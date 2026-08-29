@@ -1,0 +1,61 @@
+TRADINGBOT — COMMUNICATION PROTOCOL v1 (CP/1)
+=============================================
+Nature
+------
+Communication Protocol est un PROTOCOLE, pas un moteur et pas un service autonome.
+Il definit le langage JSON commun entre le futur Supervisor, le Communication Router et les Engines.
+
+Objectifs
+---------
+- communication bidirectionnelle ;
+- preservation integrale de l'information produite par les Engines ;
+- request/response pour les analyses demandees ;
+- events pour les changements spontanes ;
+- format stable, versionne et tracable ;
+- securite applicative des la version locale.
+
+Niveaux de detail
+-----------------
+summary  : synthese compacte ;
+analysis : analyse normalisee complete ;
+evidence : donnees justificatives lourdes uniquement sur demande.
+Le Router ne resume jamais lui-meme une reponse.
+
+Requete CP/1
+------------
+Champs principaux : protocol, request_id, timestamp, target, action, detail, arguments.
+Validation : nom cible/action, structure JSON, types, taille, timestamp, whitelist et schema d'arguments.
+
+Reponse CP/1
+------------
+Champs principaux : protocol, request_id, engine, action, status, schema,
+generated_at, duration_ms, data_hash, data, warnings.
+Le data_hash SHA-256 est calcule de facon deterministe sur data et verifie par le Router.
+
+Evenement CP/1
+--------------
+Champs principaux : protocol, event_id, timestamp, source, type, schema,
+severity, data_hash, data.
+Les events sont authentifies, whitelistes, verifies, audites et conserves dans un buffer borne du Router pour le futur Supervisor.
+
+Securite locale v1
+------------------
+- toutes les interfaces internes sont liees a 127.0.0.1 ;
+- secret machine-to-machine aleatoire 256 bits dans Parametres/CommunicationProtocol.dat (0600) ;
+- action whitelist stricte ;
+- validation des arguments par action ;
+- request_id/event_id et protection anti-replay ;
+- timestamp avec fenetre de validite ;
+- tailles et profondeur JSON bornees ;
+- timeout de routage ;
+- hash d'integrite des donnees Engine ;
+- journal d'audit dans logs.dat sans secret ;
+- aucune action shell/fichier/URL arbitraire exposee au Supervisor.
+
+Donnees externes
+----------------
+Le protocole ne transforme jamais une news, une page Web ou un post social en instruction executable. Les donnees externes restent du contenu non fiable interprete par les Engines/agents, jamais une commande CP.
+
+Preparation VPS
+---------------
+CP/1 est transport-agnostique. En local il circule sur localhost. Lors du mode Online/VPS, les memes contrats pourront etre transportes sur une couche reseau privee avec TLS/mTLS, firewall et rotation de secrets sans modifier les fonctions metier des Engines.

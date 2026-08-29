@@ -1,0 +1,28 @@
+IA-TB FUNDAMENTAL ENGINE v1.6.1 — CORRECTIVE
+================================================
+Base: v1.6.0 -> v1.6.1
+Mode: INFORMATION_ONLY
+
+Correctifs:
+1) Bootstrap SQLite auto-réparant dans le service lui-même.
+   - vérifie better-sqlite3 8.7.0 et SQLite en mémoire;
+   - si absent, installation explicite via le Node/npm local IA-TB;
+   - utilisé quel que soit le chemin de démarrage (cold start, Admin restart, lancement direct).
+2) RSS TLS High Sierra / Node 16.
+   - Node HTTPS reste le transport primaire;
+   - uniquement en cas d'erreur de chaîne de certificats, fallback vers /usr/bin/curl et le magasin de confiance système macOS;
+   - AUCUN rejectUnauthorized:false, AUCUN -k/--insecure.
+3) Logs Fundamental.
+   - suppression du double affichage dans fundamental.log quand stdout est déjà redirigé par le Launcher/Admin.
+4) Actualisation manuelle.
+   - le bouton force désormais tous les flux RSS/Atom actifs (?all=1), indépendamment du poll interval.
+5) Diagnostic UI.
+   - dernière erreur d'un feed visible directement dans /fundamental;
+   - PROVIDER_PENDING présenté comme CONNECTEUR NON ACTIF.
+6) Admin restart.
+   - timeout Fundamental porté à 30 s pour laisser un premier bootstrap natif se terminer.
+
+Hors périmètre:
+- Web Provider: prévu pour l'itération suivante.
+- X / Truth Social providers: toujours non actifs.
+- Event Engine, scoring Bull/Bear, synthèse IA, Strategy influence: non activés.
