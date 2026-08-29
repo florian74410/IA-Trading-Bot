@@ -35,16 +35,21 @@ Principales évolutions clôturées :
 
 ---
 
-# 🚧 v1.7.9 — EN PRÉPARATION
+# 🚧 v1.7.9 — EN DÉVELOPPEMENT
 
-**Progression fonctionnelle : 0 / 3**
+**Progression fonctionnelle validée : 0 / 3**
 
 ## Flux de données prévus
 
-- [ ] **CoinGecko — API**
-  - Intégration comme source de données complémentaire.
-  - Normalisation et provenance explicite des données.
-  - État, fraîcheur et erreurs visibles.
+- [ ] **CoinGecko — API** — développement en cours
+  - [x] Socle du provider `COINGECKO` programmé.
+  - [x] Enregistrement dans le registre multi-provider programmé.
+  - [x] Provenance CoinGecko explicite et séparation des données CEX/DEX natives.
+  - [x] Aucun volume d'exchange artificiel : volume indisponible déclaré explicitement.
+  - [x] État interne : dernière réussite, dernière erreur et état d'authentification.
+  - [ ] Configuration complète depuis `Settings > API` si une clé CoinGecko est utilisée.
+  - [ ] Tests d'intégration et validation sur la machine cible.
+  - [ ] Validation fonctionnelle finale CoinGecko avant passage de la fonction principale à `[x]`.
 
 - [ ] **Blockchain.com — API**
   - Intégration comme source de données complémentaire.
