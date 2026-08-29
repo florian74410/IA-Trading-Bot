@@ -21,6 +21,48 @@ Le système repose sur un **Router central** qui orchestre les différents moteu
 - `Market Data -> Chart Viewer`
 - `Portfolio -> Supervisor`
 
+# 🗺️ Feuille de route — v1.8+
+
+> **Check-list détaillée de développement de IA-Trading-Bot**
+
+## 🔒 Règle de démarrage
+
+Cette feuille de route commence **exclusivement à partir de la version v1.8**.
+
+Tant que la branche **v1.7.x** n'est pas officiellement **terminée, testée et déclarée STABLE**, aucune fonctionnalité, tâche ou sous-tâche de v1.8 ne doit être planifiée ici.
+
+À la clôture de v1.7.x, cette feuille sera construite à partir de **l'état réel du code source** et des décisions prises pour la suite du projet.
+
+### Légende de suivi
+
+- [ ] À faire
+- ◐ En cours
+- [x] Terminé
+- ⚠️ Bloqué / à vérifier
+- ★ Validé **STABLE**
+
+## Version v1.8
+
+**État : 🔒 EN ATTENTE DE CLÔTURE DE v1.7.x**
+
+> ### AUCUNE TÂCHE PLANIFIÉE
+> La check-list v1.8 restera volontairement vide jusqu'à la validation **STABLE** de la dernière version v1.7.x.
+
+### Structure utilisée à partir de v1.8
+
+- [ ] Objectif de la version
+  - [ ] Fonctionnalité / chantier
+    - [ ] Sous-tâche technique
+    - [ ] Tests nécessaires
+    - [ ] Critère de validation
+  - [ ] Documentation à mettre à jour
+  - [ ] Contrôle de sécurité
+  - [ ] Contrôle des performances
+  - [ ] Validation finale
+- [ ] ★ Passage **STABLE**
+
+---
+
 ## Rôle du dépôt
 
 Ce dépôt est la **source de vérité du code source courant de IA-TB**.
