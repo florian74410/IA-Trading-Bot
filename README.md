@@ -54,41 +54,40 @@ La roadmap ci-dessous reflète l'état réel de développement. Le détail compl
 - [x] Client/cache mémoire UserData.
 - [x] API compte, Settings, credentials et stratégies.
 - [x] Vault AES-256-GCM et clés hors dépôt.
-- [x] Migration/projection depuis les anciens fichiers `.dat`.
-- ◐ SQLite comme source canonique des Settings : couche prête, projections `.dat` encore utilisées par le serveur principal.
-- ◐ SQLite comme source canonique du Login : compte SQLite supporté, `user.dat` encore projeté pour compatibilité.
-- [ ] Supprimer progressivement la dépendance runtime aux anciens fichiers Settings/Login.
+- [x] Migration depuis les anciens fichiers `.dat`.
+- [x] Core démarré via le bootstrap/runtime UserData.
+- [x] SQLite/cache mémoire = source canonique du Login et des Settings ; les anciens fichiers restent uniquement des projections de compatibilité.
+- [x] Écritures compte/Settings répercutées vers SQLite avant la fin des requêtes.
 - ⚠️ Tester `better-sqlite3@8.7.0` sous Node 16.20.2 / High Sierra.
-- ⚠️ Tester restauration de la DB après changement de build.
+- ⚠️ Tester restauration des données après changement de build.
 
 ### Compte / Authentification
 
-Nouvelle règle : le **Username est créé à l'inscription, lié au compte/email et immuable**.
+Règle v1.7.9 : le **Username est créé à l'inscription, lié au compte/email et immuable**.
 
 - [x] Validation backend du Username.
-- [x] Support du compte dans UserData Server / client.
-- [x] Migration d'un ancien compte vers UserData.
-- [ ] Ajouter le champ Username à la première inscription.
-- [ ] Enregistrer Username + Email + hash directement dans SQLite à l'inscription.
-- [ ] Afficher le Username en lecture seule dans Settings.
-- [ ] Faire utiliser SQLite directement par `/api/setup`, `/api/login`, changement d'email et changement de mot de passe.
-- ⚠️ Tester création de compte, reconnexion et modifications de compte.
+- [x] Champ Username à la première inscription.
+- [x] Pré-enregistrement et contrôle du Username avant `/api/setup`.
+- [x] Username + Email + hash/salt enregistrés dans le compte SQLite.
+- [x] Username non modifiable et affiché en lecture seule dans Settings.
+- [x] Setup/Login/changement d'email/changement de mot de passe raccordés au compte SQLite par l'adaptateur runtime.
+- ⚠️ Tester création de compte, reconnexion et modifications de compte sur le Mac cible.
 
 ### Settings
 
 - [x] API générique `scope/key/value` SQLite.
 - [x] Import initial des paramètres existants vers UserData.
-- ◐ Synchronisation SQLite ↔ projections `.dat` disponible.
-- [ ] Migrer `/api/settings/general` vers SQLite direct.
-- [ ] Migrer langue, puissance IA, modulation/mosaïque et profil actif vers SQLite direct.
-- [ ] Confirmer qu'un patch v1.7.8 → v1.7.9 ne remplace jamais les Settings utilisateur.
+- [x] Bootstrap et restauration depuis SQLite.
+- [x] General, langue, puissance IA, modulation/mosaïque et profils couverts par la couche canonique SQLite.
+- ⚠️ Confirmer qu'un patch v1.7.8 → v1.7.9 ne remplace jamais les Settings utilisateur.
 
 ### Secrets / API
 
 - [x] Infrastructure Vault SQLite.
 - [x] Credentials chiffrés dans UserData.
-- ◐ Compatibilité `secrets_v2.dat` encore présente.
-- [ ] Faire lire directement les credentials UserData/Vault par OpenAI/X/exchanges.
+- [x] API Data Service pour accéder aux credentials sans accès SQLite direct.
+- ◐ Certains consommateurs du Core utilisent encore `secrets_v2.dat`.
+- [ ] Faire utiliser exclusivement le **Data Service/Vault** par OpenAI, X et les Exchanges.
 - [ ] Préparer la sauvegarde/restauration sécurisée de la clé maître.
 
 ### Connecteurs & Market Data
@@ -102,8 +101,10 @@ Nouvelle règle : le **Username est créé à l'inscription, lié au compte/emai
 
 ### Finalisation v1.7.9
 
+- [ ] Migrer les consommateurs de credentials vers Data Service/Vault.
+- [ ] Intégrer le nouvel écran d'authentification graphique.
 - [ ] Revue complète du patch.
-- [ ] Tests Mac High Sierra : démarrage, Login, Settings, UserData, Fundamental, Admin, MarketData.
+- [ ] Tests Mac High Sierra : démarrage, inscription Username, Login, Settings, UserData, Vault, Fundamental, Admin, MarketData.
 - [ ] Test d'update v1.7.8 → v1.7.9 sans perte de données.
 - [ ] Corrections de régression.
 - [ ] CHANGELOG + Wiki.
