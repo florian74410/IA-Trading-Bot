@@ -2,6 +2,16 @@
 
 Application modulaire de trading crypto : CEX/DEX, Market Data, Chart Viewer, Indicator Engine, Liquidity Engine, gestion centralisée des API et Update Manager versionné.
 
+## Rôle du dépôt
+
+Ce dépôt est la **source de vérité du code source courant de IA-TB**.
+
+- `main` = code source complet de la dernière version validée.
+- `Updates/Patches/` = archives de mise à jour installables entre deux versions.
+- L'historique Git conserve les anciennes versions du code ; il n'est pas nécessaire de dupliquer le projet dans des dossiers `v1.x`.
+- Chaque nouvelle mise à jour repart de la dernière source validée présente sur GitHub, puis remplace/actualise cette source une fois les tests terminés.
+- Les secrets, coffres, clés privées, tokens, logs, bases locales et données utilisateur ne doivent jamais être commités.
+
 ## Documentation
 
 La documentation officielle est versionnée dans [`docs/wiki`](docs/wiki/Home.md).
@@ -22,4 +32,8 @@ La documentation officielle est versionnée dans [`docs/wiki`](docs/wiki/Home.md
 
 La branche de développement utilise les versions `v1.x`. Chaque changement publié incrémente la version. Le passage à `v2.x` correspondra à la phase suivant le développement/test.
 
-Voir [Versionnage et releases](docs/wiki/Versioning-and-Releases.md) et le [protocole de release](docs/RELEASE_PROTOCOL.md).
+Cycle officiel :
+
+`Source GitHub N -> Développement N+1 -> Tests -> Patch -> CHANGELOG -> Commit source N+1 -> Updates/Patches -> Wiki`
+
+Voir [Versionnage et releases](docs/wiki/Versioning-and-Releases.md) et le [protocole de mise à jour](docs/RELEASE_PROTOCOL.md).
