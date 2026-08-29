@@ -1,34 +1,40 @@
 # Market Data
 
-Le Market Data de IA-TB conserve la provenance exacte des données utilisées.
+Le Market Data Engine fournit aux autres modules les données de marché normalisées tout en conservant leur provenance.
 
-## Principe
+## Données minimales par connecteur
 
-Chaque connecteur CEX/DEX apporte, lorsque la plateforme le permet, ses propres :
+Pour tout nouveau CEX/DEX, l'intégration doit traiter lorsque la plateforme le permet :
 
-- marchés / paires ;
+- liste des marchés / paires ;
 - prix ;
-- OHLC / OHLCV ;
-- volumes ;
-- informations de fraîcheur / état du provider.
+- OHLC ou OHLCV ;
+- volumes propres à la plateforme ;
+- timeframes disponibles ;
+- timestamps et fraîcheur ;
+- état du provider.
 
-Les données sont ensuite normalisées pour être consommées par les différents moteurs de l'application sans perdre l'identité de leur source.
+## Règle de provenance
 
-## Règle de fiabilité
+Les données ne sont pas interchangeables silencieusement.
 
-Les données d'un exchange ne doivent pas être substituées silencieusement par celles d'un autre exchange.
+Exemples :
 
-Exemple : une série `BTC/USD Coinbase` reste identifiée comme Coinbase ; une série `BTC/USDT Binance` reste identifiée comme Binance.
+- `BTC/USDT @ Binance` ;
+- `BTC/USD @ Coinbase` ;
+- `BTC-USDT @ OKX` ;
+- marché équivalent @ GMX.
 
-## Consommateurs
+La normalisation peut fournir un symbole canonique pour l'interface, mais la source originale reste attachée au dataset.
 
-Le Market Data alimente notamment :
+## Déduplication
 
-- Chart Viewer ;
-- Indicator Engine ;
-- Liquidity Engine ;
-- moteurs d'analyse et de stratégie.
+La déduplication sert à présenter les mêmes actifs de façon cohérente, pas à fusionner leurs volumes ou leurs chandeliers.
 
-## Ajout d'un connecteur
+## Cache et historique
 
-Lorsqu'un nouveau CEX/DEX est ajouté, l'intégration des données OHLC/OHLCV et des volumes fait partie du même changement de version que le connecteur lui-même.
+Le cache doit être borné et adapté aux contraintes de la machine cible. Les historiques importants sont chargés à la demande.
+
+## Erreurs
+
+Un provider indisponible doit être signalé explicitement. Le moteur ne doit pas remplacer silencieusement ses données par celles d'un autre exchange sans que l'appelant en soit informé.

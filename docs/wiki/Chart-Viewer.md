@@ -1,20 +1,29 @@
 # Chart Viewer
 
-Le Chart Viewer affiche les séries de marché en conservant le choix explicite de la source CEX/DEX.
+Le Chart Viewer affiche les séries de marché fournies par le Market Data Engine.
 
-## Sélection des données
+## Sélection
 
-Le Chart Viewer doit pouvoir sélectionner :
+L'utilisateur choisit au minimum :
 
-- le connecteur / exchange ;
+- la plateforme / source ;
 - la paire ;
-- le timeframe ;
-- les données OHLC/OHLCV fournies par le Market Data associé.
+- le timeframe.
 
-## Cohérence avec les moteurs
+## Sources
 
-Lorsque le Chart Viewer utilise une source donnée, les moteurs d'analyse associés doivent recevoir la même identité de marché afin d'éviter les mélanges silencieux entre exchanges.
+Les connecteurs intégrés ou prévus dans l'architecture actuelle comprennent notamment Binance, GMX, Coinbase et OKX.
 
-## Ajout d'un CEX / DEX
+Le Chart Viewer doit utiliser les OHLC/OHLCV du connecteur sélectionné et afficher clairement la provenance des données.
 
-Tout nouveau connecteur doit être pris en charge par le Chart Viewer dans le même cycle de version que son intégration Market Data, lorsque ses données de marché permettent l'affichage de chandeliers.
+## Cohérence avec les indicateurs
+
+Lorsque l'utilisateur change d'exchange, le contexte transmis à l'Indicator Engine doit changer avec lui. Un graphique Coinbase ne doit pas calculer silencieusement ses indicateurs sur des chandeliers Binance.
+
+## Volumes
+
+Lorsque le connecteur fournit des volumes, ils sont ceux de la plateforme sélectionnée et restent distincts de ceux des autres marchés.
+
+## Performance
+
+Le graphique doit pouvoir apparaître rapidement sans précharger inutilement un historique massif. L'historique supplémentaire est récupéré selon les besoins de navigation et d'analyse.

@@ -1,21 +1,25 @@
-# IA-Trading-Bot
+# IA-Trading-Bot (IA-TB)
 
-Dépôt du projet **IA-TB**.
+Application modulaire de trading crypto : CEX/DEX, Market Data, Chart Viewer, Indicator Engine, Liquidity Engine, gestion centralisée des API et Update Manager versionné.
 
 ## Documentation
 
-- [Protocole officiel de versionnage et de release](docs/RELEASE_PROTOCOL.md)
-- [Checklist obligatoire de release](.github/RELEASE_CHECKLIST.md)
-- [Sources du Wiki](docs/wiki/Home.md)
+La documentation officielle est versionnée dans [`docs/wiki`](docs/wiki/Home.md).
 
-## Cycle de release
+- [Accueil documentation](docs/wiki/Home.md)
+- [Installation](docs/wiki/Installation.md)
+- [Architecture](docs/wiki/Architecture.md)
+- [Connecteurs CEX / DEX](docs/wiki/Connectors-CEX-DEX.md)
+- [Market Data](docs/wiki/Market-Data.md)
+- [Chart Viewer](docs/wiki/Chart-Viewer.md)
+- [Indicator Engine](docs/wiki/Indicator-Engine.md)
+- [Settings / API](docs/wiki/Settings-API.md)
+- [Update Manager](docs/wiki/Update-Manager.md)
+- [Sécurité](docs/wiki/Security.md)
+- [Roadmap](docs/wiki/Roadmap.md)
 
-Le cycle officiel est :
+## Versionnage
 
-**Versionnage → Développement → Tests → Patch → CHANGELOG → Déploiement GitHub → Analyse d'impact Wiki → Mise à jour du Wiki**
+La branche de développement utilise les versions `v1.x`. Chaque changement publié incrémente la version. Le passage à `v2.x` correspondra à la phase suivant le développement/test.
 
-Une release n'est terminée que lorsque la documentation correspondant à la version réellement publiée a également été traitée.
-
-## Connecteurs
-
-Chaque nouveau CEX/DEX doit être intégré avec ses propres données de marché lorsque disponibles : marchés/paires, OHLC/OHLCV, volumes, Market Data, Chart Viewer et paramètres nécessaires dans `Settings > API`.
+Voir [Versionnage et releases](docs/wiki/Versioning-and-Releases.md) et le [protocole de release](docs/RELEASE_PROTOCOL.md).
