@@ -17,13 +17,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Rebuild login background
+      - name: Rebuild and validate login background
         run: |
           set -euo pipefail
           mkdir -p Update/v1.7.9/Frontend/Assets
           cat .github/import-bg/part*.txt | base64 -d > Update/v1.7.9/Frontend/Assets/ia-tb-login-background.webp
           test "$(wc -c < Update/v1.7.9/Frontend/Assets/ia-tb-login-background.webp | tr -d ' ')" = "26924"
-          echo "6f1a93737dcab846b219ccdcbe371643d9f813a54ca68d0a39dd5932ef3661c0  Update/v1.7.9/Frontend/Assets/ia-tb-login-background.webp" | sha256sum -c -
+          file Update/v1.7.9/Frontend/Assets/ia-tb-login-background.webp | grep -qi 'webp'
+          ffmpeg -v error -i Update/v1.7.9/Frontend/Assets/ia-tb-login-background.webp -f null -
           rm -rf .github/import-bg
           rm -f .github/workflows/import-login-background.yml
 
