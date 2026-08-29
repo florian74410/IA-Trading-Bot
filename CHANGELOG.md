@@ -10,9 +10,17 @@
 - `/providers` et `/health` exposent le type, l'etat de connexion, le dernier evenement et les erreurs.
 - Kraken reste le provider de reference par defaut.
 
+### Interface
+- Correction Mosaic : la mosaïque principale est masquee lorsqu'une surcouche Settings, Strategy ou Update est ouverte, afin d'eviter les chevauchements d'interface.
+
 ### Runtime
 - Ajout de `ws@8.18.0` limite au module MarketData, compatible Node.js 16.
 - `install_runtime.command` installe automatiquement la dependance si necessaire.
+
+### Release / UpdateManager
+- Patch cible : `1.7.7 -> 1.7.8`.
+- Le package de mise a jour respecte le format natif UpdateManager : `update_manifest.json + payload/`.
+- Les donnees utilisateur protegees restent exclues du payload.
 
 ### Compatibilite
 - Base v1.7.7 conservee.
