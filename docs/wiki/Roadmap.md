@@ -14,7 +14,7 @@ La roadmap décrit l'état réel du projet. Une fonctionnalité n'est marquée *
 
 **État global : ◐ DÉVELOPPEMENT / DEBUG**
 
-Objectif : consolider l'administration, la persistance UserData et l'authentification avant la prochaine vague de connecteurs.
+Objectif : terminer la consolidation UserData/SQLite, l'authentification et le Vault avant la validation finale de la branche v1.7.x.
 
 ## Interface & Administration
 
@@ -72,14 +72,23 @@ Nouvelle règle v1.7.9 : le **Username est créé à l'inscription et devient im
 - [ ] Migrer les paramètres Indicator Engine vers le Data Service uniquement si leur périmètre doit devenir utilisateur/persistant.
 - ⚠️ Confirmer qu'une mise à jour v1.7.8 → v1.7.9 ne remplace jamais les Settings utilisateur.
 
-## Secrets / API
+## Secrets / API / Vault
+
+Architecture cible : `Settings > API -> Data Service -> Vault SQLite -> consommateur`. Aucun connecteur ne doit accéder directement à SQLite.
 
 - [x] Infrastructure Vault SQLite disponible.
 - [x] Credentials chiffrés dans la DB UserData.
 - [x] API Data Service pour lire/écrire un credential sans accès SQLite direct du consommateur.
-- ◐ L'ancien coffre `secrets_v2.dat` reste encore utilisé par certains consommateurs du Core.
-- [ ] Faire utiliser **exclusivement le Data Service/Vault** par OpenAI, X et les Exchanges pour leurs credentials ; aucun connecteur ne doit lire SQLite directement.
-- [ ] Préparer une procédure sécurisée de sauvegarde/restauration de la clé maître.
+- ◐ L'ancien coffre `secrets_v2.dat` reste temporairement utilisé par certains consommateurs du Core.
+- [ ] Migrer OpenAI vers le Data Service/Vault.
+- [ ] Migrer X / Twitter vers le Data Service/Vault.
+- [ ] Migrer les connecteurs Exchange nécessitant des credentials vers le Data Service/Vault.
+- [ ] Importer automatiquement les credentials encore présents dans `secrets_v2.dat` vers le Vault SQLite lors de la migration.
+- [ ] Vérifier qu'aucun module ne lit ou n'écrit encore `secrets_v2.dat`.
+- [ ] Supprimer définitivement `secrets_v2.dat` et l'ancienne logique de coffre RSA une fois la migration validée.
+- [ ] Nettoyer les textes UI/documentation qui parlent encore du coffre RSA `secrets_v2.dat`.
+- [ ] Préparer une procédure sécurisée de sauvegarde/restauration de la clé maître du Vault SQLite.
+- ⚠️ Tester sauvegarde, lecture, modification et redémarrage avec credentials Vault sur le Mac cible.
 
 ## Connecteurs & Market Data
 
@@ -92,11 +101,13 @@ Nouvelle règle v1.7.9 : le **Username est créé à l'inscription et devient im
 
 ## Finalisation v1.7.9
 
-- [ ] Terminer la migration des consommateurs de credentials vers Data Service/Vault.
+- [ ] Terminer la migration Credentials vers Data Service/Vault.
+- [ ] Supprimer `secrets_v2.dat` après migration et validation.
 - [ ] Intégrer le nouvel écran d'authentification graphique dans le runtime.
 - [ ] Revue complète des fichiers du patch v1.7.9.
 - [ ] Tests fonctionnels sur le Mac High Sierra : démarrage, inscription Username, Login, Settings, UserData, Vault, Fundamental, Admin, MarketData.
 - [ ] Test de mise à jour depuis v1.7.8 sans perte de données utilisateur.
+- [ ] Tester migration automatique des anciens Settings/Login/credentials vers SQLite.
 - [ ] Corriger les régressions découvertes pendant les tests.
 - [ ] Mettre à jour CHANGELOG / documentation Wiki.
 - [ ] Générer le patch officiel v1.7.8 → v1.7.9.
