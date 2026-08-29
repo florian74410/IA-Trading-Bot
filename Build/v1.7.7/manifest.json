@@ -1,9 +1,0 @@
-{
-  "schema": 1,
-  "application": "IA-Trading-Bot",
-  "version": "1.7.7",
-  "status": "DEV",
-  "source_version": "1.7.6",
-  "entrypoint": "Core/Server/server_v1.0.js",
-  "update_artifact": "Update/v1.7.7/Crypto-Chart-Viewer-IA-Trader-v1.7.7-update.zip"
-}
