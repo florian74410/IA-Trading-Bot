@@ -1,0 +1,9 @@
+{
+  "schema": 1,
+  "application": "IA-Trading-Bot",
+  "version": "1.7.8",
+  "status": "DEV",
+  "source_version": "1.7.7",
+  "entrypoint": "Core/Server/server_v1.0.js",
+  "update_artifact": "updates/v1.7.8"
+}
