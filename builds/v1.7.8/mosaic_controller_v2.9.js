@@ -28,9 +28,29 @@
       this.defaultLayout = JSON.parse(JSON.stringify(o.defaultLayout || {}));
       this.layout = JSON.parse(JSON.stringify(o.layout || o.defaultLayout || {}));
       this.modules = new Map();
+      this.overlayObserver = null;
       if (!this.container) throw new Error('Conteneur Mosaïque manquant.');
       this.scan();
       this.apply(this.layout, false);
+      this.bindOverlayVisibility();
+    }
+
+    bindOverlayVisibility() {
+      const self = this;
+      const overlays = ['settingsPage', 'strategyPage', 'updatePage']
+        .map((id) => document.getElementById(id))
+        .filter(Boolean);
+      if (!overlays.length || typeof MutationObserver === 'undefined') return;
+
+      const sync = function () {
+        const overlayOpen = overlays.some((el) => !el.classList.contains('hide'));
+        self.container.style.visibility = overlayOpen ? 'hidden' : '';
+        self.container.setAttribute('aria-hidden', overlayOpen ? 'true' : 'false');
+      };
+
+      this.overlayObserver = new MutationObserver(sync);
+      overlays.forEach((el) => this.overlayObserver.observe(el, { attributes: true, attributeFilter: ['class'] }));
+      sync();
     }
 
     scan() {
