@@ -18,12 +18,12 @@ start_userdata(){
   if userdata_ready; then
     echo "UserData Server deja actif sur 127.0.0.1:$USERDATA_PORT."
   else
-    echo "Demarrage UserData Server local -> $USERDATA_ROOT/<username>/user_data.db"
+    echo "Demarrage UserData Server local -> $USERDATA_ROOT/User Data/<username>/user_data.db"
     IATB_USERDATA_SERVER_PORT="$USERDATA_PORT" IATB_USERDATA_SERVER_ROOT="$USERDATA_ROOT" "$PWD/.node/bin/node" "$PWD/UserData/local_server.js" >> "$USERDATA_LOG" 2>&1 &
     for i in 1 2 3 4 5 6 7 8 9 10; do userdata_ready && break; sleep 0.2; done
     if ! userdata_ready; then echo "ERREUR: UserData Server indisponible. Consulte $USERDATA_LOG"; return 1; fi
   fi
-  echo "Chargement des donnees utilisateur en memoire..."
+  echo "Chargement UserData SQLite -> memoire (Login + Settings + Vault + strategies)..."
   IATB_USERDATA_SERVER_PORT="$USERDATA_PORT" "$PWD/.node/bin/node" "$PWD/UserData/bootstrap.js" || return 1
   return 0
 }
