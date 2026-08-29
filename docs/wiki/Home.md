@@ -2,7 +2,19 @@
 
 Bienvenue dans la documentation officielle de **IA-TB / IA-Trading-Bot**.
 
-IA-TB est une application modulaire de trading crypto réunissant notamment des connecteurs CEX/DEX, un moteur Market Data, un Chart Viewer, un Indicator Engine, un Liquidity Engine, une configuration centralisée des API et un système de mise à jour versionné.
+IA-TB est une application modulaire de trading crypto réunissant notamment des connecteurs CEX/DEX, un moteur Market Data, un Chart Viewer, un Indicator Engine, une architecture de routage centralisée, une configuration centralisée des API et un système de mise à jour versionné.
+
+## Vue d’ensemble de l’architecture
+
+<p align="center">
+  <a href="Architecture.md">
+    <img src="../assets/architecture-overview.png" alt="IA-TB — Schéma de communication entre modules" width="100%" />
+  </a>
+</p>
+
+<p align="center">
+  <sub>Schéma officiel IA-TB — <a href="Architecture.md">documentation d’architecture</a> · <a href="../assets/architecture-overview.png">PNG</a> · <a href="../assets/architecture-overview.svg">SVG</a></sub>
+</p>
 
 ## Commencer
 
