@@ -37,11 +37,13 @@ Objectif : consolider l'administration, la persistance UserData et l'authentific
 - [x] Vault AES-256-GCM pour les credentials stockés dans SQLite.
 - [x] Clé maître et token serveur conservés hors dépôt.
 - [x] Mécanisme de migration/projection depuis les anciens fichiers `.dat`.
-- ◐ Faire de SQLite la source canonique directe des Settings : couche UserData disponible, mais le serveur principal utilise encore des fichiers de projection pour compatibilité.
-- ◐ Faire de SQLite la source canonique directe du Login : compte SQLite supporté, mais l'ancien `user.dat` reste encore projeté pour le runtime existant.
-- [ ] Supprimer progressivement la dépendance runtime aux anciens fichiers Settings/Login lorsque les consommateurs seront migrés.
+- [x] Core lancé via `UserData/server_entry.js` après bootstrap SQLite.
+- [x] Runtime adapter `runtime_hooks.js` : SQLite/cache mémoire devient la source canonique des lectures Login et Settings.
+- [x] Écritures Login/Settings répercutées vers SQLite avant la fin de la requête HTTP.
+- [x] Les anciens fichiers Login/Settings sont conservés uniquement comme projections de compatibilité pour les consommateurs historiques.
+- ◐ Supprimer progressivement les projections lorsque tous les consommateurs historiques auront été migrés ; ce nettoyage n'est pas bloquant pour la source canonique SQLite.
 - ⚠️ Vérifier l'installation de `better-sqlite3@8.7.0` avec Node 16.20.2 sur macOS High Sierra.
-- ⚠️ Tester récupération de la DB après suppression de la copie locale / changement de build.
+- ⚠️ Tester récupération de la DB après suppression d'une projection locale / changement de build.
 - ⚠️ Tester sauvegarde et restauration des Settings, compte et credentials après mise à jour.
 
 ## Compte / Authentification
@@ -51,29 +53,32 @@ Nouvelle règle v1.7.9 : le **Username est créé à l'inscription et devient im
 - [x] Validation backend disponible pour un Username sûr (`3–32`, lettres/chiffres/`.`/`_`/`-`).
 - [x] Support du compte dans le client et le serveur UserData.
 - [x] Migration d'un ancien compte vers une identité UserData.
-- [ ] Ajouter le champ **Username** au formulaire de première inscription.
-- [ ] Enregistrer Username + Email + hash du mot de passe directement dans le compte SQLite lors de l'inscription.
-- [ ] Rendre le Username non modifiable dans Settings.
-- [ ] Afficher le Username du compte dans Settings en lecture seule.
-- [ ] Faire utiliser le compte SQLite directement par `/api/setup`, `/api/login`, changement d'email et changement de mot de passe.
-- ⚠️ Tester création de compte neuf, reconnexion, changement d'email et changement de mot de passe.
+- [x] Champ **Username** injecté dans le formulaire de première inscription.
+- [x] Pré-enregistrement `/api/userdata/pre-register` avant `/api/setup` avec contrôle d'unicité/validité.
+- [x] Username + Email + hash/salt du mot de passe enregistrés dans le compte SQLite lors de l'inscription.
+- [x] Username non modifiable après création.
+- [x] Username affiché dans Settings en lecture seule.
+- [x] `/api/setup`, `/api/login`, changement d'email et changement de mot de passe raccordés au compte SQLite par l'adaptateur runtime, tout en gardant la compatibilité du Core existant.
+- ⚠️ Tester création de compte neuf, reconnexion, changement d'email et changement de mot de passe sur le Mac cible.
 
 ## Settings
 
 - [x] API générique `scope/key/value` disponible dans SQLite.
 - [x] Import initial des fichiers de paramètres existants vers UserData.
-- ◐ Synchronisation SQLite ↔ projections `.dat` disponible pour compatibilité.
-- [ ] Migrer `/api/settings/general` vers SQLite comme source directe.
-- [ ] Migrer langue, puissance IA, modulation/mosaïque et profil actif vers SQLite comme source directe.
-- [ ] Migrer les paramètres Indicator Engine pertinents vers le Data Service si nécessaire.
-- [ ] Confirmer qu'une mise à jour v1.7.8 → v1.7.9 ne remplace jamais les Settings utilisateur.
+- [x] Bootstrap : restauration des projections depuis SQLite au démarrage.
+- [x] Lectures runtime des Settings suivis servies depuis le cache SQLite.
+- [x] Écritures `config_v1.0.dat`, `ai_settings_v2.dat` et `Parametres/*.dat` répercutées vers SQLite.
+- [x] General, langue, puissance IA, modulation/mosaïque et profils actifs couverts par cette couche de compatibilité canonique SQLite.
+- [ ] Migrer les paramètres Indicator Engine vers le Data Service uniquement si leur périmètre doit devenir utilisateur/persistant.
+- ⚠️ Confirmer qu'une mise à jour v1.7.8 → v1.7.9 ne remplace jamais les Settings utilisateur.
 
 ## Secrets / API
 
 - [x] Infrastructure Vault SQLite disponible.
 - [x] Credentials chiffrés dans la DB UserData.
-- ◐ Les anciens secrets peuvent encore être représentés via la compatibilité `secrets_v2.dat`.
-- [ ] Migrer les consommateurs OpenAI/X/exchanges pour lire directement leurs credentials via UserData/Vault.
+- [x] API Data Service pour lire/écrire un credential sans accès SQLite direct du consommateur.
+- ◐ L'ancien coffre `secrets_v2.dat` reste encore utilisé par certains consommateurs du Core.
+- [ ] Faire utiliser **exclusivement le Data Service/Vault** par OpenAI, X et les Exchanges pour leurs credentials ; aucun connecteur ne doit lire SQLite directement.
 - [ ] Préparer une procédure sécurisée de sauvegarde/restauration de la clé maître.
 
 ## Connecteurs & Market Data
@@ -87,8 +92,10 @@ Nouvelle règle v1.7.9 : le **Username est créé à l'inscription et devient im
 
 ## Finalisation v1.7.9
 
+- [ ] Terminer la migration des consommateurs de credentials vers Data Service/Vault.
+- [ ] Intégrer le nouvel écran d'authentification graphique dans le runtime.
 - [ ] Revue complète des fichiers du patch v1.7.9.
-- [ ] Tests fonctionnels sur le Mac High Sierra : démarrage, Login, Settings, UserData, Fundamental, Admin, MarketData.
+- [ ] Tests fonctionnels sur le Mac High Sierra : démarrage, inscription Username, Login, Settings, UserData, Vault, Fundamental, Admin, MarketData.
 - [ ] Test de mise à jour depuis v1.7.8 sans perte de données utilisateur.
 - [ ] Corriger les régressions découvertes pendant les tests.
 - [ ] Mettre à jour CHANGELOG / documentation Wiki.
