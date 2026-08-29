@@ -1,42 +1,105 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1000" viewBox="0 0 1400 1000">
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1300" viewBox="0 0 1600 1300" role="img" aria-labelledby="title desc">
+  <title id="title">IA-TB — Architecture fonctionnelle</title>
+  <desc id="desc">Connexions: Supervisor bidirectionnel Router; Strategy Engine bidirectionnel Router; Trading Engine bidirectionnel Router; Indicator Engine bidirectionnel Router; Fundamental Engine bidirectionnel Router; Market Data vers Supervisor; Exchanges vers Market Data; Trading Engine vers Risk Manager vers Exchanges; Market Data vers Chart Viewer; Portfolio vers Supervisor.</desc>
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#03101f"/><stop offset="1" stop-color="#071b31"/></linearGradient>
-    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f6d47a"/><stop offset="1" stop-color="#b87924"/></linearGradient>
-    <filter id="glow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#efc15f"/></marker>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#020817"/><stop offset=".55" stop-color="#061426"/><stop offset="1" stop-color="#03101e"/></linearGradient>
+    <radialGradient id="halo" cx="50%" cy="42%" r="65%"><stop offset="0" stop-color="#0ea5e9" stop-opacity=".13"/><stop offset="1" stop-color="#020817" stop-opacity="0"/></radialGradient>
+    <linearGradient id="brand" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#eef8ff"/><stop offset=".4" stop-color="#a9c7e6"/><stop offset=".54" stop-color="#11d9ff"/><stop offset="1" stop-color="#0876ff"/></linearGradient>
+    <linearGradient id="cyanStroke" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#26e7ff"/><stop offset="1" stop-color="#1686ff"/></linearGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="10" stdDeviation="16" flood-color="#000814" flood-opacity=".58"/></filter>
+    <marker id="arrowCyan" viewBox="0 0 10 10" refX="8.8" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" fill="#28dcff"/></marker>
+    <marker id="arrowPurple" viewBox="0 0 10 10" refX="8.8" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" fill="#a66cff"/></marker>
+    <marker id="arrowOrange" viewBox="0 0 10 10" refX="8.8" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" fill="#ff9b31"/></marker>
     <style>
-      .box{fill:#0a1c31;stroke:#b98234;stroke-width:2;rx:24}.t{fill:#fff;font-family:Arial,Helvetica,sans-serif;font-size:26px;font-weight:700}.s{fill:#cbd5e1;font-family:Arial,Helvetica,sans-serif;font-size:16px}.line{stroke:#efc15f;stroke-width:3;fill:none;marker-end:url(#arrow)}.bi{stroke:#efc15f;stroke-width:3;fill:none;marker-start:url(#arrow);marker-end:url(#arrow)}
+      .frame{fill:#071528;fill-opacity:.93;stroke:#164264;stroke-width:1.5}
+      .card{fill:#081a30;fill-opacity:.98;stroke-width:2;filter:url(#shadow)}
+      .cyan{stroke:#2acfff}.purple{stroke:#8d6bff}.orange{stroke:#ff9637}
+      .title{font:800 27px Inter,Arial,sans-serif;fill:#f4f9ff;letter-spacing:.3px}
+      .sub{font:400 15px Inter,Arial,sans-serif;fill:#a8bfd4}
+      .section{font:700 15px Inter,Arial,sans-serif;fill:#63dcff;letter-spacing:2.2px}
+      .small{font:500 14px Inter,Arial,sans-serif;fill:#98b0c5}
+      .label{font:600 13px Inter,Arial,sans-serif;paint-order:stroke;stroke:#04101e;stroke-width:5;stroke-linejoin:round}
+      .fwdC{fill:none;stroke:#28dcff;stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round;marker-end:url(#arrowCyan)}
+      .biC{fill:none;stroke:#28dcff;stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round;marker-start:url(#arrowCyan);marker-end:url(#arrowCyan)}
+      .biP{fill:none;stroke:#a66cff;stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round;marker-start:url(#arrowPurple);marker-end:url(#arrowPurple)}
+      .fwdO{fill:none;stroke:#ff9b31;stroke-width:3.4;stroke-linecap:round;stroke-linejoin:round;marker-end:url(#arrowOrange)}
+      .iC{fill:none;stroke:#62e9ff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+      .iP{fill:none;stroke:#b388ff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+      .iO{fill:none;stroke:#ffb04b;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
     </style>
   </defs>
-  <rect width="1400" height="1000" fill="url(#bg)"/>
-  <text x="700" y="55" text-anchor="middle" class="t" font-size="34" fill="#f6d47a">IA-TRADING-BOT — SYSTEM ARCHITECTURE</text>
 
-  <!-- boxes -->
-  <rect class="box" x="80" y="120" width="250" height="140"/><text class="t" x="205" y="175" text-anchor="middle">MARKET DATA</text><text class="s" x="205" y="210" text-anchor="middle">Real-time streams</text>
-  <rect class="box" x="575" y="105" width="250" height="140"/><text class="t" x="700" y="160" text-anchor="middle">SUPERVISOR</text><text class="s" x="700" y="195" text-anchor="middle">AI orchestration</text>
-  <rect class="box" x="1070" y="120" width="250" height="140"/><text class="t" x="1195" y="175" text-anchor="middle">PORTFOLIO</text><text class="s" x="1195" y="210" text-anchor="middle">Positions &amp; performance</text>
+  <rect width="1600" height="1300" fill="url(#bg)"/>
+  <rect width="1600" height="1300" fill="url(#halo)"/>
 
-  <circle cx="700" cy="430" r="125" fill="#091a2e" stroke="url(#gold)" stroke-width="5" filter="url(#glow)"/><text class="t" x="700" y="420" text-anchor="middle" font-size="32">ROUTER</text><text class="s" x="700" y="455" text-anchor="middle">Intelligent task router</text>
+  <!-- Header IA-TB -->
+  <g transform="translate(490 24)">
+    <circle cx="64" cy="60" r="51" fill="#031526" stroke="#20d9ff" stroke-width="3" filter="url(#glow)"/>
+    <path d="M27 87 C50 78 72 69 98 43" class="iC"/>
+    <path d="M29 89 L45 89 M44 88 V73 M59 82 V54 M74 74 V38 M89 59 V26" stroke="#169fff" stroke-width="7" stroke-linecap="round"/>
+    <path d="M98 43 H110 V33 M100 58 H116 M103 71 H119" class="iC"/>
+    <circle cx="110" cy="33" r="3.5" fill="#20d9ff"/><circle cx="116" cy="58" r="3.5" fill="#20d9ff"/><circle cx="119" cy="71" r="3.5" fill="#20d9ff"/>
+    <text x="139" y="70" font-family="Inter,Arial,sans-serif" font-size="69" font-weight="800" fill="url(#brand)" letter-spacing="2">IA-TB</text>
+    <text x="143" y="101" font-family="Inter,Arial,sans-serif" font-size="18" font-weight="600" fill="#b6d4ea">IA Trading Bot</text>
+    <circle cx="277" cy="95" r="4" fill="#20d9ff" filter="url(#glow)"/>
+    <text x="293" y="101" font-family="Inter,Arial,sans-serif" font-size="14" fill="#789ebc">Architecture fonctionnelle</text>
+  </g>
+  <text x="800" y="158" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="18" fill="#72dfff" letter-spacing="2">SCHÉMA DE COMMUNICATION ENTRE MODULES</text>
 
-  <rect class="box" x="90" y="360" width="260" height="150"/><text class="t" x="220" y="420" text-anchor="middle">CHART VIEWER</text><text class="s" x="220" y="455" text-anchor="middle">Interactive charts</text>
-  <rect class="box" x="1050" y="345" width="280" height="165"/><text class="t" x="1190" y="410" text-anchor="middle">TRADING ENGINE</text><text class="s" x="1190" y="445" text-anchor="middle">Orders &amp; execution</text>
+  <text x="70" y="205" class="section">DONNÉES &amp; SUPERVISION</text><line x1="70" y1="215" x2="1530" y2="215" stroke="#103551"/>
+  <text x="70" y="675" class="section" fill="#b388ff">ENGINES &amp; ROUTING</text><line x1="70" y1="685" x2="1530" y2="685" stroke="#2b2455"/>
+  <text x="70" y="955" class="section" fill="#ffae47">EXÉCUTION CONTRÔLÉE</text><line x1="70" y1="965" x2="1530" y2="965" stroke="#553015"/>
 
-  <rect class="box" x="210" y="650" width="250" height="150"/><text class="t" x="335" y="710" text-anchor="middle">STRATEGY ENGINE</text><text class="s" x="335" y="745" text-anchor="middle">Strategies &amp; backtests</text>
-  <rect class="box" x="500" y="650" width="250" height="150"/><text class="t" x="625" y="710" text-anchor="middle">INDICATOR ENGINE</text><text class="s" x="625" y="745" text-anchor="middle">Technical indicators</text>
-  <rect class="box" x="790" y="650" width="270" height="150"/><text class="t" x="925" y="710" text-anchor="middle">FUNDAMENTAL ENGINE</text><text class="s" x="925" y="745" text-anchor="middle">Fundamental analysis</text>
-  <rect class="box" x="1085" y="650" width="230" height="150"/><text class="t" x="1200" y="710" text-anchor="middle">RISK MANAGER</text><text class="s" x="1200" y="745" text-anchor="middle">Risk controls</text>
-  <rect class="box" x="575" y="850" width="250" height="110"/><text class="t" x="700" y="915" text-anchor="middle">EXCHANGES</text>
+  <!-- CANONICAL COMMUNICATION TOPOLOGY: no decorative arrow is outside this group -->
+  <g id="communication-edges">
+    <path id="exchanges-market-data" data-from="Exchanges" data-to="Market Data" data-direction="forward" class="fwdC" d="M430 1198 H44 V318 H118"/>
+    <path id="market-data-chart-viewer" data-from="Market Data" data-to="Chart Viewer" data-direction="forward" class="fwdC" d="M270 390 V475"/>
+    <path id="market-data-supervisor" data-from="Market Data" data-to="Supervisor" data-direction="forward" class="fwdC" d="M420 312 H640"/>
+    <path id="portfolio-supervisor" data-from="Portfolio" data-to="Supervisor" data-direction="forward" class="fwdC" d="M1180 312 H960"/>
+    <path id="supervisor-router" data-from="Supervisor" data-to="Router" data-direction="both" class="biC" d="M800 395 V465"/>
+    <path id="strategy-router" data-from="Strategy Engine" data-to="Router" data-direction="both" class="biP" d="M220 725 V655 H705"/>
+    <path id="trading-router" data-from="Trading Engine" data-to="Router" data-direction="both" class="biP" d="M580 725 V680 H760 V655"/>
+    <path id="indicator-router" data-from="Indicator Engine" data-to="Router" data-direction="both" class="biP" d="M1020 725 V680 H840 V655"/>
+    <path id="fundamental-router" data-from="Fundamental Engine" data-to="Router" data-direction="both" class="biP" d="M1380 725 V655 H895"/>
+    <path id="trading-risk" data-from="Trading Engine" data-to="Risk Manager" data-direction="forward" class="fwdO" d="M580 895 V990"/>
+    <path id="risk-exchanges" data-from="Risk Manager" data-to="Exchanges" data-direction="forward" class="fwdO" d="M580 1110 V1145"/>
+  </g>
 
-  <!-- flows -->
-  <path class="line" d="M330 190 H560"/>
-  <path class="line" d="M1070 190 H840"/>
-  <path class="bi" d="M700 245 V300"/>
-  <path class="bi" d="M825 430 H1035"/>
-  <path class="bi" d="M620 525 L400 640"/>
-  <path class="bi" d="M665 550 L630 640"/>
-  <path class="bi" d="M775 525 L885 640"/>
-  <path class="line" d="M1190 510 V635"/>
-  <path class="line" d="M1200 800 L820 875"/>
-  <path class="line" d="M575 900 H430 V520 H220"/>
-  <path class="line" d="M575 885 H380 V285 H205 V275"/>
+  <text x="486" y="300" class="label" fill="#68e5ff">flux marché</text>
+  <text x="1034" y="300" class="label" fill="#68e5ff">état portefeuille</text>
+  <text x="820" y="438" class="label" fill="#68e5ff">pilotage</text>
+  <text x="57" y="844" class="label" fill="#68e5ff" transform="rotate(-90 57 844)">données exchanges</text>
+  <text x="603" y="948" class="label" fill="#ffb35a">contrôle du risque</text>
+
+  <!-- Market Data -->
+  <g transform="translate(120 240)"><rect class="card cyan" width="300" height="150" rx="24"/><rect x="18" y="21" width="70" height="70" rx="18" fill="#07304b" stroke="#1dcdf5"/><path d="M37 72 V49 M52 72 V37 M67 72 V57 M32 77 H75" class="iC"/><text x="108" y="59" class="title">MARKET DATA</text><text x="108" y="87" class="sub">OHLC / OHLCV • volumes</text><text x="108" y="112" class="sub">flux temps réel</text><rect x="108" y="126" width="96" height="4" rx="2" fill="#21d9ff" opacity=".65"/></g>
+
+  <!-- Supervisor -->
+  <g transform="translate(640 230)"><rect class="card cyan" width="320" height="165" rx="28"/><rect x="20" y="24" width="78" height="78" rx="20" fill="#07304b" stroke="#1dcdf5"/><circle cx="59" cy="63" r="23" class="iC"/><circle cx="59" cy="63" r="7" fill="#21d9ff"/><path d="M59 31 V40 M59 86 V95 M27 63 H36 M82 63 H91 M36 40 L42 46 M76 80 L82 86 M82 40 L76 46 M42 80 L36 86" class="iC"/><text x="120" y="62" class="title">SUPERVISOR</text><text x="120" y="91" class="sub">orchestration &amp; coordination IA</text><text x="120" y="117" class="sub">état global de l'application</text><circle cx="282" cy="139" r="5" fill="#20d9ff" filter="url(#glow)"/><text x="120" y="145" class="small">CONTROL PLANE</text></g>
+
+  <!-- Portfolio -->
+  <g transform="translate(1180 240)"><rect class="card cyan" width="300" height="150" rx="24"/><rect x="18" y="21" width="70" height="70" rx="18" fill="#07304b" stroke="#1dcdf5"/><path d="M38 65 A22 22 0 1 1 64 42 L57 62 Z M58 36 V58 H80" class="iC"/><text x="108" y="59" class="title">PORTFOLIO</text><text x="108" y="87" class="sub">positions • performance</text><text x="108" y="112" class="sub">exposition &amp; PnL</text></g>
+
+  <!-- Chart Viewer -->
+  <g transform="translate(120 475)"><rect class="card cyan" width="300" height="150" rx="24"/><rect x="18" y="21" width="70" height="70" rx="18" fill="#07304b" stroke="#1dcdf5"/><rect x="31" y="38" width="44" height="33" rx="4" class="iC"/><path d="M36 63 L46 54 L55 59 L69 45 M45 80 H62" class="iC"/><text x="108" y="59" class="title">CHART VIEWER</text><text x="108" y="87" class="sub">visualisation des marchés</text><text x="108" y="112" class="sub">source conservée</text></g>
+
+  <!-- Router -->
+  <g transform="translate(640 465)"><rect width="320" height="190" rx="38" fill="#081a30" stroke="url(#cyanStroke)" stroke-width="4" filter="url(#shadow)"/><rect x="23" y="31" width="82" height="82" rx="24" fill="#07304b" stroke="#27d8ff" stroke-width="2"/><circle cx="64" cy="72" r="11" fill="#23d9ff" filter="url(#glow)"/><path d="M64 42 V56 M64 88 V102 M34 72 H48 M80 72 H94 M43 51 L53 61 M75 83 L85 93 M85 51 L75 61 M53 83 L43 93" class="iC"/><text x="126" y="73" class="title" font-size="30">ROUTER</text><text x="126" y="102" class="sub">message bus / routage central</text><text x="126" y="128" class="sub">distribution des tâches &amp; signaux</text><rect x="23" y="143" width="274" height="28" rx="14" fill="#06253c" stroke="#174c6c"/><circle cx="43" cy="157" r="5" fill="#35e8ff"/><text x="58" y="162" class="small">HUB DE COMMUNICATION</text></g>
+
+  <!-- Engines -->
+  <g transform="translate(70 725)"><rect class="card purple" width="300" height="170" rx="24"/><rect x="18" y="22" width="70" height="70" rx="18" fill="#24173d" stroke="#9c72ff"/><path d="M35 69 C35 47 48 39 56 46 C62 34 78 42 76 55 C88 61 82 78 69 78 C61 90 44 84 44 76" class="iP"/><circle cx="54" cy="58" r="3" fill="#b388ff"/><circle cx="66" cy="54" r="3" fill="#b388ff"/><text x="108" y="59" class="title">STRATEGY</text><text x="108" y="86" class="title">ENGINE</text><text x="108" y="117" class="sub">stratégies • backtests</text><text x="108" y="142" class="sub">décision &amp; scénarios</text></g>
+  <g transform="translate(430 725)"><rect class="card purple" width="300" height="170" rx="24"/><rect x="18" y="22" width="70" height="70" rx="18" fill="#24173d" stroke="#9c72ff"/><path d="M35 76 H72 M40 66 L50 54 L59 60 L73 43 M43 39 V56 M52 61 V78 M64 47 V66" class="iP"/><text x="108" y="59" class="title">TRADING</text><text x="108" y="86" class="title">ENGINE</text><text x="108" y="117" class="sub">ordres • exécution</text><text x="108" y="142" class="sub">signaux vers Risk Manager</text><rect x="18" y="151" width="264" height="3" rx="2" fill="#ff9b31" opacity=".85"/></g>
+  <g transform="translate(870 725)"><rect class="card purple" width="300" height="170" rx="24"/><rect x="18" y="22" width="70" height="70" rx="18" fill="#24173d" stroke="#9c72ff"/><path d="M32 72 L43 60 L53 67 L64 48 L76 55" class="iP"/><circle cx="43" cy="60" r="4" fill="#b388ff"/><circle cx="64" cy="48" r="4" fill="#b388ff"/><text x="108" y="59" class="title">INDICATOR</text><text x="108" y="86" class="title">ENGINE</text><text x="108" y="117" class="sub">RSI • MACD • Ichimoku</text><text x="108" y="142" class="sub">analyse technique</text></g>
+  <g transform="translate(1230 725)"><rect class="card purple" width="300" height="170" rx="24"/><rect x="18" y="22" width="70" height="70" rx="18" fill="#24173d" stroke="#9c72ff"/><path d="M35 39 H71 V76 H35 Z M42 49 H64 M42 58 H64 M42 67 H55" class="iP"/><text x="108" y="59" class="title">FUNDAMENTAL</text><text x="108" y="86" class="title">ENGINE</text><text x="108" y="117" class="sub">news • contexte marché</text><text x="108" y="142" class="sub">analyse fondamentale</text></g>
+
+  <!-- Execution -->
+  <g transform="translate(430 990)"><rect class="card orange" width="300" height="120" rx="24"/><rect x="18" y="18" width="70" height="70" rx="18" fill="#35200f" stroke="#ff9b31"/><path d="M53 31 L76 40 V57 C76 72 66 82 53 88 C40 82 30 72 30 57 V40 Z M53 45 V62 M53 72 V73" class="iO"/><text x="108" y="53" class="title">RISK MANAGER</text><text x="108" y="82" class="sub">limites • risque • validation</text></g>
+  <g transform="translate(430 1145)"><rect class="card orange" width="300" height="110" rx="24"/><rect x="18" y="18" width="70" height="70" rx="18" fill="#35200f" stroke="#ff9b31"/><circle cx="53" cy="53" r="25" class="iO"/><path d="M29 53 H77 M53 29 C42 40 42 66 53 77 M53 29 C64 40 64 66 53 77" class="iO"/><text x="108" y="53" class="title">EXCHANGES</text><text x="108" y="82" class="sub">CEX / DEX • connexions marché</text></g>
+
+  <!-- Legend: decorative samples have no arrow markers, so they are not communication edges -->
+  <g transform="translate(810 1000)"><rect class="frame" width="690" height="245" rx="28"/><text x="28" y="39" class="section">LÉGENDE</text><line x1="32" y1="70" x2="92" y2="70" stroke="#28dcff" stroke-width="4"/><text x="110" y="76" class="small">Données / supervision</text><line x1="330" y1="70" x2="390" y2="70" stroke="#a66cff" stroke-width="4"/><text x="408" y="76" class="small">Engines ↔ Router</text><line x1="32" y1="112" x2="92" y2="112" stroke="#ff9b31" stroke-width="4"/><text x="110" y="118" class="small">Exécution contrôlée</text><text x="28" y="160" class="section" fill="#f0f7ff">PRINCIPE CLÉ</text><text x="28" y="188" class="small">Le Router reste le hub des Engines ; le Supervisor orchestre l'ensemble.</text><text x="28" y="213" class="small">Les données marché restent liées à leur source d'exécution.</text></g>
+
+  <text x="70" y="1280" font-family="Inter,Arial,sans-serif" font-size="14" fill="#4f7898">IA-TB • Architecture fonctionnelle • topologie de communication explicite</text>
+  <text x="1530" y="1280" text-anchor="end" font-family="Inter,Arial,sans-serif" font-size="14" fill="#4f7898">docs/assets/architecture-overview.svg</text>
 </svg>
