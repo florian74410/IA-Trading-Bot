@@ -1,5 +1,23 @@
 # CHANGELOG
 
+## v1.7.8
+
+### Market Data / Providers
+- Nouveau type de Provider `SOCKET` pour les flux WebSocket persistants.
+- Hyperliquid devient le premier Provider MarketData de type `SOCKET`.
+- Historique OHLCV Hyperliquid via `candleSnapshot`, puis mise a jour temps reel par WebSocket.
+- Volumes natifs Hyperliquid conserves et identifies par source.
+- `/providers` et `/health` exposent le type, l'etat de connexion, le dernier evenement et les erreurs.
+- Kraken reste le provider de reference par defaut.
+
+### Runtime
+- Ajout de `ws@8.18.0` limite au module MarketData, compatible Node.js 16.
+- `install_runtime.command` installe automatiquement la dependance si necessaire.
+
+### Compatibilite
+- Base v1.7.7 conservee.
+- macOS High Sierra / Intel et Node.js v16.20.2 conserves.
+
 ## v1.7.4
 
 ### Ajouts
