@@ -1,0 +1,37 @@
+name: Import login background
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/import-login-background.yml'
+      - '.github/import-bg/**'
+
+permissions:
+  contents: write
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Rebuild login background
+        run: |
+          set -euo pipefail
+          mkdir -p Update/v1.7.9/Frontend/Assets
+          cat .github/import-bg/part*.txt | base64 -d > Update/v1.7.9/Frontend/Assets/ia-tb-login-background.webp
+          test "$(wc -c < Update/v1.7.9/Frontend/Assets/ia-tb-login-background.webp | tr -d ' ')" = "26924"
+          echo "6f1a93737dcab846b219ccdcbe371643d9f813a54ca68d0a39dd5932ef3661c0  Update/v1.7.9/Frontend/Assets/ia-tb-login-background.webp" | sha256sum -c -
+          rm -rf .github/import-bg
+          rm -f .github/workflows/import-login-background.yml
+
+      - name: Commit rebuilt asset
+        run: |
+          set -e
+          git config user.name "IA-TB Asset Builder"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          git commit -m "assets: finalize IA-TB login background for v1.7.9"
+          git push
