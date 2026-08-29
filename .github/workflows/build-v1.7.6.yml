@@ -87,6 +87,14 @@ jobs:
           sha256sum IA-Trading-Bot_V1.7.6.zip | tee Update/v1.7.6/FULL_ARCHIVE_SHA256.txt
           printf "1.7.6\n" > VERSION
 
+      - name: Publish full v1.7.6 archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: IA-Trading-Bot_V1.7.6
+          path: IA-Trading-Bot_V1.7.6.zip
+          if-no-files-found: error
+          retention-days: 30
+
       - name: Commit rebuilt app archive
         shell: bash
         run: |
