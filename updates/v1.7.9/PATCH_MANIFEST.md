@@ -11,10 +11,10 @@ Cible : v1.7.9
 ## UserData Phase 1
 Stockage canonique sur Macro:
 
-`~/IA-TB-UserData-Server/<username>/user_data.db`
+`~/IA-TB-UserData-Server/User Data/<username>/user_data.db`
 
 Regles:
-- le dossier serveur et le dossier `<username>` sont crees automatiquement s'ils sont absents;
+- le dossier serveur et le dossier `User Data/<username>` sont crees automatiquement s'ils sont absents;
 - la DB est creee automatiquement si elle n'existe pas;
 - la DB n'est jamais copiee dans le dossier du build;
 - le build charge profils, Settings, strategies et etat des credentials en memoire via le UserData Server local;
@@ -25,12 +25,13 @@ Regles:
 UserData Server Phase 1:
 - ecoute exclusivement `127.0.0.1:8020`;
 - demarre automatiquement pendant le lancement du build s'il n'est pas deja actif;
-- API locale authentifiee pour snapshot, Settings, strategies et credentials;
+- API locale authentifiee pour snapshot, Settings, strategies, login et credentials;
 - architecture prevue pour remplacer plus tard le transport local par HTTPS/SFTP.
 
 ## Flux Tester
 - Le test lance depuis `Flux & collecte` affiche son resultat dans le header de cette section.
 - Les tests lances depuis `Providers` restent affiches dans le header Providers.
+- Le routage du resultat Flux est isole dans `Frontend/JS/fundamental_flux_test_v1.7.9.js` afin d'empecher le handler Providers de reprendre le clic.
 - Le Collector conserve la journalisation des tests et erreurs dans `Fundamental/fundamental.log`.
 
 ## Admin UI
@@ -45,10 +46,12 @@ UserData Server Phase 1:
 - Frontend/CSS/admin_v1.0.css
 - Frontend/Pages/fundamental_v1.0.html
 - Frontend/JS/fundamental_controller_v1.0.js
+- Frontend/JS/fundamental_flux_test_v1.7.9.js
 - UserData/local_server.js
 - UserData/memory_client.js
 - UserData/user_data_service.js
 - UserData/bootstrap.js
+- UserData/runtime_bootstrap.js
 - UserData/vault.js
 - UserData/server_auth.js
 - UserData/package.json
