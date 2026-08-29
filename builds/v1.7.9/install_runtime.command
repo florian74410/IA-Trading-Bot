@@ -11,6 +11,7 @@ USERDATA_ROOT="${IATB_USERDATA_SERVER_ROOT:-$HOME/IA-TB-UserData-Server}"
 USERDATA_LOG="$USERDATA_ROOT/server.log"
 install_marketdata_deps(){ if [ ! -f "$PWD/MarketData/package.json" ]; then return 0; fi; if [ -f "$PWD/MarketData/node_modules/ws/package.json" ]; then return 0; fi; echo "Installation dependance MarketData WebSocket (ws)..."; "$PWD/.node/bin/npm" install --prefix "$PWD/MarketData" --omit=dev --no-audit --no-fund || return 1; }
 install_userdata_deps(){ if [ ! -f "$PWD/UserData/package.json" ]; then return 0; fi; if [ -f "$PWD/UserData/node_modules/better-sqlite3/package.json" ]; then return 0; fi; echo "Installation dependance UserData SQLite (better-sqlite3)..."; "$PWD/.node/bin/npm" install --prefix "$PWD/UserData" --omit=dev --no-audit --no-fund || return 1; }
+run_userdata_selftest(){ [ -f "$PWD/UserData/self_test.js" ] || { echo "ERREUR: UserData/self_test.js introuvable."; return 1; }; echo "Self-test v1.7.9 UserData / Vault / Auth..."; "$PWD/.node/bin/node" "$PWD/UserData/self_test.js" || { echo "ERREUR: self-test v1.7.9 refuse le demarrage."; return 1; }; }
 userdata_ready(){ curl -fsS --connect-timeout 1 --max-time 2 "http://127.0.0.1:$USERDATA_PORT/health" 2>/dev/null | grep -q 'IA-TB UserData Local Server'; }
 start_userdata(){
   [ -f "$PWD/UserData/local_server.js" ] || return 0
@@ -27,7 +28,7 @@ start_userdata(){
   IATB_USERDATA_SERVER_PORT="$USERDATA_PORT" "$PWD/.node/bin/node" "$PWD/UserData/bootstrap.js" || return 1
   return 0
 }
-prepare_runtime_deps(){ install_marketdata_deps || return 1; install_userdata_deps || return 1; start_userdata || return 1; }
+prepare_runtime_deps(){ install_marketdata_deps || return 1; install_userdata_deps || return 1; run_userdata_selftest || return 1; start_userdata || return 1; }
 if [ "$(uname -s)" != "Darwin" ]; then echo "Ce runtime local est prevu pour macOS Intel."; fi
 mkdir -p "$PWD/Runtime"; need_install=1
 if [ -x "$PWD/.node/bin/node" ]; then current="$($PWD/.node/bin/node -v 2>/dev/null || true)"; if [ "$current" = "$REQ_VERSION" ]; then need_install=0; fi; fi
