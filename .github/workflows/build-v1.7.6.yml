@@ -1,0 +1,104 @@
+name: Build IA-Trading-Bot v1.7.6
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/build-v1.7.6.yml"
+      - "Update/BUILD_v1.7.6.trigger"
+
+permissions:
+  contents: write
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Reconstruct and verify v1.7.6 patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          PATCH6="Update/v1.7.6/Crypto-Chart-Viewer-IA-Trader-v1.7.6-update.zip"
+          cat Update/v1.7.6/.package/part_* | base64 --decode > "$PATCH6"
+          echo "2417663c44d25077ca6eb40d45753aa6e66ddb19a10e7016b8dc71c0a9d0b465  $PATCH6" | sha256sum -c -
+
+      - name: Verify v1.7.5 patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "dc2e8d1da812faa23f2c4cbbd32716348ed3747082508908e68b96b15ae87b84  Update/v1.7.5/Crypto-Chart-Viewer-IA-Trader-v1.7.5-update.zip" | sha256sum -c -
+
+      - name: Apply v1.7.5 and v1.7.6 to current archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .rebuild
+          mkdir -p .rebuild/unpacked .rebuild/p175 .rebuild/p176
+          unzip -q IA-Trading-Bot_V1.7.4.zip -d .rebuild/unpacked
+
+          APPROOT=".rebuild/unpacked"
+          if [ ! -d "$APPROOT/services" ]; then
+            shopt -s nullglob dotglob
+            children=("$APPROOT"/*)
+            shopt -u dotglob
+            if [ "${#children[@]}" -eq 1 ] && [ -d "${children[0]}" ]; then
+              APPROOT="${children[0]}"
+            fi
+          fi
+
+          unzip -q Update/v1.7.5/Crypto-Chart-Viewer-IA-Trader-v1.7.5-update.zip -d .rebuild/p175
+          unzip -q Update/v1.7.6/Crypto-Chart-Viewer-IA-Trader-v1.7.6-update.zip -d .rebuild/p176
+          cp -a .rebuild/p175/. "$APPROOT"/
+          cp -a .rebuild/p176/. "$APPROOT"/
+
+          find "$APPROOT" -maxdepth 4 -type f -name VERSION -exec sh -c 'printf "1.7.6\n" > "$1"' _ {} \;
+          if ! find "$APPROOT" -maxdepth 4 -type f -name VERSION | grep -q .; then
+            printf "1.7.6\n" > "$APPROOT/VERSION"
+          fi
+
+          test -f "$APPROOT/services/fundamental-engine/fundamental-engine.js"
+          test -f "$APPROOT/services/trading-engine/trading-engine.js"
+          test -f "$APPROOT/services/trading-engine/exchange-adapters/binance/executor.js"
+          test -f "$APPROOT/services/trading-engine/exchange-adapters/okx/executor.js"
+          test -f "$APPROOT/services/trading-engine/exchange-adapters/kraken/executor.js"
+          test -f "$APPROOT/services/trading-engine/exchange-adapters/gmx/executor.js"
+          printf '%s\n' "$APPROOT" > .rebuild/app_root.txt
+
+      - name: Validate added engines
+        shell: bash
+        run: |
+          set -euo pipefail
+          APPROOT="$(cat .rebuild/app_root.txt)"
+          node --check "$APPROOT/services/fundamental-engine/fundamental-engine.js"
+          node "$APPROOT/services/fundamental-engine/self-test.js"
+          find "$APPROOT/services/trading-engine" -name '*.js' -print0 | xargs -0 -n1 node --check
+          node "$APPROOT/services/trading-engine/self-test.js"
+
+      - name: Build full v1.7.6 archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f IA-Trading-Bot_V1.7.6.zip
+          (cd .rebuild/unpacked && zip -qr "$GITHUB_WORKSPACE/IA-Trading-Bot_V1.7.6.zip" .)
+          sha256sum IA-Trading-Bot_V1.7.6.zip | tee Update/v1.7.6/FULL_ARCHIVE_SHA256.txt
+          printf "1.7.6\n" > VERSION
+
+      - name: Commit rebuilt app archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add VERSION IA-Trading-Bot_V1.7.6.zip \
+            Update/v1.7.6/Crypto-Chart-Viewer-IA-Trader-v1.7.6-update.zip \
+            Update/v1.7.6/FULL_ARCHIVE_SHA256.txt
+          if git diff --cached --quiet; then
+            echo "No generated changes to commit."
+            exit 0
+          fi
+          git commit -m "release: build full IA-Trading-Bot v1.7.6 archive"
+          git push origin HEAD:main
