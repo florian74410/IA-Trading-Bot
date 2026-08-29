@@ -13,6 +13,7 @@ user_data.db-*
 *.user_data.db
 UserData/node_modules/
 UserData/local_username.dat
+UserData/sync_agent.pid
 Fundamental/Data/internal_service_key.dat
 Fundamental/node_modules/
 Runtime/*.tar.gz
