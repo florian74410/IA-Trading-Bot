@@ -1,0 +1,39 @@
+name: Package v1.7.8 build
+
+on:
+  push:
+    branches:
+      - patch/v1.7.8-socket-hyperliquid
+    paths:
+      - '.github/workflows/package-v1.7.8.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: patch/v1.7.8-socket-hyperliquid
+          fetch-depth: 0
+      - name: Package
+        run: |
+          set -euo pipefail
+          test -d builds/v1.7.8
+          test -d updates/v1.7.8
+          test "$(tr -d '\r\n' < builds/v1.7.8/VERSION)" = "1.7.8"
+          mkdir -p archives
+          rm -f archives/IA-Trading-Bot_V1.7.8.zip archives/IA-Trading-Bot_V1.7.8.zip.sha256
+          (cd builds && zip -qry ../archives/IA-Trading-Bot_V1.7.8.zip v1.7.8 -x 'v1.7.8/.node/*' 'v1.7.8/**/node_modules/*' 'v1.7.8/logs.dat' 'v1.7.8/user.dat' 'v1.7.8/secrets_v2.dat' 'v1.7.8/.env' 'v1.7.8/.env.*')
+          shasum -a 256 archives/IA-Trading-Bot_V1.7.8.zip > archives/IA-Trading-Bot_V1.7.8.zip.sha256
+      - name: Commit archive
+        run: |
+          set -euo pipefail
+          git config user.name "IA-TB Release Builder"
+          git config user.email "actions@users.noreply.github.com"
+          git add archives/IA-Trading-Bot_V1.7.8.zip archives/IA-Trading-Bot_V1.7.8.zip.sha256
+          git diff --cached --quiet && exit 0
+          git commit -m "release: package v1.7.8 build archive"
+          git push origin HEAD:patch/v1.7.8-socket-hyperliquid
