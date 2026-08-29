@@ -1,0 +1,11 @@
+IA-Trading-Bot v1.7.7 — Trading Engine Runtime
+
+- Trading Engine devient un service local supervise sur 127.0.0.1:8016.
+- Endpoints: /health, /api/status, /api/capabilities, /api/last-execution, /cp/v1.
+- Communication interne: CP/1 via Router.
+- Exchanges enregistres: BINANCE, OKX, KRAKEN, GMX.
+- risk_approval_id obligatoire avant toute execution.
+- Execution LIVE desactivee par defaut (SAFE).
+- ADMIN affiche ONLINE/OFFLINE, PID, version, LIVE ON/OFF, nombre d exchanges et exigence Risk Approval.
+- Restart global, stop.command, logs et Service Registry incluent Trading Engine.
+- Le secret CP local n est plus pre-emballe; il est regenere localement au premier demarrage.

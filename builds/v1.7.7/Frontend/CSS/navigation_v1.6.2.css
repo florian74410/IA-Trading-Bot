@@ -1,0 +1,21 @@
+/* IA-TB v1.6.3 corrective - navigation principale unifiee */
+.topbar,.top{border-bottom:1px solid #263b4c!important;background:rgba(8,15,22,.97)!important;box-shadow:0 8px 24px rgba(0,0,0,.22);backdrop-filter:blur(8px)}
+.topbar{min-height:52px!important;height:auto!important;padding:7px 12px!important;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.top{min-height:76px!important;height:auto!important;flex:0 0 auto!important;padding:7px 12px!important;display:flex;align-items:center;align-content:center;gap:8px;flex-wrap:wrap}
+.topbar>.brand,.top>.brand{font-weight:750;letter-spacing:.025em;white-space:nowrap}
+.topbar>.nav,.top>.navActions,.top>.adminNav{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.topbar>.nav button,.topbar>.nav .btn,.top>.navActions>.navBtn,.top>.adminNav>.btn{
+ position:relative;min-height:34px;border:1px solid #304858!important;border-radius:7px!important;background:#101b25!important;color:#d8e3ec!important;padding:7px 10px!important;cursor:pointer;transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease;color .14s ease
+}
+.topbar>.nav button:hover,.topbar>.nav .btn:hover,.top>.navActions>.navBtn:hover,.top>.adminNav>.btn:hover{background:#172735!important;border-color:#47718f!important;transform:translateY(-1px);box-shadow:0 0 0 1px rgba(86,164,218,.08),0 5px 16px rgba(0,0,0,.2)}
+.topbar>.nav button.active,.topbar>.nav .btn.active,.top>.navActions>.navBtn.active,.top>.adminNav>.btn.active{background:#12304a!important;border-color:#4c96c8!important;color:#f2f9ff!important;box-shadow:0 0 16px rgba(74,142,194,.2)}
+.topbar>.nav button.active:after,.topbar>.nav .btn.active:after,.top>.navActions>.navBtn.active:after,.top>.adminNav>.btn.active:after{content:"";position:absolute;left:14%;right:14%;bottom:-5px;height:2px;border-radius:2px;background:#62b4e8;box-shadow:0 0 8px rgba(98,180,232,.78)}
+.topbar>.engineState{margin-left:auto}
+.top>.navActions{order:20;flex:1 0 100%;width:100%;margin-left:0;justify-content:center;overflow-x:auto;overflow-y:visible;flex-wrap:nowrap;padding:2px 2px 5px}
+.top>.adminNav{margin-left:10px}
+@media(max-width:900px){.topbar>.brand{width:100%}.top>.navActions,.top>.adminNav{margin-left:0}.topbar>.engineState{margin-left:0}.topbar>.nav,.top>.navActions,.top>.adminNav{width:100%;overflow-x:auto;flex-wrap:nowrap;padding-bottom:5px}.topbar>.nav button,.topbar>.nav .btn,.top>.navActions>.navBtn,.top>.adminNav>.btn{flex:0 0 auto}}
+
+/* Correctif Trading IA v1.6.3 : la nav est une vraie ligne du header, jamais superposee au chart/console. */
+.app>.body{min-height:0}
+.top>.navActions::-webkit-scrollbar{height:4px}
+.top>.navActions::-webkit-scrollbar-thumb{background:#314b5e;border-radius:5px}

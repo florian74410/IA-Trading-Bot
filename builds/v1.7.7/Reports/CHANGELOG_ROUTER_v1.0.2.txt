@@ -1,0 +1,10 @@
+CHANGELOG ROUTER v1.0.2
+=======================
+- Page Trading unique GMX / Kraken avec sélecteur Exchange.
+- /kraken devient un alias de la page Trading en mode Kraken.
+- Router expose ticker et OHLC Kraken normalisés au format attendu par le graphique principal.
+- TradingView / Chart Viewer reste direct vers ses propres sources.
+- Statuts séparés GMX et Kraken Public ; Kraken Private affiché Non configuré dans ce build.
+- Kraken reste un Add-On isolé sur 127.0.0.1:8011.
+- Core serveur v1.0, launcher et UpdateManager conservés.
+- Aucune fonction privée Kraken et aucun ordre réel ajoutés dans ce build de validation du routage.
