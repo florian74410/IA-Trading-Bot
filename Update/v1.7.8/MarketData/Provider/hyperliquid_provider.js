@@ -1,83 +1,27 @@
 'use strict';
 
 /* IA-Trading-Bot v1.7.8 - Hyperliquid market-data provider
- * Transport: SOCKET (WebSocket)
- * Default public endpoint: wss://api.hyperliquid.xyz/ws
+ * Primary transport: SOCKET (WebSocket)
+ * Historical bootstrap: Hyperliquid public /info candleSnapshot.
  */
 
-var SocketProvider = require('./socket_provider');
+var https=require('https'),SocketProvider=require('./socket_provider');
 
-function HyperliquidProvider(options) {
-  options = options || {};
-  this.name = 'HYPERLIQUID';
-  this.type = 'SOCKET';
-  this.coin = String(options.coin || 'BTC').toUpperCase();
-  this.socket = new SocketProvider({
-    name: this.name,
-    url: options.url || 'wss://api.hyperliquid.xyz/ws',
-    reconnectMs: options.reconnectMs || 3000,
-    maxReconnectMs: options.maxReconnectMs || 30000
-  });
-  this.handlers = [];
-  this.lastEventAt = 0;
-  this.lastError = '';
-  this._wire();
-}
+function tfMs(tf){var m={"1m":60000,"3m":180000,"5m":300000,"15m":900000,"30m":1800000,"1h":3600000,"2h":7200000,"4h":14400000,"8h":28800000,"12h":43200000,"1d":86400000,"3d":259200000,"1w":604800000,"1M":2592000000};return m[tf]||3600000;}
+function normSymbol(s){s=String(s||'BTC').toUpperCase().replace(/[-_/](USD|USDT|USDC)$/,'');return s||'BTC';}
+function candle(x){return{time:+(x.t||x.time||0),open:+x.o,high:+x.h,low:+x.l,close:+x.c,volume:+(x.v||0)};}
+function postInfo(body,cb){var raw=JSON.stringify(body),done=false,r=https.request({hostname:'api.hyperliquid.xyz',port:443,path:'/info',method:'POST',timeout:10000,headers:{'Content-Type':'application/json','Content-Length':Buffer.byteLength(raw),'Accept':'application/json'}},function(res){var a=[];res.on('data',function(c){a.push(c);});res.on('end',function(){if(done)return;done=true;var o;try{o=JSON.parse(Buffer.concat(a).toString('utf8')||'null');}catch(e){return cb(new Error('HYPERLIQUID_JSON_INVALID'));}if((res.statusCode||500)>=400)return cb(new Error('HYPERLIQUID_HTTP_'+res.statusCode));cb(null,o);});});r.on('timeout',function(){r.destroy(new Error('HYPERLIQUID_TIMEOUT'));});r.on('error',function(e){if(done)return;done=true;cb(e);});r.end(raw);}
 
-HyperliquidProvider.prototype._wire = function () {
-  var self = this;
-  this.socket.on('open', function () {
-    self.lastError = '';
-    self.subscribeTrades(self.coin);
-  });
-  this.socket.on('message', function (raw) {
-    var msg;
-    try { msg = JSON.parse(String(raw)); } catch (_) { return; }
-    self.lastEventAt = Date.now();
-    self.handlers.forEach(function (fn) {
-      try { fn(msg); } catch (_) {}
-    });
-  });
-  this.socket.on('error', function (err) {
-    self.lastError = err && err.message ? err.message : String(err || 'SOCKET_ERROR');
-  });
-};
-
-HyperliquidProvider.prototype.connect = function () {
-  this.socket.connect();
-};
-
-HyperliquidProvider.prototype.close = function () {
-  this.socket.close();
-};
-
-HyperliquidProvider.prototype.onEvent = function (fn) {
-  if (typeof fn === 'function') this.handlers.push(fn);
-  return this;
-};
-
-HyperliquidProvider.prototype.subscribeTrades = function (coin) {
-  this.coin = String(coin || this.coin || 'BTC').toUpperCase();
-  return this.socket.sendJSON({
-    method: 'subscribe',
-    subscription: { type: 'trades', coin: this.coin }
-  });
-};
-
-HyperliquidProvider.prototype.subscribeBook = function (coin) {
-  var c = String(coin || this.coin || 'BTC').toUpperCase();
-  return this.socket.sendJSON({
-    method: 'subscribe',
-    subscription: { type: 'l2Book', coin: c }
-  });
-};
-
-HyperliquidProvider.prototype.status = function () {
-  var s = this.socket.status();
-  s.coin = this.coin;
-  s.lastEventAt = this.lastEventAt || null;
-  s.lastError = this.lastError || null;
-  return s;
-};
-
-module.exports = HyperliquidProvider;
+function HyperliquidProvider(options){options=options||{};this.name='HYPERLIQUID';this.type='SOCKET';this.coin=normSymbol(options.coin||'BTC');this.interval=options.interval||'1h';this.socket=new SocketProvider({name:this.name,url:options.url||'wss://api.hyperliquid.xyz/ws',reconnectMs:options.reconnectMs||3000,maxReconnectMs:options.maxReconnectMs||30000});this.handlers=[];this.candles=Object.create(null);this.subscriptions=Object.create(null);this.lastEventAt=0;this.lastError='';this._wire();}
+HyperliquidProvider.prototype._wire=function(){var self=this;this.socket.on('open',function(){self.lastError='';Object.keys(self.subscriptions).forEach(function(k){var s=self.subscriptions[k];self._sendCandleSub(s.coin,s.interval);});});this.socket.on('message',function(raw){var msg;try{msg=JSON.parse(String(raw));}catch(_){return;}self.lastEventAt=Date.now();if(msg&&msg.channel==='candle'&&msg.data){var d=msg.data,coin=normSymbol(d.s||self.coin),iv=d.i||self.interval,k=coin+'|'+iv,c=candle(d),arr=self.candles[k]||(self.candles[k]=[]);if(c.time){var n=arr.length;if(n&&arr[n-1].time===c.time)arr[n-1]=c;else arr.push(c);if(arr.length>1000)arr.splice(0,arr.length-1000);}}self.handlers.forEach(function(fn){try{fn(msg);}catch(_){}});});this.socket.on('error',function(err){self.lastError=err&&err.message?err.message:String(err||'SOCKET_ERROR');});};
+HyperliquidProvider.prototype.connect=function(){this.socket.connect();};
+HyperliquidProvider.prototype.close=function(){this.socket.close();};
+HyperliquidProvider.prototype.onEvent=function(fn){if(typeof fn==='function')this.handlers.push(fn);return this;};
+HyperliquidProvider.prototype._sendCandleSub=function(coin,interval){return this.socket.sendJSON({method:'subscribe',subscription:{type:'candle',coin:coin,interval:interval}});};
+HyperliquidProvider.prototype.subscribeCandles=function(coin,interval){coin=normSymbol(coin||this.coin);interval=interval||this.interval;this.coin=coin;this.interval=interval;this.subscriptions[coin+'|'+interval]={coin:coin,interval:interval};this.connect();return this._sendCandleSub(coin,interval);};
+HyperliquidProvider.prototype.subscribeTrades=function(coin){coin=normSymbol(coin||this.coin);this.connect();return this.socket.sendJSON({method:'subscribe',subscription:{type:'trades',coin:coin}});};
+HyperliquidProvider.prototype.subscribeBook=function(coin){coin=normSymbol(coin||this.coin);this.connect();return this.socket.sendJSON({method:'subscribe',subscription:{type:'l2Book',coin:coin}});};
+HyperliquidProvider.prototype.getCandles=function(symbol,interval,cb){var self=this,coin=normSymbol(symbol),iv=interval||'1h',k=coin+'|'+iv,end=Date.now(),start=end-tfMs(iv)*500;this.subscribeCandles(coin,iv);postInfo({type:'candleSnapshot',req:{coin:coin,interval:iv,startTime:start,endTime:end}},function(e,rows){if(e){var cached=self.candles[k]||[];if(cached.length)return cb(null,self._result(coin,iv,cached));return cb(e);}var arr=(Array.isArray(rows)?rows:[]).map(candle).filter(function(x){return x.time&&isFinite(x.open)&&isFinite(x.close);});var live=self.candles[k]||[];live.forEach(function(x){var n=arr.length;if(n&&arr[n-1].time===x.time)arr[n-1]=x;else if(!n||x.time>arr[n-1].time)arr.push(x);});self.candles[k]=arr.slice(-1000);cb(null,self._result(coin,iv,self.candles[k]));});};
+HyperliquidProvider.prototype._result=function(coin,iv,arr){var pv=arr.reduce(function(n,x){return n+(x.volume>0?1:0);},0);return{ok:true,provider:'HYPERLIQUID',providerType:'SOCKET',exchange:'HYPERLIQUID',canonicalSymbol:coin+'USD',providerPair:coin,timeframe:iv,candles:arr,volumeAvailable:pv>0,positiveVolumeRows:pv,volumeSource:pv>0?'HYPERLIQUID_NATIVE':'NONE',priceSource:'HYPERLIQUID_SOCKET',timestampUnit:'ms'};};
+HyperliquidProvider.prototype.status=function(){var s=this.socket.status();s.coin=this.coin;s.interval=this.interval;s.lastEventAt=this.lastEventAt||null;s.lastError=this.lastError||null;s.subscriptions=Object.keys(this.subscriptions).length;s.cachedSeries=Object.keys(this.candles).length;return s;};
+module.exports=HyperliquidProvider;
