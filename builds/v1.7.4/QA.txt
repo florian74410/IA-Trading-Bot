@@ -1,0 +1,46 @@
+Crypto Chart Viewer IA Trader — Patch v1.7.3 -> v1.7.4
+QA / validation report
+
+Archive:
+  Crypto Chart Viewer IA Trader.zip
+  SHA-256: 5478062b635e62aad2a3a4445755abf9e530930e24f158b03493cea46a72a608
+  Size: 130526 bytes
+
+Update compatibility:
+  application   = Crypto Chart Viewer IA Trader
+  package_type  = UPDATE
+  from_version  = 1.7.3
+  to_version    = 1.7.4
+  payload files = 14
+
+Main changes:
+- Unified source-aware Market Data for GMX, Kraken, Binance, Coinbase and OKX.
+- Native OHLCV/volume kept separate per venue; cache key includes exchange.
+- Coinbase public Exchange candles/ticker/products support.
+- OKX public SPOT history-candles/ticker/instruments support with pagination.
+- Chart Viewer/main Trading UI support Coinbase + OKX.
+- Indicator Engine and Liquidity Engine now receive the selected exchange.
+- Settings > API adds Coinbase Key Name + EC Private Key.
+- Settings > API adds OKX API Key + Secret + Passphrase + Demo mode.
+- Public Market Data can operate without private API credentials.
+- Long Coinbase private keys use a backward-compatible hybrid encrypted envelope in the existing secrets vault.
+
+Validation performed:
+[PASS] All changed Node.js files pass node --check.
+[PASS] Inline JavaScript in both main app and Chart Viewer passes node --check.
+[PASS] start.command passes bash -n.
+[PASS] Normalizer tests: Binance / Coinbase / OKX OHLCV + volume + aggregation.
+[PASS] Mock provider tests: Binance URL, Coinbase 4H aggregation, OKX 100-row pagination + after cursor.
+[PASS] RSA short-secret backward compatibility test.
+[PASS] Hybrid AES-256-GCM + RSA-OAEP-SHA256 long-secret roundtrip test.
+[PASS] Coinbase ES256 JWT generation/signature test.
+[PASS] ZIP root, manifest coverage and all SHA-256 entries verified.
+[PASS] No protected data path is included in the update payload.
+[PASS] Real UpdateManager v1.0 inspection from currentVersion=1.7.3 accepted the archive.
+[PASS] Real UpdateManager install on a clean copy of the supplied v1.7.3 completed successfully.
+[PASS] current_release.dat became 1.7.4 and pending_activation.dat records 1.7.3 -> 1.7.4.
+[PASS] 9 protected/user-data files present in the validation copy had identical SHA-256 hashes before/after install.
+[PASS] Installed Market Data service starts and /health reports GMX,KRAKEN,BINANCE,COINBASE,OKX.
+
+External-network limitation of this build environment:
+Live HTTPS calls to Binance/Coinbase/OKX could not be end-to-end tested here because the sandbox does not provide working external DNS for those hosts. API request construction, normalization and pagination were instead covered with deterministic mock responses. The in-app "Tester Coinbase" and "Tester OKX" buttons are included for live validation on the target Mac/network.
