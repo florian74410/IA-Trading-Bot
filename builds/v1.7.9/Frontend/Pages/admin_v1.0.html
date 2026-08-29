@@ -7,132 +7,39 @@
   <title>IA-TB ADMIN</title>
   <link rel="stylesheet" href="/assets/admin_v1.0.css">
   <link rel="stylesheet" href="/assets/navigation_v1.6.2.css">
+  <link rel="stylesheet" href="/assets/admin_layout_v1.7.9.css">
 </head>
 <body>
 <div class="adminShell">
   <aside class="adminSidebar" aria-label="Navigation Admin">
-    <div class="sideBrand">
-      <div class="sideLogo">◈</div>
-      <div><strong>CRYPTO TRADING</strong><span>IA TRADER <b id="version">v…</b></span></div>
-    </div>
-
+    <div class="sideBrand"><div class="sideLogo">◈</div><div><strong>CRYPTO TRADING</strong><span>IA TRADER <b id="version">v…</b></span></div></div>
     <div class="sideGroupLabel">APPLICATION</div>
-    <nav class="sideNav">
-      <button id="navTrading" class="sideLink"><span>◫</span>Trading IA</button>
-      <button id="navChart" class="sideLink"><span>⌁</span>Chart Viewer</button>
-      <button id="navPortfolio" class="sideLink"><span>▥</span>Portfolio</button>
-      <button id="navFundamental" class="sideLink"><span>◇</span>Fondamental</button>
-    </nav>
-
-    <div class="sideDivider"></div>
-    <div class="sideGroupLabel">ADMINISTRATION</div>
-    <nav class="sideNav adminSectionNav">
-      <button class="sideLink adminSideLink active" data-target="overview"><span>⌂</span>Vue d’ensemble</button>
-      <button class="sideLink adminSideLink" data-target="servicesSection"><span>⚙</span>Services</button>
-      <button class="sideLink adminSideLink" data-target="maintenanceSection"><span>↻</span>Maintenance</button>
-      <button class="sideLink adminSideLink" data-target="logsSection"><span>≡</span>Logs & exécutions</button>
-      <button class="sideLink adminSideLink" data-target="systemSection"><span>◉</span>Système</button>
-      <button class="sideLink adminSideLink" data-target="updates"><span>⇩</span>Mises à jour</button>
-    </nav>
-
-    <div class="sideFooter">
-      <span id="role" class="sideRole">ADMIN</span>
-      <span>Console locale sécurisée</span>
-    </div>
+    <nav class="sideNav"><button id="navTrading" class="sideLink"><span>◫</span>Trading IA</button><button id="navChart" class="sideLink"><span>⌁</span>Chart Viewer</button><button id="navPortfolio" class="sideLink"><span>▥</span>Portfolio</button><button id="navFundamental" class="sideLink"><span>◇</span>Fondamental</button></nav>
+    <div class="sideDivider"></div><div class="sideGroupLabel">ADMINISTRATION</div>
+    <nav class="sideNav adminSectionNav"><button class="sideLink adminSideLink active" data-target="overview"><span>⌂</span>Vue d’ensemble</button><button class="sideLink adminSideLink" data-target="servicesSection"><span>⚙</span>Services</button><button class="sideLink adminSideLink" data-target="maintenanceSection"><span>↻</span>Maintenance</button><button class="sideLink adminSideLink" data-target="logsSection"><span>≡</span>Logs & exécutions</button><button class="sideLink adminSideLink" data-target="systemSection"><span>◉</span>Système</button><button class="sideLink adminSideLink" data-target="updates"><span>⇩</span>Mises à jour</button></nav>
+    <div class="sideFooter"><span id="role" class="sideRole">ADMIN</span><span>Console locale sécurisée</span></div>
   </aside>
-
   <main class="adminMain">
-    <header class="adminTopbar">
-      <div>
-        <div class="eyebrow">ADMIN BACKEND MANAGER</div>
-        <h1>Administration & supervision</h1>
-      </div>
-      <div class="topStatus">
-        <span class="liveBadge"><i></i> LOCAL</span>
-        <button id="refresh" class="btn">Actualiser</button>
-      </div>
-    </header>
-
+    <header class="adminTopbar"><div><div class="eyebrow">ADMIN BACKEND MANAGER</div><h1>Administration & supervision</h1></div><div class="topStatus"><span class="liveBadge"><i></i> LOCAL</span><button id="refresh" class="btn">Actualiser</button></div></header>
     <div class="adminContent">
-      <section id="overview" class="heroPanel adminAnchor">
-        <div class="heroIcon">⚙</div>
-        <div class="heroCopy">
-          <h2>Centre de contrôle IA-TB</h2>
-          <p>Supervision des moteurs, maintenance, journaux, état système et mises à jour depuis une seule interface.</p>
-        </div>
-        <span class="statusPill ok">OPÉRATIONNEL</span>
-      </section>
-
+      <section id="overview" class="heroPanel adminAnchor"><div class="heroIcon">⚙</div><div class="heroCopy"><h2>Centre de contrôle IA-TB</h2><p>Supervision des moteurs, maintenance, journaux, état système et mises à jour depuis une seule interface.</p></div><span class="statusPill ok">OPÉRATIONNEL</span></section>
       <div class="notice">Console de diagnostic locale. Actions strictement prédéfinies : aucun shell libre, aucune commande arbitraire, aucun secret/API Key affiché.</div>
-
-      <section id="servicesSection" class="adminBlock adminAnchor">
-        <div class="blockTitle"><div><span class="blockKicker">RUNTIME</span><h2>Services & moteurs</h2></div><span class="blockHint">État temps réel des processus IA-TB</span></div>
-        <div id="services" class="grid"></div>
-      </section>
-
-      <section id="maintenanceSection" class="section adminAnchor">
-        <div class="sectionHead"><div><span class="blockKicker">CONTRÔLE</span><h2>Actions de maintenance</h2></div><span id="actionMsg" class="msg"></span></div>
-        <div class="sectionBody">
-          <div class="actions maintenanceBar">
-            <button id="reloadIndicators" class="btn">Recharger les indicateurs</button>
-            <button id="clearMarket" class="btn">Vider cache MarketData</button>
-            <button id="clearLiquidity" class="btn">Vider cache Liquidity</button>
-            <button id="clearAllCaches" class="btn">Vider les 2 caches</button>
-            <button id="restartAll" class="btn danger">Redémarrer IA-TB</button>
-            <button id="stopTotal" class="btn danger strongDanger">Arrêt Total</button>
-            <label class="ultraToggle"><input id="ultraAutostart" type="checkbox"> Mode ULTRA au démarrage</label>
-            <span id="ultraState" class="ultraState">ULTRA : …</span>
-          </div>
-          <div class="ultraConsoleHead"><strong>ULTRA Mode v2.0</strong><span id="ultraLogMeta" class="msg"></span><button id="ultraLogRefresh" class="btn small" type="button">Actualiser</button></div>
-          <pre id="ultraTerminal" class="terminal ultraTerminal">Chargement du journal ULTRA…</pre>
-        </div>
-      </section>
-
-      <section id="logsSection" class="section adminAnchor">
-        <div class="sectionHead"><div><span class="blockKicker">OBSERVABILITÉ</span><h2>Logs · lecture seule</h2></div><span id="logMeta" class="msg"></span></div>
-        <div class="sectionBody">
-          <div class="toolbar"><select id="logSource"></select><select id="logLines"><option>50</option><option selected>120</option><option>250</option><option>500</option></select><button id="logRefresh" class="btn small">Actualiser</button><button id="logCopy" class="btn small">Copier</button><button id="logClear" class="btn small danger">Vider ce log</button><label><input id="logAuto" type="checkbox" checked> auto 2 s</label></div>
-          <pre id="terminal" class="terminal">Chargement…</pre>
-        </div>
-      </section>
-
-      <section id="systemSection" class="section adminAnchor">
-        <div class="sectionHead"><div><span class="blockKicker">MACHINE</span><h2>Système</h2></div></div>
-        <div class="sectionBody"><div id="system" class="systemGrid"></div></div>
-      </section>
-
-      <section id="updates" class="section adminUpdateSection adminAnchor">
-        <div class="sectionHead"><div><span class="blockKicker">RELEASES</span><h2>Mises à jour</h2></div><span class="msg">UpdateManager · accès ADMIN uniquement</span></div>
-        <div class="sectionBody adminUpdateMount"><div class="updateGrid settingsUpdateGrid">
-          <div class="updateCard wide">
-            <div class="updateCardTitle"><div><h3>🧾 Historique des mises à jour</h3><div class="settingHint">Les mises à jour installées sont conservées dans <code>Updates/update_history.dat</code>. Une sauvegarde est créée avant chaque remplacement.</div></div><button id="updateRefresh" class="navBtn" type="button">Actualiser</button></div>
-            <div class="updateOverflow updateHistoryScroll"><table class="updateHistory"><thead><tr><th>Date</th><th>Version</th><th>Source</th><th>État</th><th>Sauvegarde</th></tr></thead><tbody id="updateHistoryBody"><tr><td colspan="5" class="muted">Chargement…</td></tr></tbody></table></div>
-          </div>
-          <div class="updateCard wide">
-            <h3>📦 Déposer un patch Crypto Chart Viewer IA Trader</h3>
-            <div class="settingHint">Dépose <b>Crypto Chart Viewer IA Trader.zip</b> dans la zone ci-dessous. L’archive est contrôlée avant installation : application, version source, version cible, chemins et SHA‑256.</div>
-            <div id="updateDropZone" class="updateDropZone" tabindex="0" role="button" aria-label="Déposer ou sélectionner Crypto Chart Viewer IA Trader.zip"><div class="updateDropIcon">⇩</div><strong>Glisse et dépose Crypto Chart Viewer IA Trader.zip ici</strong><span>ou</span><button id="updateBrowse" class="btn secondary" type="button">Choisir l’archive</button><input id="updateFile" type="file" accept=".zip,application/zip" hidden><div id="updateDropName" class="tiny">Aucune archive sélectionnée.</div></div>
-            <div id="updateSourceMsg" class="result"></div>
-            <details class="updateRemoteBox"><summary>Installer depuis une adresse web (optionnel)</summary><div class="updateRow"><label><input id="updateRemote" type="checkbox"> Utiliser une URL</label></div><div class="updateRow"><input id="updateUrl" type="url" placeholder="https://exemple.tld/Crypto Chart Viewer IA Trader.zip" disabled><button id="updateVerify" class="btn secondary" type="button">Vérifier l’URL</button></div></details>
-          </div>
-          <div class="updateCard wide">
-            <h3>🤖 AI Update Builder</h3>
-            <div class="settingHint">Le Chat peut construire un patch dans <code>Updates/AI-Generated/</code>, le faire vérifier par le même UpdateManager puis, selon les autorisations ci-dessous, l’installer et demander au launcher superviseur de redémarrer Crypto Chart Viewer IA Trader. Les fichiers de sécurité, Paramètres, Annexes et le moteur de mise à jour lui-même restent interdits.</div>
-            <div class="settingRow"><div><b>Autoriser la création</b><div class="settingHint">Le Chat peut générer et tester Crypto Chart Viewer IA Trader.zip, sans l’installer.</div></div><input id="aiUpdateAllowCreate" type="checkbox"></div>
-            <div class="settingRow"><div><b>Autoriser l’installation</b><div class="settingHint">Permet au Chat d’installer un patch qu’il vient de générer et vérifier.</div></div><input id="aiUpdateAllowInstall" type="checkbox"></div>
-            <div class="settingRow"><div><b>Autoriser le redémarrage automatique</b><div class="settingHint">Nécessite start.command / launcher.js. Après redémarrage, un health-check valide la release; en cas d’échec, rollback automatique.</div></div><input id="aiUpdateAllowRestart" type="checkbox"></div>
-            <div class="settingsActions"><button id="aiUpdateSave" class="btn" type="button">Enregistrer les droits de mise à jour IA</button><span id="aiUpdateSupervisor" class="tiny"></span></div>
-            <div id="aiUpdateMsg" class="result"></div>
-            <div class="updateOverflow updateBuildOverflow"><table class="updateHistory"><thead><tr><th>Date</th><th>Build IA</th><th>État</th><th>Résumé</th></tr></thead><tbody id="aiUpdateBuilds"><tr><td colspan="4" class="muted">Aucun build chargé.</td></tr></tbody></table></div>
-          </div>
-          <div class="updateCard"><h3>🔐 Compatibilité</h3><div class="settingRow"><div>Version installée</div><strong id="updateCurrentVersion">3.0</strong></div><div class="settingRow"><div>Version source exigée</div><strong id="updateFromVersion">--</strong></div><div class="settingRow"><div>Version cible</div><strong id="updateToVersion">--</strong></div><div class="settingRow"><div>Fichiers vérifiés</div><strong id="updateFileCount">--</strong></div><div id="updateManifest" class="manifestBox">Aucune archive vérifiée.</div></div>
-          <div class="updateCard"><h3>✅ Installation</h3><div class="settingHint">Les clés API, utilisateur, paramètres, logs, stratégies et mosaïques sont protégés contre l’écrasement par un patch Core.</div><div id="updateProtected" class="settingHint updateProtected"></div><div class="updateRow"><label class="dangerConfirm"><input id="updateConfirm" type="checkbox"> J’autorise l’installation de l’archive vérifiée</label></div><button id="updateInstall" class="btn" type="button" disabled>Installer la mise à jour</button><div id="updateInstallMsg" class="result"></div></div>
-        </div></div>
-      </section>
+      <section id="servicesSection" class="adminBlock adminAnchor"><div class="blockTitle"><div><span class="blockKicker">RUNTIME</span><h2>Services & moteurs</h2></div><span class="blockHint">État temps réel des processus IA-TB</span></div><div id="services" class="grid"></div></section>
+      <section id="maintenanceSection" class="section adminAnchor"><div class="sectionHead"><div><span class="blockKicker">CONTRÔLE</span><h2>Actions de maintenance</h2></div><span id="actionMsg" class="msg"></span></div><div class="sectionBody"><div class="actions maintenanceBar"><button id="reloadIndicators" class="btn">Recharger les indicateurs</button><button id="clearMarket" class="btn">Vider cache MarketData</button><button id="clearLiquidity" class="btn">Vider cache Liquidity</button><button id="clearAllCaches" class="btn">Vider les 2 caches</button><button id="restartAll" class="btn danger">Redémarrer IA-TB</button><button id="stopTotal" class="btn danger strongDanger">Arrêt Total</button><label class="ultraToggle"><input id="ultraAutostart" type="checkbox"> Mode ULTRA au démarrage</label><span id="ultraState" class="ultraState">ULTRA : …</span></div><div class="ultraConsoleHead"><strong>ULTRA Mode v2.0</strong><span id="ultraLogMeta" class="msg"></span><button id="ultraLogRefresh" class="btn small" type="button">Actualiser</button></div><pre id="ultraTerminal" class="terminal ultraTerminal">Chargement du journal ULTRA…</pre></div></section>
+      <section id="logsSection" class="section adminAnchor"><div class="sectionHead"><div><span class="blockKicker">OBSERVABILITÉ</span><h2>Logs · lecture seule</h2></div><span id="logMeta" class="msg"></span></div><div class="sectionBody"><div class="toolbar"><select id="logSource"></select><select id="logLines"><option>50</option><option selected>120</option><option>250</option><option>500</option></select><button id="logRefresh" class="btn small">Actualiser</button><button id="logCopy" class="btn small">Copier</button><button id="logClear" class="btn small danger">Vider ce log</button><label><input id="logAuto" type="checkbox" checked> auto 2 s</label></div><pre id="terminal" class="terminal">Chargement…</pre></div></section>
+      <section id="systemSection" class="section adminAnchor"><div class="sectionHead"><div><span class="blockKicker">MACHINE</span><h2>Système</h2></div></div><div class="sectionBody"><div id="system" class="systemGrid"></div></div></section>
+      <section id="updates" class="section adminUpdateSection adminAnchor"><div class="sectionHead"><div><span class="blockKicker">RELEASES</span><h2>Mises à jour</h2></div><span class="msg">UpdateManager · accès ADMIN uniquement</span></div><div class="sectionBody adminUpdateMount"><div class="updateGrid settingsUpdateGrid">
+        <div class="updateCard wide"><div class="updateCardTitle"><div><h3>🧾 Historique des mises à jour</h3><div class="settingHint">Les mises à jour installées sont conservées dans <code>Updates/update_history.dat</code>. Une sauvegarde est créée avant chaque remplacement.</div></div><button id="updateRefresh" class="navBtn" type="button">Actualiser</button></div><div class="updateOverflow updateHistoryScroll"><table class="updateHistory"><thead><tr><th>Date</th><th>Version</th><th>Source</th><th>État</th><th>Sauvegarde</th></tr></thead><tbody id="updateHistoryBody"><tr><td colspan="5" class="muted">Chargement…</td></tr></tbody></table></div></div>
+        <div class="updateCard wide"><h3>📦 Déposer un patch Crypto Chart Viewer IA Trader</h3><div class="settingHint">Dépose <b>Crypto Chart Viewer IA Trader.zip</b> dans la zone ci-dessous. L’archive est contrôlée avant installation : application, version source, version cible, chemins et SHA‑256.</div><div id="updateDropZone" class="updateDropZone" tabindex="0" role="button" aria-label="Déposer ou sélectionner Crypto Chart Viewer IA Trader.zip"><div class="updateDropIcon">⇩</div><strong>Glisse et dépose Crypto Chart Viewer IA Trader.zip ici</strong><span>ou</span><button id="updateBrowse" class="btn secondary" type="button">Choisir l’archive</button><input id="updateFile" type="file" accept=".zip,application/zip" hidden><div id="updateDropName" class="tiny">Aucune archive sélectionnée.</div></div><div id="updateSourceMsg" class="result"></div><details class="updateRemoteBox"><summary>Installer depuis une adresse web (optionnel)</summary><div class="updateRow"><label><input id="updateRemote" type="checkbox"> Utiliser une URL</label></div><div class="updateRow"><input id="updateUrl" type="url" placeholder="https://exemple.tld/Crypto Chart Viewer IA Trader.zip" disabled><button id="updateVerify" class="btn secondary" type="button">Vérifier l’URL</button></div></details></div>
+        <div class="updateCard wide"><h3>🤖 AI Update Builder</h3><div class="settingHint">Le Chat peut construire un patch dans <code>Updates/AI-Generated/</code>, le faire vérifier par le même UpdateManager puis, selon les autorisations ci-dessous, l’installer et demander au launcher superviseur de redémarrer Crypto Chart Viewer IA Trader. Les fichiers de sécurité, Paramètres, Annexes et le moteur de mise à jour lui-même restent interdits.</div><div class="settingRow"><div><b>Autoriser la création</b><div class="settingHint">Le Chat peut générer et tester Crypto Chart Viewer IA Trader.zip, sans l’installer.</div></div><input id="aiUpdateAllowCreate" type="checkbox"></div><div class="settingRow"><div><b>Autoriser l’installation</b><div class="settingHint">Permet au Chat d’installer un patch qu’il vient de générer et vérifier.</div></div><input id="aiUpdateAllowInstall" type="checkbox"></div><div class="settingRow"><div><b>Autoriser le redémarrage automatique</b><div class="settingHint">Nécessite start.command / launcher.js. Après redémarrage, un health-check valide la release; en cas d’échec, rollback automatique.</div></div><input id="aiUpdateAllowRestart" type="checkbox"></div><div class="settingsActions"><button id="aiUpdateSave" class="btn" type="button">Enregistrer les droits de mise à jour IA</button><span id="aiUpdateSupervisor" class="tiny"></span></div><div id="aiUpdateMsg" class="result"></div><div class="updateOverflow updateBuildOverflow"><table class="updateHistory"><thead><tr><th>Date</th><th>Build IA</th><th>État</th><th>Résumé</th></tr></thead><tbody id="aiUpdateBuilds"><tr><td colspan="4" class="muted">Aucun build chargé.</td></tr></tbody></table></div></div>
+        <div class="updateCard"><h3>🔐 Compatibilité</h3><div class="settingRow"><div>Version installée</div><strong id="updateCurrentVersion">3.0</strong></div><div class="settingRow"><div>Version source exigée</div><strong id="updateFromVersion">--</strong></div><div class="settingRow"><div>Version cible</div><strong id="updateToVersion">--</strong></div><div class="settingRow"><div>Fichiers vérifiés</div><strong id="updateFileCount">--</strong></div><div id="updateManifest" class="manifestBox">Aucune archive vérifiée.</div></div>
+        <div class="updateCard"><h3>✅ Installation</h3><div class="settingHint">Les clés API, utilisateur, paramètres, logs, stratégies et mosaïques sont protégés contre l’écrasement par un patch Core.</div><div id="updateProtected" class="settingHint updateProtected"></div><div class="updateRow"><label class="dangerConfirm"><input id="updateConfirm" type="checkbox"> J’autorise l’installation de l’archive vérifiée</label></div><button id="updateInstall" class="btn" type="button" disabled>Installer la mise à jour</button><div id="updateInstallMsg" class="result"></div></div>
+      </div></div></section>
     </div>
   </main>
 </div>
 <script src="/assets/admin_controller_v1.0.js"></script>
+<script src="/assets/admin_layout_v1.7.9.js"></script>
 <script src="/assets/update_ui_v1.0.js"></script>
 </body>
 </html>
