@@ -1,0 +1,76 @@
+IA-TB — FUNDAMENTAL ENGINE v1.6.2 CORRIGEE
+==========================================
+Mode: INFORMATION_ONLY
+
+OBJECTIF
+- Ajouter le WEB Provider sans elargir la collecte au hasard.
+- Corriger l activation des feeds WEB lors d une mise a jour depuis une base v1.6.1 preservee.
+- Corriger/endurcir la traduction a la demande dans la langue configuree.
+- Ajouter une vue Providers v1 pour diagnostiquer les connecteurs.
+- Uniformiser la navigation principale sur les pages Trading IA, Chart Viewer, Portfolio, Fondamental et Admin.
+- Conserver le biais visuel indicatif par publication, sans influence strategie.
+
+PROVIDERS
+- RSS / ATOM : ACTIF.
+- WEB : ACTIF pour pages HTML statiques explicitement enregistrees.
+- SOCIAL : PROVIDER PENDING.
+- API : PROVIDER PENDING.
+
+PROVIDERS v1 — DIAGNOSTIC
+- Liste tous les feeds/providers enregistres.
+- Etats normalises : ONLINE / DEGRADED / ERROR / PENDING.
+- Affiche derniere tentative, dernier succes, nombre d elements recus, latence, transport et derniere erreur.
+- Bouton Tester : lance une requete de diagnostic sur un provider sans ajouter les publications du test dans raw_items.
+- Vue detaillee de l endpoint et du dernier diagnostic.
+- Architecture compatible avec de futurs Social Providers.
+
+WEB PROVIDER
+- HTTPS valide normalement.
+- Fallback macOS /usr/bin/curl uniquement pour erreurs de chaine de certificat.
+- Jamais de -k, rejectUnauthorized=false ou NODE_TLS_REJECT_UNAUTHORIZED=0.
+- Redirections limitees, timeout, limite de taille, User-Agent IA-TB.
+- Extraction LINK_LIST depuis une page enregistree et filtres URL propres au feed.
+- Feeds WEB actifs :
+  * UST_PRESS_WEB — U.S. Treasury Press Releases
+  * WHITE_HOUSE_ACTIONS_WEB — White House Presidential Actions
+- Migration v1.6.2 : la base Fundamental existante est conservee, puis ces deux feeds sont explicitement ajoutes/actives et leurs provider_configs reappliques.
+- CME_FEDWATCH reste PROVIDER PENDING : ses probabilites requierent un adaptateur/API dedie. Le Provider retourne WEB_ADAPTER_REQUIRED au diagnostic au lieu de simuler des donnees.
+
+TRADUCTION
+- Langues supportees uniquement : fr / en / es / de.
+- La langue se choisit dans Parametres > Session, a cote de l email.
+- Traduction a la demande via l icone globe de chaque publication.
+- La cle OpenAI reste dans le coffre du Core : elle n est jamais transmise au Fundamental Engine.
+- Le Core tente d abord une reponse structuree JSON Schema puis effectue un second essai JSON simple si le premier format echoue ou est incomplet.
+- Budget de sortie augmente pour eviter les traductions incompletes.
+- Validation stricte de translated_title avant mise en cache.
+- Le Fundamental Engine ne stocke que la traduction finale dans SQLite.
+- Cache SQLite raw_item_translations pour ne pas retraduire inutilement.
+- Si aucune cle OpenAI n est configuree, la collecte continue normalement et l UI affiche traduction indisponible.
+
+BIAIS VISUEL PAR NEWS
+- BULL / BEAR / NEUTRAL / MIXED / UNKNOWN.
+- Heuristique locale legere, basee sur le titre/resume et des motifs economiques/crypto.
+- Confidence + raison disponibles au survol.
+- INFORMATION_ONLY / UI ONLY : aucune strategie ne peut consommer ce biais comme ordre ou signal dans v1.6.2.
+
+UI
+- Navigation principale unifiee sur Trading IA, Chart Viewer, Portfolio, Fondamental et Admin.
+- Effet valide A+B : halo discret au survol + ligne lumineuse sous la page active.
+- Les badges Provider deja valides dans les news sont conserves tels quels.
+- Publications recentes : 5 cartes visibles puis scroll interne.
+- Cartes compactes, Voir plus si besoin.
+- Icones traduction et biais a droite de chaque publication.
+- Nouvelle section Providers v1 sur la page Fondamental.
+
+SQLITE
+- provider_configs : configuration par feed WEB.
+- raw_item_translations : cache des traductions fr/en/es/de.
+- feeds.last_duration_ms / last_received_count / last_transport : diagnostic Providers v1.
+- schema_version = 3 pour la migration de reparation/diagnostic v1.6.2.
+- Fundamental/Data/** reste protege des Update packages.
+
+ROADMAP
+- Construire ensuite les adaptateurs WEB specialises si necessaire.
+- Social Provider : X API / Truth Social.
+- API Provider ensuite pour les donnees structurees.

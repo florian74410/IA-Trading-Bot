@@ -1,0 +1,10 @@
+Crypto Chart Viewer IA Trader / TradingBot — ChangeLog Router v1.0
+==================================================================
+- Ajout router.js : point d'entree navigateur unique sur 127.0.0.1:8000.
+- Le Core v1.0 est conserve intact et ecoute en interne sur 127.0.0.1:8001.
+- L'Add-On Kraken reste isole sur 127.0.0.1:8011.
+- Ajout /kraken et /kraken-api/* sur le Router.
+- Ajout d'un lien Kraken injecte dans les pages HTML du Core au niveau du Router uniquement.
+- TradingView reste direct et n'utilise pas le proxy Kraken.
+- start.command lance automatiquement Core + Kraken Add-On + Router avec le meme runtime Node local.
+- Une panne Kraken ne doit pas faire tomber le Core.

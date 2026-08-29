@@ -1,0 +1,60 @@
+TradingBot Kraken Unified v1.0.3 — RAPPORT DE TEST
+===================================================
+Date : 2026-08-24
+
+PROBLÈME CORRIGÉ
+----------------
+Kraken Public était déclaré connecté et le ticker fonctionnait, mais les bougies n'étaient pas
+rendues dans le Chart.
+
+CAUSE
+-----
+Kraken REST OHLC renvoie le timestamp Unix de chaque bougie en secondes.
+Le format interne historique du TradingBot / GMX stocke les timestamps de bougies en millisecondes.
+Le Chart convertit ensuite ce format interne en secondes pour Lightweight Charts.
+En v1.0.2, les timestamps Kraken n'étaient pas convertis en millisecondes : ils étaient donc divisés
+une seconde fois par 1000 côté graphique, créant des timestamps identiques ou quasi-identiques et
+une série invalide.
+
+CORRECTION v1.0.3
+-----------------
+- Conversion automatique des timestamps Kraken secondes -> millisecondes dans router.js.
+- Compatibilité conservée si une source fournit déjà des millisecondes.
+- Tri chronologique explicite des chandeliers Kraken.
+- Déduplication par timestamp.
+- Rejet des OHLC non numériques/incomplets.
+- Réponse diagnostic : timestampUnit = "ms".
+
+TEST DE NORMALISATION
+---------------------
+Entrée Kraken simulée :
+1688671200, 1688671260, 1688671320 secondes.
+
+Sortie Router validée :
+1688671200000, 1688671260000, 1688671320000 millisecondes.
+
+Après conversion du Chart :
+1688671200, 1688671260, 1688671320 secondes.
+
+PASS - timestamps uniques.
+PASS - ordre strictement croissant.
+PASS - intervalle 60 secondes conservé.
+PASS - doublon artificiel supprimé.
+PASS - données artificiellement désordonnées triées.
+PASS - ticker Kraken inchangé et valide.
+
+INTÉGRITÉ
+---------
+PASS - server_v1.0.js inchangé par rapport à v1.0.2.
+PASS - app_v1.0.html inchangé.
+PASS - chart_viewer_v1.0.html inchangé.
+PASS - launcher.js inchangé.
+PASS - start.command inchangé.
+PASS - AddOns/Kraken/kraken_client.js inchangé.
+PASS - AddOns/Kraken/kraken_service.js inchangé.
+PASS - syntaxe Node de tous les fichiers *.js.
+
+VERDICT
+-------
+Correction ciblée validée. Le build v1.0.3 ne change pas l'architecture multi-exchange :
+port utilisateur 8000, Core 8001, Kraken Add-On 8011.
