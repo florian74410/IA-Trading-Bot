@@ -1,6 +1,25 @@
 # IA-Trading-Bot (IA-TB)
 
-Application modulaire de trading crypto : CEX/DEX, Market Data, Chart Viewer, Indicator Engine, Liquidity Engine, gestion centralisée des API et Update Manager versionné.
+Application modulaire de trading crypto : CEX/DEX, Market Data, Chart Viewer, Indicator Engine, Strategy Engine, Fundamental Engine, gestion centralisée des API et Update Manager versionné.
+
+<p align="center">
+  <img src="docs/assets/architecture-overview.svg" alt="IA-Trading-Bot architecture" width="100%" />
+</p>
+
+## Architecture générale
+
+Le système repose sur un **Router central** qui orchestre les différents moteurs spécialisés :
+
+- `Supervisor <-> Router`
+- `Strategy Engine <-> Router`
+- `Trading Engine <-> Router`
+- `Indicator Engine <-> Router`
+- `Fundamental Engine <-> Router`
+- `Market Data -> Supervisor`
+- `Exchanges -> Market Data`
+- `Trading Engine -> Risk Manager -> Exchanges`
+- `Market Data -> Chart Viewer`
+- `Portfolio -> Supervisor`
 
 ## Rôle du dépôt
 
