@@ -81,14 +81,22 @@ Règle v1.7.9 : le **Username est créé à l'inscription, lié au compte/email 
 - [x] General, langue, puissance IA, modulation/mosaïque et profils couverts par la couche canonique SQLite.
 - ⚠️ Confirmer qu'un patch v1.7.8 → v1.7.9 ne remplace jamais les Settings utilisateur.
 
-### Secrets / API
+### Secrets / API / Vault
+
+Architecture cible : `Settings > API -> Data Service -> Vault SQLite -> consommateur`. Aucun connecteur ne doit accéder directement à SQLite.
 
 - [x] Infrastructure Vault SQLite.
 - [x] Credentials chiffrés dans UserData.
 - [x] API Data Service pour accéder aux credentials sans accès SQLite direct.
-- ◐ Certains consommateurs du Core utilisent encore `secrets_v2.dat`.
-- [ ] Faire utiliser exclusivement le **Data Service/Vault** par OpenAI, X et les Exchanges.
-- [ ] Préparer la sauvegarde/restauration sécurisée de la clé maître.
+- ◐ `secrets_v2.dat` reste temporairement utilisé par certains consommateurs du Core.
+- [ ] Migrer OpenAI vers Data Service/Vault.
+- [ ] Migrer X / Twitter vers Data Service/Vault.
+- [ ] Migrer les Exchanges nécessitant des credentials vers Data Service/Vault.
+- [ ] Importer les anciens credentials de `secrets_v2.dat` vers SQLite.
+- [ ] Vérifier qu'aucun module ne lit/écrit encore `secrets_v2.dat`.
+- [ ] Supprimer définitivement `secrets_v2.dat` et l'ancien coffre RSA après validation.
+- [ ] Nettoyer l'UI/documentation encore liée à `secrets_v2.dat`.
+- [ ] Préparer la sauvegarde/restauration sécurisée de la clé maître Vault.
 
 ### Connecteurs & Market Data
 
@@ -101,11 +109,13 @@ Règle v1.7.9 : le **Username est créé à l'inscription, lié au compte/email 
 
 ### Finalisation v1.7.9
 
-- [ ] Migrer les consommateurs de credentials vers Data Service/Vault.
+- [ ] Terminer la migration Credentials vers Data Service/Vault.
+- [ ] Supprimer `secrets_v2.dat` après migration et validation.
 - [ ] Intégrer le nouvel écran d'authentification graphique.
 - [ ] Revue complète du patch.
 - [ ] Tests Mac High Sierra : démarrage, inscription Username, Login, Settings, UserData, Vault, Fundamental, Admin, MarketData.
 - [ ] Test d'update v1.7.8 → v1.7.9 sans perte de données.
+- [ ] Tester la migration automatique des anciens Settings/Login/credentials vers SQLite.
 - [ ] Corrections de régression.
 - [ ] CHANGELOG + Wiki.
 - [ ] Patch officiel v1.7.8 → v1.7.9.
