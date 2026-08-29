@@ -2,28 +2,32 @@
 
 IA-TB suit une architecture modulaire. Le but est de pouvoir ajouter des CEX/DEX et des moteurs d'analyse sans créer de dépendances implicites entre les plateformes.
 
-## Vue logique
+<p align="center">
+  <img src="../assets/architecture-overview.png" alt="IA-TB — Architecture fonctionnelle" width="100%" />
+</p>
+
+> Version SVG : [`docs/assets/architecture-overview.svg`](../assets/architecture-overview.svg)
+
+## Vue logique actuelle
+
+Le **Router** est le hub de communication central. Les échanges bidirectionnels sont représentés par deux flèches distinctes : chaque flèche reprend la couleur du module dont elle part, tandis que les données binaires affichées entre les deux sens restent blanches.
 
 ```text
-CEX / DEX connectors
-        │
-        ├── Market Data : marchés, OHLC/OHLCV, volumes
-        │       ├── providers API / référence
-        │       └── providers SOCKET (WebSocket persistant)
-        ├── Private API : compte, positions, ordres
-        └── Health / capabilities
-                │
-                v
-        Normalisation commune
-                │
-        ┌───────┼────────┐
-        v       v        v
- Chart Viewer  Indicator  Liquidity
-               Engine     Engine
-        │
-        v
- Trading / stratégie / exécution
+Market Data    <-> Router
+Chart Viewer   <-> Router
+Portfolio      <-> Router
+Risk Manager   <-> Router
+Supervisor     <-> Router
+
+Strategy Engine     <-> Router
+Trading Engine      <-> Router
+Indicator Engine    <-> Router
+Fundamental Engine  <-> Router
+
+Trading Engine <-> Firewall <-> Exchanges
 ```
+
+Le **Firewall** matérialise la couche de contrôle du canal d'exécution entre le Trading Engine et les Exchanges. Il représente notamment les contrôles de sécurité, les coupures réseau possibles et les validations avant exécution.
 
 ## Principes
 
@@ -53,7 +57,7 @@ Les données publiques doivent fonctionner sans clé lorsque la plateforme le pe
 
 ### Faible couplage
 
-Chart Viewer, Indicator Engine et Liquidity Engine consomment des interfaces normalisées plutôt que du code spécifique à un exchange.
+Chart Viewer, Indicator Engine et les autres moteurs consomment des interfaces normalisées et communiquent via le Router plutôt que par des dépendances implicites entre modules.
 
 ### Machine cible
 

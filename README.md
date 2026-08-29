@@ -3,23 +3,25 @@
 Application modulaire de trading crypto : CEX/DEX, Market Data, Chart Viewer, Indicator Engine, Strategy Engine, Fundamental Engine, gestion centralisée des API et Update Manager versionné.
 
 <p align="center">
-  <img src="docs/assets/architecture-overview.svg" alt="IA-Trading-Bot architecture" width="100%" />
+  <img src="docs/assets/architecture-overview.png" alt="IA-Trading-Bot architecture" width="100%" />
 </p>
 
 ## Architecture générale
 
-Le système repose sur un **Router central** qui orchestre les différents moteurs spécialisés :
+Le système repose sur un **Router central** qui assure la communication entre les modules. Les canaux bidirectionnels utilisent une flèche par sens et conservent la couleur du module d'origine ; les données binaires représentées entre les flux restent blanches.
 
 - `Supervisor <-> Router`
+- `Market Data <-> Router`
+- `Chart Viewer <-> Router`
+- `Portfolio <-> Router`
+- `Risk Manager <-> Router`
 - `Strategy Engine <-> Router`
 - `Trading Engine <-> Router`
 - `Indicator Engine <-> Router`
 - `Fundamental Engine <-> Router`
-- `Market Data -> Supervisor`
-- `Exchanges -> Market Data`
-- `Trading Engine -> Risk Manager -> Exchanges`
-- `Market Data -> Chart Viewer`
-- `Portfolio -> Supervisor`
+- `Trading Engine <-> Firewall <-> Exchanges`
+
+Le **Firewall** représente la couche de contrôle placée sur le canal d'exécution entre le Trading Engine et les Exchanges.
 
 # 🗺️ Roadmap
 
