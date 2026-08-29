@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1000" viewBox="0 0 1400 1000">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#03101f"/><stop offset="1" stop-color="#071b31"/></linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f6d47a"/><stop offset="1" stop-color="#b87924"/></linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#efc15f"/></marker>
+    <style>
+      .box{fill:#0a1c31;stroke:#b98234;stroke-width:2;rx:24}.t{fill:#fff;font-family:Arial,Helvetica,sans-serif;font-size:26px;font-weight:700}.s{fill:#cbd5e1;font-family:Arial,Helvetica,sans-serif;font-size:16px}.line{stroke:#efc15f;stroke-width:3;fill:none;marker-end:url(#arrow)}.bi{stroke:#efc15f;stroke-width:3;fill:none;marker-start:url(#arrow);marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="1400" height="1000" fill="url(#bg)"/>
+  <text x="700" y="55" text-anchor="middle" class="t" font-size="34" fill="#f6d47a">IA-TRADING-BOT — SYSTEM ARCHITECTURE</text>
+
+  <!-- boxes -->
+  <rect class="box" x="80" y="120" width="250" height="140"/><text class="t" x="205" y="175" text-anchor="middle">MARKET DATA</text><text class="s" x="205" y="210" text-anchor="middle">Real-time streams</text>
+  <rect class="box" x="575" y="105" width="250" height="140"/><text class="t" x="700" y="160" text-anchor="middle">SUPERVISOR</text><text class="s" x="700" y="195" text-anchor="middle">AI orchestration</text>
+  <rect class="box" x="1070" y="120" width="250" height="140"/><text class="t" x="1195" y="175" text-anchor="middle">PORTFOLIO</text><text class="s" x="1195" y="210" text-anchor="middle">Positions &amp; performance</text>
+
+  <circle cx="700" cy="430" r="125" fill="#091a2e" stroke="url(#gold)" stroke-width="5" filter="url(#glow)"/><text class="t" x="700" y="420" text-anchor="middle" font-size="32">ROUTER</text><text class="s" x="700" y="455" text-anchor="middle">Intelligent task router</text>
+
+  <rect class="box" x="90" y="360" width="260" height="150"/><text class="t" x="220" y="420" text-anchor="middle">CHART VIEWER</text><text class="s" x="220" y="455" text-anchor="middle">Interactive charts</text>
+  <rect class="box" x="1050" y="345" width="280" height="165"/><text class="t" x="1190" y="410" text-anchor="middle">TRADING ENGINE</text><text class="s" x="1190" y="445" text-anchor="middle">Orders &amp; execution</text>
+
+  <rect class="box" x="210" y="650" width="250" height="150"/><text class="t" x="335" y="710" text-anchor="middle">STRATEGY ENGINE</text><text class="s" x="335" y="745" text-anchor="middle">Strategies &amp; backtests</text>
+  <rect class="box" x="500" y="650" width="250" height="150"/><text class="t" x="625" y="710" text-anchor="middle">INDICATOR ENGINE</text><text class="s" x="625" y="745" text-anchor="middle">Technical indicators</text>
+  <rect class="box" x="790" y="650" width="270" height="150"/><text class="t" x="925" y="710" text-anchor="middle">FUNDAMENTAL ENGINE</text><text class="s" x="925" y="745" text-anchor="middle">Fundamental analysis</text>
+  <rect class="box" x="1085" y="650" width="230" height="150"/><text class="t" x="1200" y="710" text-anchor="middle">RISK MANAGER</text><text class="s" x="1200" y="745" text-anchor="middle">Risk controls</text>
+  <rect class="box" x="575" y="850" width="250" height="110"/><text class="t" x="700" y="915" text-anchor="middle">EXCHANGES</text>
+
+  <!-- flows -->
+  <path class="line" d="M330 190 H560"/>
+  <path class="line" d="M1070 190 H840"/>
+  <path class="bi" d="M700 245 V300"/>
+  <path class="bi" d="M825 430 H1035"/>
+  <path class="bi" d="M620 525 L400 640"/>
+  <path class="bi" d="M665 550 L630 640"/>
+  <path class="bi" d="M775 525 L885 640"/>
+  <path class="line" d="M1190 510 V635"/>
+  <path class="line" d="M1200 800 L820 875"/>
+  <path class="line" d="M575 900 H430 V520 H220"/>
+  <path class="line" d="M575 885 H380 V285 H205 V275"/>
+</svg>
