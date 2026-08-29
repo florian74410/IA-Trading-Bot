@@ -30,8 +30,9 @@ jobs:
       - name: Fix Auth background asset format
         run: |
           python3 - <<'PY'
-          from PIL import Image
+          from PIL import Image, ImageFile
           from pathlib import Path
+          ImageFile.LOAD_TRUNCATED_IMAGES = True
           src = Path('Docs/Assets/IA-TB_Auth_v1.7.9.png')
           targets = [
               Path('builds/v1.7.9/Frontend/Assets/IA-TB_Auth_v1.7.9.png'),
@@ -40,11 +41,13 @@ jobs:
           if not src.exists():
               raise SystemExit('Missing source Auth artwork: %s' % src)
           with Image.open(src) as im:
+              im.load()
               rgb = im.convert('RGB')
               for dst in targets:
                   dst.parent.mkdir(parents=True, exist_ok=True)
                   rgb.save(dst, format='PNG', optimize=True)
                   with Image.open(dst) as check:
+                      check.load()
                       if check.format != 'PNG' or check.size != rgb.size:
                           raise SystemExit('Invalid converted Auth asset: %s' % dst)
                       print('AUTH_ASSET_OK', dst, check.format, check.size)
