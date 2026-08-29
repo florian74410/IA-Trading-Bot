@@ -1,0 +1,2 @@
+# Chemins à supprimer lors de l'application/build v1.7.7
+Parametres/CommunicationProtocol.dat
