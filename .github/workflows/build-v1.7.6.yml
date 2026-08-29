@@ -55,10 +55,52 @@ jobs:
           cp -a .rebuild/p175/. "$APPROOT"/
           cp -a .rebuild/p176/. "$APPROOT"/
 
-          find "$APPROOT" -maxdepth 4 -type f -name VERSION -exec sh -c 'printf "1.7.6\n" > "$1"' _ {} \;
-          if ! find "$APPROOT" -maxdepth 4 -type f -name VERSION | grep -q .; then
-            printf "1.7.6\n" > "$APPROOT/VERSION"
+          printf "1.7.6\n" > "$APPROOT/VERSION"
+
+          python3 - "$APPROOT" <<'PY'
+          import json, pathlib, sys
+          root = pathlib.Path(sys.argv[1])
+
+          release = root / "Updates" / "current_release.dat"
+          release.parent.mkdir(parents=True, exist_ok=True)
+          obj = {}
+          if release.exists():
+              try:
+                  obj = json.loads(release.read_text(encoding="utf-8"))
+              except Exception:
+                  obj = {}
+          obj.update({
+              "schema": 1,
+              "application": "Crypto Chart Viewer IA Trader",
+              "version": "1.7.6",
+              "server": "Core/Server/server_v1.0.js"
+          })
+          release.write_text(json.dumps(obj, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+
+          manifest = root / "manifest.json"
+          m = {}
+          if manifest.exists():
+              try:
+                  m = json.loads(manifest.read_text(encoding="utf-8"))
+              except Exception:
+                  m = {}
+          m.update({
+              "schema": 1,
+              "application": "IA-Trading-Bot",
+              "version": "1.7.6",
+              "status": "DEV",
+              "source_version": "1.7.5",
+              "entrypoint": "Core/Server/server_v1.0.js",
+              "update_artifact": "Update/v1.7.6/Crypto-Chart-Viewer-IA-Trader-v1.7.6-update.zip"
+          })
+          manifest.write_text(json.dumps(m, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+          PY
+
+          if [ -f "$APPROOT/start.command" ]; then
+            sed -i 's#^[[:space:]]*\./install_runtime\.command[[:space:]]*$#bash "./install_runtime.command"#' "$APPROOT/start.command"
           fi
+
+          find "$APPROOT" -type f \( -name '*.command' -o -name '*.sh' \) -exec chmod 755 {} +
 
           test -f "$APPROOT/services/fundamental-engine/fundamental-engine.js"
           test -f "$APPROOT/services/trading-engine/trading-engine.js"
@@ -66,9 +108,19 @@ jobs:
           test -f "$APPROOT/services/trading-engine/exchange-adapters/okx/executor.js"
           test -f "$APPROOT/services/trading-engine/exchange-adapters/kraken/executor.js"
           test -f "$APPROOT/services/trading-engine/exchange-adapters/gmx/executor.js"
+          test "$(cat "$APPROOT/VERSION")" = "1.7.6"
+          python3 - "$APPROOT" <<'PY'
+          import json, pathlib, sys
+          root = pathlib.Path(sys.argv[1])
+          assert json.loads((root/'Updates/current_release.dat').read_text())['version'] == '1.7.6'
+          assert json.loads((root/'manifest.json').read_text())['version'] == '1.7.6'
+          PY
+          test -x "$APPROOT/install_runtime.command"
+          test -x "$APPROOT/start.command"
+          grep -F 'bash "./install_runtime.command"' "$APPROOT/start.command"
           printf '%s\n' "$APPROOT" > .rebuild/app_root.txt
 
-      - name: Validate added engines
+      - name: Validate added engines and shell launchers
         shell: bash
         run: |
           set -euo pipefail
@@ -77,6 +129,7 @@ jobs:
           node "$APPROOT/services/fundamental-engine/self-test.js"
           find "$APPROOT/services/trading-engine" -name '*.js' -print0 | xargs -0 -n1 node --check
           node "$APPROOT/services/trading-engine/self-test.js"
+          find "$APPROOT" -type f -name '*.command' -print0 | xargs -0 -n1 bash -n
 
       - name: Build full v1.7.6 archive
         shell: bash
@@ -84,6 +137,7 @@ jobs:
           set -euo pipefail
           rm -f IA-Trading-Bot_V1.7.6.zip
           (cd .rebuild/unpacked && zip -qr "$GITHUB_WORKSPACE/IA-Trading-Bot_V1.7.6.zip" .)
+          unzip -Z -v IA-Trading-Bot_V1.7.6.zip | grep -A4 'install_runtime.command' || true
           sha256sum IA-Trading-Bot_V1.7.6.zip | tee Update/v1.7.6/FULL_ARCHIVE_SHA256.txt
           printf "1.7.6\n" > VERSION
 
@@ -95,7 +149,7 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
-      - name: Commit rebuilt app archive
+      - name: Commit corrected v1.7.6 archive
         shell: bash
         run: |
           set -euo pipefail
@@ -108,5 +162,5 @@ jobs:
             echo "No generated changes to commit."
             exit 0
           fi
-          git commit -m "release: build full IA-Trading-Bot v1.7.6 archive"
+          git commit -m "fix: replace defective IA-Trading-Bot v1.7.6 archive"
           git push origin HEAD:main
