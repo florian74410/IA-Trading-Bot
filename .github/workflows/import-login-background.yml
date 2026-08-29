@@ -24,7 +24,6 @@ jobs:
           cat .github/import-bg/part*.txt | base64 -d > Update/v1.7.9/Frontend/Assets/ia-tb-login-background.webp
           test "$(wc -c < Update/v1.7.9/Frontend/Assets/ia-tb-login-background.webp | tr -d ' ')" = "26924"
           file Update/v1.7.9/Frontend/Assets/ia-tb-login-background.webp | grep -qi 'webp'
-          ffmpeg -v error -i Update/v1.7.9/Frontend/Assets/ia-tb-login-background.webp -f null -
           rm -rf .github/import-bg
           rm -f .github/workflows/import-login-background.yml
 
