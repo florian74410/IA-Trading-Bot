@@ -1,0 +1,8 @@
+{
+  "target": "Fundamental/package.json",
+  "version": "1.7.8",
+  "dependencies_add": {
+    "ws": "8.18.0"
+  },
+  "note": "Node 16 compatible WebSocket client required by MarketData/Provider/socket_provider.js"
+}
