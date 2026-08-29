@@ -28,7 +28,6 @@ module.exports={
     config:path.join(ROOT,'config_v1.0.dat'),
     logs:path.join(ROOT,'logs.dat'),
     user:path.join(ROOT,'user.dat'),
-    vault:path.join(ROOT,'secrets_v2.dat'),
     aiSettings:path.join(ROOT,'ai_settings_v2.dat')
   },
   Annexes:path.join(ROOT,'Annexes'),
