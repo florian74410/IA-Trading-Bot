@@ -1,19 +1,19 @@
-# Changelog
+# IA-Trading-Bot v1.7.8
 
-## v1.7.7 - DEV
+## Market Data / Providers
+- Nouveau type de Provider `SOCKET` pour les flux WebSocket persistants.
+- Hyperliquid ajoute comme premier Provider `SOCKET`.
+- Historique OHLCV Hyperliquid via `candleSnapshot`, puis mise a jour temps reel via WebSocket.
+- Volumes natifs Hyperliquid conserves et identifies par source.
+- Nouveau registre MarketData multi-provider; Kraken reste le provider de reference par defaut.
+- Endpoints `/providers` et `/health` enrichi avec type, connexion, dernier evenement et erreurs.
+- Cache separe par provider et borne pour limiter la memoire.
 
-- Trading Engine transforme en service runtime supervise sur `127.0.0.1:8016`.
-- Integration au Communication Protocol CP/1 via le Router.
-- Endpoints de debug/etat: `/health`, `/api/status`, `/api/capabilities`, `/api/last-execution`, `/cp/v1`.
-- ADMIN: carte Trading Engine avec ONLINE/OFFLINE, PID, version, LIVE ON/OFF, exchanges et Risk Approval.
-- Restart global, logs, stop.command et Service Registry etendus au Trading Engine.
-- Execution LIVE desactivee par defaut; `risk_approval_id` reste obligatoire.
-- Le secret CP local n est plus pre-emballe dans l archive complete; il est regenere au premier demarrage.
+## Runtime
+- Ajout de `ws@8.18.0`, compatible Node.js 16.
+- `install_runtime.command` installe la dependance MarketData si necessaire.
 
-## v1.7.4 - STABLE
+## Tests
+- Self-test statique Hyperliquid/SOCKET et test live optionnel.
 
-- Correctif layout Trading IA : header agrandi, logo/navigation repositionnes.
-- Scroll vertical desktop global pour acceder aux modules Mosaique.
-- Synchronisation hauteur header avec overlays et mode Chart agrandi.
-- Baseline GitHub et protocole de versionnage GitHub ajoutes.
-- Patch source v1.7.3 -> v1.7.4 conserve dans `Update/`.
+Base: v1.7.7
