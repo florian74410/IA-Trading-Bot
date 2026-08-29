@@ -12,6 +12,8 @@ function patchSource(src){
  src=src.replace(/Coffre chiffre inaccessible: /g,"Vault SQLite inaccessible: ");
  src=src.replace(/secrets_v2\.dat/g,'legacy credential file');
  src=src.replace(/Coffre RSA-OAEP/g,'Vault SQLite AES-256-GCM');
+ src=src.replace("||p==='/assets/ia_tb_logo_v1.7.2.png')){var files={","||p==='/assets/ia_tb_logo_v1.7.2.png'||p==='/assets/IA-TB_Auth_v1.7.9.png')){var files={");
+ src=src.replace("'/assets/ia_tb_logo_v1.7.2.png':'Frontend/Assets/ia_tb_logo_v1.7.2.png'},fn=files[p]","'/assets/ia_tb_logo_v1.7.2.png':'Frontend/Assets/ia_tb_logo_v1.7.2.png','/assets/IA-TB_Auth_v1.7.9.png':'Frontend/Assets/IA-TB_Auth_v1.7.9.png'},fn=files[p]");
  return src;
 }
 function load(serverPath){var source=fs.readFileSync(serverPath,'utf8'),patched=patchSource(source),m=new Module(serverPath,module.parent);m.filename=serverPath;m.paths=Module._nodeModulePaths(require('path').dirname(serverPath));m._compile(patched,serverPath);return m.exports;}
