@@ -5,8 +5,8 @@ function pairForLegacy(name){
  name=String(name||'').trim().toUpperCase();
  if(name==='OPENAI_API_KEY')return{provider:'OPENAI',scope:'API_KEY'};
  if(name==='X_BEARER_TOKEN')return{provider:'X',scope:'BEARER_TOKEN'};
- var m=name.match(/^([A-Z0-9][A-Z0-9._-]{1,31})_(API_KEY|API_SECRET|SECRET_KEY|SECRET|PASSPHRASE|TOKEN|BEARER_TOKEN)$/);
- if(m)return{provider:m[1],scope:m[2]};
+ var suffixes=['BEARER_TOKEN','API_SECRET','SECRET_KEY','API_KEY','PASSPHRASE','SECRET','TOKEN'];
+ for(var i=0;i<suffixes.length;i++){var suf=suffixes[i],mark='_'+suf;if(name.length>mark.length&&name.slice(-mark.length)===mark){var provider=name.slice(0,-mark.length);if(/^[A-Z0-9][A-Z0-9._-]{1,31}$/.test(provider))return{provider:provider,scope:suf};}}
  return{provider:'LEGACY',scope:name.replace(/[^A-Z0-9._-]/g,'_').slice(0,64)||'UNKNOWN'};
 }
 function keyOf(provider,scope){return String(provider).toUpperCase()+':'+String(scope).toUpperCase();}
