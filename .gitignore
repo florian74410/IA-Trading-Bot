@@ -5,6 +5,14 @@ logs.dat
 ai_settings_v2.dat
 *.log
 
+# Persistent UserData database - NEVER versioned or overwritten by Git/builds/patches
+user_data.db
+user_data.db-*
+*.user_data.db
+UserData/node_modules/
+UserData/local_username.dat
+IA-TB-UserData-Server/
+
 # Generated inter-process secret
 Parametres/CommunicationProtocol.dat
 
