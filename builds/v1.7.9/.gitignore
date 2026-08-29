@@ -7,6 +7,12 @@ user.dat
 secrets_v2.dat
 .env
 .env.*
+# Persistent UserData DB: never version or overwrite from Git/builds/patches
+user_data.db
+user_data.db-*
+*.user_data.db
+UserData/node_modules/
+UserData/local_username.dat
 Fundamental/Data/internal_service_key.dat
 Fundamental/node_modules/
 Runtime/*.tar.gz
