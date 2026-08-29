@@ -4,7 +4,7 @@ Base cible : v1.7.7
 
 ## Objectif
 
-Introduire le type de Provider `SOCKET` pour les flux temps reel persistants et intégrer Hyperliquid comme premier Provider MarketData de ce type.
+Introduire le type de Provider `SOCKET` pour les flux temps reel persistants et integrer Hyperliquid comme premier Provider MarketData de ce type.
 
 ## Integration realisee
 
@@ -38,6 +38,10 @@ Introduire le type de Provider `SOCKET` pour les flux temps reel persistants et 
   - variable `IATB_MARKET_PROVIDER` pour choisir le provider par defaut
   - variable `IATB_HYPERLIQUID_WS` pour surcharger l endpoint WebSocket
 
+- `Frontend/JS/mosaic_controller_v2.9.js`
+  - masque la mosaique principale quand les surcouches Settings, Strategy ou Update sont ouvertes
+  - evite les chevauchements d interface
+
 - `MarketData/package.json`
   - dependance legere `ws@8.18.0`, compatible Node.js 16
 
@@ -49,6 +53,18 @@ Introduire le type de Provider `SOCKET` pour les flux temps reel persistants et 
   - test du contrat Provider/SOCKET sans reseau
   - test live optionnel avec `IATB_LIVE_HYPERLIQUID_TEST=1`
 
+## Format UpdateManager
+
+Le package final cible `1.7.7 -> 1.7.8` et est genere au format natif attendu par UpdateManager :
+
+```text
+Crypto Chart Viewer IA Trader/
+├── update_manifest.json
+└── payload/
+```
+
+Le manifeste contient le SHA-256 de chaque fichier du payload. Les donnees utilisateur protegees sont exclues.
+
 ## Compatibilite
 
 - macOS High Sierra / Intel cible conservee
@@ -59,12 +75,4 @@ Introduire le type de Provider `SOCKET` pour les flux temps reel persistants et 
 
 ## Etat
 
-INTEGRATION CODE TERMINEE SUR LA BRANCHE PATCH.
-
-Avant de promouvoir en build officielle v1.7.8 :
-1. appliquer le contenu de `Update/v1.7.8/` sur une copie de la v1.7.7 ;
-2. executer `install_runtime.command` ;
-3. executer le self-test local puis le test live Hyperliquid ;
-4. verifier `/health`, `/providers` et `/candles?provider=HYPERLIQUID` ;
-5. verifier Chart Viewer / Indicator Engine avec le provider Hyperliquid ;
-6. seulement ensuite creer `Build/v1.7.8`, mettre a jour `VERSION` et produire l archive de release.
+RELEASE v1.7.8 PRETE AU PACKAGING FINAL.
