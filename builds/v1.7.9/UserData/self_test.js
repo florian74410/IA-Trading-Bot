@@ -19,7 +19,7 @@ try{
  var paths=text('Core/Shared/paths.js');ok(paths.indexOf('Data.vault')<0&&paths.indexOf("vault:path.join")<0,'Core path registry has no legacy credential path');
  var sp=text('services/trading-engine/secret-provider.js');ok(sp.indexOf('credential_service')>=0,'Trading Engine SecretProvider -> Data Service');
  var ks=text('AddOns/Kraken/kraken_service.js');ok(ks.indexOf('USERDATA_VAULT')>=0&&ks.indexOf('credential_service')>=0,'Kraken private credentials -> Data Service');
- ok(fs.existsSync(path.join(ROOT,'Frontend','Assets','IA-TB_Auth_v1.7.9.png')),'v1.7.9 Auth artwork present');
+ ok(fs.existsSync(path.join(ROOT,'Frontend','Assets','IA-TB_Auth_v1.7.9.jpg')),'v1.7.9 Auth artwork present');
  var hooks=text('UserData/runtime_hooks.js');ok(hooks.indexOf('data-iatb-auth-v179')>=0,'functional Auth page artwork integration installed');
  if(fail.length)throw new Error(fail.join(' | '));
  console.log('[SELF-TEST] PASS v1.7.9 UserData/Vault/Auth');
