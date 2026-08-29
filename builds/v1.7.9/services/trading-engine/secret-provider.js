@@ -1,13 +1,18 @@
-
 "use strict";
+const path = require("path");
+const CredentialService = require(path.resolve(__dirname,"../../UserData/credential_service"));
 
 /**
- * Adapter expected to bridge the existing secure Settings > API vault.
- * No API key or private key is stored inside Trading Engine files.
+ * Trading Engine credential bridge.
+ * Reads credentials only through the UserData local Data Service/Vault.
+ * It never opens SQLite and never reads credential files directly.
  */
 class SecretProvider {
+  constructor(options = {}) {
+    this.service = options.service || new CredentialService({root:path.resolve(__dirname,"../..")});
+  }
   async get(exchange) {
-    throw new Error(`SecretProvider not connected for ${exchange}`);
+    return this.service.exchange(String(exchange || "").toUpperCase());
   }
 }
 
