@@ -8,8 +8,7 @@ URL="https://nodejs.org/download/release/v16.20.2/$ARCHIVE_NAME"
 EXPECTED_SHA="d7a46eaf2b57ffddeda16ece0d887feb2e31a91ad33f8774da553da0249dc4a6"
 install_marketdata_deps(){ if [ ! -f "$PWD/MarketData/package.json" ]; then return 0; fi; if [ -f "$PWD/MarketData/node_modules/ws/package.json" ]; then return 0; fi; echo "Installation dependance MarketData WebSocket (ws)..."; "$PWD/.node/bin/npm" install --prefix "$PWD/MarketData" --omit=dev --no-audit --no-fund || return 1; }
 install_userdata_deps(){ if [ ! -f "$PWD/UserData/package.json" ]; then return 0; fi; if [ -f "$PWD/UserData/node_modules/better-sqlite3/package.json" ]; then return 0; fi; echo "Installation dependance UserData SQLite (better-sqlite3)..."; "$PWD/.node/bin/npm" install --prefix "$PWD/UserData" --omit=dev --no-audit --no-fund || return 1; }
-bootstrap_userdata(){ if [ ! -f "$PWD/UserData/bootstrap.js" ]; then return 0; fi; echo "Initialisation UserData persistent..."; "$PWD/.node/bin/node" "$PWD/UserData/bootstrap.js" || return 1; }
-prepare_runtime_deps(){ install_marketdata_deps || return 1; install_userdata_deps || return 1; bootstrap_userdata || return 1; }
+prepare_runtime_deps(){ install_marketdata_deps || return 1; install_userdata_deps || return 1; }
 if [ "$(uname -s)" != "Darwin" ]; then echo "Ce runtime local est prevu pour macOS Intel."; fi
 mkdir -p "$PWD/Runtime"; need_install=1
 if [ -x "$PWD/.node/bin/node" ]; then current="$($PWD/.node/bin/node -v 2>/dev/null || true)"; if [ "$current" = "$REQ_VERSION" ]; then need_install=0; fi; fi
