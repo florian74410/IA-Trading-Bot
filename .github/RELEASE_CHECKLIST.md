@@ -2,6 +2,21 @@
 
 Cette checklist doit être utilisée pour chaque nouvelle version.
 
+## État de release — v1.7.9
+
+- [x] Patch v1.7.9 publié dans `updates/v1.7.9/`.
+- [x] Archive `Crypto Chart Viewer IA Trader.zip` publiée avec SHA-256.
+- [x] `PATCH_MANIFEST.md` publié.
+- [x] Test d'installation documenté dans `updates/v1.7.9/INSTALL_TEST_RESULT.md`.
+- [x] Build complet publié dans `builds/v1.7.9/`.
+- [x] Archive complète publiée dans `archives/IA-Trading-Bot_V1.7.9.zip` avec SHA-256.
+- [x] La v1.7.9 a été utilisée comme source officielle vérifiée du passage UpdateManager vers v1.8.0.
+- [ ] Validation runtime fonctionnelle complète sur la machine cible avant déclaration STABLE définitive.
+
+**État : PATCH / BUILD / ARCHIVE v1.7.9 FINALISÉS.**
+
+---
+
 ## État de release — v1.7.9 → v1.8.0
 
 Dernière validation packaging effectuée le 30 août 2026.
