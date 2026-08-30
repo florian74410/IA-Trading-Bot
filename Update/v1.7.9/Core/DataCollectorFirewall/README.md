@@ -22,42 +22,86 @@ Il reprend le même fonctionnement de base que le Trading Firewall :
 
 Mais ses règles sont spécifiques aux données de marché. Il ne valide pas des ordres de trading.
 
+## Settings
+
+La configuration utilisateur est prévue dans :
+
+```text
+Settings
+└── Protection
+    └── Firewall
+        ├── Trading Firewall
+        └── Data Collector Firewall
+```
+
+Le Data Collector Firewall expose sa page locale sur `127.0.0.1:8018/settings`. Cette page peut être intégrée dans Settings et permet à la fois de configurer **chaque règle** et de lancer le debug du Firewall sans quitter la page de paramètres.
+
+Les réglages sont persistés dans `Parametres/data_collector_firewall.json` et rechargés au démarrage.
+
 ## Modes
 
 - `PROTECTION` : une donnée invalide est rejetée avant le Supervisor.
 - `OBSERVATION` : la donnée est laissée passer mais le Firewall rapporte qu'elle aurait été rejetée.
 - `enabled=false` : inspection désactivée, passage direct.
 
-## Contrôles v1
+## Règles configurables
 
+Chaque contrôle possède son interrupteur indépendant dans Settings :
+
+- contrôle de taille du payload ;
 - whitelist des providers ;
 - whitelist des types de données ;
 - provenance obligatoire ;
-- fraîcheur et timestamp futur ;
-- taille maximale du payload ;
-- symbole valide ;
-- validation des nombres ;
+- fraîcheur / timestamp ;
+- validation du symbole / paire ;
+- validation du schéma et des invariants OHLCV ;
 - prix strictement positif ;
-- cohérence OHLC (`High >= O/C/L`, `Low <= O/C/H`) ;
-- volume non négatif ;
-- détection de saut de prix anormal par provider + symbole ;
-- contrôle bid/ask et warning de spread excessif ;
-- détection de doublons par empreinte SHA-256 dans une fenêtre courte.
+- saut de prix maximal ;
+- cohérence bid/ask ;
+- spread maximal ;
+- protection anti-doublon.
+
+Les seuils associés sont également modifiables :
+
+- `maxMessageAgeMs` ;
+- `maxFutureSkewMs` ;
+- `maxPayloadBytes` ;
+- `duplicateWindowMs` ;
+- `maxPriceJumpPct` ;
+- `maxSpreadPct` ;
+- `providerWhitelist` ;
+- `typeWhitelist`.
+
+## Debug depuis Settings
+
+La page de configuration contient :
+
+- un éditeur JSON de message de test ;
+- `Inspecter ce message` pour faire passer un échantillon dans le moteur réel ;
+- `Auto-test Firewall` pour tester plusieurs cas valides et invalides ;
+- `Réinitialiser stats` ;
+- affichage des décisions `PASS`, `WARN`, `REJECT`, motifs, anomalies et compteurs.
+
+Le debug ne produit aucun ordre de trading. Il n'utilise que le moteur de validation du Data Collector Firewall.
 
 ## Technologie
 
-Le service est volontairement léger pour le Mac cible : Node.js natif (`http`, `crypto`), aucune dépendance supplémentaire et aucune base de données.
+Le service reste léger : Node.js natif (`http`, `crypto`, `fs`), aucune dépendance supplémentaire et aucune base de données.
 
-Le service écoute par défaut sur `127.0.0.1:8018`. Les appels inter-services peuvent être protégés par la clé interne existante via `x-ia-tb-internal-key` (`IATB_INTERNAL_SERVICE_KEY`).
+Le service écoute par défaut sur `127.0.0.1:8018`. Les appels inter-services peuvent être protégés par la clé interne existante via `x-ia-tb-internal-key` (`IATB_INTERNAL_SERVICE_KEY`). La page de Settings utilise une session locale éphémère dédiée, limitée au service loopback.
 
-Contrairement au Trading Firewall, ce premier Data Collector Firewall ne signe pas chaque message par HMAC. Sa sécurité v1 repose sur l'isolation localhost + la clé de service interne ; son cœur est surtout la validation sémantique et structurelle des données.
+Contrairement au Trading Firewall, le Data Collector Firewall ne signe pas chaque donnée par HMAC. Son rôle principal est la validation sémantique et structurelle des données.
 
 ## API locale
 
+- `GET /settings`
 - `GET /health`
 - `GET /status`
+- `GET /rules`
 - `POST /configure`
 - `POST /inspect`
+- `POST /debug/self-test`
+- `POST /debug/reset`
 
 ## Format recommandé d'un message
 
@@ -74,8 +118,6 @@ Contrairement au Trading Firewall, ce premier Data Collector Firewall ne signe p
 ```
 
 ## Décision
-
-Réponse possible :
 
 - `PASS` : donnée valide ;
 - `WARN` : anomalie non bloquante ou mode Observation ;
