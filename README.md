@@ -3,7 +3,7 @@
 Application modulaire de trading crypto : CEX/DEX, Market Data, Chart Viewer, Indicator Engine, Strategy Engine, Fundamental Engine, gestion centralisée des API et Update Manager versionné.
 
 <p align="center">
-  <img src="docs/assets/app_architecture_900.jpeg" alt="IA-Trading-Bot architecture" width="100%" />
+  <img src="./docs/assets/app_architecture.jpg" alt="IA-Trading-Bot architecture" width="100%" />
 </p>
 
 ## Architecture générale
