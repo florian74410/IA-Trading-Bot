@@ -150,7 +150,7 @@ Principales évolutions clôturées :
 - [ ] Tests automatiques réussis.
 - [ ] Tests de fonctionnement sur la machine cible.
 - [ ] Vérification consommation mémoire / stabilité.
-- [ ] Wiki et documentation mis à jour.
+- [x] Wiki et documentation mis à jour.
 - [ ] `CHANGELOG.md` mis à jour.
 - [ ] `VERSION` mis à jour.
 - [ ] Patch `.zip` directement compatible UpdateManager publié dans `updates/`.
