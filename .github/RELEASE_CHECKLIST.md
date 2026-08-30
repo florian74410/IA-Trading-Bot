@@ -2,6 +2,58 @@
 
 Cette checklist doit être utilisée pour chaque nouvelle version.
 
+## État de release — v1.7.9 → v1.8.0
+
+Dernière validation packaging effectuée le 30 août 2026.
+
+### Versionnage
+
+- [x] `from_version = 1.7.9`
+- [x] `to_version = 1.8.0`
+- [x] La source utilisée est l'archive officielle `archives/IA-Trading-Bot_V1.7.9.zip`.
+- [x] SHA-256 de l'archive source vérifié avant génération du patch.
+- [x] Convention de versionnage respectée.
+
+### Patch / UpdateManager
+
+- [x] Patch `1.7.9 -> 1.8.0` généré au format UpdateManager officiel.
+- [x] `update_manifest.json` valide.
+- [x] 61 fichiers déclarés et couverts par SHA-256.
+- [x] Archive ZIP vérifiée sans erreur.
+- [x] UpdateManager v1 de la v1.7.9 accepte le patch.
+- [x] Installation effectuée sur une copie propre de la v1.7.9.
+- [x] Version obtenue après installation : `1.8.0`.
+- [x] Entrypoint obtenu : `Core/Server/server_v1.8.js`.
+- [x] Le résultat installé correspond à `builds/v1.8` pour les fichiers applicatifs concernés.
+- [x] Rapport `VALIDATION_REPORT.json` publié avec statut `PASS`.
+- [x] Patch publié dans `updates/Patch_v1.7.9_to_v1.8.0/`.
+- [x] Build source complet publié dans `builds/v1.8/`.
+
+### Tests exécutés pendant la validation du patch
+
+- [x] Validation effectuée sous Node.js `16.20.2`.
+- [x] Vérification syntaxique du Risk Engine.
+- [x] Test pur de calcul du Risk Engine réussi.
+- [x] Vérification que le patch installé produit le build cible attendue.
+- [ ] Test runtime complet sur macOS High Sierra / machine cible.
+- [ ] Test end-to-end Router / CP/1 / Market Data / Indicators / Supervisor.
+- [ ] Vérification mémoire / CPU sur MacBook Pro 2011.
+- [ ] Validation fonctionnelle utilisateur de la v1.8 avant déclaration STABLE.
+
+### Publication GitHub
+
+- [x] Code et build v1.8 présents dans `main`.
+- [x] Patch v1.8 présent dans `main`.
+- [x] Manifeste, SHA-256, build info et rapport de validation présents avec le patch.
+- [x] Aucun secret utilisateur requis pour générer ou valider le patch.
+- [x] Branche de sauvegarde créée avant la validation finale.
+
+**État : PATCH 1.7.9 → 1.8.0 FINALISÉ ET VALIDÉ PAR UPDATEMANAGER.**
+
+**La v1.8 reste DEV jusqu'aux tests runtime sur la machine cible.**
+
+---
+
 ## 1. Versionnage
 
 - [ ] `from_version` défini
