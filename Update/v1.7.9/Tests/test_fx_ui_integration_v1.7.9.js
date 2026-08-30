@@ -14,7 +14,9 @@ var wrapper=fs.readFileSync(path.join(ROOT,'Update','v1.7.9','Core','Server','se
 ].forEach(function(marker){assert.ok(html.indexOf(marker)>=0,'Stable UI marker missing: '+marker.slice(0,80));});
 [
  'function injectTradingFx(raw)',
- '<option value=\\"FX\\">ƒx</option>',
+ "'FX_OPTION'",
+ "'FX_LOAD_URL'",
+ "'FX_VOLUME_LABEL'",
  '/api/market/fx-klines',
  '/candles/consensus?symbol=',
  "S.marketSource==='FX'",
