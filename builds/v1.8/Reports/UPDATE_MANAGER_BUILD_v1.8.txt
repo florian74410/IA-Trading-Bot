@@ -1,5 +1,0 @@
-IA-Trading-Bot v1.8.0 DEV
-Build method: official v1.7.9 STABLE archive + UpdateManager v1 patch 1.7.9 -> 1.8.0
-Entrypoint: Core/Server/server_v1.8.js
-Risk Engine: integrated through CP/1 / Router, analytical only
-Validation: generated patch must be accepted and installed by the v1.7.9 UpdateManager; installed code must match builds/v1.8.

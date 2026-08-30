@@ -1,7 +1,0 @@
-{
-  "name": "iatb-marketdata-runtime",
-  "private": true,
-  "version": "1.7.8",
-  "description": "IA-TB Market Data runtime dependencies",
-  "dependencies": {"ws": "8.18.0"}
-}
