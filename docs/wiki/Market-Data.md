@@ -1,78 +1,87 @@
 # Market Data
 
-Le Market Data Engine fournit aux autres modules les données de marché normalisées tout en conservant leur provenance.
+Le Market Data Engine fournit aux autres modules les données de marché normalisées tout en conservant leur provenance. La v1.7.9 étend ce rôle avec des sources complémentaires, un Collector multi-source et une source virtuelle de consensus `ƒx`.
+
+## Principes
+
+- aucune source ne remplace silencieusement une autre ;
+- les symboles peuvent être normalisés, mais la provenance originale reste attachée aux données ;
+- aucun volume absent n'est fabriqué ;
+- les données complémentaires ne deviennent pas artificiellement des OHLCV d'exchange ;
+- le cache reste borné et séparé par provider / symbole / timeframe.
 
 ## Types de providers
 
-IA-TB distingue désormais plusieurs modes de fournisseurs de données. Depuis la v1.7.8, le type `SOCKET` désigne les providers utilisant un flux WebSocket persistant pour les mises à jour temps réel. L'historique peut toujours être récupéré par une API HTTP lorsque la plateforme l'impose.
+IA-TB distingue les providers API et les providers `SOCKET`. Depuis la v1.7.8, `SOCKET` désigne un provider utilisant un flux WebSocket persistant pour les mises à jour temps réel ; une API HTTP peut rester utilisée pour l'historique ou les métadonnées.
 
 Hyperliquid est le premier provider `SOCKET` intégré.
 
-## Données minimales par connecteur
+## Sources v1.7.9
 
-Pour tout nouveau CEX/DEX, l'intégration doit traiter lorsque la plateforme le permet :
+### CoinGecko — API
 
-- liste des marchés / paires ;
-- prix ;
-- OHLC ou OHLCV ;
-- volumes propres à la plateforme ;
-- timeframes disponibles ;
-- timestamps et fraîcheur ;
-- état du provider.
+CoinGecko est une source complémentaire `COINGECKO`. Sa provenance reste explicite et séparée des données natives CEX/DEX. L'application ne transforme pas une donnée CoinGecko en volume d'exchange lorsqu'un tel volume n'existe pas.
+
+L'état du provider expose notamment la dernière réussite, la dernière erreur et l'état d'authentification. La clé API éventuelle est configurée dans `Settings > API`, stockée par le coffre existant et transmise au service Market Data uniquement en mémoire.
+
+### Blockchain.com — API
+
+Le provider `BLOCKCHAIN` utilise actuellement le flux public Blockchain.com Exchange, notamment le canal WebSocket `prices`. Les OHLCV et volumes reçus restent natifs, les timeframes non supportés sont refusés plutôt qu'approximés et la provenance `BLOCKCHAIN.COM` est conservée.
+
+La v1.7.9 prévoit encore de recentrer cette source sur son rôle Bitcoin / on-chain afin d'éviter un doublon inutile avec les sources Exchange.
+
+### DefiLlama — API
+
+`DEFILLAMA` est une source analytique complémentaire et déclare `candleCapable:false`. Elle ne doit donc jamais remplacer silencieusement les chandeliers CEX/DEX.
+
+Les familles de données intégrées couvrent : TVL protocoles et chaînes, prix tokens actuels/historiques/chart/variations, stablecoins, pools de rendement et historiques APY/TVL, volumes DEX et options, open interest, fees et revenue. La provenance est `DEFILLAMA_PUBLIC_API`.
 
 ## Hyperliquid / SOCKET
 
-La v1.7.8 ajoute un provider Market Data Hyperliquid de type `SOCKET` :
+Le provider Hyperliquid charge l'historique OHLCV via `candleSnapshot`, maintient les chandeliers avec l'abonnement WebSocket `candle` et dispose également des abonnements `trades` et `l2Book`. Les volumes natifs Hyperliquid sont conservés avec leur provenance et le cache provider est borné.
 
-- historique OHLCV chargé via `candleSnapshot` ;
-- abonnement WebSocket `candle` pour maintenir les chandeliers à jour ;
-- abonnements disponibles dans le provider pour `trades` et `l2Book` ;
-- volumes natifs Hyperliquid conservés avec `volumeSource: HYPERLIQUID_NATIVE` lorsqu'ils sont présents ;
-- provenance explicite `provider: HYPERLIQUID`, `providerType: SOCKET`, `exchange: HYPERLIQUID` ;
-- cache local borné à 1000 chandeliers par série côté provider.
+## Market Data Collector
 
-Les timeframes reconnues par le provider Hyperliquid vont de `1m` à `1M`, selon les intervalles pris en charge par la plateforme.
+Le Collector v1.7.9 rend les sources de prix explicites. Kraken fournit OHLCV et prix live. GMX fournit OHLC et prix Oracle ; aucun volume GMX absent n'est fabriqué.
 
-## Registre multi-provider
+### Prix consensus
 
-Le Market Data Engine utilise un registre commun de providers. Kraken reste le provider de référence par défaut, tandis qu'un appel peut sélectionner explicitement un autre provider.
+`GET /price/consensus` calcule un prix consensus à partir des sources valides, Kraken et GMX étant les sources par défaut actuelles. Le résultat conserve les prix individuels, leur provenance, le nombre de sources et le spread entre sources.
 
-Les contextes actifs sont rafraîchis automatiquement pendant une durée limitée afin de maintenir des données récentes sans charger inutilement la mémoire.
+Le calcul utilise la moyenne des sources valides. À partir de trois sources, un filtre d'outliers autour de la médiane permet d'écarter une valeur incohérente avant le consensus.
 
-## Endpoints de diagnostic
+## Source virtuelle ƒx / consensus OHLCV
 
-Depuis la v1.7.8 :
+La source virtuelle `FX`, affichée `ƒx Consensus`, est calculée directement dans le Collector et n'ajoute aucun service réseau.
 
-- `GET /providers` liste les providers et leur état ;
-- `GET /health` retourne notamment le provider par défaut, l'état des providers, les statistiques de cache et le nombre de contextes actifs ;
-- `GET /active` expose les contextes de marché actuellement suivis ;
-- `POST /refresh` force le rafraîchissement d'une série ;
-- `POST /cache/clear` vide le cache Market Data.
+`GET /candles/consensus` produit les bougies synthétiques à la demande :
 
-Pour un provider `SOCKET`, l'état peut inclure la connexion, le dernier événement reçu, la dernière erreur, le nombre d'abonnements et le nombre de séries mises en cache.
+- Open, High, Low et Close = moyenne arithmétique des bougies sources valides et alignées ;
+- Volume = somme des volumes natifs comparables réellement disponibles ;
+- correspondance stricte de la paire canonique ;
+- alignement des timestamps par bucket de timeframe ;
+- conservation des sources prix, sources volume, volumes par source, sources exclues et motifs d'exclusion.
 
-## Règle de provenance
+Le proxy Core `GET /api/market/fx-klines` permet au navigateur de rester sur le canal local existant. Le rafraîchissement `ƒx` est léger, à 15 secondes, sans historique consensus supplémentaire conservé en mémoire.
 
-Les données ne sont pas interchangeables silencieusement.
+## Catalogue des commandes
 
-Exemples :
+Le catalogue central couvre GMX, Kraken/Reference, Hyperliquid, CoinGecko, Blockchain.com et DefiLlama, tout en signalant les connecteurs historiques Binance/Coinbase/OKX.
 
-- `BTC/USDT @ Binance` ;
-- `BTC/USD @ Coinbase` ;
-- `BTC-USDT @ OKX` ;
-- marché équivalent @ GMX ;
-- `BTC @ Hyperliquid` avec provider `SOCKET`.
+Les états de capacité sont :
 
-La normalisation peut fournir un symbole canonique pour l'interface, mais la source originale reste attachée au dataset.
+- `IMPLEMENTED` : commande branchée dans le runtime courant ;
+- `LEGACY_IMPLEMENTED` : fonction disponible dans une intégration historique ;
+- `UPSTREAM_AVAILABLE` : possibilité connue côté fournisseur mais non branchée ici.
 
-## Déduplication
+`GET /capabilities` expose le catalogue complet, `GET /capabilities?provider=...` le filtre par provider et `POST /command` exécute les commandes analytiques génériques actuellement branchées. Les opérations privées de compte, trading et retrait restent hors de ce catalogue Market Data.
 
-La déduplication sert à présenter les mêmes actifs de façon cohérente, pas à fusionner leurs volumes ou leurs chandeliers.
+La référence technique détaillée des commandes v1.7.9 se trouve dans `Update/v1.7.9/MarketData/API_COMMANDS.md`.
 
-## Cache et historique
+## Diagnostic et cache
 
-Le cache doit être borné et adapté aux contraintes de la machine cible. Les historiques importants sont chargés à la demande. En v1.7.8, le cache du service Market Data est séparé par provider, symbole et timeframe afin de préserver la provenance.
+Les endpoints `/providers`, `/health`, `/active`, `/refresh` et `/cache/clear` permettent de suivre l'état des providers et des contextes actifs. Les historiques importants restent chargés à la demande afin de limiter l'empreinte mémoire.
 
-## Erreurs
+## Validation restante v1.7.9
 
-Un provider indisponible doit être signalé explicitement. Le moteur ne doit pas remplacer silencieusement ses données par celles d'un autre exchange sans que l'appelant en soit informé.
+Les providers CoinGecko, Blockchain.com et DefiLlama ainsi que Kraken/GMX et `ƒx` doivent encore être validés end-to-end sur la machine cible. La documentation décrit l'état fonctionnel actuel sans transformer ces validations restantes en succès acquis.
