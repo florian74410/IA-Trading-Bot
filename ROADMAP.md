@@ -35,9 +35,12 @@ Principales évolutions clôturées :
 
 ---
 
-# 🚧 v1.7.9 — EN DÉVELOPPEMENT
+# ✅ v1.7.9 — PATCH / BUILD / ARCHIVE FINALISÉS
 
-**Progression fonctionnelle validée : 0 / 4**
+**État de packaging : FINALISÉ.**  
+**État fonctionnel machine cible : validation finale encore requise avant de remplacer v1.7.8 comme dernière version STABLE.**
+
+Le patch v1.7.9, son test d'installation, le build complet et l'archive complète sont présents dans le dépôt. La v1.7.9 constitue également la source officielle utilisée par l'UpdateManager pour produire et valider la v1.8.
 
 ## Flux de données prévus
 
@@ -114,13 +117,13 @@ Principales évolutions clôturées :
 - [x] `GET /capabilities?provider=...` expose la liste d'un provider précis.
 - [x] `POST /command` permet l'exécution des commandes analytiques génériques actuellement branchées, notamment DefiLlama.
 - [x] Les commandes privées de compte/trading/retrait restent séparées du catalogue Market Data.
-- [x] Documentation du catalogue et de la source virtuelle `ƒx` ajoutée dans `Update/v1.7.9/MarketData/API_COMMANDS.md`.
+- [x] Documentation du catalogue et de la source virtuelle `ƒx` ajoutée dans `updates/v1.7.9/MarketData/API_COMMANDS.md`.
 
 > Ces sources API complètent les données de l'application. Elles ne doivent pas remplacer silencieusement les chandeliers ou volumes natifs des CEX/DEX.
 
 ## Authentification / inscription
 
-- [ ] **Écran d'authentification unifié** — intégration en version de test `debug`, validation restante
+- [ ] **Écran d'authentification unifié** — intégré, validation complète machine cible restante
   - [x] Le formulaire affiché par défaut reste toujours le formulaire de connexion, y compris lorsque la base utilisateur ne contient encore aucun compte.
   - [x] Ajout d'un libellé/lien cliquable `S'inscrire` depuis le formulaire de connexion.
   - [x] Bascule dans le même panneau entre les modes `Connexion` et `Inscription`, sans page d'authentification séparée.
@@ -132,23 +135,24 @@ Principales évolutions clôturées :
 
 ## Validation v1.7.9
 
-- [ ] Intégration fonctionnelle des éléments prévus.
-- [ ] Tests automatiques réussis.
-- [ ] Tests de fonctionnement sur la machine cible.
-- [ ] Vérification consommation mémoire / stabilité.
-- [x] Wiki et documentation mis à jour.
-- [ ] `CHANGELOG.md` mis à jour.
-- [ ] `VERSION` mis à jour.
-- [ ] Patch `.zip` directement compatible UpdateManager publié dans `updates/`.
-- [ ] Build complet publié dans `builds/v1.7.9/`.
-- [ ] Archive complète publiée dans `archives/`.
-- [ ] Vérification finale puis déclaration **v1.7.9 STABLE**.
+- [x] Packaging du patch v1.7.9 finalisé dans `updates/v1.7.9/` avec ZIP et SHA-256.
+- [x] Test d'installation du patch documenté dans `updates/v1.7.9/INSTALL_TEST_RESULT.md`.
+- [x] Build complet publié dans `builds/v1.7.9/`.
+- [x] Archive complète publiée dans `archives/IA-Trading-Bot_V1.7.9.zip` avec SHA-256.
+- [x] `CHANGELOG.md` et `VERSION` disponibles dans le code livré.
+- [x] La v1.7.9 a servi de source officielle vérifiée pour le passage UpdateManager vers v1.8.0.
+- [ ] Validation end-to-end de toutes les fonctions prévues sur la machine cible.
+- [ ] Vérification consommation mémoire / stabilité sur la machine cible.
+- [ ] Vérification finale puis déclaration **v1.7.9 STABLE** au sens fonctionnel complet.
 
 ---
 
-# 🧪 v1.8 — PLANIFIÉE / PRÉPARATION DEBUG
+# 🚧 v1.8 — PATCH / BUILD FINALISÉS, TEST MACHINE CIBLE EN COURS
 
-Cette version commencera sur `debug` à partir d'une v1.7.9 stabilisée. Les prototypes locaux peuvent être préparés en amont, mais aucune fonction principale n'est considérée validée avant intégration CP/1, tests et validation sur la machine cible.
+Le packaging v1.8 est maintenant reproductible : la version est produite depuis l'archive officielle v1.7.9 au moyen d'un patch UpdateManager `1.7.9 -> 1.8.0`. Le patch a été accepté et installé par le vrai UpdateManager de la v1.7.9 sous Node.js 16.20.2, puis le résultat a été comparé au build `builds/v1.8`.
+
+**État packaging : PASS.**  
+**État runtime complet : validation sur macOS High Sierra / machine cible en cours.**
 
 ## Portfolio Module
 
@@ -172,15 +176,18 @@ Cette version commencera sur `debug` à partir d'une v1.7.9 stabilisée. Les pro
 
 ## Risk Engine
 
-- [ ] **Risk Engine — moteur analytique de représentation du risque**
-  - [ ] Intégrer le prototype Risk Engine comme Engine autonome enregistré auprès du Router en CP/1.
-  - [ ] Conserver un rôle strictement analytique : aucun `APPROVE`, `MODIFY`, `REJECT` et aucune exécution d'ordre dans le Risk Engine.
-  - [ ] Autoriser les requêtes de données vers Market Data Collector exclusivement via le Router.
-  - [ ] Autoriser les requêtes d'indicateurs vers Indicator Engine exclusivement via le Router.
-  - [ ] Autoriser les requêtes Portfolio vers Portfolio Module exclusivement via le Router.
-  - [ ] Fournir au Supervisor des analyses de risque de position, portefeuille et stratégie via CP/1.
-  - [ ] Intégrer les calculs de risque de position, exposition, levier, marge, drawdown, volatilité, VaR historique, Expected Shortfall et scénarios de stress.
-  - [ ] Valider que le Supervisor reste seul responsable de la décision finale de stratégie / action.
+- [ ] **Risk Engine — moteur analytique de représentation du risque** — intégré au build v1.8, validation runtime CP/1 restante
+  - [x] Prototype Risk Engine intégré comme Engine autonome prévu pour l'enregistrement auprès du Router en CP/1.
+  - [x] Rôle strictement analytique conservé : aucun `APPROVE`, `MODIFY`, `REJECT` et aucune exécution d'ordre dans le Risk Engine.
+  - [x] Requêtes de données Market Data conçues exclusivement via le Router.
+  - [x] Requêtes d'indicateurs conçues exclusivement via le Router.
+  - [x] Requêtes Portfolio conçues exclusivement via le Router.
+  - [x] Calculs de position, exposition, levier, marge, drawdown, volatilité, VaR historique et Expected Shortfall intégrés.
+  - [x] Tests purs du Risk Engine réussis sous Node.js 16.20.2 pendant la validation UpdateManager.
+  - [ ] Vérifier l'enregistrement réel du service Risk auprès du Router sur la machine cible.
+  - [ ] Fournir et valider les analyses Risk au Supervisor via CP/1 en conditions runtime.
+  - [ ] Ajouter/valider les scénarios de stress avancés.
+  - [ ] Valider que le Supervisor reste seul responsable de la décision finale de stratégie / action dans le flux end-to-end.
 
 ## Trading Engine / historique Portfolio
 
@@ -195,16 +202,33 @@ Cette version commencera sur `debug` à partir d'une v1.7.9 stabilisée. Les pro
 - [ ] Afficher les statistiques calculées par le module et l'equity curve depuis les snapshots.
 - [ ] Le navigateur accède au Portfolio Module via des routes proxy Core authentifiées ; aucun accès navigateur direct au port interne Portfolio.
 
+## Packaging / UpdateManager v1.8
+
+- [x] Archive source officielle v1.7.9 contrôlée par SHA-256 avant génération.
+- [x] Patch `1.7.9 -> 1.8.0` généré au format officiel UpdateManager.
+- [x] Manifeste couvrant exactement les 61 fichiers du payload avec SHA-256.
+- [x] Entrypoint officiel `Core/Server/server_v1.8.js`.
+- [x] Patch accepté par le vrai `Core/Updates/update_manager_v1.0.js` de la v1.7.9.
+- [x] Installation du patch réussie sur une copie propre de la v1.7.9.
+- [x] Version obtenue après installation : `1.8.0`.
+- [x] Résultat installé comparé au build cible : `installedBuildMatchesTarget = true`.
+- [x] ZIP final vérifié sans erreur.
+- [x] Rapport `updates/Patch_v1.7.9_to_v1.8.0/VALIDATION_REPORT.json` publié avec `status = PASS`.
+- [x] Patch, SHA-256, manifeste et informations de build publiés dans `main`.
+- [x] Build complet v1.8 publié dans `builds/v1.8/`.
+
 ## Validation v1.8
 
-- [ ] Intégration Portfolio Module + Risk Engine sur `debug` à partir de la v1.7.9 stable.
+- [x] Packaging v1.8 validé par UpdateManager à partir de la v1.7.9 officielle.
+- [x] Test pur Risk Engine réussi sous Node.js 16.20.2.
+- [x] Code source et patch v1.8 synchronisés dans `main`.
+- [ ] Intégration Portfolio Module complète.
 - [ ] Tests CP/1 Router ↔ Portfolio ↔ Market Data ↔ Trading Engine ↔ Supervisor.
-- [ ] Tests CP/1 Router ↔ Risk Engine ↔ Market Data / Indicators / Portfolio / Supervisor.
+- [ ] Tests CP/1 Router ↔ Risk Engine ↔ Market Data / Indicators / Portfolio / Supervisor sur la machine cible.
 - [ ] Tests SQLite et persistance après redémarrage / mise à jour / nouveau clone Git.
 - [ ] Tests UI Portfolio sur macOS High Sierra / Firefox cible.
 - [ ] Vérification consommation mémoire / CPU sur MacBook Pro 2011.
-- [ ] Documentation et Wiki mis à jour.
-- [ ] `CHANGELOG.md`, `VERSION`, build et archive v1.8 mis à jour.
+- [ ] Documentation et Wiki finalisés pour toutes les fonctions effectivement validées.
 - [ ] Vérification finale avant déclaration **v1.8 STABLE**.
 
 ---
