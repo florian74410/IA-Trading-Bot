@@ -146,6 +146,69 @@ Principales évolutions clôturées :
 
 ---
 
+# 🧪 v1.8 — PLANIFIÉE / PRÉPARATION DEBUG
+
+Cette version commencera sur `debug` à partir d'une v1.7.9 stabilisée. Les prototypes locaux peuvent être préparés en amont, mais aucune fonction principale n'est considérée validée avant intégration CP/1, tests et validation sur la machine cible.
+
+## Portfolio Module
+
+- [ ] **Portfolio Module — mémoire financière et source de vérité du portefeuille**
+  - [ ] Intégrer un service `portfolio` autonome relié au Router en CP/1.
+  - [ ] Utiliser une base SQLite persistante hors du dépôt Git afin qu'un nouveau `git clone` ne supprime jamais l'historique utilisateur.
+  - [ ] Ajouter un `Event Ledger` normalisé et dédupliqué pour conserver BUY, SELL, OPEN, INCREASE, REDUCE, CLOSE, DEPOSIT, WITHDRAWAL, TRANSFER, FEE, FUNDING, LIQUIDATION, SWAP et autres événements utiles.
+  - [ ] Ajouter un `Position Builder` capable de reconstruire les positions ouvertes, prix d'entrée moyen, quantités, levier, marge, PnL, frais, funding, SL/TP et provenance.
+  - [ ] Ajouter les balances consolidées Wallet / CEX / DEX avec provenance et horodatage.
+  - [ ] Ajouter les snapshots historiques pour conserver l'évolution de l'equity, de la valeur du portefeuille, de l'exposition, de la marge et du PnL.
+  - [ ] Ajouter les statistiques de trading : PnL réalisé/latent, frais, funding, win rate, profit factor, moyennes et historique exploitable pour les graphiques.
+  - [ ] Préparer les commandes CP/1 `portfolio.snapshot`, `portfolio.positions`, `portfolio.history`, `portfolio.statistics`, `portfolio.events`, `portfolio.event.record`, `portfolio.events.import`, `portfolio.sync` et `portfolio.health`.
+  - [ ] Communication Market Data exclusivement via `Portfolio -> Router -> Market Data Collector` pour récupérer les mark prices et valoriser positions/balances.
+  - [ ] Communication Trading exclusivement via le Router : réception des exécutions et ajout d'une capacité de resynchronisation historique côté Trading Engine.
+  - [ ] Communication Supervisor exclusivement via le Router ; aucune connexion directe Supervisor ↔ Portfolio hors CP/1.
+  - [ ] Préparer l'accès du futur Risk Engine aux snapshots/positions du Portfolio via le Router.
+  - [ ] Adapter la page web Portfolio afin qu'elle affiche les données calculées par Portfolio Module plutôt que de reconstruire elle-même l'état depuis Trust Wallet/GMX.
+  - [ ] Ajouter un graphique d'equity basé sur les snapshots SQLite.
+  - [ ] Valider la présence et le comportement de `sqlite3` sur macOS High Sierra / Node.js 16 et prévoir le comportement VPS.
+  - [ ] Tester reconstruction, déduplication, reprise après arrêt, synchronisation et cohérence des calculs.
+
+## Risk Engine
+
+- [ ] **Risk Engine — moteur analytique de représentation du risque**
+  - [ ] Intégrer le prototype Risk Engine comme Engine autonome enregistré auprès du Router en CP/1.
+  - [ ] Conserver un rôle strictement analytique : aucun `APPROVE`, `MODIFY`, `REJECT` et aucune exécution d'ordre dans le Risk Engine.
+  - [ ] Autoriser les requêtes de données vers Market Data Collector exclusivement via le Router.
+  - [ ] Autoriser les requêtes d'indicateurs vers Indicator Engine exclusivement via le Router.
+  - [ ] Autoriser les requêtes Portfolio vers Portfolio Module exclusivement via le Router.
+  - [ ] Fournir au Supervisor des analyses de risque de position, portefeuille et stratégie via CP/1.
+  - [ ] Intégrer les calculs de risque de position, exposition, levier, marge, drawdown, volatilité, VaR historique, Expected Shortfall et scénarios de stress.
+  - [ ] Valider que le Supervisor reste seul responsable de la décision finale de stratégie / action.
+
+## Trading Engine / historique Portfolio
+
+- [ ] Ajouter une sortie d'événement d'exécution normalisée vers `portfolio.event.record` via Router après chaque résultat d'exécution utile.
+- [ ] Ajouter une capacité READ-ONLY `trading.history` ou équivalent pour permettre au Portfolio de reconstruire/rattraper les événements après une interruption.
+- [ ] Garantir l'idempotence des imports afin qu'une resynchronisation ne crée jamais de transaction en double.
+
+## Interface Portfolio v1.8
+
+- [ ] Remplacer progressivement la vue Portfolio actuelle centrée Wallet/GMX par la vue consolidée du Portfolio Module.
+- [ ] Afficher : balances, positions ouvertes, prix d'entrée moyen, quantités, levier, marge utilisée, PnL latent/réalisé, SL/TP connus, exchange/source d'origine, mark price, frais, funding, liquidation et date d'ouverture lorsque disponibles.
+- [ ] Afficher les statistiques calculées par le module et l'equity curve depuis les snapshots.
+- [ ] Le navigateur accède au Portfolio Module via des routes proxy Core authentifiées ; aucun accès navigateur direct au port interne Portfolio.
+
+## Validation v1.8
+
+- [ ] Intégration Portfolio Module + Risk Engine sur `debug` à partir de la v1.7.9 stable.
+- [ ] Tests CP/1 Router ↔ Portfolio ↔ Market Data ↔ Trading Engine ↔ Supervisor.
+- [ ] Tests CP/1 Router ↔ Risk Engine ↔ Market Data / Indicators / Portfolio / Supervisor.
+- [ ] Tests SQLite et persistance après redémarrage / mise à jour / nouveau clone Git.
+- [ ] Tests UI Portfolio sur macOS High Sierra / Firefox cible.
+- [ ] Vérification consommation mémoire / CPU sur MacBook Pro 2011.
+- [ ] Documentation et Wiki mis à jour.
+- [ ] `CHANGELOG.md`, `VERSION`, build et archive v1.8 mis à jour.
+- [ ] Vérification finale avant déclaration **v1.8 STABLE**.
+
+---
+
 ## 📌 Convention de reprise du développement
 
 Au début d'une session de développement :
