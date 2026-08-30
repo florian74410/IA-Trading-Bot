@@ -1,0 +1,114 @@
+name: v1.7.9 Market Data Architecture
+
+on:
+  push:
+    branches: [debug]
+    paths:
+      - '.github/workflows/v179-market-data-architecture.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  integrate-test-package:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout debug
+        uses: actions/checkout@v4
+        with:
+          ref: debug
+          fetch-depth: 1
+          persist-credentials: true
+
+      - name: Apply Market Data architecture
+        run: node .github/scripts/v179_market_data_architecture.js
+
+      - name: Syntax checks
+        run: |
+          node --check builds/v1.7.9/Core/Communication/communication_router_v1.js
+          node --check builds/v1.7.9/MarketData/market_data_service.js
+          node --check builds/v1.7.9/Liquidity/Engine/liquidity_service.js
+          node --check builds/v1.7.9/Indicators/Engine/indicator_service.js
+
+      - name: Verify Router contracts
+        run: |
+          node <<'NODE'
+          const fs=require('fs'),os=require('os'),path=require('path');
+          const R=require('./builds/v1.7.9/Core/Communication/communication_router_v1');
+          const root=fs.mkdtempSync(path.join(os.tmpdir(),'iatb-router-'));
+          fs.mkdirSync(path.join(root,'Parametres'),{recursive:true});
+          const r=new R(root);
+          const caps=r.capabilities();
+          const ids=caps.engines.map(x=>x.id);
+          for(const id of ['indicator','market_data','liquidity','trading']) if(!ids.includes(id)) throw new Error('ROUTER_ENGINE_MISSING:'+id);
+          const md=caps.engines.find(x=>x.id==='market_data');
+          const liq=caps.engines.find(x=>x.id==='liquidity');
+          if(!md.capabilities.includes('market_data.get')) throw new Error('MARKET_DATA_GET_MISSING');
+          if(!liq.capabilities.includes('liquidity.compute')) throw new Error('LIQUIDITY_COMPUTE_MISSING');
+          console.log('ROUTER_CONTRACT_OK');
+          NODE
+
+      - name: Verify no direct Engine-to-Engine market link
+        run: |
+          node <<'NODE'
+          const fs=require('fs');
+          const liq=fs.readFileSync('builds/v1.7.9/Liquidity/Engine/liquidity_service.js','utf8');
+          const ind=fs.readFileSync('builds/v1.7.9/Indicators/Engine/indicator_service.js','utf8');
+          const md=fs.readFileSync('builds/v1.7.9/MarketData/market_data_service.js','utf8');
+          if(liq.includes('market_data_provider')||liq.includes('provider.getCandles')) throw new Error('LIQUIDITY_DIRECT_MARKET_LINK_REMAINS');
+          if(!ind.includes("CP.makeRequest('market_data'")) throw new Error('INDICATOR_NOT_ROUTED_TO_MARKET_DATA');
+          if(!md.includes("CP.makeRequest('liquidity'")) throw new Error('MARKET_DATA_NOT_ROUTED_TO_LIQUIDITY');
+          if(!md.includes("path:'/communication/v1/request'")) throw new Error('MARKET_DATA_BYPASSES_ROUTER');
+          console.log('ENGINE_ROUTING_OK');
+          NODE
+
+      - name: Run v1.7.9 self-test
+        run: node builds/v1.7.9/UserData/self_test.js
+
+      - name: Rebuild UpdateManager patch
+        run: |
+          chmod +x updates/v1.7.9/build_patch.command updates/v1.7.9/test_install.command
+          cd updates/v1.7.9
+          ./build_patch.command
+          shasum -a 256 'Crypto Chart Viewer IA Trader.zip' > 'Crypto Chart Viewer IA Trader.zip.sha256'
+          unzip -tq 'Crypto Chart Viewer IA Trader.zip'
+          ./test_install.command
+
+      - name: Rebuild full v1.7.9 archive
+        run: |
+          mkdir -p archives
+          rm -f archives/IA-Trading-Bot_V1.7.9.zip archives/IA-Trading-Bot_V1.7.9.zip.sha256
+          (
+            cd builds
+            zip -qry ../archives/IA-Trading-Bot_V1.7.9.zip v1.7.9 \
+              -x 'v1.7.9/.node/*' 'v1.7.9/Runtime/*' 'v1.7.9/**/node_modules/*' \
+                 'v1.7.9/Fundamental/Data/*' 'v1.7.9/*.log' 'v1.7.9/**/*.log' \
+                 'v1.7.9/logs.dat' 'v1.7.9/Update/*.zip' 'v1.7.9/.DS_Store' 'v1.7.9/**/.DS_Store'
+          )
+          shasum -a 256 archives/IA-Trading-Bot_V1.7.9.zip > archives/IA-Trading-Bot_V1.7.9.zip.sha256
+          unzip -tq archives/IA-Trading-Bot_V1.7.9.zip
+
+      - name: Commit architecture and refreshed packages
+        run: |
+          git config user.name 'IA-TB Build Bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add builds/v1.7.9/Core/Communication/communication_router_v1.js \
+                  builds/v1.7.9/MarketData \
+                  builds/v1.7.9/Liquidity \
+                  builds/v1.7.9/Indicators \
+                  updates/v1.7.9/Core/Communication/communication_router_v1.js \
+                  updates/v1.7.9/MarketData \
+                  updates/v1.7.9/Liquidity \
+                  updates/v1.7.9/Indicators \
+                  updates/v1.7.9/build_patch.command \
+                  updates/v1.7.9/'Crypto Chart Viewer IA Trader.zip' \
+                  updates/v1.7.9/'Crypto Chart Viewer IA Trader.zip.sha256' \
+                  archives/IA-Trading-Bot_V1.7.9.zip \
+                  archives/IA-Trading-Bot_V1.7.9.zip.sha256
+          if git diff --cached --quiet; then
+            echo 'Nothing to commit.'
+          else
+            git commit -m 'v1.7.9: route Market Data and Liquidity through CP/1 [skip ci]'
+            git push origin HEAD:debug
+          fi

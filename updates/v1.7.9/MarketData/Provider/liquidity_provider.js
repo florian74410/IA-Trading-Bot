@@ -1,0 +1,9 @@
+'use strict';
+/* Liquidity Engine adapter owned by Market Data Collector.
+   The provider speaks CP/1 directly with the Liquidity Engine; the Router is not in this provider path.
+*/
+var http=require('http'),path=require('path'),CP=require('../../Core/Communication/communication_protocol_v1');
+function Provider(opt){opt=opt||{};this.name='Liquidity Engine';this.type='ENGINE';this.transport='CP/1';this.port=+(opt.port||process.env.IATB_LIQUIDITY_PORT||8014);this.root=path.resolve(__dirname,'../..');}
+Provider.prototype.compute=function(args,cb){var token;try{token=CP.ensureSecret(this.root);}catch(e){return cb(e);}var req=CP.makeRequest('liquidity','liquidity.compute',args||{},'analysis'),b=Buffer.from(JSON.stringify(req)),done=false,q=http.request({host:'127.0.0.1',port:this.port,path:'/cp/v1',method:'POST',timeout:12000,headers:{'Content-Type':'application/json','Accept':'application/json','Content-Length':b.length,'X-IATB-CP-Token':token,'X-IATB-CP-Caller':'market_data'}},function(r){var a=[];r.on('data',function(c){a.push(c);});r.on('end',function(){if(done)return;done=true;var o;try{o=JSON.parse(Buffer.concat(a).toString('utf8')||'{}');}catch(e){return cb(new Error('LIQUIDITY_CP_JSON_INVALID'));}if((r.statusCode||500)>=400||o.status==='ERROR'||o.ok===false)return cb(new Error(o.error||(o.data&&o.data.error)||('LIQUIDITY_CP_HTTP_'+r.statusCode)));var v=CP.validateResponse(o,req);if(!v.ok)return cb(new Error(v.errors[0]||'LIQUIDITY_CP_RESPONSE_INVALID'));cb(null,o.data);});});q.on('timeout',function(){q.destroy(new Error('LIQUIDITY_CP_TIMEOUT'));});q.on('error',function(e){if(done)return;done=true;cb(e);});q.end(b);};
+Provider.prototype.status=function(){return{id:'LIQUIDITY_ENGINE',name:this.name,type:this.type,transport:this.transport,port:this.port,default:false};};
+module.exports=Provider;

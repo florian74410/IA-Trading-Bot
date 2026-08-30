@@ -1,0 +1,41 @@
+IA-TB FUNDAMENTAL ENGINE / CORE AI SYNTHESIS v1.7.1
+====================================================
+
+STATUT
+------
+Le Fundamental Engine reste en mode INFORMATION_ONLY et conserve sa base v1.6.8.
+La v1.7.1 active la carte "Synthèse IA" de la page /fundamental via le Core,
+qui possède déjà l'accès sécurisé à la clé OpenAI.
+
+FONCTIONNEMENT
+--------------
+- La clé OpenAI reste chiffrée dans le coffre Core et n'est jamais transmise au Fundamental Engine ni au navigateur.
+- Le Core récupère un contexte compact : statistiques Fundamental + jusqu'à 28 publications récentes.
+- Le texte externe est marqué UNTRUSTED_FUNDAMENTAL_DATA dans le prompt.
+- La sortie OpenAI est contrainte par un schéma JSON strict et ne contient aucune action/commande.
+- La synthèse fournit : titre, aperçu, tonalité, confiance de synthèse, thèmes, points à surveiller et limitations.
+- La confiance décrit la qualité de la synthèse; elle n'est ni un score de stratégie ni une probabilité de gain.
+- Les publications brutes ne sont pas présentées automatiquement comme des événements confirmés.
+
+OPTIMISATION TOKENS
+-------------------
+- contexte borné et nettoyé ;
+- maximum 28 publications et corps tronqués pour la synthèse ;
+- cache en mémoire indexé par SHA-256 du contexte + modèle + langue ;
+- réutilisation pendant 15 minutes lorsque le contexte n'a pas changé ;
+- une collecte qui change réellement le contexte peut déclencher une nouvelle synthèse ;
+- bouton Actualiser disponible pour une demande manuelle.
+
+SECURITE
+--------
+- endpoint authentifié par la session locale ;
+- aucune clé API dans les logs ou la réponse navigateur ;
+- contenu news explicitement non fiable dans les instructions OpenAI ;
+- aucun outil, shell, fichier, SQL ou ordre de trading exposé à cette synthèse ;
+- store=false sur la requête Responses API.
+
+PREPARATION v1.8
+----------------
+Cette Synthèse IA est une vue d'aide pour l'utilisateur. Elle ne devient pas la
+source de vérité du futur Supervisor. En v1.8, le Fundamental Engine sera
+normalisé et exposera ses propres données summary / analysis / evidence via CP/1.

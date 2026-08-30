@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="fr"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer">
+<title>IA-TB · Portfolio</title><link rel="stylesheet" href="/assets/portfolio_v1.0.css"><link rel="stylesheet" href="/assets/navigation_v1.6.2.css">
+</head><body>
+<header class="topbar">
+ <div class="brand">IA-TB · PORTFOLIO</div><span id="version" class="tag">v…</span><span class="tag readonly">READ-ONLY</span>
+ <nav class="nav"><button id="navTrading" class="btn">Trading IA</button><button id="navChart" class="btn">📈 Chart Viewer</button><button class="btn active">📊 Portfolio</button><button id="navFundamental" class="btn">🧭 Fondamental</button><button id="navAdmin" class="btn hide">🛠 ADMIN</button></nav>
+ <div class="spacer"></div><span id="globalState" class="muted">Initialisation…</span><button id="refreshAll" class="btn">↻ Actualiser</button><button id="connectWallet" class="btn primary">Connecter Trust Wallet</button>
+</header>
+<main class="page">
+ <section class="intro"><div><h1>Portfolio</h1><p>Vue consolidée et strictement en lecture seule des actifs et positions connus par IA-TB, quel que soit l'exchange connecté.</p></div><div class="freshness"><span>Dernière actualisation</span><strong id="updatedAt">--</strong></div></section>
+ <section class="metrics">
+  <article class="metric heroMetric"><span>Valorisation Wallet connue</span><strong id="knownValue">$ --</strong><small>ETH + USDC sur Arbitrum One</small></article>
+  <article class="metric"><span>Actifs détectés</span><strong id="assetCount">0</strong><small>soldes positifs suivis</small></article>
+  <article class="metric"><span>Positions ouvertes</span><strong id="positionCount">--</strong><small id="positionSources">exchanges connectés</small></article>
+  <article class="metric"><span>LONG / SHORT</span><strong id="directionCount">-- / --</strong><small>positions vérifiées</small></article>
+  <article class="metric"><span>PnL latent connu</span><strong id="unrealizedPnl">$ --</strong><small>uniquement si fourni par les API</small></article>
+ </section>
+ <section class="sourceGrid">
+  <article class="card sourceCard"><div class="cardHead"><div><span id="walletDot" class="dot"></span><h2>Wallet</h2></div><span id="walletStatus" class="status">Déconnecté</span></div>
+   <div class="rows"><div><span>Réseau</span><strong id="walletNetwork">--</strong></div><div><span>Adresse</span><strong id="walletAddress" class="copyable">--</strong></div><div><span>ETH</span><strong id="walletEth">--</strong></div><div><span>USDC</span><strong id="walletUsdc">--</strong></div><div><span>Total connu</span><strong id="walletTotal">$ --</strong></div></div>
+   <p class="note">La seed et la clé privée restent dans le Wallet. Portfolio ne reçoit que l'adresse publique et les données de lecture nécessaires.</p></article>
+  <article class="card sourceCard"><div class="cardHead"><div><span id="gmxDot" class="dot"></span><h2>GMX · Arbitrum</h2></div><span id="gmxStatus" class="status">Vérification…</span></div>
+   <div class="rows"><div><span>API publique</span><strong id="gmxApi">--</strong></div><div><span>Positions</span><strong id="gmxPositions">Wallet requis</strong></div><div><span>Ordres actifs</span><strong id="gmxOrders">Wallet requis</strong></div><div><span>Actifs wallet détectés</span><strong id="gmxAssets">--</strong></div></div>
+   <p class="note">Lecture uniquement. Les ordres et positions ne peuvent jamais être modifiés depuis Portfolio.</p></article>
+  <article class="card sourceCard"><div class="cardHead"><div><span id="krakenDot" class="dot"></span><h2>Kraken</h2></div><span id="krakenStatus" class="status">Vérification…</span></div>
+   <div class="rows"><div><span>API publique</span><strong id="krakenPublic">--</strong></div><div><span>API privée</span><strong>Non configurée</strong></div><div><span>Positions</span><strong>Non accessibles</strong></div><div><span>Mode</span><strong>Market Data uniquement</strong></div></div>
+   <p class="note">Aucune position Kraken n'est supposée à zéro : tant que l'API privée n'est pas configurée, leur état est déclaré indisponible.</p></article>
+ </section>
+
+ <section class="card positionsCard"><div class="sectionHead"><div><h2>Positions</h2><p>Toutes les positions actuellement lisibles sur les exchanges connectés. Les données spécifiques de l'API restent disponibles dans Détails.</p></div><span class="tag readonly">READ-ONLY</span></div>
+  <div id="exchangeSummaryGrid" class="exchangeSummaryGrid"></div>
+  <div class="tableWrap positionsWrap"><table class="positionsTable"><thead><tr><th>Exchange</th><th>Marché</th><th>Sens</th><th class="num">Taille</th><th class="num">Entrée</th><th class="num">Mark</th><th class="num">Levier</th><th class="num">Collatéral</th><th class="num">PnL latent</th><th class="num">Liquidation</th><th>SL / TP</th><th>État</th><th>Détails</th></tr></thead><tbody id="positionsBody"><tr><td colspan="13" class="empty">Connecte le Wallet pour lire les positions GMX.</td></tr></tbody></table></div>
+ </section>
+
+ <section class="card assetsCard"><div class="sectionHead"><div><h2>Actifs suivis</h2><p>Valorisation locale des actifs actuellement supportés par le connecteur Wallet.</p></div><span id="priceSource" class="tag">Prix --</span></div>
+  <div class="tableWrap"><table><thead><tr><th>Actif</th><th>Source</th><th class="num">Quantité</th><th class="num">Prix USD</th><th class="num">Valeur USD</th></tr></thead><tbody id="assetsBody"><tr><td colspan="5" class="empty">Connecte le Wallet pour afficher les actifs.</td></tr></tbody></table></div>
+ </section>
+ <section class="footNote"><strong>Portfolio v1.7.2 · source de vérité READ-ONLY</strong><span>Portfolio décrit la réalité observée sur Wallet/CEX/DEX. Le futur Supervisor pourra lire ces informations mais aucune commande d'écriture Portfolio ne sera exposée.</span></section>
+</main><script src="/assets/portfolio_controller_v1.0.js"></script></body></html>

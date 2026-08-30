@@ -1,0 +1,9 @@
+{
+  "name": "iatb-userdata-runtime",
+  "private": true,
+  "version": "1.0.0",
+  "description": "IA-TB local persistent user data service",
+  "dependencies": {
+    "better-sqlite3": "8.7.0"
+  }
+}

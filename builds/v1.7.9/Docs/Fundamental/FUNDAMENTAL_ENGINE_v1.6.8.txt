@@ -1,0 +1,25 @@
+IA-TB FUNDAMENTAL ENGINE v1.6.8
+
+Scope:
+- Flux Manager v1: ajout, test, modification, activation/desactivation et suppression des flux RSS, ATOM, WEB et X.
+- Formulaire adaptatif selon le provider.
+- Nouvelles sources media: CoinDesk, Cointelegraph, NewsBTC, Decrypt et BeInCrypto.
+- Social Provider X v1 via X API v2 Recent Search.
+- Bearer Token X stocke exclusivement dans le coffre RSA du Core; jamais dans Fundamental/Data/fundamental.db ni dans les logs.
+- Broker local Core <-> Fundamental protege par une cle de service locale.
+- Flux X initiaux: Federal Reserve, SEC et Donald Trump; actives lors de la migration v1.6.8. Sans Bearer Token ou session deverrouillee ils restent diagnostiquables en PENDING. Truth Social reste PROVIDER_PENDING.
+
+Garde-fous:
+- Fundamental reste INFORMATION_ONLY.
+- Les diagnostics techniques bruts sont conserves.
+- Les URLs manuelles sont limitees a HTTP/HTTPS publics; localhost et plages privees sont refuses.
+- Suppression d un flux: suppression en cascade de ses publications/traductions, avec confirmation UI.
+- Les feeds supprimes sont memorises dans feed_tombstones afin de ne pas etre recrees par les seeds au redemarrage.
+- Aucune strategie de trading n est influencee par ce module.
+
+X / Twitter:
+- Token: Parametres > Secrets/API > X / Twitter Bearer Token.
+- Test: X API v2 Recent Search.
+- Flux par compte: requete from:compte avec exclusion optionnelle des retweets.
+- Flux par requete: jusqu a 512 caracteres.
+- Erreurs visibles telles quelles: X_BEARER_TOKEN_MISSING, X_VAULT_LOCKED_LOGIN_REQUIRED, X_API_HTTP_403, X_API_HTTP_429, etc.

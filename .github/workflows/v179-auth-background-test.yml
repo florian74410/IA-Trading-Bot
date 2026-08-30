@@ -1,0 +1,94 @@
+name: v1.7.9 Auth Background Test
+
+on:
+  push:
+    branches: [debug]
+    paths:
+      - '.github/workflows/v179-auth-background-test.yml'
+      - 'builds/v1.7.9/UserData/auth_background_runtime.js'
+      - 'builds/v1.7.9/UserData/server_entry.js'
+      - 'updates/v1.7.9/UserData/auth_background_runtime.js'
+      - 'updates/v1.7.9/UserData/server_entry.js'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  test-and-package:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout debug
+        uses: actions/checkout@v4
+        with:
+          ref: debug
+          fetch-depth: 1
+          persist-credentials: true
+
+      - name: Verify rendered Auth HTML
+        run: |
+          node <<'NODE'
+          const fs=require('fs'),path=require('path');
+          const root=path.resolve('builds/v1.7.9');
+          const hooks=require(path.join(root,'UserData/runtime_hooks.js'));
+          const bg=require(path.join(root,'UserData/auth_background_runtime.js'));
+          const client={
+            username:'ci-test',
+            getAccount(){return null;},
+            getSetting(){return null;},
+            setSetting(scope,key,value,cb){cb(null,{ok:true});},
+            setAccount(value,mode,cb){cb(null,{ok:true});}
+          };
+          const ctx={root,client};
+          hooks.install(ctx);
+          bg.install(ctx);
+          const html=fs.readFileSync(path.join(root,'Frontend/Pages/app_v1.0.html'),'utf8');
+          if(!html.includes('data-iatb-auth-bg-v179')) throw new Error('AUTH_BG_STYLE_MISSING');
+          if(!html.includes('data:image/jpeg;base64,')) throw new Error('AUTH_BG_DATA_URI_MISSING');
+          if(!html.includes('background-size:cover!important')) throw new Error('AUTH_BG_COVER_MISSING');
+          if(!html.includes('.auth:before{display:none!important')) throw new Error('OLD_PSEUDO_NOT_DISABLED');
+          const m=html.match(/data:image\/jpeg;base64,([A-Za-z0-9+/=]+)/);
+          if(!m || m[1].length < 1000) throw new Error('AUTH_BG_DATA_TOO_SMALL');
+          console.log('AUTH_BACKGROUND_RENDER_OK base64='+m[1].length);
+          NODE
+
+      - name: Run v1.7.9 self-test
+        run: node builds/v1.7.9/UserData/self_test.js
+
+      - name: Rebuild UpdateManager patch
+        run: |
+          chmod +x updates/v1.7.9/build_patch.command updates/v1.7.9/test_install.command
+          cd updates/v1.7.9
+          ./build_patch.command
+          shasum -a 256 'Crypto Chart Viewer IA Trader.zip' > 'Crypto Chart Viewer IA Trader.zip.sha256'
+          unzip -tq 'Crypto Chart Viewer IA Trader.zip'
+          ./test_install.command
+
+      - name: Rebuild full v1.7.9 archive
+        run: |
+          mkdir -p archives
+          rm -f archives/IA-Trading-Bot_V1.7.9.zip archives/IA-Trading-Bot_V1.7.9.zip.sha256
+          (
+            cd builds
+            zip -qry ../archives/IA-Trading-Bot_V1.7.9.zip v1.7.9 \
+              -x 'v1.7.9/.node/*' 'v1.7.9/Runtime/*' 'v1.7.9/**/node_modules/*' \
+                 'v1.7.9/Fundamental/Data/*' 'v1.7.9/*.log' 'v1.7.9/**/*.log' \
+                 'v1.7.9/logs.dat' 'v1.7.9/Update/*.zip' 'v1.7.9/.DS_Store' 'v1.7.9/**/.DS_Store'
+          )
+          shasum -a 256 archives/IA-Trading-Bot_V1.7.9.zip > archives/IA-Trading-Bot_V1.7.9.zip.sha256
+          unzip -tq archives/IA-Trading-Bot_V1.7.9.zip
+
+      - name: Commit refreshed packages
+        run: |
+          git config user.name 'IA-TB Build Bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add updates/v1.7.9/'Crypto Chart Viewer IA Trader.zip' \
+                  updates/v1.7.9/'Crypto Chart Viewer IA Trader.zip.sha256' \
+                  archives/IA-Trading-Bot_V1.7.9.zip \
+                  archives/IA-Trading-Bot_V1.7.9.zip.sha256
+          if git diff --cached --quiet; then
+            echo 'Nothing to commit.'
+          else
+            git commit -m 'v1.7.9: rebuild packages after Auth background fix [skip ci]'
+            git push origin HEAD:debug
+          fi
