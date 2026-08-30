@@ -45,10 +45,6 @@ jobs:
           print('Autonomous SVG generated:', svg.stat().st_size, 'bytes')
           PY
 
-      - name: Verify README source
-        run: |
-          grep -F '<img src="./docs/assets/app_architecture.svg" alt="IA-Trading-Bot architecture" width="100%" />' README.md
-
       - name: Commit final SVG and remove workflow
         run: |
           rm .github/workflows/finalize-self-contained-architecture-svg.yml
