@@ -13,16 +13,28 @@
 - Si le coffre est verrouillé ou si aucune clé n'est configurée, CoinGecko conserve son fonctionnement public/non authentifié.
 - Ajout d'un test CoinGecko depuis Settings et d'un test automatisé dédié dans `Update/v1.7.9/Tests/`.
 
+### Market Data / Blockchain.com
+- Ajout du provider complémentaire `BLOCKCHAIN` au registre multi-provider.
+- Utilisation de l'API publique Blockchain.com Exchange via le WebSocket `prices`, sans authentification utilisateur.
+- Conservation des bougies OHLCV et volumes natifs reçus depuis Blockchain.com ; aucune donnée de volume n'est fabriquée.
+- Provenance explicite : `exchange=BLOCKCHAIN.COM`, `priceSource=BLOCKCHAIN_EXCHANGE_PRICES_SOCKET`, `volumeSource=BLOCKCHAIN_NATIVE` lorsque le volume est positif.
+- Normalisation des symboles au format Blockchain.com (`BTC-USD`, `ETH-EUR`, etc.).
+- Granularités supportées strictement : 60, 300, 900, 3600, 21600 et 86400 secondes ; les timeframes non supportés sont refusés explicitement.
+- État du provider enrichi : connexion, dernière connexion, dernier événement, dernière réussite, dernière erreur, abonnements et séries en cache.
+- Ajout de tests automatisés de normalisation des paires, granularités et conversion OHLCV dans `Update/v1.7.9/Tests/test_blockchain_v1.7.9.js`.
+
 ### Interface
 - Ajout de CoinGecko à la section `Settings > API` avec champ secret masqué, état Configurée/Absente et bouton de test.
+- Blockchain.com n'exige pas de clé pour la lecture des données publiques utilisée par IA-TB v1.7.9 ; aucun nouveau secret n'est donc ajouté dans Settings.
 
 ### Sécurité
-- Réutilisation du mécanisme de coffre RSA existant ; aucun nouveau fichier de secret en clair.
+- Réutilisation du mécanisme de coffre RSA existant pour CoinGecko ; aucun nouveau fichier de secret en clair.
 - Transmission Core → Market Data protégée par la clé de service interne existante et limitée à `127.0.0.1`.
+- Le provider Blockchain.com de cette version utilise uniquement les canaux publics anonymes de données de marché ; aucune fonction de trading/retrait Blockchain.com n'est exposée.
 
 ### État de validation
-- Intégration technique CoinGecko préparée dans `Update/v1.7.9`.
-- Validation sur la machine cible et validation fonctionnelle finale encore requises avant passage de CoinGecko à l'état terminé.
+- Intégrations techniques CoinGecko et Blockchain.com préparées dans `Update/v1.7.9`.
+- Validation sur la machine cible et validation fonctionnelle finale encore requises avant passage de ces providers à l'état terminé.
 
 ## v1.7.8
 
