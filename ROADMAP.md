@@ -64,10 +64,28 @@ Principales évolutions clôturées :
   - [ ] Tests d'intégration et validation sur la machine cible.
   - [ ] Validation fonctionnelle finale Blockchain.com avant passage de la fonction principale à `[x]`.
 
-- [ ] **DefiLlama — API**
-  - Intégration comme source de données complémentaire DeFi.
-  - Normalisation et provenance explicite des données.
-  - État, fraîcheur et erreurs visibles.
+- [ ] **DefiLlama — API** — intégration technique terminée, validation machine cible restante
+  - [x] Provider complémentaire `DEFILLAMA` ajouté au registre multi-provider.
+  - [x] DefiLlama déclaré `candleCapable:false` afin de ne jamais remplacer silencieusement les OHLCV natifs CEX/DEX.
+  - [x] TVL protocoles et chaînes intégrés.
+  - [x] Prix tokens actuels, historiques, chart et variations intégrés.
+  - [x] Données stablecoins intégrées.
+  - [x] Pools de rendement et historiques APY/TVL intégrés.
+  - [x] Volumes DEX et options, open interest, fees et revenue intégrés.
+  - [x] Provenance `DEFILLAMA_PUBLIC_API`, fraîcheur, dernière commande et dernière erreur exposées.
+  - [x] Tests automatiques du provider et de son catalogue de commandes ajoutés.
+  - [ ] Tests d'intégration et validation sur la machine cible.
+  - [ ] Validation fonctionnelle finale DefiLlama avant passage de la fonction principale à `[x]`.
+
+## Catalogue des commandes Market Data
+
+- [x] Catalogue central créé pour Kraken/Reference, Hyperliquid, CoinGecko, Blockchain.com et DefiLlama.
+- [x] Chaque commande indique si elle est `IMPLEMENTED` ou seulement `UPSTREAM_AVAILABLE`.
+- [x] `GET /capabilities` expose la liste complète au runtime.
+- [x] `GET /capabilities?provider=...` expose la liste d'un provider précis.
+- [x] `POST /command` permet l'exécution des commandes analytiques génériques actuellement branchées, notamment DefiLlama.
+- [x] Les commandes privées de compte/trading/retrait restent séparées du catalogue Market Data.
+- [x] Documentation du catalogue ajoutée dans `Update/v1.7.9/MarketData/API_COMMANDS.md`.
 
 > Ces sources API complètent les données de l'application. Elles ne doivent pas remplacer silencieusement les chandeliers ou volumes natifs des CEX/DEX.
 
