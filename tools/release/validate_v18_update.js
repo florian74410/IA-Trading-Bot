@@ -12,17 +12,18 @@ function copyTree(src,dst){mkdir(dst);fs.readdirSync(src).forEach(function(n){va
 function fail(e){console.error(e&&e.stack||e);process.exit(1);}
 try{
  if(!fs.existsSync(ARCHIVE)||!fs.existsSync(PATCH)||!fs.existsSync(TARGET))throw new Error('VALIDATION_INPUT_MISSING');
- var temp=fs.mkdtempSync(path.join(os.tmpdir(),'iatb-v18-'));
+ var patchDigest=sha(PATCH),temp=fs.mkdtempSync(path.join(os.tmpdir(),'iatb-v18-'));
  child.execFileSync('/usr/bin/unzip',['-q',ARCHIVE,'-d',path.join(temp,'extract')]);
  var base=locateBase(path.join(temp,'extract')),work=path.join(temp,'work');copyTree(base,work);
  if(fs.readFileSync(path.join(work,'VERSION'),'utf8').trim()!=='1.7.9')throw new Error('BASE_VERSION_NOT_1.7.9');
  var UpdateManager=require(path.join(work,'Core','Updates','update_manager_v1.0.js'));
  if(typeof UpdateManager!=='function'&&UpdateManager&&typeof UpdateManager.UpdateManager==='function')UpdateManager=UpdateManager.UpdateManager;
  if(typeof UpdateManager!=='function')throw new Error('UPDATE_MANAGER_EXPORT_INVALID');
- var mgr=new UpdateManager(work,'1.7.9');
- mgr.inspectArchive(PATCH,'ci',function(err,preview){
+ var mgr=new UpdateManager(work,'1.7.9'),patchForInstall=path.join(temp,'Crypto Chart Viewer IA Trader.zip');fs.copyFileSync(PATCH,patchForInstall);
+ mgr.inspectArchive(patchForInstall,'ci',function(err,preview){
   if(err)return fail(err);
   if(!preview||!preview.compatibility||preview.compatibility.ok!==true)return fail(new Error('PREVIEW_NOT_COMPATIBLE'));
+  if(preview.archiveSha256!==patchDigest)return fail(new Error('PATCH_SHA_CHANGED'));
   console.log('PREVIEW_OK files='+preview.compatibility.fileCount+' sha256='+preview.archiveSha256);
   mgr.install(preview.token,function(instErr,result){
    if(instErr)return fail(instErr);
@@ -37,7 +38,7 @@ try{
     var a=walk(work),b=walk(TARGET),diff=[];
     Object.keys(a).concat(Object.keys(b)).filter(function(x,i,z){return z.indexOf(x)===i;}).sort().forEach(function(r){if(ignored(r))return;if(r==='Updates/current_release.dat')return;if(a[r]!==b[r])diff.push({path:r,installed:a[r]||null,target:b[r]||null});});
     if(diff.length)throw new Error('INSTALLED_BUILD_MISMATCH '+JSON.stringify(diff.slice(0,30)));
-    var report={schema:1,status:'PASS',fromVersion:'1.7.9',toVersion:'1.8.0',updateManager:'Core/Updates/update_manager_v1.0.js',patchSha256:sha(PATCH),fileCount:preview.compatibility.fileCount,entrypoint:'Core/Server/server_v1.8.js',riskPureTest:'PASS',installedBuildMatchesTarget:true,validatedAt:new Date().toISOString()};
+    var report={schema:1,status:'PASS',fromVersion:'1.7.9',toVersion:'1.8.0',updateManager:'Core/Updates/update_manager_v1.0.js',patchSha256:patchDigest,fileCount:preview.compatibility.fileCount,entrypoint:'Core/Server/server_v1.8.js',riskPureTest:'PASS',installedBuildMatchesTarget:true,validatedAt:new Date().toISOString()};
     var reportPath=path.join(ROOT,'updates','Patch_v1.7.9_to_v1.8.0','VALIDATION_REPORT.json');fs.writeFileSync(reportPath,JSON.stringify(report,null,2)+'\n');
     console.log(JSON.stringify(report,null,2));rm(temp);
    }catch(e){fail(e);}
