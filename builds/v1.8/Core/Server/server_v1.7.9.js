@@ -7,7 +7,7 @@
 var fs=require('fs'),path=require('path');
 var base=path.join(__dirname,'server_v1.0.js');
 var src=fs.readFileSync(base,'utf8');
-function replaceOnce(find,repl,label){var i=src.indexOf(find);if(i<0)throw new Error('V1.7.9_CORE_PATCH_MARKER_MISSING:'+label);if(src.indexOf(find,i+find.length)>=0&&label!=='SETTINGS_APIS_BODY')throw new Error('V1.7.9_CORE_PATCH_MARKER_AMBIGUOUS:'+label);src=src.slice(0,i)+repl+src.slice(i+find.length);}
+function replaceOnce(find,repl,label){var i=src.indexOf(find);if(i<0)throw new Error('V1.7.9_CORE_PATCH_MARKER_MISSING:'+label);if(src.indexOf(find,i+find.length)>=0&&['SETTINGS_APIS_BODY','FX_HOME_HTML'].indexOf(label)<0)throw new Error('V1.7.9_CORE_PATCH_MARKER_AMBIGUOUS:'+label);src=src.slice(0,i)+repl+src.slice(i+find.length);}
 replaceOnce("return{openai:!!s.OPENAI_API_KEY,x:!!s.X_BEARER_TOKEN};","return{openai:!!s.OPENAI_API_KEY,x:!!s.X_BEARER_TOKEN,coingecko:!!s.COINGECKO_API_KEY};",'SECRET_STATUS');
 replaceOnce("function request(method,url,headers,data,cb,timeout){",
 "function internalCoinGeckoKey(req,res){if(!internalRequestOK(req))return json(res,403,{ok:false,error:'INTERNAL_AUTH_FAILED'});var us=unlockedSession();if(!us)return json(res,423,{ok:false,error:'COINGECKO_VAULT_LOCKED_LOGIN_REQUIRED'});var token=getSecret(us,'COINGECKO_API_KEY');return json(res,200,{ok:true,configured:!!token,apiKey:token||''});}\n"+
