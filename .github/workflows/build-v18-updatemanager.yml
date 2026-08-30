@@ -1,0 +1,74 @@
+name: Build and validate v1.8 UpdateManager patch
+
+on:
+  push:
+    branches:
+      - integration/v1.8-updatemanager-validation
+    paths:
+      - .github/workflows/build-v18-updatemanager.yml
+
+permissions:
+  contents: write
+
+jobs:
+  build-validate-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout integration branch
+        uses: actions/checkout@v4
+        with:
+          ref: integration/v1.8-updatemanager-validation
+          fetch-depth: 0
+
+      - name: Use Node.js 16
+        uses: actions/setup-node@v4
+        with:
+          node-version: '16.20.2'
+
+      - name: Verify official v1.7.9 archive checksum
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f archives/IA-Trading-Bot_V1.7.9.zip
+          expected="$(awk '{print $1}' archives/IA-Trading-Bot_V1.7.9.zip.sha256)"
+          actual="$(sha256sum archives/IA-Trading-Bot_V1.7.9.zip | awk '{print $1}')"
+          echo "expected=$expected"
+          echo "actual=$actual"
+          test "$actual" = "$expected"
+
+      - name: Mark build as UpdateManager-generated target
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p builds/v1.8/Reports
+          cat > builds/v1.8/Reports/UPDATE_MANAGER_BUILD_v1.8.txt <<'EOF'
+          IA-Trading-Bot v1.8.0 DEV
+          Build method: official v1.7.9 STABLE archive + UpdateManager v1 patch 1.7.9 -> 1.8.0
+          Entrypoint: Core/Server/server_v1.8.js
+          Risk Engine: integrated through CP/1 / Router, analytical only
+          Validation: generated patch must be accepted and installed by the v1.7.9 UpdateManager; installed code must match builds/v1.8.
+          EOF
+
+      - name: Generate exact UpdateManager patch
+        run: python3 tools/release/build_v18_update.py
+
+      - name: Validate by the real v1.7.9 UpdateManager
+        run: node tools/release/validate_v18_update.js
+
+      - name: Verify generated patch archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          unzip -tq 'updates/Patch_v1.7.9_to_v1.8.0/Crypto Chart Viewer IA Trader.zip'
+          sha256sum -c 'updates/Patch_v1.7.9_to_v1.8.0/Crypto Chart Viewer IA Trader.zip.sha256'
+          cat updates/Patch_v1.7.9_to_v1.8.0/VALIDATION_REPORT.json
+
+      - name: Commit validated patch and generated build marker
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add builds/v1.8/Reports/UPDATE_MANAGER_BUILD_v1.8.txt updates/Patch_v1.7.9_to_v1.8.0
+          git commit -m 'release v1.8: validate UpdateManager patch and build' || exit 0
+          git push origin HEAD:integration/v1.8-updatemanager-validation
