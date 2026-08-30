@@ -10,7 +10,7 @@ ROOT="$STAGE/$APP"
 PAYLOAD="$ROOT/payload"
 rm -rf "$STAGE" "$OUT"
 mkdir -p "$PAYLOAD"
-for item in Core Frontend UserData AddOns services launcher.js install_runtime.command; do
+for item in Core Frontend UserData AddOns services Indicators MarketData Liquidity launcher.js install_runtime.command; do
   [ -e "$PWD/$item" ] || { echo "ERREUR: élément patch manquant: $item"; exit 1; }
   cp -R "$PWD/$item" "$PAYLOAD/"
 done
