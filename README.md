@@ -3,7 +3,7 @@
 Application modulaire de trading crypto : CEX/DEX, Market Data, Chart Viewer, Indicator Engine, Strategy Engine, Fundamental Engine, gestion centralisée des API et Update Manager versionné.
 
 <p align="center">
-  <img src="docs/assets/architecture-overview.png" alt="IA-Trading-Bot architecture" width="100%" />
+  <img src="docs/assets/architecture-overview.svg" alt="IA-Trading-Bot architecture" width="100%" />
 </p>
 
 ## Architecture générale
@@ -79,29 +79,17 @@ Principales évolutions clôturées :
   - [ ] Tests d'intégration et validation sur la machine cible.
   - [ ] Validation fonctionnelle finale CoinGecko avant passage de la fonction principale à `[x]`.
 
-- [ ] **Blockchain.com — API** — intégration technique terminée, validation machine cible restante
-  - [x] Provider `BLOCKCHAIN` ajouté au registre multi-provider.
-  - [x] Flux public anonyme Blockchain.com Exchange utilisé via le canal WebSocket `prices`.
-  - [x] Bougies OHLCV et volumes natifs conservés sans fabrication de données.
-  - [x] Normalisation symbole / timeframe et provenance `BLOCKCHAIN.COM` explicite.
-  - [x] Timeframes non supportés refusés explicitement au lieu d'être approximés.
-  - [x] État, fraîcheur, connexion, dernière erreur et nombre de séries en cache exposés.
-  - [x] Tests automatiques de normalisation, granularités et format OHLCV ajoutés.
-  - [ ] Tests d'intégration et validation sur la machine cible.
-  - [ ] Validation fonctionnelle finale Blockchain.com avant passage de la fonction principale à `[x]`.
+- [ ] **Blockchain.com — API**
+  - Intégration comme source de données complémentaire.
+  - Normalisation et provenance explicite des données.
+  - État, fraîcheur et erreurs visibles.
 
-- [ ] **DefiLlama — API** — intégration technique terminée, validation machine cible restante
-  - [x] Provider complémentaire `DEFILLAMA` ajouté au registre multi-provider.
-  - [x] DefiLlama déclaré `candleCapable:false` afin de ne jamais remplacer silencieusement les OHLCV natifs CEX/DEX.
-  - [x] TVL protocoles et chaînes intégrés.
-  - [x] Prix tokens actuels, historiques, chart et variations intégrés.
-  - [x] Données stablecoins intégrées.
-  - [x] Pools de rendement et historiques APY/TVL intégrés.
-  - [x] Volumes DEX et options, open interest, fees et revenue intégrés.
-  - [x] Provenance `DEFILLAMA_PUBLIC_API`, fraîcheur, dernière commande et dernière erreur exposées.
-  - [x] Tests automatiques du provider et de son catalogue de commandes ajoutés.
-  - [ ] Tests d'intégration et validation sur la machine cible.
-  - [ ] Validation fonctionnelle finale DefiLlama avant passage de la fonction principale à `[x]`.
+- [ ] **DefiLlama — API**
+  - Intégration comme source de données complémentaire DeFi.
+  - Normalisation et provenance explicite des données.
+  - État, fraîcheur et erreurs visibles.
+
+> Ces sources API complètent les données de l'application. Elles ne doivent pas remplacer silencieusement les chandeliers ou volumes natifs des CEX/DEX.
 
 ## Market Data Collector / prix consensus
 
@@ -121,10 +109,6 @@ Principales évolutions clôturées :
 - [x] `GET /capabilities` expose la liste complète au runtime.
 - [x] `GET /capabilities?provider=...` expose la liste d'un provider précis.
 - [x] `POST /command` permet l'exécution des commandes analytiques génériques actuellement branchées, notamment DefiLlama.
-- [x] Les commandes privées de compte/trading/retrait restent séparées du catalogue Market Data.
-- [x] Documentation du catalogue ajoutée dans `Update/v1.7.9/MarketData/API_COMMANDS.md`.
-
-> Ces sources API complètent les données de l'application. Elles ne doivent pas remplacer silencieusement les chandeliers ou volumes natifs des CEX/DEX.
 
 ## Validation v1.7.9
 
@@ -182,7 +166,7 @@ La documentation officielle est versionnée dans [`docs/wiki`](docs/wiki/Home.md
 - [Settings / API](docs/wiki/Settings-API.md)
 - [Update Manager](docs/wiki/Update-Manager.md)
 - [Sécurité](docs/wiki/Security.md)
-- [Roadmap](ROADMAP.md)
+- [Roadmap](docs/wiki/Roadmap.md)
 
 ## Versionnage
 
