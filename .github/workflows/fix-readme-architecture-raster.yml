@@ -1,0 +1,40 @@
+name: Fix README architecture raster
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - '.github/workflows/fix-readme-architecture-raster.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Point README to raster asset
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('README.md')
+          text = p.read_text(encoding='utf-8')
+          text = text.replace('src="docs/assets/app_architecture.svg"', 'src="docs/assets/app_architecture.jpg"')
+          text = text.replace('src="./docs/assets/app_architecture.svg"', 'src="./docs/assets/app_architecture.jpg"')
+          p.write_text(text, encoding='utf-8')
+          PY
+          grep -F 'app_architecture.jpg' README.md
+
+      - name: Commit and remove temporary workflow
+        run: |
+          rm .github/workflows/fix-readme-architecture-raster.yml
+          git config user.name "IA-TB Release Builder"
+          git config user.email "actions@users.noreply.github.com"
+          git add README.md .github/workflows/fix-readme-architecture-raster.yml
+          git commit -m "docs: render application architecture directly in README"
+          git push origin main
