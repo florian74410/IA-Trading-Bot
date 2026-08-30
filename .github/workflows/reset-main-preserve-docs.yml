@@ -1,0 +1,59 @@
+name: Reset main preserving documentation
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - '.github/workflows/reset-main-preserve-docs.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  reset:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Verify save branch exists
+        run: |
+          git fetch origin save:refs/remotes/origin/save
+          test "$(git rev-parse origin/save)" = "797a2cc899d982e56561571915864c3d057db9fe"
+
+      - name: Delete all branches except main and save
+        run: |
+          git ls-remote --heads origin | while read -r sha ref; do
+            branch="${ref#refs/heads/}"
+            if [ "$branch" != "main" ] && [ "$branch" != "save" ]; then
+              echo "Deleting branch: $branch"
+              git push origin --delete "$branch"
+            fi
+          done
+
+      - name: Format main while preserving documentation
+        run: |
+          git config user.name "IA-TB Repository Reset"
+          git config user.email "actions@users.noreply.github.com"
+
+          for entry in .* *; do
+            [ "$entry" = "." ] && continue
+            [ "$entry" = ".." ] && continue
+            [ "$entry" = ".git" ] && continue
+            case "$entry" in
+              Docs|docs|README.md|ROADMAP.md)
+                echo "Preserving $entry"
+                ;;
+              *)
+                if git ls-files --error-unmatch "$entry" >/dev/null 2>&1 || git ls-files "$entry" | grep -q .; then
+                  git rm -r -f --ignore-unmatch "$entry"
+                fi
+                ;;
+            esac
+          done
+
+          git status --short
+          git commit -m "chore: reset main and preserve documentation"
+          git push origin main
