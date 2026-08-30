@@ -77,10 +77,21 @@ Principales évolutions clôturées :
   - [ ] Tests d'intégration et validation sur la machine cible.
   - [ ] Validation fonctionnelle finale DefiLlama avant passage de la fonction principale à `[x]`.
 
+## Market Data Collector / prix consensus
+
+- [x] Kraken est une source explicite du Market Data Collector pour OHLCV et prix live.
+- [x] GMX est intégré comme source explicite du Market Data Collector pour OHLC et prix Oracle ; aucun volume GMX n'est fabriqué.
+- [x] Endpoint `GET /price/consensus` ajouté ; sources par défaut : Kraken + GMX.
+- [x] Prix consensus calculé par moyenne des sources valides avec filtre d'outliers autour de la médiane à partir de 3 sources.
+- [x] La réponse conserve les prix individuels, la provenance, le nombre de sources et le spread entre sources.
+- [x] Test automatisé du calcul de consensus ajouté.
+- [ ] Affichage UI du prix consensus et des prix sources à intégrer/valider.
+- [ ] Validation réseau et machine cible Kraken + GMX.
+
 ## Catalogue des commandes Market Data
 
-- [x] Catalogue central créé pour Kraken/Reference, Hyperliquid, CoinGecko, Blockchain.com et DefiLlama.
-- [x] Chaque commande indique si elle est `IMPLEMENTED` ou seulement `UPSTREAM_AVAILABLE`.
+- [x] Catalogue central créé pour GMX, Kraken/Reference, Hyperliquid, CoinGecko, Blockchain.com et DefiLlama, avec visibilité des connecteurs historiques Binance/Coinbase/OKX.
+- [x] Chaque commande indique si elle est `IMPLEMENTED`, `LEGACY_IMPLEMENTED` ou seulement `UPSTREAM_AVAILABLE`.
 - [x] `GET /capabilities` expose la liste complète au runtime.
 - [x] `GET /capabilities?provider=...` expose la liste d'un provider précis.
 - [x] `POST /command` permet l'exécution des commandes analytiques génériques actuellement branchées, notamment DefiLlama.
