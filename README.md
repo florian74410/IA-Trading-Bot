@@ -79,10 +79,16 @@ Principales évolutions clôturées :
   - [ ] Tests d'intégration et validation sur la machine cible.
   - [ ] Validation fonctionnelle finale CoinGecko avant passage de la fonction principale à `[x]`.
 
-- [ ] **Blockchain.com — API**
-  - Intégration comme source de données complémentaire.
-  - Normalisation et provenance explicite des données.
-  - État, fraîcheur et erreurs visibles.
+- [ ] **Blockchain.com — API** — intégration technique terminée, validation machine cible restante
+  - [x] Provider `BLOCKCHAIN` ajouté au registre multi-provider.
+  - [x] Flux public anonyme Blockchain.com Exchange utilisé via le canal WebSocket `prices`.
+  - [x] Bougies OHLCV et volumes natifs conservés sans fabrication de données.
+  - [x] Normalisation symbole / timeframe et provenance `BLOCKCHAIN.COM` explicite.
+  - [x] Timeframes non supportés refusés explicitement au lieu d'être approximés.
+  - [x] État, fraîcheur, connexion, dernière erreur et nombre de séries en cache exposés.
+  - [x] Tests automatiques de normalisation, granularités et format OHLCV ajoutés.
+  - [ ] Tests d'intégration et validation sur la machine cible.
+  - [ ] Validation fonctionnelle finale Blockchain.com avant passage de la fonction principale à `[x]`.
 
 - [ ] **DefiLlama — API**
   - Intégration comme source de données complémentaire DeFi.
