@@ -1,84 +1,61 @@
-# Connecteurs CEX / DEX
+# Connecteurs CEX / DEX et sources de données
 
-Cette page recense les règles communes appliquées aux connecteurs de IA-TB.
+Cette page recense les règles communes appliquées aux connecteurs et distingue les exchanges des sources analytiques complémentaires.
 
-## Contrat minimum d'un connecteur
+## Contrat minimum d'un CEX / DEX
 
-Chaque nouveau CEX ou DEX doit être intégré comme un bloc cohérent comprenant, lorsque la plateforme le permet :
+Chaque nouveau CEX ou DEX doit traiter, lorsque la plateforme le permet : marchés/paires, prix, OHLC/OHLCV, volumes propres à la plateforme, health check, intégration Market Data, Chart Viewer, paramètres privés dans `Settings > API` et test de connexion lorsque pertinent.
 
-- marchés / paires ;
-- prix ;
-- OHLC / OHLCV ;
-- volumes propres à la plateforme ;
-- état du provider / health check ;
-- intégration Market Data ;
-- intégration Chart Viewer ;
-- paramètres privés dans `Settings > API` ;
-- test de connexion lorsque pertinent.
-
-La provenance des données doit toujours rester identifiable. Un `BTC/USD Coinbase` ne doit pas être mélangé silencieusement avec un `BTC/USDT Binance`.
+La provenance doit toujours rester identifiable. Deux marchés proches ne sont pas fusionnés silencieusement.
 
 ## Types de providers
 
-Les connecteurs de données peuvent utiliser différents modes de transport. Depuis la v1.7.8, IA-TB reconnaît le type `SOCKET` pour les providers reposant sur un flux WebSocket persistant. Une API HTTP peut être utilisée en parallèle pour l'historique ou les métadonnées sans changer la catégorie du provider temps réel.
+IA-TB utilise des providers API et `SOCKET`. `SOCKET` désigne un flux WebSocket persistant ; HTTP peut rester utilisé pour l'historique ou les métadonnées.
 
-## Connecteurs actuellement prévus / intégrés
+## Sources Exchange / trading
 
 ### Binance
 
-- Type : CEX
-- Market Data : oui
-- OHLCV : oui
-- Volume : oui
-- Chart Viewer : oui
-- Paramètres privés : `Settings > API`
-
-### GMX
-
-- Type : DEX
-- Market Data : oui
-- Données propres au protocole utilisées lorsque disponibles
-- Chart Viewer : oui
-- Paramètres privés : `Settings > API` lorsque nécessaires
-
-### Kraken
-
-- Type : CEX
-- Market Data : oui
-- Provider de référence par défaut du registre Market Data
-- Add-on Kraken conservé dans le build
+CEX historique avec Market Data, OHLCV, volumes, Chart Viewer et paramètres privés centralisés.
 
 ### Coinbase
 
-- Type : CEX
-- Market Data : oui
-- OHLCV : oui
-- Volume : oui
-- Chart Viewer : oui
-- Paramètres privés : `Settings > API`
+CEX historique avec Market Data, OHLCV, volumes, Chart Viewer et paramètres privés centralisés.
 
 ### OKX
 
-- Type : CEX
-- Market Data : oui
-- OHLCV : oui
-- Volume : oui
-- Chart Viewer : oui
-- Paramètres privés : `Settings > API`
+CEX historique avec Market Data, OHLCV, volumes, Chart Viewer et paramètres privés centralisés.
+
+### Kraken
+
+CEX et source explicite du Market Data Collector v1.7.9. Kraken fournit OHLCV et prix live et reste le provider de référence du registre actuel.
+
+### GMX
+
+DEX et source explicite du Collector v1.7.9 pour OHLC et prix Oracle. Aucun volume GMX absent n'est fabriqué. Les paramètres privés restent dans `Settings > API` lorsqu'ils sont nécessaires.
 
 ### Hyperliquid
 
-- Type : DEX / plateforme de trading on-chain
-- Provider Market Data : `SOCKET`
-- Première intégration `SOCKET` : v1.7.8
-- Historique OHLCV : `candleSnapshot`
-- Temps réel : WebSocket `candle`
-- Abonnements provider disponibles : `trades`, `l2Book`
-- Volumes natifs conservés avec provenance Hyperliquid
-- État de connexion et fraîcheur exposés par `/providers` et `/health`
+DEX / plateforme on-chain et premier provider Market Data `SOCKET` depuis la v1.7.8. Historique via `candleSnapshot`, temps réel via WebSocket `candle`, abonnements `trades` et `l2Book`, volumes natifs conservés et état de connexion exposé.
+
+## Sources complémentaires v1.7.9
+
+### CoinGecko
+
+Provider API complémentaire `COINGECKO`. Sa provenance est séparée des CEX/DEX et aucun volume d'exchange n'est inventé. La clé éventuelle est configurée dans `Settings > API` et transmise au Market Data uniquement en mémoire.
+
+### Blockchain.com
+
+Provider `BLOCKCHAIN`. L'implémentation actuelle utilise le flux public Blockchain.com Exchange avec OHLCV/volumes natifs et refus explicite des granularités non supportées. Un travail v1.7.9 reste prévu pour recentrer la source sur le rôle Bitcoin / on-chain retenu.
+
+### DefiLlama
+
+Provider analytique `DEFILLAMA`, déclaré `candleCapable:false`. Il fournit notamment TVL, prix tokens, stablecoins, rendement, volumes DEX/options, open interest, fees et revenue, sans remplacer les chandeliers natifs des exchanges.
+
+## Source virtuelle ƒx
+
+`ƒx Consensus` n'est ni un CEX ni un DEX. C'est une source virtuelle calculée dans le Market Data Collector à partir de plusieurs sources compatibles. Elle conserve la provenance des contributions et n'invente aucune donnée manquante.
 
 ## Ajout d'un futur connecteur
 
-L'ajout d'un nouveau CEX/DEX n'est pas considéré comme terminé tant que son Market Data, ses données OHLC/OHLCV, ses volumes et sa documentation Wiki n'ont pas été traités selon le protocole de release.
-
-Pour un futur provider `SOCKET`, la documentation doit aussi préciser au minimum : URL/transport, types d'abonnements, stratégie de reconnexion, fraîcheur du dernier événement et comportement de repli historique.
+Un nouveau CEX/DEX n'est considéré terminé que lorsque ses données, sa provenance, son intégration UI pertinente, ses diagnostics, ses tests et sa documentation ont été traités. Pour un provider `SOCKET`, documenter également le transport, les abonnements, la reconnexion, la fraîcheur et le repli historique.
