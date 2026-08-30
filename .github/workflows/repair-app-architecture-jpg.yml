@@ -18,48 +18,39 @@ jobs:
           ref: main
           fetch-depth: 0
 
-      - name: Decode Base64 text into real JPEG bytes
+      - name: Install Pillow
+        run: python3 -m pip install --quiet pillow
+
+      - name: Rebuild truncated JPEG
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          import base64, re
+          from PIL import Image, ImageFile
 
           p = Path('docs/assets/app_architecture.jpg')
           raw = p.read_bytes()
           print('stored size:', len(raw))
+          if not raw.startswith(b'\xff\xd8'):
+              raise SystemExit('No JPEG SOI marker')
 
-          if raw.startswith(b'\xff\xd8'):
-              decoded = raw
-              print('File is already binary JPEG')
-          else:
-              try:
-                  text = raw.decode('ascii')
-              except UnicodeDecodeError:
-                  raise SystemExit('File is neither JPEG bytes nor ASCII Base64')
-              compact = re.sub(r'\s+', '', text)
-              try:
-                  decoded = base64.b64decode(compact, validate=True)
-              except Exception as exc:
-                  raise SystemExit(f'Base64 decode failed: {exc}')
+          ImageFile.LOAD_TRUNCATED_IMAGES = True
+          with Image.open(p) as im:
+              print('decoded source:', im.format, im.size, im.mode)
+              rgb = im.convert('RGB')
+              rgb.save(p, 'JPEG', quality=90, optimize=True, progressive=False)
 
-          if not decoded.startswith(b'\xff\xd8'):
-              raise SystemExit('Decoded payload has no JPEG SOI marker')
-          eoi = decoded.rfind(b'\xff\xd9')
-          if eoi < 0:
-              raise SystemExit('Decoded payload has no JPEG EOI marker')
-          decoded = decoded[:eoi+2]
-          p.write_bytes(decoded)
-          print('decoded JPEG size:', len(decoded))
-          print('SOI:', decoded[:2].hex(), 'EOI:', decoded[-2:].hex())
+          fixed = p.read_bytes()
+          if not fixed.startswith(b'\xff\xd8') or not fixed.endswith(b'\xff\xd9'):
+              raise SystemExit('Rebuilt JPEG markers invalid')
+          with Image.open(p) as check:
+              check.verify()
+          print('rebuilt size:', len(fixed))
+          print('SOI:', fixed[:2].hex(), 'EOI:', fixed[-2:].hex())
           PY
           file docs/assets/app_architecture.jpg
-          if command -v identify >/dev/null 2>&1; then
-            identify docs/assets/app_architecture.jpg
-          fi
 
       - name: Verify README uses JPEG
-        run: |
-          grep -F 'docs/assets/app_architecture.jpg' README.md
+        run: grep -F 'docs/assets/app_architecture.jpg' README.md
 
       - name: Commit repaired image and cleanup
         run: |
@@ -67,5 +58,5 @@ jobs:
           git config user.name "IA-TB Release Builder"
           git config user.email "actions@users.noreply.github.com"
           git add docs/assets/app_architecture.jpg .github/workflows/repair-app-architecture-jpg.yml
-          git commit -m "assets: decode application architecture JPEG"
+          git commit -m "assets: reconstruct application architecture JPEG"
           git push origin main
