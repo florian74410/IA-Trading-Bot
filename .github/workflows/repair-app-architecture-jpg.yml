@@ -18,36 +18,54 @@ jobs:
           ref: main
           fetch-depth: 0
 
-      - name: Repair JPEG container
+      - name: Decode Base64 text into real JPEG bytes
         run: |
           python3 - <<'PY'
           from pathlib import Path
+          import base64, re
+
           p = Path('docs/assets/app_architecture.jpg')
-          data = p.read_bytes()
-          soi = data.find(b'\xff\xd8')
-          eoi = data.rfind(b'\xff\xd9')
-          if soi < 0 or eoi < 0 or eoi <= soi:
-              raise SystemExit('Invalid JPEG markers')
-          fixed = data[soi:eoi+2]
-          p.write_bytes(fixed)
-          print('old size:', len(data))
-          print('new size:', len(fixed))
-          print('SOI:', fixed[:2].hex(), 'EOI:', fixed[-2:].hex())
+          raw = p.read_bytes()
+          print('stored size:', len(raw))
+
+          if raw.startswith(b'\xff\xd8'):
+              decoded = raw
+              print('File is already binary JPEG')
+          else:
+              try:
+                  text = raw.decode('ascii')
+              except UnicodeDecodeError:
+                  raise SystemExit('File is neither JPEG bytes nor ASCII Base64')
+              compact = re.sub(r'\s+', '', text)
+              try:
+                  decoded = base64.b64decode(compact, validate=True)
+              except Exception as exc:
+                  raise SystemExit(f'Base64 decode failed: {exc}')
+
+          if not decoded.startswith(b'\xff\xd8'):
+              raise SystemExit('Decoded payload has no JPEG SOI marker')
+          eoi = decoded.rfind(b'\xff\xd9')
+          if eoi < 0:
+              raise SystemExit('Decoded payload has no JPEG EOI marker')
+          decoded = decoded[:eoi+2]
+          p.write_bytes(decoded)
+          print('decoded JPEG size:', len(decoded))
+          print('SOI:', decoded[:2].hex(), 'EOI:', decoded[-2:].hex())
           PY
           file docs/assets/app_architecture.jpg
           if command -v identify >/dev/null 2>&1; then
             identify docs/assets/app_architecture.jpg
           fi
 
-      - name: Verify README uses repaired JPEG
+      - name: Verify README uses JPEG
         run: |
           grep -F 'docs/assets/app_architecture.jpg' README.md
 
-      - name: Commit repaired image
+      - name: Commit repaired image and cleanup
         run: |
           rm .github/workflows/repair-app-architecture-jpg.yml
           git config user.name "IA-TB Release Builder"
           git config user.email "actions@users.noreply.github.com"
           git add docs/assets/app_architecture.jpg .github/workflows/repair-app-architecture-jpg.yml
-          git commit -m "assets: repair application architecture JPEG"
+          git commit -m "assets: decode application architecture JPEG"
           git push origin main
