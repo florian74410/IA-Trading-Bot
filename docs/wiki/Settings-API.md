@@ -1,66 +1,41 @@
 # Settings / API
 
-`Settings > API` est l'emplacement unique de configuration des informations nécessaires aux connecteurs CEX / DEX.
+`Settings > API` est l'emplacement unique de configuration des informations d'authentification nécessaires aux connecteurs et providers.
 
 ## Règle obligatoire
 
-Toute information requise par un connecteur doit être paramétrable ici :
-
-- API Key ;
-- Secret ;
-- Passphrase ;
-- Token ;
-- identifiant / Key Name ;
-- clé privée lorsque nécessaire ;
-- endpoint ou mode particulier lorsque nécessaire.
-
-Aucun secret ne doit être codé en dur dans l'application.
+Toute information privée requise doit être paramétrable ici : API Key, Secret, Passphrase, Token, identifiant / Key Name, clé privée, endpoint ou mode particulier lorsque nécessaire. Aucun secret ne doit être codé en dur dans l'application.
 
 ## Données publiques et fonctions privées
 
-Lorsqu'une plateforme permet d'utiliser ses Market Data publiques sans authentification, IA-TB doit pouvoir récupérer ces données sans exiger de clé privée.
+Lorsqu'une plateforme autorise ses Market Data publiques sans authentification, IA-TB doit pouvoir les récupérer sans exiger de clé privée. Les identifiants privés ne sont utilisés que pour les fonctions qui les nécessitent.
 
-Les identifiants API servent uniquement aux fonctions qui le nécessitent, par exemple :
+## CoinGecko — v1.7.9
 
-- compte ;
-- portefeuille ;
-- positions ;
-- ordres ;
-- trading privé.
+CoinGecko peut recevoir une clé API depuis `Settings > API`. La clé est stockée dans le coffre RSA existant et n'est pas écrite en clair dans la configuration Market Data.
+
+Lorsqu'elle est nécessaire au provider, elle est transmise au service Market Data uniquement en mémoire via le canal interne authentifié. Le provider expose son état d'authentification sans exposer la valeur du secret.
+
+## OKX
+
+Paramètres privés selon le mode utilisé : API Key, Secret Key, Passphrase et mode réel / démo lorsque applicable.
+
+## Coinbase
+
+Paramètres privés selon le type de clé : identifiant / Key Name, clé privée et paramètres supplémentaires imposés par l'API retenue si nécessaire.
+
+## Binance / GMX
+
+Leurs paramètres restent centralisés dans cette même section selon les besoins de chaque connecteur.
+
+## Providers publics complémentaires
+
+Blockchain.com et DefiLlama utilisent dans l'intégration v1.7.9 des données publiques pour les fonctions actuellement branchées. Ils ne doivent pas demander artificiellement un secret lorsqu'une commande publique n'en a pas besoin.
 
 ## Permissions
 
-Principe de moindre privilège : seules les permissions réellement nécessaires doivent être activées.
-
-Par défaut, une permission de retrait ne doit pas être exigée pour le fonctionnement normal de IA-TB.
-
-## Connecteurs
-
-### OKX
-
-Paramètres privés à prévoir selon le mode utilisé :
-
-- API Key ;
-- Secret Key ;
-- Passphrase ;
-- mode réel / démo lorsque applicable.
-
-### Coinbase
-
-Paramètres privés à prévoir selon le type de clé utilisé :
-
-- identifiant / Key Name ;
-- clé privée ;
-- autres paramètres imposés par l'API retenue si nécessaire.
-
-### Binance / GMX
-
-Leurs paramètres restent centralisés dans la même section selon les besoins de chaque connecteur.
+Le principe du moindre privilège s'applique. Une permission de retrait ne doit pas être exigée pour le fonctionnement normal de IA-TB, et les commandes privées de compte/trading/retrait restent séparées du catalogue Market Data.
 
 ## Test de connexion
 
-Lorsqu'un connecteur possède des paramètres privés, l'interface doit proposer un moyen de vérifier la configuration et afficher un état clair, par exemple :
-
-- connecté ;
-- non configuré ;
-- erreur.
+Lorsqu'un connecteur possède des paramètres privés, l'interface doit permettre de distinguer clairement les états connecté, non configuré et erreur. Les diagnostics ne doivent jamais renvoyer le secret lui-même.
