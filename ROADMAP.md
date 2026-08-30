@@ -37,7 +37,7 @@ Principales évolutions clôturées :
 
 # 🚧 v1.7.9 — EN DÉVELOPPEMENT
 
-**Progression fonctionnelle validée : 0 / 3**
+**Progression fonctionnelle validée : 0 / 4**
 
 ## Flux de données prévus
 
@@ -117,6 +117,18 @@ Principales évolutions clôturées :
 - [x] Documentation du catalogue et de la source virtuelle `ƒx` ajoutée dans `Update/v1.7.9/MarketData/API_COMMANDS.md`.
 
 > Ces sources API complètent les données de l'application. Elles ne doivent pas remplacer silencieusement les chandeliers ou volumes natifs des CEX/DEX.
+
+## Authentification / inscription
+
+- [ ] **Écran d'authentification unifié** — intégration en version de test `debug`, validation restante
+  - [x] Le formulaire affiché par défaut reste toujours le formulaire de connexion, y compris lorsque la base utilisateur ne contient encore aucun compte.
+  - [x] Ajout d'un libellé/lien cliquable `S'inscrire` depuis le formulaire de connexion.
+  - [x] Bascule dans le même panneau entre les modes `Connexion` et `Inscription`, sans page d'authentification séparée.
+  - [x] Ajout du lien inverse `Déjà un compte ? Se connecter` en mode inscription.
+  - [x] Le backend conserve la règle actuelle : une installation locale ne crée pas un second compte si un compte local existe déjà.
+  - [ ] Vérifier visuellement le formulaire sur macOS High Sierra / Firefox cible.
+  - [ ] Tester connexion, première inscription, refus d'une seconde inscription et récupération de mot de passe.
+  - [ ] Validation fonctionnelle finale avant passage de la fonction principale à `[x]`.
 
 ## Validation v1.7.9
 
