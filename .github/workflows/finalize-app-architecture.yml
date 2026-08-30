@@ -19,16 +19,29 @@ jobs:
           ref: main
           fetch-depth: 0
           persist-credentials: true
-      - name: Validate JPEG
+      - name: Repair and validate JPEG
         run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('docs/assets/app_architecture.jpg')
+          b=p.read_bytes()
+          if not b.startswith(b'\xff\xd8'):
+              raise SystemExit('JPEG SOI marker invalid')
+          end=b.find(b'\xff\xd9',2)
+          if end < 0:
+              raise SystemExit('JPEG EOI marker missing')
+          b=b[:end+2]
+          p.write_bytes(b)
+          print('JPEG repaired bytes:',len(b))
+          PY
           file docs/assets/app_architecture.jpg
           file docs/assets/app_architecture.jpg | grep -qi 'JPEG image data'
           python3 - <<'PY'
           from pathlib import Path
           b=Path('docs/assets/app_architecture.jpg').read_bytes()
           if not (b.startswith(b'\xff\xd8') and b.endswith(b'\xff\xd9')):
-              raise SystemExit('JPEG markers invalid')
-          print('JPEG bytes:', len(b))
+              raise SystemExit('JPEG markers invalid after repair')
+          print('JPEG markers: OK')
           PY
       - name: Update README
         run: |
@@ -45,11 +58,11 @@ jobs:
           p.write_text(s,encoding='utf-8')
           PY
           grep -F 'src="./docs/assets/app_architecture.jpg"' README.md
-      - name: Commit final README
+      - name: Commit final image and README
         run: |
           rm -f .github/workflows/finalize-app-architecture.yml
           git config user.name 'IA-TB Asset Builder'
           git config user.email 'actions@users.noreply.github.com'
-          git add README.md .github/workflows/finalize-app-architecture.yml
+          git add README.md docs/assets/app_architecture.jpg .github/workflows/finalize-app-architecture.yml
           git commit -m 'docs: use application architecture image in README'
           git push origin HEAD:main
