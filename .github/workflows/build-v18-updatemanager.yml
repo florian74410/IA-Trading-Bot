@@ -60,7 +60,7 @@ jobs:
         run: |
           set -euo pipefail
           unzip -tq 'updates/Patch_v1.7.9_to_v1.8.0/Crypto Chart Viewer IA Trader.zip'
-          sha256sum -c 'updates/Patch_v1.7.9_to_v1.8.0/Crypto Chart Viewer IA Trader.zip.sha256'
+          (cd 'updates/Patch_v1.7.9_to_v1.8.0' && sha256sum -c 'Crypto Chart Viewer IA Trader.zip.sha256')
           cat updates/Patch_v1.7.9_to_v1.8.0/VALIDATION_REPORT.json
 
       - name: Commit validated patch and generated build marker
