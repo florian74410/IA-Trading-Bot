@@ -1,0 +1,256 @@
+{
+  "schema": 1,
+  "application": "Crypto Chart Viewer IA Trader",
+  "package_type": "UPDATE",
+  "from_version": "1.7.9",
+  "to_version": "1.8.0",
+  "payload_root": "payload",
+  "entrypoint": "Core/Server/server_v1.8.js",
+  "description": "IA-Trading-Bot v1.8.0 DEV — Risk Engine et intégrations v1.8 appliqués sur v1.7.9 STABLE",
+  "files": [
+    {
+      "path": "CHANGELOG.md",
+      "sha256": "a344c3370f50e00ab15a563511d30157766a20f177147e50af60cfd464e3dd95"
+    },
+    {
+      "path": "Core/Admin/restart_all.js",
+      "sha256": "4e055c80c1e4572160ce2b15e02c9970db2e661a5763ea08f2af21fe02f24665"
+    },
+    {
+      "path": "Core/Admin/service_registry.js",
+      "sha256": "83cbdfae25c5a38ebae196a42f04a7c347db2cd3e5738f4bf83e49d7fbdbe1fe"
+    },
+    {
+      "path": "Core/Communication/communication_router_v1.js",
+      "sha256": "7e0e82decfbc1de66871e254f2f5db7e5d61e73f95a6458b9c49bdeb06b2e7a6"
+    },
+    {
+      "path": "Core/DataCollectorFirewall/README.md",
+      "sha256": "8d1d647b7ab23a9525e9ab8b9148475be6decdb24b8a0db27fa108fb33160c05"
+    },
+    {
+      "path": "Core/DataCollectorFirewall/data_collector_firewall.js",
+      "sha256": "a0e4ccb07ffb481a82a8edb59cbcb836c0120e1edc6a774ffb1093bd2d785b76"
+    },
+    {
+      "path": "Core/DataCollectorFirewall/firewall_client.js",
+      "sha256": "496e62d5f8043b6a1c612686555b5a76b3c10fed213a9a3f49b078cb79241967"
+    },
+    {
+      "path": "Core/DataCollectorFirewall/firewall_service.js",
+      "sha256": "743a937c856e6b21c1f8b3112414b8df77f3192517590f390f9b582e25caa805"
+    },
+    {
+      "path": "Core/DataCollectorFirewall/settings.html",
+      "sha256": "8a1b55111683ac518c5ea65b309a526c98a65fad838af150863b737c71dd5888"
+    },
+    {
+      "path": "Core/Server/server_v1.7.9.js",
+      "sha256": "1a468bb2fe71a153ecb34633b3a60f6d71c895726146188b0a3af5f609b08860"
+    },
+    {
+      "path": "Core/Server/server_v1.8.js",
+      "sha256": "dc8863950695372e35760df5cb37a1a240513e323ac8df3a8646c2dd35d0eaca"
+    },
+    {
+      "path": "Core/TradingFirewall/README.md",
+      "sha256": "b61b344279b18eef4f0ec4b4260a391699d1d82ae4c3d9319e9b67ec7e6d949f"
+    },
+    {
+      "path": "Core/TradingFirewall/firewall_client.js",
+      "sha256": "fed9d30d22381226cb1d14135a635cc5d53784b59aa5e1ab6ae23ae1cbb43e4b"
+    },
+    {
+      "path": "Core/TradingFirewall/firewall_service.js",
+      "sha256": "46d332f01a536daee54ed9d010b6969be0e4a0f2cb0667a62aaa7a533f465efc"
+    },
+    {
+      "path": "Core/TradingFirewall/settings.html",
+      "sha256": "051ce50c513fbc2150bd3ffa1275bc37f48d37a005177413af036b5afe74505c"
+    },
+    {
+      "path": "Core/TradingFirewall/trading_firewall.js",
+      "sha256": "2d00a7b40755294762d5c5c2e73656f8aec3345399e446817b69457562df06f8"
+    },
+    {
+      "path": "Frontend/Assets/ia-tb-login-background.webp",
+      "sha256": "3dff5f1d08e5177bb42cc679ebc8b0c4ec358ac1a749d49722896ce7f755cc82"
+    },
+    {
+      "path": "Frontend/JS/custom_mosaic_v1.0.js",
+      "sha256": "af50916ec09ef72dde70129f15dd6d06ec60bc9e18bf820230d7ae7a84f08604"
+    },
+    {
+      "path": "Fundamental/Engine/fundamental_cp.js",
+      "sha256": "c80cf2c1d662700fe506b5a1158a17fe30716d5d3426ece10bcb81a302ea357f"
+    },
+    {
+      "path": "Fundamental/Engine/fundamental_service.js",
+      "sha256": "4bc21bb2d3009c1e7adc1c5585ad5d419d385d6daf1f46523d587cde8613c0a2"
+    },
+    {
+      "path": "Fundamental/Tests/test_fundamental_cp.js",
+      "sha256": "a1db363386cde7ee34a1c79d23a8c626a8f177a03b35101ba2be9a7cfb288fa9"
+    },
+    {
+      "path": "Fundamental/Tests/test_fundamental_router_integration.js",
+      "sha256": "02b2983130a75e57bd7bd922d1a73d0d6f98923ce0c821c35477e2850730c710"
+    },
+    {
+      "path": "Liquidity/Engine/liquidity_service.js",
+      "sha256": "a67d241d367205d5e0b9a7c4a08bbaa3aed12262e993f37b3ad1cbe7e5b5f8a2"
+    },
+    {
+      "path": "MarketData/API_COMMANDS.md",
+      "sha256": "d28e8d680684bdf9097ae128989331d2c8654a1c531119061111c03f34e3b013"
+    },
+    {
+      "path": "MarketData/Aggregator/candle_consensus.js",
+      "sha256": "74485a3998db1668176d83e539e586f4b61a15422542d9465bfe65d9ab222fab"
+    },
+    {
+      "path": "MarketData/Aggregator/price_consensus.js",
+      "sha256": "4d1057559f609d688fcad429a10ade96e4f3914ea3cb69e484a63aa8dc9ef1b9"
+    },
+    {
+      "path": "MarketData/Normalizer/data_projection.js",
+      "sha256": "44ef9acc3170945dad5a6d690375128a1e4dbd8c657441ab6a6b2bea6d7cbcd5"
+    },
+    {
+      "path": "MarketData/Normalizer/market_data_contract.js",
+      "sha256": "153645e26b4058c763152ea11807443b34c506dc7bdf33c9905887112c3198a1"
+    },
+    {
+      "path": "MarketData/Provider/blockchain_provider.js",
+      "sha256": "f23db71a9d767b49ae842bb58a88246e7fc8b9e3e5fca9923a85a9bfa81c5fbf"
+    },
+    {
+      "path": "MarketData/Provider/capability_catalog.js",
+      "sha256": "85708c48620dbf0c04894bf3907ca12d9c359ec895856db66ad46b8dc01d447a"
+    },
+    {
+      "path": "MarketData/Provider/coingecko_provider.js",
+      "sha256": "864ede4de9137d5f29e1aa935c7eedcea0cbb727c2fb6937655efa2ab484c9bb"
+    },
+    {
+      "path": "MarketData/Provider/defillama_provider.js",
+      "sha256": "76da59967b18f2db98c8133879311a324e4df724946f897d3622c776ccb58b69"
+    },
+    {
+      "path": "MarketData/Provider/gmx_provider.js",
+      "sha256": "9c469e2782da9f1655d303503a025b1e6c8a3acd4f43871818d53bf2d3e605c8"
+    },
+    {
+      "path": "MarketData/Provider/liquidity_provider.js",
+      "sha256": "1dcc9088dd5a83927e5d08df002a123c375164072551c27c3fcc1cfc91fac098"
+    },
+    {
+      "path": "MarketData/Provider/provider_registry.js",
+      "sha256": "e272d96bc938da8562d45b198a8b4386abb33995500af4d420a288e1d82f5278"
+    },
+    {
+      "path": "MarketData/Provider/reference_provider.js",
+      "sha256": "26ef2f7d68c27c6de13240f511d635a6446b51e63543f20fda481ba3185ab10a"
+    },
+    {
+      "path": "MarketData/Tests/data_request_contract_test.js",
+      "sha256": "e948f6b0ef3181f46ec7ed710be9be2713280d64c0fbc0c75d1eb6e63326c316"
+    },
+    {
+      "path": "MarketData/market_data_service.js",
+      "sha256": "e626e54f7c9d57a4f968e9284ab8b3f23f9f46c93701dddb71ad3f0fcf0e2c94"
+    },
+    {
+      "path": "PATCH_PIPELINE_NOTE.md",
+      "sha256": "a7e8bb4d1d9dc9c64985996f216742fcd1913340d8b1d53cc41eaa95d54c541f"
+    },
+    {
+      "path": "Reports/UPDATE_MANAGER_BUILD_v1.8.txt",
+      "sha256": "39d603dac3a2fc3ead1d72f5a84e019156bc6d4dacf6884150c34634b0f706e3"
+    },
+    {
+      "path": "Risk/Engine/risk_engine.js",
+      "sha256": "b6b6fef596e25dfea128935a8206a36cf53e32ed20ac36b609e5c942b1cf9530"
+    },
+    {
+      "path": "Risk/Engine/risk_service.js",
+      "sha256": "19106d6d6358dfc60f8cbe742d121eda19e2cf8c155dab8c032f780e20042828"
+    },
+    {
+      "path": "Risk/INTEGRATION_CONTRACT.md",
+      "sha256": "2f64169255e9755ed77b62c6ee04f7c8d1fcb126fedd9cb10bf6cda9b0a19243"
+    },
+    {
+      "path": "Risk/README.md",
+      "sha256": "e375be25b008ccf142fa2b8dbb5583f5c84db75f068fdad12aa60b7f82228fb9"
+    },
+    {
+      "path": "Risk/Tests/risk_engine.test.js",
+      "sha256": "6afa420d83831c95f4616552d65bee771424c4b7ae94d94b71e5585d67ccb7d3"
+    },
+    {
+      "path": "Runtime/README.txt",
+      "sha256": "b7b467761272fc3f79a6f6139e163599ffa6b229be2d679e2f52b53827d8d054"
+    },
+    {
+      "path": "Tests/test_blockchain_v1.7.9.js",
+      "sha256": "2a77ae9427e19c0dd77eaea2a68507885318871b73b64b9f400f83245ff8b3d0"
+    },
+    {
+      "path": "Tests/test_coingecko_v1.7.9.js",
+      "sha256": "f0e5bb5810cf4d7bcdc082399b6bc69678b4ec9f1a5f1d503e7ae46c40eee7a3"
+    },
+    {
+      "path": "Tests/test_data_collector_firewall_v1.7.9.js",
+      "sha256": "64fff8edd98af8551bbc88bd78373269e43e6224c4ab1d0c244046eda406385b"
+    },
+    {
+      "path": "Tests/test_defillama_v1.7.9.js",
+      "sha256": "d561692211db15e67e794b616317c8f450201dfe0e775c30664fdcf6c14ad949"
+    },
+    {
+      "path": "Tests/test_fx_consensus_v1.7.9.js",
+      "sha256": "0ac0241a0cf112378b1d4c357a5b8d3d41c683743fef0f120032a4a25424eee1"
+    },
+    {
+      "path": "Tests/test_fx_ui_integration_v1.7.9.js",
+      "sha256": "56057d572f1617020940d4d53ace9b0f3a906025ba623a1c2f925c828ea71d72"
+    },
+    {
+      "path": "Tests/test_market_consensus_v1.7.9.js",
+      "sha256": "b5ba99b3a93bb384041a31cb65aa153b07ba5e145bd622c626a1e93bfaf5cdb5"
+    },
+    {
+      "path": "Update/Patch_V1.7.3_to_V1.7.4.zip",
+      "sha256": "542811e2ea5ed16ea35198485919e581a9425f0cbb04174318cf7cd64b308aff"
+    },
+    {
+      "path": "UserData/api_ui_runtime.js",
+      "sha256": "d87070e3725a9eaffc0d64f45cdb57433ff751ec1ca97ab07f1ee91e0c1bc6f8"
+    },
+    {
+      "path": "V1.8_DEV_MANIFEST.json",
+      "sha256": "5595f8821e21c09d89e7e6ed119a24c5e8bfa79f68f2d40ded8d9fb83d3b489f"
+    },
+    {
+      "path": "VERSION",
+      "sha256": "3eb1ef94b5890ca727158b106142685c8733b0ace5bcb4cf3f0ac14f9f0643f4"
+    },
+    {
+      "path": "start.command",
+      "sha256": "d5cdbd2eb6e498260235da93e26faf8386db584b034264900436e8143cb329e8"
+    },
+    {
+      "path": "start_v1.7.9_base.command",
+      "sha256": "fba88a54f08a3a542b80707583361be7fa3ccf8cd9fbafa54cc238d44e7550be"
+    },
+    {
+      "path": "stop.command",
+      "sha256": "b619566b563946f38220844cf86487759824d390102e88e9b89db6fdf7066f11"
+    },
+    {
+      "path": "stop_v1.7.9_base.command",
+      "sha256": "8923882c966269d5b5c4282915bc08004e320e36978d18143d02bd1891723d67"
+    }
+  ]
+}

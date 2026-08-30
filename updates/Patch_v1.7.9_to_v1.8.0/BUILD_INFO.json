@@ -1,0 +1,7 @@
+{
+  "baselineArchive": "archives/IA-Trading-Bot_V1.7.9.zip",
+  "baselineSha256": "b215bab4ff56f721ca310037671f94097c7a8c93a17f24d673ce1fb6369da1fc",
+  "patchSha256": "2cd4889be98d03a06aec16f05e8deca420491a682397586a529f5f1d1dcac96a",
+  "fileCount": 61,
+  "entrypoint": "Core/Server/server_v1.8.js"
+}
