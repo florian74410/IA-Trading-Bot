@@ -1,5 +1,29 @@
 # CHANGELOG
 
+## v1.7.9 — EN DÉVELOPPEMENT
+
+### Market Data / CoinGecko
+- Ajout du provider complémentaire `COINGECKO` au registre multi-provider.
+- OHLC CoinGecko normalisés avec provenance explicite `COINGECKO_API`.
+- Aucune donnée de volume d'exchange n'est fabriquée : `volumeAvailable=false`, `positiveVolumeRows=0`, `volumeSource=NONE`.
+- État du provider enrichi : dernière réussite, dernière erreur, état d'authentification et présence d'une clé en mémoire.
+- La clé CoinGecko optionnelle peut être ajoutée depuis `Settings > API`.
+- La clé CoinGecko est stockée dans le coffre RSA-OAEP existant (`secrets_v2.dat`), comme les autres secrets API.
+- Market Data ne persiste jamais la clé : elle est récupérée depuis le Core uniquement en mémoire via un canal interne authentifié.
+- Si le coffre est verrouillé ou si aucune clé n'est configurée, CoinGecko conserve son fonctionnement public/non authentifié.
+- Ajout d'un test CoinGecko depuis Settings et d'un test automatisé dédié dans `Update/v1.7.9/Tests/`.
+
+### Interface
+- Ajout de CoinGecko à la section `Settings > API` avec champ secret masqué, état Configurée/Absente et bouton de test.
+
+### Sécurité
+- Réutilisation du mécanisme de coffre RSA existant ; aucun nouveau fichier de secret en clair.
+- Transmission Core → Market Data protégée par la clé de service interne existante et limitée à `127.0.0.1`.
+
+### État de validation
+- Intégration technique CoinGecko préparée dans `Update/v1.7.9`.
+- Validation sur la machine cible et validation fonctionnelle finale encore requises avant passage de CoinGecko à l'état terminé.
+
 ## v1.7.8
 
 ### Market Data / Providers
@@ -45,7 +69,7 @@
 ### Compatibilité
 - Patch construit pour `1.7.3 -> 1.7.4`.
 - Validation avec l'UpdateManager réel de la v1.7.3.
-- Données utilisateur protégées non incluses dans le payload.
+- Données utilisateur protégées non incluses du payload.
 
 ### Documentation
 - Wiki impact : Connecteurs CEX/DEX, Market Data, Chart Viewer, Settings/API, Versionnage/Releases.
