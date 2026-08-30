@@ -1,13 +1,14 @@
 # IA-TB v1.7.9 — Catalogue des commandes Market Data
 
-Ce fichier est la référence du patch v1.7.9 pour les capacités des providers Market Data.
+Ce fichier est la référence du patch v1.7.9 pour les capacités des APIs de marché connues par IA-TB.
 
-Deux états sont utilisés :
+Trois états sont utilisés :
 
-- `IMPLEMENTED` : commande réellement utilisable par IA-TB.
+- `IMPLEMENTED` : commande réellement utilisable par le registre Market Data v1.7.9.
+- `LEGACY_IMPLEMENTED` : capacité déjà présente dans un connecteur IA-TB antérieur/parallèle, mais pas encore migrée vers ce registre.
 - `UPSTREAM_AVAILABLE` : fonction documentée par l'API source mais pas encore branchée dans IA-TB.
 
-Le catalogue exécutable est exposé par :
+Le catalogue runtime est exposé par :
 
 - `GET /capabilities`
 - `GET /capabilities?provider=DEFILLAMA`
@@ -17,7 +18,61 @@ Les commandes analytiques génériques sont exécutées par :
 - `POST /command`
 - Corps : `{ "provider":"DEFILLAMA", "command":"defillama.protocols.list", "arguments":{} }`
 
-> Périmètre : données de marché et analytics. Les commandes privées de compte, dépôt, retrait et exécution d'ordres ne sont volontairement pas mélangées à ce catalogue Market Data.
+> Périmètre : données de marché et analytics. Les commandes privées de compte, dépôt, retrait et exécution d'ordres restent dans les connecteurs de trading et ne sont volontairement pas mélangées à ce catalogue Market Data.
+
+## GMX
+
+- `market.candles` — LEGACY_IMPLEMENTED
+- `market.tickers` — LEGACY_IMPLEMENTED
+- `market.tokens` — LEGACY_IMPLEMENTED
+- `market.markets` — UPSTREAM_AVAILABLE
+- `market.markets.info` — UPSTREAM_AVAILABLE
+- `market.markets.state` — UPSTREAM_AVAILABLE
+- `market.markets.tickers` — UPSTREAM_AVAILABLE
+- `market.signed_prices.latest` — UPSTREAM_AVAILABLE
+- `market.rates` — UPSTREAM_AVAILABLE
+
+## Binance
+
+- `market.exchange_info` — UPSTREAM_AVAILABLE
+- `market.orderbook.depth` — UPSTREAM_AVAILABLE
+- `market.trades.recent` — UPSTREAM_AVAILABLE
+- `market.trades.historical` — UPSTREAM_AVAILABLE
+- `market.trades.aggregate` — UPSTREAM_AVAILABLE
+- `market.candles` — LEGACY_IMPLEMENTED
+- `market.ui_klines` — UPSTREAM_AVAILABLE
+- `market.avg_price` — UPSTREAM_AVAILABLE
+- `market.ticker.price` — UPSTREAM_AVAILABLE
+- `market.ticker.book` — UPSTREAM_AVAILABLE
+- `market.ticker.24h` — UPSTREAM_AVAILABLE
+- `market.ticker.trading_day` — UPSTREAM_AVAILABLE
+- `market.ticker.rolling_window` — UPSTREAM_AVAILABLE
+
+## Coinbase
+
+- `market.products.list` — UPSTREAM_AVAILABLE
+- `market.product.get` — UPSTREAM_AVAILABLE
+- `market.candles` — LEGACY_IMPLEMENTED
+- `market.trades` — UPSTREAM_AVAILABLE
+- `market.orderbook` — UPSTREAM_AVAILABLE
+- `market.ticker` — UPSTREAM_AVAILABLE
+- `market.level2` — UPSTREAM_AVAILABLE
+- `market.market_trades` — UPSTREAM_AVAILABLE
+
+## OKX
+
+- `market.tickers` — UPSTREAM_AVAILABLE
+- `market.orderbook` — UPSTREAM_AVAILABLE
+- `market.candles` — LEGACY_IMPLEMENTED
+- `market.history_candles` — UPSTREAM_AVAILABLE
+- `market.index_ticker` — UPSTREAM_AVAILABLE
+- `market.index_candles` — UPSTREAM_AVAILABLE
+- `market.price_limit` — UPSTREAM_AVAILABLE
+- `market.funding_rate` — UPSTREAM_AVAILABLE
+- `market.funding_rate_history` — UPSTREAM_AVAILABLE
+- `market.mark_price` — UPSTREAM_AVAILABLE
+- `market.open_interest` — UPSTREAM_AVAILABLE
+- `market.trades` — UPSTREAM_AVAILABLE
 
 ## Kraken / Reference
 
@@ -109,7 +164,7 @@ Les commandes analytiques génériques sont exécutées par :
 
 ### DefiLlama disponible upstream mais pas encore branché
 
-- `defillama.batch_historical` — free endpoint, POST wiring deferred
+- `defillama.batch_historical` — endpoint gratuit, câblage POST différé
 - `defillama.pro.yields.borrow` — Pro
 - `defillama.pro.yields.perps` — Pro
 - `defillama.pro.unlocks` — Pro
@@ -119,3 +174,5 @@ Les commandes analytiques génériques sont exécutées par :
 ## Règle d'architecture
 
 Un provider ne doit jamais prétendre fournir une capacité qu'il ne possède pas réellement. DefiLlama est donc déclaré `candleCapable:false` : ses métriques DeFi restent complémentaires et ne remplacent pas silencieusement les OHLCV natifs des CEX/DEX.
+
+Le catalogue n'expose que les opérations de **Market Data / analytics**. Les APIs complètes des exchanges peuvent proposer des centaines d'opérations privées supplémentaires ; elles sont gérées séparément par Trading Engine / connecteurs et devront être cataloguées dans leur propre registre de commandes de trading.
