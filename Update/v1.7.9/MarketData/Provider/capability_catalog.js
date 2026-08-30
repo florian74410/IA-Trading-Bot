@@ -1,12 +1,63 @@
 'use strict';
 /* IA-TB Market Data capability catalogue v1.7.9.
-   IMPLEMENTED = usable by the current IA-TB provider.
+   IMPLEMENTED = usable by the current v1.7.9 Market Data provider.
+   LEGACY_IMPLEMENTED = capability exists in an earlier/parallel IA-TB connector but is not yet migrated to this registry.
    UPSTREAM_AVAILABLE = documented by upstream API but not yet wired into IA-TB.
    Scope is Market Data / analytics only; private account/trading operations are intentionally excluded.
 */
 function c(command,status,transport,auth,notes){return{command:command,status:status,transport:transport,auth:auth||'NONE',notes:notes||''};}
 var CATALOG={
- REFERENCE:{provider:'KRAKEN_PUBLIC_REFERENCE',commands:[
+ GMX:{provider:'GMX',registryState:'LEGACY_CONNECTOR',commands:[
+  c('market.candles','LEGACY_IMPLEMENTED','REST','NONE','GMX Oracle/API OHLC surface'),
+  c('market.tickers','LEGACY_IMPLEMENTED','REST','NONE'),
+  c('market.tokens','LEGACY_IMPLEMENTED','REST','NONE'),
+  c('market.markets','UPSTREAM_AVAILABLE','REST','NONE'),
+  c('market.markets.info','UPSTREAM_AVAILABLE','REST','NONE','Liquidity, open interest, funding and borrowing'),
+  c('market.markets.state','UPSTREAM_AVAILABLE','REST','NONE'),
+  c('market.markets.tickers','UPSTREAM_AVAILABLE','REST','NONE'),
+  c('market.signed_prices.latest','UPSTREAM_AVAILABLE','REST','NONE'),
+  c('market.rates','UPSTREAM_AVAILABLE','REST','NONE','Historical hourly funding/rate snapshots')
+ ]},
+ BINANCE:{provider:'BINANCE',registryState:'LEGACY_CONNECTOR',commands:[
+  c('market.exchange_info','UPSTREAM_AVAILABLE','REST/WS','NONE'),
+  c('market.orderbook.depth','UPSTREAM_AVAILABLE','REST/WS','NONE'),
+  c('market.trades.recent','UPSTREAM_AVAILABLE','REST/WS','NONE'),
+  c('market.trades.historical','UPSTREAM_AVAILABLE','REST','API_KEY'),
+  c('market.trades.aggregate','UPSTREAM_AVAILABLE','REST/WS','NONE'),
+  c('market.candles','LEGACY_IMPLEMENTED','REST/WS','NONE','Klines/OHLCV'),
+  c('market.ui_klines','UPSTREAM_AVAILABLE','REST/WS','NONE'),
+  c('market.avg_price','UPSTREAM_AVAILABLE','REST/WS','NONE'),
+  c('market.ticker.price','UPSTREAM_AVAILABLE','REST/WS','NONE'),
+  c('market.ticker.book','UPSTREAM_AVAILABLE','REST/WS','NONE'),
+  c('market.ticker.24h','UPSTREAM_AVAILABLE','REST/WS','NONE'),
+  c('market.ticker.trading_day','UPSTREAM_AVAILABLE','REST/WS','NONE'),
+  c('market.ticker.rolling_window','UPSTREAM_AVAILABLE','REST/WS','NONE')
+ ]},
+ COINBASE:{provider:'COINBASE',registryState:'LEGACY_CONNECTOR',commands:[
+  c('market.products.list','UPSTREAM_AVAILABLE','REST','NONE'),
+  c('market.product.get','UPSTREAM_AVAILABLE','REST','NONE'),
+  c('market.candles','LEGACY_IMPLEMENTED','REST','NONE','Advanced Trade candles/OHLCV'),
+  c('market.trades','UPSTREAM_AVAILABLE','REST/WS','NONE'),
+  c('market.orderbook','UPSTREAM_AVAILABLE','REST/WS','NONE'),
+  c('market.ticker','UPSTREAM_AVAILABLE','WS','NONE'),
+  c('market.level2','UPSTREAM_AVAILABLE','WS','NONE'),
+  c('market.market_trades','UPSTREAM_AVAILABLE','WS','NONE')
+ ]},
+ OKX:{provider:'OKX',registryState:'LEGACY_CONNECTOR',commands:[
+  c('market.tickers','UPSTREAM_AVAILABLE','REST/WS','NONE'),
+  c('market.orderbook','UPSTREAM_AVAILABLE','REST/WS','NONE'),
+  c('market.candles','LEGACY_IMPLEMENTED','REST/WS','NONE'),
+  c('market.history_candles','UPSTREAM_AVAILABLE','REST','NONE'),
+  c('market.index_ticker','UPSTREAM_AVAILABLE','REST/WS','NONE'),
+  c('market.index_candles','UPSTREAM_AVAILABLE','REST','NONE'),
+  c('market.price_limit','UPSTREAM_AVAILABLE','REST','NONE'),
+  c('market.funding_rate','UPSTREAM_AVAILABLE','REST/WS','NONE'),
+  c('market.funding_rate_history','UPSTREAM_AVAILABLE','REST','NONE'),
+  c('market.mark_price','UPSTREAM_AVAILABLE','REST/WS','NONE'),
+  c('market.open_interest','UPSTREAM_AVAILABLE','REST/WS','NONE'),
+  c('market.trades','UPSTREAM_AVAILABLE','REST/WS','NONE')
+ ]},
+ REFERENCE:{provider:'KRAKEN_PUBLIC_REFERENCE',registryState:'CURRENT_REGISTRY',commands:[
   c('market.candles','IMPLEMENTED','REST','NONE','OHLC via Kraken reference adapter'),
   c('market.ticker','UPSTREAM_AVAILABLE','REST/WS','NONE'),
   c('market.trades','UPSTREAM_AVAILABLE','REST/WS','NONE'),
@@ -16,7 +67,7 @@ var CATALOG={
   c('market.asset_pairs','UPSTREAM_AVAILABLE','REST','NONE'),
   c('market.instrument','UPSTREAM_AVAILABLE','WS','NONE')
  ]},
- HYPERLIQUID:{provider:'HYPERLIQUID',commands:[
+ HYPERLIQUID:{provider:'HYPERLIQUID',registryState:'CURRENT_REGISTRY',commands:[
   c('market.candles','IMPLEMENTED','REST+WS','NONE','candleSnapshot + candle subscription'),
   c('market.stream.candles','IMPLEMENTED','WS','NONE'),
   c('market.stream.trades','IMPLEMENTED','WS','NONE'),
@@ -25,14 +76,14 @@ var CATALOG={
   c('market.asset_contexts','UPSTREAM_AVAILABLE','REST/INFO','NONE'),
   c('market.bbo','UPSTREAM_AVAILABLE','WS','NONE')
  ]},
- COINGECKO:{provider:'COINGECKO',commands:[
+ COINGECKO:{provider:'COINGECKO',registryState:'CURRENT_REGISTRY',commands:[
   c('market.ohlc','IMPLEMENTED','REST','OPTIONAL_DEMO_KEY','Mapped to IA-TB candles with volume unavailable'),
   c('market.simple_price','UPSTREAM_AVAILABLE','REST','OPTIONAL_KEY'),
   c('market.coins_markets','UPSTREAM_AVAILABLE','REST','OPTIONAL_KEY'),
   c('market.market_chart','UPSTREAM_AVAILABLE','REST','OPTIONAL_KEY'),
   c('market.market_chart_range','UPSTREAM_AVAILABLE','REST','OPTIONAL_KEY')
  ]},
- BLOCKCHAIN:{provider:'BLOCKCHAIN.COM',commands:[
+ BLOCKCHAIN:{provider:'BLOCKCHAIN.COM',registryState:'CURRENT_REGISTRY',commands:[
   c('market.candles','IMPLEMENTED','WS','NONE','prices channel'),
   c('market.heartbeat','UPSTREAM_AVAILABLE','WS','NONE'),
   c('market.orderbook.l2','UPSTREAM_AVAILABLE','WS','NONE'),
@@ -41,7 +92,7 @@ var CATALOG={
   c('market.ticker','UPSTREAM_AVAILABLE','WS','NONE'),
   c('market.trades','UPSTREAM_AVAILABLE','WS','NONE')
  ]},
- DEFILLAMA:{provider:'DEFILLAMA',commands:[
+ DEFILLAMA:{provider:'DEFILLAMA',registryState:'CURRENT_REGISTRY',commands:[
   c('defillama.protocols.list','IMPLEMENTED','REST','NONE'),
   c('defillama.protocol.get','IMPLEMENTED','REST','NONE'),
   c('defillama.protocol.tvl','IMPLEMENTED','REST','NONE'),
