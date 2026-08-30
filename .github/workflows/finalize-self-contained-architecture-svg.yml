@@ -26,23 +26,23 @@ jobs:
 
           jpg = Path('docs/assets/app_architecture.jpg')
           svg = Path('docs/assets/app_architecture.svg')
-
           if not jpg.exists():
               raise SystemExit('Missing docs/assets/app_architecture.jpg')
 
           encoded = base64.b64encode(jpg.read_bytes()).decode('ascii')
-          content = f'''<svg xmlns="http://www.w3.org/2000/svg" width="1122" height="1402" viewBox="0 0 1122 1402" role="img" aria-labelledby="title desc">
-  <title id="title">IA-TB — Architecture fonctionnelle</title>
-  <desc id="desc">Schéma de communication entre les modules de IA-TB.</desc>
-  <image href="data:image/jpeg;base64,{encoded}" x="0" y="0" width="1122" height="1402" preserveAspectRatio="xMidYMid meet"/>
-</svg>
-'''
-          svg.write_text(content, encoding='utf-8')
-
+          lines = [
+              '<svg xmlns="http://www.w3.org/2000/svg" width="1122" height="1402" viewBox="0 0 1122 1402" role="img" aria-labelledby="title desc">',
+              '  <title id="title">IA-TB — Architecture fonctionnelle</title>',
+              '  <desc id="desc">Schéma de communication entre les modules de IA-TB.</desc>',
+              '  <image href="data:image/jpeg;base64,' + encoded + '" x="0" y="0" width="1122" height="1402" preserveAspectRatio="xMidYMid meet"/>',
+              '</svg>',
+              ''
+          ]
+          svg.write_text('\n'.join(lines), encoding='utf-8')
           check = svg.read_text(encoding='utf-8')
           assert 'data:image/jpeg;base64,' in check
           assert 'href="app_architecture.jpg"' not in check
-          print(f'Autonomous SVG generated: {svg.stat().st_size} bytes')
+          print('Autonomous SVG generated:', svg.stat().st_size, 'bytes')
           PY
 
       - name: Verify README source
