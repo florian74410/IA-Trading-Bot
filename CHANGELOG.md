@@ -23,18 +23,36 @@
 - État du provider enrichi : connexion, dernière connexion, dernier événement, dernière réussite, dernière erreur, abonnements et séries en cache.
 - Ajout de tests automatisés de normalisation des paires, granularités et conversion OHLCV dans `Update/v1.7.9/Tests/test_blockchain_v1.7.9.js`.
 
+### Market Data / DefiLlama
+- Ajout du provider complémentaire `DEFILLAMA`.
+- DefiLlama est explicitement déclaré `candleCapable:false` : ses métriques ne remplacent jamais les OHLCV natifs des CEX/DEX.
+- Intégration des commandes gratuites TVL protocoles/chaînes, prix tokens, stablecoins, yields, volumes DEX/options, open interest et fees/revenue.
+- Provenance explicite `DEFILLAMA_PUBLIC_API`, avec dernière réussite, dernière commande et dernière erreur.
+- 29 commandes gratuites DefiLlama sont branchées via l'interface générique Market Data `/command`.
+- Les endpoints Pro sont catalogués comme `UPSTREAM_AVAILABLE` avec authentification `PRO_API_KEY`, mais ne sont pas activés dans cette version.
+- Ajout du test `Update/v1.7.9/Tests/test_defillama_v1.7.9.js`.
+
+### Market Data / Catalogue des capacités API
+- Ajout de `MarketData/Provider/capability_catalog.js`.
+- Le catalogue couvre Kraken/Reference, Hyperliquid, CoinGecko, Blockchain.com et DefiLlama.
+- Chaque capacité est marquée `IMPLEMENTED` ou `UPSTREAM_AVAILABLE`.
+- `GET /capabilities` retourne le catalogue complet ; `GET /capabilities?provider=...` filtre par provider.
+- `POST /command` permet d'exécuter les commandes analytiques génériques effectivement branchées.
+- Ajout de `Update/v1.7.9/MarketData/API_COMMANDS.md` comme référence lisible du catalogue.
+- Le catalogue reste limité au périmètre Market Data/analytics ; les commandes privées de compte, trading et retrait restent séparées.
+
 ### Interface
 - Ajout de CoinGecko à la section `Settings > API` avec champ secret masqué, état Configurée/Absente et bouton de test.
-- Blockchain.com n'exige pas de clé pour la lecture des données publiques utilisée par IA-TB v1.7.9 ; aucun nouveau secret n'est donc ajouté dans Settings.
+- Blockchain.com et DefiLlama n'exigent pas de clé pour les fonctions publiques utilisées par IA-TB v1.7.9.
 
 ### Sécurité
 - Réutilisation du mécanisme de coffre RSA existant pour CoinGecko ; aucun nouveau fichier de secret en clair.
 - Transmission Core → Market Data protégée par la clé de service interne existante et limitée à `127.0.0.1`.
-- Le provider Blockchain.com de cette version utilise uniquement les canaux publics anonymes de données de marché ; aucune fonction de trading/retrait Blockchain.com n'est exposée.
+- Les providers Blockchain.com et DefiLlama de cette version utilisent uniquement des fonctions publiques de données/analytics.
 
 ### État de validation
-- Intégrations techniques CoinGecko et Blockchain.com préparées dans `Update/v1.7.9`.
-- Validation sur la machine cible et validation fonctionnelle finale encore requises avant passage de ces providers à l'état terminé.
+- Intégrations techniques CoinGecko, Blockchain.com et DefiLlama préparées dans `Update/v1.7.9`.
+- Validation sur la machine cible et validation fonctionnelle finale encore requises avant passage des trois providers à l'état terminé.
 
 ## v1.7.8
 
