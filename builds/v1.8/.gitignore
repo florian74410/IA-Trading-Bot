@@ -1,0 +1,23 @@
+.DS_Store
+.node/
+__MACOSX/
+*.log
+logs.dat
+user.dat
+secrets_v2.dat
+.env
+.env.*
+# Persistent UserData DB: never version or overwrite from Git/builds/patches
+user_data.db
+user_data.db-*
+*.user_data.db
+UserData/node_modules/
+UserData/local_username.dat
+UserData/sync_agent.pid
+Fundamental/Data/internal_service_key.dat
+Fundamental/node_modules/
+Runtime/*.tar.gz
+Runtime/.node-install/
+Updates/Backups/
+Updates/Inbox/
+Updates/Applied/

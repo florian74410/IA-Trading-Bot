@@ -1,0 +1,5 @@
+'use strict';
+var http=require('http'),crypto=require('crypto');
+var CP=require('../Communication/communication_protocol_v1');
+function call(root,action,args,cb,opt){opt=opt||{};var msg=CP.makeRequest('trading',action,args||{},opt.detail||'analysis'),secret=CP.ensureSecret(root),raw=Buffer.from(JSON.stringify(msg),'utf8');var sig=crypto.createHmac('sha256',secret).update(raw).digest('hex');var q=http.request({host:'127.0.0.1',port:+(opt.port||process.env.IATB_TRADING_FIREWALL_PORT||8017),path:'/cp/v1',method:'POST',timeout:opt.timeout||8000,headers:{Accept:'application/json','Content-Type':'application/json','Content-Length':raw.length,'x-iatb-cp-token':secret,'x-iatb-fw-signature':sig}},function(r){var a=[];r.on('data',function(c){a.push(c)});r.on('end',function(){var o;try{o=JSON.parse(Buffer.concat(a).toString('utf8')||'{}');}catch(e){return cb(e);}cb(null,o,r.statusCode);});});q.on('timeout',function(){q.destroy(new Error('FIREWALL_TIMEOUT'));});q.on('error',cb);q.end(raw);}
+module.exports={call:call};

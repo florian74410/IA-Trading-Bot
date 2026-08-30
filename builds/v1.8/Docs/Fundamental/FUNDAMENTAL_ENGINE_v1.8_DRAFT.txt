@@ -1,0 +1,70 @@
+DRAFT — NORMALISATION FUNDAMENTAL ENGINE v1.8
+=============================================
+Statut : conception seulement, NON implémentée en v1.7.1.
+
+OBJECTIF
+--------
+Faire du Fundamental Engine le deuxième moteur normalisé prêt pour le futur
+Supervisor v2.0, sur le même Communication Protocol CP/1 que l'Indicator Engine.
+
+CAPACITES CP ENVISAGEES
+-----------------------
+- fundamental.get_state
+- fundamental.analyze(asset, horizon)
+- fundamental.get_events
+- fundamental.get_sources
+- fundamental.get_context
+- fundamental.get_evidence
+- fundamental.list_capabilities
+
+SORTIES
+-------
+1) summary  : état compact, frais, faible coût de transport.
+2) analysis : événements, sources, corroboration, biais et contradictions.
+3) evidence : publications/provenance détaillées sur demande.
+
+NORMALISATION IMPORTANTE
+------------------------
+Séparer strictement :
+- SOURCE_GRADE : qualité intrinsèque de la source ;
+- EVENT_CONFIDENCE : confiance dans l'information après corroboration ;
+- MARKET_IMPACT : importance potentielle pour le marché ;
+- DIRECTIONAL_BIAS : sens fondamental estimé, avec horizon et incertitude.
+
+CORROBORATION / PROMOTION
+-------------------------
+Une information de faible grade ne doit jamais être jetée uniquement à cause de
+sa source. Elle entre comme signal à confirmer. Une source mieux gradée peut
+ensuite promouvoir le même événement. Les reprises non indépendantes ne doivent
+pas compter comme confirmations distinctes.
+
+Exemple :
+NEWS_RADAR 0.60 seul -> SIGNAL
++ média reconnu       -> PROBABLE
++ source officielle   -> CONFIRMED / confiance élevée
+
+AJOUT POSSIBLE A ETUDIER
+------------------------
+NEWS_RADAR basé sur Google News RSS, poids initial 0.60, uniquement comme radar
+secondaire. Il ne remplace jamais les sources officielles RSS/WEB.
+
+EVENTS CP ENVISAGES
+-------------------
+- fundamental.signal.detected
+- fundamental.event.promoted
+- fundamental.event.confirmed
+- fundamental.bias.changed
+- fundamental.data_quality.changed
+
+SECURITE
+--------
+- contenu RSS/WEB/X/NEWS_RADAR toujours marqué UNTRUSTED_EXTERNAL_CONTENT ;
+- aucun texte externe ne devient une commande CP ;
+- le Router n'autorise que les capacités Fundamental whitelistees ;
+- aucune clé provider, SQL arbitraire, shell ou fichier exposé au Supervisor.
+
+POSITION DE LA SYNTHESE IA v1.7.1
+---------------------------------
+La Synthèse IA actuelle reste une aide UI. Le futur Supervisor devra consommer
+les sorties normalisées du Fundamental Engine, et non considérer le texte de la
+Synthèse IA comme une source de vérité.

@@ -1,0 +1,8 @@
+/* IA-TB v1.7.9 - Flux test header routing fix */
+(function(){'use strict';
+function $(id){return document.getElementById(id)}
+function status(text,state){var n=$('feedTestHeaderResult');if(!n)return;n.textContent=String(text||'');n.className='providerTestResult '+(state||'')}
+function selectedFeedId(){var row=document.querySelector('#feedsBody tr.feedRow.selected');return row?+(row.getAttribute('data-feed-id')||0):0}
+function bind(){var b=$('testSelectedFeed');if(!b||b.getAttribute('data-flux-test-route')==='1')return;b.setAttribute('data-flux-test-route','1');b.addEventListener('click',function(e){e.preventDefault();e.stopImmediatePropagation();var id=selectedFeedId();if(!id){status('Sélectionne un flux à tester.','bad');return}b.disabled=true;b.textContent='Test…';status('Test du flux en cours…','pending');fetch('/api/fundamental/providers/test',{method:'POST',headers:{Accept:'application/json','Content-Type':'application/json'},body:JSON.stringify({feedId:id})}).then(function(r){return r.json().catch(function(){return{}}).then(function(j){if(!r.ok)throw new Error(j.error||j.message||('HTTP '+r.status));return j})}).then(function(r){var z=r.result||{},code=z.code||'',txt=r.ok?'Flux '+code+' ONLINE · '+(z.received==null?'--':z.received)+' élément(s) · '+(z.durationMs==null?'--':z.durationMs+' ms'):'Flux '+code+' ERROR · '+(r.error||z.error||'échec');status(txt,r.ok?'ok':'bad')}).catch(function(err){status('Flux ERROR · '+err.message,'bad')}).then(function(){b.disabled=false;b.textContent='Tester'})},true)}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);else bind();
+})();

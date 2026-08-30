@@ -1,0 +1,7 @@
+{
+  "schema": 1,
+  "application": "Crypto Chart Viewer IA Trader",
+  "lastGoodVersion": "1.7.3",
+  "server": "Core/Server/server_v1.0.js",
+  "healthyAt": "2026-08-28T22:58:04.137Z"
+}
