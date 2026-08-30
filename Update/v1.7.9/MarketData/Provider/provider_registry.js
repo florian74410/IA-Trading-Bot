@@ -15,10 +15,10 @@ Registry.prototype.executeCommand=function(provider,command,args,cb){var p=this.
 Registry.prototype.list=function(){return[
  {id:'KRAKEN',name:this.reference.name,type:'API',default:true,candleCapable:true,priceCapable:true,collectorSource:true,status:this.reference.status(),capabilities:CapabilityCatalog.forProvider('KRAKEN')},
  {id:'GMX',name:this.gmx.name,type:'API',default:false,candleCapable:true,priceCapable:true,collectorSource:true,status:this.gmx.status(),capabilities:CapabilityCatalog.forProvider('GMX')},
- {id:'HYPERLIQUID',name:this.hyperliquid.name,type:'SOCKET',default:false,candleCapable:true,status:this.hyperliquid.status(),capabilities:CapabilityCatalog.forProvider('HYPERLIQUID')},
- {id:'COINGECKO',name:this.coingecko.name,type:'API',default:false,complementary:true,candleCapable:true,status:this.coingecko.status(),capabilities:CapabilityCatalog.forProvider('COINGECKO')},
- {id:'BLOCKCHAIN',name:this.blockchain.name,type:'SOCKET',apiFamily:'BLOCKCHAIN_EXCHANGE_API',default:false,complementary:true,candleCapable:true,status:this.blockchain.status(),capabilities:CapabilityCatalog.forProvider('BLOCKCHAIN')},
- {id:'DEFILLAMA',name:this.defillama.name,type:'API',apiFamily:'DEFILLAMA_PUBLIC_API',default:false,complementary:true,candleCapable:false,status:this.defillama.status(),capabilities:CapabilityCatalog.forProvider('DEFILLAMA')}
+ {id:'HYPERLIQUID',name:this.hyperliquid.name,type:'SOCKET',default:false,candleCapable:true,collectorSource:true,status:this.hyperliquid.status(),capabilities:CapabilityCatalog.forProvider('HYPERLIQUID')},
+ {id:'COINGECKO',name:this.coingecko.name,type:'API',default:false,complementary:true,candleCapable:true,collectorSource:false,status:this.coingecko.status(),capabilities:CapabilityCatalog.forProvider('COINGECKO')},
+ {id:'BLOCKCHAIN',name:this.blockchain.name,type:'SOCKET',apiFamily:'BLOCKCHAIN_EXCHANGE_API',default:false,complementary:true,candleCapable:true,collectorSource:false,status:this.blockchain.status(),capabilities:CapabilityCatalog.forProvider('BLOCKCHAIN')},
+ {id:'DEFILLAMA',name:this.defillama.name,type:'API',apiFamily:'DEFILLAMA_PUBLIC_API',default:false,complementary:true,candleCapable:false,collectorSource:false,status:this.defillama.status(),capabilities:CapabilityCatalog.forProvider('DEFILLAMA')}
  ];};
 Registry.prototype.close=function(){try{this.hyperliquid.close();}catch(_){}try{this.blockchain.close();}catch(_){}};
 module.exports=Registry;
