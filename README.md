@@ -79,17 +79,30 @@ Principales évolutions clôturées :
   - [ ] Tests d'intégration et validation sur la machine cible.
   - [ ] Validation fonctionnelle finale CoinGecko avant passage de la fonction principale à `[x]`.
 
-- [ ] **Blockchain.com — API**
-  - Intégration comme source de données complémentaire.
-  - Normalisation et provenance explicite des données.
-  - État, fraîcheur et erreurs visibles.
+- [ ] **Blockchain.com — API** — intégration technique terminée, spécialisation finale et validation machine cible restantes
+  - [x] Provider `BLOCKCHAIN` ajouté au registre multi-provider.
+  - [x] Flux public anonyme Blockchain.com Exchange utilisé via le canal WebSocket `prices` dans l'implémentation actuelle.
+  - [x] Bougies OHLCV et volumes natifs conservés sans fabrication de données.
+  - [x] Normalisation symbole / timeframe et provenance `BLOCKCHAIN.COM` explicite.
+  - [x] Timeframes non supportés refusés explicitement au lieu d'être approximés.
+  - [x] État, fraîcheur, connexion, dernière erreur et nombre de séries en cache exposés.
+  - [x] Tests automatiques de normalisation, granularités et format OHLCV ajoutés.
+  - [ ] Recentrer Blockchain.com sur le rôle Bitcoin / on-chain retenu afin d'éviter un doublon inutile de source Exchange.
+  - [ ] Tests d'intégration et validation sur la machine cible.
+  - [ ] Validation fonctionnelle finale Blockchain.com avant passage de la fonction principale à `[x]`.
 
-- [ ] **DefiLlama — API**
-  - Intégration comme source de données complémentaire DeFi.
-  - Normalisation et provenance explicite des données.
-  - État, fraîcheur et erreurs visibles.
-
-> Ces sources API complètent les données de l'application. Elles ne doivent pas remplacer silencieusement les chandeliers ou volumes natifs des CEX/DEX.
+- [ ] **DefiLlama — API** — intégration technique terminée, validation machine cible restante
+  - [x] Provider complémentaire `DEFILLAMA` ajouté au registre multi-provider.
+  - [x] DefiLlama déclaré `candleCapable:false` afin de ne jamais remplacer silencieusement les OHLCV natifs CEX/DEX.
+  - [x] TVL protocoles et chaînes intégrés.
+  - [x] Prix tokens actuels, historiques, chart et variations intégrés.
+  - [x] Données stablecoins intégrées.
+  - [x] Pools de rendement et historiques APY/TVL intégrés.
+  - [x] Volumes DEX et options, open interest, fees et revenue intégrés.
+  - [x] Provenance `DEFILLAMA_PUBLIC_API`, fraîcheur, dernière commande et dernière erreur exposées.
+  - [x] Tests automatiques du provider et de son catalogue de commandes ajoutés.
+  - [ ] Tests d'intégration et validation sur la machine cible.
+  - [ ] Validation fonctionnelle finale DefiLlama avant passage de la fonction principale à `[x]`.
 
 ## Market Data Collector / prix consensus
 
@@ -99,8 +112,25 @@ Principales évolutions clôturées :
 - [x] Prix consensus calculé par moyenne des sources valides avec filtre d'outliers autour de la médiane à partir de 3 sources.
 - [x] La réponse conserve les prix individuels, la provenance, le nombre de sources et le spread entre sources.
 - [x] Test automatisé du calcul de consensus ajouté.
-- [ ] Affichage UI du prix consensus et des prix sources à intégrer/valider.
+- [ ] Affichage UI détaillé du prix consensus et des prix sources à intégrer/valider.
 - [ ] Validation réseau et machine cible Kraken + GMX.
+
+## Market Data Collector / ƒx OHLCV synthétique
+
+- [x] Source virtuelle `FX` / `ƒx Consensus` intégrée directement au Market Data Collector, sans nouveau service ni nouvelle couche réseau.
+- [x] Endpoint `GET /candles/consensus` ajouté pour produire les bougies synthétiques à la demande.
+- [x] `Open`, `High`, `Low` et `Close` sont calculés par moyenne arithmétique des bougies sources valides et alignées.
+- [x] `Volume` est calculé par somme des volumes natifs comparables disponibles ; aucune donnée manquante n'est fabriquée.
+- [x] Correspondance stricte de la paire canonique : une donnée `BTC/USD` ne peut pas participer à un consensus `BTC/EUR`.
+- [x] Alignement des timestamps par bucket de timeframe avant agrégation.
+- [x] Provenance conservée : sources prix, sources volume, volume par source, sources exclues et motifs d'exclusion.
+- [x] Proxy Core `GET /api/market/fx-klines` ajouté pour que le navigateur reste sur le canal local existant.
+- [x] Le sélecteur Exchange du graphique Trading IA propose `ƒx` en plus des sources natives.
+- [x] En mode `ƒx`, le graphique affiche les OHLC synthétiques et le volume total en unité de l'actif de base lorsqu'il est disponible.
+- [x] Rafraîchissement `ƒx` léger à 15 secondes ; aucun historique consensus supplémentaire n'est conservé en mémoire.
+- [x] Test dédié `test_fx_consensus_v1.7.9.js` ajouté ; le calcul pur moyenne OHLC + somme des volumes a été vérifié localement.
+- [ ] Validation end-to-end avec les flux réels sur la machine cible.
+- [ ] Vérifier le comportement `ƒx` à mesure que Binance, Coinbase, OKX et d'autres connecteurs sont migrés dans le registre courant du Collector.
 
 ## Catalogue des commandes Market Data
 
@@ -109,6 +139,10 @@ Principales évolutions clôturées :
 - [x] `GET /capabilities` expose la liste complète au runtime.
 - [x] `GET /capabilities?provider=...` expose la liste d'un provider précis.
 - [x] `POST /command` permet l'exécution des commandes analytiques génériques actuellement branchées, notamment DefiLlama.
+- [x] Les commandes privées de compte/trading/retrait restent séparées du catalogue Market Data.
+- [x] Documentation du catalogue et de la source virtuelle `ƒx` ajoutée dans `Update/v1.7.9/MarketData/API_COMMANDS.md`.
+
+> Ces sources API complètent les données de l'application. Elles ne doivent pas remplacer silencieusement les chandeliers ou volumes natifs des CEX/DEX.
 
 ## Validation v1.7.9
 
