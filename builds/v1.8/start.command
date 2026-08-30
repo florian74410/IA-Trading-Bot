@@ -1,7 +1,7 @@
 #!/bin/bash
-# IA-TB v1.8 DEV bootstrap: preserve v1.7.9 lifecycle and add protection/risk services.
+# IA-TB v1.8.2 DEV bootstrap: preserve v1.7.9 lifecycle and add protection/risk services.
 cd "$(dirname "$0")" || exit 1
-export IATB_RELEASE_VERSION="1.8.0"
+export IATB_RELEASE_VERSION="1.8.2"
 TRADING_FIREWALL_PORT="${IATB_TRADING_FIREWALL_PORT:-8017}"
 DATA_FIREWALL_PORT="${IATB_DATA_FIREWALL_PORT:-8018}"
 RISK_PORT="${IATB_RISK_ENGINE_PORT:-8019}"
@@ -27,6 +27,6 @@ mkdir -p Core/TradingFirewall Core/DataCollectorFirewall Risk
 IATB_TRADING_FIREWALL_PORT="$TRADING_FIREWALL_PORT" IATB_TRADING_ENGINE_PORT="${IATB_TRADING_ENGINE_PORT:-8016}" "$NODE_BIN" Core/TradingFirewall/firewall_service.js >> Core/TradingFirewall/firewall.log 2>&1 & EXTRA_PIDS="$EXTRA_PIDS $!"
 IATB_DATA_FIREWALL_PORT="$DATA_FIREWALL_PORT" "$NODE_BIN" Core/DataCollectorFirewall/firewall_service.js >> Core/DataCollectorFirewall/data_firewall.log 2>&1 & EXTRA_PIDS="$EXTRA_PIDS $!"
 IATB_RISK_ENGINE_PORT="$RISK_PORT" ROUTER_PORT="${ROUTER_PORT:-8000}" "$NODE_BIN" Risk/Engine/risk_service.js >> Risk/risk.log 2>&1 & EXTRA_PIDS="$EXTRA_PIDS $!"
-echo "IA-TB v1.8 DEV : Trading Firewall 8017 · Data Firewall 8018 · Risk Engine 8019"
+echo "IA-TB v1.8.2 DEV : Trading Firewall 8017 · Data Firewall 8018 · Risk Engine 8019"
 /bin/bash "$PWD/start_v1.7.9_base.command"
 exit $?
