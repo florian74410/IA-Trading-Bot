@@ -21,3 +21,17 @@ function init(){var apiTitle=[].slice.call(document.querySelectorAll('.settingsC
  $('eyeCoinGecko').onclick=function(){var i=$('setCoinGeckoKey');i.type=i.type==='password'?'text':'password'};var sb=$('settingsBtn');if(sb)sb.addEventListener('click',function(){setTimeout(refresh,120)});refresh();}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
+
+/* IA-TB v1.7.9 - lightweight Trading IA UI polish.
+   No engine/service added: login layout + exchange catalogue only. */
+(function(){'use strict';
+function addStyle(){if(document.getElementById('iatbV179UiPolish'))return;var s=document.createElement('style');s.id='iatbV179UiPolish';s.textContent=
+'.auth{position:relative!important;min-height:100vh!important;height:100vh!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:24px!important;overflow:hidden!important;background-color:#070b10!important;}'+
+'.auth:before{content:"";position:absolute;z-index:0;left:50%;top:72%;transform:translate(-50%,-50%);width:min(390px,90vw);height:330px;background:#071018;border-radius:10px;box-shadow:0 0 34px 18px #071018;pointer-events:none;}'+
+'.auth .card{position:relative!important;z-index:2!important;margin:0!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;transform:none!important;}'+
+'@media(max-height:700px){.auth{align-items:center!important;padding:12px!important}.auth:before{top:74%;height:300px}.auth .card{max-height:94vh;overflow:auto}}';document.head.appendChild(s)}
+function ensureOption(sel,value,label,disabled,title){if(!sel)return;for(var i=0;i<sel.options.length;i++)if(sel.options[i].value===value){if(label)sel.options[i].textContent=label;if(title)sel.options[i].title=title;return sel.options[i]}var o=document.createElement('option');o.value=value;o.textContent=label||value;o.disabled=!!disabled;if(title)o.title=title;sel.appendChild(o);return o}
+function exchangeCatalogue(){var sel=document.getElementById('exchangeSelect');if(!sel)return;ensureOption(sel,'FX','ƒx · Consensus',false,'OHLC moyen + somme des volumes comparables');ensureOption(sel,'GMX','GMX · DEX',false,'Source Market Data active');ensureOption(sel,'KRAKEN','Kraken · CEX',false,'Source Market Data active');ensureOption(sel,'HYPERLIQUID','Hyperliquid · DEX',true,'Connecté au Market Data Collector; routage du graphique Trading IA à finaliser');ensureOption(sel,'BINANCE','Binance · CEX',true,'Connecteur historique; migration vers le registre Market Data courant à finaliser');ensureOption(sel,'COINBASE','Coinbase · CEX',true,'Connecteur historique; migration vers le registre Market Data courant à finaliser');ensureOption(sel,'OKX','OKX · CEX',true,'Connecteur historique; migration vers le registre Market Data courant à finaliser')}
+function init(){addStyle();exchangeCatalogue();setTimeout(exchangeCatalogue,200);setTimeout(exchangeCatalogue,900)}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
