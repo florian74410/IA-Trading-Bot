@@ -67,13 +67,15 @@ Principales évolutions clôturées :
 
 ## Flux de données prévus
 
-- [ ] **CoinGecko — API** — développement en cours
+- [ ] **CoinGecko — API** — intégration technique terminée, validation machine cible restante
   - [x] Socle du provider `COINGECKO` programmé.
   - [x] Enregistrement dans le registre multi-provider programmé.
   - [x] Provenance CoinGecko explicite et séparation des données CEX/DEX natives.
   - [x] Aucun volume d'exchange artificiel : volume indisponible déclaré explicitement.
   - [x] État interne : dernière réussite, dernière erreur et état d'authentification.
-  - [ ] Configuration complète depuis `Settings > API` si une clé CoinGecko est utilisée.
+  - [x] Configuration complète depuis `Settings > API` avec stockage de la clé dans le coffre RSA existant.
+  - [x] Transmission de la clé à Market Data uniquement en mémoire via canal interne authentifié.
+  - [x] Tests automatiques du provider, de la provenance, du volume et du pont de sécurité ajoutés.
   - [ ] Tests d'intégration et validation sur la machine cible.
   - [ ] Validation fonctionnelle finale CoinGecko avant passage de la fonction principale à `[x]`.
 
