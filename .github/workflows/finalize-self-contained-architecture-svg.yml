@@ -1,0 +1,59 @@
+name: Finalize self-contained architecture SVG
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - '.github/workflows/finalize-self-contained-architecture-svg.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  finalize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Build autonomous SVG
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import base64
+
+          jpg = Path('docs/assets/app_architecture.jpg')
+          svg = Path('docs/assets/app_architecture.svg')
+
+          if not jpg.exists():
+              raise SystemExit('Missing docs/assets/app_architecture.jpg')
+
+          encoded = base64.b64encode(jpg.read_bytes()).decode('ascii')
+          content = f'''<svg xmlns="http://www.w3.org/2000/svg" width="1122" height="1402" viewBox="0 0 1122 1402" role="img" aria-labelledby="title desc">
+  <title id="title">IA-TB — Architecture fonctionnelle</title>
+  <desc id="desc">Schéma de communication entre les modules de IA-TB.</desc>
+  <image href="data:image/jpeg;base64,{encoded}" x="0" y="0" width="1122" height="1402" preserveAspectRatio="xMidYMid meet"/>
+</svg>
+'''
+          svg.write_text(content, encoding='utf-8')
+
+          check = svg.read_text(encoding='utf-8')
+          assert 'data:image/jpeg;base64,' in check
+          assert 'href="app_architecture.jpg"' not in check
+          print(f'Autonomous SVG generated: {svg.stat().st_size} bytes')
+          PY
+
+      - name: Verify README source
+        run: |
+          grep -F '<img src="./docs/assets/app_architecture.svg" alt="IA-Trading-Bot architecture" width="100%" />' README.md
+
+      - name: Commit final SVG and remove workflow
+        run: |
+          rm .github/workflows/finalize-self-contained-architecture-svg.yml
+          git config user.name "IA-TB Release Builder"
+          git config user.email "actions@users.noreply.github.com"
+          git add docs/assets/app_architecture.svg .github/workflows/finalize-self-contained-architecture-svg.yml
+          git commit -m "assets: make application architecture SVG self-contained"
+          git push origin main
