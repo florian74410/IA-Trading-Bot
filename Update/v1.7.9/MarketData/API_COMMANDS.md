@@ -20,17 +20,46 @@ Les commandes analytiques génériques sont exécutées par :
 
 > Périmètre : données de marché et analytics. Les commandes privées de compte, dépôt, retrait et exécution d'ordres restent dans les connecteurs de trading et ne sont volontairement pas mélangées à ce catalogue Market Data.
 
+## ƒx — Market Consensus synthétique
+
+`ƒx` n'est pas un exchange et n'ajoute aucun service au runtime. Il s'agit d'une source virtuelle calculée à la demande directement dans le **Market Data Collector** à partir des sources CEX/DEX déjà connectées.
+
+Endpoints :
+
+- `GET /candles/consensus?symbol=BTCUSD&interval=1h&limit=300`
+- `GET /candles/consensus?symbol=BTCEUR&interval=1h&limit=300&providers=KRAKEN,BINANCE,OKX&details=1`
+- Proxy Core utilisé par le graphique Trading IA : `GET /api/market/fx-klines?symbol=BTCUSD&interval=1h&limit=300`
+
+Règles de calcul :
+
+- `Open` = moyenne arithmétique des Open valides.
+- `High` = moyenne arithmétique des High valides, puis contrôle de cohérence OHLC.
+- `Low` = moyenne arithmétique des Low valides, puis contrôle de cohérence OHLC.
+- `Close` = moyenne arithmétique des Close valides.
+- `Volume` = somme des volumes natifs comparables disponibles.
+- Aucun volume manquant n'est estimé ou fabriqué.
+- Une source n'est utilisée que si sa paire canonique correspond exactement à la paire demandée : `BTC/EUR` n'est jamais mélangé à `BTC/USD`.
+- Les bougies sont alignées sur le même bucket de timeframe avant agrégation.
+- L'unité de volume synthétique est l'actif de base de la paire, par exemple `BTC` pour `BTC/EUR`.
+
+La réponse conserve notamment `sourcesUsed`, `sourcesExcluded`, `volumeUnit`, `priceMethod`, `volumeMethod` et, avec `details=1`, `volumeBySource` et la provenance par bougie.
+
+`GET /providers` expose également `FX` comme provider virtuel de type `SYNTHETIC` afin que l'interface puisse le proposer dans le sélecteur d'exchange sans le confondre avec un CEX/DEX réel.
+
 ## GMX
 
-- `market.candles` — LEGACY_IMPLEMENTED
-- `market.tickers` — LEGACY_IMPLEMENTED
-- `market.tokens` — LEGACY_IMPLEMENTED
+- `market.candles` — IMPLEMENTED
+- `market.ticker.price` — IMPLEMENTED
+- `market.tickers` — UPSTREAM_AVAILABLE
+- `market.tokens` — UPSTREAM_AVAILABLE
 - `market.markets` — UPSTREAM_AVAILABLE
 - `market.markets.info` — UPSTREAM_AVAILABLE
 - `market.markets.state` — UPSTREAM_AVAILABLE
 - `market.markets.tickers` — UPSTREAM_AVAILABLE
 - `market.signed_prices.latest` — UPSTREAM_AVAILABLE
 - `market.rates` — UPSTREAM_AVAILABLE
+
+GMX fournit les OHLC utilisés par IA-TB, mais aucun volume n'est inventé lorsque l'Oracle ne fournit pas de volume comparable.
 
 ## Binance
 
@@ -77,7 +106,7 @@ Les commandes analytiques génériques sont exécutées par :
 ## Kraken / Reference
 
 - `market.candles` — IMPLEMENTED
-- `market.ticker` — UPSTREAM_AVAILABLE
+- `market.ticker.price` — IMPLEMENTED
 - `market.trades` — UPSTREAM_AVAILABLE
 - `market.orderbook.l2` — UPSTREAM_AVAILABLE
 - `market.spread` — UPSTREAM_AVAILABLE
@@ -112,6 +141,8 @@ Les commandes analytiques génériques sont exécutées par :
 - `market.symbols` — UPSTREAM_AVAILABLE
 - `market.ticker` — UPSTREAM_AVAILABLE
 - `market.trades` — UPSTREAM_AVAILABLE
+
+> La spécialisation finale de Blockchain.com doit encore être revue avant stabilisation de v1.7.9 afin d'éviter les doublons inutiles avec les sources CEX/DEX natives.
 
 ## DefiLlama — commandes gratuites implémentées
 
