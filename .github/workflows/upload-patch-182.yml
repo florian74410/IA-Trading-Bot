@@ -1,0 +1,33 @@
+name: upload-cumulative-patch-182
+on:
+  push:
+    paths:
+      - '.upload/patch182.part*'
+permissions:
+  contents: write
+jobs:
+  assemble:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Assemble when all chunks exist
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected=6
+          count=$(find .upload -maxdepth 1 -type f -name 'patch182.part*' 2>/dev/null | wc -l | tr -d ' ')
+          if [ "$count" != "$expected" ]; then
+            echo "Waiting for all chunks: $count/$expected"
+            exit 0
+          fi
+          mkdir -p updates
+          cat .upload/patch182.part00 .upload/patch182.part01 .upload/patch182.part02 .upload/patch182.part03 .upload/patch182.part04 .upload/patch182.part05 | base64 -d > updates/IA-TB_Update_v1.8.2_CUMULATIVE_FROM_1.8.0.zip
+          sha256sum updates/IA-TB_Update_v1.8.2_CUMULATIVE_FROM_1.8.0.zip > updates/IA-TB_Update_v1.8.2_CUMULATIVE_FROM_1.8.0.zip.sha256
+          test "$(sha256sum updates/IA-TB_Update_v1.8.2_CUMULATIVE_FROM_1.8.0.zip | awk '{print $1}')" = "d00ec0965cc35d5cf41f718caf105bb4bcb2eb5c9d1d103b7fcd807ab47f1493"
+          rm -rf .upload
+          rm -f .github/workflows/upload-patch-182.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "release: add cumulative v1.8.2 update patch"
+          git push
