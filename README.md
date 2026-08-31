@@ -200,9 +200,20 @@ Le packaging v1.8 est maintenant reproductible : la version est produite depuis 
   - [ ] Valider la présence et le comportement de `sqlite3` sur macOS High Sierra / Node.js 16 et prévoir le comportement VPS.
   - [ ] Tester reconstruction, déduplication, reprise après arrêt, synchronisation et cohérence des calculs.
 
+## Trading Firewall Module
+
+- [x] **Implémentation du Firewall Module** — couche de sécurité du canal `Trading Engine -> Exchanges` conçue et intégrée.
+  - [x] Paramétrage `Settings > Trading Firewall` défini.
+  - [x] Modes `Protection` et `Observation` définis.
+  - [x] Vérification authentification CP, signatures et âge maximal des messages prévue.
+  - [x] Command Whitelist définie pour `trading.execute`, `trading.cancel`, `trading.close_position` et `trading.health`.
+  - [x] Trading Pair Whitelist intégrée au modèle de configuration.
+  - [x] Duplicate Protection avec fenêtre configurable définie.
+  - [ ] Validation end-to-end du Firewall sur la machine cible avec les connecteurs réels.
+
 ## Risk Engine
 
-- [ ] **Risk Engine — moteur analytique de représentation du risque** — intégré au build v1.8, validation runtime CP/1 restante
+- [x] **Implémentation du Risk Engine** — moteur analytique de représentation du risque intégré ; validation runtime CP/1 end-to-end restante
   - [x] Prototype Risk Engine intégré comme Engine autonome prévu pour l'enregistrement auprès du Router en CP/1.
   - [x] Rôle strictement analytique conservé : aucun `APPROVE`, `MODIFY`, `REJECT` et aucune exécution d'ordre dans le Risk Engine.
   - [x] Requêtes de données Market Data conçues exclusivement via le Router.
