@@ -6,7 +6,7 @@ IA-TB suit une architecture modulaire. Le but est de pouvoir ajouter des CEX/DEX
   <img src="../assets/architecture-overview.png" alt="IA-TB — Architecture fonctionnelle" width="100%" />
 </p>
 
-> Version SVG : [`docs/assets/architecture-overview.svg`](../assets/architecture-overview.svg)
+> Version SVG : [`assets/architecture-overview.svg`](../assets/architecture-overview.svg)
 
 ## Vue logique actuelle
 
