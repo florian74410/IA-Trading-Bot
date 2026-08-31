@@ -147,12 +147,12 @@ Le patch v1.7.9, son test d'installation, le build complet et l'archive complèt
 
 ---
 
-# 🚧 v1.8.x — DÉVELOPPEMENT EN COURS, BUILD v1.8.2 EN VALIDATION
+# ✅ v1.8.2 — FINALISÉE
 
 Le packaging v1.8 est maintenant reproductible : la version est produite depuis l'archive officielle v1.7.9 au moyen d'un patch UpdateManager `1.7.9 -> 1.8.0`. Le patch a été accepté et installé par le vrai UpdateManager de la v1.7.9 sous Node.js 16.20.2, puis le résultat a été comparé au build `builds/v1.8`.
 
 **État packaging : PASS.**  
-**État runtime complet : validation sur macOS High Sierra / machine cible en cours.**
+**État v1.8.2 : FINALISÉ. Les développements suivants commencent après cette version.**
 
 ## v1.8.1 — Liquidity Engine
 
@@ -166,8 +166,8 @@ Le packaging v1.8 est maintenant reproductible : la version est produite depuis 
   - [x] Ajout des endpoints `/realtime`, `/snapshot`, `/liquidations` et `/liquidations/event`.
   - [x] Cache temps réel borné et buffer de liquidations borné.
   - [x] Tests unitaires Liquidity et contrôles de syntaxe JavaScript réussis dans l'environnement de build.
-  - [ ] Validation réseau temps réel avec les providers réels sur la machine cible.
-  - [ ] Validation consommation mémoire / stabilité Liquidity sur macOS High Sierra.
+  - [x] Validation réseau temps réel avec les providers réels sur la machine cible.
+  - [x] Validation consommation mémoire / stabilité Liquidity sur macOS High Sierra.
 
 ## v1.8.2 — Admin UI / UpdateManager
 
@@ -178,9 +178,9 @@ Le packaging v1.8 est maintenant reproductible : la version est produite depuis 
   - [x] Palette et contours harmonisés avec les autres pages de l'application.
   - [x] Réutilisation du logo IA-TB déjà présent dans l'application.
   - [x] Fonctions Admin existantes conservées derrière la nouvelle présentation.
-  - [ ] Validation visuelle et fonctionnelle sur macOS High Sierra / Firefox cible.
+  - [x] Validation visuelle et fonctionnelle sur macOS High Sierra / Firefox cible.
 
-- [ ] **UpdateManager v1.8.2 — validation finale machine cible restante.**
+- [x] **UpdateManager v1.8.2 — finalisé.**
   - [x] Cause du rejet identifiée : version installée détectée `1.8.0` alors que le premier patch ciblait `1.8.1`.
   - [x] Patch cumulatif corrigé pour `1.8.0 -> 1.8.2`.
   - [x] Le patch cumulatif inclut les changements Liquidity v1.8.1 et Admin v1.8.2 nécessaires au résultat final.
@@ -188,9 +188,15 @@ Le packaging v1.8 est maintenant reproductible : la version est produite depuis 
   - [x] Après installation de test, `current_release.dat` et la version active passent à `1.8.2`.
   - [x] Contrôle SHA-256 et syntaxe JavaScript réussis sur le build installé de test.
   - [x] Le nom externe du fichier ZIP n'est pas utilisé comme source de vérité ; la compatibilité est déterminée par le manifeste interne.
-  - [ ] Installer le patch corrigé via l'Update Manager sur la machine cible.
-  - [ ] Confirmer que l'application affiche `1.8.2` après redémarrage.
-  - [ ] Publier/valider définitivement l'archive corrigée dans `updates/` sur GitHub.
+  - [x] Installer le patch corrigé via l'Update Manager sur la machine cible.
+  - [x] Confirmer que l'application affiche `1.8.2` après redémarrage.
+  - [x] Publier/valider définitivement l'archive corrigée dans `updates/` sur GitHub.
+
+---
+
+# 🔜 Après v1.8.2 — travaux futurs
+
+Les éléments ci-dessous ne font pas partie de la v1.8.2 finalisée. Ils constituent la suite de la feuille de route.
 
 ## Portfolio Module
 
@@ -273,7 +279,7 @@ Le packaging v1.8 est maintenant reproductible : la version est produite depuis 
 - [x] Upgrade Liquidity v1.8.1 intégré et testé dans l'environnement de build.
 - [x] Nouvelle interface Admin v1.8.2 programmée.
 - [x] Patch cumulatif `1.8.0 -> 1.8.2` validé sur copie du build v1.8.0.
-- [ ] Installation et validation du patch v1.8.2 sur la machine cible.
+- [x] Installation et validation du patch v1.8.2 sur la machine cible.
 - [ ] Intégration Portfolio Module complète.
 - [ ] Tests CP/1 Router ↔ Portfolio ↔ Market Data ↔ Trading Engine ↔ Supervisor.
 - [ ] Tests CP/1 Router ↔ Risk Engine ↔ Market Data / Indicators / Portfolio / Supervisor sur la machine cible.
