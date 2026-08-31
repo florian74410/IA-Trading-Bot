@@ -3,20 +3,20 @@
 IA-TB suit une architecture modulaire. Le but est de pouvoir ajouter des CEX/DEX et des moteurs d'analyse sans créer de dépendances implicites entre les plateformes.
 
 <p align="center">
-  <img src="../assets/architecture-overview.png" alt="IA-TB — Architecture fonctionnelle" width="100%" />
+  <img src="../../assets/architecture-overview.png" alt="IA-TB — Architecture fonctionnelle" width="100%" />
 </p>
 
-> Version SVG : [`assets/architecture-overview.svg`](../assets/architecture-overview.svg)
+> Version SVG : [`assets/architecture-overview.svg`](../../assets/architecture-overview.svg)
 
 ## Vue logique actuelle
 
-Le **Router** est le hub de communication central. Les échanges bidirectionnels sont représentés par deux flèches distinctes : chaque flèche reprend la couleur du module dont elle part, tandis que les données binaires affichées entre les deux sens restent blanches.
+Le **Router** est le hub de communication central. Les échanges inter-modules passent par lui afin de limiter le couplage et de rendre les flux observables.
 
 ```text
 Market Data    <-> Router
 Chart Viewer   <-> Router
 Portfolio      <-> Router
-Risk Manager   <-> Router
+Risk Engine    <-> Router
 Supervisor     <-> Router
 
 Strategy Engine     <-> Router
@@ -24,10 +24,36 @@ Trading Engine      <-> Router
 Indicator Engine    <-> Router
 Fundamental Engine  <-> Router
 
-Trading Engine <-> Firewall <-> Exchanges
+Trading Engine <-> Trading Firewall <-> Exchanges
 ```
 
-Le **Firewall** matérialise la couche de contrôle du canal d'exécution entre le Trading Engine et les Exchanges. Il représente notamment les contrôles de sécurité, les coupures réseau possibles et les validations avant exécution.
+Le **Risk Engine** est analytique : il calcule exposition, levier, marge, drawdown, volatilité, VaR, Expected Shortfall et autres métriques à partir des données obtenues via le Router. Il fournit ses résultats au Supervisor mais ne décide ni n'exécute directement un ordre. Voir [Risk Engine](Risk-Engine.md).
+
+Le **Trading Firewall** est la couche de contrôle du canal d'exécution entre le Trading Engine et les Exchanges. Il vérifie les règles de sécurité avant transmission d'une commande : authentification CP, signatures, âge du message, whitelist de commandes, whitelist de paires et protection anti-doublon. Voir [Trading Firewall Module](Firewall-Module.md).
+
+## Séparation des responsabilités
+
+```text
+Strategy / Supervisor
+        |
+        v
+      Router <-> Risk Engine
+        |
+        v
+ Trading Engine
+        |
+        v
+ Trading Firewall
+        |
+        v
+     Exchanges
+```
+
+- **Supervisor** : orchestration et décision de haut niveau.
+- **Risk Engine** : mesure et représentation du risque.
+- **Trading Engine** : préparation/adaptation et exécution technique des ordres.
+- **Trading Firewall** : contrôle de sécurité du canal d'exécution.
+- **Exchange connector** : communication avec l'API CEX/DEX concernée.
 
 ## Principes
 
@@ -45,8 +71,6 @@ Le registre permet de sélectionner explicitement la source sans mélanger les c
 
 Le type `SOCKET` représente un flux WebSocket persistant destiné aux mises à jour temps réel. Il peut être associé à une API HTTP pour récupérer l'historique initial. Hyperliquid utilise cette architecture avec `candleSnapshot` pour l'historique et le canal WebSocket `candle` pour les mises à jour.
 
-La couche SOCKET suit également l'état de connexion, le dernier événement reçu, les erreurs et les abonnements actifs afin de rendre le flux observable.
-
 ### Normalisation centrale
 
 La couche commune harmonise symboles, timeframes, timestamps et formats sans effacer l'identité de la source.
@@ -57,8 +81,8 @@ Les données publiques doivent fonctionner sans clé lorsque la plateforme le pe
 
 ### Faible couplage
 
-Chart Viewer, Indicator Engine et les autres moteurs consomment des interfaces normalisées et communiquent via le Router plutôt que par des dépendances implicites entre modules.
+Chart Viewer, Risk Engine, Indicator Engine et les autres moteurs consomment des interfaces normalisées et communiquent via le Router plutôt que par des dépendances implicites entre modules.
 
 ### Machine cible
 
-L'application doit rester légère : cache maîtrisé, mémoire limitée, traitement à la demande et flux temps réel raisonnables plutôt qu'un chargement historique massif au démarrage. La v1.7.8 conserve cette règle avec un cache Market Data borné et des contextes actifs expirables.
+L'application doit rester légère : cache maîtrisé, mémoire limitée, traitement à la demande et flux temps réel raisonnables plutôt qu'un chargement historique massif au démarrage.
