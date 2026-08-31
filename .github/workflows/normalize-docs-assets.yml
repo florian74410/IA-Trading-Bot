@@ -1,0 +1,88 @@
+name: Normalize docs and assets layout
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - '.github/workflows/normalize-docs-assets.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  normalize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Merge documentation and assets
+        run: |
+          set -euo pipefail
+          mkdir -p assets
+
+          if [ -d Docs/Assets ]; then
+            for f in Docs/Assets/*; do
+              [ -e "$f" ] || continue
+              base="$(basename "$f")"
+              if [ -e "assets/$base" ]; then
+                echo "Collision: assets/$base" >&2
+                exit 1
+              fi
+              git mv "$f" "assets/$base"
+            done
+            rmdir Docs/Assets
+          fi
+
+          if [ -d Docs ]; then
+            if [ "$(find Docs -mindepth 1 -print -quit)" ]; then
+              echo "Docs still contains files; refusing destructive merge." >&2
+              find Docs -maxdepth 3 -print
+              exit 1
+            fi
+            rmdir Docs
+          fi
+
+          if [ -d docs/assets ]; then
+            for f in docs/assets/*; do
+              [ -e "$f" ] || continue
+              base="$(basename "$f")"
+              if [ -e "assets/$base" ]; then
+                echo "Collision: assets/$base" >&2
+                exit 1
+              fi
+              git mv "$f" "assets/$base"
+            done
+            rmdir docs/assets
+          fi
+
+          python3 - <<'PY'
+          from pathlib import Path
+          for p in Path('.').rglob('*.md'):
+              if '.git' in p.parts:
+                  continue
+              text = p.read_text(encoding='utf-8')
+              new = text.replace('docs/assets/', 'assets/').replace('./docs/assets/', './assets/').replace('Docs/Assets/', 'assets/').replace('./Docs/Assets/', './assets/')
+              if new != text:
+                  p.write_text(new, encoding='utf-8')
+          PY
+
+          test -d docs/wiki
+          test -f README.md
+          test -f ROADMAP.md
+          test -d assets
+          test ! -e Docs
+          test ! -e docs/assets
+
+      - name: Commit normalized layout and cleanup workflow
+        run: |
+          rm .github/workflows/normalize-docs-assets.yml
+          rmdir .github/workflows 2>/dev/null || true
+          rmdir .github 2>/dev/null || true
+          git config user.name "IA-TB Repository Normalizer"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          git commit -m "chore: normalize docs and assets layout"
+          git push origin main
