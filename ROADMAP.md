@@ -16,6 +16,17 @@ Construire d'abord une workstation de développement fiable, utilisable manuelle
 - [ ] Finaliser le stockage sécurisé des identifiants et secrets.
 - [ ] Améliorer la gestion et l'affichage des erreurs.
 - [ ] Vérifier le comportement au démarrage, à l'arrêt et en cas d'échec d'un service.
+- [ ] Finaliser un lanceur macOS exécutable / raccourci `.app` permettant de démarrer IA-TB_Dev_Updater par double-clic sans utiliser le Terminal manuellement.
+
+### Socle local — état d'implémentation
+
+- Journal applicatif centralisé `~/.ia_tb_dev_updater/logs/app.log` ajouté.
+- Rotation des journaux applicatifs ajoutée pour limiter leur taille.
+- Capture des exceptions Python non gérées ajoutée.
+- Journal de bootstrap `~/.ia_tb_dev_updater/logs/bootstrap.log` ajouté au lanceur.
+- Démarrage et arrêt de l'application désormais tracés.
+- Le lanceur `.command` reste disponible pendant le développement.
+- Le raccourci `.app` final sera construit après stabilisation du socle afin qu'il repose sur un démarrage fiable.
 
 ## Phase 2 — Git local
 
