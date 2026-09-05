@@ -1,55 +1,57 @@
 from PySide2.QtGui import QFont
 
 
+BG = "#0d131a"
+PANEL = "#111a22"
+PANEL_2 = "#0b1219"
+BORDER = "#2a3947"
+TEXT = "#e8edf2"
+MUTED = "#a6b0bb"
+GREEN = "#67d35b"
+BLUE = "#4f9cff"
+PURPLE = "#b260d9"
+ORANGE = "#f3a847"
+
+
 def apply_theme(app):
-
     app.setStyle("Fusion")
-
-    app.setFont(
-        QFont("Arial", 11)
-    )
-
-    app.setStyleSheet("""
-        QMainWindow {
-            background: #17191f;
-        }
-
-        QWidget {
-            color: #e8e8e8;
-            background: #17191f;
-        }
-
-        QGroupBox {
-            border: 1px solid #3b3f48;
-            border-radius: 8px;
-            margin-top: 12px;
-            padding: 10px;
-        }
-
-        QGroupBox::title {
-            subcontrol-origin: margin;
-            left: 12px;
-            padding: 0 5px;
-        }
-
-        QPushButton {
-            background: #2d313a;
-            border: 1px solid #4a4f5a;
-            border-radius: 6px;
-            padding: 8px 14px;
-        }
-
-        QPushButton:hover {
-            background: #3a3f4a;
-        }
-
-        QTextEdit {
-            background: #101216;
-            border: 1px solid #3b3f48;
-            border-radius: 6px;
-        }
-
-        QLabel {
-            padding: 2px;
-        }
+    app.setFont(QFont("Arial", 10))
+    app.setStyleSheet(f"""
+        * {{ color: {TEXT}; font-family: Arial; }}
+        QMainWindow, QWidget {{ background: {BG}; }}
+        QToolTip {{ background: #18232d; border: 1px solid {BORDER}; padding: 6px; color: {TEXT}; }}
+        QFrame#topbar {{ background: #101821; border-bottom: 1px solid #25323e; }}
+        QFrame#footer {{ background: #0f171f; border-top: 1px solid #25323e; }}
+        QLabel {{ background: transparent; }}
+        QLabel#title {{ font-size: 16px; font-weight: 600; }}
+        QLabel#muted {{ color: {MUTED}; }}
+        QLabel#section {{ font-size: 14px; font-weight: 600; color: #dfe6ec; }}
+        QPushButton {{
+            background: #202b35; border: 1px solid #33424f; border-radius: 6px;
+            padding: 7px 11px; min-height: 18px;
+        }}
+        QPushButton:hover {{ background: #293742; border-color: #4b5e6e; }}
+        QPushButton:pressed {{ background: #17222b; }}
+        QPushButton#nav {{ background: transparent; border: 1px solid transparent; padding: 8px 13px; }}
+        QPushButton#nav:hover {{ background: #19242e; }}
+        QPushButton#nav[active="true"] {{ background: #1a2c3c; border-color: #203f58; color: {BLUE}; }}
+        QPushButton#accent {{ background: #193728; border-color: #2e6441; color: {GREEN}; }}
+        QPushButton#blue {{ background: #172d43; border-color: #2b5279; color: {BLUE}; }}
+        QPushButton#purple {{ background: #2b1b38; border-color: #5d3575; color: {PURPLE}; }}
+        QPushButton#danger {{ color: #ff9b9b; }}
+        QFrame#agentCard {{ background: {PANEL}; border: 1px solid {BORDER}; border-radius: 8px; }}
+        QFrame#agentCard[accent="green"] {{ border-color: #36723b; }}
+        QFrame#agentCard[accent="blue"] {{ border-color: #315d8f; }}
+        QFrame#agentCard[accent="purple"] {{ border-color: #75438d; }}
+        QFrame#tree {{ background: {PANEL_2}; border: 1px solid #253541; border-radius: 6px; }}
+        QFrame#console {{ background: #090e13; border: 1px solid #263642; border-radius: 7px; }}
+        QTextEdit, QPlainTextEdit {{ background: #090e13; border: 0; selection-background-color: #28445b; font-family: Menlo, Monaco, monospace; font-size: 11px; }}
+        QLineEdit {{ background: #121b23; border: 1px solid #2d3d49; border-radius: 5px; padding: 6px 8px; }}
+        QScrollBar:vertical {{ background: #0b1117; width: 9px; margin: 2px; }}
+        QScrollBar::handle:vertical {{ background: #334451; border-radius: 4px; min-height: 24px; }}
+        QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {{ height: 0; }}
+        QSplitter::handle {{ background: #1b2730; }}
+        QTabWidget::pane {{ border: 1px solid {BORDER}; border-radius: 6px; }}
+        QTabBar::tab {{ background: #141e27; padding: 7px 12px; border: 1px solid {BORDER}; }}
+        QTabBar::tab:selected {{ background: #1c2a35; }}
     """)
