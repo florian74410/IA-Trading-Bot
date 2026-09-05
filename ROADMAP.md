@@ -11,10 +11,10 @@ Construire d'abord une workstation de développement fiable, utilisable manuelle
 ## Phase 1 — Socle local
 
 - [ ] Garantir un lancement propre de l'application sur macOS 10.13.6+.
-- [ ] Stabiliser la configuration de l'application.
-- [ ] Centraliser et fiabiliser les logs.
+- [x] Stabiliser la configuration de l'application.
+- [x] Centraliser et fiabiliser les logs.
 - [ ] Finaliser le stockage sécurisé des identifiants et secrets.
-- [ ] Améliorer la gestion et l'affichage des erreurs.
+- [x] Améliorer la gestion et l'affichage des erreurs.
 - [ ] Vérifier le comportement au démarrage, à l'arrêt et en cas d'échec d'un service.
 - [ ] Finaliser un lanceur macOS exécutable / raccourci `.app` permettant de démarrer IA-TB_Dev_Updater par double-clic sans utiliser le Terminal manuellement.
 
@@ -25,8 +25,20 @@ Construire d'abord une workstation de développement fiable, utilisable manuelle
 - Capture des exceptions Python non gérées ajoutée.
 - Journal de bootstrap `~/.ia_tb_dev_updater/logs/bootstrap.log` ajouté au lanceur.
 - Démarrage et arrêt de l'application désormais tracés.
+- Sauvegarde des paramètres rendue atomique afin de limiter les fichiers partiellement écrits.
+- Détection et sauvegarde de secours des paramètres JSON corrompus avant régénération des valeurs par défaut.
+- Contrôles de démarrage ajoutés : version Python et accès en écriture aux dossiers de données, workspace et logs.
+- Affichage d'une erreur bloquante lisible si le bootstrap local ne peut pas terminer.
+- Tests ajoutés pour les logs, les contrôles de démarrage et la récupération des paramètres corrompus.
 - Le lanceur `.command` reste disponible pendant le développement.
-- Le raccourci `.app` final sera construit après stabilisation du socle afin qu'il repose sur un démarrage fiable.
+- Le raccourci `.app` final sera construit après stabilisation complète du programme afin qu'il repose sur un démarrage fiable.
+
+### Validation encore nécessaire avant clôture de la Phase 1
+
+- Test réel sur le MacBook Pro macOS 10.13.6 cible.
+- Vérification du comportement de fermeture depuis l'interface et après erreur d'un service réel.
+- Audit final du stockage sécurisé Keychain / coffre local.
+- Packaging final du lanceur macOS `.app` en fin de projet.
 
 ## Phase 2 — Git local
 
