@@ -341,6 +341,11 @@ class MainWindow(QMainWindow):
         layout.setSpacing(10)
         layout.addWidget(self.page_header("Wiki", "Documentation du programme — README.md de la branche github-administration."))
 
+        # Create the browser first. Toolbar actions below reference this object.
+        self.wiki_view = QWebEngineView()
+        self.wiki_view.setObjectName("wikiView")
+        self.wiki_view.setUrl(QUrl("https://github.com/florian74410/IA-Trading-Bot/blob/github-administration/README.md"))
+
         toolbar = QHBoxLayout()
         status = QLabel("●  Documentation GitHub")
         status.setObjectName("connected")
@@ -348,23 +353,19 @@ class MainWindow(QMainWindow):
         toolbar.addStretch()
 
         back = QPushButton("‹  Retour")
-        back.clicked.connect(lambda: self.wiki_view.back())
+        back.clicked.connect(self.wiki_view.back)
         toolbar.addWidget(back)
         forward = QPushButton("Avancer  ›")
-        forward.clicked.connect(lambda: self.wiki_view.forward())
+        forward.clicked.connect(self.wiki_view.forward)
         toolbar.addWidget(forward)
         reload_button = QPushButton("⟳  Actualiser")
         reload_button.clicked.connect(self.wiki_view.reload)
         toolbar.addWidget(reload_button)
         open_button = QPushButton("↗  GitHub")
-        open_button.clicked.connect(lambda: self.wiki_view.page().profile().downloadRequested if False else None)
         open_button.clicked.connect(self.open_wiki_external)
         toolbar.addWidget(open_button)
         layout.addLayout(toolbar)
 
-        self.wiki_view = QWebEngineView()
-        self.wiki_view.setObjectName("wikiView")
-        self.wiki_view.setUrl(QUrl("https://github.com/florian74410/IA-Trading-Bot/blob/github-administration/README.md"))
         self.wiki_view.loadStarted.connect(lambda: status.setText("●  Chargement du Wiki..."))
         self.wiki_view.loadFinished.connect(self.on_wiki_loaded)
         layout.addWidget(self.wiki_view, 1)
