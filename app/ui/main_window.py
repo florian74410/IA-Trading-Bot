@@ -4,9 +4,9 @@ import webbrowser
 
 from PySide2.QtCore import Qt, QTimer, QUrl, QProcess
 from PySide2.QtWidgets import (
-    QCheckBox, QDialog, QDialogButtonBox, QFrame, QGridLayout, QHBoxLayout,
-    QLabel, QLineEdit, QMainWindow, QMessageBox, QPlainTextEdit, QPushButton,
-    QStackedWidget, QVBoxLayout, QWidget
+    QCheckBox, QComboBox, QDialog, QDialogButtonBox, QFrame, QGridLayout,
+    QHBoxLayout, QLabel, QLineEdit, QMainWindow, QMessageBox, QPlainTextEdit,
+    QPushButton, QScrollArea, QStackedWidget, QVBoxLayout, QWidget
 )
 from PySide2.QtWebEngineWidgets import QWebEngineView
 
@@ -20,20 +20,69 @@ from app.services.github_service import GitHubService
 from app.services.openai_service import OpenAIService
 
 NAV_ITEMS = (("Dashboard", "▣"), ("Agents", "♙"), ("Console", "›_"), ("Archives", "▤"), ("Wiki", "▤"), ("Paramètres", "⚙"), ("Logs", "▤"))
+ACCENTS = {"green": "#67d35b", "blue": "#4f9cff", "purple": "#b260d9", "orange": "#f3a847"}
 
 
 class AgentEditor(QDialog):
+    """Full mission-sheet editor. Superficial identity and deep operational fields live here."""
     def __init__(self, name, data, parent=None):
-        super().__init__(parent); self.setWindowTitle(f"Agent — {name}"); self.setMinimumSize(720, 520); self.data = data
-        layout = QVBoxLayout(self); title = QLabel(f"Configuration de {name}"); title.setObjectName("pageTitle"); layout.addWidget(title)
-        role = QLabel(data.get("role", "")); role.setObjectName("muted"); layout.addWidget(role)
-        enabled = QCheckBox("Agent actif"); enabled.setChecked(bool(data.get("enabled", True))); layout.addWidget(enabled)
-        layout.addWidget(QLabel("Prompt système")); prompt = QPlainTextEdit(); prompt.setPlainText(data.get("prompt", "")); layout.addWidget(prompt, 2)
-        layout.addWidget(QLabel("Commandes autorisées — une commande ou un préfixe par ligne")); commands = QPlainTextEdit(); commands.setPlainText("\n".join(data.get("commands", []))); layout.addWidget(commands, 1)
-        buttons = QDialogButtonBox(QDialogButtonBox.Save | QDialogButtonBox.Cancel); buttons.accepted.connect(self.accept); buttons.rejected.connect(self.reject); layout.addWidget(buttons)
-        self.enabled, self.prompt, self.commands = enabled, prompt, commands
+        super().__init__(parent)
+        self.name = name
+        self.data = dict(data)
+        self.setWindowTitle(f"Fiche de mission — {name}")
+        self.setMinimumSize(900, 700)
+        self.setObjectName("agentEditor")
+        root = QVBoxLayout(self)
+        title = QLabel(f"{data.get('avatar', '🤖')}  {data.get('pseudo', name)}")
+        title.setObjectName("pageTitle")
+        root.addWidget(title)
+        subtitle = QLabel("Configuration complète de la mission, du comportement et du niveau d'autonomie.")
+        subtitle.setObjectName("muted")
+        root.addWidget(subtitle)
+
+        scroll = QScrollArea(); scroll.setWidgetResizable(True); scroll.setFrameShape(QFrame.NoFrame)
+        body = QWidget(); layout = QVBoxLayout(body); layout.setSpacing(10)
+        layout.addWidget(self.section_title("IDENTITÉ"))
+        self.pseudo = self.field(layout, "Pseudo affiché", data.get("pseudo", name))
+        row = QHBoxLayout(); self.avatar = self.field(row, "Avatar / icône", data.get("avatar", "🤖")); self.accent = QComboBox(); self.accent.addItems(["green", "blue", "purple", "orange"]); self.accent.setCurrentText(data.get("accent", "green")); wrap = QVBoxLayout(); wrap.addWidget(QLabel("Accent visuel")); wrap.addWidget(self.accent); row.addLayout(wrap, 1); layout.addLayout(row)
+        self.role = self.field(layout, "Rôle", data.get("role", "Agent IA"))
+        self.enabled = QCheckBox("Agent actif"); self.enabled.setChecked(bool(data.get("enabled", True))); layout.addWidget(self.enabled)
+
+        layout.addWidget(self.section_title("MISSION"))
+        self.mission = self.area(layout, "Mission principale", data.get("mission", ""), 2)
+        self.objectives = self.area(layout, "Objectifs à atteindre — un objectif par ligne", data.get("objectives", ""), 3)
+        self.methodology = self.area(layout, "Méthodologie de travail", data.get("methodology", ""), 3)
+
+        layout.addWidget(self.section_title("INTELLIGENCE & CONTEXTE"))
+        self.prompt = self.area(layout, "Prompt système / instructions fondamentales", data.get("prompt", ""), 6)
+        self.context = self.area(layout, "Contexte et ressources disponibles", data.get("context", ""), 3)
+        self.forbidden = self.area(layout, "Règles / interdictions", data.get("forbidden", ""), 3)
+
+        layout.addWidget(self.section_title("AUTONOMIE & EXÉCUTION"))
+        row = QHBoxLayout(); row.addWidget(QLabel("Niveau d'autonomie")); self.autonomy = QComboBox(); self.autonomy.addItems(["Observation", "Proposition", "Exécution contrôlée", "Autonome"]); self.autonomy.setCurrentText(data.get("autonomy", "Proposition")); row.addWidget(self.autonomy, 1); row.addWidget(QLabel("Mode")); self.execution_mode = QComboBox(); self.execution_mode.addItems(["À la demande", "Après validation", "Automatique"]); self.execution_mode.setCurrentText(data.get("execution_mode", "À la demande")); row.addWidget(self.execution_mode, 1); layout.addLayout(row)
+        self.commands = self.area(layout, "Commandes autorisées — une commande ou un préfixe par ligne", "\n".join(data.get("commands", [])), 4)
+        note = QLabel("Les privilèges restent également visibles et gérables depuis Paramètres."); note.setObjectName("muted"); layout.addWidget(note)
+        layout.addStretch(); scroll.setWidget(body); root.addWidget(scroll, 1)
+        buttons = QDialogButtonBox(QDialogButtonBox.Save | QDialogButtonBox.Cancel); buttons.accepted.connect(self.accept); buttons.rejected.connect(self.reject); root.addWidget(buttons)
+
+    def section_title(self, text):
+        label = QLabel(text); label.setObjectName("section"); return label
+    def field(self, layout, label, value):
+        wrap = QVBoxLayout(); wrap.addWidget(QLabel(label)); edit = QLineEdit(value); wrap.addWidget(edit); layout.addLayout(wrap); return edit
+    def area(self, layout, label, value, stretch):
+        layout.addWidget(QLabel(label)); edit = QPlainTextEdit(); edit.setPlainText(value); edit.setMinimumHeight(70 + stretch * 8); layout.addWidget(edit, stretch); return edit
     def values(self):
-        return {"role": self.data.get("role", ""), "enabled": self.enabled.isChecked(), "prompt": self.prompt.toPlainText().strip(), "commands": [x.strip() for x in self.commands.toPlainText().splitlines() if x.strip()]}
+        return {
+            "pseudo": self.pseudo.text().strip() or self.name,
+            "avatar": self.avatar.text().strip() or "🤖",
+            "accent": self.accent.currentText(), "role": self.role.text().strip() or "Agent IA",
+            "enabled": self.enabled.isChecked(), "mission": self.mission.toPlainText().strip(),
+            "objectives": self.objectives.toPlainText().strip(), "methodology": self.methodology.toPlainText().strip(),
+            "prompt": self.prompt.toPlainText().strip(), "context": self.context.toPlainText().strip(),
+            "autonomy": self.autonomy.currentText(), "execution_mode": self.execution_mode.currentText(),
+            "commands": [x.strip() for x in self.commands.toPlainText().splitlines() if x.strip()],
+            "forbidden": self.forbidden.toPlainText().strip(),
+        }
 
 
 class MainWindow(QMainWindow):
@@ -42,8 +91,7 @@ class MainWindow(QMainWindow):
         self.puce, self.geek, self.archiviste = PuceAgent(), GeekAgent(), ArchivisteAgent()
         for agent in (self.puce, self.geek, self.archiviste): self.orchestrator.register(agent)
         self.agent_order = list(self.config.agents.keys()); self.nav_buttons, self.pages = {}, {}; self.log_lines = []; self.process = None
-        self.setWindowTitle("Trading IA – Gestion des Agents"); self.resize(1540, 920); self.setMinimumSize(1180, 760); self.build_ui(); self.load_persisted_logs()
-        self.orchestrator.log_message.connect(self.add_log)
+        self.setWindowTitle("Trading IA – Gestion des Agents"); self.resize(1540, 920); self.setMinimumSize(1180, 760); self.build_ui(); self.load_persisted_logs(); self.orchestrator.log_message.connect(self.add_log)
         for source, message in (("SYSTEM", "Connexion à GitHub réussie"), ("SYSTEM", "Chargement des agents..."), ("LA PUCE", "Analyse du repository en cours..."), ("LE GEEK", "Vérification des nouvelles branches..."), ("L'ARCHIVISTE", "Synchronisation du Wiki..."), ("SYSTEM", "IA-TB_Dev_Updater prêt.")): self.add_log(source, message)
         self.clock = QTimer(self); self.clock.timeout.connect(self.refresh_clock); self.clock.start(1000)
 
@@ -56,7 +104,7 @@ class MainWindow(QMainWindow):
         for name,icon in NAV_ITEMS:b=QPushButton(f"{icon}  {name}");b.setObjectName("nav");b.setProperty("nav_name",name);b.clicked.connect(lambda checked=False,x=name:self.select_nav(x));self.nav_buttons[name]=b;layout.addWidget(b)
         layout.addStretch(1);status=QLabel("●  Connecté");status.setObjectName("connected");layout.addWidget(status);layout.addWidget(QLabel("◉"));return bar
     def build_footer(self):
-        footer=QFrame();footer.setObjectName("footer");layout=QHBoxLayout(footer);layout.setContentsMargins(10,3,10,3);layout.addWidget(QLabel("v1.0.0"));mode=QLabel("Mode: Production");mode.setObjectName("modeOk");layout.addWidget(mode);layout.addStretch();layout.addWidget(QLabel("3 agents actifs   🟢 🔵 🟣"));layout.addStretch();self.sync_label=QLabel("Dernière sync: --:--:--");layout.addWidget(self.sync_label);layout.addWidget(QLabel("⟳"));return footer
+        footer=QFrame();footer.setObjectName("footer");layout=QHBoxLayout(footer);layout.setContentsMargins(10,3,10,3);layout.addWidget(QLabel("v1.0.0"));mode=QLabel("Mode: Production");mode.setObjectName("modeOk");layout.addWidget(mode);layout.addStretch();layout.addWidget(QLabel(f"{len(self.agent_order)} agents configurés"));layout.addStretch();self.sync_label=QLabel("Dernière sync: --:--:--");layout.addWidget(self.sync_label);layout.addWidget(QLabel("⟳"));return footer
     def select_nav(self,name,write_log=True):
         if name not in self.pages:return
         for item,b in self.nav_buttons.items():b.setProperty("active",item==name);b.style().unpolish(b);b.style().polish(b)
@@ -76,39 +124,55 @@ class MainWindow(QMainWindow):
     def build_agent_card(self,agent,accent,icon,name,role,branch,changes):
         card=QFrame();card.setObjectName("agentCard");card.setProperty("accent",accent);layout=QVBoxLayout(card);layout.setContentsMargins(14,11,14,11);layout.setSpacing(7);header=QHBoxLayout();avatar=QLabel(icon);avatar.setFixedSize(45,45);avatar.setAlignment(Qt.AlignCenter);avatar.setObjectName("avatar");header.addWidget(avatar);texts=QVBoxLayout();title=QLabel(name);title.setObjectName(f"agent_{accent}");texts.addWidget(title);role_label=QLabel(role);role_label.setObjectName("muted");texts.addWidget(role_label);header.addLayout(texts,1);badge=QLabel("ACTIF");badge.setObjectName("activeBadge");header.addWidget(badge,0,Qt.AlignTop);layout.addLayout(header);self.add_separator(layout);section=QLabel("Dernières modifications");section.setObjectName("section");layout.addWidget(section)
         for text,tag,time in changes:row=QHBoxLayout();row.addWidget(QLabel("◈"));row.addWidget(QLabel(text),1);tag_label=QLabel(tag);tag_label.setObjectName("tag");row.addWidget(tag_label);row.addWidget(QLabel(time));layout.addLayout(row)
-        self.add_separator(layout);tree_title=QLabel("Arborescence <span style='color:#a6b0bb'>(branche surveillée)</span>");tree_title.setObjectName("section");layout.addWidget(tree_title);branch_label=QLabel("⌘  "+branch);branch_label.setObjectName(f"branch_{accent}");layout.addWidget(branch_label);tree=QFrame();tree.setObjectName("tree");tree_layout=QVBoxLayout(tree);tree_layout.setContentsMargins(10,7,10,7)
-        for text,indent,modified in self.tree_for(accent):row=QHBoxLayout();row.setContentsMargins(indent*15,0,0,0);row.addWidget(QLabel(text),1);m=QLabel(modified);m.setObjectName("modified");row.addWidget(m) if modified else None;tree_layout.addLayout(row)
-        layout.addWidget(tree,1);return card
+        self.add_separator(layout);branch_label=QLabel("⌘  "+branch);branch_label.setObjectName(f"branch_{accent}");layout.addWidget(branch_label);return card
     def add_separator(self,layout):line=QFrame();line.setFrameShape(QFrame.HLine);line.setObjectName("separator");layout.addWidget(line)
-    def tree_for(self,accent):
-        if accent=="green":return [("▾  📁 trading-ia/",0,""),("▾  📁 src/",1,""),("▾  📁 signals/",2,""),("🐍  rsi_signal.py",3,"M"),("🐍  risk_manager.py",3,"M"),("▾  📁 tests/",1,""),("🐍  test_rsi_signal.py",2,"A"),("▤  README.md",1,"M")]
-        if accent=="blue":return [("▾  📁 trading-ia/",0,""),("▾  📁 reports/",1,""),("▤  review_184.md",2,"M"),("▾  📁 tests/",1,""),("🌐  regression_report.html",3,"A"),("◉  coverage.xml",3,"")]
-        return [("▾  📁 wiki/",0,""),("▾  📁 strategies/",1,""),("▤  rsi-signal.md",2,"M"),("▤  risk-management.md",2,""),("▾  📁 architecture/",1,""),("▤  system-overview.md",2,"A")]
 
     def build_agents_page(self):
-        frame=QFrame();frame.setObjectName("pageFrame");layout=QVBoxLayout(frame);layout.addWidget(self.page_header("Agents","Configuration des agents IA : prompt, activation et commandes autorisées."));self.agent_rows=QVBoxLayout();layout.addLayout(self.agent_rows);self.refresh_agent_rows();layout.addStretch();return frame
+        frame=QFrame();frame.setObjectName("pageFrame");layout=QVBoxLayout(frame);layout.setSpacing(12)
+        hero=QFrame();hero.setObjectName("agentsHero");h=QHBoxLayout(hero);h.setContentsMargins(20,16,20,16);left=QVBoxLayout();title=QLabel("ÉQUIPE IA");title.setObjectName("heroTitle");left.addWidget(title);sub=QLabel("Des fiches de mission vivantes : identité, objectifs, méthode, prompt et autonomie.");sub.setObjectName("muted");left.addWidget(sub);h.addLayout(left,1)
+        stats=QHBoxLayout();stats.addWidget(self.stat_card("AGENTS",str(len(self.agent_order))));stats.addWidget(self.stat_card("ACTIFS",str(sum(1 for x in self.agent_order if self.config.agents.get(x,{}).get("enabled",True)))));stats.addWidget(self.stat_card("AUTONOMIE","CONFIGURABLE"));h.addLayout(stats);add=QPushButton("＋  NOUVEL AGENT");add.setObjectName("accent");add.clicked.connect(self.add_agent);h.addWidget(add,0,Qt.AlignCenter);layout.addWidget(hero)
+        scroll=QScrollArea();scroll.setWidgetResizable(True);scroll.setFrameShape(QFrame.NoFrame);body=QWidget();self.agent_cards_layout=QGridLayout(body);self.agent_cards_layout.setContentsMargins(0,0,0,0);self.agent_cards_layout.setSpacing(14);scroll.setWidget(body);layout.addWidget(scroll,1);self.refresh_agent_cards();return frame
+    def stat_card(self,label,value):
+        f=QFrame();f.setObjectName("miniStat");v=QVBoxLayout(f);v.setContentsMargins(12,8,12,8);a=QLabel(label);a.setObjectName("muted");b=QLabel(value);b.setObjectName("statValue");v.addWidget(a);v.addWidget(b);return f
+    def refresh_agent_cards(self):
+        if not hasattr(self,"agent_cards_layout"):return
+        while self.agent_cards_layout.count():
+            item=self.agent_cards_layout.takeAt(0);w=item.widget()
+            if w:w.deleteLater()
+        for index,name in enumerate(self.agent_order):
+            self.agent_cards_layout.addWidget(self.visual_agent_card(name),index//2,index%2)
+            self.agent_cards_layout.setColumnStretch(index%2,1)
+        empty=QFrame();empty.setObjectName("addAgentCard");v=QVBoxLayout(empty);v.setAlignment(Qt.AlignCenter);icon=QLabel("＋");icon.setObjectName("addAgentIcon");v.addWidget(icon,0,Qt.AlignCenter);txt=QLabel("Créer une nouvelle fiche de mission");txt.setObjectName("section");v.addWidget(txt,0,Qt.AlignCenter);b=QPushButton("Ajouter un agent");b.clicked.connect(self.add_agent);v.addWidget(b,0,Qt.AlignCenter);pos=len(self.agent_order);self.agent_cards_layout.addWidget(empty,pos//2,pos%2)
+    def visual_agent_card(self,name):
+        d=self.config.agents.get(name,{});accent=d.get("accent","green");card=QFrame();card.setObjectName("missionCard");card.setProperty("accent",accent);v=QVBoxLayout(card);v.setContentsMargins(18,16,18,16);v.setSpacing(10)
+        header=QHBoxLayout();avatar=QLabel(d.get("avatar","🤖"));avatar.setObjectName("bigAvatar");avatar.setProperty("accent",accent);avatar.setAlignment(Qt.AlignCenter);avatar.setFixedSize(64,64);header.addWidget(avatar);names=QVBoxLayout();pseudo=QLabel(d.get("pseudo",name));pseudo.setObjectName("agentName");names.addWidget(pseudo);role=QLabel(d.get("role","Agent IA"));role.setObjectName("muted");names.addWidget(role);header.addLayout(names,1);status=QLabel("● ACTIF" if d.get("enabled",True) else "○ INACTIF");status.setObjectName("statusActive" if d.get("enabled",True) else "statusInactive");header.addWidget(status,0,Qt.AlignTop);v.addLayout(header)
+        mission=QLabel(d.get("mission","Mission non définie"));mission.setWordWrap(True);mission.setObjectName("missionText");v.addWidget(mission)
+        chips=QHBoxLayout();chips.addWidget(self.chip("⚡  "+d.get("autonomy","Proposition"),accent));chips.addWidget(self.chip("▶  "+d.get("execution_mode","À la demande"),"neutral"));chips.addWidget(self.chip(f"⌘  {len(d.get('commands',[]))} commandes","neutral"));chips.addStretch();v.addLayout(chips)
+        preview=QFrame();preview.setObjectName("promptPreview");pv=QVBoxLayout(preview);pv.setContentsMargins(11,9,11,9);pl=QLabel("PROMPT / MÉTHODOLOGIE");pl.setObjectName("muted");pv.addWidget(pl);pt=QLabel((d.get("methodology") or d.get("prompt") or "Aucune instruction définie")[:240]);pt.setWordWrap(True);pv.addWidget(pt);v.addWidget(preview)
+        bottom=QHBoxLayout();edit=QPushButton("✎  Ouvrir la fiche complète");edit.setObjectName(accent);edit.clicked.connect(lambda checked=False,n=name:self.edit_agent(n));bottom.addWidget(edit,1);delete=QPushButton("Supprimer");delete.setObjectName("danger");delete.clicked.connect(lambda checked=False,n=name:self.delete_agent(n));bottom.addWidget(delete);v.addLayout(bottom);return card
+    def chip(self,text,accent):
+        label=QLabel(text);label.setObjectName("agentChip");label.setProperty("accent",accent);return label
+    def edit_agent(self,name):
+        dialog=AgentEditor(name,self.config.agents[name],self)
+        if dialog.exec_():self.config.agents[name]=dialog.values();self.config.save_settings();self.refresh_agent_cards();self.refresh_agent_rows();self.refresh_settings_page();self.add_log("SYSTEM",f"Fiche de mission de {name} enregistrée.")
+    def add_agent(self):
+        dialog=QDialog(self);dialog.setWindowTitle("Nouvelle fiche de mission");dialog.setMinimumWidth(560);v=QVBoxLayout(dialog);v.addWidget(QLabel("Nom interne de l'agent"));name_edit=QLineEdit();name_edit.setPlaceholderText("Ex. STRATEGE");v.addWidget(name_edit);v.addWidget(QLabel("Rôle initial"));role_edit=QLineEdit();role_edit.setPlaceholderText("Ex. Analyste stratégique");v.addWidget(role_edit);buttons=QDialogButtonBox(QDialogButtonBox.Save|QDialogButtonBox.Cancel);buttons.accepted.connect(dialog.accept);buttons.rejected.connect(dialog.reject);v.addWidget(buttons)
+        if not dialog.exec_():return
+        name=name_edit.text().strip().upper();role=role_edit.text().strip() or "Agent IA"
+        if not name:return
+        if name in self.config.agents:QMessageBox.warning(self,"Agent existant","Un agent porte déjà ce nom.");return
+        self.config.agents[name]={"pseudo":name,"role":role,"avatar":"🤖","accent":"green","enabled":True,"mission":"Définir la mission principale de cet agent.","objectives":"Définir les objectifs à atteindre.","methodology":"Analyser → planifier → exécuter → vérifier.","prompt":f"Tu es {name}, {role}.","context":"","autonomy":"Proposition","execution_mode":"À la demande","commands":[],"forbidden":"Ne jamais exposer de secrets ni effectuer d'action destructive sans validation."};self.agent_order.append(name);self.config.save_settings();self.refresh_agent_cards();self.refresh_agent_rows();self.refresh_settings_page();self.add_log("SYSTEM",f"Agent {name} ajouté.");self.edit_agent(name)
+    def delete_agent(self,name):
+        if QMessageBox.question(self,"Supprimer l'agent",f"Supprimer la fiche de mission de {name} ?")!=QMessageBox.Yes:return
+        self.config.agents.pop(name,None);self.agent_order.remove(name) if name in self.agent_order else None;self.config.save_settings();self.refresh_agent_cards();self.refresh_agent_rows();self.refresh_settings_page();self.add_log("SYSTEM",f"Agent {name} supprimé de la configuration.")
+    def build_agents_legacy_rows(self):return
     def refresh_agent_rows(self):
         if not hasattr(self,"agent_rows"):return
         while self.agent_rows.count():
             item=self.agent_rows.takeAt(0);w=item.widget()
             if w:w.deleteLater()
-        colors={"LA PUCE":"green","LE GEEK":"blue","L'ARCHIVISTE":"purple"}
         for name in self.agent_order:
-            data=self.config.agents.get(name,{"role":"","enabled":True,"commands":[]});row=QFrame();row.setObjectName("listRow");r=QHBoxLayout(row);r.addWidget(QLabel(name));role=QLabel(data.get("role",""));role.setObjectName("muted");r.addWidget(role,1);cmd=QLabel(f"{len(data.get('commands',[]))} commandes");cmd.setObjectName("muted");r.addWidget(cmd);badge=QLabel("ACTIF" if data.get("enabled",True) else "DÉSACTIVÉ");badge.setObjectName(f"badge_{colors.get(name,'green')}");r.addWidget(badge);edit=QPushButton("✎  Éditer");edit.clicked.connect(lambda checked=False,n=name:self.edit_agent(n));r.addWidget(edit);delete=QPushButton("Supprimer");delete.clicked.connect(lambda checked=False,n=name:self.delete_agent(n));r.addWidget(delete);self.agent_rows.addWidget(row)
-        add=QPushButton("＋  Ajouter un agent");add.clicked.connect(self.add_agent);self.agent_rows.addWidget(add)
-    def edit_agent(self,name):
-        dialog=AgentEditor(name,self.config.agents[name],self)
-        if dialog.exec_():self.config.agents[name]=dialog.values();self.config.save_settings();self.refresh_agent_rows();self.refresh_settings_page();self.add_log("SYSTEM",f"Configuration de {name} enregistrée.")
-    def add_agent(self):
-        dialog=QDialog(self);dialog.setWindowTitle("Ajouter un agent");dialog.setMinimumWidth(520);v=QVBoxLayout(dialog);v.addWidget(QLabel("Nom de l'agent"));name_edit=QLineEdit();v.addWidget(name_edit);v.addWidget(QLabel("Rôle"));role_edit=QLineEdit();v.addWidget(role_edit);buttons=QDialogButtonBox(QDialogButtonBox.Save|QDialogButtonBox.Cancel);buttons.accepted.connect(dialog.accept);buttons.rejected.connect(dialog.reject);v.addWidget(buttons)
-        if not dialog.exec_():return
-        name=name_edit.text().strip().upper();role=role_edit.text().strip() or "Agent IA"
-        if not name:return
-        if name in self.config.agents:QMessageBox.warning(self,"Agent existant","Un agent porte déjà ce nom.");return
-        self.config.agents[name]={"role":role,"enabled":True,"prompt":f"Tu es {name}, {role}.","commands":["git status","python"]};self.agent_order.append(name);self.config.save_settings();self.refresh_agent_rows();self.refresh_settings_page();self.add_log("SYSTEM",f"Agent {name} ajouté.")
-    def delete_agent(self,name):
-        if QMessageBox.question(self,"Supprimer l'agent",f"Supprimer {name} de la configuration ?")!=QMessageBox.Yes:return
-        self.config.agents.pop(name,None);self.agent_order.remove(name) if name in self.agent_order else None;self.config.save_settings();self.refresh_agent_rows();self.refresh_settings_page();self.add_log("SYSTEM",f"Agent {name} supprimé de la configuration.")
+            d=self.config.agents.get(name,{});row=QFrame();row.setObjectName("listRow");r=QHBoxLayout(row);r.addWidget(QLabel(d.get("pseudo",name)));role=QLabel(d.get("role","Agent IA"));role.setObjectName("muted");r.addWidget(role,1);r.addWidget(QLabel(f"{len(d.get('commands',[]))} commandes"));r.addWidget(QLabel("ACTIF" if d.get("enabled",True) else "DÉSACTIVÉ"));edit=QPushButton("✎ Éditer");edit.clicked.connect(lambda checked=False,n=name:self.edit_agent(n));r.addWidget(edit);self.agent_rows.addWidget(row)
 
     def build_console_page(self):
         frame=QFrame();frame.setObjectName("pageFrame");layout=QVBoxLayout(frame);layout.addWidget(self.page_header("Console","Exécution des commandes système et retour en temps réel."));layout.addWidget(self.build_console(),1);return frame
@@ -128,7 +192,6 @@ class MainWindow(QMainWindow):
             for line in text.splitlines():self.add_log("CONSOLE",line)
     def command_finished(self,code,status):self.read_process_output();self.add_log("CONSOLE",f"Commande terminée — code {code}.")
     def command_error(self,error):self.add_log("CONSOLE",f"Erreur d'exécution : {error}")
-
     def build_quick_panel(self):
         wrapper=QWidget();layout=QVBoxLayout(wrapper);layout.setContentsMargins(0,0,0,0);quick=QFrame();quick.setObjectName("consolePanel");q=QVBoxLayout(quick);q.addWidget(QLabel("Commandes rapides"));grid=QGridLayout();commands=[("⟳  Sync All",self.sync_all,""),("▷  Run Tests",self.run_tests,""),("▣  Build",self.build_project,""),("↥  Push All",self.push_all,"accent"),("▣  Create PR",self.create_pr,""),("▤  Update Wiki",self.update_wiki,"purple")]
         for i,(text,fn,kind) in enumerate(commands):b=QPushButton(text);b.clicked.connect(fn);b.setObjectName(kind) if kind else None;grid.addWidget(b,i//2,i%2)
@@ -148,7 +211,7 @@ class MainWindow(QMainWindow):
             self.settings_layout.addWidget(box)
         box=QFrame();box.setObjectName("listRow");v=QVBoxLayout(box);h=QLabel("Privilèges des agents IA");h.setObjectName("section");v.addWidget(h)
         for name,data in self.config.agents.items():
-            r=QHBoxLayout();r.addWidget(QLabel(name));info=QLabel(f"{len(data.get('commands',[]))} commandes autorisées");info.setObjectName("muted");r.addWidget(info,1);edit=QPushButton("⚙  Configurer");edit.clicked.connect(lambda checked=False,n=name:self.edit_agent(n));r.addWidget(edit);v.addLayout(r)
+            r=QHBoxLayout();r.addWidget(QLabel(data.get("pseudo",name)));info=QLabel(f"{len(data.get('commands',[]))} commandes autorisées · {data.get('autonomy','Proposition')}");info.setObjectName("muted");r.addWidget(info,1);edit=QPushButton("⚙  Configurer");edit.clicked.connect(lambda checked=False,n=name:self.edit_agent(n));r.addWidget(edit);v.addLayout(r)
         self.settings_layout.addWidget(box)
 
     def build_archives_page(self):return self.simple_data_page("Archives","Versions, builds et archives générés par le programme.",[("v1.7.9","Archive complète","VALIDÉ"),("v1.8.0","Build UpdateManager","EN TEST"),("debug","Build de développement","WIP")])
@@ -162,7 +225,6 @@ class MainWindow(QMainWindow):
         frame=QFrame();frame.setObjectName("pageFrame");layout=QVBoxLayout(frame);layout.addWidget(self.page_header(title,subtitle))
         for name,detail,state in rows:row=QFrame();row.setObjectName("listRow");r=QHBoxLayout(row);r.addWidget(QLabel(name));d=QLabel(detail);d.setObjectName("muted");r.addWidget(d,1);r.addWidget(QLabel(state));layout.addWidget(row)
         layout.addStretch();return frame
-
     def build_logs_page(self):
         frame=QFrame();frame.setObjectName("pageFrame");layout=QVBoxLayout(frame);layout.addWidget(self.page_header("Logs","Historique complet des événements et opérations de l'application."));self.full_log_view=QPlainTextEdit();self.full_log_view.setReadOnly(True);self.full_log_view.setObjectName("fullLogView");layout.addWidget(self.full_log_view,1);buttons=QHBoxLayout();clear=QPushButton("▱  Vider les logs");clear.clicked.connect(self.clear_logs);buttons.addWidget(clear);buttons.addStretch();refresh=QPushButton("▤  Rafraîchir");refresh.clicked.connect(self.refresh_full_log);buttons.addWidget(refresh);layout.addLayout(buttons);self.refresh_full_log();return frame
     def load_persisted_logs(self):
