@@ -1,10 +1,11 @@
 from datetime import datetime
 
-from PySide2.QtCore import Qt, QTimer
+from PySide2.QtCore import Qt, QTimer, QUrl
 from PySide2.QtWidgets import (
     QFrame, QGridLayout, QHBoxLayout, QLabel, QLineEdit, QMainWindow,
     QPlainTextEdit, QPushButton, QStackedWidget, QVBoxLayout, QWidget
 )
+from PySide2.QtWebEngineWidgets import QWebEngineView
 
 from app.core.config import AppConfig
 from app.core.orchestrator import Orchestrator
@@ -334,26 +335,52 @@ class MainWindow(QMainWindow):
             ("v1.7.9", "Archive complète", "VALIDÉ"), ("v1.8.0", "Build UpdateManager", "EN TEST"), ("debug", "Build de développement", "WIP")])
 
     def build_wiki_page(self):
-        return self.simple_data_page("Wiki", "Documentation technique et synchronisation de la documentation.", [
-            ("Architecture", "Vue du système", "À JOUR"), ("Market Data", "Providers et flux", "À JOUR"), ("Release Protocol", "Procédure de publication", "À JOUR")])
-
-    def build_settings_page(self):
-        frame = QFrame(); frame.setObjectName("console")
+        frame = QFrame(); frame.setObjectName("wikiPage")
         layout = QVBoxLayout(frame)
-        layout.addWidget(self.page_header("Paramètres", "Configuration locale du Dev Updater."))
-        for label, value in (("Branche de travail", "github-administration"), ("Repository", "florian74410/IA-Trading-Bot"), ("Mode", "Production")):
-            row = QHBoxLayout(); row.addWidget(QLabel(label)); row.addStretch(); edit = QLineEdit(value); edit.setReadOnly(label != "Branche de travail"); edit.setMinimumWidth(360); row.addWidget(edit); layout.addLayout(row)
-        save = QPushButton("Enregistrer les paramètres"); save.setObjectName("accent"); save.clicked.connect(lambda: self.add_log("SYSTEM", "Paramètres enregistrés.")); layout.addWidget(save, 0, Qt.AlignRight)
-        layout.addStretch()
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(10)
+        layout.addWidget(self.page_header("Wiki", "Documentation du programme — README.md de la branche github-administration."))
+
+        toolbar = QHBoxLayout()
+        status = QLabel("●  Documentation GitHub")
+        status.setObjectName("connected")
+        toolbar.addWidget(status)
+        toolbar.addStretch()
+
+        back = QPushButton("‹  Retour")
+        back.clicked.connect(lambda: self.wiki_view.back())
+        toolbar.addWidget(back)
+        forward = QPushButton("Avancer  ›")
+        forward.clicked.connect(lambda: self.wiki_view.forward())
+        toolbar.addWidget(forward)
+        reload_button = QPushButton("⟳  Actualiser")
+        reload_button.clicked.connect(self.wiki_view.reload)
+        toolbar.addWidget(reload_button)
+        open_button = QPushButton("↗  GitHub")
+        open_button.clicked.connect(lambda: self.wiki_view.page().profile().downloadRequested if False else None)
+        open_button.clicked.connect(self.open_wiki_external)
+        toolbar.addWidget(open_button)
+        layout.addLayout(toolbar)
+
+        self.wiki_view = QWebEngineView()
+        self.wiki_view.setObjectName("wikiView")
+        self.wiki_view.setUrl(QUrl("https://github.com/florian74410/IA-Trading-Bot/blob/github-administration/README.md"))
+        self.wiki_view.loadStarted.connect(lambda: status.setText("●  Chargement du Wiki..."))
+        self.wiki_view.loadFinished.connect(self.on_wiki_loaded)
+        layout.addWidget(self.wiki_view, 1)
         return frame
 
-    def build_logs_page(self):
-        frame = QFrame(); frame.setObjectName("console")
-        layout = QVBoxLayout(frame)
-        layout.addWidget(self.page_header("Logs", "Journal complet des événements de l'application."))
-        self.full_log_view = QPlainTextEdit(); self.full_log_view.setReadOnly(True); layout.addWidget(self.full_log_view, 1)
-        clear = QPushButton("▱  Vider les logs"); clear.clicked.connect(lambda: self.clear_logs()); layout.addWidget(clear, 0, Qt.AlignRight)
-        return frame
+    def on_wiki_loaded(self, ok):
+        status_text = "●  Documentation GitHub" if ok else "●  Impossible de charger le Wiki"
+        for child in self.pages["Wiki"].findChildren(QLabel):
+            if child.objectName() == "connected":
+                child.setText(status_text)
+                break
+        self.add_log("WIKI", "README.md chargé depuis GitHub." if ok else "Échec du chargement du README.md.")
+
+    def open_wiki_external(self):
+        import webbrowser
+        webbrowser.open("https://github.com/florian74410/IA-Trading-Bot/blob/github-administration/README.md")
 
     def simple_data_page(self, title, subtitle, rows):
         frame = QFrame(); frame.setObjectName("console")
