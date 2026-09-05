@@ -59,6 +59,10 @@ DEFAULT_AGENTS = {
 }
 
 
+def _default_agents_copy():
+    return json.loads(json.dumps(DEFAULT_AGENTS))
+
+
 @dataclass
 class AppConfig:
     repository: str = "florian74410/IA-Trading-Bot"
@@ -67,9 +71,10 @@ class AppConfig:
     geek_branch: str = "develop"
     archiviste_branch: str = "develop"
     workspace: Path = field(default_factory=lambda: WORKSPACE_DIR)
-    agents: dict = field(default_factory=lambda: json.loads(json.dumps(DEFAULT_AGENTS)))
+    agents: dict = field(default_factory=_default_agents_copy)
 
     def ensure_directories(self):
+        DATA_DIR.mkdir(parents=True, exist_ok=True)
         self.workspace.mkdir(parents=True, exist_ok=True)
         LOG_DIR.mkdir(parents=True, exist_ok=True)
         self.load_settings()
@@ -78,11 +83,16 @@ class AppConfig:
         if not SETTINGS_FILE.exists():
             self.save_settings()
             return
+
         try:
             data = json.loads(SETTINGS_FILE.read_text(encoding="utf-8"))
+            if not isinstance(data, dict):
+                raise ValueError("Le fichier de paramètres doit contenir un objet JSON.")
+
             saved_agents = data.get("agents", {})
             if not isinstance(saved_agents, dict):
-                return
+                raise ValueError("La section 'agents' est invalide.")
+
             self.agents = {}
             for name, saved in saved_agents.items():
                 defaults = DEFAULT_AGENTS.get(name, {
@@ -96,13 +106,31 @@ class AppConfig:
                 if isinstance(saved, dict):
                     merged.update(saved)
                 self.agents[name] = merged
+
             for name, defaults in DEFAULT_AGENTS.items():
                 if name not in self.agents:
                     self.agents[name] = json.loads(json.dumps(defaults))
-        except (OSError, ValueError, TypeError):
-            self.agents = json.loads(json.dumps(DEFAULT_AGENTS))
+
+        except (OSError, ValueError, TypeError, json.JSONDecodeError):
+            self._backup_invalid_settings()
+            self.agents = _default_agents_copy()
+            self.save_settings()
+
+    def _backup_invalid_settings(self):
+        if not SETTINGS_FILE.exists():
+            return
+        backup = SETTINGS_FILE.with_suffix(".json.invalid")
+        try:
+            SETTINGS_FILE.replace(backup)
+        except OSError:
+            pass
 
     def save_settings(self):
         DATA_DIR.mkdir(parents=True, exist_ok=True)
         payload = {"agents": self.agents}
-        SETTINGS_FILE.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+        temporary = SETTINGS_FILE.with_suffix(".tmp")
+        temporary.write_text(
+            json.dumps(payload, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+        temporary.replace(SETTINGS_FILE)
