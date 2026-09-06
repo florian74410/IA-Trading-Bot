@@ -1,0 +1,4 @@
+ETHDEV=en0
+WIFIDEV=en1
+WIFI_WAS_ON=true
+WIFI_DISABLED=false

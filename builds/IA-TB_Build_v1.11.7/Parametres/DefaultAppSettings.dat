@@ -1,0 +1,68 @@
+{
+  "version": "1.0",
+  "general": {
+    "defaultSymbol": "BTCUSD",
+    "defaultInterval": "1m",
+    "chartCandles": 100,
+    "aiCandles": 60,
+    "gmxDefaultMarket": "BTC/USD",
+    "gmxCollateral": "USDC",
+    "gmxMaxLeverage": 50,
+    "openaiModel": "gpt-5.6",
+    "binanceEnv": "TESTNET",
+    "defaultMarketSource": "GMX"
+  },
+  "power": {
+    "modeId": 2,
+    "methods": [
+      "reduce_market_data",
+      "reduce_reasoning",
+      "limit_response_length"
+    ]
+  },
+  "ai": {
+    "orderExecution": "MANUAL"
+  },
+  "modulation": {
+    "modules": [
+      "gmx",
+      "strategy",
+      "wallet",
+      "system"
+    ],
+    "layout": {
+      "console": {
+        "col": 1,
+        "row": 1,
+        "w": 4,
+        "h": 6,
+        "visible": true,
+        "order": 0
+      },
+      "chat": {
+        "col": 1,
+        "row": 7,
+        "w": 4,
+        "h": 8,
+        "visible": true,
+        "order": 1
+      },
+      "chart": {
+        "col": 5,
+        "row": 1,
+        "w": 8,
+        "h": 10,
+        "visible": true,
+        "order": 2
+      },
+      "modules": {
+        "col": 5,
+        "row": 11,
+        "w": 8,
+        "h": 5,
+        "visible": true,
+        "order": 3
+      }
+    }
+  }
+}

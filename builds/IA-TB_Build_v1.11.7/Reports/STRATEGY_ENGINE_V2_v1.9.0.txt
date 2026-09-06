@@ -1,0 +1,12 @@
+IA-TB v1.9.0 — STRATEGY ENGINE v2
+- Nouveau service autonome: Strategy/Engine/strategy_service.js, port 8018.
+- Remplace le Strategy historique comme moteur canonique CP/1.
+- Compatibilité legacy schema_version=1 conservée en lecture.
+- Strategy Registry v2, Runner/Evaluator, Signal Builder, Scoring/Aggregation et Stats ajoutés.
+- strategy.signal/2.0 avec expiration, confidence, risk_hint, correlation_id.
+- BUY / SELL / HOLD gérés explicitement.
+- Mode dry-run disponible.
+- Aucun accès Exchange; execution=INTENTION_ONLY.
+- ProcessRegistry + ProtocolRegistry activés pour `strategy`.
+- Préparé pour le futur Supervisor via Router CP/1.
+- Aucun fichier Frontend/CSS/HTML modifié par ce chantier.

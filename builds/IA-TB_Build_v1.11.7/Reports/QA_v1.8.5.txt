@@ -1,0 +1,21 @@
+IA-TB v1.8.5 QA
+
+Base source: v1.8.4
+Patch: IA-TB_Update_v1.8.4_to_v1.8.5_Trading_UI.zip
+Patch SHA-256: 7200dba7ed4c007fa7def8f022b44f6538ac1e113e1724b0184e6730efc4840d
+
+PASS
+- UpdateManager validateManifest : OK
+- package_type UPDATE : OK
+- from_version 1.8.4 : OK
+- to_version 1.8.5 : OK
+- Entrypoint Core/Server/server_v1.8.js : OK
+- Node syntax server_v1.0.js : OK
+- Node syntax server_v1.8.js : OK
+- Node syntax trading_dashboard_v1.8.5.js : OK
+- New CSS/JS assets exposed by Core server : OK
+- Frontend page references new dashboard assets : OK
+
+Note visuelle
+-------------
+Le rendu a été conçu pour les résolutions desktop 1280x800 et 1536x1024, avec repli responsive sous 980 px.

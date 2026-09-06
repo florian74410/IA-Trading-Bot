@@ -1,0 +1,5 @@
+IA-TB v1.9.2
+Fix Core/Router false OFFLINE diagnostics.
+Routes: /settings/ and /strategy/.
+Navbar label: Paramètres.
+No engine trading logic changed.

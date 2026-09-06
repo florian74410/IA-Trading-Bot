@@ -1,0 +1,11 @@
+{
+  "schema": 1,
+  "application": "Crypto Chart Viewer IA Trader",
+  "package_type": "UPDATE",
+  "from_version": "1.0",
+  "to_version": "1.1",
+  "payload_root": "payload",
+  "entrypoint": "server_v1.1.js",
+  "description": "Exemple de mise à jour",
+  "files": []
+}

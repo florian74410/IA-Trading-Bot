@@ -1,0 +1,7 @@
+{
+  "version":"1.7.8","enabled":true,"mode":"PROTECTION",
+  "security":{"verifyCpAuthentication":true,"verifySignatures":true,"maxMessageAgeSeconds":30},
+  "commandWhitelist":{"enabled":true,"allowed":["trading.execute","trading.cancel","trading.close_position","trading.health"]},
+  "tradingPairWhitelist":{"enabled":true,"allowed":["BTC/EUR","BTC/USDT","ETH/EUR"]},
+  "duplicateProtection":{"enabled":true,"windowSeconds":30}
+}

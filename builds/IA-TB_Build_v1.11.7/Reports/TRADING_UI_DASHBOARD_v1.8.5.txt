@@ -1,0 +1,28 @@
+IA-TB v1.8.5 — TRADING IA DASHBOARD
+
+Source: IA-TB_Build_v1.8.4.zip
+Target: v1.8.5
+
+Objectif
+--------
+Restaurer une page Trading IA structurée comme le dashboard de référence :
+- Chat IA Supervisor à gauche
+- Chart Viewer au centre
+- cartes Volume / Stratégies / Synthèse IA sous le chart
+- panneau Exchanges + Consensus à droite
+- barre Etat des services en bas
+
+Correctif
+---------
+Le layout Trading IA n'utilise plus les coordonnées Mosaïque sauvegardées pour placer ses blocs principaux. Les contrôleurs et IDs historiques sont conservés.
+
+Fichiers principaux
+-------------------
+- Frontend/Pages/app_v1.0.html
+- Frontend/CSS/trading_dashboard_v1.8.5.css
+- Frontend/JS/trading_dashboard_v1.8.5.js
+- Core/Server/server_v1.0.js
+
+Compatibilité cible
+-------------------
+macOS 10.13 / Firefox 115 ESR / Node.js 16.20.2

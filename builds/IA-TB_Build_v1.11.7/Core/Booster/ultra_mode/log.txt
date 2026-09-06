@@ -1,0 +1,20 @@
+[2026-08-30 23:34:19] === ULTRA MODE v2.0 : ACTIVATION ===
+[2026-08-30 23:34:19] OS=10.13.6 MODEL=MacBookPro8,1
+[2026-08-30 23:34:19] Alimentation: Now drawing from 'AC Power'
+[2026-08-30 23:34:21] Time Machine: arrêt du backup courant demandé si nécessaire.
+[2026-08-30 23:34:21] Déjà inactif: Finder
+[2026-08-30 23:34:21] Suspendu temporairement: Notification Center
+[2026-08-30 23:34:21] Suspendu temporairement: iCloud Drive (bird)
+[2026-08-30 23:34:21] Suspendu temporairement: CloudKit (cloudd)
+[2026-08-30 23:34:21] Suspendu temporairement: Photos iCloud
+[2026-08-30 23:34:21] Suspendu temporairement: Photo Library
+[2026-08-30 23:34:21] Suspendu temporairement: Safari Bookmarks Sync
+[2026-08-30 23:34:21] TERM résidu: Dropbox Finder extension
+[2026-08-30 23:34:21] TERM résidu: QuickLook Satellite
+[2026-08-30 23:34:21] Fermeture processus: quicklookd
+[2026-08-30 23:34:21] Fermeture processus: Spotlight
+[2026-08-30 23:34:21] Fermeture processus: NotificationCenter
+[2026-08-30 23:34:21] Fermeture processus: bird
+[2026-08-30 23:34:22] Réseau: ethernet=false wifi_avant=true wifi_coupé=false
+[2026-08-30 23:34:23] ULTRA ACTIVE (caffeinate PID 72477).
+[2026-08-30 23:34:23] COLD START IA-TB: ULTRA confirmé une fois, stabilisation unique 2 s avant VPS.
