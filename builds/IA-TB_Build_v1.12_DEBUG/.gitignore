@@ -1,16 +1,25 @@
-.DS_Store
-.node/
-__MACOSX/
+# IA-TB v1.12 DEBUG - generated/runtime data
+
+# Dependencies
+node_modules/
+
+# Runtime state
+**/.runtime/
+*.pid
+
+# Logs
 *.log
 logs.dat
-user.dat
-secrets_v2.dat
-.env
-.env.*
-Fundamental/Data/internal_service_key.dat
-Fundamental/node_modules/
-Runtime/*.tar.gz
-Runtime/.node-install/
-Updates/Backups/
-Updates/Inbox/
-Updates/Applied/
+
+# SQLite transient/runtime files
+*-wal
+*-shm
+Fundamental/Data/*
+!Fundamental/Data/.gitkeep
+
+# Generated launcher/update state
+Updates/launcher_state.dat
+Updates/pending_activation.dat
+
+# OS/editor noise
+.DS_Store
