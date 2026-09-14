@@ -30,6 +30,9 @@ var RUNTIME_LOG_FILES={
   risk:path.join(APP_RUNTIME_DIRS.logs,'risk.log'),
   portfolio:path.join(APP_RUNTIME_DIRS.logs,'portfolio.log')
 };
+var RUNTIME_STATE_FILES={
+  strategyStats:path.join(APP_RUNTIME_DIRS.state,'strategy','strategy_stats.json')
+};
 function ensureAppRuntimeDirs(){
   Object.keys(APP_RUNTIME_DIRS).forEach(function(k){
     try{fs.mkdirSync(APP_RUNTIME_DIRS[k],{recursive:true});}catch(e){}
@@ -42,6 +45,7 @@ module.exports={
   NodeRuntime:NODE_RUNTIME,
   AppRuntime:APP_RUNTIME_DIRS,
   RuntimeLogs:RUNTIME_LOG_FILES,
+  RuntimeState:RUNTIME_STATE_FILES,
   ensureAppRuntimeDirs:ensureAppRuntimeDirs,
   Frontend:{
     app:path.join(ROOT,'Frontend','Pages','app_v1.0.html'),
