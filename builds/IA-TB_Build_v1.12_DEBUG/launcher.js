@@ -3,7 +3,7 @@
    Processus maitre stable: lancement, redemarrage apres update, health-check et rollback automatique.
 */
 var fs=require('fs'),path=require('path'),child=require('child_process'),http=require('http');
-var ROOT=__dirname,UPDATES=path.join(ROOT,'Updates'),POINTER=path.join(UPDATES,'current_release.dat'),PENDING=path.join(UPDATES,'pending_activation.dat'),STATE=path.join(UPDATES,'launcher_state.dat'),CONTROL=path.join(UPDATES,'launcher_control.dat'),HISTORY=path.join(UPDATES,'update_history.dat'),PORT=+(process.env.IATB_PORT||3000),DEFAULT={schema:1,application:'Crypto Chart Viewer IA Trader',version:'1.0',server:'server_v1.0.js'};
+var ROOT=__dirname,UPDATES=path.join(ROOT,'Updates'),POINTER=path.join(UPDATES,'current_release.dat'),PENDING=path.join(UPDATES,'pending_activation.dat'),STATE=path.join(UPDATES,'launcher_state.dat'),CONTROL=path.join(UPDATES,'launcher_control.dat'),HISTORY=path.join(UPDATES,'update_history.dat'),PORT=+(process.env.IATB_PORT||3000),DEFAULT={schema:1,application:'Crypto Chart Viewer IA Trader',version:'1.12',server:'Core/Server/server.js'};
 function ensureDir(p){if(!fs.existsSync(p))fs.mkdirSync(p,{recursive:true});}
 function safeRm(p){try{fs.rmSync(p,{recursive:true,force:true});}catch(e){}}
 function readJson(p,def){try{return JSON.parse(fs.readFileSync(p,'utf8'));}catch(e){return def;}}
