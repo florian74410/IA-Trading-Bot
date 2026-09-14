@@ -1,0 +1,103 @@
+name: Apply Firewall Admin Configuration v1.12
+on:
+  push:
+    branches: [debug]
+permissions:
+  contents: write
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: debug
+          fetch-depth: 0
+      - name: Apply minimal Firewall Admin editor
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 <<'PY'
+          from pathlib import Path
+          B=Path('builds/IA-TB_Build_v1.12_DEBUG')
+          def replace_once(path, old, new):
+              p=B/path
+              s=p.read_text()
+              if old not in s:
+                  raise SystemExit('marker missing: %s' % p)
+              p.write_text(s.replace(old,new,1))
+
+          # Firewall service: expose current worker configuration and hot-apply a patch.
+          p=B/'Core/Firewall/firewall_service.js'
+          s=p.read_text()
+          marker=" if(req.method==='GET'&&p==='/api/threads')return send(res,200,{ok:true,threads:status().threads});\n"
+          add=marker+" if(req.method==='GET'&&p==='/api/thread/config'){if(!FIREWALL_ENABLED)return managementDenied(res);var cid=String(u.searchParams.get('thread')||'').toLowerCase();if(cid!=='trading'&&cid!=='data')return send(res,400,{ok:false,error:'THREAD_INVALID'});return ask(cid,'status',{},function(er,x){if(er)return send(res,503,{ok:false,error:er.message});send(res,200,{ok:true,thread:cid,config:x&&x.status||{},runtime:x});});}\n if(req.method==='POST'&&p==='/api/thread/config'){if(!FIREWALL_ENABLED)return managementDenied(res);return body(req,function(e,b){if(e)return send(res,400,{ok:false,error:e.message});var o;try{o=JSON.parse(b.toString('utf8')||'{}');}catch(x){return send(res,400,{ok:false,error:'JSON_INVALID'});}var cid=String(o.thread||'').toLowerCase(),patch=o.patch&&typeof o.patch==='object'&&!Array.isArray(o.patch)?o.patch:null;if((cid!=='trading'&&cid!=='data')||!patch)return send(res,400,{ok:false,error:'FIREWALL_CONFIG_INVALID'});ask(cid,'configure',{patch:patch},function(er,x){if(er)return send(res,503,{ok:false,error:er.message});threads[cid].enabled=x.enabled!==false;threads[cid].status=x;append({component:cid.toUpperCase(),thread:threads[cid].thread,type:'CONFIG_APPLIED',result:'PASS'});send(res,200,{ok:true,thread:cid,config:x&&x.status||{},runtime:x,hotReload:true});});});}\n"
+          if marker not in s: raise SystemExit('firewall service marker missing')
+          p.write_text(s.replace(marker,add,1))
+
+          # Admin service registry: GET/POST bridge to local Firewall service.
+          p=B/'Core/Admin/service_registry.js'
+          s=p.read_text()
+          marker="Registry.prototype.post=function(id,targetPath,cb){this.postJson(id,targetPath,{},cb);};\n"
+          add="Registry.prototype.getJson=function(id,targetPath,cb){var s;try{s=this.spec(id)}catch(e){return cb(e)}var q=http.get({host:'127.0.0.1',port:s.port,path:targetPath,timeout:5000,headers:{Accept:'application/json'}},function(r){var a=[];r.on('data',function(c){a.push(c)});r.on('end',function(){var raw=Buffer.concat(a).toString('utf8'),o;try{o=JSON.parse(raw||'{}')}catch(e){return cb(new Error('SERVICE_JSON_INVALID'))}if((r.statusCode||500)>=400||o.ok===false)return cb(new Error(o.error||('HTTP '+r.statusCode)));cb(null,o);});});q.on('timeout',function(){q.destroy(new Error('timeout'))});q.on('error',cb);};\n"+marker
+          if marker not in s: raise SystemExit('registry marker missing')
+          s=s.replace(marker,add,1)
+          marker2="Registry.prototype.stopFirewallThread=function(id,cb){"
+          add2="Registry.prototype.getFirewallConfig=function(id,cb){id=String(id||'').toLowerCase();if(id!=='trading'&&id!=='data')return cb(new Error('FIREWALL_THREAD_INVALID'));this.getJson('firewall','/api/thread/config?thread='+encodeURIComponent(id),cb);};\nRegistry.prototype.setFirewallConfig=function(id,patch,cb){id=String(id||'').toLowerCase();if(id!=='trading'&&id!=='data')return cb(new Error('FIREWALL_THREAD_INVALID'));if(!patch||typeof patch!=='object'||Array.isArray(patch))return cb(new Error('FIREWALL_CONFIG_INVALID'));this.postJson('firewall','/api/thread/config',{thread:id,patch:patch},cb);};\n"+marker2
+          if marker2 not in s: raise SystemExit('registry firewall marker missing')
+          p.write_text(s.replace(marker2,add2,1))
+
+          # Core ADMIN endpoints. Critical Trading rules require explicit confirmation when disabled.
+          p=B/'Core/Server/server.js'
+          s=p.read_text()
+          marker=" if(req.method==='POST'&&p==='/api/admin/firewall/thread/stop')"
+          routes=" if(req.method==='GET'&&p==='/api/admin/firewall/config'){var fgc=String(u.searchParams.get('service')||'').toLowerCase();return ADMIN.services.getFirewallConfig(fgc,function(er,o){if(er)return json(res,400,{ok:false,error:er.message});json(res,200,o);});}\n if(req.method==='POST'&&p==='/api/admin/firewall/config')return body(req,function(e,b){if(e||!b||!b.patch||typeof b.patch!=='object')return json(res,400,{ok:false,error:'FIREWALL_CONFIG_INVALID'});var fsc=String(b.service||'').toLowerCase(),critical=fsc==='trading'&&b.patch.security&&((b.patch.security.verifyCpAuthentication===false)||(b.patch.security.verifySignatures===false));if(critical&&b.confirmedCritical!==true)return json(res,400,{ok:false,error:'CRITICAL_RULE_CONFIRMATION_REQUIRED'});ADMIN.services.setFirewallConfig(fsc,b.patch,function(er,o){if(er){log('ADMIN','Firewall config refuse',fsc+' '+er.message);return json(res,400,{ok:false,error:er.message});}log('ADMIN','Firewall config appliquee',fsc);json(res,200,{ok:true,service:fsc,result:o,hotReload:true});});});\n"
+          if marker not in s: raise SystemExit('server firewall marker missing')
+          p.write_text(s.replace(marker,routes+marker,1))
+
+          # Browser ADMIN: add a lightweight configuration overlay without restructuring the page.
+          p=B/'Frontend/JS/admin_controller_v1.0.js'
+          s=p.read_text()
+          old="<div class=\"fwThreadButtons\">'+(online?'<button class=\"btn small fwThreadRestart\""
+          new="<div class=\"fwThreadButtons\"><button class=\"btn small fwConfigOpen\" data-firewall-config=\"'+esc(t.id)+'\">⚙ Paramètres</button>'+(online?'<button class=\"btn small fwThreadRestart\""
+          if old not in s: raise SystemExit('admin firewall buttons marker missing')
+          s=s.replace(old,new,1)
+          marker="function bindDynamic(){"
+          editor=r'''function fwEditorStyles(){if(document.getElementById('fwEditorStyles'))return;var st=document.createElement('style');st.id='fwEditorStyles';st.textContent='.fwEditorBackdrop{position:fixed;inset:0;z-index:200;background:rgba(2,8,12,.78);display:flex;align-items:center;justify-content:center;padding:24px}.fwEditor{width:min(920px,96vw);max-height:90vh;overflow:auto;background:#0b1720;border:1px solid #345267;border-radius:12px;box-shadow:0 24px 80px rgba(0,0,0,.55);padding:18px}.fwEditorHead{display:flex;align-items:flex-start;gap:12px;border-bottom:1px solid #243948;padding-bottom:12px;margin-bottom:12px}.fwEditorHead h3{margin:0;font-size:18px}.fwEditorHead p{margin:4px 0 0;color:#86a3b7}.fwEditorClose{margin-left:auto}.fwEditorGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.fwRule{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px;border:1px solid #243948;border-radius:8px;background:#0a151e}.fwRule small{display:block;color:#86a3b7;margin-top:3px}.fwRule.critical{border-color:#73502d}.fwRule input[type=number],.fwRule input[type=text],.fwRule textarea,.fwRule select{width:100%;margin-top:6px;background:#071018;color:#d9e9f5;border:1px solid #345267;border-radius:5px;padding:7px}.fwRule textarea{min-height:58px;resize:vertical}.fwEditorFoot{display:flex;align-items:center;justify-content:flex-end;gap:8px;border-top:1px solid #243948;padding-top:12px;margin-top:12px}.fwEditorMsg{margin-right:auto;color:#86a3b7}.fwCritical{color:#ffc85a}@media(max-width:760px){.fwEditorGrid{grid-template-columns:1fr}}';document.head.appendChild(st);}
+function fwCheck(id,label,checked,help,critical){return'<label class="fwRule '+(critical?'critical':'')+'"><span><b>'+esc(label)+'</b>'+(critical?'<small class="fwCritical">⚠ Règle critique</small>':'')+(help?'<small>'+esc(help)+'</small>':'')+'</span><input id="'+id+'" type="checkbox" '+(checked?'checked':'')+'></label>';}
+function fwNumber(id,label,value,unit,min,max){return'<label class="fwRule"><span><b>'+esc(label)+'</b><small>'+esc(unit||'')+'</small><input id="'+id+'" type="number" value="'+esc(value)+'" min="'+esc(min)+'" max="'+esc(max)+'"></span></label>';}
+function fwText(id,label,value,help){return'<label class="fwRule"><span><b>'+esc(label)+'</b>'+(help?'<small>'+esc(help)+'</small>':'')+'<textarea id="'+id+'">'+esc((value||[]).join('\n'))+'</textarea></span></label>';}
+function fwLines(id){var e=$(id);return String(e&&e.value||'').split(/[\n,]+/).map(function(x){return x.trim();}).filter(Boolean);}
+function closeFirewallConfig(){var x=$('fwEditorBackdrop');if(x&&x.parentNode)x.parentNode.removeChild(x);}
+function renderFirewallConfig(id,cfg){fwEditorStyles();closeFirewallConfig();cfg=cfg||{};var trade=id==='trading',html='<div id="fwEditorBackdrop" class="fwEditorBackdrop"><div class="fwEditor"><div class="fwEditorHead"><div><h3>🛡 '+(trade?'Trading Protection':'Market Data Protection')+'</h3><p>Configuration active · application à chaud sans redémarrer IA-TB</p></div><button id="fwEditorClose" class="btn small fwEditorClose">✕</button></div><div class="fwEditorGrid">';html+='<label class="fwRule"><span><b>Mode</b><small>PROTECTION bloque · OBSERVATION signale sans bloquer</small><select id="fwModeSelect"><option value="PROTECTION" '+(cfg.mode==='OBSERVATION'?'':'selected')+'>PROTECTION</option><option value="OBSERVATION" '+(cfg.mode==='OBSERVATION'?'selected':'')+'>OBSERVATION</option></select></span></label>';if(trade){var sec=cfg.security||{},cw=cfg.commandWhitelist||{},pw=cfg.tradingPairWhitelist||{},dp=cfg.duplicateProtection||{};html+=fwCheck('fwCpAuth','Authentification CP/1',sec.verifyCpAuthentication!==false,'Vérifie l’identité CP/1 de la commande.',true);html+=fwCheck('fwSignature','Signature des messages',sec.verifySignatures!==false,'Vérifie l’intégrité/signature avant transmission.',true);html+=fwCheck('fwCommandWL','Whitelist des commandes',cw.enabled!==false,'Autorise uniquement les commandes listées.');html+=fwCheck('fwPairWL','Whitelist des paires',pw.enabled!==false,'Autorise uniquement les paires listées.');html+=fwCheck('fwDuplicate','Anti-duplicate / anti-replay',dp.enabled!==false,'Bloque les requêtes et ordres répétés.');html+=fwNumber('fwAge','Âge maximal du message',sec.maxMessageAgeSeconds||30,'secondes',1,300);html+=fwNumber('fwDupWindow','Fenêtre anti-duplicate',dp.windowSeconds||30,'secondes',1,600);html+=fwText('fwCommands','Commandes autorisées',cw.allowed||[],'Une commande par ligne.');html+=fwText('fwPairs','Paires autorisées',pw.allowed||[],'Une paire par ligne.');}else{var r=cfg.rules||{};[['payloadSize','Taille du payload'],['providerWhitelist','Whitelist providers'],['typeWhitelist','Whitelist types'],['provenance','Provenance'],['timestamp','Timestamp'],['symbol','Format symbole'],['ohlcSchema','Schéma OHLC'],['positivePrice','Prix positifs'],['priceJump','Saut de prix'],['bidAsk','Validation Bid / Ask'],['spread','Spread maximum'],['duplicateProtection','Anti-duplicate']].forEach(function(x){html+=fwCheck('fwRule_'+x[0],x[1],r[x[0]]!==false,'Règle Market Data sélectionnable individuellement.');});html+=fwNumber('fwMaxAge','Âge maximal des données',cfg.maxMessageAgeMs||30000,'millisecondes',1000,600000);html+=fwNumber('fwFuture','Tolérance timestamp futur',cfg.maxFutureSkewMs||5000,'millisecondes',0,60000);html+=fwNumber('fwPayload','Payload maximal',cfg.maxPayloadBytes||524288,'octets',1024,4194304);html+=fwNumber('fwDupMs','Fenêtre anti-duplicate',cfg.duplicateWindowMs||5000,'millisecondes',0,600000);html+=fwNumber('fwJump','Saut de prix maximum',cfg.maxPriceJumpPct||20,'%',0,1000);html+=fwNumber('fwSpread','Spread maximum',cfg.maxSpreadPct||10,'%',0,100);html+=fwText('fwProviders','Providers autorisés',cfg.providerWhitelist||[],'Un provider par ligne.');html+=fwText('fwTypes','Types autorisés',cfg.typeWhitelist||[],'Un type par ligne.');}html+='</div><div class="fwEditorFoot"><span id="fwEditorMsg" class="fwEditorMsg"></span><button id="fwEditorCancel" class="btn">Annuler</button><button id="fwEditorApply" class="btn">Appliquer</button></div></div></div>';document.body.insertAdjacentHTML('beforeend',html);$('fwEditorClose').onclick=closeFirewallConfig;$('fwEditorCancel').onclick=closeFirewallConfig;$('fwEditorBackdrop').onclick=function(e){if(e.target===$('fwEditorBackdrop'))closeFirewallConfig();};$('fwEditorApply').onclick=function(){applyFirewallConfig(id,cfg);};}
+function openFirewallConfig(id){actionMsg('Chargement configuration Firewall…');api('/api/admin/firewall/config?service='+encodeURIComponent(id)).then(function(o){renderFirewallConfig(id,o.config||{});actionMsg('Configuration '+id+' chargée.');}).catch(function(e){actionMsg('Erreur Firewall : '+e.message);});}
+function applyFirewallConfig(id,oldCfg){var trade=id==='trading',patch={mode:$('fwModeSelect').value};if(trade){patch.security={verifyCpAuthentication:$('fwCpAuth').checked,verifySignatures:$('fwSignature').checked,maxMessageAgeSeconds:+$('fwAge').value||30};patch.commandWhitelist={enabled:$('fwCommandWL').checked,allowed:fwLines('fwCommands')};patch.tradingPairWhitelist={enabled:$('fwPairWL').checked,allowed:fwLines('fwPairs')};patch.duplicateProtection={enabled:$('fwDuplicate').checked,windowSeconds:+$('fwDupWindow').value||30};}else{patch.rules={};['payloadSize','providerWhitelist','typeWhitelist','provenance','timestamp','symbol','ohlcSchema','positivePrice','priceJump','bidAsk','spread','duplicateProtection'].forEach(function(k){patch.rules[k]=$('fwRule_'+k).checked;});patch.maxMessageAgeMs=+$('fwMaxAge').value||30000;patch.maxFutureSkewMs=+$('fwFuture').value||0;patch.maxPayloadBytes=+$('fwPayload').value||524288;patch.duplicateWindowMs=+$('fwDupMs').value||0;patch.maxPriceJumpPct=+$('fwJump').value||0;patch.maxSpreadPct=+$('fwSpread').value||0;patch.providerWhitelist=fwLines('fwProviders');patch.typeWhitelist=fwLines('fwTypes');}var critical=trade&&((patch.security.verifyCpAuthentication===false)||(patch.security.verifySignatures===false)),confirmedCritical=!critical;if(critical)confirmedCritical=confirm('⚠ ATTENTION — règle critique désactivée.\n\nTu désactives une protection d’authentification ou de signature du Trading Firewall. Confirmer cette configuration ?');if(!confirmedCritical)return;var msg=$('fwEditorMsg');if(msg)msg.textContent='Application…';api('/api/admin/firewall/config',{method:'POST',body:{service:id,patch:patch,confirmedCritical:confirmedCritical}}).then(function(){if(msg)msg.textContent='CONFIG_APPLIED · Hot reload OK';actionMsg('Firewall '+id+' : paramètres appliqués à chaud.');setTimeout(function(){closeFirewallConfig();refresh();},650);}).catch(function(e){if(msg)msg.textContent='Erreur : '+e.message;});}
+'''
+          if marker not in s: raise SystemExit('admin bind marker missing')
+          s=s.replace(marker,editor+marker,1)
+          bind_old="function bindDynamic(){[].slice.call(document.querySelectorAll('.processToggle'))"
+          bind_new="function bindDynamic(){[].slice.call(document.querySelectorAll('.fwConfigOpen')).forEach(function(b){b.onclick=function(){openFirewallConfig(b.getAttribute('data-firewall-config'))}});[].slice.call(document.querySelectorAll('.processToggle'))"
+          if bind_old not in s: raise SystemExit('bind dynamic exact marker missing')
+          p.write_text(s.replace(bind_old,bind_new,1))
+
+          # Documentation only: no runtime architecture change beyond the editor/API.
+          p=B/'Core/Firewall/README.md'
+          s=p.read_text()
+          extra='''\n## Configuration depuis ADMIN\n\nDans ADMIN > Firewall, le bouton **Paramètres** d’une protection ouvre une surcouche dédiée. Chaque règle peut être activée ou désactivée individuellement et les seuils/whitelists peuvent être modifiés. **Appliquer** utilise le Worker existant pour valider, persister et recharger la configuration à chaud.\n\nLes règles Trading d’authentification CP/1 et de signature restent configurables pour les tests, mais leur désactivation est signalée comme critique et exige une confirmation explicite.\n'''
+          if '## Configuration depuis ADMIN' not in s:
+              p.write_text(s+extra)
+          PY
+
+          B="builds/IA-TB_Build_v1.12_DEBUG"
+          node --check "$B/Core/Firewall/firewall_service.js"
+          node --check "$B/Core/Admin/service_registry.js"
+          node --check "$B/Core/Server/server.js"
+          node --check "$B/Frontend/JS/admin_controller_v1.0.js"
+          node "$B/Core/Firewall/Tests/trading_firewall.test.js"
+          node "$B/Core/Firewall/Tests/market_data_firewall.test.js"
+
+          git rm .github/workflows/apply-firewall-admin-config-v112.yml
+          git config user.name "0v3r-F10w"
+          git config user.email "florianbeckert.74@outlook.fr"
+          git add "$B"
+          git commit -m "feat(debug): add configurable firewall rules in admin"
+          git push origin debug
