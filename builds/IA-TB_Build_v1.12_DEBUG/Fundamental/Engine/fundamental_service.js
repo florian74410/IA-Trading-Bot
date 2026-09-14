@@ -2,8 +2,8 @@
 /* IA-TB Fundamental Engine v1.6.8
    INFORMATION_ONLY. RSS/Atom + WEB + X collection, Flux Manager, Source Registry, translation cache,
    informational per-publication bias. No strategy influence, no AI-written facts. */
-var http=require('http'),fs=require('fs'),path=require('path'),URL=require('url').URL,Bootstrap=require('./bootstrap_sqlite'),Collector=require('./collector'),EventEngine=require('./event_engine'),CPAdapter=require('../../Core/Communication/component_cp1_adapter'),CP=require('../../Core/Communication/communication_protocol_v1');
-var HOST='127.0.0.1',PORT=+(process.env.IATB_FUNDAMENTAL_PORT||8015),ROOT=path.resolve(__dirname,'..'),APP_ROOT=path.resolve(__dirname,'../..'),LOG=path.join(ROOT,'fundamental.log'),VERSION='1.8.0-event.1',Storage,storage,collector,eventEngine,eventTimer,server,bootstrapInfo=null,MAX_BODY=65536;
+var http=require('http'),fs=require('fs'),path=require('path'),URL=require('url').URL,Bootstrap=require('./bootstrap_sqlite'),Collector=require('./collector'),EventEngine=require('./event_engine'),CPAdapter=require('../../Core/Communication/component_cp1_adapter'),CP=require('../../Core/Communication/communication_protocol_v1'),PATHS=require('../../Core/Shared/paths');
+var HOST='127.0.0.1',PORT=+(process.env.IATB_FUNDAMENTAL_PORT||8015),ROOT=path.resolve(__dirname,'..'),APP_ROOT=path.resolve(__dirname,'../..'),LOG=PATHS.RuntimeLogs.fundamental,VERSION='1.8.0-event.1',Storage,storage,collector,eventEngine,eventTimer,server,bootstrapInfo=null,MAX_BODY=65536;
 function stamp(){return new Date().toISOString();}
 function log(tag,msg){var line='['+stamp()+'] '+String(tag||'FE')+' '+String(msg||'');try{fs.appendFileSync(LOG,line+'\n','utf8')}catch(e){}if(process.stdout.isTTY||process.env.IATB_FUNDAMENTAL_STDOUT==='1')console.log(line);}
 function send(res,code,obj){var b=Buffer.from(JSON.stringify(obj,null,2));res.writeHead(code,{'Content-Type':'application/json; charset=utf-8','Content-Length':b.length,'Cache-Control':'no-store','X-IA-TB-Fundamental-Mode':'INFORMATION_ONLY'});res.end(b);}
