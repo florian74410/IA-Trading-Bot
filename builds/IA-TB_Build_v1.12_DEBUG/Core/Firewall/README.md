@@ -1,11 +1,30 @@
-# IA-TB Firewall Service v1.8.1
+# IA-TB Firewall
 
-Architecture officielle : **1 processus / 1 port (8017) / 3 threads**.
+Architecture v1.12 : **1 coordinateur / 1 port (8017) / 2 Workers de protection optionnels**.
 
-- Thread 0 — Router Firewall : routage interne du service, toujours actif tant que le service tourne.
-- Thread 1 — Trading Engine Protection : règles + whitelist dans `Trading_Engine_security/`.
-- Thread 2 — Market Data Collector Protection : règles + whitelist dans `Market_Data_Collector_security/`.
+- Thread 0 — Firewall Coordinator : orchestration HTTP, proxy interne et cycle de vie des Workers.
+- Thread 1 — Trading Protection : `Protection/trading_firewall.js`, configuration `Config/Trading/`.
+- Thread 2 — Market Data Protection : `Protection/market_data_firewall.js`, configuration `Config/MarketData/`.
 
-Lorsqu'un nouveau thread de protection est ajouté, créer `Core/Firewall/<Nom_Engine>_security/` avec au minimum `rules.json` et `whitelist.json`. Les règles déterminent les contrôles exécutés; la whitelist détermine les commandes, paires, providers ou types explicitement autorisés selon le moteur protégé.
+## Mode normal
 
-Tous les événements des trois threads sont centralisés dans `Core/Firewall/Firewall.log`.
+Par défaut, les deux Workers de protection sont initialisés. Le coordinateur vérifie les commandes Trading et les données Market Data avant transmission.
+
+## Mode test sans pare-feu
+
+Lancer `./start_no_firewall.command` ou démarrer avec `IATB_FIREWALL_ENABLED=0 ./start.command`.
+
+Dans ce mode, **aucun Worker de protection n'est initialisé**. Le coordinateur 8017 reste uniquement comme pass-through afin de conserver exactement la même topologie réseau et de pouvoir comparer le comportement de l'application avec et sans protections sans modifier Router, CP/1 ou Trading Engine.
+
+Le Trading Engine conserve ses contrôles propres, notamment CP/1 et `risk_approval_id`; seules les inspections Firewall sont bypassées.
+
+Ce mode est destiné au diagnostic et au développement. Le mode normal/prod doit garder les protections actives.
+
+## Protections Market Data
+
+Les règles `priceJump`, `bidAsk` et `spread` sont maintenant effectives :
+- saut de prix maximum par provider/symbol ;
+- bid/ask positifs et non inversés ;
+- spread maximum configurable.
+
+Les événements restent centralisés dans `Core/Firewall/Firewall.log`.
