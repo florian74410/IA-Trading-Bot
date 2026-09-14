@@ -1,9 +1,9 @@
 {
   "schema": 1,
   "application": "Crypto Chart Viewer IA Trader",
-  "version": "1.11.7",
-  "server": "Core/Server/server_v1.8.js",
-  "activatedAt": "2026-09-04T14:20:00+02:00",
+  "version": "1.12",
+  "server": "Core/Server/server.js",
+  "activatedAt": "2026-09-14T16:31:00+02:00",
   "ui": "UI/Gateway/ui_service.js",
   "uiPort": 8000,
   "routerPort": 8021
