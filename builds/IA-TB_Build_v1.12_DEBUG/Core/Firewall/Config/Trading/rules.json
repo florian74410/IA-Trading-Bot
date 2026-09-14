@@ -4,6 +4,7 @@
   "security": {
     "verifyCpAuthentication": true,
     "verifySignatures": true,
+    "verifyTimestamp": true,
     "maxMessageAgeSeconds": 30
   },
   "duplicateProtection": {
