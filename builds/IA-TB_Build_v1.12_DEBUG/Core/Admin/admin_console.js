@@ -5,9 +5,9 @@
    - Server commands are explicit, whitelisted actions; never a shell.
    - Read-only/command classification is enforced server-side.
 */
-var fs=require('fs'),path=require('path'),DebugController=require('./debug_controller');
+var fs=require('fs'),path=require('path'),DebugController=require('./debug_controller'),PATHS=require('../Shared/paths');
 function plain(x){return !!x&&typeof x==='object'&&!Array.isArray(x);}
-function Console(root,admin){this.root=path.resolve(root);this.admin=admin;this.auditFile=path.join(this.root,'logs.dat');var self=this;this.debug=new DebugController(root,admin,function(x){self.audit(x);});}
+function Console(root,admin){this.root=path.resolve(root);this.admin=admin;this.auditFile=PATHS.RuntimeLogs.core;var self=this;this.debug=new DebugController(root,admin,function(x){self.audit(x);});}
 Console.prototype.serverCommands=function(){return[
  {name:'server.status',mode:'observation',description:'État synthétique du serveur IA-TB',arguments:{allowed:[]}},
  {name:'server.services',mode:'observation',description:'Liste et état des services gérés',arguments:{allowed:[]}},
