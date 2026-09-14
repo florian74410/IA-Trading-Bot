@@ -33,6 +33,12 @@ var RUNTIME_LOG_FILES={
 var RUNTIME_STATE_FILES={
   strategyStats:path.join(APP_RUNTIME_DIRS.state,'strategy','strategy_stats.json')
 };
+var RUNTIME_LAUNCHER_DIR=path.join(APP_RUNTIME_DIRS.state,'launcher');
+var RUNTIME_LAUNCHER_FILES={
+  pending:path.join(RUNTIME_LAUNCHER_DIR,'pending_activation.dat'),
+  state:path.join(RUNTIME_LAUNCHER_DIR,'launcher_state.dat'),
+  control:path.join(RUNTIME_LAUNCHER_DIR,'launcher_control.dat')
+};
 var RUNTIME_SECURITY_DIR=path.join(APP_RUNTIME_DIRS.state,'security');
 var RUNTIME_SECRET_FILES={
   internalServiceKey:path.join(RUNTIME_SECURITY_DIR,'internal_service_key.dat')
@@ -51,6 +57,7 @@ function ensureAppRuntimeDirs(){
   Object.keys(APP_RUNTIME_DIRS).forEach(function(k){
     try{fs.mkdirSync(APP_RUNTIME_DIRS[k],{recursive:true});}catch(e){}
   });
+  try{fs.mkdirSync(RUNTIME_LAUNCHER_DIR,{recursive:true});}catch(e){}
   try{fs.mkdirSync(RUNTIME_SECURITY_DIR,{recursive:true});}catch(e){}
   return APP_RUNTIME_DIRS;
 }
@@ -89,6 +96,7 @@ module.exports={
   AppRuntime:APP_RUNTIME_DIRS,
   RuntimeLogs:RUNTIME_LOG_FILES,
   RuntimeState:RUNTIME_STATE_FILES,
+  RuntimeLauncher:RUNTIME_LAUNCHER_FILES,
   RuntimeSecrets:RUNTIME_SECRET_FILES,
   PersistentData:PERSISTENT_DATA,
   ensureAppRuntimeDirs:ensureAppRuntimeDirs,
@@ -129,6 +137,6 @@ module.exports={
   AIUpdateSettings:path.join(ROOT,'Parametres','AIUpdateSettings.dat'),
   Updates:path.join(ROOT,'Updates'),
   ReleasePointer:path.join(ROOT,'Updates','current_release.dat'),
-  LauncherControl:path.join(ROOT,'Updates','launcher_control.dat'),
+  LauncherControl:RUNTIME_LAUNCHER_FILES.control,
   Kraken:path.join(ROOT,'AddOns','Kraken')
 };
