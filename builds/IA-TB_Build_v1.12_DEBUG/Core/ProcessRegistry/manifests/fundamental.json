@@ -9,7 +9,7 @@
   "restartable": true,
   "defaultEnabled": true,
   "script": "Fundamental/Engine/fundamental_service.js",
-  "log": "Fundamental/fundamental.log",
+  "log": ".runtime/logs/fundamental.log",
   "env": {
     "IATB_FUNDAMENTAL_PORT": "8015"
   }

@@ -9,7 +9,7 @@
   "restartable": true,
   "defaultEnabled": true,
   "script": "Risk/Engine/risk_service.js",
-  "log": "Risk/risk.log",
+  "log": ".runtime/logs/risk.log",
   "env": {
     "IATB_RISK_ENGINE_PORT": "8019",
     "ROUTER_PORT": "8021"

@@ -9,7 +9,7 @@
   "restartable": true,
   "defaultEnabled": true,
   "script": "Core/Firewall/firewall_service.js",
-  "log": "Core/Firewall/Firewall.log",
+  "log": ".runtime/logs/firewall.log",
   "env": {
     "IATB_FIREWALL_PORT": "8017",
     "IATB_TRADING_ENGINE_PORT": "8016",

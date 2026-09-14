@@ -9,7 +9,7 @@
   "restartable": true,
   "defaultEnabled": true,
   "script": "AddOns/Kraken/kraken_service.js",
-  "log": "AddOns/Kraken/kraken.log",
+  "log": ".runtime/logs/kraken.log",
   "env": {
     "KRAKEN_ADDON_PORT": "8011"
   }

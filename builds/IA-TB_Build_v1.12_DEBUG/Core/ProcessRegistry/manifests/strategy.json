@@ -9,7 +9,7 @@
   "restartable": true,
   "defaultEnabled": true,
   "script": "Strategy/Engine/strategy_service.js",
-  "log": "Strategy/strategy.log",
+  "log": ".runtime/logs/strategy.log",
   "env": {
     "IATB_STRATEGY_PORT": "8018",
     "ROUTER_PORT": "8021"

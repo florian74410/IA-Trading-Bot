@@ -9,7 +9,7 @@
   "restartable": true,
   "defaultEnabled": true,
   "script": "Liquidity/Engine/liquidity_service.js",
-  "log": "Liquidity/liquidity.log",
+  "log": ".runtime/logs/liquidity.log",
   "env": {
     "IATB_LIQUIDITY_PORT": "8014"
   }

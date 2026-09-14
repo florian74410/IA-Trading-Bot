@@ -9,7 +9,7 @@
   "restartable": true,
   "defaultEnabled": true,
   "script": "Indicators/Engine/indicator_service.js",
-  "log": "Indicators/indicator.log",
+  "log": ".runtime/logs/indicators.log",
   "env": {
     "IATB_INDICATOR_PORT": "8012"
   }

@@ -9,7 +9,7 @@
   "restartable": true,
   "defaultEnabled": true,
   "script": "Portfolio/Engine/portfolio_service.js",
-  "log": "Portfolio/portfolio.log",
+  "log": ".runtime/logs/portfolio.log",
   "env": {
     "IATB_PORTFOLIO_PORT": "8020"
   },

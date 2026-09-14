@@ -9,7 +9,7 @@
   "restartable": true,
   "defaultEnabled": true,
   "script": "services/trading-engine/trading_service.js",
-  "log": "services/trading-engine/trading.log",
+  "log": ".runtime/logs/trading.log",
   "env": {
     "IATB_TRADING_ENGINE_PORT": "8016",
     "IATB_TRADING_LIVE": "0"
