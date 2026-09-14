@@ -20,9 +20,19 @@ Le Trading Engine conserve ses contrôles propres, notamment CP/1 et `risk_appro
 
 Ce mode est destiné au diagnostic et au développement. Le mode normal/prod doit garder les protections actives.
 
+## Configuration depuis ADMIN
+
+La page `ADMIN > Firewall` reste une vue de supervision. Un clic sur une carte **Trading Protection** ou **Market Data Protection**, ou sur son bouton **Paramètres**, ouvre une surcouche de configuration dédiée.
+
+Chaque règle exposée par la protection peut être activée ou désactivée individuellement. Les seuils et listes autorisées peuvent également être modifiés. Le bouton **Appliquer** envoie la configuration au Worker correspondant ; le Worker la valide, la persiste et l'applique immédiatement, sans redémarrage complet d'IA-TB.
+
+Les protections Trading d'authentification CP/1, de signature et de timestamp restent configurables pour les essais et le développement. Elles sont signalées comme critiques dans l'interface et leur désactivation demande une confirmation explicite.
+
+Quand IA-TB est lancé en mode `IATB_FIREWALL_ENABLED=0`, aucun Worker n'existe : l'éditeur de règles est donc volontairement indisponible jusqu'au prochain démarrage avec Firewall actif.
+
 ## Protections Market Data
 
-Les règles `priceJump`, `bidAsk` et `spread` sont maintenant effectives :
+Les règles `priceJump`, `bidAsk` et `spread` sont effectives :
 - saut de prix maximum par provider/symbol ;
 - bid/ask positifs et non inversés ;
 - spread maximum configurable.
