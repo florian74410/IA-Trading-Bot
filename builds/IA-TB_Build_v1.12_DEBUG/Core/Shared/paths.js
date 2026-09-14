@@ -13,6 +13,23 @@ var APP_RUNTIME_DIRS={
   pids:path.join(APP_RUNTIME,'pids'),
   updates:path.join(APP_RUNTIME,'updates')
 };
+var RUNTIME_LOG_FILES={
+  core:path.join(APP_RUNTIME_DIRS.logs,'core.log'),
+  router:path.join(APP_RUNTIME_DIRS.logs,'router.log'),
+  ui:path.join(APP_RUNTIME_DIRS.logs,'ui.log'),
+  restart:path.join(APP_RUNTIME_DIRS.logs,'restart_all.log'),
+  kraken:path.join(APP_RUNTIME_DIRS.logs,'kraken.log'),
+  indicators:path.join(APP_RUNTIME_DIRS.logs,'indicators.log'),
+  marketdata:path.join(APP_RUNTIME_DIRS.logs,'market_data.log'),
+  liquidity:path.join(APP_RUNTIME_DIRS.logs,'liquidity.log'),
+  fundamental:path.join(APP_RUNTIME_DIRS.logs,'fundamental.log'),
+  fundamentalSqlite:path.join(APP_RUNTIME_DIRS.logs,'fundamental_sqlite_install.log'),
+  trading:path.join(APP_RUNTIME_DIRS.logs,'trading.log'),
+  firewall:path.join(APP_RUNTIME_DIRS.logs,'firewall.log'),
+  strategy:path.join(APP_RUNTIME_DIRS.logs,'strategy.log'),
+  risk:path.join(APP_RUNTIME_DIRS.logs,'risk.log'),
+  portfolio:path.join(APP_RUNTIME_DIRS.logs,'portfolio.log')
+};
 function ensureAppRuntimeDirs(){
   Object.keys(APP_RUNTIME_DIRS).forEach(function(k){
     try{fs.mkdirSync(APP_RUNTIME_DIRS[k],{recursive:true});}catch(e){}
@@ -23,6 +40,7 @@ module.exports={
   ROOT:ROOT,
   NodeRuntime:NODE_RUNTIME,
   AppRuntime:APP_RUNTIME_DIRS,
+  RuntimeLogs:RUNTIME_LOG_FILES,
   ensureAppRuntimeDirs:ensureAppRuntimeDirs,
   Frontend:{
     app:path.join(ROOT,'Frontend','Pages','app_v1.0.html'),
