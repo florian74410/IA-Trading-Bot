@@ -1,5 +1,5 @@
 'use strict';
-var fs=require('fs'),path=require('path');
+var fs=require('fs'),path=require('path'),os=require('os');
 var ROOT=path.resolve(__dirname,'../..');
 var NODE_RUNTIME=path.join(ROOT,'NodeRuntime');
 var APP_RUNTIME=path.join(ROOT,'.runtime');
@@ -33,6 +33,15 @@ var RUNTIME_LOG_FILES={
 var RUNTIME_STATE_FILES={
   strategyStats:path.join(APP_RUNTIME_DIRS.state,'strategy','strategy_stats.json')
 };
+var PERSISTENT_ROOT=process.env.IATB_DATA_ROOT||path.join(os.homedir(),'IA-TB-UserData-Server');
+var SHARED_DATA=path.join(PERSISTENT_ROOT,'Shared Data');
+var FUNDAMENTAL_DATA=path.join(SHARED_DATA,'Fundamental');
+var PERSISTENT_DATA={
+  root:PERSISTENT_ROOT,
+  shared:SHARED_DATA,
+  fundamental:FUNDAMENTAL_DATA,
+  fundamentalDb:process.env.IATB_FUNDAMENTAL_DB||path.join(FUNDAMENTAL_DATA,'fundamental.db')
+};
 function ensureAppRuntimeDirs(){
   Object.keys(APP_RUNTIME_DIRS).forEach(function(k){
     try{fs.mkdirSync(APP_RUNTIME_DIRS[k],{recursive:true});}catch(e){}
@@ -46,6 +55,7 @@ module.exports={
   AppRuntime:APP_RUNTIME_DIRS,
   RuntimeLogs:RUNTIME_LOG_FILES,
   RuntimeState:RUNTIME_STATE_FILES,
+  PersistentData:PERSISTENT_DATA,
   ensureAppRuntimeDirs:ensureAppRuntimeDirs,
   Frontend:{
     app:path.join(ROOT,'Frontend','Pages','app_v1.0.html'),
