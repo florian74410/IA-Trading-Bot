@@ -4,9 +4,10 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 FUND="$ROOT/Fundamental"
 NODE_BIN="$ROOT/.node/bin/node"
 NPM_CLI="$ROOT/.node/lib/node_modules/npm/bin/npm-cli.js"
-LOG="$FUND/sqlite_install.log"
+LOG_DIR="$ROOT/.runtime/logs"
+LOG="$LOG_DIR/fundamental_sqlite_install.log"
 cd "$ROOT" || exit 1
-mkdir -p "$FUND"
+mkdir -p "$FUND" "$LOG_DIR"
 check_sqlite(){
   "$NODE_BIN" -e "var p=require('./Fundamental/node_modules/better-sqlite3/package.json'); if(p.version!=='8.7.0')process.exit(2); var D=require('./Fundamental/node_modules/better-sqlite3'); var d=new D(':memory:'); var v=d.prepare('select sqlite_version() v').get().v; d.close(); console.log(v);" >/dev/null 2>&1
 }

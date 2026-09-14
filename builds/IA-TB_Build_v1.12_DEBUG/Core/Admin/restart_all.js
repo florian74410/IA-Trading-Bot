@@ -2,8 +2,9 @@
 /* IA-TB v1.4.3 — Global Restart Helper.
    Aucun argument utilisateur. Le Launcher Supervisor reste vivant et relance le Core.
 */
-var fs=require('fs'),path=require('path'),child=require('child_process'),Registry=require('./service_registry');
-var ROOT=path.resolve(__dirname,'../..');
+var fs=require('fs'),path=require('path'),child=require('child_process'),Registry=require('./service_registry'),PATHS=require('../Shared/paths');
+var ROOT=PATHS.ROOT;
+PATHS.ensureAppRuntimeDirs();
 var P={
  router:+(process.env.ROUTER_PORT||8021),
  core:+(process.env.IATB_PUBLIC_PORT||process.env.CORE_PUBLIC_PORT||8001),
@@ -30,7 +31,7 @@ function waitRouter(want,deadline,cb){
  });
 }
 function spawnRouter(cb){
- var script=safeRoot('Core/Router/router.js'),logPath=safeRoot('router.log');
+ var script=safeRoot('Core/Router/router.js'),logPath=PATHS.RuntimeLogs.router;
  if(!fs.existsSync(script))return cb(new Error('ROUTER_SCRIPT_INVALID'));
  var fd;try{fd=fs.openSync(logPath,'a')}catch(e){return cb(e)}
  var env=Object.assign({},process.env,{

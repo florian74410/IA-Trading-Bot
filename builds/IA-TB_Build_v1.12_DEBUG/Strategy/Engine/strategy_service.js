@@ -4,9 +4,10 @@
    Security invariant: INTENTION_ONLY. No exchange adapter is imported here.
 */
 var http=require('http'),fs=require('fs'),path=require('path'),crypto=require('crypto');
-var Adapter=require('../../Core/Communication/component_cp1_adapter'),CP=require('../../Core/Communication/communication_protocol_v1');
+var Adapter=require('../../Core/Communication/component_cp1_adapter'),CP=require('../../Core/Communication/communication_protocol_v1'),PATHS=require('../../Core/Shared/paths');
 var Registry=require('./strategy_registry_v2'),Core=require('./strategy_v2_core'),Stats=require('./strategy_stats_v2');
-var ROOT=path.resolve(__dirname,'../..'),HOST='127.0.0.1',PORT=+(process.env.IATB_STRATEGY_PORT||8018),ROUTER_PORT=+(process.env.ROUTER_PORT||8021),VERSION='2.0.0',LOG=path.join(ROOT,'Strategy','strategy.log');
+PATHS.ensureAppRuntimeDirs();
+var ROOT=PATHS.ROOT,HOST='127.0.0.1',PORT=+(process.env.IATB_STRATEGY_PORT||8018),ROUTER_PORT=+(process.env.ROUTER_PORT||8021),VERSION='2.0.0',LOG=PATHS.RuntimeLogs.strategy;
 var registry=new Registry(ROOT),stats=new Stats(ROOT),state={mode:'RUNNING',startedAt:Date.now(),lastEvaluation:null,lastSignal:null};
 function log(tag,msg){try{fs.appendFileSync(LOG,'['+new Date().toISOString()+'] ['+tag+'] '+String(msg||'').replace(/[\r\n]+/g,' ').slice(0,900)+'\n','utf8');}catch(e){}}
 function send(res,code,o){var b=Buffer.from(JSON.stringify(o));res.writeHead(code,{'Content-Type':'application/json; charset=utf-8','Content-Length':b.length,'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});res.end(b);}
