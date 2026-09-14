@@ -1,15 +1,16 @@
 'use strict';
-/* IA-TB UI Service v1.11.6
+/* IA-TB UI Service v1.12
    Dedicated graphical-interface process.
    - Serves Frontend files only.
    - Proxies Core APIs and Router read channels through explicit boundaries.
    - Never imports Engines/Core implementation modules.
    - IA Trading View market candles always come from Market Data Collector via
      Router -> Firewall Data Thread -> Market Data Collector.
+   - ADMIN Firewall editor uses an explicit ADMIN-only bridge to port 8017.
 */
 var http=require('http'),fs=require('fs'),path=require('path'),URL=require('url').URL,Permissions=require('../Permissions/ui_permissions');
 var ROOT=path.resolve(__dirname,'../..'),HOST='127.0.0.1';
-var PORT=+(process.env.IATB_UI_PORT||8000),CORE_PORT=+(process.env.CORE_PUBLIC_PORT||8001),ROUTER_PORT=+(process.env.ROUTER_PORT||8021);
+var PORT=+(process.env.IATB_UI_PORT||8000),CORE_PORT=+(process.env.CORE_PUBLIC_PORT||8001),ROUTER_PORT=+(process.env.ROUTER_PORT||8021),FIREWALL_PORT=+(process.env.IATB_FIREWALL_PORT||process.env.IATB_TRADING_FIREWALL_PORT||8017);
 var AUTH_MODE=String(process.env.IATB_AUTH_MODE||'disabled').toLowerCase(),BYPASS_ROLE=Permissions.normalizeRole(process.env.IATB_UI_BYPASS_ROLE||'ADMIN');
 var PAGE_MAP={'/':'Frontend/Pages/app_v1.0.html','/trading':'Frontend/Pages/app_v1.0.html','/trading/':'Frontend/Pages/app_v1.0.html','/ia-trading':'Frontend/Pages/app_v1.0.html','/ia-trading/':'Frontend/Pages/app_v1.0.html','/settings':'Frontend/Pages/settings_v1.11.html','/settings/':'Frontend/Pages/settings_v1.11.html','/strategy':'Frontend/Pages/strategy_v1.11.html','/strategy/':'Frontend/Pages/strategy_v1.11.html','/strategies':'Frontend/Pages/strategy_v1.11.html','/strategies/':'Frontend/Pages/strategy_v1.11.html','/chart-viewer':'Frontend/Pages/chart_viewer_v1.0.html','/chart-viewer/':'Frontend/Pages/chart_viewer_v1.0.html','/charts':'Frontend/Pages/chart_viewer_v1.0.html','/portfolio':'Frontend/Pages/portfolio_v1.0.html','/portfolio/':'Frontend/Pages/portfolio_v1.0.html','/fundamental':'Frontend/Pages/fundamental_v1.0.html','/fundamental/':'Frontend/Pages/fundamental_v1.0.html','/admin':'Frontend/Pages/admin_v1.0.html','/admin/':'Frontend/Pages/admin_v1.0.html'};
 var ASSET_DIRS=['Frontend/JS','Frontend/CSS','Frontend/Assets','Frontend/Protocols'];
@@ -17,6 +18,7 @@ function json(res,code,obj){var b=Buffer.from(JSON.stringify(obj,null,2));res.wr
 function contentType(fn){if(/\.css$/i.test(fn))return'text/css; charset=utf-8';if(/\.json$/i.test(fn))return'application/json; charset=utf-8';if(/\.png$/i.test(fn))return'image/png';if(/\.jpe?g$/i.test(fn))return'image/jpeg';if(/\.svg$/i.test(fn))return'image/svg+xml';if(/\.html$/i.test(fn))return'text/html; charset=utf-8';return'application/javascript; charset=utf-8';}
 function safeRead(rel,cb){var p=path.resolve(ROOT,rel);if(p.indexOf(ROOT+path.sep)!==0)return cb(new Error('UI_PATH_FORBIDDEN'));fs.readFile(p,cb);}
 function serveFile(res,rel){safeRead(rel,function(e,b){if(e)return json(res,404,{ok:false,error:'UI_FILE_NOT_FOUND'});res.writeHead(200,{'Content-Type':contentType(rel),'Content-Length':b.length,'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer'});res.end(b);});}
+function serveAdminPage(res){safeRead(PAGE_MAP['/admin'],function(e,b){if(e)return json(res,404,{ok:false,error:'UI_FILE_NOT_FOUND'});var html=b.toString('utf8'),tag='<script defer src="/assets/firewall_admin_editor.js"></script>';if(html.indexOf(tag)<0)html=html.replace('</body>',tag+'\n</body>');var out=Buffer.from(html,'utf8');res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Content-Length':out.length,'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer'});res.end(out);});}
 function findAsset(name){if(!/^[A-Za-z0-9._-]+$/.test(name))return null;for(var i=0;i<ASSET_DIRS.length;i++){var rel=ASSET_DIRS[i]+'/'+name;if(fs.existsSync(path.join(ROOT,rel)))return rel;}return null;}
 function copyHeaders(src){var h={};Object.keys(src||{}).forEach(function(k){var l=k.toLowerCase();if(l==='host'||l==='connection'||l==='content-length')return;h[k]=src[k];});return h;}
 function responseHeaders(src){var h={};Object.keys(src||{}).forEach(function(k){var l=k.toLowerCase();if(l==='connection'||l==='transfer-encoding'||l==='content-length')return;h[k]=src[k];});return h;}
@@ -26,10 +28,11 @@ function authorizePage(req,res,required,cb){if(AUTH_MODE==='disabled'){var r=BYP
 function allowCore(req,res,p){var c=Permissions.classify(req.method,p),role=currentRole();if(AUTH_MODE==='disabled'&&!Permissions.allowed(role,c)){json(res,403,{ok:false,error:'ACCESS_DENIED',role:role,required:c.permission});return false;}return c;}
 function routerReadPath(p){return p.indexOf('/communication/')===0||p.indexOf('/router-api/')===0||p.indexOf('/market-data')===0||p.indexOf('/indicator-api')===0||p.indexOf('/liquidity-data')===0||p.indexOf('/portfolio-api')===0||p.indexOf('/kraken-api')===0;}
 var server=http.createServer(function(req,res){var u=new URL(req.url,'http://'+HOST+':'+PORT),p=u.pathname;
- if(req.method==='GET'&&p==='/ui-health')return json(res,200,{ok:true,name:'IA-TB UI Service',version:'1.11.6',pid:process.pid,host:HOST,port:PORT,corePort:CORE_PORT,routerPort:ROUTER_PORT,authMode:AUTH_MODE,bypassRole:AUTH_MODE==='disabled'?BYPASS_ROLE:null,separation:'UI_PROCESS_ISOLATED'});
+ if(req.method==='GET'&&p==='/ui-health')return json(res,200,{ok:true,name:'IA-TB UI Service',version:'1.12',pid:process.pid,host:HOST,port:PORT,corePort:CORE_PORT,routerPort:ROUTER_PORT,firewallPort:FIREWALL_PORT,authMode:AUTH_MODE,bypassRole:AUTH_MODE==='disabled'?BYPASS_ROLE:null,separation:'UI_PROCESS_ISOLATED'});
  if(req.method==='GET'&&p==='/ui-api/session')return json(res,200,{ok:true,authenticated:AUTH_MODE!=='disabled',authMode:AUTH_MODE,role:currentRole(),permissions:{read:true,userWrite:true,adminWrite:currentRole()==='ADMIN'},policy:'SERVER_SIDE'});
- if((req.method==='GET'||req.method==='HEAD')&&PAGE_MAP[p])return authorizePage(req,res,p==='/admin'?'ADMIN':'USER',function(){serveFile(res,PAGE_MAP[p]);});
+ if((req.method==='GET'||req.method==='HEAD')&&PAGE_MAP[p])return authorizePage(req,res,(p==='/admin'||p==='/admin/')?'ADMIN':'USER',function(){if(p==='/admin'||p==='/admin/')return serveAdminPage(res);serveFile(res,PAGE_MAP[p]);});
  if((req.method==='GET'||req.method==='HEAD')&&p.indexOf('/assets/')===0){var a=findAsset(p.slice('/assets/'.length));return a?serveFile(res,a):json(res,404,{ok:false,error:'UI_ASSET_NOT_FOUND'});}
+ if(p.indexOf('/firewall-admin/')===0)return authorizePage(req,res,'ADMIN',function(){var sub=p.slice('/firewall-admin'.length)||'/';proxy(req,res,FIREWALL_PORT,sub+u.search,{service:'Firewall Admin',permission:'ADMIN_WRITE'});});
  // Stable browser contract for IA Trading View. Always Market Data Collector, never Core market endpoints.
  if(req.method==='GET'&&p==='/ui-data/market/candles'){var qp='/market-data/candles'+u.search;return proxy(req,res,ROUTER_PORT,qp,{service:'Market Data Collector via Router',permission:'READ'});}
  if(routerReadPath(p))return proxy(req,res,ROUTER_PORT,p+u.search,{service:'Router',permission:'READ'});
@@ -37,5 +40,5 @@ var server=http.createServer(function(req,res){var u=new URL(req.url,'http://'+H
  json(res,404,{ok:false,error:'UI_ROUTE_NOT_FOUND'});
 });
 server.on('error',function(e){console.error('IA-TB UI Service bind error:',e&&e.message||e);process.exit(17);});
-server.listen(PORT,HOST,function(){console.log('IA-TB UI Service v1.11.6 : http://'+HOST+':'+PORT);console.log('Core API interne : http://'+HOST+':'+CORE_PORT);console.log('Router interne   : http://'+HOST+':'+ROUTER_PORT);});
+server.listen(PORT,HOST,function(){console.log('IA-TB UI Service v1.12 : http://'+HOST+':'+PORT);console.log('Core API interne : http://'+HOST+':'+CORE_PORT);console.log('Router interne   : http://'+HOST+':'+ROUTER_PORT);console.log('Firewall interne : http://'+HOST+':'+FIREWALL_PORT);});
 function stop(){server.close(function(){process.exit(0);});setTimeout(function(){process.exit(0);},1200);}process.on('SIGINT',stop);process.on('SIGTERM',stop);
