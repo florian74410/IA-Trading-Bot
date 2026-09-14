@@ -1,0 +1,105 @@
+name: IA-TB one-shot repository cleanup
+
+on:
+  push:
+    paths:
+      - '.github/workflows/repo_cleanup_once.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Remove retired booster references safely
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          root = Path('.')
+          build = root / 'builds' / 'IA-TB_Build_v1.11.7'
+
+          # Core server: remove the retired Admin API endpoints and simplify
+          # restart/stop-total back to the normal IA-TB lifecycle.
+          p = build / 'Core' / 'Server' / 'server_v1.0.js'
+          s = p.read_text(encoding='utf-8')
+          s = re.sub(r"\n if\(req\.method==='GET'&&p==='/api/admin/ultra/status'\).*?;\n", "\n", s)
+          s = re.sub(r" if\(req\.method==='GET'&&p==='/api/admin/ultra/log'\).*?;\n", "", s)
+          s = re.sub(r" if\(req\.method==='POST'&&p==='/api/admin/ultra/autostart'\).*?;\n", "", s)
+
+          restart_start = " if(req.method==='POST'&&p==='/api/admin/system/restart')return body(req,function(e,b){"
+          stop_start = " if(req.method==='POST'&&p==='/api/admin/system/stop-total')return body(req,function(e,b){"
+          i = s.find(restart_start)
+          j = s.find(stop_start)
+          if i < 0 or j < 0 or j <= i:
+              raise SystemExit('restart/stop-total markers not found')
+          restart = """ if(req.method==='POST'&&p==='/api/admin/system/restart')return body(req,function(e,b){
+  if(e||!b||b.confirmed!==true)return json(res,400,{ok:false,error:'CONFIRMATION_REQUIRED'});
+  if(process.env.IATB_SUPERVISED!=='1')return json(res,409,{ok:false,error:'SUPERVISOR_REQUIRED'});
+  if(!fs.existsSync(path.join(ROOT,'Core','Admin','restart_all.js')))return json(res,500,{ok:false,error:'RESTART_HELPER_MISSING'});
+  json(res,200,{ok:true,message:'Full IA-TB restart scheduled',components:['core','router','kraken','indicators','marketdata','liquidity','fundamental','trading','firewall','strategy','risk','portfolio']});
+  setTimeout(function(){try{scheduleAdminFullRestart();}catch(x){log('ADMIN','Redemarrage global impossible',x.message);}},180);
+ });
+"""
+          s = s[:i] + restart + s[j:]
+          s = s.replace("json(res,200,{ok:true,message:'Arrêt Total programmé',ultraWillStop:true,preferencePreserved:true,helperPid:helper.helperPid});",
+                        "json(res,200,{ok:true,message:'Arrêt Total programmé',helperPid:helper.helperPid});")
+          p.write_text(s, encoding='utf-8')
+
+          # Admin CSS: preserve generic maintenance/stop styling, remove only
+          # styling belonging to the retired booster UI.
+          p = build / 'Frontend' / 'CSS' / 'admin_v1.0.css'
+          s = p.read_text(encoding='utf-8')
+          s = re.sub(
+              r"/\* v1\.5\.1 — ULTRA Mode lifecycle \+ Arrêt Total \*/\n"
+              r"\.maintenanceBar\{align-items:center\}\n"
+              r"(\.strongDanger\{.*?\}\n\.strongDanger:hover\{.*?\}\n)"
+              r".*?(?=\.fwToggle\{)",
+              r"/* Arrêt Total */\n.maintenanceBar{align-items:center}\n\1",
+              s,
+              flags=re.S,
+          )
+          s = s.replace('.maintenanceBar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.maintenanceBar .btn{min-height:35px}.ultraToggle{display:flex;align-items:center;gap:7px;padding:7px 9px;border:1px solid #304858;border-radius:7px;background:#0c1822}.ultraState{border-radius:6px}.ultraTerminal{height:190px;margin:0}.toolbar{margin-bottom:9px}',
+                        '.maintenanceBar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.maintenanceBar .btn{min-height:35px}.toolbar{margin-bottom:9px}')
+          p.write_text(s, encoding='utf-8')
+
+          # Historical roadmap navigation: remove the retired item from the list.
+          p = root / 'ROADMAP.md'
+          s = p.read_text(encoding='utf-8')
+          s = s.replace('Maintenance, ULTRA, Logs', 'Maintenance, Logs')
+          p.write_text(s, encoding='utf-8')
+          PY
+
+          # The dedicated files were already removed from main. Ensure no
+          # case-insensitive textual reference remains in tracked content,
+          # except this temporary one-shot workflow itself.
+          set +e
+          matches=$(git grep -In -i 'ultra' -- ':!.github/workflows/repo_cleanup_once.yml')
+          rc=$?
+          set -e
+          if [ $rc -eq 0 ]; then
+            echo 'Residual references detected:'
+            echo "$matches"
+            exit 23
+          elif [ $rc -ne 1 ]; then
+            exit $rc
+          fi
+
+      - name: Commit cleanup
+        shell: bash
+        run: |
+          git config user.name 'IA-TB Repository Bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add -A
+          if git diff --cached --quiet; then
+            echo 'No additional cleanup required.'
+            exit 0
+          fi
+          git commit -m 'refactor(core): purge retired booster integration'
+          git push origin HEAD:main
