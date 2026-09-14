@@ -36,6 +36,7 @@ function ensureAppRuntimeDirs(){
   });
   return APP_RUNTIME_DIRS;
 }
+ensureAppRuntimeDirs();
 module.exports={
   ROOT:ROOT,
   NodeRuntime:NODE_RUNTIME,
@@ -65,7 +66,7 @@ module.exports={
   },
   Data:{
     config:path.join(ROOT,'config_v1.0.dat'),
-    logs:path.join(ROOT,'logs.dat'),
+    logs:RUNTIME_LOG_FILES.core,
     user:path.join(ROOT,'user.dat'),
     vault:path.join(ROOT,'secrets_v2.dat'),
     aiSettings:path.join(ROOT,'ai_settings_v2.dat')
