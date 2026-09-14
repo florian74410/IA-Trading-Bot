@@ -1,0 +1,97 @@
+/* IA-TB v1.6.3 corrective - navigation principale unifiee */
+.topbar,.top{border-bottom:1px solid #263b4c!important;background:rgba(8,15,22,.97)!important;box-shadow:0 8px 24px rgba(0,0,0,.22);backdrop-filter:blur(8px)}
+.topbar{min-height:52px!important;height:auto!important;padding:7px 12px!important;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.top{min-height:76px!important;height:auto!important;flex:0 0 auto!important;padding:7px 12px!important;display:flex;align-items:center;align-content:center;gap:8px;flex-wrap:wrap}
+.topbar>.brand,.top>.brand{font-weight:750;letter-spacing:.025em;white-space:nowrap}
+.topbar>.nav,.top>.navActions,.top>.adminNav{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.topbar>.nav button,.topbar>.nav .btn,.top>.navActions>.navBtn,.top>.adminNav>.btn{
+ position:relative;min-height:34px;border:1px solid #304858!important;border-radius:7px!important;background:#101b25!important;color:#d8e3ec!important;padding:7px 10px!important;cursor:pointer;transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease;color .14s ease
+}
+.topbar>.nav button:hover,.topbar>.nav .btn:hover,.top>.navActions>.navBtn:hover,.top>.adminNav>.btn:hover{background:#172735!important;border-color:#47718f!important;transform:translateY(-1px);box-shadow:0 0 0 1px rgba(86,164,218,.08),0 5px 16px rgba(0,0,0,.2)}
+.topbar>.nav button.active,.topbar>.nav .btn.active,.top>.navActions>.navBtn.active,.top>.adminNav>.btn.active{background:#12304a!important;border-color:#4c96c8!important;color:#f2f9ff!important;box-shadow:0 0 16px rgba(74,142,194,.2)}
+.topbar>.nav button.active:after,.topbar>.nav .btn.active:after,.top>.navActions>.navBtn.active:after,.top>.adminNav>.btn.active:after{content:"";position:absolute;left:14%;right:14%;bottom:-5px;height:2px;border-radius:2px;background:#62b4e8;box-shadow:0 0 8px rgba(98,180,232,.78)}
+.topbar>.engineState{margin-left:auto}
+.top>.navActions{order:20;flex:1 0 100%;width:100%;margin-left:0;justify-content:center;overflow-x:auto;overflow-y:visible;flex-wrap:nowrap;padding:2px 2px 5px}
+.top>.adminNav{margin-left:10px}
+@media(max-width:900px){.topbar>.brand{width:100%}.top>.navActions,.top>.adminNav{margin-left:0}.topbar>.engineState{margin-left:0}.topbar>.nav,.top>.navActions,.top>.adminNav{width:100%;overflow-x:auto;flex-wrap:nowrap;padding-bottom:5px}.topbar>.nav button,.topbar>.nav .btn,.top>.navActions>.navBtn,.top>.adminNav>.btn{flex:0 0 auto}}
+
+/* Correctif Trading IA v1.6.3 : la nav est une vraie ligne du header, jamais superposee au chart/console. */
+.app>.body{min-height:0}
+.top>.navActions::-webkit-scrollbar{height:4px}
+.top>.navActions::-webkit-scrollbar-thumb{background:#314b5e;border-radius:5px}
+
+/* v1.8.8 — Navbar principale unique et visuellement identique sur toutes les pages */
+:root{--iatb-global-nav-h:52px;--iatb-nav-bg:#050b10;--iatb-nav-line:#16303d;--iatb-nav-cyan:#00d8ff;--iatb-nav-text:#829ba7;--iatb-nav-text-active:#dff9ff}
+#iatbGlobalNav{display:none;position:fixed;z-index:20000;left:0;right:0;top:0;height:var(--iatb-global-nav-h);background:rgba(4,10,15,.985);border-bottom:1px solid var(--iatb-nav-line);box-shadow:0 8px 26px rgba(0,0,0,.22);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",Arial,sans-serif}
+body.iatb-global-nav-ready{padding-top:var(--iatb-global-nav-h)!important}
+body.iatb-global-nav-ready #iatbGlobalNav{display:block}
+.iatbGlobalInner{height:100%;display:flex;align-items:center;padding:0 17px;gap:18px;min-width:0}
+.iatbGlobalBrand{width:132px;height:44px;display:flex;align-items:center;flex:0 0 132px;overflow:hidden;text-decoration:none}
+.iatbGlobalBrand img{width:122px;max-height:40px;object-fit:contain;display:block}
+.iatbGlobalLinks{height:100%;display:flex;align-items:stretch;gap:0;min-width:0;overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
+.iatbGlobalLinks::-webkit-scrollbar{display:none}
+.iatbGlobalLinks a{position:relative;height:100%;display:flex;align-items:center;padding:0 13px;color:var(--iatb-nav-text);text-decoration:none;border-bottom:2px solid transparent;background:transparent;font-size:11px;font-weight:500;white-space:nowrap;transition:color .14s ease,background .14s ease,border-color .14s ease}
+.iatbGlobalLinks a:hover{color:#ccebf4;background:#08131a}
+.iatbGlobalLinks a.active{color:var(--iatb-nav-cyan);border-bottom-color:var(--iatb-nav-cyan);background:#07141b}
+.iatbGlobalRight{margin-left:auto;height:100%;display:flex;align-items:center;gap:8px;flex:0 0 auto}
+.iatbWalletLink,.iatbAdminLink{height:32px;display:flex;align-items:center;padding:0 11px;border:1px solid #214250;border-radius:5px;background:#071119;color:#b9d0da;text-decoration:none;font-size:10px;white-space:nowrap;transition:.14s ease}
+.iatbWalletLink:hover,.iatbAdminLink:hover{border-color:#34708a;background:#0a1a23;color:#e4f8ff}
+.iatbWalletLink{border-color:#13627a;color:#8ee8ff}.iatbAdminLink{border-color:#365164;color:#d3e1e8}.iatbAdminLink.active{border-color:var(--iatb-nav-cyan);color:var(--iatb-nav-cyan);background:#071c26}
+.iatbGlobalStatus{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border:1px solid #16313f;border-radius:50%;background:#061018}.iatbGlobalStatus i{width:8px;height:8px;border-radius:50%;background:#19d58f;box-shadow:0 0 9px rgba(25,213,143,.58)}
+.iatbNavHidden{display:none!important}
+/* Trading IA : la barre locale devient uniquement une sous-barre d'état. */
+body.iatb-page-trading.iatb-global-nav-ready .app{height:calc(100vh - var(--iatb-global-nav-h))!important}
+body.iatb-page-trading.iatb-global-nav-ready .app>.top{height:34px!important;min-height:34px!important;flex:0 0 34px!important;padding:0 10px!important;justify-content:flex-start!important}
+body.iatb-page-trading.iatb-global-nav-ready .app>.top .appLogoWrap,body.iatb-page-trading.iatb-global-nav-ready .app>.top .navActions{display:none!important}
+/* Portfolio : conservation uniquement de l'état Portfolio dans une sous-barre compacte. */
+body.iatb-page-portfolio.iatb-global-nav-ready .portfolioApp{height:calc(100vh - var(--iatb-global-nav-h))!important;--top:30px!important}
+body.iatb-page-portfolio.iatb-global-nav-ready .portfolioApp>.topbar{height:30px!important;min-height:30px!important;padding:0 12px!important;justify-content:flex-end!important}
+body.iatb-page-portfolio.iatb-global-nav-ready .portfolioApp>.topbar>.brand,body.iatb-page-portfolio.iatb-global-nav-ready .portfolioApp>.topbar>nav,body.iatb-page-portfolio.iatb-global-nav-ready .portfolioApp>.topbar .walletBtn,body.iatb-page-portfolio.iatb-global-nav-ready .portfolioApp>.topbar .adminBtn{display:none!important}
+/* Fondamental : la navigation locale disparaît, l'état du moteur reste visible. */
+body.iatb-page-fundamental.iatb-global-nav-ready .page{min-height:calc(100vh - var(--iatb-global-nav-h))!important}
+body.iatb-page-fundamental.iatb-global-nav-ready .page>.topbar{height:30px!important;min-height:30px!important;padding:0 12px!important;justify-content:flex-end!important}
+body.iatb-page-fundamental.iatb-global-nav-ready .page>.topbar>.brand,body.iatb-page-fundamental.iatb-global-nav-ready .page>.topbar>.nav{display:none!important}
+/* Chart Viewer : Settings/API restent une sous-barre fonctionnelle, les liens globaux sont retirés. */
+body.iatb-page-chart.iatb-global-nav-ready>.topbar{min-height:38px!important;height:38px!important;padding:0 10px!important}
+body.iatb-page-chart.iatb-global-nav-ready>.topbar>.brand{display:none!important}
+body.iatb-page-chart.iatb-global-nav-ready>.topbar>.nav>#navTrading,body.iatb-page-chart.iatb-global-nav-ready>.topbar>.nav>#navPortfolio,body.iatb-page-chart.iatb-global-nav-ready>.topbar>.nav>#navFundamental,body.iatb-page-chart.iatb-global-nav-ready>.topbar>.nav>#navAdmin,body.iatb-page-chart.iatb-global-nav-ready>.topbar>.nav>button.active:not(#navSettings):not(#navApi){display:none!important}
+/* Admin : la navbar globale est la ligne 1, le header Admin reste la sous-barre métier. */
+body.iatb-page-admin.iatb-global-nav-ready .adminShell{height:calc(100vh - var(--iatb-global-nav-h))!important;min-height:calc(100vh - var(--iatb-global-nav-h))!important}
+@media(max-width:900px){.iatbGlobalInner{padding:0 8px;gap:8px}.iatbGlobalBrand{width:92px;flex-basis:92px}.iatbGlobalBrand img{width:88px}.iatbGlobalLinks a{padding:0 9px}.iatbWalletLink{display:none}.iatbGlobalRight{gap:5px}.iatbAdminLink{padding:0 8px}}
+
+/* v1.8.13 — Chart Viewer visual cleanup
+   Suppression de la sous-navigation locale inutile (Parametres / API / Indicateurs).
+   La navbar globale IA-TB reste strictement inchangée. Les badges d'état restent visibles. */
+body.iatb-page-chart.iatb-global-nav-ready>.topbar{
+  min-height:30px!important;
+  height:30px!important;
+  padding:0 10px!important;
+  justify-content:flex-end!important;
+}
+body.iatb-page-chart.iatb-global-nav-ready>.topbar>.nav{
+  display:none!important;
+}
+body.iatb-page-chart.iatb-global-nav-ready>.topbar>.spacer{
+  display:block!important;
+  flex:1 1 auto!important;
+}
+
+/* v1.8.13 — Trading IA vertical compactness hotfix
+   Supprime la sous-barre locale devenue vide sous la navbar globale afin que
+   le dashboard commence immédiatement sous la navigation principale.
+   Aucun composant du dashboard, Engine ou backend n'est modifié. */
+body.iatb-page-trading.iatb-global-nav-ready .app>.top{
+  display:none!important;
+  height:0!important;
+  min-height:0!important;
+  max-height:0!important;
+  flex:0 0 0!important;
+  padding:0!important;
+  margin:0!important;
+  border:0!important;
+  box-shadow:none!important;
+  overflow:hidden!important;
+}
+body.iatb-page-trading.iatb-global-nav-ready .body[data-mosaic-root]{
+  top:0!important;
+}

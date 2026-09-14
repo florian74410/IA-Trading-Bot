@@ -1,0 +1,73 @@
+{
+  "schema": "iatb.indicator.v1",
+  "id": "adx",
+  "name": "Average Directional Index",
+  "version": "1.0",
+  "category": "trend",
+  "inputs": {
+    "high": {
+      "type": "series",
+      "default": "high",
+      "allowed": [
+        "high"
+      ]
+    },
+    "low": {
+      "type": "series",
+      "default": "low",
+      "allowed": [
+        "low"
+      ]
+    },
+    "close": {
+      "type": "series",
+      "default": "close",
+      "allowed": [
+        "close"
+      ]
+    },
+    "period": {
+      "type": "integer",
+      "default": 14,
+      "min": 2,
+      "max": 200
+    }
+  },
+  "engine": {
+    "operation": "adx"
+  },
+  "outputs": {
+    "adx": {
+      "type": "number",
+      "strategy": true,
+      "chart": true
+    },
+    "plus_di": {
+      "type": "number",
+      "strategy": true,
+      "chart": true
+    },
+    "minus_di": {
+      "type": "number",
+      "strategy": true,
+      "chart": true
+    }
+  },
+  "strategy": {
+    "operators": [
+      "<",
+      "<=",
+      ">",
+      ">=",
+      "==",
+      "!=",
+      "crosses_above",
+      "crosses_below"
+    ]
+  },
+  "display": {
+    "pane": "separate",
+    "min": 0,
+    "max": 100
+  }
+}

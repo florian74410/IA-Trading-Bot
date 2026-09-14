@@ -1,0 +1,18 @@
+'use strict';
+var fs=require('fs'),vm=require('vm'),path=require('path'),assert=require('assert');
+var ROOT=path.resolve(__dirname,'../..');
+var html=fs.readFileSync(path.join(ROOT,'Frontend/Pages/app_v1.0.html'),'utf8');
+var code=fs.readFileSync(path.join(ROOT,'Frontend/JS/chart_controller_native_v1.2.js'),'utf8');
+assert(html.indexOf('/assets/chart_controller_native_v1.2.js')>=0,'native v1.2 asset missing');
+assert(html.indexOf("$('interval').onchange=function(){S.interval=this.value;S.chartNeedsFit=true")>=0,'timeframe handler not repaired');
+assert(html.indexOf("$('visible').onchange=function(){S.visible=+this.value;if(S.chartCtl)S.chartCtl.setVisibleCount(S.visible)")>=0,'visible handler not wired');
+assert(html.indexOf('marketGeneration:0')>=0,'market request generation guard missing');
+assert(html.indexOf('gen!==S.marketGeneration')>=0,'stale market response guard missing');
+assert(html.indexOf('IATBIndicatorUI.refresh(true)')>=0,'indicator forced refresh after context load missing');
+assert(html.indexOf('lightweight-charts@')<0,'TradingView Lightweight Charts must not return');
+assert(code.indexOf("version:'1.2.0'")>=0,'native engine version marker missing');
+assert(code.indexOf('setVisibleCount')>=0,'visible candle API missing');
+assert(code.indexOf('paneKey')>=0,'separate indicator pane metadata missing');
+assert(code.indexOf("volumeTop")>=0 && code.indexOf("paneKeys.forEach")>=0,'volume/indicator panes not separated');
+assert(code.indexOf("scaleMin")>=0 && code.indexOf("scaleMax")>=0,'indicator declared scales not supported');
+console.log('Native Chart Engine v1.11.2 repair contract: OK');

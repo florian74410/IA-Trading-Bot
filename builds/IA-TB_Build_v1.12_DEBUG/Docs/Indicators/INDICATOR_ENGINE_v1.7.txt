@@ -1,0 +1,74 @@
+TRADINGBOT — INDICATOR ENGINE v1.7
+=================================
+Objet
+-----
+La v1.7 normalise l'Indicator Engine afin qu'il puisse devenir un outil du futur Supervisor (v2.0 Cerveau) sans exposer son implementation interne.
+
+Contrat principal
+-----------------
+IndicatorEngine.analyze(symbol, timeframe)
+Action Communication Protocol : indicator.analyze
+Schema de reponse : indicator.analysis/1.0
+
+Timeframes acceptes
+-------------------
+1m, 5m, 15m, 30m, 1h, 4h, 1d, 1w.
+Le timeframe n'est PAS un parametre global : il est fourni a chaque analyse par le futur Supervisor.
+
+Sortie normalisee
+-----------------
+- qualite et fraicheur des donnees : score, statut, bougies manquantes, age de la derniere bougie, provenance ;
+- valeurs et interpretation des indicateurs disponibles ;
+- structure de marche : tendance, force, regime, volatilite, prix ;
+- supports et resistances avec force estimee ;
+- confluence : signaux haussiers, baissiers, neutres et contradictions ;
+- conclusion technique : biais, force, confiance, regime, contexte de risque, horizon ;
+- liste explicite des indicateurs actives, desactives, calcules et en erreur ;
+- warnings et provenance ;
+- mode evidence sur demande avec bougies et series recentes.
+
+IMPORTANT — semantique de confiance
+-----------------------------------
+technicalAssessment.confidence est un indice de COHERENCE/CONFLUENCE des signaux, ajuste par la couverture des indicateurs et la qualite des donnees.
+Ce nombre N'EST PAS une probabilite calibree de gain.
+Les champs suivants l'indiquent explicitement :
+  confidenceType = CONFLUENCE_CONSISTENCY
+  calibratedProbability = false
+Une calibration statistique pourra etre ajoutee plus tard avec les backtests.
+
+Regimes de marche
+-----------------
+TRENDING, RANGING, BREAKOUT, BREAKDOWN, COMPRESSION, HIGH_VOLATILITY, UNCERTAIN.
+
+Actions exposees au Communication Protocol
+------------------------------------------
+- indicator.analyze(symbol, timeframe [, force])
+- indicator.get_state([symbol, timeframe])
+- indicator.get_levels(symbol, timeframe)
+- indicator.get_signals(symbol, timeframe)
+- indicator.list_capabilities()
+- indicator.list_indicators()
+
+Evenement spontane
+------------------
+indicator.analysis.updated
+Emis uniquement lorsqu'une analyse fraiche change de maniere significative (biais, regime, confiance ou force). Le message transporte un resume et le hash de l'analyse ; les details restent recuperables a la demande.
+
+Parametrage utilisateur
+-----------------------
+Settings > Engines & Communication :
+- activation/desactivation de chaque indicateur ;
+- frequence minimum de recalcul (cache).
+La liste est generee dynamiquement depuis le registre de l'Indicator Engine. Ajouter ou supprimer un module d'indicateur met automatiquement l'interface a jour.
+Les reglages sont conserves dans Parametres/IndicatorEngine.dat, fichier protege par l'UpdateManager.
+
+Indicateurs disponibles au moment de la v1.7
+---------------------------------------------
+ADX, ATR, Bollinger Bands, CCI, EMA, HMA, Ichimoku Cloud, MACD, MFI, OBV,
+Parabolic SAR, ROC, RSI, SMA, Stochastic, Stochastic RSI, Supertrend,
+VWAP, VWMA, Williams %R.
+Liquidity HeatMap est declare dans le registre mais reste un moteur externe et n'est pas active comme calcul natif.
+
+Compatibilite
+-------------
+Les endpoints historiques /api/compute, /api/compute-batch et /api/runtime/update restent disponibles afin de ne pas casser l'interface existante.

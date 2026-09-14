@@ -1,0 +1,56 @@
+TradingBot Kraken Unified v1.0.3 STABLE — CONTRÔLE DE STABILITÉ
+==============================================================
+Date : 24 août 2026
+
+BASE
+----
+Source reconstruite : TradingBot_v1.0.2.zip fourni par l’utilisateur.
+Correction fonctionnelle v1.0.3 : router.js uniquement (normalisation OHLC Kraken).
+BUILD_VARIANT.txt et les documents de contrôle ont été mis à jour/ajoutés pour identifier la reconstruction.
+Updates/current_release.dat reste volontairement en release 1.0 / server_v1.0.js.
+
+TESTS EFFECTUÉS
+---------------
+PASS - intégrité ZIP source v1.0.2.
+PASS - syntaxe Node de tous les *.js applicatifs hors runtime embarqué.
+PASS - syntaxe JavaScript inline app_v1.0.html.
+PASS - syntaxe JavaScript inline chart_viewer_v1.0.html.
+PASS - JSON applicatifs valides.
+PASS - syntaxe Bash start.command et stop.command.
+PASS - comparaison byte-à-byte : aucun fichier hérité inattendu modifié.
+PASS - Router /router-health avec Core + Kraken simulés.
+PASS - OHLC Kraken secondes -> millisecondes.
+PASS - timestamps Kraken déjà en millisecondes conservés.
+PASS - tri chronologique des bougies Kraken.
+PASS - déduplication par timestamp.
+PASS - rejet des OHLC non numériques.
+PASS - ticker Kraken inchangé.
+PASS - proxy GMX inchangé.
+PASS - smoke test application complète : /, /trading, /chart-viewer, /api/health, /kraken-api/health HTTP 200 ; /kraken redirection HTTP 302.
+
+LIMITES DU TEST
+---------------
+Le runtime macOS Intel Node 16.20.2 inclus dans le build ne peut pas être exécuté dans l’environnement Linux de génération.
+Les tests runtime ont donc utilisé Node local de l’environnement de génération.
+Aucun ordre réel ni appel privé Kraken/GMX n’a été effectué.
+Le test final sur le MacBook cible reste le contrôle matériel réel.
+
+VERDICT
+-------
+v1.0.3 STABLE RECOVERED : base complète apte à servir de référence avant construction de la release 1.1.
+
+SHA-256 FICHIERS CRITIQUES
+--------------------------
+0664f49125e29ae60c32626392ff3dc7465477d8020d23db95ee8f359ce8ac51  server_v1.0.js
+039fa8c8d11d7a8b31cb72e8230d73bba552c5aad90b68e16613907fab59404a  app_v1.0.html
+35bd95865f5fb5e0f31e5be69618334f123d1c41b526d79c5bf9afc4dbb03371  chart_viewer_v1.0.html
+296860c6e2abfde6401f8ad88a7c620d0c0026ba7c64877dc46ce323edcb0236  launcher.js
+ff05ae73a29929d190680d0b42dbb2981dba7a848a923656a1463554829a7929  start.command
+d3d5a6b06319022158b0ca096e7b559d043cd3f209c58e24397d3903947239d2  stop.command
+d35157323ff23fad8cf7800ad6e9884a397002703038a269bf7d0f82373261f3  update_manager_v1.0.js
+74ee9e9f63f370f02867c1ea76257eb0670a637ee2a290cc65a3936f1d28138b  ai_update_builder_v1.0.js
+9c86e8157aa9e6c2fe0081ae60d70e1db49b6afc1a8c502ab8783a6022b7e6ae  ai_command_protocol_v1.0.json
+020ce4e8df43567950ded445ae24697f95791747ad55578d60f870060ea70eb9  chart_controller_v2.8.js
+945d4d28469738229dee2d0eadb0aa43e092197878c3b6b39bb723d78c2d9728  router.js
+ac40aaef820bb837de5e4f8f769df43184b6525770f3a23f3f0df49b133eb227  AddOns/Kraken/kraken_client.js
+9a5fbbff052d577706c7afdc317cd4eb265a3deff2c9f70c74b0a1c993484b5a  AddOns/Kraken/kraken_service.js

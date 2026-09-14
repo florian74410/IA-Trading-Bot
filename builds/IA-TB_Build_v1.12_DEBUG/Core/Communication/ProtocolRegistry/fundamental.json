@@ -1,0 +1,177 @@
+{
+  "id": "fundamental",
+  "label": "Fundamental Engine",
+  "type": "ENGINE",
+  "transport": "CP1",
+  "endpoint": {
+    "host": "127.0.0.1",
+    "port": 8015,
+    "cpPath": "/cp/v1",
+    "healthPath": "/health"
+  },
+  "table": {
+    "commands": [
+      {
+        "name": "fundamental.health",
+        "arguments": {
+          "allowed": []
+        }
+      },
+      {
+        "name": "fundamental.summary",
+        "arguments": {
+          "allowed": []
+        }
+      },
+      {
+        "name": "fundamental.context",
+        "arguments": {
+          "allowed": [
+            "query"
+          ]
+        }
+      },
+      {
+        "name": "fundamental.sources",
+        "arguments": {
+          "allowed": [
+            "query",
+            "domain",
+            "enabled",
+            "limit"
+          ]
+        }
+      },
+      {
+        "name": "fundamental.events",
+        "arguments": {
+          "allowed": [
+            "limit",
+            "asset",
+            "status"
+          ]
+        }
+      },
+      {
+        "name": "fundamental.collect",
+        "arguments": {
+          "allowed": [
+            "all",
+            "eventLimit"
+          ]
+        }
+      },
+      {
+        "name": "fundamental.get_state",
+        "arguments": {
+          "allowed": []
+        }
+      },
+      {
+        "name": "fundamental.analyze",
+        "arguments": {
+          "allowed": [
+            "asset",
+            "horizon",
+            "status",
+            "limit"
+          ]
+        }
+      },
+      {
+        "name": "fundamental.get_events",
+        "arguments": {
+          "allowed": [
+            "asset",
+            "status",
+            "limit"
+          ]
+        }
+      },
+      {
+        "name": "fundamental.get_sources",
+        "arguments": {
+          "allowed": [
+            "query",
+            "domain",
+            "enabled",
+            "limit"
+          ]
+        }
+      },
+      {
+        "name": "fundamental.get_context",
+        "arguments": {
+          "allowed": [
+            "query"
+          ]
+        }
+      },
+      {
+        "name": "fundamental.get_evidence",
+        "arguments": {
+          "allowed": [
+            "eventId",
+            "event_id"
+          ]
+        }
+      },
+      {
+        "name": "fundamental.list_capabilities",
+        "arguments": {
+          "allowed": []
+        }
+      },
+      {
+        "name": "fundamental.latest_news",
+        "arguments": {
+          "allowed": []
+        }
+      },
+      {
+        "name": "fundamental.event_process",
+        "arguments": {
+          "allowed": [
+            "limit"
+          ]
+        }
+      }
+    ],
+    "dataTypes": [
+      {
+        "name": "fundamental.analysis",
+        "direction": "PRODUCE"
+      },
+      {
+        "name": "fundamental.news",
+        "direction": "PRODUCE"
+      },
+      {
+        "name": "fundamental.event",
+        "direction": "PRODUCE"
+      },
+      {
+        "name": "fundamental.evidence",
+        "direction": "PRODUCE"
+      },
+      {
+        "name": "fundamental.sentiment",
+        "direction": "PRODUCE"
+      }
+    ],
+    "events": [
+      {
+        "name": "fundamental.event.promoted"
+      },
+      {
+        "name": "fundamental.event.confirmed"
+      },
+      {
+        "name": "fundamental.bias.changed"
+      },
+      {
+        "name": "fundamental.data_quality.changed"
+      }
+    ]
+  }
+}
