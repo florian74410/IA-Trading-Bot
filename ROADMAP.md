@@ -173,7 +173,7 @@ Le packaging v1.8 est maintenant reproductible : la version est produite depuis 
 
 - [x] **Nouvelle interface Admin programmée.**
   - [x] Barre latérale gauche avec labels cliquables et icônes/miniatures.
-  - [x] Navigation par ancres vers Console, Firewall, Processus, Engines & Services, Maintenance, ULTRA, Logs, Diagnostics et Mises à jour.
+  - [x] Navigation par ancres vers Console, Firewall, Processus, Engines & Services, Maintenance, Logs, Diagnostics et Mises à jour.
   - [x] Défilement fluide et mise en évidence de la section active.
   - [x] Palette et contours harmonisés avec les autres pages de l'application.
   - [x] Réutilisation du logo IA-TB déjà présent dans l'application.

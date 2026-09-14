@@ -452,33 +452,17 @@ function route(req,res){var u=new URL(req.url,'http://'+HOST+':'+PORT),p=u.pathn
  if(req.method==='POST'&&p==='/api/admin/indicators/reload')return ADMIN.services.reloadIndicators(function(e,o){if(e)return json(res,400,{ok:false,error:e.message});log('ADMIN','Indicator Registry recharge');json(res,200,{ok:true,result:o});});
  if(req.method==='POST'&&p==='/api/admin/cache/clear')return body(req,function(e,b){if(e||!b||b.confirmed!==true)return json(res,400,{ok:false,error:'CONFIRMATION_REQUIRED'});ADMIN.services.clearCache(String(b.target||''),function(er,o){if(er)return json(res,400,{ok:false,error:er.message});log('ADMIN','Cache vide',String(b.target||''));json(res,200,o);});});
  if(req.method==='POST'&&p==='/api/admin/core/restart')return body(req,function(e,b){if(e||!b||b.confirmed!==true)return json(res,400,{ok:false,error:'CONFIRMATION_REQUIRED'});if(process.env.IATB_SUPERVISED!=='1')return json(res,409,{ok:false,error:'SUPERVISOR_REQUIRED'});json(res,200,{ok:true,message:'Core restart scheduled'});setTimeout(function(){scheduleSupervisorRestart(CURRENT_VERSION);},120);});
- if(req.method==='GET'&&p==='/api/admin/ultra/status')return ADMIN.ultra.snapshot(function(e,o){if(e)return json(res,500,{ok:false,error:e.message});json(res,200,o);});
- if(req.method==='GET'&&p==='/api/admin/ultra/log'){try{return json(res,200,ADMIN.ultra.tailLog(u.searchParams.get('lines')||160));}catch(ue){return json(res,400,{ok:false,error:ue.message});}}
- if(req.method==='POST'&&p==='/api/admin/ultra/autostart')return body(req,function(e,b){if(e||!b||typeof b.enabled!=='boolean')return json(res,400,{ok:false,error:'ULTRA_SETTING_INVALID'});try{var set=ADMIN.ultra.writeSettings(b.enabled===true);ADMIN.ultra.status(function(se,st){if(se)return json(res,500,{ok:false,error:se.message});log('ADMIN','ULTRA au démarrage',set.enabledOnStart?'ON':'OFF');json(res,200,{ok:true,settings:set,status:st});});}catch(ux){json(res,500,{ok:false,error:ux.message});}});
  if(req.method==='POST'&&p==='/api/admin/system/restart')return body(req,function(e,b){
   if(e||!b||b.confirmed!==true)return json(res,400,{ok:false,error:'CONFIRMATION_REQUIRED'});
   if(process.env.IATB_SUPERVISED!=='1')return json(res,409,{ok:false,error:'SUPERVISOR_REQUIRED'});
   if(!fs.existsSync(path.join(ROOT,'Core','Admin','restart_all.js')))return json(res,500,{ok:false,error:'RESTART_HELPER_MISSING'});
-  var pref=ADMIN.ultra.readSettings();
-  ADMIN.ultra.status(function(ue,us){
-   if(ue)return json(res,500,{ok:false,error:ue.message});
-   function launchRestart(startedNow){
-    json(res,200,{ok:true,message:'Full IA-TB restart scheduled',components:['core','router','kraken','indicators','marketdata','liquidity','fundamental','trading'],ultra:{active:us.active===true,preserved:us.active===true&&!startedNow,startedNow:startedNow===true,stabilizationApplied:startedNow===true}});
-    setTimeout(function(){try{scheduleAdminFullRestart();}catch(x){log('ADMIN','Redemarrage global impossible',x.message);}},180);
-   }
-   if(us.active){ADMIN.ultra.note('Redémarrage IA-TB: ULTRA déjà ACTIF; conservation directe, aucune temporisation.');return launchRestart(false);}
-   if(pref.enabledOnStart){
-    log('ADMIN','ULTRA inactif avant redémarrage','activation unique puis stabilisation unique');
-    return ADMIN.ultra.ensureStarted(function(se,so){if(se){log('ADMIN','Activation ULTRA refusée avant redémarrage',se.message);return json(res,409,{ok:false,error:'ULTRA_START_FAILED: '+se.message});}us.active=true;launchRestart(!!(so&&so.startedNow));});
-   }
-   ADMIN.ultra.note('Redémarrage IA-TB: ULTRA inactif et autostart OFF; redémarrage sans ULTRA.');
-   launchRestart(false);
-  });
+  json(res,200,{ok:true,message:'Full IA-TB restart scheduled',components:['core','router','kraken','indicators','marketdata','liquidity','fundamental','trading','firewall','strategy','risk','portfolio']});
+  setTimeout(function(){try{scheduleAdminFullRestart();}catch(x){log('ADMIN','Redemarrage global impossible',x.message);}},180);
  });
  if(req.method==='POST'&&p==='/api/admin/system/stop-total')return body(req,function(e,b){
   if(e||!b||b.confirmed!==true)return json(res,400,{ok:false,error:'CONFIRMATION_REQUIRED'});
   var helper;try{helper=scheduleAdminTotalStop();}catch(x){return json(res,500,{ok:false,error:x.message});}
-  json(res,200,{ok:true,message:'Arrêt Total programmé',ultraWillStop:true,preferencePreserved:true,helperPid:helper.helperPid});
+  json(res,200,{ok:true,message:'Arrêt Total programmé',helperPid:helper.helperPid});
   setTimeout(function(){shutdownServer();},260);
  });
  if(req.method==='POST'&&p==='/api/shutdown'){json(res,200,{ok:true,message:'Serveur en cours d arret'});return shutdownServer();}
