@@ -40,7 +40,7 @@ var PERSISTENT_DATA={
   root:PERSISTENT_ROOT,
   shared:SHARED_DATA,
   fundamental:FUNDAMENTAL_DATA,
-  fundamentalDb:process.env.IATB_FUNDAMENTAL_DB||path.join(FUNDAMENTAL_DATA,'fundamental.db')
+  fundamentalDb:path.join(FUNDAMENTAL_DATA,'fundamental.db')
 };
 function ensureAppRuntimeDirs(){
   Object.keys(APP_RUNTIME_DIRS).forEach(function(k){
