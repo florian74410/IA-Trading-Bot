@@ -122,6 +122,21 @@ if [ ! -x "$NODE_BIN" ]; then
   exit 1
 fi
 
+LOG_DIR="$PWD/.runtime/logs"
+mkdir -p "$LOG_DIR"
+ROUTER_LOG="$LOG_DIR/router.log"
+UI_LOG="$LOG_DIR/ui.log"
+KRAKEN_LOG="$LOG_DIR/kraken.log"
+INDICATOR_LOG="$LOG_DIR/indicators.log"
+MARKET_DATA_LOG="$LOG_DIR/market_data.log"
+LIQUIDITY_LOG="$LOG_DIR/liquidity.log"
+FUNDAMENTAL_LOG="$LOG_DIR/fundamental.log"
+TRADING_LOG="$LOG_DIR/trading.log"
+FIREWALL_LOG="$LOG_DIR/firewall.log"
+STRATEGY_LOG="$LOG_DIR/strategy.log"
+RISK_LOG="$LOG_DIR/risk.log"
+PORTFOLIO_LOG="$LOG_DIR/portfolio.log"
+
 # v1.6.0 Fundamental Engine: dependance SQLite native testee avec Node 16.20.2.
 # Echec non bloquant: IA-TB reste disponible et le FE apparaitra OFFLINE dans ADMIN.
 FUNDAMENTAL_READY=0
@@ -132,7 +147,7 @@ if [ -f "$PWD/Fundamental/install_sqlite.command" ]; then
     echo "Fundamental SQLite : prêt."
   else
     echo "ATTENTION: Fundamental SQLite indisponible. IA-TB continue sans Fundamental Engine."
-    echo "Consulte Fundamental/sqlite_install.log depuis ADMIN."
+    echo "Consulte le journal Fundamental SQLite depuis ADMIN."
   fi
 fi
 
@@ -179,24 +194,19 @@ cleanup() {
 }
 trap cleanup EXIT INT TERM
 
-: > router.log
-mkdir -p UI/Logs
-: > UI/Logs/ui.log
-: > AddOns/Kraken/kraken.log
-: > Indicators/indicator.log
-: > MarketData/market_data.log
-: > Liquidity/liquidity.log
+: > "$ROUTER_LOG"
+: > "$UI_LOG"
+: > "$KRAKEN_LOG"
+: > "$INDICATOR_LOG"
+: > "$MARKET_DATA_LOG"
+: > "$LIQUIDITY_LOG"
 mkdir -p Fundamental/Data
-: > Fundamental/fundamental.log
-: > services/trading-engine/trading.log
-mkdir -p Core/Firewall
-: > Core/Firewall/Firewall.log
-mkdir -p Strategy
-: > Strategy/strategy.log
-mkdir -p Risk
-: > Risk/risk.log
-mkdir -p Portfolio
-: > Portfolio/portfolio.log
+: > "$FUNDAMENTAL_LOG"
+: > "$TRADING_LOG"
+: > "$FIREWALL_LOG"
+: > "$STRATEGY_LOG"
+: > "$RISK_LOG"
+: > "$PORTFOLIO_LOG"
 
 echo "Crypto Chart Viewer IA Trader · UI séparée / Core / Router / Engines"
 echo "Node local : $($NODE_BIN -v)"
@@ -214,36 +224,36 @@ echo "Strategy Engine  : 127.0.0.1:$STRATEGY_PORT"
 echo "Risk Manager     : 127.0.0.1:$RISK_ENGINE_PORT"
 echo "Portfolio Engine : 127.0.0.1:$PORTFOLIO_PORT"
 
-KRAKEN_ADDON_PORT="$KRAKEN_PORT" "$NODE_BIN" AddOns/Kraken/kraken_service.js >> AddOns/Kraken/kraken.log 2>&1 &
+KRAKEN_ADDON_PORT="$KRAKEN_PORT" "$NODE_BIN" AddOns/Kraken/kraken_service.js >> "$KRAKEN_LOG" 2>&1 &
 KRAKEN_PID=$!
 
-IATB_INDICATOR_PORT="$INDICATOR_PORT" IATB_MARKET_DATA_PORT="$MARKET_DATA_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Indicators/Engine/indicator_service.js >> Indicators/indicator.log 2>&1 &
+IATB_INDICATOR_PORT="$INDICATOR_PORT" IATB_MARKET_DATA_PORT="$MARKET_DATA_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Indicators/Engine/indicator_service.js >> "$INDICATOR_LOG" 2>&1 &
 INDICATOR_PID=$!
 
-KRAKEN_ADDON_PORT="$KRAKEN_PORT" IATB_MARKET_DATA_PORT="$MARKET_DATA_PORT" "$NODE_BIN" MarketData/market_data_service.js >> MarketData/market_data.log 2>&1 &
+KRAKEN_ADDON_PORT="$KRAKEN_PORT" IATB_MARKET_DATA_PORT="$MARKET_DATA_PORT" "$NODE_BIN" MarketData/market_data_service.js >> "$MARKET_DATA_LOG" 2>&1 &
 MARKET_DATA_PID=$!
 
-IATB_MARKET_DATA_PORT="$MARKET_DATA_PORT" IATB_LIQUIDITY_PORT="$LIQUIDITY_PORT" "$NODE_BIN" Liquidity/Engine/liquidity_service.js >> Liquidity/liquidity.log 2>&1 &
+IATB_MARKET_DATA_PORT="$MARKET_DATA_PORT" IATB_LIQUIDITY_PORT="$LIQUIDITY_PORT" "$NODE_BIN" Liquidity/Engine/liquidity_service.js >> "$LIQUIDITY_LOG" 2>&1 &
 LIQUIDITY_PID=$!
 
 if [ "$FUNDAMENTAL_READY" -eq 1 ]; then
-  IATB_FUNDAMENTAL_PORT="$FUNDAMENTAL_PORT" "$NODE_BIN" Fundamental/Engine/fundamental_service.js >> Fundamental/fundamental.log 2>&1 &
+  IATB_FUNDAMENTAL_PORT="$FUNDAMENTAL_PORT" "$NODE_BIN" Fundamental/Engine/fundamental_service.js >> "$FUNDAMENTAL_LOG" 2>&1 &
   FUNDAMENTAL_PID=$!
 fi
 
-IATB_PORTFOLIO_PORT="$PORTFOLIO_PORT" "$NODE_BIN" Portfolio/Engine/portfolio_service.js >> Portfolio/portfolio.log 2>&1 &
+IATB_PORTFOLIO_PORT="$PORTFOLIO_PORT" "$NODE_BIN" Portfolio/Engine/portfolio_service.js >> "$PORTFOLIO_LOG" 2>&1 &
 PORTFOLIO_PID=$!
 
-IATB_TRADING_ENGINE_PORT="$TRADING_ENGINE_PORT" ROUTER_PORT="$ROUTER_PORT" IATB_TRADING_LIVE="0" "$NODE_BIN" services/trading-engine/trading_service.js >> services/trading-engine/trading.log 2>&1 &
+IATB_TRADING_ENGINE_PORT="$TRADING_ENGINE_PORT" ROUTER_PORT="$ROUTER_PORT" IATB_TRADING_LIVE="0" "$NODE_BIN" services/trading-engine/trading_service.js >> "$TRADING_LOG" 2>&1 &
 TRADING_ENGINE_PID=$!
 
-IATB_FIREWALL_PORT="$FIREWALL_PORT" IATB_TRADING_FIREWALL_PORT="$FIREWALL_PORT" IATB_TRADING_ENGINE_PORT="$TRADING_ENGINE_PORT" IATB_MARKET_DATA_PORT="$MARKET_DATA_PORT" "$NODE_BIN" Core/Firewall/firewall_service.js >> Core/Firewall/Firewall.log 2>&1 &
+IATB_FIREWALL_PORT="$FIREWALL_PORT" IATB_TRADING_FIREWALL_PORT="$FIREWALL_PORT" IATB_TRADING_ENGINE_PORT="$TRADING_ENGINE_PORT" IATB_MARKET_DATA_PORT="$MARKET_DATA_PORT" "$NODE_BIN" Core/Firewall/firewall_service.js >> "$FIREWALL_LOG" 2>&1 &
 FIREWALL_PID=$!
 
-IATB_STRATEGY_PORT="$STRATEGY_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Strategy/Engine/strategy_service.js >> Strategy/strategy.log 2>&1 &
+IATB_STRATEGY_PORT="$STRATEGY_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Strategy/Engine/strategy_service.js >> "$STRATEGY_LOG" 2>&1 &
 STRATEGY_PID=$!
 
-IATB_RISK_ENGINE_PORT="$RISK_ENGINE_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Risk/Engine/risk_service.js >> Risk/risk.log 2>&1 &
+IATB_RISK_ENGINE_PORT="$RISK_ENGINE_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Risk/Engine/risk_service.js >> "$RISK_LOG" 2>&1 &
 RISK_ENGINE_PID=$!
 
 # Attendre que le Firewall Service et ses deux threads de protection soient démarrés.
@@ -255,7 +265,7 @@ for i in 1 2 3 4 5 6 7 8; do
 done
 if [ "$fw_ok" -ne 1 ]; then
   echo "ERREUR: Firewall Service ne repond pas sur $FIREWALL_PORT."
-  cat Core/Firewall/Firewall.log 2>/dev/null || true
+  cat "$FIREWALL_LOG" 2>/dev/null || true
   cleanup; read -p "Appuie sur Entree pour fermer..."; exit 1
 fi
 
@@ -268,8 +278,8 @@ for i in 1 2 3 4 5 6 7 8; do
 done
 if [ "$ind_ok" -ne 1 ]; then
   echo "ERREUR: Indicator Engine ne repond pas sur $INDICATOR_PORT."
-  echo "--- Indicators/indicator.log ---"
-  cat Indicators/indicator.log 2>/dev/null || true
+  echo "--- $INDICATOR_LOG ---"
+  cat "$INDICATOR_LOG" 2>/dev/null || true
   cleanup
   read -p "Appuie sur Entree pour fermer..."
   exit 1
@@ -283,8 +293,8 @@ for i in 1 2 3 4 5 6 7 8; do
 done
 if [ "$md_ok" -ne 1 ]; then
   echo "ERREUR: Market Data ne repond pas sur $MARKET_DATA_PORT."
-  echo "--- MarketData/market_data.log ---"
-  cat MarketData/market_data.log 2>/dev/null || true
+  echo "--- $MARKET_DATA_LOG ---"
+  cat "$MARKET_DATA_LOG" 2>/dev/null || true
   cleanup
   read -p "Appuie sur Entree pour fermer..."
   exit 1
@@ -298,8 +308,8 @@ for i in 1 2 3 4 5 6 7 8; do
 done
 if [ "$liq_ok" -ne 1 ]; then
   echo "ERREUR: Liquidity Engine ne repond pas sur $LIQUIDITY_PORT."
-  echo "--- Liquidity/liquidity.log ---"
-  cat Liquidity/liquidity.log 2>/dev/null || true
+  echo "--- $LIQUIDITY_LOG ---"
+  cat "$LIQUIDITY_LOG" 2>/dev/null || true
   cleanup
   read -p "Appuie sur Entree pour fermer..."
   exit 1
@@ -313,8 +323,8 @@ for i in 1 2 3 4 5 6 7 8; do
 done
 if [ "$portfolio_ok" -ne 1 ]; then
   echo "ERREUR: Portfolio Engine ne répond pas sur $PORTFOLIO_PORT."
-  echo "--- Portfolio/portfolio.log ---"
-  cat Portfolio/portfolio.log 2>/dev/null || true
+  echo "--- $PORTFOLIO_LOG ---"
+  cat "$PORTFOLIO_LOG" 2>/dev/null || true
   cleanup
   read -p "Appuie sur Entree pour fermer..."
   exit 1
@@ -328,8 +338,8 @@ for i in 1 2 3 4 5 6 7 8; do
 done
 if [ "$te_ok" -ne 1 ]; then
   echo "ERREUR: Trading Engine ne répond pas sur $TRADING_ENGINE_PORT."
-  echo "--- services/trading-engine/trading.log ---"
-  cat services/trading-engine/trading.log 2>/dev/null || true
+  echo "--- $TRADING_LOG ---"
+  cat "$TRADING_LOG" 2>/dev/null || true
   cleanup
   read -p "Appuie sur Entree pour fermer..."
   exit 1
@@ -343,8 +353,8 @@ for i in 1 2 3 4 5 6 7 8; do
 done
 if [ "$strategy_ok" -ne 1 ]; then
   echo "ERREUR: Strategy Engine v2 ne répond pas sur $STRATEGY_PORT."
-  echo "--- Strategy/strategy.log ---"
-  cat Strategy/strategy.log 2>/dev/null || true
+  echo "--- $STRATEGY_LOG ---"
+  cat "$STRATEGY_LOG" 2>/dev/null || true
   cleanup
   read -p "Appuie sur Entree pour fermer..."
   exit 1
@@ -358,7 +368,7 @@ for i in 1 2 3 4 5 6 7 8; do
 done
 if [ "$risk_ok" -ne 1 ]; then
   echo "ATTENTION: Risk Manager Engine ne répond pas sur $RISK_ENGINE_PORT. IA-TB continue en mode dégradé."
-  cat Risk/risk.log 2>/dev/null || true
+  cat "$RISK_LOG" 2>/dev/null || true
 fi
 
 if [ "$FUNDAMENTAL_READY" -eq 1 ]; then
@@ -370,7 +380,7 @@ if [ "$FUNDAMENTAL_READY" -eq 1 ]; then
   done
   if [ "$fe_ok" -ne 1 ]; then
     echo "ATTENTION: Fundamental Engine ne répond pas sur $FUNDAMENTAL_PORT. IA-TB continue en mode dégradé."
-    cat Fundamental/fundamental.log 2>/dev/null || true
+    cat "$FUNDAMENTAL_LOG" 2>/dev/null || true
     FUNDAMENTAL_READY=0
   fi
 fi
@@ -392,7 +402,7 @@ if [ "$ok" -ne 1 ]; then
   exit 1
 fi
 
-CORE_PUBLIC_PORT="$CORE_PORT" KRAKEN_ADDON_PORT="$KRAKEN_PORT" IATB_INDICATOR_PORT="$INDICATOR_PORT" IATB_MARKET_DATA_PORT="$MARKET_DATA_PORT" IATB_LIQUIDITY_PORT="$LIQUIDITY_PORT" IATB_FUNDAMENTAL_PORT="$FUNDAMENTAL_PORT" IATB_TRADING_ENGINE_PORT="$TRADING_ENGINE_PORT" IATB_FIREWALL_PORT="$FIREWALL_PORT" IATB_TRADING_FIREWALL_PORT="$FIREWALL_PORT" IATB_STRATEGY_PORT="$STRATEGY_PORT" IATB_RISK_ENGINE_PORT="$RISK_ENGINE_PORT" IATB_PORTFOLIO_PORT="$PORTFOLIO_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Core/Router/router.js >> router.log 2>&1 &
+CORE_PUBLIC_PORT="$CORE_PORT" KRAKEN_ADDON_PORT="$KRAKEN_PORT" IATB_INDICATOR_PORT="$INDICATOR_PORT" IATB_MARKET_DATA_PORT="$MARKET_DATA_PORT" IATB_LIQUIDITY_PORT="$LIQUIDITY_PORT" IATB_FUNDAMENTAL_PORT="$FUNDAMENTAL_PORT" IATB_TRADING_ENGINE_PORT="$TRADING_ENGINE_PORT" IATB_FIREWALL_PORT="$FIREWALL_PORT" IATB_TRADING_FIREWALL_PORT="$FIREWALL_PORT" IATB_STRATEGY_PORT="$STRATEGY_PORT" IATB_RISK_ENGINE_PORT="$RISK_ENGINE_PORT" IATB_PORTFOLIO_PORT="$PORTFOLIO_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Core/Router/router.js >> "$ROUTER_LOG" 2>&1 &
 ROUTER_PID=$!
 
 # Valider le Router interne avant de démarrer le service UI public.
@@ -404,8 +414,8 @@ for i in 1 2 3 4 5 6 7 8; do
 done
 if [ "$ok" -ne 1 ]; then
   echo "ERREUR: le Router n'a pas pris le port $ROUTER_PORT."
-  echo "--- router.log ---"
-  cat router.log 2>/dev/null || true
+  echo "--- $ROUTER_LOG ---"
+  cat "$ROUTER_LOG" 2>/dev/null || true
   cleanup
   read -p "Appuie sur Entree pour fermer..."
   exit 1
@@ -413,7 +423,7 @@ fi
 
 echo "Router interne valide sur 127.0.0.1:$ROUTER_PORT"
 
-IATB_UI_PORT="$UI_PORT" CORE_PUBLIC_PORT="$CORE_PORT" ROUTER_PORT="$ROUTER_PORT" IATB_AUTH_MODE="disabled" IATB_UI_BYPASS_ROLE="ADMIN" "$NODE_BIN" UI/Gateway/ui_service.js >> UI/Logs/ui.log 2>&1 &
+IATB_UI_PORT="$UI_PORT" CORE_PUBLIC_PORT="$CORE_PORT" ROUTER_PORT="$ROUTER_PORT" IATB_AUTH_MODE="disabled" IATB_UI_BYPASS_ROLE="ADMIN" "$NODE_BIN" UI/Gateway/ui_service.js >> "$UI_LOG" 2>&1 &
 UI_PID=$!
 
 ui_ok=0
@@ -424,8 +434,8 @@ for i in 1 2 3 4 5 6 7 8; do
 done
 if [ "$ui_ok" -ne 1 ]; then
   echo "ERREUR: UI Service ne répond pas sur $UI_PORT."
-  echo "--- UI/Logs/ui.log ---"
-  cat UI/Logs/ui.log 2>/dev/null || true
+  echo "--- $UI_LOG ---"
+  cat "$UI_LOG" 2>/dev/null || true
   cleanup
   read -p "Appuie sur Entree pour fermer..."
   exit 1
