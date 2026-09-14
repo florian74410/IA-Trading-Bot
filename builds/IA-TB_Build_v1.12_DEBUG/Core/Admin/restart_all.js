@@ -5,6 +5,11 @@
 var fs=require('fs'),path=require('path'),child=require('child_process'),Registry=require('./service_registry'),PATHS=require('../Shared/paths');
 var ROOT=PATHS.ROOT;
 PATHS.ensureAppRuntimeDirs();
+var RESTART_LOG=PATHS.RuntimeLogs.restart,LEGACY_RESTART_LOG=path.join(ROOT,'Core','Admin','restart_all.log');
+/* Compatibility cleanup: server.js may still open the historical path before this
+   helper starts. On macOS the open descriptor stays valid after unlink, while the
+   canonical persistent copy is written below. This prevents a second log file. */
+try{if(fs.existsSync(LEGACY_RESTART_LOG))fs.unlinkSync(LEGACY_RESTART_LOG);}catch(e){}
 var P={
  router:+(process.env.ROUTER_PORT||8021),
  core:+(process.env.IATB_PUBLIC_PORT||process.env.CORE_PUBLIC_PORT||8001),
@@ -21,7 +26,7 @@ var P={
 };
 var reg=new Registry(ROOT,{ports:P}),errors=[];
 function now(){return new Date().toISOString();}
-function log(s){console.log(now()+' '+s);}
+function log(s){var line=now()+' '+s;try{fs.appendFileSync(RESTART_LOG,line+'\n','utf8');}catch(e){}console.log(line);}
 function safeRoot(rel){var p=path.resolve(ROOT,rel);if(p.indexOf(ROOT+path.sep)!==0)throw new Error('PATH_REJECTED');return p;}
 function waitRouter(want,deadline,cb){
  if(Date.now()>deadline)return cb(new Error('ROUTER_TIMEOUT'));
