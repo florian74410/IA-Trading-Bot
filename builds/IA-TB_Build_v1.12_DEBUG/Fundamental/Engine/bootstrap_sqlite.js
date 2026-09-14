@@ -1,13 +1,13 @@
 'use strict';
 /* IA-TB Fundamental Engine v1.6.1 - deterministic SQLite bootstrap.
    Fixed dependency only; no arbitrary package/shell input. Node 16 compatible. */
-var fs=require('fs'),path=require('path'),child=require('child_process');
+var fs=require('fs'),path=require('path'),child=require('child_process'),PATHS=require('../../Core/Shared/paths');
 var FUND=path.resolve(__dirname,'..'),ROOT=path.resolve(FUND,'..');
 var NODE=process.execPath;
 var NPM=path.join(ROOT,'.node','lib','node_modules','npm','bin','npm-cli.js');
 var MOD=path.join(FUND,'node_modules','better-sqlite3');
 var PKG=path.join(MOD,'package.json');
-var LOG=path.join(FUND,'sqlite_install.log');
+var LOG=PATHS.RuntimeLogs.fundamentalSqlite;
 var REQUIRED='8.7.0';
 function stamp(){return new Date().toISOString();}
 function append(s){try{fs.appendFileSync(LOG,'['+stamp()+'] '+String(s||'')+'\n','utf8');}catch(e){}}
