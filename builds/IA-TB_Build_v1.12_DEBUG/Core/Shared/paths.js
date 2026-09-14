@@ -1,5 +1,5 @@
 'use strict';
-var fs=require('fs'),path=require('path'),os=require('os');
+var fs=require('fs'),path=require('path'),os=require('os'),crypto=require('crypto');
 var ROOT=path.resolve(__dirname,'../..');
 var NODE_RUNTIME=path.join(ROOT,'NodeRuntime');
 var APP_RUNTIME=path.join(ROOT,'.runtime');
@@ -33,6 +33,11 @@ var RUNTIME_LOG_FILES={
 var RUNTIME_STATE_FILES={
   strategyStats:path.join(APP_RUNTIME_DIRS.state,'strategy','strategy_stats.json')
 };
+var RUNTIME_SECURITY_DIR=path.join(APP_RUNTIME_DIRS.state,'security');
+var RUNTIME_SECRET_FILES={
+  internalServiceKey:path.join(RUNTIME_SECURITY_DIR,'internal_service_key.dat')
+};
+var LEGACY_INTERNAL_SERVICE_KEY=path.join(ROOT,'Fundamental','Data','internal_service_key.dat');
 var PERSISTENT_ROOT=process.env.IATB_DATA_ROOT||path.join(os.homedir(),'IA-TB-UserData-Server');
 var SHARED_DATA=path.join(PERSISTENT_ROOT,'Shared Data');
 var FUNDAMENTAL_DATA=path.join(SHARED_DATA,'Fundamental');
@@ -46,17 +51,48 @@ function ensureAppRuntimeDirs(){
   Object.keys(APP_RUNTIME_DIRS).forEach(function(k){
     try{fs.mkdirSync(APP_RUNTIME_DIRS[k],{recursive:true});}catch(e){}
   });
+  try{fs.mkdirSync(RUNTIME_SECURITY_DIR,{recursive:true});}catch(e){}
   return APP_RUNTIME_DIRS;
 }
+function validInternalServiceKeyFile(file){
+  try{return /^[a-f0-9]{64}$/i.test(String(fs.readFileSync(file,'utf8')||'').trim());}catch(e){return false;}
+}
+function ensureInternalServiceRuntimeKey(){
+  ensureAppRuntimeDirs();
+  var target=RUNTIME_SECRET_FILES.internalServiceKey;
+  if(!validInternalServiceKeyFile(target)&&validInternalServiceKeyFile(LEGACY_INTERNAL_SERVICE_KEY)){
+    try{fs.renameSync(LEGACY_INTERNAL_SERVICE_KEY,target);}
+    catch(e){try{fs.copyFileSync(LEGACY_INTERNAL_SERVICE_KEY,target);fs.unlinkSync(LEGACY_INTERNAL_SERVICE_KEY);}catch(x){}}
+  }
+  if(!validInternalServiceKeyFile(target)){
+    var value=crypto.randomBytes(32).toString('hex');
+    try{fs.writeFileSync(target,value,{encoding:'utf8',mode:384,flag:'wx'});}catch(e){}
+    if(!validInternalServiceKeyFile(target))throw new Error('INTERNAL_SERVICE_KEY_UNAVAILABLE');
+  }
+  try{fs.chmodSync(target,384);}catch(e){}
+  /* Temporary compatibility link for Core/Server/server.js until its legacy
+     literal path is removed during the server canonicalization pass. */
+  try{
+    if(fs.existsSync(LEGACY_INTERNAL_SERVICE_KEY)||fs.lstatSync(LEGACY_INTERNAL_SERVICE_KEY).isSymbolicLink())fs.unlinkSync(LEGACY_INTERNAL_SERVICE_KEY);
+  }catch(e){}
+  try{
+    fs.mkdirSync(path.dirname(LEGACY_INTERNAL_SERVICE_KEY),{recursive:true});
+    fs.symlinkSync(path.relative(path.dirname(LEGACY_INTERNAL_SERVICE_KEY),target),LEGACY_INTERNAL_SERVICE_KEY);
+  }catch(e){}
+  return target;
+}
 ensureAppRuntimeDirs();
+ensureInternalServiceRuntimeKey();
 module.exports={
   ROOT:ROOT,
   NodeRuntime:NODE_RUNTIME,
   AppRuntime:APP_RUNTIME_DIRS,
   RuntimeLogs:RUNTIME_LOG_FILES,
   RuntimeState:RUNTIME_STATE_FILES,
+  RuntimeSecrets:RUNTIME_SECRET_FILES,
   PersistentData:PERSISTENT_DATA,
   ensureAppRuntimeDirs:ensureAppRuntimeDirs,
+  ensureInternalServiceRuntimeKey:ensureInternalServiceRuntimeKey,
   Frontend:{
     app:path.join(ROOT,'Frontend','Pages','app_v1.0.html'),
     chartViewer:path.join(ROOT,'Frontend','Pages','chart_viewer_v1.0.html'),
