@@ -1,6 +1,0 @@
-/System/Library/LaunchAgents/com.apple.notificationcenterui.plist
-/System/Library/LaunchAgents/com.apple.bird.plist
-/System/Library/LaunchAgents/com.apple.cloudd.plist
-/System/Library/LaunchAgents/com.apple.cloudphotosd.plist
-/System/Library/LaunchAgents/com.apple.photolibraryd.plist
-/System/Library/LaunchAgents/com.apple.SafariBookmarksSyncAgent.plist
