@@ -1,17 +1,40 @@
 #!/bin/bash
 set -u
 cd "$(dirname "$0")" || exit 1
+
 REQ_VERSION="v16.20.2"
 ARCHIVE_NAME="node-v16.20.2-darwin-x64.tar.gz"
-ARCHIVE="$PWD/Runtime/$ARCHIVE_NAME"
+NODE_RUNTIME_DIR="$PWD/NodeRuntime"
+LEGACY_RUNTIME_DIR="$PWD/Runtime"
+ARCHIVE="$NODE_RUNTIME_DIR/$ARCHIVE_NAME"
+LEGACY_ARCHIVE="$LEGACY_RUNTIME_DIR/$ARCHIVE_NAME"
 URL="https://nodejs.org/download/release/v16.20.2/$ARCHIVE_NAME"
 EXPECTED_SHA="d7a46eaf2b57ffddeda16ece0d887feb2e31a91ad33f8774da553da0249dc4a6"
+
+# Fondation runtime applicative. Aucun moteur n'y est encore migre :
+# ces dossiers deviennent seulement les emplacements canoniques futurs.
+mkdir -p "$PWD/.runtime/logs" \
+         "$PWD/.runtime/state" \
+         "$PWD/.runtime/database" \
+         "$PWD/.runtime/cache" \
+         "$PWD/.runtime/config" \
+         "$PWD/.runtime/pids" \
+         "$PWD/.runtime/updates"
 
 if [ "$(uname -s)" != "Darwin" ]; then
   echo "Ce runtime local est prevu pour macOS Intel."
 fi
 
-mkdir -p "$PWD/Runtime"
+mkdir -p "$NODE_RUNTIME_DIR"
+
+# Migration transparente depuis l'ancien dossier Runtime/ afin d'eviter
+# de retelecharger l'archive Node sur une installation existante.
+if [ ! -f "$ARCHIVE" ] && [ -f "$LEGACY_ARCHIVE" ]; then
+  echo "Migration du runtime Node : Runtime -> NodeRuntime..."
+  mv "$LEGACY_ARCHIVE" "$ARCHIVE"
+fi
+# Supprime l'ancien dossier uniquement s'il est devenu vide.
+rmdir "$LEGACY_RUNTIME_DIR" >/dev/null 2>&1 || true
 
 need_install=1
 if [ -x "$PWD/.node/bin/node" ]; then
@@ -34,7 +57,7 @@ if [ ! -f "$ARCHIVE" ]; then
   rm -f "$tmp"
   if ! curl -L --fail --retry 3 --connect-timeout 20 "$URL" -o "$tmp"; then
     echo "ERREUR: impossible de telecharger Node.js."
-    echo "Telecharge manuellement $ARCHIVE_NAME depuis nodejs.org et place-le dans le dossier Runtime, puis relance start.command."
+    echo "Telecharge manuellement $ARCHIVE_NAME depuis nodejs.org et place-le dans le dossier NodeRuntime, puis relance start.command."
     rm -f "$tmp"
     exit 1
   fi
@@ -49,14 +72,14 @@ if [ "$actual" != "$EXPECTED_SHA" ]; then
   exit 1
 fi
 
-rm -rf "$PWD/.node" "$PWD/Runtime/.node-install"
-mkdir -p "$PWD/Runtime/.node-install"
-if ! tar -xzf "$ARCHIVE" -C "$PWD/Runtime/.node-install"; then
+rm -rf "$PWD/.node" "$NODE_RUNTIME_DIR/.node-install"
+mkdir -p "$NODE_RUNTIME_DIR/.node-install"
+if ! tar -xzf "$ARCHIVE" -C "$NODE_RUNTIME_DIR/.node-install"; then
   echo "ERREUR: extraction du runtime impossible."
   exit 1
 fi
-mv "$PWD/Runtime/.node-install/node-v16.20.2-darwin-x64" "$PWD/.node"
-rm -rf "$PWD/Runtime/.node-install"
+mv "$NODE_RUNTIME_DIR/.node-install/node-v16.20.2-darwin-x64" "$PWD/.node"
+rm -rf "$NODE_RUNTIME_DIR/.node-install"
 chmod +x "$PWD/.node/bin/node" 2>/dev/null || true
 
 if [ ! -x "$PWD/.node/bin/node" ]; then

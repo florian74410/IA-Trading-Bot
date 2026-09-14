@@ -1,8 +1,29 @@
 'use strict';
-var path=require('path');
+var fs=require('fs'),path=require('path');
 var ROOT=path.resolve(__dirname,'../..');
+var NODE_RUNTIME=path.join(ROOT,'NodeRuntime');
+var APP_RUNTIME=path.join(ROOT,'.runtime');
+var APP_RUNTIME_DIRS={
+  root:APP_RUNTIME,
+  logs:path.join(APP_RUNTIME,'logs'),
+  state:path.join(APP_RUNTIME,'state'),
+  database:path.join(APP_RUNTIME,'database'),
+  cache:path.join(APP_RUNTIME,'cache'),
+  config:path.join(APP_RUNTIME,'config'),
+  pids:path.join(APP_RUNTIME,'pids'),
+  updates:path.join(APP_RUNTIME,'updates')
+};
+function ensureAppRuntimeDirs(){
+  Object.keys(APP_RUNTIME_DIRS).forEach(function(k){
+    try{fs.mkdirSync(APP_RUNTIME_DIRS[k],{recursive:true});}catch(e){}
+  });
+  return APP_RUNTIME_DIRS;
+}
 module.exports={
   ROOT:ROOT,
+  NodeRuntime:NODE_RUNTIME,
+  AppRuntime:APP_RUNTIME_DIRS,
+  ensureAppRuntimeDirs:ensureAppRuntimeDirs,
   Frontend:{
     app:path.join(ROOT,'Frontend','Pages','app_v1.0.html'),
     chartViewer:path.join(ROOT,'Frontend','Pages','chart_viewer_v1.0.html'),
