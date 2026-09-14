@@ -538,34 +538,6 @@
       "status": "ACTIVATED_HEALTHY"
     },
     {
-      "installedAt": "2026-08-26T19:05:19.879Z",
-      "fromVersion": "1.5.0",
-      "toVersion": "1.5.1",
-      "packageType": "UPDATE",
-      "description": "v1.5.1 - Intégration ADMIN du Mode ULTRA v2.0 : autostart, stabilisation 2 s, redémarrage sans cycle ULTRA, Arrêt Total et journal dédié.",
-      "source": "local",
-      "archiveSha256": "5cac95e588c406d65b504202bbc242d34761b556ea875c2e71ee85bb5d98628b",
-      "backup": "2026-08-26T19-05-19-711Z-v1.5.0-to-v1.5.1",
-      "files": [
-        "Core/Admin/admin_backend.js",
-        "Core/Admin/log_reader.js",
-        "Core/Admin/stop_total.js",
-        "Core/Booster/ultra_mode/log.txt",
-        "Core/Booster/ultra_mode/start.command",
-        "Core/Booster/ultra_mode/status.command",
-        "Core/Booster/ultra_mode/stop.command",
-        "Core/Booster/ultra_mode/ultra_manager.js",
-        "Core/Server/server_v1.0.js",
-        "Docs/Admin/ULTRA_MODE_v1.5.1.txt",
-        "Frontend/CSS/admin_v1.0.css",
-        "Frontend/JS/admin_controller_v1.0.js",
-        "Frontend/Pages/admin_v1.0.html",
-        "start.command"
-      ],
-      "status": "INSTALLED_RESTART_REQUIRED",
-      "autoRollbackReady": true
-    },
-    {
       "installedAt": "2026-08-26T19:05:35.704Z",
       "fromVersion": "1.5.0",
       "toVersion": "1.5.1",
@@ -574,49 +546,12 @@
       "status": "ACTIVATED_HEALTHY"
     },
     {
-      "installedAt": "2026-08-26T19:33:38.310Z",
-      "fromVersion": "1.5.1",
-      "toVersion": "1.5.2",
-      "packageType": "UPDATE",
-      "description": "v1.5.2 - Correctif ULTRA: activation single-flight, une seule confirmation et une seule stabilisation; redémarrage IA-TB sans délai quand ULTRA est déjà actif.",
-      "source": "local",
-      "archiveSha256": "87224a25d20f061bda54eac2b6d84ad0c00491c899cdebae6c29ea96f1b10fa6",
-      "backup": "2026-08-26T19-33-38-235Z-v1.5.1-to-v1.5.2",
-      "files": [
-        "Core/Booster/ultra_mode/ultra_manager.js",
-        "Core/Server/server_v1.0.js",
-        "Docs/Admin/ULTRA_MODE_v1.5.2.txt",
-        "Frontend/JS/admin_controller_v1.0.js",
-        "start.command"
-      ],
-      "status": "INSTALLED_RESTART_REQUIRED",
-      "autoRollbackReady": true
-    },
-    {
       "installedAt": "2026-08-26T19:33:58.258Z",
       "fromVersion": "1.5.1",
       "toVersion": "1.5.2",
       "source": "launcher-supervisor",
       "backup": "2026-08-26T19-33-38-235Z-v1.5.1-to-v1.5.2",
       "status": "ACTIVATED_HEALTHY"
-    },
-    {
-      "installedAt": "2026-08-26T19:48:29.252Z",
-      "fromVersion": "1.5.2",
-      "toVersion": "1.5.3",
-      "packageType": "UPDATE",
-      "description": "v1.5.3 - Correctif Admin: état Router basé sur le JSON réel et suppression de l’alternance visuelle donnant l’impression que la stabilisation ULTRA boucle.",
-      "source": "local",
-      "archiveSha256": "ef405059851d9f89913e82218b6c43768fd9128c29d4d8735e4882fd98b6e21e",
-      "backup": "2026-08-26T19-48-29-096Z-v1.5.2-to-v1.5.3",
-      "files": [
-        "Core/Admin/service_registry.js",
-        "Core/Server/server_v1.0.js",
-        "Docs/Admin/ROUTER_ULTRA_UI_v1.5.3.txt",
-        "Frontend/JS/admin_controller_v1.0.js"
-      ],
-      "status": "INSTALLED_RESTART_REQUIRED",
-      "autoRollbackReady": true
     },
     {
       "installedAt": "2026-08-26T19:49:07.577Z",
