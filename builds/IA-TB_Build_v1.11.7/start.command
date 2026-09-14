@@ -136,38 +136,6 @@ if [ -f "$PWD/Fundamental/install_sqlite.command" ]; then
   fi
 fi
 
-# IA-TB v1.5.2 — ULTRA Mode v2.0 lifecycle.
-# La préférence est écrite par ADMIN dans Parametres/UltraModeSettings.dat.
-# v1.5.2: un seul START, une seule confirmation, une seule stabilisation de 2 s.
-ULTRA_DIR="$PWD/Core/Booster/ultra_mode"
-ULTRA_SETTINGS="$PWD/Parametres/UltraModeSettings.dat"
-ULTRA_LOG="$ULTRA_DIR/log.txt"
-ultra_status(){
-  [ -f "$ULTRA_DIR/status.command" ] || { echo INACTIVE; return 1; }
-  /bin/bash "$ULTRA_DIR/status.command" 2>/dev/null | tail -1
-}
-ultra_enabled=false
-if [ -f "$ULTRA_SETTINGS" ] && grep -Eq '"enabledOnStart"[[:space:]]*:[[:space:]]*true' "$ULTRA_SETTINGS" 2>/dev/null; then ultra_enabled=true; fi
-if [ "$ultra_enabled" = true ]; then
-  echo "Mode ULTRA v2.0 demandé par ADMIN."
-  if [ "$(ultra_status)" = "ACTIVE" ]; then
-    echo "ULTRA déjà actif : conservation de l'état, aucun délai."
-    printf '[%s] COLD START IA-TB: ULTRA déjà actif, aucun restart, aucun délai.\n' "$(date '+%Y-%m-%d %H:%M:%S')" >> "$ULTRA_LOG" 2>/dev/null || true
-  else
-    echo "Activation ULTRA avant démarrage du VPS..."
-    if /bin/bash "$ULTRA_DIR/start.command" >/dev/null 2>&1 && [ "$(ultra_status)" = "ACTIVE" ]; then
-      echo "ULTRA confirmé ACTIF. Stabilisation unique de 2 secondes..."
-      printf '[%s] COLD START IA-TB: ULTRA confirmé une fois, stabilisation unique 2 s avant VPS.\n' "$(date '+%Y-%m-%d %H:%M:%S')" >> "$ULTRA_LOG" 2>/dev/null || true
-      sleep 2
-    else
-      echo "ATTENTION: ULTRA non confirmé. IA-TB démarre en mode normal pour rester disponible."
-      printf '[%s] WARN COLD START: ULTRA non confirmé; aucun retry en boucle; fallback IA-TB normal.\n' "$(date '+%Y-%m-%d %H:%M:%S')" >> "$ULTRA_LOG" 2>/dev/null || true
-    fi
-  fi
-else
-  echo "Mode ULTRA au démarrage : désactivé dans ADMIN."
-fi
-
 KRAKEN_PID=""
 INDICATOR_PID=""
 MARKET_DATA_PID=""
@@ -208,11 +176,6 @@ cleanup() {
   stop_known_on_port "$STRATEGY_PORT" >/dev/null 2>&1 || true
   stop_known_on_port "$RISK_ENGINE_PORT" >/dev/null 2>&1 || true
   stop_known_on_port "$PORTFOLIO_PORT" >/dev/null 2>&1 || true
-  # ULTRA suit le cycle de vie du VPS : arrêt uniquement quand start.command se termine.
-  if [ -f "$ULTRA_DIR/stop.command" ] && [ "$(ultra_status)" = "ACTIVE" ]; then
-    echo "Arrêt du Mode ULTRA v2.0..."
-    /bin/bash "$ULTRA_DIR/stop.command" >/dev/null 2>&1 || true
-  fi
 }
 trap cleanup EXIT INT TERM
 
@@ -263,7 +226,6 @@ MARKET_DATA_PID=$!
 IATB_MARKET_DATA_PORT="$MARKET_DATA_PORT" IATB_LIQUIDITY_PORT="$LIQUIDITY_PORT" "$NODE_BIN" Liquidity/Engine/liquidity_service.js >> Liquidity/liquidity.log 2>&1 &
 LIQUIDITY_PID=$!
 
-
 if [ "$FUNDAMENTAL_READY" -eq 1 ]; then
   IATB_FUNDAMENTAL_PORT="$FUNDAMENTAL_PORT" "$NODE_BIN" Fundamental/Engine/fundamental_service.js >> Fundamental/fundamental.log 2>&1 &
   FUNDAMENTAL_PID=$!
@@ -296,7 +258,6 @@ if [ "$fw_ok" -ne 1 ]; then
   cat Core/Firewall/Firewall.log 2>/dev/null || true
   cleanup; read -p "Appuie sur Entree pour fermer..."; exit 1
 fi
-
 
 # L Indicator Engine doit etre sain avant activation de la nouvelle release.
 ind_ok=0
