@@ -25,7 +25,6 @@
         <button class="sideLink" type="button" data-target="processus"><span class="sideIcon gearsIcon">⚙</span><span><b>Processus</b><small>État global du Core</small></span></button>
         <button class="sideLink" type="button" data-target="engines"><span class="sideIcon engineIcon">◉</span><span><b>Engines & Services</b><small>Moteurs et services</small></span></button>
         <button class="sideLink" type="button" data-target="maintenance"><span class="sideIcon toolsIcon">⌁</span><span><b>Maintenance</b><small>Actions administrateur</small></span></button>
-        <button class="sideLink" type="button" data-target="ultra"><span class="sideIcon pulseIcon">⌁</span><span><b>ULTRA</b><small>Booster & journal</small></span></button>
         <button class="sideLink" type="button" data-target="diagnostics"><span class="sideIcon diagIcon">⌁</span><span><b>Diagnostics</b><small>Santé de la machine</small></span></button>
         <button class="sideLink" type="button" data-target="updates"><span class="sideIcon updateIcon">⇩</span><span><b>Mises à jour</b><small>Update Manager</small></span></button>
       </nav>
@@ -121,15 +120,8 @@
             <button id="clearAllCaches" class="btn">Vider les 2 caches</button>
             <button id="restartAll" class="btn danger">Redémarrer IA-TB</button>
             <button id="stopTotal" class="btn danger strongDanger">Arrêt Total</button>
-            <label class="ultraToggle"><input id="ultraAutostart" type="checkbox"> Mode ULTRA au démarrage</label>
-            <span id="ultraState" class="ultraState">ULTRA : …</span>
           </div>
         </div>
-      </section>
-
-      <section id="ultra" class="dashSection anchorSection">
-        <div class="dashSectionHead"><div class="sectionIdentity"><span class="sectionIcon">⌁</span><div><h2>ULTRA Mode v2.0</h2><p>Journal du booster et état d’activation</p></div></div><div class="headActions"><span id="ultraLogMeta" class="msg"></span><button id="ultraLogRefresh" class="btn small" type="button">Actualiser</button></div></div>
-        <div class="dashSectionBody"><pre id="ultraTerminal" class="terminal ultraTerminal">Chargement du journal ULTRA…</pre></div>
       </section>
 
       <section id="diagnostics" class="dashSection anchorSection">
