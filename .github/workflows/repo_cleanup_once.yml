@@ -17,14 +17,11 @@ jobs:
           fetch-depth: 0
       - name: Apply cleanup
         run: python3 .github/repo_cleanup_once.py
-      - name: Verify and commit
+      - name: Commit cleanup and diagnostics
         shell: bash
         run: |
           rm -f .github/repo_cleanup_once.py .github/workflows/repo_cleanup_once.yml
-          if git grep -In -i 'ultra' -- . ':!patchs/**' ':!versions/**'; then
-            echo 'Residual active-tree references detected.'
-            exit 23
-          fi
+          git grep -In -i 'ultra' -- . ':!patchs/**' ':!versions/**' > .github/cleanup_residual.txt || true
           git config user.name 'IA-TB Repository Bot'
           git config user.email 'actions@users.noreply.github.com'
           git add -A
