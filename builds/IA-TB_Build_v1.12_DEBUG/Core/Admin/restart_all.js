@@ -5,11 +5,7 @@
 var fs=require('fs'),path=require('path'),child=require('child_process'),Registry=require('./service_registry'),PATHS=require('../Shared/paths');
 var ROOT=PATHS.ROOT;
 PATHS.ensureAppRuntimeDirs();
-var RESTART_LOG=PATHS.RuntimeLogs.restart,LEGACY_RESTART_LOG=path.join(ROOT,'Core','Admin','restart_all.log');
-/* Compatibility cleanup: server.js may still open the historical path before this
-   helper starts. On macOS the open descriptor stays valid after unlink, while the
-   canonical persistent copy is written below. This prevents a second log file. */
-try{if(fs.existsSync(LEGACY_RESTART_LOG))fs.unlinkSync(LEGACY_RESTART_LOG);}catch(e){}
+var RESTART_LOG=PATHS.RuntimeLogs.restart;
 var P={
  router:+(process.env.ROUTER_PORT||8021),
  core:+(process.env.IATB_PUBLIC_PORT||process.env.CORE_PUBLIC_PORT||8001),

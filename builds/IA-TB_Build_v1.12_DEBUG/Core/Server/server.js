@@ -376,7 +376,7 @@ function installAIUpdate(build,cb){var tmp=UPDATES.newInboxPath();try{fs.copyFil
 function closeLocalServers(exitCode){var pending=0,done=false;function finish(){if(done)return;done=true;setTimeout(function(){process.exit(exitCode);},100);}function closeOne(s){if(!s||!s.listening)return;pending++;try{s.close(function(){pending--;if(pending<=0)finish();});}catch(e){pending--;}}closeOne(PUBLIC_SERVER);closeOne(SERVER);if(!pending)finish();setTimeout(finish,1800);}
 function scheduleAdminFullRestart(){
  if(process.env.IATB_SUPERVISED!=='1')throw new Error('SUPERVISOR_REQUIRED');
- var script=path.join(ROOT,'Core','Admin','restart_all.js'),logFile=path.join(ROOT,'Core','Admin','restart_all.log');
+ var script=path.join(ROOT,'Core','Admin','restart_all.js'),logFile=PATHS.RuntimeLogs.restart;
  if(!fs.existsSync(script))throw new Error('RESTART_HELPER_MISSING');
  var fd=fs.openSync(logFile,'a'),proc,env=Object.assign({},process.env,{
   ROUTER_PORT:String(+(process.env.ROUTER_PORT||8021)),IATB_PUBLIC_PORT:String(PUBLIC_PORT),
