@@ -23,7 +23,7 @@ var RUNTIME_UPDATE_DIRS={root:APP_RUNTIME_DIRS.updates,inbox:path.join(APP_RUNTI
 var RUNTIME_SECURITY_DIR=path.join(APP_RUNTIME_DIRS.state,'security');
 var RUNTIME_SECRET_FILES={internalServiceKey:path.join(RUNTIME_SECURITY_DIR,'internal_service_key.dat'),communicationProtocolKey:path.join(RUNTIME_SECURITY_DIR,'communication_protocol_key.dat')};
 var DEFAULT_CONFIG={appSettings:path.join(ROOT,'Config','Defaults','app_settings.json')};
-var LEGACY_INTERNAL_SERVICE_KEY=path.join(ROOT,'Fundamental','Data','internal_service_key.dat');
+
 var LEGACY_COMMUNICATION_PROTOCOL_KEY=path.join(ROOT,'Parametres','CommunicationProtocol.dat');
 var PERSISTENT_ROOT=process.env.IATB_DATA_ROOT||path.join(os.homedir(),'IA-TB-UserData-Server');
 var SHARED_DATA=path.join(PERSISTENT_ROOT,'Shared Data'),FUNDAMENTAL_DATA=path.join(SHARED_DATA,'Fundamental');
@@ -53,7 +53,7 @@ function ensureRuntimeSecret(target,legacy,errorCode,compatibilityLink){
   if(legacy&&compatibilityLink){try{if(fs.existsSync(legacy)||fs.lstatSync(legacy).isSymbolicLink())fs.unlinkSync(legacy);}catch(e){}try{fs.mkdirSync(path.dirname(legacy),{recursive:true});fs.symlinkSync(path.relative(path.dirname(legacy),target),legacy);}catch(e){}}
   return target;
 }
-function ensureInternalServiceRuntimeKey(){return ensureRuntimeSecret(RUNTIME_SECRET_FILES.internalServiceKey,LEGACY_INTERNAL_SERVICE_KEY,'INTERNAL_SERVICE_KEY_UNAVAILABLE',true);}
+function ensureInternalServiceRuntimeKey(){return ensureRuntimeSecret(RUNTIME_SECRET_FILES.internalServiceKey,null,'INTERNAL_SERVICE_KEY_UNAVAILABLE',false);}
 function ensureCommunicationProtocolRuntimeKey(){return ensureRuntimeSecret(RUNTIME_SECRET_FILES.communicationProtocolKey,LEGACY_COMMUNICATION_PROTOCOL_KEY,'CP_SECRET_UNAVAILABLE',false);}
 ensureAppRuntimeDirs();ensureUpdateRuntimeDirs();ensureInternalServiceRuntimeKey();ensureCommunicationProtocolRuntimeKey();
 module.exports={
