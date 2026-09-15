@@ -23,3 +23,6 @@ Updates/pending_activation.dat
 
 # OS/editor noise
 .DS_Store
+
+# Local bundled Node runtime
+.node/
