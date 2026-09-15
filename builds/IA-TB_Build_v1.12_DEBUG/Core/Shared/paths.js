@@ -14,129 +14,49 @@ var APP_RUNTIME_DIRS={
   updates:path.join(APP_RUNTIME,'updates')
 };
 var RUNTIME_LOG_FILES={
-  core:path.join(APP_RUNTIME_DIRS.logs,'core.log'),
-  router:path.join(APP_RUNTIME_DIRS.logs,'router.log'),
-  ui:path.join(APP_RUNTIME_DIRS.logs,'ui.log'),
-  restart:path.join(APP_RUNTIME_DIRS.logs,'restart_all.log'),
-  kraken:path.join(APP_RUNTIME_DIRS.logs,'kraken.log'),
-  indicators:path.join(APP_RUNTIME_DIRS.logs,'indicators.log'),
-  marketdata:path.join(APP_RUNTIME_DIRS.logs,'market_data.log'),
-  liquidity:path.join(APP_RUNTIME_DIRS.logs,'liquidity.log'),
-  fundamental:path.join(APP_RUNTIME_DIRS.logs,'fundamental.log'),
-  fundamentalSqlite:path.join(APP_RUNTIME_DIRS.logs,'fundamental_sqlite_install.log'),
-  trading:path.join(APP_RUNTIME_DIRS.logs,'trading.log'),
-  firewall:path.join(APP_RUNTIME_DIRS.logs,'firewall.log'),
-  strategy:path.join(APP_RUNTIME_DIRS.logs,'strategy.log'),
-  risk:path.join(APP_RUNTIME_DIRS.logs,'risk.log'),
-  portfolio:path.join(APP_RUNTIME_DIRS.logs,'portfolio.log')
+  core:path.join(APP_RUNTIME_DIRS.logs,'core.log'),router:path.join(APP_RUNTIME_DIRS.logs,'router.log'),ui:path.join(APP_RUNTIME_DIRS.logs,'ui.log'),restart:path.join(APP_RUNTIME_DIRS.logs,'restart_all.log'),kraken:path.join(APP_RUNTIME_DIRS.logs,'kraken.log'),indicators:path.join(APP_RUNTIME_DIRS.logs,'indicators.log'),marketdata:path.join(APP_RUNTIME_DIRS.logs,'market_data.log'),liquidity:path.join(APP_RUNTIME_DIRS.logs,'liquidity.log'),fundamental:path.join(APP_RUNTIME_DIRS.logs,'fundamental.log'),fundamentalSqlite:path.join(APP_RUNTIME_DIRS.logs,'fundamental_sqlite_install.log'),trading:path.join(APP_RUNTIME_DIRS.logs,'trading.log'),firewall:path.join(APP_RUNTIME_DIRS.logs,'firewall.log'),strategy:path.join(APP_RUNTIME_DIRS.logs,'strategy.log'),risk:path.join(APP_RUNTIME_DIRS.logs,'risk.log'),portfolio:path.join(APP_RUNTIME_DIRS.logs,'portfolio.log')
 };
-var RUNTIME_STATE_FILES={
-  strategyStats:path.join(APP_RUNTIME_DIRS.state,'strategy','strategy_stats.json')
-};
+var RUNTIME_STATE_FILES={strategyStats:path.join(APP_RUNTIME_DIRS.state,'strategy','strategy_stats.json')};
 var RUNTIME_LAUNCHER_DIR=path.join(APP_RUNTIME_DIRS.state,'launcher');
-var RUNTIME_LAUNCHER_FILES={
-  pending:path.join(RUNTIME_LAUNCHER_DIR,'pending_activation.dat'),
-  state:path.join(RUNTIME_LAUNCHER_DIR,'launcher_state.dat'),
-  control:path.join(RUNTIME_LAUNCHER_DIR,'launcher_control.dat')
-};
+var RUNTIME_LAUNCHER_FILES={pending:path.join(RUNTIME_LAUNCHER_DIR,'pending_activation.dat'),state:path.join(RUNTIME_LAUNCHER_DIR,'launcher_state.dat'),control:path.join(RUNTIME_LAUNCHER_DIR,'launcher_control.dat')};
+var RUNTIME_UPDATE_DIRS={root:APP_RUNTIME_DIRS.updates,inbox:path.join(APP_RUNTIME_DIRS.updates,'Inbox'),staging:path.join(APP_RUNTIME_DIRS.updates,'Staging'),backups:path.join(APP_RUNTIME_DIRS.updates,'Backups')};
 var RUNTIME_SECURITY_DIR=path.join(APP_RUNTIME_DIRS.state,'security');
-var RUNTIME_SECRET_FILES={
-  internalServiceKey:path.join(RUNTIME_SECURITY_DIR,'internal_service_key.dat')
-};
+var RUNTIME_SECRET_FILES={internalServiceKey:path.join(RUNTIME_SECURITY_DIR,'internal_service_key.dat')};
 var LEGACY_INTERNAL_SERVICE_KEY=path.join(ROOT,'Fundamental','Data','internal_service_key.dat');
+var LEGACY_UPDATE_DIRS={inbox:path.join(ROOT,'Updates','Inbox'),staging:path.join(ROOT,'Updates','Staging'),backups:path.join(ROOT,'Updates','Backups')};
 var PERSISTENT_ROOT=process.env.IATB_DATA_ROOT||path.join(os.homedir(),'IA-TB-UserData-Server');
-var SHARED_DATA=path.join(PERSISTENT_ROOT,'Shared Data');
-var FUNDAMENTAL_DATA=path.join(SHARED_DATA,'Fundamental');
-var PERSISTENT_DATA={
-  root:PERSISTENT_ROOT,
-  shared:SHARED_DATA,
-  fundamental:FUNDAMENTAL_DATA,
-  fundamentalDb:path.join(FUNDAMENTAL_DATA,'fundamental.db')
-};
+var SHARED_DATA=path.join(PERSISTENT_ROOT,'Shared Data'),FUNDAMENTAL_DATA=path.join(SHARED_DATA,'Fundamental');
+var PERSISTENT_DATA={root:PERSISTENT_ROOT,shared:SHARED_DATA,fundamental:FUNDAMENTAL_DATA,fundamentalDb:path.join(FUNDAMENTAL_DATA,'fundamental.db')};
 function ensureAppRuntimeDirs(){
-  Object.keys(APP_RUNTIME_DIRS).forEach(function(k){
-    try{fs.mkdirSync(APP_RUNTIME_DIRS[k],{recursive:true});}catch(e){}
-  });
+  Object.keys(APP_RUNTIME_DIRS).forEach(function(k){try{fs.mkdirSync(APP_RUNTIME_DIRS[k],{recursive:true});}catch(e){}});
   try{fs.mkdirSync(RUNTIME_LAUNCHER_DIR,{recursive:true});}catch(e){}
   try{fs.mkdirSync(RUNTIME_SECURITY_DIR,{recursive:true});}catch(e){}
+  Object.keys(RUNTIME_UPDATE_DIRS).forEach(function(k){try{fs.mkdirSync(RUNTIME_UPDATE_DIRS[k],{recursive:true});}catch(e){}});
   return APP_RUNTIME_DIRS;
 }
-function validInternalServiceKeyFile(file){
-  try{return /^[a-f0-9]{64}$/i.test(String(fs.readFileSync(file,'utf8')||'').trim());}catch(e){return false;}
+function copyTree(src,dst){
+  fs.readdirSync(src).forEach(function(name){var a=path.join(src,name),b=path.join(dst,name),st=fs.lstatSync(a);if(st.isDirectory()){if(!fs.existsSync(b))fs.mkdirSync(b,{recursive:true});copyTree(a,b);try{fs.rmdirSync(a);}catch(e){}}else if(!fs.existsSync(b)){try{fs.renameSync(a,b);}catch(e){fs.copyFileSync(a,b);fs.unlinkSync(a);}}});
 }
-function ensureInternalServiceRuntimeKey(){
+function ensureUpdateRuntimeDirs(){
   ensureAppRuntimeDirs();
-  var target=RUNTIME_SECRET_FILES.internalServiceKey;
-  if(!validInternalServiceKeyFile(target)&&validInternalServiceKeyFile(LEGACY_INTERNAL_SERVICE_KEY)){
-    try{fs.renameSync(LEGACY_INTERNAL_SERVICE_KEY,target);}
-    catch(e){try{fs.copyFileSync(LEGACY_INTERNAL_SERVICE_KEY,target);fs.unlinkSync(LEGACY_INTERNAL_SERVICE_KEY);}catch(x){}}
-  }
-  if(!validInternalServiceKeyFile(target)){
-    var value=crypto.randomBytes(32).toString('hex');
-    try{fs.writeFileSync(target,value,{encoding:'utf8',mode:384,flag:'wx'});}catch(e){}
-    if(!validInternalServiceKeyFile(target))throw new Error('INTERNAL_SERVICE_KEY_UNAVAILABLE');
-  }
+  ['inbox','staging','backups'].forEach(function(k){var legacy=LEGACY_UPDATE_DIRS[k],target=RUNTIME_UPDATE_DIRS[k];try{var st=fs.lstatSync(legacy);if(st.isSymbolicLink()){var resolved=path.resolve(path.dirname(legacy),fs.readlinkSync(legacy));if(resolved===target)return;fs.unlinkSync(legacy);}else if(st.isDirectory()){copyTree(legacy,target);try{fs.rmdirSync(legacy);}catch(e){return;}}else return;}catch(e){}
+    try{fs.mkdirSync(path.dirname(legacy),{recursive:true});fs.symlinkSync(path.relative(path.dirname(legacy),target),legacy);}catch(e){}
+  });
+  return RUNTIME_UPDATE_DIRS;
+}
+function validInternalServiceKeyFile(file){try{return /^[a-f0-9]{64}$/i.test(String(fs.readFileSync(file,'utf8')||'').trim());}catch(e){return false;}}
+function ensureInternalServiceRuntimeKey(){
+  ensureAppRuntimeDirs();var target=RUNTIME_SECRET_FILES.internalServiceKey;
+  if(!validInternalServiceKeyFile(target)&&validInternalServiceKeyFile(LEGACY_INTERNAL_SERVICE_KEY)){try{fs.renameSync(LEGACY_INTERNAL_SERVICE_KEY,target);}catch(e){try{fs.copyFileSync(LEGACY_INTERNAL_SERVICE_KEY,target);fs.unlinkSync(LEGACY_INTERNAL_SERVICE_KEY);}catch(x){}}}
+  if(!validInternalServiceKeyFile(target)){var value=crypto.randomBytes(32).toString('hex');try{fs.writeFileSync(target,value,{encoding:'utf8',mode:384,flag:'wx'});}catch(e){}if(!validInternalServiceKeyFile(target))throw new Error('INTERNAL_SERVICE_KEY_UNAVAILABLE');}
   try{fs.chmodSync(target,384);}catch(e){}
-  /* Temporary compatibility link for Core/Server/server.js until its legacy
-     literal path is removed during the server canonicalization pass. */
-  try{
-    if(fs.existsSync(LEGACY_INTERNAL_SERVICE_KEY)||fs.lstatSync(LEGACY_INTERNAL_SERVICE_KEY).isSymbolicLink())fs.unlinkSync(LEGACY_INTERNAL_SERVICE_KEY);
-  }catch(e){}
-  try{
-    fs.mkdirSync(path.dirname(LEGACY_INTERNAL_SERVICE_KEY),{recursive:true});
-    fs.symlinkSync(path.relative(path.dirname(LEGACY_INTERNAL_SERVICE_KEY),target),LEGACY_INTERNAL_SERVICE_KEY);
-  }catch(e){}
+  try{if(fs.existsSync(LEGACY_INTERNAL_SERVICE_KEY)||fs.lstatSync(LEGACY_INTERNAL_SERVICE_KEY).isSymbolicLink())fs.unlinkSync(LEGACY_INTERNAL_SERVICE_KEY);}catch(e){}
+  try{fs.mkdirSync(path.dirname(LEGACY_INTERNAL_SERVICE_KEY),{recursive:true});fs.symlinkSync(path.relative(path.dirname(LEGACY_INTERNAL_SERVICE_KEY),target),LEGACY_INTERNAL_SERVICE_KEY);}catch(e){}
   return target;
 }
-ensureAppRuntimeDirs();
-ensureInternalServiceRuntimeKey();
+ensureAppRuntimeDirs();ensureUpdateRuntimeDirs();ensureInternalServiceRuntimeKey();
 module.exports={
-  ROOT:ROOT,
-  NodeRuntime:NODE_RUNTIME,
-  AppRuntime:APP_RUNTIME_DIRS,
-  RuntimeLogs:RUNTIME_LOG_FILES,
-  RuntimeState:RUNTIME_STATE_FILES,
-  RuntimeLauncher:RUNTIME_LAUNCHER_FILES,
-  RuntimeSecrets:RUNTIME_SECRET_FILES,
-  PersistentData:PERSISTENT_DATA,
-  ensureAppRuntimeDirs:ensureAppRuntimeDirs,
-  ensureInternalServiceRuntimeKey:ensureInternalServiceRuntimeKey,
-  Frontend:{
-    app:path.join(ROOT,'Frontend','Pages','app_v1.0.html'),
-    chartViewer:path.join(ROOT,'Frontend','Pages','chart_viewer_v1.0.html'),
-    portfolio:path.join(ROOT,'Frontend','Pages','portfolio_v1.0.html'),
-    fundamental:path.join(ROOT,'Frontend','Pages','fundamental_v1.0.html'),
-    admin:path.join(ROOT,'Frontend','Pages','admin_v1.0.html'),
-    assets:{
-      chart:path.join(ROOT,'Frontend','JS','chart_controller_v2.8.js'),
-      mosaic:path.join(ROOT,'Frontend','JS','mosaic_controller_v2.9.js'),
-      customMosaic:path.join(ROOT,'Frontend','JS','custom_mosaic_v1.0.js'),
-      updateUI:path.join(ROOT,'Frontend','JS','update_ui_v1.0.js'),
-      mosaicCSS:path.join(ROOT,'Frontend','CSS','mosaic_v2.9.css'),
-      aiProtocol:path.join(ROOT,'Frontend','Protocols','ai_command_protocol_v1.0.json'),
-      adminJS:path.join(ROOT,'Frontend','JS','admin_controller_v1.0.js'),
-      adminCSS:path.join(ROOT,'Frontend','CSS','admin_v1.0.css'),
-      portfolioJS:path.join(ROOT,'Frontend','JS','portfolio_controller_v1.0.js'),
-      portfolioCSS:path.join(ROOT,'Frontend','CSS','portfolio_v1.0.css'),
-      fundamentalJS:path.join(ROOT,'Frontend','JS','fundamental_controller_v1.0.js'),
-      fundamentalCSS:path.join(ROOT,'Frontend','CSS','fundamental_v1.0.css')
-    }
-  },
-  Data:{
-    config:path.join(ROOT,'config_v1.0.dat'),
-    logs:RUNTIME_LOG_FILES.core,
-    user:path.join(ROOT,'user.dat'),
-    vault:path.join(ROOT,'secrets_v2.dat'),
-    aiSettings:path.join(ROOT,'ai_settings_v2.dat')
-  },
-  Annexes:path.join(ROOT,'Annexes'),
-  Strategies:path.join(ROOT,'Annexes','Strategies'),
-  LegacyStrategies:path.join(ROOT,'strategies'),
-  Parameters:path.join(ROOT,'Parametres'),
-  ActiveAppSettings:path.join(ROOT,'Parametres','ActiveAppSettings.dat'),
-  AIUpdateSettings:path.join(ROOT,'Parametres','AIUpdateSettings.dat'),
-  Updates:path.join(ROOT,'Updates'),
-  ReleasePointer:path.join(ROOT,'Updates','current_release.dat'),
-  LauncherControl:RUNTIME_LAUNCHER_FILES.control,
-  Kraken:path.join(ROOT,'AddOns','Kraken')
+  ROOT:ROOT,NodeRuntime:NODE_RUNTIME,AppRuntime:APP_RUNTIME_DIRS,RuntimeLogs:RUNTIME_LOG_FILES,RuntimeState:RUNTIME_STATE_FILES,RuntimeLauncher:RUNTIME_LAUNCHER_FILES,RuntimeUpdates:RUNTIME_UPDATE_DIRS,RuntimeSecrets:RUNTIME_SECRET_FILES,PersistentData:PERSISTENT_DATA,ensureAppRuntimeDirs:ensureAppRuntimeDirs,ensureUpdateRuntimeDirs:ensureUpdateRuntimeDirs,ensureInternalServiceRuntimeKey:ensureInternalServiceRuntimeKey,
+  Frontend:{app:path.join(ROOT,'Frontend','Pages','app_v1.0.html'),chartViewer:path.join(ROOT,'Frontend','Pages','chart_viewer_v1.0.html'),portfolio:path.join(ROOT,'Frontend','Pages','portfolio_v1.0.html'),fundamental:path.join(ROOT,'Frontend','Pages','fundamental_v1.0.html'),admin:path.join(ROOT,'Frontend','Pages','admin_v1.0.html'),assets:{chart:path.join(ROOT,'Frontend','JS','chart_controller_v2.8.js'),mosaic:path.join(ROOT,'Frontend','JS','mosaic_controller_v2.9.js'),customMosaic:path.join(ROOT,'Frontend','JS','custom_mosaic_v1.0.js'),updateUI:path.join(ROOT,'Frontend','JS','update_ui_v1.0.js'),mosaicCSS:path.join(ROOT,'Frontend','CSS','mosaic_v2.9.css'),aiProtocol:path.join(ROOT,'Frontend','Protocols','ai_command_protocol_v1.0.json'),adminJS:path.join(ROOT,'Frontend','JS','admin_controller_v1.0.js'),adminCSS:path.join(ROOT,'Frontend','CSS','admin_v1.0.css'),portfolioJS:path.join(ROOT,'Frontend','JS','portfolio_controller_v1.0.js'),portfolioCSS:path.join(ROOT,'Frontend','CSS','portfolio_v1.0.css'),fundamentalJS:path.join(ROOT,'Frontend','JS','fundamental_controller_v1.0.js'),fundamentalCSS:path.join(ROOT,'Frontend','CSS','fundamental_v1.0.css')}},
+  Data:{config:path.join(ROOT,'config_v1.0.dat'),logs:RUNTIME_LOG_FILES.core,user:path.join(ROOT,'user.dat'),vault:path.join(ROOT,'secrets_v2.dat'),aiSettings:path.join(ROOT,'ai_settings_v2.dat')},Annexes:path.join(ROOT,'Annexes'),Strategies:path.join(ROOT,'Annexes','Strategies'),LegacyStrategies:path.join(ROOT,'strategies'),Parameters:path.join(ROOT,'Parametres'),ActiveAppSettings:path.join(ROOT,'Parametres','ActiveAppSettings.dat'),AIUpdateSettings:path.join(ROOT,'Parametres','AIUpdateSettings.dat'),Updates:path.join(ROOT,'Updates'),ReleasePointer:path.join(ROOT,'Updates','current_release.dat'),LauncherControl:RUNTIME_LAUNCHER_FILES.control,Kraken:path.join(ROOT,'AddOns','Kraken')
 };
