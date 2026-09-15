@@ -25,7 +25,6 @@ var RUNTIME_SECRET_FILES={internalServiceKey:path.join(RUNTIME_SECURITY_DIR,'int
 var DEFAULT_CONFIG={appSettings:path.join(ROOT,'Config','Defaults','app_settings.json')};
 var LEGACY_INTERNAL_SERVICE_KEY=path.join(ROOT,'Fundamental','Data','internal_service_key.dat');
 var LEGACY_COMMUNICATION_PROTOCOL_KEY=path.join(ROOT,'Parametres','CommunicationProtocol.dat');
-var LEGACY_UPDATE_DIRS={inbox:path.join(ROOT,'Updates','Inbox'),staging:path.join(ROOT,'Updates','Staging'),backups:path.join(ROOT,'Updates','Backups')};
 var PERSISTENT_ROOT=process.env.IATB_DATA_ROOT||path.join(os.homedir(),'IA-TB-UserData-Server');
 var SHARED_DATA=path.join(PERSISTENT_ROOT,'Shared Data'),FUNDAMENTAL_DATA=path.join(SHARED_DATA,'Fundamental');
 var PERSISTENT_DATA={root:PERSISTENT_ROOT,shared:SHARED_DATA,fundamental:FUNDAMENTAL_DATA,fundamentalDb:path.join(FUNDAMENTAL_DATA,'fundamental.db')};
@@ -40,11 +39,10 @@ function copyTree(src,dst){
   fs.readdirSync(src).forEach(function(name){var a=path.join(src,name),b=path.join(dst,name),st=fs.lstatSync(a);if(st.isDirectory()){if(!fs.existsSync(b))fs.mkdirSync(b,{recursive:true});copyTree(a,b);try{fs.rmdirSync(a);}catch(e){}}else if(!fs.existsSync(b)){try{fs.renameSync(a,b);}catch(e){fs.copyFileSync(a,b);fs.unlinkSync(a);}}});
 }
 function ensureUpdateRuntimeDirs(){
-  ensureAppRuntimeDirs();
-  ['inbox','staging','backups'].forEach(function(k){var legacy=LEGACY_UPDATE_DIRS[k],target=RUNTIME_UPDATE_DIRS[k];try{var st=fs.lstatSync(legacy);if(st.isSymbolicLink()){var resolved=path.resolve(path.dirname(legacy),fs.readlinkSync(legacy));if(resolved===target)return;fs.unlinkSync(legacy);}else if(st.isDirectory()){copyTree(legacy,target);try{fs.rmdirSync(legacy);}catch(e){return;}}else return;}catch(e){}
-    try{fs.mkdirSync(path.dirname(legacy),{recursive:true});fs.symlinkSync(path.relative(path.dirname(legacy),target),legacy);}catch(e){}
-  });
-  return RUNTIME_UPDATE_DIRS;
+  fs.mkdirSync(RUNTIME_UPDATE_DIRS.root,{recursive:true});
+  fs.mkdirSync(RUNTIME_UPDATE_DIRS.inbox,{recursive:true});
+  fs.mkdirSync(RUNTIME_UPDATE_DIRS.staging,{recursive:true});
+  fs.mkdirSync(RUNTIME_UPDATE_DIRS.backups,{recursive:true});
 }
 function validSecretFile(file){try{return /^[a-f0-9]{64}$/i.test(String(fs.readFileSync(file,'utf8')||'').trim());}catch(e){return false;}}
 function ensureRuntimeSecret(target,legacy,errorCode,compatibilityLink){
