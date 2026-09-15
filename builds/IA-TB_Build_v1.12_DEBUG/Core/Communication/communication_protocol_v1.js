@@ -6,12 +6,11 @@
    - No arbitrary code, path, URL or shell command can be carried as an action
    Node.js 16 compatible, zero npm dependencies.
 */
-var fs=require('fs'),path=require('path'),crypto=require('crypto');
+var fs=require('fs'),crypto=require('crypto'),PATHS=require('../Shared/paths');
 var PROTOCOL='CP/1',MAX_CLOCK_SKEW_MS=30000,MAX_REQUEST_ID=96;
 
-function ensureDir(p){if(!fs.existsSync(p))fs.mkdirSync(p,{recursive:true});}
-function secretPath(root){return path.join(root,'Parametres','CommunicationProtocol.dat');}
-function ensureSecret(root){var p=secretPath(root),v='';try{v=String(fs.readFileSync(p,'utf8')||'').trim();}catch(e){}if(/^[a-f0-9]{64}$/i.test(v))return v;ensureDir(path.dirname(p));v=crypto.randomBytes(32).toString('hex');try{fs.writeFileSync(p,v,{encoding:'utf8',mode:384,flag:'wx'});}catch(e){try{var x=String(fs.readFileSync(p,'utf8')||'').trim();if(/^[a-f0-9]{64}$/i.test(x))return x;}catch(ignore){}throw new Error('CP_SECRET_UNAVAILABLE');}try{fs.chmodSync(p,384);}catch(ignore2){}return v;}
+function secretPath(root){return PATHS.RuntimeSecrets.communicationProtocolKey;}
+function ensureSecret(root){var p=PATHS.ensureCommunicationProtocolRuntimeKey(),v='';try{v=String(fs.readFileSync(p,'utf8')||'').trim();}catch(e){}if(/^[a-f0-9]{64}$/i.test(v))return v;throw new Error('CP_SECRET_UNAVAILABLE');}
 function timingEqual(a,b){a=String(a||'');b=String(b||'');if(!a||a.length!==b.length)return false;try{return crypto.timingSafeEqual(Buffer.from(a,'utf8'),Buffer.from(b,'utf8'));}catch(e){return false;}}
 function verifyToken(root,token){var s;try{s=ensureSecret(root);}catch(e){return false;}return /^[a-f0-9]{64}$/i.test(String(token||''))&&timingEqual(token,s);}
 function requestId(){return 'cp-'+Date.now().toString(36)+'-'+crypto.randomBytes(8).toString('hex');}
