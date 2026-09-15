@@ -1,7 +1,7 @@
 'use strict';
-/* IA-TB SQLite Settings Store v1.4
-   Uses a dedicated v2 table to avoid collisions with every historical
-   settings schema already present in user_data.db.
+/* IA-TB SQLite Settings Store v1.5
+   Canonical application settings live in the per-user SQLite database.
+   Factory defaults are seeded from Config/Defaults/app_settings.json.
 */
 var fs=require('fs'),path=require('path'),os=require('os'),child=require('child_process');
 function b64(v){return Buffer.from(String(v==null?'':v),'utf8').toString('base64');}
@@ -18,6 +18,7 @@ Store.prototype.listKeys=function(scope){if(!this.ready)return[];try{return this
 Store.prototype.hasMigration=function(id){if(!this.ready)return false;try{return !!this.run('SELECT id FROM iatb_settings_migrations_v2 WHERE id='+q(id)+' LIMIT 1;',true).trim();}catch(e){return false;}};
 Store.prototype.markMigration=function(id,details){if(!this.ready)return;this.run('INSERT OR REPLACE INTO iatb_settings_migrations_v2(id,applied_at,details_b64) VALUES('+q(id)+','+q(new Date().toISOString())+','+q(b64(JSON.stringify(details||{})))+');');};
 Store.prototype.seedCanonicalAppDefaults=function(){if(!this.ready||this.get('app_profile','DefaultAppSettings.dat',null))return false;var fp=path.join(this.root,'Config','Defaults','app_settings.json');try{var obj=JSON.parse(fs.readFileSync(fp,'utf8'));this.set('app_profile','DefaultAppSettings.dat',obj);if(!this.get('app_settings','active_file',null))this.set('app_settings','active_file','DefaultAppSettings.dat');return true;}catch(e){this.lastError='APP_DEFAULTS_UNAVAILABLE: '+String(e.message||e);return false;}};
-Store.prototype.importLegacyAppSettings=function(paramDir){var id='legacy-appsettings-dat-v2',out={imported:[],active:null,backups:[],seededDefault:false};if(!this.ready)return out;if(!this.hasMigration(id)){var files=[];try{files=fs.readdirSync(paramDir).filter(function(n){return /AppSettings\.dat$/i.test(n)&&n!=='ActiveAppSettings.dat';});}catch(e){}for(var i=0;i<files.length;i++){var n=files[i],fp=path.join(paramDir,n);try{var obj=JSON.parse(fs.readFileSync(fp,'utf8'));this.set('app_profile',n,obj);out.imported.push(n);var bak=fp+'.migrated.bak';if(!fs.existsSync(bak)){fs.copyFileSync(fp,bak);out.backups.push(path.basename(bak));}}catch(e){}}try{var a=JSON.parse(fs.readFileSync(path.join(paramDir,'ActiveAppSettings.dat'),'utf8'));if(a&&a.activeFile){this.set('app_settings','active_file',String(a.activeFile));out.active=String(a.activeFile);}}catch(e){}this.markMigration(id,out);}out.seededDefault=this.seedCanonicalAppDefaults();return out;};
+/* Compatibility API retained for Core/Server during v1.12 cleanup. Legacy Parametres files are no longer read. */
+Store.prototype.importLegacyAppSettings=function(){return{imported:[],active:null,backups:[],seededDefault:this.seedCanonicalAppDefaults(),legacyRetired:true};};
 Store.prototype.status=function(){return{ready:this.ready,dbPath:this.dbPath,username:this.username,backend:'sqlite3-cli',schema:'iatb-settings-v2',lastError:this.lastError};};
 module.exports=Store;
