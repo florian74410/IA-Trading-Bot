@@ -1,14 +1,12 @@
 'use strict';
 /* Dynamic Indicator Engine settings. Registry is the source of truth.
-   Mutable settings live in the per-user SQLite Settings Store.
-   Parametres/IndicatorEngine.dat is imported once for compatibility. */
-var fs=require('fs'),path=require('path'),Store=require('../../Core/Settings/sqlite_settings_store');
-var REFRESH_PRESETS=[1000,5000,15000,30000,60000],SCOPE='indicator_engine',KEY='settings',MIGRATION='legacy-indicator-engine-dat-v1';
-function Settings(root,registry){this.root=root;this.registry=registry;this.appRoot=path.resolve(root,'..');this.legacyFile=path.join(this.appRoot,'Parametres','IndicatorEngine.dat');this.store=new Store(this.appRoot);this.state=this._load();}
+   Mutable settings live exclusively in the per-user SQLite Settings Store. */
+var path=require('path'),Store=require('../../Core/Settings/sqlite_settings_store');
+var REFRESH_PRESETS=[1000,5000,15000,30000,60000],SCOPE='indicator_engine',KEY='settings';
+function Settings(root,registry){this.root=root;this.registry=registry;this.appRoot=path.resolve(root,'..');this.store=new Store(this.appRoot);this.state=this._load();}
 Settings.prototype._defaultEnabled=function(meta){return meta&&meta.operation!=='liquidity_heatmap';};
 Settings.prototype._normalize=function(raw){raw=raw&&typeof raw==='object'?raw:{};var items=this.registry.list(),old=raw.enabled&&typeof raw.enabled==='object'?raw.enabled:{},enabled={},self=this;items.forEach(function(m){enabled[m.id]=Object.prototype.hasOwnProperty.call(old,m.id)?old[m.id]!==false:self._defaultEnabled(m);});var refresh=+raw.refreshMs;if(REFRESH_PRESETS.indexOf(refresh)<0)refresh=15000;return{schema:'iatb.indicator.settings/1.0',refreshMs:refresh,enabled:enabled,updatedAt:raw.updatedAt||new Date().toISOString()};};
-Settings.prototype._legacy=function(){var raw=null;if(!this.store.ready||this.store.hasMigration(MIGRATION))return null;try{raw=JSON.parse(fs.readFileSync(this.legacyFile,'utf8'));}catch(e){}if(raw&&typeof raw==='object'){var n=this._normalize(raw);this.store.set(SCOPE,KEY,n);this.store.markMigration(MIGRATION,{source:'Parametres/IndicatorEngine.dat',imported:true});try{fs.unlinkSync(this.legacyFile);}catch(e){}return n;}this.store.markMigration(MIGRATION,{source:'Parametres/IndicatorEngine.dat',imported:false});return null;};
-Settings.prototype._load=function(){var raw=this.store.get(SCOPE,KEY,null);if(raw==null)raw=this._legacy();var n=this._normalize(raw||{});this._save(n);return n;};
+Settings.prototype._load=function(){var raw=this.store.get(SCOPE,KEY,null),n=this._normalize(raw||{});this._save(n);return n;};
 Settings.prototype._save=function(o){if(!this.store.ready)throw new Error('INDICATOR_SETTINGS_STORE_UNAVAILABLE: '+(this.store.lastError||''));this.store.set(SCOPE,KEY,o);};
 Settings.prototype.reconcile=function(){this.state=this._normalize(this.state);this._save(this.state);return this.get();};
 Settings.prototype.get=function(){var self=this;return{schema:this.state.schema,refreshMs:this.state.refreshMs,refreshPresets:REFRESH_PRESETS.slice(),indicators:this.registry.list().map(function(m){return{id:m.id,name:m.name,version:m.version,category:m.category||'other',kind:m.kind,operation:m.operation,available:m.operation!=='liquidity_heatmap',enabled:self.state.enabled[m.id]!==false,chartAvailable:m.chartAvailable!==false,outputs:m.outputs||{},display:m.display||{},reason:m.operation==='liquidity_heatmap'?'EXTERNAL_ENGINE_REQUIRED':null};}),updatedAt:this.state.updatedAt};};
