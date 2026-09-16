@@ -43,9 +43,9 @@ Indicators/
   (réservé au futur Indicator Engine)
 
 Annexes/
-Parametres/
 Updates/
-Runtime/
+.runtime/
+NodeRuntime/
 .node/
   (inchangés)
 

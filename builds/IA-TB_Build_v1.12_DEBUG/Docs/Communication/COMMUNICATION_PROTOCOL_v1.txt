@@ -41,7 +41,7 @@ Les events sont authentifies, whitelistes, verifies, audites et conserves dans u
 Securite locale v1
 ------------------
 - toutes les interfaces internes sont liees a 127.0.0.1 ;
-- secret machine-to-machine aleatoire 256 bits dans Parametres/CommunicationProtocol.dat (0600) ;
+- secret machine-to-machine aleatoire 256 bits dans .runtime/state/security/communication_protocol_key.dat (0600) ;
 - action whitelist stricte ;
 - validation des arguments par action ;
 - request_id/event_id et protection anti-replay ;

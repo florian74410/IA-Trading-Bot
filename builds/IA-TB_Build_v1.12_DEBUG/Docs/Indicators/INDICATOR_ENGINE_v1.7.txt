@@ -60,7 +60,7 @@ Settings > Engines & Communication :
 - activation/desactivation de chaque indicateur ;
 - frequence minimum de recalcul (cache).
 La liste est generee dynamiquement depuis le registre de l'Indicator Engine. Ajouter ou supprimer un module d'indicateur met automatiquement l'interface a jour.
-Les reglages sont conserves dans Parametres/IndicatorEngine.dat, fichier protege par l'UpdateManager.
+Les reglages sont conserves dans la base SQLite utilisateur persistante (scope indicator_engine, cle settings), hors du runtime et des mises a jour Core.
 
 Indicateurs disponibles au moment de la v1.7
 ---------------------------------------------

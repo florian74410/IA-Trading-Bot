@@ -27,7 +27,7 @@ La base, le runtime SQLite local et les logs FE sont protégés des futurs
 payloads UpdateManager : Fundamental/Data/**, Fundamental/node_modules/**,
 Fundamental/fundamental.log et Fundamental/sqlite_install.log.
 Les données utilisateur historiques restent également protégées
-(config_v1.0.dat, secrets, user, logs, Parametres/** et Annexes/**).
+(config_v1.0.dat, secrets, user, logs et Annexes/**).
 
 SOURCE REGISTRY
 ---------------

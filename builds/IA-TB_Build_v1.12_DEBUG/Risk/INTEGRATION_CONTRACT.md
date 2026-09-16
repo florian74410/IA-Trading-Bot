@@ -48,7 +48,7 @@ Il devra être remplacé si le futur Portfolio expose un autre nom de capability
 ## Sécurité / CP/1
 
 Le service réutilise :
-- `CommunicationProtocol.dat`
+- secret CP/1 runtime : `.runtime/state/security/communication_protocol_key.dat`
 - `CP.makeRequest`
 - `CP.validateRequest`
 - `CP.makeResponse`
