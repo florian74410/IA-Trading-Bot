@@ -9,6 +9,6 @@ assert(fs.existsSync(navCss),'shared navigation CSS missing');
 var js=fs.readFileSync(navJs,'utf8');
 ['/ia-trading','/chart-viewer','/portfolio','/fundamental','/admin','#settings','#strategies'].forEach(function(x){assert(js.indexOf(x)>=0,'navigation target missing: '+x);});
 pages.forEach(function(name){var html=fs.readFileSync(path.join(ROOT,'Frontend/Pages',name),'utf8');assert(html.indexOf('/assets/navigation_v1.6.2.css')>=0,name+' missing shared CSS');assert(html.indexOf('/assets/shared_navigation_v1.8.8.js')>=0,name+' missing shared JS');});
-var server=fs.readFileSync(path.join(ROOT,'Core/Server/server_v1.0.js'),'utf8');
+var server=fs.readFileSync(path.join(ROOT,'Core/Server/server.js'),'utf8');
 assert(server.indexOf("/assets/shared_navigation_v1.8.8.js")>=0,'server does not expose shared navigation JS');
 console.log('PASS shared navigation v1.8.8: '+pages.length+' pages unified');
