@@ -24,7 +24,6 @@ var RUNTIME_SECURITY_DIR=path.join(APP_RUNTIME_DIRS.state,'security');
 var RUNTIME_SECRET_FILES={internalServiceKey:path.join(RUNTIME_SECURITY_DIR,'internal_service_key.dat'),communicationProtocolKey:path.join(RUNTIME_SECURITY_DIR,'communication_protocol_key.dat')};
 var DEFAULT_CONFIG={appSettings:path.join(ROOT,'Config','Defaults','app_settings.json')};
 
-var LEGACY_COMMUNICATION_PROTOCOL_KEY=path.join(ROOT,'Parametres','CommunicationProtocol.dat');
 var PERSISTENT_ROOT=process.env.IATB_DATA_ROOT||path.join(os.homedir(),'IA-TB-UserData-Server');
 var SHARED_DATA=path.join(PERSISTENT_ROOT,'Shared Data'),FUNDAMENTAL_DATA=path.join(SHARED_DATA,'Fundamental');
 var PERSISTENT_DATA={root:PERSISTENT_ROOT,shared:SHARED_DATA,fundamental:FUNDAMENTAL_DATA,fundamentalDb:path.join(FUNDAMENTAL_DATA,'fundamental.db')};
@@ -54,7 +53,7 @@ function ensureRuntimeSecret(target,legacy,errorCode,compatibilityLink){
   return target;
 }
 function ensureInternalServiceRuntimeKey(){return ensureRuntimeSecret(RUNTIME_SECRET_FILES.internalServiceKey,null,'INTERNAL_SERVICE_KEY_UNAVAILABLE',false);}
-function ensureCommunicationProtocolRuntimeKey(){return ensureRuntimeSecret(RUNTIME_SECRET_FILES.communicationProtocolKey,LEGACY_COMMUNICATION_PROTOCOL_KEY,'CP_SECRET_UNAVAILABLE',false);}
+function ensureCommunicationProtocolRuntimeKey(){return ensureRuntimeSecret(RUNTIME_SECRET_FILES.communicationProtocolKey,null,'CP_SECRET_UNAVAILABLE',false);}
 ensureAppRuntimeDirs();ensureUpdateRuntimeDirs();ensureInternalServiceRuntimeKey();ensureCommunicationProtocolRuntimeKey();
 module.exports={
   ROOT:ROOT,NodeRuntime:NODE_RUNTIME,AppRuntime:APP_RUNTIME_DIRS,RuntimeLogs:RUNTIME_LOG_FILES,RuntimeState:RUNTIME_STATE_FILES,RuntimeLauncher:RUNTIME_LAUNCHER_FILES,RuntimeUpdates:RUNTIME_UPDATE_DIRS,RuntimeSecrets:RUNTIME_SECRET_FILES,Defaults:DEFAULT_CONFIG,PersistentData:PERSISTENT_DATA,ensureAppRuntimeDirs:ensureAppRuntimeDirs,ensureUpdateRuntimeDirs:ensureUpdateRuntimeDirs,ensureInternalServiceRuntimeKey:ensureInternalServiceRuntimeKey,ensureCommunicationProtocolRuntimeKey:ensureCommunicationProtocolRuntimeKey,
