@@ -17,10 +17,6 @@ logs.dat
 Fundamental/Data/*
 !Fundamental/Data/.gitkeep
 
-# Generated launcher/update state
-Updates/launcher_state.dat
-Updates/pending_activation.dat
-
 # OS/editor noise
 .DS_Store
 
