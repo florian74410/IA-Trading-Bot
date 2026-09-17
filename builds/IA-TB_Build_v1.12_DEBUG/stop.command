@@ -1,6 +1,68 @@
 #!/bin/bash
 cd "$(dirname "$0")" || exit 1
 
+# IA-TB Shutdown Console
+if [ -t 1 ]; then
+  C_RESET='\033[0m'
+  C_GREEN='\033[1;32m'
+  C_CYAN='\033[1;36m'
+  C_YELLOW='\033[1;33m'
+  C_RED='\033[1;31m'
+  C_GRAY='\033[0;90m'
+  C_BOLD='\033[1m'
+else
+  C_RESET=''
+  C_GREEN=''
+  C_CYAN=''
+  C_YELLOW=''
+  C_RED=''
+  C_GRAY=''
+  C_BOLD=''
+fi
+
+UI_DELAY="0.20"
+status_ok(){
+  printf "  ${C_GREEN}[ OK ]${C_RESET} %-34s %s\n" "$1" "$2"
+}
+
+status_wait(){
+  printf "  ${C_CYAN}[....]${C_RESET} %-34s %s\n" "$1" "$2"
+  sleep "$UI_DELAY"
+}
+
+status_warn(){
+  printf "  ${C_YELLOW}[WARN]${C_RESET} %-34s %s\n" "$1" "$2"
+}
+
+status_fail(){
+  printf "  ${C_RED}[FAIL]${C_RESET} %-34s %s\n" "$1" "$2"
+}
+
+status_skip(){
+  printf "  ${C_GRAY}[SKIP]${C_RESET} %-34s %s\n" "$1" "$2"
+}
+
+section(){
+  echo
+  echo "────────────────────────────────────────────────────────────────"
+  printf "  ${C_BOLD}%s${C_RESET}\n" "$1"
+  echo "────────────────────────────────────────────────────────────────"
+  echo
+}
+
+shutdown_banner(){
+  echo
+  echo "╔══════════════════════════════════════════════════════════════╗"
+  echo "║                                                              ║"
+  echo "║                     IA TRADING BOT                           ║"
+  echo "║                      v1.12 DEBUG                             ║"
+  echo "║                                                              ║"
+  echo "║                  SYSTEM SHUTDOWN CONSOLE                     ║"
+  echo "║                                                              ║"
+  echo "╚══════════════════════════════════════════════════════════════╝"
+  echo
+}
+
 http_get(){ curl -fsS --connect-timeout 1 --max-time 2 "$1" 2>/dev/null || true; }
 json_pid(){ echo "$1" | sed -n 's/.*"pid"[[:space:]]*:[[:space:]]*\([0-9][0-9]*\).*/\1/p' | head -1; }
 port_busy(){
@@ -30,7 +92,7 @@ stop_known_on_port(){
   pid=""; label=""
   if echo "$ui" | grep -q 'IA-TB UI Service'; then pid="$(json_pid "$ui")"; label="UI Service"
   elif echo "$r" | grep -q '"router"[[:space:]]*:[[:space:]]*true'; then pid="$(json_pid "$r")"; label="Router"
-  elif echo "$a" | grep -q 'Crypto Chart Viewer IA Trader'; then pid="$(json_pid "$a")"; label="TradingBot"
+  elif echo "$a" | grep -q 'Crypto Chart Viewer IA Trader'; then pid="$(json_pid "$a")"; label="Core Supervisor"
   elif echo "$k" | grep -q 'Kraken Add-On'; then pid="$(json_pid "$k")"; label="Kraken Add-On"
   elif echo "$k" | grep -q 'IA-TB Indicator Engine'; then pid="$(json_pid "$k")"; label="Indicator Engine"
   elif echo "$k" | grep -q 'IA-TB Market Data'; then pid="$(json_pid "$k")"; label="Market Data"
@@ -44,10 +106,11 @@ stop_known_on_port(){
   fi
 
   if [ -n "$pid" ]; then
-    echo "Arret $label sur port $port (PID $pid)"
+    printf "         ${C_GRAY}↳ PID %s · port %s${C_RESET}\n" "$pid" "$port"
     kill "$pid" >/dev/null 2>&1 || true
     if ! wait_port_free "$port"; then
-      echo "$label ne s'est pas arrete proprement -> arret force PID $pid"
+      status_warn "$label" "graceful stop timeout"
+      printf "         ${C_GRAY}↳ PID %s · forcing shutdown${C_RESET}\n" "$pid"
       kill -9 "$pid" >/dev/null 2>&1 || true
       wait_port_free "$port" || true
     fi
@@ -58,7 +121,8 @@ stop_known_on_port(){
     pids="$(lsof -tiTCP:"$port" -sTCP:LISTEN 2>/dev/null | tr '\n' ' ')"
     for x in $pids; do
       [ -n "$x" ] || continue
-      echo "Nettoyage listener residuel $label sur port $port (PID $x)"
+      status_warn "$label" "residual listener"
+      printf "         ${C_GRAY}↳ PID %s · port %s · cleanup${C_RESET}\n" "$x" "$port"
       kill "$x" >/dev/null 2>&1 || true
     done
     wait_port_free "$port" || {
@@ -68,22 +132,120 @@ stop_known_on_port(){
   fi
 
   if port_busy "$port"; then
-    if [ -n "$label" ]; then echo "ATTENTION: le port $port ($label) est encore utilise apres tentative d'arret."
-    else echo "ATTENTION: le port $port est utilise par un processus non identifie; aucun processus externe n'a ete tue."; fi
+    if [ -n "$label" ]; then
+      status_fail "$label" ":$port still occupied"
+    else
+      status_warn "Unknown process" ":$port still occupied"
+      echo "         ↳ external process was not terminated"
+    fi
     return 1
   fi
   return 0
 }
 
-failed=0
-for port in 8000 8001 8011 8012 8013 8014 8015 8016 8017 8018 8019 8020 8021 3000; do
-  stop_known_on_port "$port" || failed=1
-done
+shutdown_banner
 
-if [ "$failed" -eq 0 ]; then
-  echo "Arret IA-TB termine. Tous les ports connus sont libres."
+section "[ 1/3 ]  SERVICE SHUTDOWN"
+
+STOP_FAILURE=0
+
+stop_service(){
+  label="$1"
+  port="$2"
+
+  if ! port_busy "$port"; then
+    status_skip "$label" "already offline"
+    return 0
+  fi
+
+  status_wait "$label" "stopping"
+
+  # Réutilise la fonction sécurisée du stop.command existant :
+  # elle n'arrête qu'une instance reconnue comme appartenant à IA-TB.
+  stop_known_on_port "$port"
+  rc=$?
+
+  if [ "$rc" -eq 0 ] && ! port_busy "$port"; then
+    status_ok "$label" "stopped"
+    return 0
+  fi
+
+  if port_busy "$port"; then
+    status_fail "$label" ":$port still occupied"
+    STOP_FAILURE=1
+    return 1
+  fi
+
+  status_ok "$label" "stopped"
+  return 0
+}
+
+# Ordre inverse des couches de démarrage :
+# consommateurs / interfaces avant leurs dépendances.
+stop_service "UI Service"          "8000" || true
+stop_service "Router"              "8021" || true
+stop_service "Core Supervisor"     "3000" || true
+stop_service "Core"                "8001" || true
+stop_service "Risk Engine"         "8019" || true
+stop_service "Strategy Engine"     "8018" || true
+stop_service "Firewall"            "8017" || true
+stop_service "Trading Engine"      "8016" || true
+stop_service "Portfolio Engine"    "8020" || true
+stop_service "Fundamental Engine"  "8015" || true
+stop_service "Liquidity Engine"    "8014" || true
+stop_service "Market Data"         "8013" || true
+stop_service "Indicator Engine"    "8012" || true
+stop_service "Kraken Adapter"      "8011" || true
+
+
+section "[ 2/3 ]  PORT VERIFICATION"
+
+verify_port(){
+  port="$1"
+  label="$2"
+
+  if port_busy "$port"; then
+    status_fail "$label" ":$port OCCUPIED"
+    STOP_FAILURE=1
+  else
+    status_ok "$label" ":$port FREE"
+  fi
+}
+
+verify_port "8000" "UI Service"
+verify_port "8001" "Core"
+verify_port "8011" "Kraken Adapter"
+verify_port "8012" "Indicator Engine"
+verify_port "8013" "Market Data"
+verify_port "8014" "Liquidity Engine"
+verify_port "8015" "Fundamental Engine"
+verify_port "8016" "Trading Engine"
+verify_port "8017" "Firewall"
+verify_port "8018" "Strategy Engine"
+verify_port "8019" "Risk Engine"
+verify_port "8020" "Portfolio Engine"
+verify_port "8021" "Router"
+verify_port "3000" "Core Supervisor"
+
+
+section "[ 3/3 ]  SYSTEM STATUS"
+
+if [ "$STOP_FAILURE" -eq 0 ]; then
+  printf "              ${C_GREEN}${C_BOLD}13 / 13 SERVICES OFFLINE${C_RESET}\n"
+  echo
+  printf "                 ${C_GREEN}${C_BOLD}SUPERVISOR OFFLINE${C_RESET}\n"
+  echo
+  printf "                    ${C_GREEN}${C_BOLD}IA-TB STOPPED${C_RESET}\n"
+  echo
+  echo "────────────────────────────────────────────────────────────────"
+  echo
   exit 0
 fi
 
-echo "Arret IA-TB termine avec avertissement: au moins un port non-IA-TB reste occupe."
+printf "              ${C_RED}${C_BOLD}SHUTDOWN INCOMPLETE${C_RESET}\n"
+echo
+status_fail "IA-TB" "one or more ports remain occupied"
+echo
+echo "────────────────────────────────────────────────────────────────"
+echo
 exit 1

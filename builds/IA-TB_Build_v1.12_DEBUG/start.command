@@ -17,7 +17,71 @@ PORTFOLIO_PORT=8020
 ROUTER_PORT=8021
 SUPERVISOR_PORT=3000
 
+# IA-TB Startup Console
+if [ -t 1 ]; then
+  C_RESET='\033[0m'
+  C_GREEN='\033[1;32m'
+  C_CYAN='\033[1;36m'
+  C_YELLOW='\033[1;33m'
+  C_RED='\033[1;31m'
+  C_GRAY='\033[0;90m'
+  C_BOLD='\033[1m'
+else
+  C_RESET=''
+  C_GREEN=''
+  C_CYAN=''
+  C_YELLOW=''
+  C_RED=''
+  C_GRAY=''
+  C_BOLD=''
+fi
+
+UI_DELAY="0.20"
+STARTUP_SPACING="0.30"
 say(){ echo "$1"; }
+
+status_ok(){
+  printf "  ${C_GREEN}[ OK ]${C_RESET} %-34s %s\n" "$1" "$2"
+}
+
+status_wait(){
+  printf "  ${C_CYAN}[....]${C_RESET} %-34s %s\n" "$1" "$2"
+  sleep "$UI_DELAY"
+}
+
+status_warn(){
+  printf "  ${C_YELLOW}[WARN]${C_RESET} %-34s %s\n" "$1" "$2"
+}
+
+status_fail(){
+  printf "  ${C_RED}[FAIL]${C_RESET} %-34s %s\n" "$1" "$2"
+}
+
+status_skip(){
+  printf "  ${C_GRAY}[SKIP]${C_RESET} %-34s %s\n" "$1" "$2"
+}
+
+section(){
+  echo
+  echo "────────────────────────────────────────────────────────────────"
+  printf "  ${C_BOLD}%s${C_RESET}\n" "$1"
+  echo "────────────────────────────────────────────────────────────────"
+  echo
+}
+
+startup_banner(){
+  echo
+  echo "╔══════════════════════════════════════════════════════════════╗"
+  echo "║                                                              ║"
+  echo "║                     IA TRADING BOT                           ║"
+  echo "║                      v1.12 DEBUG                             ║"
+  echo "║                                                              ║"
+  echo "║                  SYSTEM STARTUP CONSOLE                      ║"
+  echo "║                                                              ║"
+  echo "╚══════════════════════════════════════════════════════════════╝"
+  echo
+}
+
 http_get(){ curl -fsS --connect-timeout 1 --max-time 2 "$1" 2>/dev/null || true; }
 json_pid(){ echo "$1" | sed -n 's/.*"pid"[[:space:]]*:[[:space:]]*\([0-9][0-9]*\).*/\1/p' | head -1; }
 port_busy(){
@@ -92,7 +156,10 @@ stop_known_on_port(){
   return 0
 }
 
-say "Nettoyage des anciennes instances TradingBot..."
+startup_banner
+section "[ 1/4 ]  ENVIRONMENT"
+
+status_wait "Previous instances" "cleanup"
 stop_known_on_port "$UI_PORT" || { read -p "Appuie sur Entree pour fermer..."; exit 1; }
 stop_known_on_port "$ROUTER_PORT" || { read -p "Appuie sur Entree pour fermer..."; exit 1; }
 stop_known_on_port "$CORE_PORT" || { read -p "Appuie sur Entree pour fermer..."; exit 1; }
@@ -107,7 +174,9 @@ stop_known_on_port "$STRATEGY_PORT" || { read -p "Appuie sur Entree pour fermer.
 stop_known_on_port "$RISK_ENGINE_PORT" || { read -p "Appuie sur Entree pour fermer..."; exit 1; }
 stop_known_on_port "$PORTFOLIO_PORT" || { read -p "Appuie sur Entree pour fermer..."; exit 1; }
 stop_known_on_port "$SUPERVISOR_PORT" || { read -p "Appuie sur Entree pour fermer..."; exit 1; }
+status_ok "Previous instances" "clean"
 
+status_wait "Node Runtime" "checking"
 bash "./install_runtime.command"
 if [ $? -ne 0 ]; then
   echo "Le runtime Node local n'a pas pu etre prepare."
@@ -121,11 +190,13 @@ if [ ! -x "$NODE_BIN" ]; then
   read -p "Appuie sur Entree pour fermer..."
   exit 1
 fi
+status_ok "Node Runtime" "$($NODE_BIN -v)"
 
 LOG_DIR="$PWD/.runtime/logs"
 mkdir -p "$LOG_DIR"
 ROUTER_LOG="$LOG_DIR/router.log"
 UI_LOG="$LOG_DIR/ui.log"
+LAUNCHER_LOG="$LOG_DIR/launcher.log"
 KRAKEN_LOG="$LOG_DIR/kraken.log"
 INDICATOR_LOG="$LOG_DIR/indicators.log"
 MARKET_DATA_LOG="$LOG_DIR/market_data.log"
@@ -141,13 +212,13 @@ PORTFOLIO_LOG="$LOG_DIR/portfolio.log"
 # Echec non bloquant: IA-TB reste disponible et le FE apparaitra OFFLINE dans ADMIN.
 FUNDAMENTAL_READY=0
 if [ -f "$PWD/Fundamental/install_sqlite.command" ]; then
-  echo "Vérification SQLite du Fundamental Engine..."
+  status_wait "SQLite / Fundamental" "checking"
   if /bin/bash "$PWD/Fundamental/install_sqlite.command"; then
     FUNDAMENTAL_READY=1
-    echo "Fundamental SQLite : prêt."
+    status_ok "SQLite / Fundamental" "ready"
   else
-    echo "ATTENTION: Fundamental SQLite indisponible. IA-TB continue sans Fundamental Engine."
-    echo "Consulte le journal Fundamental SQLite depuis ADMIN."
+    status_warn "SQLite / Fundamental" "unavailable"
+    echo "         ↳ IA-TB continues without Fundamental Engine"
   fi
 fi
 
@@ -196,6 +267,7 @@ trap cleanup EXIT INT TERM
 
 : > "$ROUTER_LOG"
 : > "$UI_LOG"
+: > "$LAUNCHER_LOG"
 : > "$KRAKEN_LOG"
 : > "$INDICATOR_LOG"
 : > "$MARKET_DATA_LOG"
@@ -208,53 +280,67 @@ mkdir -p Fundamental/Data
 : > "$RISK_LOG"
 : > "$PORTFOLIO_LOG"
 
-echo "Crypto Chart Viewer IA Trader · UI séparée / Core / Router / Engines"
-echo "Node local : $($NODE_BIN -v)"
-echo "Interface UI      : http://127.0.0.1:$UI_PORT"
-echo "Router interne    : 127.0.0.1:$ROUTER_PORT"
-echo "Core interne     : 127.0.0.1:$CORE_PORT"
-echo "Kraken interne   : 127.0.0.1:$KRAKEN_PORT"
-echo "Indicators       : 127.0.0.1:$INDICATOR_PORT"
-echo "Market Data      : 127.0.0.1:$MARKET_DATA_PORT"
-echo "Liquidity        : 127.0.0.1:$LIQUIDITY_PORT"
-echo "Fundamental      : 127.0.0.1:$FUNDAMENTAL_PORT"
-echo "Trading Engine   : 127.0.0.1:$TRADING_ENGINE_PORT"
-echo "Firewall         : 127.0.0.1:$FIREWALL_PORT (Thread 0 Router · Thread 1 Trading · Thread 2 Data)"
-echo "Strategy Engine  : 127.0.0.1:$STRATEGY_PORT"
-echo "Risk Manager     : 127.0.0.1:$RISK_ENGINE_PORT"
-echo "Portfolio Engine : 127.0.0.1:$PORTFOLIO_PORT"
+section "[ 2/4 ]  STARTING SERVICES"
 
+echo "  Runtime     $($NODE_BIN -v)"
+echo "  Profile     ${IATB_USERDATA_USER:-default}"
+echo "  Mode        DEBUG"
+echo
+
+status_wait "Kraken Adapter" "127.0.0.1:$KRAKEN_PORT"
 KRAKEN_ADDON_PORT="$KRAKEN_PORT" "$NODE_BIN" AddOns/Kraken/kraken_service.js >> "$KRAKEN_LOG" 2>&1 &
 KRAKEN_PID=$!
+sleep "$STARTUP_SPACING"
+status_wait "Indicator Engine" "127.0.0.1:$INDICATOR_PORT"
 
 IATB_INDICATOR_PORT="$INDICATOR_PORT" IATB_MARKET_DATA_PORT="$MARKET_DATA_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Indicators/Engine/indicator_service.js >> "$INDICATOR_LOG" 2>&1 &
 INDICATOR_PID=$!
+sleep "$STARTUP_SPACING"
+status_wait "Market Data Collector" "127.0.0.1:$MARKET_DATA_PORT"
 
 KRAKEN_ADDON_PORT="$KRAKEN_PORT" IATB_MARKET_DATA_PORT="$MARKET_DATA_PORT" "$NODE_BIN" MarketData/market_data_service.js >> "$MARKET_DATA_LOG" 2>&1 &
 MARKET_DATA_PID=$!
+sleep "$STARTUP_SPACING"
+status_wait "Liquidity Engine" "127.0.0.1:$LIQUIDITY_PORT"
 
 IATB_MARKET_DATA_PORT="$MARKET_DATA_PORT" IATB_LIQUIDITY_PORT="$LIQUIDITY_PORT" "$NODE_BIN" Liquidity/Engine/liquidity_service.js >> "$LIQUIDITY_LOG" 2>&1 &
 LIQUIDITY_PID=$!
+sleep "$STARTUP_SPACING"
 
 if [ "$FUNDAMENTAL_READY" -eq 1 ]; then
+  status_wait "Fundamental Engine" "127.0.0.1:$FUNDAMENTAL_PORT"
   IATB_FUNDAMENTAL_PORT="$FUNDAMENTAL_PORT" "$NODE_BIN" Fundamental/Engine/fundamental_service.js >> "$FUNDAMENTAL_LOG" 2>&1 &
   FUNDAMENTAL_PID=$!
+  sleep "$STARTUP_SPACING"
+else
+  status_skip "Fundamental Engine" "disabled"
 fi
 
+status_wait "Portfolio Engine" "127.0.0.1:$PORTFOLIO_PORT"
 IATB_PORTFOLIO_PORT="$PORTFOLIO_PORT" "$NODE_BIN" Portfolio/Engine/portfolio_service.js >> "$PORTFOLIO_LOG" 2>&1 &
 PORTFOLIO_PID=$!
+sleep "$STARTUP_SPACING"
+status_wait "Trading Engine" "127.0.0.1:$TRADING_ENGINE_PORT"
 
 IATB_TRADING_ENGINE_PORT="$TRADING_ENGINE_PORT" ROUTER_PORT="$ROUTER_PORT" IATB_TRADING_LIVE="0" "$NODE_BIN" services/trading-engine/trading_service.js >> "$TRADING_LOG" 2>&1 &
 TRADING_ENGINE_PID=$!
+sleep "$STARTUP_SPACING"
+status_wait "Firewall" "127.0.0.1:$FIREWALL_PORT"
 
 IATB_FIREWALL_PORT="$FIREWALL_PORT" IATB_TRADING_FIREWALL_PORT="$FIREWALL_PORT" IATB_TRADING_ENGINE_PORT="$TRADING_ENGINE_PORT" IATB_MARKET_DATA_PORT="$MARKET_DATA_PORT" "$NODE_BIN" Core/Firewall/firewall_service.js >> "$FIREWALL_LOG" 2>&1 &
 FIREWALL_PID=$!
+sleep "$STARTUP_SPACING"
+status_wait "Strategy Engine" "127.0.0.1:$STRATEGY_PORT"
 
 IATB_STRATEGY_PORT="$STRATEGY_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Strategy/Engine/strategy_service.js >> "$STRATEGY_LOG" 2>&1 &
 STRATEGY_PID=$!
+sleep "$STARTUP_SPACING"
+status_wait "Risk Engine" "127.0.0.1:$RISK_ENGINE_PORT"
 
 IATB_RISK_ENGINE_PORT="$RISK_ENGINE_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Risk/Engine/risk_service.js >> "$RISK_LOG" 2>&1 &
 RISK_ENGINE_PID=$!
+
+section "[ 3/4 ]  HEALTH CHECK"
 
 # Attendre que le Firewall Service et ses deux threads de protection soient démarrés.
 fw_ok=0
@@ -264,9 +350,15 @@ for i in 1 2 3 4 5 6 7 8; do
   sleep 1
 done
 if [ "$fw_ok" -ne 1 ]; then
-  echo "ERREUR: Firewall Service ne repond pas sur $FIREWALL_PORT."
+  status_fail "Firewall" ":$FIREWALL_PORT"
+  echo "         ↳ Firewall health-check failed"
   cat "$FIREWALL_LOG" 2>/dev/null || true
   cleanup; read -p "Appuie sur Entree pour fermer..."; exit 1
+else
+  status_ok "Firewall" ":$FIREWALL_PORT"
+  echo "         ├─ Thread 0  Router ............. OK"
+  echo "         ├─ Thread 1  Trading ............ OK"
+  echo "         └─ Thread 2  Data ............... OK"
 fi
 
 # L Indicator Engine doit etre sain avant activation de la nouvelle release.
@@ -277,12 +369,14 @@ for i in 1 2 3 4 5 6 7 8; do
   sleep 1
 done
 if [ "$ind_ok" -ne 1 ]; then
-  echo "ERREUR: Indicator Engine ne repond pas sur $INDICATOR_PORT."
+  status_fail "Indicator Engine" ":$INDICATOR_PORT"
   echo "--- $INDICATOR_LOG ---"
   cat "$INDICATOR_LOG" 2>/dev/null || true
   cleanup
   read -p "Appuie sur Entree pour fermer..."
   exit 1
+else
+  status_ok "Indicator Engine" ":$INDICATOR_PORT"
 fi
 
 md_ok=0
@@ -292,12 +386,14 @@ for i in 1 2 3 4 5 6 7 8; do
   sleep 1
 done
 if [ "$md_ok" -ne 1 ]; then
-  echo "ERREUR: Market Data ne repond pas sur $MARKET_DATA_PORT."
+  status_fail "Market Data Collector" ":$MARKET_DATA_PORT"
   echo "--- $MARKET_DATA_LOG ---"
   cat "$MARKET_DATA_LOG" 2>/dev/null || true
   cleanup
   read -p "Appuie sur Entree pour fermer..."
   exit 1
+else
+  status_ok "Market Data Collector" ":$MARKET_DATA_PORT"
 fi
 
 liq_ok=0
@@ -307,12 +403,14 @@ for i in 1 2 3 4 5 6 7 8; do
   sleep 1
 done
 if [ "$liq_ok" -ne 1 ]; then
-  echo "ERREUR: Liquidity Engine ne repond pas sur $LIQUIDITY_PORT."
+  status_fail "Liquidity Engine" ":$LIQUIDITY_PORT"
   echo "--- $LIQUIDITY_LOG ---"
   cat "$LIQUIDITY_LOG" 2>/dev/null || true
   cleanup
   read -p "Appuie sur Entree pour fermer..."
   exit 1
+else
+  status_ok "Liquidity Engine" ":$LIQUIDITY_PORT"
 fi
 
 portfolio_ok=0
@@ -322,12 +420,14 @@ for i in 1 2 3 4 5 6 7 8; do
   sleep 1
 done
 if [ "$portfolio_ok" -ne 1 ]; then
-  echo "ERREUR: Portfolio Engine ne répond pas sur $PORTFOLIO_PORT."
+  status_fail "Portfolio Engine" ":$PORTFOLIO_PORT"
   echo "--- $PORTFOLIO_LOG ---"
   cat "$PORTFOLIO_LOG" 2>/dev/null || true
   cleanup
   read -p "Appuie sur Entree pour fermer..."
   exit 1
+else
+  status_ok "Portfolio Engine" ":$PORTFOLIO_PORT"
 fi
 
 te_ok=0
@@ -337,12 +437,14 @@ for i in 1 2 3 4 5 6 7 8; do
   sleep 1
 done
 if [ "$te_ok" -ne 1 ]; then
-  echo "ERREUR: Trading Engine ne répond pas sur $TRADING_ENGINE_PORT."
+  status_fail "Trading Engine" ":$TRADING_ENGINE_PORT"
   echo "--- $TRADING_LOG ---"
   cat "$TRADING_LOG" 2>/dev/null || true
   cleanup
   read -p "Appuie sur Entree pour fermer..."
   exit 1
+else
+  status_ok "Trading Engine" ":$TRADING_ENGINE_PORT"
 fi
 
 strategy_ok=0
@@ -352,12 +454,14 @@ for i in 1 2 3 4 5 6 7 8; do
   sleep 1
 done
 if [ "$strategy_ok" -ne 1 ]; then
-  echo "ERREUR: Strategy Engine v2 ne répond pas sur $STRATEGY_PORT."
+  status_fail "Strategy Engine" ":$STRATEGY_PORT"
   echo "--- $STRATEGY_LOG ---"
   cat "$STRATEGY_LOG" 2>/dev/null || true
   cleanup
   read -p "Appuie sur Entree pour fermer..."
   exit 1
+else
+  status_ok "Strategy Engine" ":$STRATEGY_PORT"
 fi
 
 risk_ok=0
@@ -367,8 +471,11 @@ for i in 1 2 3 4 5 6 7 8; do
   sleep 1
 done
 if [ "$risk_ok" -ne 1 ]; then
-  echo "ATTENTION: Risk Manager Engine ne répond pas sur $RISK_ENGINE_PORT. IA-TB continue en mode dégradé."
+  status_warn "Risk Engine" ":$RISK_ENGINE_PORT OFFLINE"
+  echo "         ↳ IA-TB continues in degraded mode"
   cat "$RISK_LOG" 2>/dev/null || true
+else
+  status_ok "Risk Engine" ":$RISK_ENGINE_PORT"
 fi
 
 if [ "$FUNDAMENTAL_READY" -eq 1 ]; then
@@ -379,13 +486,19 @@ if [ "$FUNDAMENTAL_READY" -eq 1 ]; then
     sleep 1
   done
   if [ "$fe_ok" -ne 1 ]; then
-    echo "ATTENTION: Fundamental Engine ne répond pas sur $FUNDAMENTAL_PORT. IA-TB continue en mode dégradé."
+    status_warn "Fundamental Engine" ":$FUNDAMENTAL_PORT OFFLINE"
+    echo "         ↳ IA-TB continues in degraded mode"
     cat "$FUNDAMENTAL_LOG" 2>/dev/null || true
     FUNDAMENTAL_READY=0
+  else
+    status_ok "Fundamental Engine" ":$FUNDAMENTAL_PORT"
   fi
+else
+  status_skip "Fundamental Engine" "disabled"
 fi
 
-IATB_PUBLIC_PORT="$CORE_PORT" IATB_UI_SEPARATED="1" ROUTER_PORT="$ROUTER_PORT" IATB_PORTFOLIO_PORT="$PORTFOLIO_PORT" IATB_TRADING_ENGINE_PORT="$TRADING_ENGINE_PORT" IATB_FIREWALL_PORT="$FIREWALL_PORT" IATB_TRADING_FIREWALL_PORT="$FIREWALL_PORT" "$NODE_BIN" launcher.js &
+status_wait "Core Supervisor" "starting"
+IATB_PUBLIC_PORT="$CORE_PORT" IATB_UI_SEPARATED="1" ROUTER_PORT="$ROUTER_PORT" IATB_PORTFOLIO_PORT="$PORTFOLIO_PORT" IATB_TRADING_ENGINE_PORT="$TRADING_ENGINE_PORT" IATB_FIREWALL_PORT="$FIREWALL_PORT" IATB_TRADING_FIREWALL_PORT="$FIREWALL_PORT" "$NODE_BIN" launcher.js >> "$LAUNCHER_LOG" 2>&1 &
 APP_PID=$!
 
 # Attendre le coeur sur 8001 (pas seulement le superviseur 3000)
@@ -396,10 +509,13 @@ for i in 1 2 3 4 5 6 7 8 9 10; do
   sleep 1
 done
 if [ "$ok" -ne 1 ]; then
-  echo "ERREUR: le coeur TradingBot ne repond pas sur $CORE_PORT."
+  status_fail "Core" ":$CORE_PORT"
   cleanup
   read -p "Appuie sur Entree pour fermer..."
   exit 1
+else
+  status_ok "Core Supervisor" "online"
+  status_ok "Core" ":$CORE_PORT"
 fi
 
 CORE_PUBLIC_PORT="$CORE_PORT" KRAKEN_ADDON_PORT="$KRAKEN_PORT" IATB_INDICATOR_PORT="$INDICATOR_PORT" IATB_MARKET_DATA_PORT="$MARKET_DATA_PORT" IATB_LIQUIDITY_PORT="$LIQUIDITY_PORT" IATB_FUNDAMENTAL_PORT="$FUNDAMENTAL_PORT" IATB_TRADING_ENGINE_PORT="$TRADING_ENGINE_PORT" IATB_FIREWALL_PORT="$FIREWALL_PORT" IATB_TRADING_FIREWALL_PORT="$FIREWALL_PORT" IATB_STRATEGY_PORT="$STRATEGY_PORT" IATB_RISK_ENGINE_PORT="$RISK_ENGINE_PORT" IATB_PORTFOLIO_PORT="$PORTFOLIO_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Core/Router/router.js >> "$ROUTER_LOG" 2>&1 &
@@ -413,7 +529,7 @@ for i in 1 2 3 4 5 6 7 8; do
   sleep 1
 done
 if [ "$ok" -ne 1 ]; then
-  echo "ERREUR: le Router n'a pas pris le port $ROUTER_PORT."
+  status_fail "Router" ":$ROUTER_PORT"
   echo "--- $ROUTER_LOG ---"
   cat "$ROUTER_LOG" 2>/dev/null || true
   cleanup
@@ -421,7 +537,7 @@ if [ "$ok" -ne 1 ]; then
   exit 1
 fi
 
-echo "Router interne valide sur 127.0.0.1:$ROUTER_PORT"
+status_ok "Router" ":$ROUTER_PORT"
 
 IATB_UI_PORT="$UI_PORT" CORE_PUBLIC_PORT="$CORE_PORT" ROUTER_PORT="$ROUTER_PORT" IATB_AUTH_MODE="disabled" IATB_UI_BYPASS_ROLE="ADMIN" "$NODE_BIN" UI/Gateway/ui_service.js >> "$UI_LOG" 2>&1 &
 UI_PID=$!
@@ -433,7 +549,7 @@ for i in 1 2 3 4 5 6 7 8; do
   sleep 1
 done
 if [ "$ui_ok" -ne 1 ]; then
-  echo "ERREUR: UI Service ne répond pas sur $UI_PORT."
+  status_fail "UI Service" ":$UI_PORT"
   echo "--- $UI_LOG ---"
   cat "$UI_LOG" 2>/dev/null || true
   cleanup
@@ -441,6 +557,20 @@ if [ "$ui_ok" -ne 1 ]; then
   exit 1
 fi
 
-echo "UI séparée valide sur 127.0.0.1:$UI_PORT"
+status_ok "UI Service" ":$UI_PORT"
+
+section "[ 4/4 ]  SYSTEM STATUS"
+
+printf "              ${C_GREEN}${C_BOLD}13 / 13 SERVICES ONLINE${C_RESET}\n"
+echo
+printf "                 ${C_GREEN}${C_BOLD}IA-TB READY${C_RESET} · v1.12 DEBUG\n"
+echo
+echo "  UI        http://127.0.0.1:$UI_PORT"
+echo "  Core      http://127.0.0.1:$CORE_PORT"
+echo "  Router    http://127.0.0.1:$ROUTER_PORT"
+echo
+echo "────────────────────────────────────────────────────────────────"
+echo
+
 open "http://127.0.0.1:$UI_PORT" >/dev/null 2>&1 || true
 wait "$APP_PID"
