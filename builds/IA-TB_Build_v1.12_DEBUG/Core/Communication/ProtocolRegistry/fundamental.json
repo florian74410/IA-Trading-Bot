@@ -350,6 +350,66 @@
             "config"
           ]
         }
+      },
+      {
+        "name": "fundamental.discovery.inspect",
+        "arguments": {
+          "allowed": [
+            "candidate",
+            "name",
+            "code",
+            "url",
+            "endpoint",
+            "type",
+            "format",
+            "categories",
+            "language",
+            "authentication",
+            "label",
+            "poll_interval_sec",
+            "provider_config"
+          ]
+        }
+      },
+      {
+        "name": "fundamental.discovery.prepare",
+        "arguments": {
+          "allowed": [
+            "candidate",
+            "name",
+            "code",
+            "url",
+            "endpoint",
+            "type",
+            "format",
+            "categories",
+            "language",
+            "authentication",
+            "label",
+            "poll_interval_sec",
+            "provider_config"
+          ]
+        }
+      },
+      {
+        "name": "fundamental.discovery.test",
+        "arguments": {
+          "allowed": [
+            "candidate",
+            "name",
+            "code",
+            "url",
+            "endpoint",
+            "type",
+            "format",
+            "categories",
+            "language",
+            "authentication",
+            "label",
+            "poll_interval_sec",
+            "provider_config"
+          ]
+        }
       }
     ],
     "dataTypes": [
