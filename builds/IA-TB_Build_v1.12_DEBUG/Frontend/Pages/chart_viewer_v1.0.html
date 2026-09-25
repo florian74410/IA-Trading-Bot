@@ -16,7 +16,7 @@
 </style>
 <link rel="stylesheet" href="/assets/navigation_v1.6.2.css">
 <script defer src="/assets/shared_navigation_v1.8.8.js"></script>
-</head>
+<link rel="stylesheet" href="/assets/companion_v1.0.css"></head>
 <body>
 <div class="topbar">
   <div class="brand">CRYPTO CHART VIEWER IA TRADER · <span id="viewerVersion">v…</span></div>
@@ -124,5 +124,5 @@ $('chatForm').onsubmit=function(e){e.preventDefault();var text=$('chatInput').va
 refreshViewerVersion();api('/api/bootstrap').then(function(b){if(!b.authenticated){location.replace('/');return;}if(b.role==='ADMIN')$('navAdmin').classList.remove('hide');loadPrefs();renderChart();refreshStatus();}).catch(function(){location.replace('/');});
 })();
 </script>
-</body>
+<script src="/assets/companion_v1.0.js"></script></body>
 </html>
