@@ -3,7 +3,7 @@
    Runtime source of truth: Fundamental/Data/fundamental.db
    No direct SQL is exposed to the browser or to the AI. */
 var fs=require('fs'),path=require('path'),crypto=require('crypto'),URL=require('url').URL,Bias=require('./bias_engine');
-var ROOT=path.resolve(__dirname,'..'),DATA=path.join(ROOT,'Data'),DB_PATH=path.join(DATA,'fundamental.db'),SCHEMA=path.join(ROOT,'Database','schema_v1.0.sql'),EVENT_MIGRATION=path.join(ROOT,'Database','migration_event_engine_v1.8.sql'),SYNTHESIS_MIGRATION=path.join(ROOT,'Database','migration_synthesis_v1.12.sql'),MEMORY_MIGRATION=path.join(ROOT,'Database','migration_memory_v3.sql'),SEED=path.join(ROOT,'Database','seed_sources_v1.0.sql'),Database;
+var ROOT=path.resolve(__dirname,'..'),DATA=path.join(ROOT,'Data'),DB_PATH=path.join(DATA,'fundamental.db'),SCHEMA=path.join(ROOT,'Database','schema_v3.sql'),EVENT_MIGRATION=path.join(ROOT,'Database','migration_event_engine_v3.sql'),SYNTHESIS_MIGRATION=path.join(ROOT,'Database','migration_synthesis_v3.sql'),MEMORY_MIGRATION=path.join(ROOT,'Database','migration_memory_v3.sql'),SEED=path.join(ROOT,'Database','seed_sources_v3.sql'),Database;
 try{Database=require(path.join(ROOT,'node_modules','better-sqlite3'));}catch(e){e.message='SQLITE_MODULE_UNAVAILABLE: '+e.message;throw e;}
 function now(){return new Date().toISOString();}
 function ensureDir(){if(!fs.existsSync(DATA))fs.mkdirSync(DATA,{recursive:true});}
@@ -42,7 +42,7 @@ function Storage(){
  this.db.exec(fs.readFileSync(EVENT_MIGRATION,'utf8'));
  this.db.prepare('INSERT OR IGNORE INTO schema_migrations(version,name,applied_at) VALUES(?,?,?)').run(5,'event_engine_scoring_v1.8',now());
  this.db.exec(fs.readFileSync(SYNTHESIS_MIGRATION,'utf8'));
- this.db.prepare('INSERT OR IGNORE INTO schema_migrations(version,name,applied_at) VALUES(?,?,?)').run(6,'fundamental_ai_synthesis_v1.12',now()); this.db.exec(fs.readFileSync(MEMORY_MIGRATION,'utf8')); this.db.prepare('INSERT OR IGNORE INTO schema_migrations(version,name,applied_at) VALUES(?,?,?)').run(7,'fundamental_temporal_memory_v3',now());
+ this.db.prepare('INSERT OR IGNORE INTO schema_migrations(version,name,applied_at) VALUES(?,?,?)').run(6,'fundamental_ai_synthesis_v3',now()); this.db.exec(fs.readFileSync(MEMORY_MIGRATION,'utf8')); this.db.prepare('INSERT OR IGNORE INTO schema_migrations(version,name,applied_at) VALUES(?,?,?)').run(7,'fundamental_temporal_memory_v3',now());
  this.db.prepare('INSERT OR IGNORE INTO settings(key,value,updated_at) VALUES(?,?,?)').run('engine_mode','INFORMATION_ONLY',now());
  this.db.prepare('INSERT OR REPLACE INTO settings(key,value,updated_at) VALUES(?,?,?)').run('schema_version','7',now());this._prepare();
 }
