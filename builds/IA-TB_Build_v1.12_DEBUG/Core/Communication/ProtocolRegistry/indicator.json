@@ -12,6 +12,46 @@
   "table": {
     "commands": [
       {
+        "name": "indicator.language.info",
+        "arguments": {
+          "allowed": []
+        }
+      },
+      {
+        "name": "indicator.language.compile",
+        "arguments": {
+          "allowed": [
+            "source"
+          ],
+          "required": [
+            "source"
+          ]
+        }
+      },
+      {
+        "name": "indicator.language.validate",
+        "arguments": {
+          "allowed": [
+            "source"
+          ],
+          "required": [
+            "source"
+          ]
+        }
+      },
+      {
+        "name": "indicator.language.create",
+        "arguments": {
+          "allowed": [
+            "source",
+            "overwrite"
+          ],
+          "required": [
+            "source"
+          ]
+        }
+      },
+      {
         "name": "indicator.definition.validate",
         "arguments": {
           "allowed": [

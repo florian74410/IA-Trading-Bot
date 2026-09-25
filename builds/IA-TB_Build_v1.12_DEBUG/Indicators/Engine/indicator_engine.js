@@ -1,9 +1,9 @@
 'use strict';
-/* Crypto Chart Viewer IA Trader v1.2.0 - Indicator Engine
+/* IA-TB Indicator Engine v1.12.0
    Pure local computation. No network, no eval, no arbitrary JavaScript.
    Node.js 16 compatible, zero npm dependencies.
 */
-var crypto=require('crypto'),IR=require('./indicator_ir');
+var crypto=require('crypto'),IR=require('./indicator_ir'); // IR is private runtime representation; external clients use IIL.
 
 function num(v){v=+v;return isFinite(v)?v:null;}
 function clone(o){return JSON.parse(JSON.stringify(o));}

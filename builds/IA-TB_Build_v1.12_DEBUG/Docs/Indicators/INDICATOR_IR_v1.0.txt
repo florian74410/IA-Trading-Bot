@@ -1,16 +1,5 @@
-IA-TB INDICATOR IR v1.0
-========================
-But: permettre aux indicateurs Custom d'etre definis sans ajouter de JavaScript au moteur.
-
-Format: le .indicator.json reste le format public. engine.ir contient un graphe declaratif version 1.0.
-Primitives: source, constant, add, sub, mul, div, abs, min, max, scale, shift et les operations natives securisees de l'Indicator Engine.
-References: un step precedent par son id, $param.<nom>, $source.<OHLCV>.
-Limites: 64 etapes / 128 noeuds. Pas de eval, JavaScript, shell, reseau ou acces fichier depuis l'IR.
-
-CP/1:
- indicator.definition.validate {definition}
- indicator.definition.create {definition, overwrite?}
- indicator.compute / indicator.compute_batch calculent ensuite l'indicateur comme tout autre indicateur du Registry.
-
-Chat IA:
-Le Chat peut produire un JSON iatb.indicator.v1 utilisant cet IR, le faire valider via CP/1, puis demander sa creation. La creation doit rester une action explicite demandee par l'utilisateur. Un indicateur peut reutiliser les primitives natives; la composition directe d'un indicateur Custom par son id sera ajoutee dans une evolution du graphe de dependances afin d'eviter cycles et recursion non bornee.
+IA-TB INDICATOR IR v1.0 - INTERNE
+==================================
+L'IR est une representation interne de l'Indicator Engine. Ce n'est pas son interface publique et les clients ne doivent pas le generer directement.
+L'interface de creation est IIL (IA-TB Indicator Language). Le parser IIL compile le programme vers cet IR, puis le validateur du Registry controle le resultat avant execution.
+Les anciens .indicator.json IR restent acceptes pour compatibilite de la phase DEBUG.
