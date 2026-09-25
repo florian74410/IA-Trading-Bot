@@ -3,7 +3,7 @@
    Domain AI owned by Fundamental Engine. INFORMATION_ONLY.
    Uses OpenAI Responses API only when explicitly requested through CP/1.
    API keys are read from process environment and are never returned/logged. */
-var https=require('https'),path=require('path'),Helper=require('../../Core/Services/fundamental_ai_synthesis_v1'),OpenAIResponse=require('../../Core/Services/openai_response_v1.0'),UsageLedger=require('../../Core/Services/usage_ledger_v1');
+var https=require('https'),path=require('path'),Helper=require('../../Core/Services/fundamental_ai_synthesis_v3'),OpenAIResponse=require('../../Core/Services/openai_response_v1.0'),UsageLedger=require('../../Core/Services/usage_ledger_v1');
 function clip(s,n){s=String(s==null?'':s);return s.length>n?s.slice(0,n):s;}
 function AiSynthesis(opt){opt=opt||{};this.log=opt.log||function(){};this.usageLedger=opt.usageLedger||new UsageLedger(path.resolve(__dirname,'../..'));this.obs=opt.observability||null;this.transport=opt.transport||null;this.model=String(process.env.IATB_FUNDAMENTAL_AI_MODEL||process.env.OPENAI_MODEL||'gpt-5.6-luna');this.timeoutMs=Math.max(5000,Math.min(120000,+process.env.IATB_FUNDAMENTAL_AI_TIMEOUT_MS||45000));}
 AiSynthesis.prototype.status=function(){return{configured:!!(this.transport||process.env.IATB_OPENAI_API_KEY||process.env.OPENAI_API_KEY),provider:'OPENAI',api:'RESPONSES',model:this.model,mode:'ON_DEMAND',informationOnly:true};};
