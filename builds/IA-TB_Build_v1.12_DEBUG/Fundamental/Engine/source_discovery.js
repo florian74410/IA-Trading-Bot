@@ -1,5 +1,5 @@
 'use strict';
-/* Fundamental V2 Source Discovery alpha.
+/* Fundamental V3 Source Discovery.
    Discovers and prepares source/feed candidates; NEVER activates them.
    Network/web discovery is injected by an authorized adapter (Supervisor/Admin layer). */
 var URL=require('url').URL;
