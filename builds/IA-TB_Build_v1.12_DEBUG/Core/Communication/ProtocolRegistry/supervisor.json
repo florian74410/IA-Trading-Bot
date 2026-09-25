@@ -1,1 +1,64 @@
-{"id":"supervisor","label":"IA Supervisor","type":"IA","status":"RESERVED","transport":"CP1","endpoint":{"host":"127.0.0.1","port":0,"cpPath":"/cp/v1","healthPath":"/health"},"registration":{"dynamic":true},"table":{"commands":[],"dataTypes":[{"name":"risk.analysis","direction":"CONSUME"},{"name":"strategy.analysis","direction":"CONSUME"},{"name":"supervisor.decision","direction":"PRODUCE"}],"events":[]}}
+{
+  "id": "supervisor",
+  "label": "IA Supervisor",
+  "type": "IA",
+  "status": "RESERVED",
+  "transport": "CP1",
+  "endpoint": {
+    "host": "127.0.0.1",
+    "port": 0,
+    "cpPath": "/cp/v1",
+    "healthPath": "/health"
+  },
+  "registration": {
+    "dynamic": true
+  },
+  "table": {
+    "commands": [
+      {
+        "name": "marketdata.registry.status",
+        "target": "marketdata",
+        "mode": "READ_ONLY"
+      },
+      {
+        "name": "marketdata.registry.search",
+        "target": "marketdata",
+        "mode": "READ_ONLY"
+      },
+      {
+        "name": "marketdata.registry.list",
+        "target": "marketdata",
+        "mode": "READ_ONLY"
+      },
+      {
+        "name": "marketdata.registry.asset",
+        "target": "marketdata",
+        "mode": "READ_ONLY"
+      },
+      {
+        "name": "marketdata.registry.query",
+        "target": "marketdata",
+        "mode": "READ_ONLY"
+      }
+    ],
+    "dataTypes": [
+      {
+        "name": "risk.analysis",
+        "direction": "CONSUME"
+      },
+      {
+        "name": "strategy.analysis",
+        "direction": "CONSUME"
+      },
+      {
+        "name": "supervisor.decision",
+        "direction": "PRODUCE"
+      },
+      {
+        "name": "market.registry",
+        "direction": "CONSUME"
+      }
+    ],
+    "events": []
+  }
+}

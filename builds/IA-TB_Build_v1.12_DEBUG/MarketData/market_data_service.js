@@ -20,7 +20,7 @@ armRegistryTimer();setTimeout(function(){refreshRegistry(function(){});},1500);
 function assetGet(term,detail,cb){var x;try{x=registry.get(term);}catch(e){return cb(e);}if(!x)return cb(new Error('ASSET_NOT_FOUND'));if(!detail||x.detail)return cb(null,x);coingecko.coin(x.id,function(e,o){if(e)return cb(e);try{registry.upsertDetail(o);x=registry.get(x.id);cb(null,x);}catch(z){cb(z);}});}
 function applySettings(patch){settings=Settings.save(Object.assign({},settings,patch||{}));REFRESH_MS=settings.refreshMs;ACTIVE_TTL_MS=settings.activeTtlMs;provider.settings=settings;cache.ttlMs=settings.cacheTtlMs;cache.maxEntries=settings.cacheMaxEntries;armRegistryTimer();return settings;}
 function marketHealth(){return{ok:true,name:'IA-TB Market Data',service:'MARKET_DATA',version:'1.12-marketdata-v2',pid:process.pid,provider:provider.name,providers:provider.list().concat([{id:'COINGECKO',enabled:settings.providers.COINGECKO.enabled}]),coreProxy:false,cache:cache.stats(),refresh:{intervalMs:REFRESH_MS,activeContexts:Object.keys(active).length},registry:Object.assign(registry.status(),{refreshMs:settings.coingecko.registryRefreshMs,busy:registryBusy,lastError:lastRegistryError})};}
-var CP_ACTIONS=['marketdata.health','marketdata.candles','marketdata.refresh','marketdata.active','marketdata.cache.clear','marketdata.providers','marketdata.settings.get','marketdata.settings.set','marketdata.registry.status','marketdata.registry.refresh','marketdata.registry.asset','marketdata.registry.search'];
+var CP_ACTIONS=['marketdata.health','marketdata.candles','marketdata.refresh','marketdata.active','marketdata.cache.clear','marketdata.providers','marketdata.settings.get','marketdata.settings.set','marketdata.registry.status','marketdata.registry.refresh','marketdata.registry.asset','marketdata.registry.search','marketdata.registry.list','marketdata.registry.query'];
 var cpAdapter=new CPAdapter({root:APP_ROOT,id:'marketdata',label:'Market Data Collector',port:PORT,version:'1.12-marketdata-v2',schema:'marketdata.response/2.0',actions:CP_ACTIONS,handlers:{
  'marketdata.health':function(){return marketHealth();},
  'marketdata.candles':function(a,m,done){candles(a.symbol||'BTCUSD',a.timeframe||'1h',a.limit||300,!!a.force,a.exchange||a.source||settings.defaultSource,done);},
@@ -33,7 +33,9 @@ var cpAdapter=new CPAdapter({root:APP_ROOT,id:'marketdata',label:'Market Data Co
  'marketdata.registry.status':function(){return{ok:true,registry:registry.status(),busy:registryBusy,lastError:lastRegistryError};},
  'marketdata.registry.refresh':function(a,m,done){refreshRegistry(done);},
  'marketdata.registry.asset':function(a,m,done){assetGet(a.id||a.symbol||a.name||a.term,!!a.detail,done);},
- 'marketdata.registry.search':function(a){return{ok:true,items:registry.search(a.term||a.query||'',a.limit||20)};}
+ 'marketdata.registry.search':function(a){return{ok:true,items:registry.search(a.term||a.query||'',a.limit||20)};},
+ 'marketdata.registry.list':function(a){return{ok:true,items:registry.list(a.offset||0,a.limit||100,a.term||'')};},
+ 'marketdata.registry.query':function(a){return{ok:true,result:registry.query(a.action||'search',a.arguments||a.args||{})};}
 }});
 var srv=http.createServer(function(req,res){if(cpAdapter.handle(req,res))return;var u=new URL(req.url,'http://'+HOST+':'+PORT),p=u.pathname;
  if(req.method==='GET'&&p==='/health')return send(res,200,marketHealth());
@@ -42,6 +44,7 @@ var srv=http.createServer(function(req,res){if(cpAdapter.handle(req,res))return;
  if(req.method==='GET'&&p==='/settings')return send(res,200,{ok:true,settings:settings});
  if(req.method==='POST'&&p==='/settings'){var aa=[],nn=0;req.on('data',function(x){nn+=x.length;if(nn<=262144)aa.push(x);});req.on('end',function(){if(nn>262144)return send(res,413,{ok:false,error:'SETTINGS_PAYLOAD_TOO_LARGE'});var o;try{o=JSON.parse(Buffer.concat(aa).toString('utf8')||'{}');}catch(e){return send(res,400,{ok:false,error:'SETTINGS_JSON_INVALID'});}try{return send(res,200,{ok:true,settings:applySettings(o.settings||o)});}catch(e){return send(res,400,{ok:false,error:e.message});}});return;}
  if(req.method==='GET'&&p==='/registry/status')return send(res,200,{ok:true,registry:registry.status(),busy:registryBusy,lastError:lastRegistryError});
+ if(req.method==='GET'&&p==='/registry/list')return send(res,200,{ok:true,items:registry.list(u.searchParams.get('offset')||0,u.searchParams.get('limit')||100,u.searchParams.get('q')||'')});
  if(req.method==='GET'&&p==='/registry/search')return send(res,200,{ok:true,items:registry.search(u.searchParams.get('q')||'',u.searchParams.get('limit')||20)});
  if(req.method==='GET'&&p==='/registry/asset')return assetGet(u.searchParams.get('id')||u.searchParams.get('symbol')||u.searchParams.get('q')||'',u.searchParams.get('detail')==='1',function(e,o){if(e)return send(res,e.message==='ASSET_NOT_FOUND'?404:502,{ok:false,error:e.message});send(res,200,{ok:true,asset:o});});
  if(req.method==='POST'&&p==='/registry/refresh')return refreshRegistry(function(e,o){if(e)return send(res,502,{ok:false,error:e.message});send(res,200,o);});

@@ -30,17 +30,22 @@ var UI_READ_ACTIONS={
  'strategy.capabilities':1,
  'strategy.catalog':1,
  'strategy.stats':1,
- 'strategy.state':1
+ 'strategy.state':1,
+ 'marketdata.registry.status':1,
+ 'marketdata.registry.search':1,
+ 'marketdata.registry.list':1,
+ 'marketdata.registry.asset':1,
+ 'marketdata.registry.query':1
 };
 function communicationUiRead(req,res){
  readJsonBody(req,65536,function(e,b){
   if(e)return sendJson(res,400,{ok:false,error:e.message});
   b=b&&typeof b==='object'?b:{};
   var target=String(b.target||'').toLowerCase(),action=String(b.action||'');
-  if(target!=='strategy'||!UI_READ_ACTIONS[action])return sendJson(res,403,{ok:false,error:'UI_WRITE_DENY',caller:{type:'UI',role:'READ_ONLY'}});
+  if(!UI_READ_ACTIONS[action]||(['strategy','marketdata'].indexOf(target)<0))return sendJson(res,403,{ok:false,error:'UI_WRITE_DENY',caller:{type:'UI',role:'READ_ONLY'}});
   var args=b.arguments&&typeof b.arguments==='object'&&!Array.isArray(b.arguments)?b.arguments:{};
-  if(Object.keys(args).length)return sendJson(res,403,{ok:false,error:'UI_ARGUMENTS_DENY',caller:{type:'UI',role:'READ_ONLY'}});
-  var q=CP.makeRequest(target,action,{},'summary');q.caller={type:'UI',role:'READ_ONLY'};
+  if(target==='strategy'&&Object.keys(args).length)return sendJson(res,403,{ok:false,error:'UI_ARGUMENTS_DENY',caller:{type:'UI',role:'READ_ONLY'}});
+  var q=CP.makeRequest(target,action,args,'summary');q.caller={type:'UI',role:'READ_ONLY'};
   COMM.route(q,function(er,o){if(er)return sendJson(res,400,{ok:false,error:er.message,protocol:CP.PROTOCOL,caller:{type:'UI',role:'READ_ONLY'}});sendJson(res,200,o);});
  });
 }

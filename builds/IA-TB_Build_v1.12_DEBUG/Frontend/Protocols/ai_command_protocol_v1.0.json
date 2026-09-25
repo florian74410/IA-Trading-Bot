@@ -217,6 +217,36 @@
         "type": "update.ai.build_install_restart",
         "request": "demande utilisateur originale"
       }
+    ],
+    "registry": [
+      {
+        "type": "marketdata.registry.search",
+        "term": "BTC",
+        "limit": 20
+      },
+      {
+        "type": "marketdata.registry.asset",
+        "term": "BTC"
+      },
+      {
+        "type": "marketdata.registry.list",
+        "offset": 0,
+        "limit": 100
+      },
+      {
+        "type": "marketdata.registry.query",
+        "action": "markets",
+        "arguments": {
+          "term": "ETH"
+        }
+      },
+      {
+        "type": "marketdata.registry.query",
+        "action": "where_listed",
+        "arguments": {
+          "term": "SOL"
+        }
+      }
     ]
   },
   "trade_execution": {
@@ -277,5 +307,15 @@
     "complex_commands": "Analyse, stratégie, indicateurs, Pine Script et demandes non reconnues localement passent par /api/chart-viewer/chat et utilisent la clé OpenAI chiffrée existante.",
     "iframe_limit": "Le DOM et l’échelle du widget TradingView gratuit sont isolés; Crypto Chart Viewer IA Trader ne prétend pas voir les bougies et ne peut pas injecter automatiquement des dessins/Pine Script dans le widget.",
     "strategy_output": "Le Chat peut produire une carte stratégie et un Pine Script copiable, sans exécution d’ordre."
+  },
+  "market_registry": {
+    "transport": "CP/1",
+    "target": "marketdata",
+    "shared_consumers": [
+      "Paramètres > Market Data > Registry",
+      "Chat IA Trading",
+      "Supervisor"
+    ],
+    "principle": "Une seule implémentation Registry; UI et IA consomment les mêmes commandes read-only."
   }
 }
