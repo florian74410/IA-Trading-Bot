@@ -12,6 +12,7 @@
     <div class="engineState"><span id="healthDot" class="dot"></span><span id="healthText">Fundamental --</span></div>
   </header>
 
+  <aside class="fundSidebar" aria-label="Navigation Fundamental"><div class="sideTitle"><span class="sideOrb">◈</span><b>FUNDAMENTAL V2</b></div><button data-jump="cockpit" class="active">⌂ Vue d’ensemble</button><button data-jump="recentList">▤ News & Événements</button><button data-jump="sourcesBody">◉ Sources & Providers</button><button data-jump="domainGrid">⬡ Domaines & DeFi</button><button data-jump="aiSummaryHeadline">✦ Analyse IA</button><button data-jump="sourcesBody">⌘ Source Manager</button><button data-jump="feedsBody">◫ Collecte & Scheduler</button><button data-jump="providerDetail">◇ Diagnostics</button><button data-jump="fundamentalConsole">▧ Observability</button><button data-jump="fundamentalConsole">⌁ Fundamental Console</button><div class="sideFoot">INFORMATION_ONLY</div></aside>
   <main class="content">
     <section class="hero">
       <div><div class="eyebrow">FUNDAMENTAL ENGINE V2 · INFORMATION_ONLY</div><h1>Contexte fondamental</h1><p>Une mémoire structurée des sources et publications. Le moteur reste <strong>informationnel</strong> : le biais par news est une aide visuelle et n'influence aucune stratégie.</p></div>
@@ -27,7 +28,32 @@
       <article class="metric wide aiSummaryCard"><div class="aiSummaryTop"><span>Synthèse IA</span><button id="aiSummaryRefresh" class="aiSummaryBtn" type="button">Actualiser</button></div><strong id="aiSummaryHeadline" class="pending">Initialisation…</strong><small id="aiSummaryText">La synthèse OpenAI reste INFORMATION_ONLY et n’exécute aucune action de trading.</small><div id="aiSummaryMeta" class="aiSummaryMeta"></div><div id="aiSummaryThemes" class="aiSummaryThemes"></div></article>
     </section>
 
-    <div id="notice" class="notice">Chargement du Fundamental Engine…</div>
+    <section id="cockpit" class="cockpit">
+  <div class="cockpitMetrics">
+    <button class="cockpitMetric" data-expand-target="sourcesBody"><span>◉</span><b id="dashSources">--</b><small>SOURCES</small><i>＋</i></button>
+    <button class="cockpitMetric" data-expand-target="feedsBody"><span>⌘</span><b id="dashFeeds">--</b><small>FLUX ACTIFS</small><i>＋</i></button>
+    <button class="cockpitMetric" data-expand-target="recentList"><span>▤</span><b id="dashNews">--</b><small>PUBLICATIONS 24H</small><i>＋</i></button>
+    <button class="cockpitMetric eventMetric" data-expand-target="recentList"><span>ϟ</span><b id="dashEvents">--</b><small>ÉVÉNEMENTS</small><i>＋</i></button>
+    <button class="cockpitMetric alertMetric" data-expand-target="fundamentalConsole"><span>△</span><b id="dashErrors">--</b><small>ALERTES</small><i>＋</i></button>
+    <button class="cockpitMetric aiMetric" data-expand-target="aiSummaryHeadline"><span>✦</span><b id="dashConfidence">--</b><small>CONFIANCE IA</small><i>＋</i></button>
+  </div>
+  <div class="cockpitMain">
+    <article class="marketPanel">
+      <div class="panelHead"><b>VUE FONDAMENTALE DU MARCHÉ</b><button class="plusBtn" data-expand-target="aiSummaryHeadline">＋</button></div>
+      <div class="marketVisual"><div class="dataGlobe"><span class="orbit o1"></span><span class="orbit o2"></span><span class="globeCore">IA</span></div><div class="marketRead"><small>État global du marché</small><strong id="dashTone">INCERTAIN</strong><div class="confidenceBar"><i id="dashConfidenceBar"></i></div><div id="dashDomains" class="dashDomains"></div></div></div>
+    </article>
+    <article class="eventsPanel">
+      <div class="panelHead"><b>ÉVÉNEMENTS RÉCENTS</b><button class="plusBtn" data-expand-target="recentList">＋</button></div>
+      <div id="dashRecentEvents" class="dashEventList"><div class="dashEmpty">Chargement de l’activité…</div></div>
+    </article>
+  </div>
+  <div class="cockpitLower">
+    <article class="miniPanel sourcePreview"><div class="panelHead"><b>SOURCES & PROVIDERS</b><button class="plusBtn" data-expand-target="sourcesBody">＋</button></div><div id="dashSourcePreview" class="previewBody">Chargement…</div></article>
+    <article class="miniPanel newsPreview"><div class="panelHead"><b>PUBLICATIONS RÉCENTES</b><button class="plusBtn" data-expand-target="recentList">＋</button></div><div id="dashNewsPreview" class="previewBody">Chargement…</div></article>
+    <article class="miniPanel domainPreview"><div class="panelHead"><b>DOMAINES</b><button class="plusBtn" data-expand-target="domainGrid">＋</button></div><div id="dashDomainPreview" class="previewBody">Chargement…</div></article>
+  </div>
+</section>
+<div id="notice" class="notice">Chargement du Fundamental Engine…</div>
 
     <details class="section" open><summary><span>Publications récentes</span><small>5 visibles · défilement interne pour la suite</small></summary><div class="sectionBody"><div id="recentList" class="newsList"><div class="empty">Aucune publication collectée pour le moment.</div></div></div></details>
     <details class="section providersSection" open><summary><span>Providers</span><span id="providerTestResult" class="providerTestResult" aria-live="polite"></span><small id="providersMeta">Diagnostic RSS / Atom / Web</small></summary><div class="sectionBody"><div id="providerSummary" class="providerSummary"></div><div class="tableWrap fiveRowsWrap providerRowsWrap"><table class="providersTable"><thead><tr><th>Provider</th><th>Type</th><th>État</th><th>Dernière tentative</th><th>Dernier succès</th><th>Items</th><th>Latence</th><th>Actions</th></tr></thead><tbody id="providersBody"><tr><td colspan="8" class="empty">Chargement des providers…</td></tr></tbody></table></div><div id="providerDetail" class="providerDetail hide"></div></div></details>
