@@ -1,5 +1,5 @@
 'use strict';
-/* Fundamental V2 Diagnostic Core.
+/* Fundamental V3 Diagnostic Core.
    Reuses the real Collector/provider path: no duplicate diagnostic implementation. */
 function DiagnosticCore(storage,collector,observability){this.storage=storage;this.collector=collector;this.obs=observability||null;}
 DiagnosticCore.prototype.source=function(code){var s=this.storage.getSource(String(code||'').toUpperCase());if(!s)throw new Error('SOURCE_NOT_FOUND');var feeds=this.storage.listFeeds({source:s.code,limit:300});return{ok:true,source:s,feeds:feeds,health:feeds.map(function(f){return{feedId:f.id,code:f.code,provider:f.provider_type,enabled:!!f.enabled,status:f.status,lastSuccessAt:f.last_success_at,lastError:f.last_error,durationMs:f.last_duration_ms,receivedCount:f.last_received_count,transport:f.last_transport};})};};
