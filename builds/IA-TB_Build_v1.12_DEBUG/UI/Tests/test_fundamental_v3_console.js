@@ -2,9 +2,9 @@
 var fs=require('fs'),path=require('path'),assert=require('assert');
 var ROOT=path.resolve(__dirname,'../..');
 function read(p){return fs.readFileSync(path.join(ROOT,p),'utf8');}
-var html=read('Frontend/Pages/fundamental_v1.0.html');
-var js=read('Frontend/JS/fundamental_controller_v1.0.js');
-var css=read('Frontend/CSS/fundamental_v1.0.css');
+var html=read('Frontend/Pages/fundamental_v3.html');
+var js=read('Frontend/JS/fundamental_controller_v3.js');
+var css=read('Frontend/CSS/fundamental_v3.css');
 var svc=read('Fundamental/Engine/fundamental_service.js');
 [
  'id="fundamentalConsole"','id="consoleInput"','id="consoleSend"','id="consolePause"',
