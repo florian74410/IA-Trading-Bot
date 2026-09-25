@@ -27,16 +27,16 @@ function moduleDeck(){
   wrap.appendChild(d);return wrap;
 }
 
-function exchangeRow(name,logo,sub,status,detail,planned){var enabled=!planned&&(name==='GMX'||name==='KRAKEN');return '<div class="iatbExchangeRow '+(enabled?'selectable':'planned')+'" data-td-ex="'+name+'" data-exchange-selectable="'+(enabled?'1':'0')+'" role="'+(enabled?'button':'group')+'" tabindex="'+(enabled?'0':'-1')+'" aria-pressed="false"><span class="iatbExLogo '+logo+'">'+name.charAt(0)+'</span><span class="iatbExName"><strong>'+name+'</strong><span>'+sub+'</span></span><span class="iatbExStatus '+(planned?'planned':'')+'"><strong>'+status+'</strong><span>'+detail+'</span></span><span class="iatbSwitch '+(planned?'off':'')+'" aria-hidden="true"></span></div>'}
+function exchangeRow(name,logo,sub,status,detail,planned){var enabled=!planned&&(['GMX','KRAKEN','BINANCE','OKX'].indexOf(name)>=0);return '<div class="iatbExchangeRow '+(enabled?'selectable':'planned')+'" data-td-ex="'+name+'" data-exchange-selectable="'+(enabled?'1':'0')+'" role="'+(enabled?'button':'group')+'" tabindex="'+(enabled?'0':'-1')+'" aria-pressed="false"><span class="iatbExLogo '+logo+'">'+name.charAt(0)+'</span><span class="iatbExName"><strong>'+name+'</strong><span>'+sub+'</span></span><span class="iatbExStatus '+(planned?'planned':'')+'"><strong>'+status+'</strong><span>'+detail+'</span></span><span class="iatbSwitch '+(planned?'off':'')+'" aria-hidden="true"></span></div>'}
 function exchangePanel(){
   var s=el('aside','iatbExchangeColumn');s.id='iatbExchangeDashboard';
   s.innerHTML='<div class="iatbSideHead">EXCHANGES <button type="button" title="Réduire">×</button></div><div class="iatbExchangeScroll">'
     +'<div class="iatbSideSectionTitle">Connectés au Market Data Collector</div><div class="iatbExchangeList">'
     +exchangeRow('GMX','gmx','Perp · Arbitrum','PUBLIC','Oracle',false)
     +exchangeRow('KRAKEN','kraken','Spot','PUBLIC','API',false)
-    +exchangeRow('BINANCE','binance','Spot & Futures','PRÉVU','—',true)
+    +exchangeRow('BINANCE','binance','Spot','PUBLIC','API',false)
     +exchangeRow('COINBASE','coinbase','Spot','PRÉVU','—',true)
-    +exchangeRow('OKX','okx','Spot & Futures','PRÉVU','—',true)
+    +exchangeRow('OKX','okx','Spot','PUBLIC','API',false)
     +exchangeRow('FUTURS CEX/DEX','future','Architecture extensible','PRÉVU','—',true)
     +'</div><button class="iatbAddEx" type="button">＋ Ajouter un Exchange</button>'
     +'<section class="iatbConsensus"><h3>VOLUME & PRICES CONSENSUS ⓘ</h3><div class="iatbConsensusTop"><div class="iatbConsensusBox"><small id="tdConsensusPair">BTC/USD</small><strong id="tdConsensusPrice">--</strong><small>Indice de consensus</small><strong class="iatbConsensusScore" id="tdConsensusScore">—</strong><div class="iatbGauge"><i id="tdConsensusGauge" style="width:0%"></i></div></div><div class="iatbConsensusBox"><small>Source principale</small><strong id="tdConsensusSource" style="font-size:12px">Market Data</strong><small style="margin-top:9px">Écart max prix</small><strong id="tdConsensusSpread" style="font-size:14px;color:#35d98b">—</strong></div></div><div class="iatbConsensusSources"><span class="iatbExLogo gmx">G</span><span class="iatbExLogo kraken">K</span><span class="iatbExLogo binance">B</span><span class="iatbExLogo coinbase">C</span><span class="iatbExLogo okx">O</span></div></section>'
@@ -55,7 +55,7 @@ function syncExchangeSelection(){
   });
 }
 function requestExchangeSwitch(exchange){
-  exchange=String(exchange||'').toUpperCase();if(exchange!=='GMX'&&exchange!=='KRAKEN')return;
+  exchange=String(exchange||'').toUpperCase();if(['GMX','KRAKEN','BINANCE','OKX'].indexOf(exchange)<0)return;
   var sel=byId('exchangeSelect');if(!sel)return;
   if(String(sel.value).toUpperCase()===exchange){syncExchangeSelection();return}
   sel.value=exchange;
