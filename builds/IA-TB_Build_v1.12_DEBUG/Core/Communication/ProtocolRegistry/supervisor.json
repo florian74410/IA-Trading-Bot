@@ -13,8 +13,32 @@
   "registration": {
     "dynamic": true
   },
+  "policy": {
+    "marketData": "READ_ONLY",
+    "liquidity": "READ_ONLY"
+  },
   "table": {
     "commands": [
+      {
+        "name": "marketdata.health",
+        "target": "marketdata",
+        "mode": "READ_ONLY"
+      },
+      {
+        "name": "marketdata.providers",
+        "target": "marketdata",
+        "mode": "READ_ONLY"
+      },
+      {
+        "name": "marketdata.candles",
+        "target": "marketdata",
+        "mode": "READ_ONLY"
+      },
+      {
+        "name": "marketdata.financial.capabilities",
+        "target": "marketdata",
+        "mode": "READ_ONLY"
+      },
       {
         "name": "marketdata.registry.status",
         "target": "marketdata",
@@ -39,9 +63,55 @@
         "name": "marketdata.registry.query",
         "target": "marketdata",
         "mode": "READ_ONLY"
+      },
+      {
+        "name": "liquidity.health",
+        "target": "liquidity",
+        "mode": "READ_ONLY"
+      },
+      {
+        "name": "liquidity.capabilities",
+        "target": "liquidity",
+        "mode": "READ_ONLY"
+      },
+      {
+        "name": "liquidity.zones",
+        "target": "liquidity",
+        "mode": "READ_ONLY"
+      },
+      {
+        "name": "liquidity.realtime",
+        "target": "liquidity",
+        "mode": "READ_ONLY"
+      },
+      {
+        "name": "liquidity.snapshot",
+        "target": "liquidity",
+        "mode": "READ_ONLY"
+      },
+      {
+        "name": "liquidity.liquidations",
+        "target": "liquidity",
+        "mode": "READ_ONLY"
       }
     ],
     "dataTypes": [
+      {
+        "name": "market.candles",
+        "direction": "CONSUME"
+      },
+      {
+        "name": "market.registry",
+        "direction": "CONSUME"
+      },
+      {
+        "name": "defi.position",
+        "direction": "CONSUME"
+      },
+      {
+        "name": "liquidity.snapshot",
+        "direction": "CONSUME"
+      },
       {
         "name": "risk.analysis",
         "direction": "CONSUME"
@@ -53,10 +123,6 @@
       {
         "name": "supervisor.decision",
         "direction": "PRODUCE"
-      },
-      {
-        "name": "market.registry",
-        "direction": "CONSUME"
       }
     ],
     "events": []

@@ -35,50 +35,26 @@
         }
       },
       {
-        "name": "marketdata.refresh",
-        "arguments": {
-          "allowed": [
-            "symbol",
-            "timeframe",
-            "limit",
-            "exchange",
-            "source"
-          ],
-          "required": [
-            "symbol",
-            "timeframe"
-          ]
-        }
-      },
-      {
-        "name": "marketdata.active",
+        "name": "marketdata.providers",
         "arguments": {
           "allowed": []
         }
       },
       {
-        "name": "marketdata.cache.clear",
+        "name": "marketdata.financial.capabilities",
         "arguments": {
           "allowed": []
-        }
+        },
+        "description": "Read-only catalogue of normalized financial data capabilities."
       },
       {
         "name": "marketdata.registry.status",
-        "description": "État du Market Registry.",
-        "arguments": {
-          "allowed": []
-        }
-      },
-      {
-        "name": "marketdata.registry.refresh",
-        "description": "Synchronise le Registry via son provider.",
         "arguments": {
           "allowed": []
         }
       },
       {
         "name": "marketdata.registry.asset",
-        "description": "Retourne la fiche d'un actif.",
         "arguments": {
           "allowed": [
             "id",
@@ -91,7 +67,6 @@
       },
       {
         "name": "marketdata.registry.search",
-        "description": "Recherche un actif.",
         "arguments": {
           "allowed": [
             "term",
@@ -102,7 +77,6 @@
       },
       {
         "name": "marketdata.registry.list",
-        "description": "Liste paginée du Registry.",
         "arguments": {
           "allowed": [
             "offset",
@@ -113,7 +87,6 @@
       },
       {
         "name": "marketdata.registry.query",
-        "description": "Contrat commun Registry pour UI, Chat IA et Supervisor.",
         "arguments": {
           "allowed": [
             "action",
@@ -130,22 +103,24 @@
         "schema": "market.candles/1.0"
       },
       {
-        "name": "market.ticker",
-        "direction": "PRODUCE"
-      },
-      {
-        "name": "market.volume",
-        "direction": "PRODUCE"
-      },
-      {
-        "name": "market.consensus",
-        "direction": "PRODUCE"
-      },
-      {
         "name": "market.registry",
         "direction": "PRODUCE",
-        "schema": "market.registry/1.0",
-        "description": "Catalogue local d'actifs, marchés et métadonnées."
+        "schema": "market.registry/1.0"
+      },
+      {
+        "name": "defi.position",
+        "direction": "PRODUCE",
+        "schema": "iatb.financial.data/1.0"
+      },
+      {
+        "name": "onchain.read",
+        "direction": "PRODUCE",
+        "schema": "iatb.financial.data/1.0"
+      },
+      {
+        "name": "market.liquidity.raw",
+        "direction": "PRODUCE",
+        "schema": "iatb.financial.data/1.0"
       }
     ],
     "events": []
