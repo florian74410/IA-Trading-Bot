@@ -1,5 +1,5 @@
 'use strict';
-/* IA-TB Fundamental Engine v1.6.1 - deterministic SQLite bootstrap.
+/* IA-TB Fundamental Engine V3 - deterministic SQLite bootstrap.
    Fixed dependency only; no arbitrary package/shell input. Node 16 compatible. */
 var fs=require('fs'),path=require('path'),child=require('child_process'),PATHS=require('../../Core/Shared/paths');
 var FUND=path.resolve(__dirname,'..'),ROOT=path.resolve(FUND,'..');
