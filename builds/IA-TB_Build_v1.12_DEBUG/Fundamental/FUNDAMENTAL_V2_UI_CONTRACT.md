@@ -85,3 +85,23 @@ The console must support both historical retrieval and near-real-time activity. 
 
 ## Future transport
 Current v1.x local transport stays lightweight. CP1 contracts must remain deployable later through persistent mTLS links when Router becomes a proxy and Engines/Supervisor/Data are split across VPSs.
+
+
+## AI Chat + Source Discovery
+The Fundamental page AI chat is also an Admin assistant for source discovery and configuration. It may search through an authorized discovery adapter, inspect candidates, detect existing sources/feeds, infer the likely provider family, prepare a disabled draft and run the real Diagnostic Core/Collector test path.
+
+Conversation examples:
+- "Trouve-moi des sources sur les exploits DeFi."
+- "Teste les flux RSS les plus intéressants."
+- "Pourquoi Decrypt ne fonctionne plus ?"
+- "Trouve une source de remplacement."
+- "Prépare la configuration de la première."
+
+Discovery workflow:
+`Chat -> discovery.search -> inspect/deduplicate -> prepare disabled draft -> test -> Admin review -> explicit activation`.
+
+The AI never directly activates a discovered source. Discovery results are proposals. Source/feed creation or activation is an Admin-authorized action with explicit validation.
+
+UI discovery cards should summarize: source name, provider, categories, authentication requirement, duplicate state, test compatibility and diagnostic result, with progressive actions such as `Tester`, `Voir détails`, `Préparer`, and finally an Admin confirmation control.
+
+The Activity Console records discovery/search/test/configuration activity just like collection and Supervisor activity.
