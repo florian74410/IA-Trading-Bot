@@ -21,8 +21,8 @@ var adx=eng.compute(registry.get('adx'),candles,{period:14});var first=-1;for(i=
 var wr=eng.compute(registry.get('williams_r'),candles,{}).latest.value;ok(wr>=-100-1e-9&&wr<=1e-9,'Williams %R dans [-100,0]');
 // Garde volume.
 var noVol=candles.map(function(c){return c.slice(0,5);});['vwap','vwma','obv','mfi'].forEach(function(id){var good=false;try{eng.compute(registry.get(id),noVol,{});}catch(e){good=e.code==='VOLUME_REQUIRED';}ok(good,id+' refuse absence de volume');});
-// Max 8.
-var req=[];for(i=0;i<9;i++)req.push({id:'ema'});var maxok=false;try{eng.computeBatch(registry,candles,req);}catch(e){maxok=e.code==='MAX_INDICATORS';}ok(maxok,'limite 8 indicateurs appliquée');
+// Max 32.
+var req=[];for(i=0;i<33;i++)req.push({id:'ema'});var maxok=false;try{eng.computeBatch(registry,candles,req);}catch(e){maxok=e.code==='MAX_INDICATORS';}ok(maxok,'limite 32 indicateurs appliquée');
 // Runtime incrémental.
 var rt=new eng.Runtime(registry,{maxCandles:120,maxSessions:3}),r=rt.update('KRAKEN|BTCUSD|1m',candles.slice(0,100),[{id:'ema'},{id:'rsi'}]);ok(r.candleCount===100&&r.results.length===2,'runtime initial');r=rt.update('KRAKEN|BTCUSD|1m',[candles[100]],[{id:'ema'}]);ok(r.candleCount===101,'runtime incrémental');
 // Custom sûr : id distinct, operation native EMA.
