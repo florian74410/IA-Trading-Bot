@@ -293,6 +293,63 @@
             "limit"
           ]
         }
+      },
+      {
+        "name": "fundamental.source.get",
+        "arguments": {
+          "allowed": [
+            "code",
+            "source"
+          ]
+        }
+      },
+      {
+        "name": "fundamental.feeds.search",
+        "arguments": {
+          "allowed": [
+            "source",
+            "provider",
+            "enabled",
+            "limit"
+          ]
+        }
+      },
+      {
+        "name": "fundamental.providers.status",
+        "arguments": {
+          "allowed": []
+        }
+      },
+      {
+        "name": "fundamental.diagnostic.feed",
+        "arguments": {
+          "allowed": [
+            "feedId",
+            "id"
+          ]
+        }
+      },
+      {
+        "name": "fundamental.diagnostic.draft",
+        "arguments": {
+          "allowed": [
+            "source_code",
+            "sourceCode",
+            "label",
+            "provider_type",
+            "providerType",
+            "endpoint",
+            "platform",
+            "account_identifier",
+            "enabled",
+            "poll_interval_sec",
+            "base_importance",
+            "content_role",
+            "content_class",
+            "provider_config",
+            "config"
+          ]
+        }
       }
     ],
     "dataTypes": [
