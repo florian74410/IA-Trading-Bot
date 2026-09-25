@@ -70,6 +70,13 @@ function route(req,res){if(observability)observability.debug('HTTP','request',{m
  if(req.method==='GET'&&p==='/api/events')return send(res,200,{ok:true,mode:'EVENT_ENGINE_ACTIVE',events:storage.listEventsDetailed({asset:u.searchParams.get('asset')||'',status:u.searchParams.get('status')||'',limit:int(u.searchParams.get('limit'),30,1,100)})});
  if(req.method==='GET'&&p==='/api/latest-news')return send(res,200,{ok:true,mode:'INFORMATION_ONLY',latestNews:storage.latestNews()});
  if(req.method==='POST'&&p==='/api/events/process'){try{return send(res,200,eventEngine.process({limit:int(u.searchParams.get('limit'),120,1,250)}));}catch(ep){return apiError(res,ep);}}
+ if(req.method==='GET'&&p==='/api/observability/recent')return send(res,200,{ok:true,private:true,events:observability.query({level:u.searchParams.get('level')||'',component:u.searchParams.get('component')||'',source:u.searchParams.get('source')||'',query:u.searchParams.get('q')||'',limit:int(u.searchParams.get('limit'),120,1,1000)})});
+ if(req.method==='GET'&&p==='/api/observability/history')return send(res,200,{ok:true,private:true,events:observability.history({level:u.searchParams.get('level')||'',component:u.searchParams.get('component')||'',source:u.searchParams.get('source')||'',query:u.searchParams.get('q')||'',limit:int(u.searchParams.get('limit'),300,1,1000)})});
+ if(req.method==='GET'&&p==='/api/observability/stats')return send(res,200,{ok:true,private:true,stats:observability.stats()});
+ if(req.method==='POST'&&p==='/api/diagnostic/feed')return body(req,function(e,b){if(e)return apiError(res,e);diagnosticCore.feed(b&&(+b.feedId||+b.id),function(de,dr){if(de)return apiError(res,de);send(res,200,dr);});});
+ if(req.method==='POST'&&p==='/api/discovery/inspect')return body(req,function(e,b){if(e)return apiError(res,e);try{return send(res,200,sourceDiscovery.inspect(b&&b.candidate||b||{}));}catch(x){return apiError(res,x);}});
+ if(req.method==='POST'&&p==='/api/discovery/prepare')return body(req,function(e,b){if(e)return apiError(res,e);try{return send(res,200,sourceDiscovery.prepare(b&&b.candidate||b||{}));}catch(x){return apiError(res,x);}});
+ if(req.method==='POST'&&p==='/api/discovery/test')return body(req,function(e,b){if(e)return apiError(res,e);sourceDiscovery.test(b&&b.candidate||b||{},function(de,dr){if(de)return apiError(res,de);send(res,200,dr);});});
  if(req.method==='GET'&&p==='/api/context')return send(res,200,{ok:true,context:storage.context(u.searchParams.get('q')||'')});
  if(req.method==='POST'&&p==='/api/collect')return collector.collect({all:/^(1|true)$/i.test(u.searchParams.get('all')||'')},function(e,r){if(e)return apiError(res,e);send(res,200,r);});
  return send(res,404,{ok:false,error:'NOT_FOUND'});
