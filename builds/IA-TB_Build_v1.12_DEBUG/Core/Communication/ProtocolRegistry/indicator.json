@@ -12,6 +12,29 @@
   "table": {
     "commands": [
       {
+        "name": "indicator.definition.validate",
+        "arguments": {
+          "allowed": [
+            "definition"
+          ],
+          "required": [
+            "definition"
+          ]
+        }
+      },
+      {
+        "name": "indicator.definition.create",
+        "arguments": {
+          "allowed": [
+            "definition",
+            "overwrite"
+          ],
+          "required": [
+            "definition"
+          ]
+        }
+      },
+      {
         "name": "indicator.compute",
         "arguments": {
           "allowed": [
