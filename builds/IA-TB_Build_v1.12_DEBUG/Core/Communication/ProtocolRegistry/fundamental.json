@@ -18,6 +18,137 @@
         }
       },
       {
+        "name": "fundamental.status",
+        "arguments": {
+          "allowed": []
+        }
+      },
+      {
+        "name": "fundamental.capabilities",
+        "arguments": {
+          "allowed": []
+        }
+      },
+      {
+        "name": "fundamental.news.search",
+        "arguments": {
+          "allowed": [
+            "query",
+            "source",
+            "feed",
+            "since",
+            "limit"
+          ]
+        }
+      },
+      {
+        "name": "fundamental.news.get",
+        "arguments": {
+          "allowed": [
+            "id",
+            "newsId"
+          ]
+        }
+      },
+      {
+        "name": "fundamental.events.search",
+        "arguments": {
+          "allowed": [
+            "asset",
+            "status",
+            "limit"
+          ]
+        }
+      },
+      {
+        "name": "fundamental.event.get",
+        "arguments": {
+          "allowed": [
+            "eventId",
+            "id"
+          ]
+        }
+      },
+      {
+        "name": "fundamental.event.evidence",
+        "arguments": {
+          "allowed": [
+            "eventId",
+            "id"
+          ]
+        }
+      },
+      {
+        "name": "fundamental.sources.search",
+        "arguments": {
+          "allowed": [
+            "query",
+            "domain",
+            "enabled",
+            "limit"
+          ]
+        }
+      },
+      {
+        "name": "fundamental.collect",
+        "arguments": {
+          "allowed": [
+            "all",
+            "eventLimit"
+          ]
+        }
+      },
+      {
+        "name": "fundamental.synthesis.news",
+        "arguments": {
+          "allowed": [
+            "newsIds",
+            "query",
+            "source",
+            "feed",
+            "since",
+            "limit",
+            "language",
+            "window"
+          ]
+        }
+      },
+      {
+        "name": "fundamental.synthesis.event",
+        "arguments": {
+          "allowed": [
+            "eventId",
+            "event_id",
+            "language",
+            "window"
+          ]
+        }
+      },
+      {
+        "name": "fundamental.synthesis.market",
+        "arguments": {
+          "allowed": [
+            "asset",
+            "query",
+            "since",
+            "limit",
+            "language",
+            "window"
+          ]
+        }
+      },
+      {
+        "name": "fundamental.synthesis.history",
+        "arguments": {
+          "allowed": [
+            "eventId",
+            "event_id",
+            "scope",
+            "limit"
+          ]
+        }
+      },
+      {
         "name": "fundamental.summary",
         "arguments": {
           "allowed": []
@@ -49,15 +180,6 @@
             "limit",
             "asset",
             "status"
-          ]
-        }
-      },
-      {
-        "name": "fundamental.collect",
-        "arguments": {
-          "allowed": [
-            "all",
-            "eventLimit"
           ]
         }
       },
@@ -157,6 +279,10 @@
       {
         "name": "fundamental.sentiment",
         "direction": "PRODUCE"
+      },
+      {
+        "name": "fundamental.synthesis",
+        "direction": "PRODUCE"
       }
     ],
     "events": [
@@ -173,5 +299,6 @@
         "name": "fundamental.data_quality.changed"
       }
     ]
-  }
+  },
+  "description": "Canonical Fundamental Engine: collection, event normalization, evidence and on-demand AI synthesis. INFORMATION_ONLY. Business consumer: Supervisor via Router/CP1."
 }
