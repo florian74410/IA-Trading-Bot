@@ -178,3 +178,14 @@ function sync(){
 
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',build);else build();
 })();
+
+
+/* Firewall read-only information feed: local UI only, no OpenAI/token usage. */
+(function(){
+var last=Date.now()-5000,busy=false,seen={};
+function box(){return document.querySelector('[data-mosaic-id="chat"] .msgs')||document.querySelector('.chatPrimary .msgs')||document.querySelector('.chat .msgs');}
+function label(e){var r=e.result?(' · '+e.result):'',why=e.reason?(' · '+e.reason):'';return '🛡 Firewall · '+String(e.component||'SYSTEM')+' · '+String(e.type||'EVENT')+r+why;}
+function add(e){var k=[e.timestamp,e.component,e.type,e.result,e.reason].join('|');if(seen[k])return;seen[k]=1;var b=box();if(!b)return;var d=document.createElement('div');d.className='msg ai local firewallInfo';d.setAttribute('data-read-only','1');d.textContent=label(e);b.appendChild(d);b.scrollTop=b.scrollHeight;}
+function poll(){if(busy)return;busy=true;fetch('/firewall-events?audience=user&limit=40&since='+encodeURIComponent(last),{cache:'no-store',headers:{Accept:'application/json'}}).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}).then(function(o){(o.events||[]).forEach(function(e){var t=Date.parse(e.timestamp)||0;if(t>last)last=t;add(e);});}).catch(function(){}).then(function(){busy=false;});}
+setTimeout(poll,1200);setInterval(poll,2500);
+})();
