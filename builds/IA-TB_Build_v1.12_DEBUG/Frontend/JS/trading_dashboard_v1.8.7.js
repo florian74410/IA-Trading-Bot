@@ -1,6 +1,6 @@
 (function(){
 'use strict';
-var VERSION='1.8.7';
+var VERSION='1.12-workspace';
 function el(tag,cls,html){var n=document.createElement(tag);if(cls)n.className=cls;if(html!==undefined)n.innerHTML=html;return n}
 function q(s){return document.querySelector(s)}
 function byId(id){return document.getElementById(id)}
@@ -12,6 +12,8 @@ function cleanPrice(v){v=String(v||'').trim();return v&&v!=='--'?v:'--'}
 
 function topUtilities(){var nav=q('.navActions');if(!nav||byId('iatbTopUtilities'))return;var u=el('div','iatbTopUtilities');u.id='iatbTopUtilities';u.innerHTML='<span class="iatbTopLive" title="Runtime actif"></span><span class="iatbTopUtility" title="Notifications">♢</span><span class="iatbTopUtility" title="État système">⚙</span>';nav.appendChild(u)}
 
+function marketMaster(){var n=el('section','iatbMarketMaster');n.id='iatbMarketMaster';n.innerHTML='<b>MARCHÉ DE RÉFÉRENCE</b><strong class="masterPair" id="tdMasterPair">--</strong><small id="tdMasterTf">--</small><span class="masterProvider" id="tdMasterProvider">Market Data</span><span class="masterGuard">🛡 OHLCV lecture seule</span>';return n}
+function indicatorDock(){var n=el('section','iatbIndicatorDock');n.id='iatbIndicatorDock';n.innerHTML='<div class="iatbIndicatorDockHead"><b>ƒx INDICATEURS</b><span>Indicator Engine · overlays et panneaux séparés du flux OHLCV</span></div><div class="iatbIndicatorDockBody" id="tdIndicatorDockBody"><div class="iatbIndicatorEmpty">Ajoute un indicateur avec le bouton ƒx Indicateurs ou via le Chat IA.</div></div>';return n}
 function moduleDeck(){
   var wrap=el('section','iatbModuleWrap');wrap.id='iatbModuleWrap';
   wrap.innerHTML='<div class="iatbModuleLabel">MODULES</div>';
@@ -19,6 +21,8 @@ function moduleDeck(){
   d.innerHTML=''
     +'<section class="iatbDashCard"><h3>VOLUME (24H) <span class="accent">◌</span></h3><div class="iatbMetricBig"><strong id="tdVolume">—</strong><span id="tdVolumeDelta">source en attente</span></div><div class="iatbBars"><i style="height:29%"></i><i style="height:44%"></i><i style="height:36%"></i><i style="height:61%"></i><i style="height:52%"></i><i style="height:72%"></i><i style="height:46%"></i><i style="height:80%"></i><i style="height:56%"></i><i style="height:68%"></i><i style="height:38%"></i><i style="height:62%"></i></div><a class="iatbMore" href="#" onclick="return false">Flux Market Data →</a></section>'
     +'<section class="iatbDashCard"><h3>STRATÉGIES EN COURS <span class="accent">◉</span></h3><table class="iatbMiniTable"><thead><tr><th>Stratégie</th><th>Paire</th><th>Statut</th></tr></thead><tbody id="tdStrategies"><tr><td colspan="3">Chargement…</td></tr></tbody></table><a class="iatbMore" href="#" id="tdStrategiesLink">Voir toutes les stratégies →</a></section>'
+    +'<section class="iatbDashCard marketTile"><h3>PAIRE ACTIVE <span class="accent">◉</span></h3><div class="iatbMetricBig"><strong id="tdTilePair">--</strong><span id="tdTileProvider">Market Data</span></div><div class="iatbAiSummary"><p id="tdTileOhlc">O -- · H -- · L -- · C --</p></div></section>'
+    +'<section class="iatbDashCard marketTile"><h3>DERNIÈRE BOUGIE <span class="accent">◌</span></h3><div class="iatbMetricBig"><strong id="tdTileClose">--</strong><span id="tdTileTf">--</span></div><div class="iatbAiSummary"><p id="tdTileTime">En attente du Collector</p></div></section>'
     +'<section class="iatbDashCard"><h3>SYNTHÈSE IA <span class="accent">✦</span></h3><div class="iatbAiSummary"><p id="tdAiSummary"></p><ul><li>Tendance : <b style="color:#35d98b">lecture temps réel</b></li><li>Source : <b id="tdAiSource">Market Data</b></li><li>Contrôle : <b style="color:#e8b63f">Risk Manager</b></li></ul></div><a class="iatbMore" href="#" onclick="return false">Voir l’analyse complète →</a></section>';
   wrap.appendChild(d);return wrap;
 }
@@ -117,15 +121,15 @@ function watchSecondaryPages(){
 function build(){
   var body=q('.body[data-mosaic-root]'),chat=q('.chatPrimary'),chart=byId('chartArea'),top=q('.top');
   if(!body||!chat||!chart||body.dataset.dashboard186Final==='1')return;
-  body.dataset.dashboard186Final='1';document.documentElement.classList.add('iatb-dashboard-v186-final');
+  body.dataset.dashboard186Final='1';document.documentElement.classList.add('iatb-dashboard-v186-final','iatb-trading-workspace');
   var logoWrap=q('.top .appLogoWrap')||q('.appLogoWrap');
   if(byId('walletConnect'))byId('walletConnect').textContent='✦ Connecter Trust Wallet';
   if(byId('adminBtn'))byId('adminBtn').textContent='🛠 ADMIN';
   topUtilities();
   watchSecondaryPages();
-  var left=chatShell(chat,logoWrap),center=el('main','iatbCenterColumn'),right=exchangePanel(),services=serviceStrip();
-  center.appendChild(chartShell(chart));center.appendChild(moduleDeck());
-  body.appendChild(left);body.appendChild(center);body.appendChild(right);body.appendChild(services);
+  var center=el('main','iatbCenterColumn'),right=exchangePanel(),services=serviceStrip();
+  center.appendChild(marketMaster());center.appendChild(chartShell(chart));center.appendChild(indicatorDock());center.appendChild(moduleDeck());
+  body.appendChild(center);body.appendChild(right);body.appendChild(services);
   var legacyRight=q('.body[data-mosaic-root]>.right');if(legacyRight)legacyRight.setAttribute('aria-hidden','true');
   var legacyLeft=q('.body[data-mosaic-root]>.left');if(legacyLeft)legacyLeft.setAttribute('aria-hidden','true');
   var sl=byId('tdStrategiesLink');if(sl)sl.onclick=function(e){e.preventDefault();var b=byId('strategyBtn');if(b)b.click()};
@@ -162,12 +166,13 @@ function health(){
   fetch('/api/status',{credentials:'same-origin'}).then(function(r){if(!r.ok)throw new Error();return r.json()}).then(function(){markDot('Market Data','ok');markDot('Trading Engine','ok');markDot('Trading FW','ok');setText('tdUptime','en ligne')}).catch(function(){});
 }
 
+function syncIndicatorDock(){var box=byId('tdIndicatorDockBody');if(!box)return;var st=null;try{st=window.IATBIndicatorUI&&IATBIndicatorUI.state?IATBIndicatorUI.state():null}catch(e){}var a=st&&Array.isArray(st.selected)?st.selected:[];if(!a.length){box.innerHTML='<div class="iatbIndicatorEmpty">Ajoute un indicateur avec le bouton ƒx Indicateurs ou via le Chat IA.</div>';return}box.innerHTML=a.slice(0,12).map(function(x){var id=typeof x==='string'?x:(x.id||x.name||'Indicateur');return '<div class="iatbIndicatorChip"><b>'+esc(id)+'</b><small>Indicator Engine · actif</small></div>'}).join('')}
 function sync(){
   syncExchangeSelection();
   var p=q('#price'),sym=q('#symbol'),src=q('#marketSourceBadge'),ws=q('#wsState');
   var pair=sym&&sym.options&&sym.selectedIndex>=0?sym.options[sym.selectedIndex].text:'BTC/USD';
   var source=src?String(src.textContent||'Market Data').split('·')[0].trim():'Market Data';
-  setText('tdConsensusPrice',cleanPrice(p&&p.textContent));setText('tdConsensusPair',pair);setText('tdChartPair',pair);setText('tdConsensusSource',source);setText('tdAiSource',src?String(src.textContent||'Market Data').replace(/·/g,' / '):'Market Data');setText('tdAiSummary',lastAiText());
+  setText('tdMasterPair',pair);setText('tdMasterTf',(byId('interval')&&byId('interval').value)||'--');setText('tdMasterProvider',source);setText('tdTilePair',pair);setText('tdTileProvider',source);var rows=window.IATBTradingState&&window.IATBTradingState.candles||null;var readout=byId('ohlc');setText('tdTileOhlc',readout?String(readout.textContent||'').replace(/^.*? · /,''):'O -- · H -- · L -- · C --');setText('tdTileClose',cleanPrice(p&&p.textContent));setText('tdTileTf',(byId('interval')&&byId('interval').value)||'--');setText('tdTileTime',ws?String(ws.textContent||'Market Data Collector'):'Market Data Collector');syncIndicatorDock();setText('tdConsensusPrice',cleanPrice(p&&p.textContent));setText('tdConsensusPair',pair);setText('tdChartPair',pair);setText('tdConsensusSource',source);setText('tdAiSource',src?String(src.textContent||'Market Data').replace(/·/g,' / '):'Market Data');setText('tdAiSummary',lastAiText());
   var connected=0,total=0;
   var kd=byId('krakenDot'),gd=byId('gmxDot');
   if(gd){total++;if(gd.classList.contains('ok')){connected++;var g=document.querySelector('[data-td-ex="GMX"] .iatbExStatus');if(g){g.className='iatbExStatus';g.innerHTML='<strong>CONNECTÉ</strong><span>Arbitrum</span>'}}}
