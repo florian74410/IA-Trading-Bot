@@ -149,6 +149,42 @@
         }
       },
       {
+        "name": "fundamental.logs.purge",
+        "arguments": {
+          "allowed": []
+        }
+      },
+      {
+        "name": "fundamental.logs.stats",
+        "arguments": {
+          "allowed": []
+        }
+      },
+      {
+        "name": "fundamental.logs.history",
+        "arguments": {
+          "allowed": [
+            "level",
+            "component",
+            "source",
+            "query",
+            "limit"
+          ]
+        }
+      },
+      {
+        "name": "fundamental.logs.recent",
+        "arguments": {
+          "allowed": [
+            "level",
+            "component",
+            "source",
+            "query",
+            "limit"
+          ]
+        }
+      },
+      {
         "name": "fundamental.summary",
         "arguments": {
           "allowed": []
@@ -283,6 +319,10 @@
       {
         "name": "fundamental.synthesis",
         "direction": "PRODUCE"
+      },
+      {
+        "name": "fundamental.observability",
+        "direction": "PRODUCE"
       }
     ],
     "events": [
@@ -300,5 +340,5 @@
       }
     ]
   },
-  "description": "Canonical Fundamental Engine: collection, event normalization, evidence and on-demand AI synthesis. INFORMATION_ONLY. Business consumer: Supervisor via Router/CP1."
+  "description": "Canonical Fundamental Engine V2 alpha: collection, event normalization, evidence, on-demand AI synthesis and rich private observability. INFORMATION_ONLY. Business consumer: Supervisor; management/diagnostics: Admin via Router/CP1."
 }
