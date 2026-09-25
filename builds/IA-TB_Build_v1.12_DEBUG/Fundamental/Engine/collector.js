@@ -1,7 +1,8 @@
 'use strict';
 var RSS=require('../Providers/rss_provider'),WEB=require('../Providers/web_provider'),X=require('../Providers/x_provider');
 function providerFor(feed){var p=String(feed&&feed.provider_type||'').toUpperCase(),platform=String(feed&&feed.platform||'').toUpperCase();if(p==='RSS'||p==='ATOM')return{tag:'RSS',impl:RSS};if(p==='WEB')return{tag:'WEB',impl:WEB};if(p==='SOCIAL'&&platform==='X')return{tag:'X',impl:X};return null;}
-function Collector(storage,logger,observability){this.storage=storage;this.log=logger||function(){};this.obs=observability||null;this.running=false;this.lastRun=null;this.timer=null;}\nCollector.prototype._obs=function(level,event,data){if(this.obs&&typeof this.obs.emit==='function')this.obs.emit(level,'COLLECTOR',event,data||{});};
+function Collector(storage,logger,observability){this.storage=storage;this.log=logger||function(){};this.obs=observability||null;this.running=false;this.lastRun=null;this.timer=null;}
+Collector.prototype._obs=function(level,event,data){if(this.obs&&typeof this.obs.emit==='function')this.obs.emit(level,'COLLECTOR',event,data||{});};
 Collector.prototype._runFeed=function(feed,persist,cb){
  var self=this,pv=providerFor(feed),started=Date.now(),correlationId=self.obs?self.obs.newCorrelation('collect'):null;self._obs('INFO','feed.collect.start',{correlation_id:correlationId,worker:'collector',source_id:feed.source_id,source:feed.source_code,feed_id:feed.id,feed:feed.code,provider:feed.provider_type,platform:feed.platform||null,endpoint_domain:(function(){try{return new (require('url').URL)(feed.endpoint).hostname;}catch(e){return null;}})(),poll_interval_sec:feed.poll_interval_sec,test_only:!persist});
  if(!pv){
