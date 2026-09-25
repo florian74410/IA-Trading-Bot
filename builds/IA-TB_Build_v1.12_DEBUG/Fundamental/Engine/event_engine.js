@@ -1,5 +1,5 @@
 'use strict';
-/* IA-TB Fundamental Event Engine v1.0
+/* IA-TB Fundamental V3 Event Engine
    INTERNAL SUBPROCESS of Fundamental Engine.
    Groups raw publications into events, then delegates confidence/impact scoring.
    INFORMATION_ONLY: never emits trading commands. */
