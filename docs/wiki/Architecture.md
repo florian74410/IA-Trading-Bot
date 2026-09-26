@@ -28,6 +28,12 @@ IA-TB suit une architecture **multi-processus locale**. Les responsabilités son
                                                 Exchange adapters
 ```
 
+
+> **Lecture rapide :** la section ci-dessus donne l'essentiel. Ouvrez le bloc suivant pour le fonctionnement détaillé.
+
+<details>
+<summary><b>➕ En savoir plus — fonctionnement technique</b></summary>
+
 ## Couches
 
 ### 1. Présentation
@@ -87,3 +93,6 @@ Market + Indicators + Fundamental + Portfolio
 ## Philosophie
 
 IA-TB privilégie les contrats explicites : un Engine expose des capacités déclarées, pas son implémentation interne. Cela permet de remplacer un provider ou un moteur sans réécrire le Router, et facilite le passage du Mac local au futur VPS.
+
+
+</details>
