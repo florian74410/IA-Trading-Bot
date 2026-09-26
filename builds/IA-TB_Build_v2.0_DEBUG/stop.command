@@ -92,7 +92,8 @@ stop_known_on_port(){
   pid=""; label=""
   if echo "$ui" | grep -q 'IA-TB UI Service'; then pid="$(json_pid "$ui")"; label="UI Service"
   elif echo "$r" | grep -q '"router"[[:space:]]*:[[:space:]]*true'; then pid="$(json_pid "$r")"; label="Router"
-  elif echo "$a" | grep -q 'Crypto Chart Viewer IA Trader'; then pid="$(json_pid "$a")"; label="Core Supervisor"
+  elif echo "$k" | grep -q 'IA-TB Supervisor'; then pid="$(json_pid "$k")"; label="IA Supervisor"
+  elif echo "$a" | grep -q 'Crypto Chart Viewer IA Trader'; then pid="$(json_pid "$a")"; label="Core"
   elif echo "$k" | grep -q 'Kraken Add-On'; then pid="$(json_pid "$k")"; label="Kraken Add-On"
   elif echo "$k" | grep -q 'IA-TB Indicator Engine'; then pid="$(json_pid "$k")"; label="Indicator Engine"
   elif echo "$k" | grep -q 'IA-TB Market Data'; then pid="$(json_pid "$k")"; label="Market Data"
@@ -184,7 +185,7 @@ stop_service(){
 # consommateurs / interfaces avant leurs dépendances.
 stop_service "UI Service"          "8000" || true
 stop_service "Router"              "8021" || true
-stop_service "Core Supervisor"     "3000" || true
+stop_service "IA Supervisor"       "3000" || true
 stop_service "Core"                "8001" || true
 stop_service "Risk Engine"         "8019" || true
 stop_service "Strategy Engine"     "8018" || true
@@ -225,13 +226,13 @@ verify_port "8018" "Strategy Engine"
 verify_port "8019" "Risk Engine"
 verify_port "8020" "Portfolio Engine"
 verify_port "8021" "Router"
-verify_port "3000" "Core Supervisor"
+verify_port "3000" "IA Supervisor"
 
 
 section "[ 3/3 ]  SYSTEM STATUS"
 
 if [ "$STOP_FAILURE" -eq 0 ]; then
-  printf "              ${C_GREEN}${C_BOLD}13 / 13 SERVICES OFFLINE${C_RESET}\n"
+  printf "              ${C_GREEN}${C_BOLD}14 / 14 SERVICES OFFLINE${C_RESET}\n"
   echo
   printf "                 ${C_GREEN}${C_BOLD}SUPERVISOR OFFLINE${C_RESET}\n"
   echo
