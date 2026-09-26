@@ -2,11 +2,11 @@
   "id": "supervisor",
   "label": "IA Supervisor",
   "type": "IA",
-  "status": "RESERVED",
+  "status": "ACTIVE",
   "transport": "CP1",
   "endpoint": {
     "host": "127.0.0.1",
-    "port": 0,
+    "port": 3000,
     "cpPath": "/cp/v1",
     "healthPath": "/health"
   },
@@ -20,79 +20,58 @@
   "table": {
     "commands": [
       {
-        "name": "marketdata.health",
-        "target": "marketdata",
-        "mode": "READ_ONLY"
+        "name": "supervisor.health",
+        "arguments": {
+          "allowed": []
+        }
       },
       {
-        "name": "marketdata.providers",
-        "target": "marketdata",
-        "mode": "READ_ONLY"
+        "name": "supervisor.capabilities",
+        "arguments": {
+          "allowed": []
+        }
       },
       {
-        "name": "marketdata.candles",
-        "target": "marketdata",
-        "mode": "READ_ONLY"
+        "name": "supervisor.status",
+        "arguments": {
+          "allowed": []
+        }
       },
       {
-        "name": "marketdata.financial.capabilities",
-        "target": "marketdata",
-        "mode": "READ_ONLY"
+        "name": "supervisor.reload",
+        "arguments": {
+          "allowed": []
+        }
       },
       {
-        "name": "marketdata.registry.status",
-        "target": "marketdata",
-        "mode": "READ_ONLY"
+        "name": "supervisor.extensions",
+        "arguments": {
+          "allowed": []
+        }
       },
       {
-        "name": "marketdata.registry.search",
-        "target": "marketdata",
-        "mode": "READ_ONLY"
+        "name": "supervisor.llm.health",
+        "arguments": {
+          "allowed": [
+            "provider"
+          ]
+        }
       },
       {
-        "name": "marketdata.registry.list",
-        "target": "marketdata",
-        "mode": "READ_ONLY"
-      },
-      {
-        "name": "marketdata.registry.asset",
-        "target": "marketdata",
-        "mode": "READ_ONLY"
-      },
-      {
-        "name": "marketdata.registry.query",
-        "target": "marketdata",
-        "mode": "READ_ONLY"
-      },
-      {
-        "name": "liquidity.health",
-        "target": "liquidity",
-        "mode": "READ_ONLY"
-      },
-      {
-        "name": "liquidity.capabilities",
-        "target": "liquidity",
-        "mode": "READ_ONLY"
-      },
-      {
-        "name": "liquidity.zones",
-        "target": "liquidity",
-        "mode": "READ_ONLY"
-      },
-      {
-        "name": "liquidity.realtime",
-        "target": "liquidity",
-        "mode": "READ_ONLY"
-      },
-      {
-        "name": "liquidity.snapshot",
-        "target": "liquidity",
-        "mode": "READ_ONLY"
-      },
-      {
-        "name": "liquidity.liquidations",
-        "target": "liquidity",
-        "mode": "READ_ONLY"
+        "name": "supervisor.reason",
+        "arguments": {
+          "allowed": [
+            "system",
+            "prompt",
+            "model",
+            "temperature",
+            "maxTokens",
+            "metadata"
+          ],
+          "required": [
+            "prompt"
+          ]
+        }
       }
     ],
     "dataTypes": [
@@ -125,6 +104,13 @@
         "direction": "PRODUCE"
       }
     ],
-    "events": []
+    "events": [
+      {
+        "name": "supervisor.reasoning.completed"
+      },
+      {
+        "name": "supervisor.extension.loaded"
+      }
+    ]
   }
 }
