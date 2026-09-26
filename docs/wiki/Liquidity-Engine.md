@@ -6,6 +6,12 @@
 
 Il consomme les données nécessaires via la couche Market Data/Financial Data et produit un contrat `iatb.liquidity/2.0`.
 
+
+> **Lecture rapide :** l'essentiel est ci-dessus. Les détails sont disponibles sans quitter la page.
+
+<details>
+<summary><b>➕ En savoir plus — détails techniques</b></summary>
+
 ## Capacités
 
 - zones de liquidité ;
@@ -24,3 +30,6 @@ Une requête realtime/snapshot choisit un symbole et peut préciser source, prof
 ## Frontière
 
 Liquidity **analyse** ; Market Data **collecte/normalise** ; Strategy **interprète dans une stratégie** ; Trading **exécute**. Cette séparation empêche un module d'analyse de devenir implicitement un broker.
+
+
+</details>
