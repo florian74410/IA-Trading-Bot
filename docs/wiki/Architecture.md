@@ -1,103 +1,89 @@
-# Architecture
+# Architecture générale — DEBUG 1.12
 
-IA-TB suit une architecture modulaire. Depuis la v1.8.12, les communications backend inter-modules sont normalisées autour du **Communication Router + CP/1**. Le but est d'ajouter des Engines, services et CEX/DEX sans créer de dépendances directes entre leurs implémentations internes.
+## Vue d'ensemble
 
-<p align="center">
-  <img src="../../assets/architecture-overview.png" alt="IA-TB — Architecture fonctionnelle" width="100%" />
-</p>
-
-> Version SVG : [`assets/architecture-overview.svg`](../../assets/architecture-overview.svg)
-
-## Vue logique actuelle
+IA-TB suit une architecture **multi-processus locale**. Les responsabilités sont volontairement séparées : l'acquisition d'une donnée ne donne pas le droit d'exécuter un ordre, et l'IA ne reçoit pas automatiquement des droits d'administration.
 
 ```text
-Clients / Supervisor / Strategy / Console Admin
-                    |
-                    v
-             Protocol Registry
-                    |
-                    v
-           Communication Router
-      _________|_____|_____|_________
-     |         |     |     |         |
- Indicator  Trading Risk Portfolio Market Data
-                         |            |
-                    Liquidity    Fundamental
-
-Trading Engine <-> Trading Firewall <-> Exchanges
+                         ┌──────────── UI :8000 ────────────┐
+                         │ Trading / Fundamental / Portfolio│
+                         │ Strategy / Settings / Admin / IA │
+                         └───────────────┬──────────────────┘
+                                         │
+                                  Core :8001
+                                         │
+                               Router CP/1 :8021
+          ┌──────────┬──────────┬────────┼─────────┬──────────┐
+          ▼          ▼          ▼        ▼         ▼          ▼
+ Indicator:8012 Market:8013 Liquidity:8014 Fund.:8015 Strategy:8018
+          │          │          │        │         │
+          └──────────┴──────────┴────────┴─────────┤
+                                                   ▼
+                                              Risk :8019
+                                                   │
+                                              Portfolio:8020
+                                                   │
+                     Router ──► Firewall :8017 ──► Trading :8016
+                                                       │
+                                                Exchange adapters
 ```
 
-Le Router est le hub de communication central. Les échanges métier entre composants actifs passent par lui afin de limiter le couplage, appliquer les contrôles CP/1 et rendre les flux observables.
+## Couches
 
-Voir la spécification détaillée : [Router Protocol / CP/1](Router-Protocol-CP1.md).
+### 1. Présentation
+Le service UI 8000 sert les pages. La UI ne possède pas les données de marché : elle consomme des états en lecture et envoie des intentions de navigation/visualisation. Le graphique Trading IA reste le moteur natif IA-TB.
 
-## Composants CP/1 actifs — v1.8.12
+### 2. Core
+Core 8001 porte les fonctions applicatives communes : Settings, pipeline OpenAI, Update Manager, usage ledger et passerelles nécessaires à l'interface. Il ne remplace pas les Engines.
 
-- **Indicator Engine**
-- **Trading Engine**
-- **Risk Engine**
-- **Portfolio Engine**
-- **Market Data** — adapter CP/1 normalisé
-- **Liquidity Engine** — adapter CP/1 normalisé
-- **Fundamental Engine** — adapter CP/1 normalisé, `INFORMATION_ONLY`
+### 3. Communication
+Router 8021 est le **bus de communication**. Il charge ProtocolRegistry, valide cible/action/arguments, protège contre le replay, signe les appels internes et vérifie les réponses. Il ne résume pas et ne score pas les sorties des Engines.
 
-## Exceptions d'architecture
+### 4. Données
+Market Data est l'entrée universelle READ des données financières. Il normalise symboles, timeframes, OHLCV et provenance. La Financial Data Layer étend le contrat aux données CEX, DEX, agrégateurs, RPC on-chain et DeFi.
 
-### Trading Firewall
+### 5. Analyse
+Indicator calcule les indicateurs ; Liquidity produit zones/order book/liquidations ; Fundamental transforme des publications en événements et preuves ; Strategy v2 agrège les snapshots pour produire une intention ; Risk calcule l'exposition et les métriques de risque.
 
-Le **Trading Firewall** est un `SECURITY_BRIDGE` volontaire entre le Trading Engine et les Exchanges. Il n'est pas une cible métier Router directe. Son rôle est de sécuriser le canal d'exécution : authentification CP, signatures, âge du message, whitelist, protection anti-doublon et règles de sécurité associées.
+### 6. État financier
+Portfolio conserve événements d'exécution, balances, positions, statistiques et coûts. Les connexions wallet utilisées par l'interface sont conçues en lecture/confirmation externe : aucune seed ou clé privée ne doit entrer dans IA-TB.
 
-### Strategy Engine
+### 7. Exécution
+Les commandes Trading sensibles sont routées vers **Firewall 8017**, qui inspecte puis relaie vers **Trading Engine 8016**. Trading Engine sélectionne l'adapter Binance/OKX/Kraken/GMX et conserve LIVE à OFF par défaut.
 
-Statut v1.8.12 : **RESERVED**. Le contrat est préparé mais aucun service runtime autonome correspondant n'est présent dans le build. Il ne doit donc pas être présenté comme fonctionnel.
+## Flux de décision cible
 
-### Supervisor IA
+```text
+Market + Indicators + Fundamental + Portfolio
+                    │
+                    ▼
+               Strategy v2
+                    │
+             strategy.signal
+                    │
+                    ▼
+                 Risk
+                    │
+          analyse / garde-fous
+                    │
+                    ▼
+        Supervisor IA (futur)
+                    │
+                    ▼
+                 Router
+                    │
+                    ▼
+                Firewall
+                    │
+                    ▼
+             Trading Engine
+                    │
+                    ▼
+                 Exchange
+```
 
-Statut v1.8.12 : **RESERVED**. Le contrat est préparé mais aucun service runtime CP/1 autonome correspondant n'est présent dans le build. Il ne doit donc pas être présenté comme fonctionnel.
+**Important :** dans DEBUG 1.12, Strategy est actif, mais le **Supervisor autonome reste RESERVED**. Le flux ci-dessus représente donc la séparation architecturale prévue ; il ne faut pas présenter le Supervisor comme déjà opérationnel.
 
-## Contrat de communication
+## Philosophie
 
-Une requête CP/1 normalisée transporte notamment : `protocol`, `request_id`, `timestamp`, `target`, `action`, `detail`, `arguments`.
-
-Une réponse CP/1 normalisée transporte notamment : `protocol`, `request_id`, `engine`, `action`, `status`, `schema`, `generated_at`, `duration_ms`, `data_hash`, `data`, `warnings`.
-
-Les sources de vérité de la v1.8.12 sont :
-
-- `Core/Communication/router_protocol_spec_v1.8.12.json` — source machine-readable ;
-- `Docs/Architecture/ROUTER_PROTOCOL_SPEC_v1.8.12.md` — documentation humaine du build.
-
-## Séparation des responsabilités
-
-- **Supervisor** : orchestration et décision de haut niveau lorsqu'un runtime autonome sera intégré.
-- **Strategy Engine** : production de stratégies/signaux lorsqu'un runtime autonome sera intégré.
-- **Risk Engine** : mesure et représentation analytique du risque ; il ne décide pas directement l'exécution.
-- **Trading Engine** : préparation/adaptation et exécution technique des ordres autorisés.
-- **Trading Firewall** : contrôle de sécurité du canal d'exécution.
-- **Market Data** : acquisition et normalisation des données de marché.
-- **Liquidity Engine** : analyse de liquidité et informations temps réel associées.
-- **Fundamental Engine** : informations et contexte uniquement (`INFORMATION_ONLY`).
-- **Portfolio Engine** : positions, événements, historique, PnL et états Portfolio.
-- **Indicator Engine** : calcul des indicateurs techniques.
-- **Exchange connector** : communication avec l'API CEX/DEX concernée.
-
-## Principes obligatoires
-
-### Aucun Engine-to-Engine direct
-
-Un Engine ne doit pas dépendre directement de l'implémentation interne d'un autre Engine. Les échanges passent par le Router et les contrats CP/1 déclarés.
-
-### Registre et whitelist
-
-Les capacités exposées doivent être déclarées dans les registres correspondants. Une commande absente ou non autorisée ne doit pas être simulée comme réussie.
-
-### Sécurité CP/1
-
-Le protocole normalisé conserve : localhost, token CP partagé, HMAC-SHA256, whitelist Registry et protection anti-replay Router. Aucun shell, chemin système ou URL arbitraire ne doit être exposé par le protocole.
-
-### Faible couplage et machine cible
-
-L'application doit rester légère pour la machine cible : cache maîtrisé, mémoire limitée, traitement à la demande et flux temps réel raisonnables plutôt qu'un chargement historique massif au démarrage.
-
-## QA v1.8.12
-
-La normalisation Router v1.8.12, le protocole CP/1, le Debug Framework v1.8.11 et les Common Tools CP/1 v1.8.9 sont annoncés **OK** dans le handoff technique. Le VERSION-GUARD est **OK 1.8.12** et 30 fichiers visuels ont été contrôlés sans modification.
+IA-TB privilégie les contrats explicites : un Engine expose des capacités déclarées, pas son implémentation interne. Cela permet de remplacer un provider ou un moteur sans réécrire le Router, et facilite le passage du Mac local au futur VPS.
