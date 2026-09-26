@@ -1,57 +1,39 @@
-# Trading Engine
+# ⚡ Trading Engine — V2.0 DEBUG
 
-## Rôle
+## Pour débuter
 
-**Trading Engine :8016** est la couche d'exécution. Il ne produit pas de signal : il traduit une commande interne validée vers le format de l'exchange choisi.
+**Trading Engine est l'exécutant, pas le décideur. Il reçoit une commande déjà passée par les couches de contrôle et la traduit pour l'Exchange concerné. Le Supervisor n'appelle jamais directement Binance, OKX, Kraken ou GMX.**
 
-
-> **Lecture rapide :** la section ci-dessus donne l'essentiel. Ouvrez le bloc suivant pour le fonctionnement détaillé.
-
-<details>
-<summary><b>➕ En savoir plus — fonctionnement technique</b></summary>
-
-## Chemin réel DEBUG 1.12
+<small>🔧 Engine :8016. Endpoint logique `trading` exposé par ProtocolRegistry via Firewall :8017. LIVE reste désactivé par défaut avec `IATB_TRADING_LIVE=0`.</small>
 
 ```text
-Client métier / futur Supervisor
-          │
-        Router
-          │ cible trading
-          ▼
-     Firewall :8017
-          │ inspection + forward signé
-          ▼
-  Trading Engine :8016
-          │
-          ▼
- Exchange Adapter
-          │
- Binance / OKX / Kraken / GMX
+Supervisor / autre client autorisé
+        │
+    TradeIntent
+        ▼
+     Risk Gate
+        ▼
+      Router
+        ▼
+ Firewall :8017
+        ▼
+ Trading :8016
+        ▼
+ Adapter Exchange
 ```
 
-Le ProtocolRegistry déclare volontairement l'endpoint Trading sur 8017 : c'est le **point d'entrée protégé**. Le Process Registry conserve Trading Engine lui-même sur 8016.
+<details>
+<summary><b>➕ En savoir plus — contrat V2.0</b></summary>
 
-## Commandes CP/1
+Les commandes sont `trading.health`, `trading.capabilities`, `trading.execute`, `trading.cancel`, `trading.close_position` et `trading.history`.
 
-`trading.health`, `capabilities`, `execute`, `cancel`, `close_position`, `history`.
+Les commandes mutantes exigent un `risk_approval_id`. Le Firewall vérifie cette approbation avant de transmettre à :8016. Les adapters présents couvrent Binance, OKX, Kraken et GMX.
 
-Les commandes mutantes exigent les champs de sécurité prévus, dont `risk_approval_id` selon le contrat. Trading Engine exige également que la requête mutante provienne du forwarding Firewall.
+</details>
 
-## LIVE
+<details>
+<summary><b>➕ En savoir plus — état DEBUG</b></summary>
 
-`IATB_TRADING_LIVE=0` est la valeur runtime par défaut. Le service peut donc être ONLINE tout en gardant l'exécution réelle désactivée.
-
-## Adapters
-
-Chaque exchange possède capabilities + executor + schémas de requêtes. Le registre choisit l'adapter et les utilitaires HTTP/secrets restent internes à la couche Trading.
-
-## Historique et Portfolio
-
-Chaque résultat est normalisé, ajouté à l'historique, puis un événement Portfolio est enregistré. Cela permet de séparer « ordre envoyé » et « état financier observé ».
-
-## Secrets
-
-Le `secret-provider` récupère les credentials depuis le stockage Settings/API. Aucun secret ne doit être codé dans un adapter.
-
+L'existence du pipeline ne signifie pas que le trading autonome LIVE est activé. Les réglages par défaut coupent LIVE, tandis que l'extension AutonomousTrading bloque encore explicitement `LIVE_GUARDED`.
 
 </details>
