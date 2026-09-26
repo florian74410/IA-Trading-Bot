@@ -23,9 +23,9 @@ function moduleDeck(){
     +'<section class="iatbDashCard"><h3>STRATÉGIES EN COURS <span class="accent">◉</span></h3><table class="iatbMiniTable"><thead><tr><th>Stratégie</th><th>Paire</th><th>Statut</th></tr></thead><tbody id="tdStrategies"><tr><td colspan="3">Chargement…</td></tr></tbody></table><a class="iatbMore" href="#" id="tdStrategiesLink">Voir toutes les stratégies →</a></section>'
     +'<section class="iatbDashCard marketTile"><h3>PAIRE ACTIVE <span class="accent">◉</span></h3><div class="iatbMetricBig"><strong id="tdTilePair">--</strong><span id="tdTileProvider">Market Data</span></div><div class="iatbAiSummary"><p id="tdTileOhlc">O -- · H -- · L -- · C --</p></div></section>'
     +'<section class="iatbDashCard marketTile"><h3>DERNIÈRE BOUGIE <span class="accent">◌</span></h3><div class="iatbMetricBig"><strong id="tdTileClose">--</strong><span id="tdTileTf">--</span></div><div class="iatbAiSummary"><p id="tdTileTime">En attente du Collector</p></div></section>'
-    +'<section class="iatbDashCard"><h3>VOLUME STRATÉGIE <span class="accent">◌</span></h3><div class="iatbMetricBig"><strong>—</strong><span>Trading Engine · en attente de données</span></div><div class="iatbAiSummary"><p>Volume exécuté par la stratégie active.</p></div></section>'
-    +'<section class="iatbDashCard"><h3>TRADING EN DIRECT <span class="accent">◉</span></h3><div class="iatbMetricBig"><strong>—</strong><span>Trading Engine · flux live</span></div><div class="iatbAiSummary"><p>Derniers ordres et exécutions de la stratégie.</p></div></section>'
-    +'<section class="iatbDashCard"><h3>POSITIONS EN COURS <span class="accent">◉</span></h3><div class="iatbMetricBig"><strong>—</strong><span>Portfolio / Trading Engine</span></div><div class="iatbAiSummary"><p>Positions ouvertes · aucune donnée reçue.</p></div></section>'
+    +'<section class="iatbDashCard"><h3>VOLUME TRADÉ PAR LLM <span class="accent">◌</span></h3><div class="iatbMetricBig"><strong id="tdLlmVolume">—</strong><span id="tdLlmVolumeState">Portfolio · événements Supervisor</span></div><div class="iatbAiSummary"><p id="tdLlmVolumeDetail">En attente de trades attribuables au LLM.</p></div></section>'
+    +'<section class="iatbDashCard"><h3>TRADING EN DIRECT <span class="accent">◉</span></h3><div class="iatbMetricBig"><strong id="tdLiveTrading">—</strong><span>Portfolio ← Trading Engine</span></div><div class="iatbAiSummary"><p id="tdLiveTradingDetail">En attente des dernières exécutions.</p></div></section>'
+    +'<section class="iatbDashCard positionsCard"><h3>POSITIONS OUVERTES <span class="accent">◉</span></h3><div class="iatbMetricBig"><strong id="tdOpenPositionsCount">—</strong><span>Portfolio Engine · temps réel</span></div><div class="iatbPositionList" id="tdOpenPositions"><p>Aucune donnée reçue.</p></div></section>'
     +'<section class="iatbDashCard"><h3>SYNTHÈSE IA <span class="accent">✦</span></h3><div class="iatbAiSummary"><p id="tdAiSummary"></p><ul><li>Tendance : <b style="color:#35d98b">lecture temps réel</b></li><li>Source : <b id="tdAiSource">Market Data</b></li><li>Contrôle : <b style="color:#e8b63f">Risk Manager</b></li></ul></div><a class="iatbMore" href="#" onclick="return false">Voir l’analyse complète →</a></section>';
   wrap.appendChild(d);return wrap;
 }
@@ -137,8 +137,8 @@ function build(){
   var legacyLeft=q('.body[data-mosaic-root]>.left');if(legacyLeft){legacyLeft.setAttribute('aria-hidden','true');legacyLeft.style.display='none'}
   var sl=byId('tdStrategiesLink');if(sl)sl.onclick=function(e){e.preventDefault();var b=byId('strategyBtn');if(b)b.click()};
   var close=right.querySelector('.iatbSideHead button');if(close)close.onclick=function(){right.classList.toggle('iatbSideCollapsed')};bindExchangeSwitches(right);
-  sync();loadStrategies();health();volume24h();
-  setInterval(sync,1800);setInterval(loadStrategies,15000);setInterval(health,5000);setInterval(volume24h,30000);
+  sync();loadStrategies();health();volume24h();loadTradingModules();
+  setInterval(sync,1800);setInterval(loadStrategies,15000);setInterval(health,5000);setInterval(volume24h,30000);setInterval(loadTradingModules,3000);
   setTimeout(function(){try{window.dispatchEvent(new Event('resize'))}catch(e){}},120);
 }
 
@@ -161,6 +161,72 @@ function volume24h(){
   }).catch(function(){setText('tdVolume','—');setText('tdVolumeDelta','Market Data hors ligne')})
 }
 function formatCompact(n){n=+n;if(!isFinite(n))return'—';if(n>=1e9)return(n/1e9).toFixed(2)+'B';if(n>=1e6)return(n/1e6).toFixed(2)+'M';if(n>=1e3)return(n/1e3).toFixed(1)+'K';return n.toFixed(2)}
+function uiRead(target,action){return fetch('/communication/v1/ui/read',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({target:target,action:action,arguments:{}})}).then(function(r){return r.json().then(function(o){if(!r.ok||o.error)throw new Error(o.error||('HTTP '+r.status));return o.data||{}})})}
+function eventOrigin(e){return String(e&&((e.meta&&e.meta.source)||e.source||e.origin||e.actor||e.created_by||e.requested_by||e.caller)||'').toLowerCase()}
+function eventNotional(e){var x=e&&e.data&&typeof e.data==='object'?e.data:e||{},n=+(x.notional_usd!=null?x.notional_usd:(x.notional!=null?x.notional:(x.size_usd!=null?x.size_usd:x.value_usd)));return isFinite(n)&&n>0?n:null}
+function loadTradingModules(){
+  Promise.all([uiRead('portfolio','portfolio.positions'),uiRead('portfolio','portfolio.events')]).then(function(v){
+    var pos=Array.isArray(v[0].positions)?v[0].positions:[],box=byId('tdOpenPositions');setText('tdOpenPositionsCount',String(pos.length));
+    if(box)box.innerHTML=pos.length?pos.slice(0,8).map(function(x){var side=String(x.side||x.direction||'').toUpperCase(),sym=x.symbol||x.pair||'—',qty=x.quantity!=null?x.quantity:(x.size!=null?x.size:'—'),pnl=x.unrealized_pnl!=null?x.unrealized_pnl:x.pnl;return '<div class="iatbPositionRow"><b>'+esc(sym)+'</b><span>'+esc(side||'OPEN')+'</span><span>'+esc(qty)+'</span><strong>'+esc(pnl==null?'—':pnl)+'</strong></div>'}).join(''):'<p>Aucune position ouverte.</p>';
+    var ev=Array.isArray(v[1].events)?v[1].events:[],llm=0,llmN=0,last=null;
+    for(var i=0;i<ev.length;i++){var e=ev[i]||{},origin=eventOrigin(e),type=String(e.type||e.event||e.event_type||'').toLowerCase();if(!last&&/(trade|fill|order|execution)/.test(type))last=e;if(/(supervisor|llm|autonomous)/.test(origin)){var n=eventNotional(e);if(n!=null){llm+=n;llmN++}}}
+    setText('tdLlmVolume',llmN?('
+
+var providerHealth={GMX:false,KRAKEN:false,BINANCE:false,OKX:false};
+function setProviderHealth(exchange,ok,detail){
+  exchange=String(exchange||'').toUpperCase();providerHealth[exchange]=!!ok;
+  var row=document.querySelector('[data-td-ex="'+exchange+'"]'),st=row&&row.querySelector('.iatbExStatus');
+  if(st){st.className='iatbExStatus'+(ok?'':' planned');st.innerHTML='<strong>'+(ok?'CONNECTÉ':'HORS LIGNE')+'</strong><span>'+esc(detail||(ok?'Market Data':'indisponible'))+'</span>'}
+}
+function probeProvider(exchange,symbol){
+  var url='/ui-data/market/candles?exchange='+encodeURIComponent(exchange)+'&symbol='+encodeURIComponent(symbol)+'&interval=1m&limit=100&force=1';
+  return fetch(url,{credentials:'same-origin',cache:'no-store'}).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json()}).then(function(d){
+    var ok=!!(d&&d.ok!==false&&Array.isArray(d.candles)&&d.candles.length);
+    setProviderHealth(exchange,ok,ok?((d.provider||exchange)+' · '+d.candles.length+' bougies'):'OHLCV vide');return ok;
+  }).catch(function(e){setProviderHealth(exchange,false,compact(e&&e.message||'indisponible',24));return false});
+}
+function probeMarketProviders(){
+  return Promise.all([probeProvider('GMX','BTCUSD'),probeProvider('KRAKEN','BTCUSD'),probeProvider('BINANCE','BTCUSDT'),probeProvider('OKX','BTCUSDT')]).then(function(v){
+    var connected=0;for(var i=0;i<v.length;i++)if(v[i])connected++;
+    var score=v.length?connected/v.length:0;setText('tdConsensusScore',connected?score.toFixed(2):'—');var gauge=byId('tdConsensusGauge');if(gauge)gauge.style.width=Math.round(score*100)+'%';
+  });
+}
+function health(){
+  var start=Date.now();
+  fetch('/api/health',{credentials:'same-origin'}).then(function(r){if(!r.ok)throw new Error();return r.json()}).then(function(){markDot('Core','ok');markDot('Router','ok');setText('tdLatency',(Date.now()-start)+' ms')}).catch(function(){markDot('Core','bad')});
+  fetch('/api/status',{credentials:'same-origin'}).then(function(r){if(!r.ok)throw new Error();return r.json()}).then(function(){markDot('Market Data','ok');markDot('Trading Engine','ok');markDot('Trading FW','ok');setText('tdUptime','en ligne')}).catch(function(){});
+  probeMarketProviders();
+}
+
+function syncIndicatorDock(){var box=byId('tdIndicatorDockBody');if(!box)return;var st=null;try{st=window.IATBIndicatorUI&&IATBIndicatorUI.state?IATBIndicatorUI.state():null}catch(e){}var a=st&&Array.isArray(st.selected)?st.selected:[];if(!a.length){box.innerHTML='<div class="iatbIndicatorEmpty">Ajoute un indicateur avec le bouton ƒx Indicateurs ou via le Chat IA.</div>';return}box.innerHTML=a.slice(0,12).map(function(x){var id=typeof x==='string'?x:(x.id||x.name||'Indicateur');return '<div class="iatbIndicatorChip"><b>'+esc(id)+'</b><small>Indicator Engine · actif</small></div>'}).join('')}
+function sync(){
+  syncExchangeSelection();
+  var p=q('#price'),sym=q('#symbol'),src=q('#marketSourceBadge'),ws=q('#wsState');
+  var pair=sym&&sym.options&&sym.selectedIndex>=0?sym.options[sym.selectedIndex].text:'BTC/USD';
+  var source=src?String(src.textContent||'Market Data').split('·')[0].trim():'Market Data';
+  setText('tdMasterPair',pair);setText('tdMasterTf',(byId('interval')&&byId('interval').value)||'--');setText('tdMasterProvider',source);setText('tdTilePair',pair);setText('tdTileProvider',source);var rows=window.IATBTradingState&&window.IATBTradingState.candles||null;var readout=byId('ohlc');setText('tdTileOhlc',readout?String(readout.textContent||'').replace(/^.*? · /,''):'O -- · H -- · L -- · C --');setText('tdTileClose',cleanPrice(p&&p.textContent));setText('tdTileTf',(byId('interval')&&byId('interval').value)||'--');setText('tdTileTime',ws?String(ws.textContent||'Market Data Collector'):'Market Data Collector');syncIndicatorDock();setText('tdConsensusPrice',cleanPrice(p&&p.textContent));setText('tdConsensusPair',pair);setText('tdChartPair',pair);setText('tdConsensusSource',source);setText('tdAiSource',src?String(src.textContent||'Market Data').replace(/·/g,' / '):'Market Data');setText('tdAiSummary',lastAiText());
+  if(ws&&/connect|en ligne|online|ok/i.test(String(ws.textContent||'')))markDot('Market Data','ok');
+}
+
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',build);else build();
+})();
+
+
+/* Firewall read-only information feed: local UI only, no OpenAI/token usage. */
+(function(){
+var last=Date.now()-5000,busy=false,seen={};
+function box(){return document.querySelector('[data-mosaic-id="chat"] .msgs')||document.querySelector('.chatPrimary .msgs')||document.querySelector('.chat .msgs');}
+function label(e){var r=e.result?(' · '+e.result):'',why=e.reason?(' · '+e.reason):'';return '🛡 Firewall · '+String(e.component||'SYSTEM')+' · '+String(e.type||'EVENT')+r+why;}
+function add(e){var k=[e.timestamp,e.component,e.type,e.result,e.reason].join('|');if(seen[k])return;seen[k]=1;var b=box();if(!b)return;var d=document.createElement('div');d.className='msg ai local firewallInfo';d.setAttribute('data-read-only','1');d.textContent=label(e);b.appendChild(d);b.scrollTop=b.scrollHeight;}
+function poll(){if(busy)return;busy=true;fetch('/firewall-events?audience=user&limit=40&since='+encodeURIComponent(last),{cache:'no-store',headers:{Accept:'application/json'}}).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}).then(function(o){(o.events||[]).forEach(function(e){var t=Date.parse(e.timestamp)||0;if(t>last)last=t;add(e);});}).catch(function(){}).then(function(){busy=false;});}
+setTimeout(poll,1200);setInterval(poll,2500);
+})();
++formatCompact(llm)):'—');setText('tdLlmVolumeState',llmN?(llmN+' exécution'+(llmN>1?'s':'')+' attribuée'+(llmN>1?'s':'')):'aucun trade LLM attribuable');
+    setText('tdLlmVolumeDetail',llmN?'Somme des notionnels marqués Supervisor/LLM/Autonomous.':'Aucun événement Portfolio ne permet encore une attribution sûre au LLM.');
+    if(last){var d=last.data&&typeof last.data==='object'?last.data:last;setText('tdLiveTrading',d.symbol||d.pair||last.type||'EXÉCUTION');setText('tdLiveTradingDetail',String(last.type||'trade')+' · '+String(d.side||d.direction||'—')+' · '+String(d.price||'—'))}else{setText('tdLiveTrading','—');setText('tdLiveTradingDetail','Aucune exécution récente.')}
+  }).catch(function(){setText('tdOpenPositionsCount','—');setText('tdLlmVolume','—');setText('tdLiveTrading','—')})
+}
+
 
 var providerHealth={GMX:false,KRAKEN:false,BINANCE:false,OKX:false};
 function setProviderHealth(exchange,ok,detail){
