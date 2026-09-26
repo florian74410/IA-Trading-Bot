@@ -1,4 +1,4 @@
-### IA-TB DEBUG 1.12
+### IA-TB V2.0 DEBUG
 - [🏠 Accueil](Home.md)
 - [🏗 Architecture](Architecture.md)
 - [⚙ Runtime & ports](Runtime-Services.md)
@@ -7,7 +7,8 @@
 - [📈 Trading IA](Trading-IA.md)
 - [🌍 Fondamental](Fundamental-Engine.md)
 - [💼 Portfolio](Portfolio-Engine.md)
-- [🤖 Companion IA](AI-Companion.md)
+- [🏦 Bank & Vaults](Bank-Vaults.md)
+- [🤖 Supervisor & Companion](AI-Companion.md)
 - [🖥 Interfaces](User-Interfaces.md)
 
 ### Engines & données
@@ -16,7 +17,7 @@
 - [📐 Indicators](Indicator-Engine.md)
 - [🌊 Liquidity](Liquidity-Engine.md)
 - [🧠 Strategy v2](Strategy-Engine.md)
-- [🛡 Risk](Risk-Engine.md)
+- [🛡 Risk & Risk Gate](Risk-Engine.md)
 - [⚡ Trading Engine](Trading-Engine.md)
 
 ### Core & sécurité
