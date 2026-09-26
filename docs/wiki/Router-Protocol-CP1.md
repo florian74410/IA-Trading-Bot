@@ -4,6 +4,12 @@
 
 **Communication Router :8021** est le bus interne. Il charge `ProtocolRegistry`, connaît les endpoints/capacités et transmet une requête validée au composant cible. Il ne transforme pas le sens métier d'une réponse.
 
+
+> **Lecture rapide :** la section ci-dessus donne l'essentiel. Ouvrez le bloc suivant pour le fonctionnement détaillé.
+
+<details>
+<summary><b>➕ En savoir plus — fonctionnement technique</b></summary>
+
 ## Enveloppe CP/1
 
 Requête :
@@ -38,3 +44,6 @@ Chart Viewer est un composant `BROWSER_ACK`. Pour une action visuelle, le Router
 Le protocole prévoit deux identités IA : `chat_ai` et `supervisor`. Elles ont des tables de capacités explicites. Dans DEBUG 1.12, leur accès Market Data/Liquidity est **READ_ONLY**. Le Supervisor autonome reste RESERVED ; la communication future se fera donc comme n'importe quel autre composant : **IA → requête CP/1 → Router → Engine → réponse CP/1**, jamais par accès direct aux internals.
 
 Voir [Assistant IA](AI-Companion.md).
+
+
+</details>
