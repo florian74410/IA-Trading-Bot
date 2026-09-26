@@ -1,4 +1,4 @@
-:root{--iatb-nav-h:86px;--iatb-cyan:#12c8ff;--iatb-blue:#158cff;--iatb-line:#164f73;--iatb-nav-bg:#06111d}
+:root{--iatb-nav-h:86px;--iatb-nav-gap:8px;--iatb-cyan:#12c8ff;--iatb-blue:#158cff;--iatb-line:#164f73;--iatb-nav-bg:#06111d}
 html{scroll-padding-top:var(--iatb-nav-h)}
 body{padding-top:0!important}
 #iatb-global-nav{position:fixed;z-index:2147483000;left:0;right:0;top:0;height:var(--iatb-nav-h);display:flex;align-items:center;justify-content:center;padding:8px 16px;background:linear-gradient(180deg,#071725 0%,#040d17 100%);border-bottom:1px solid #11618a;box-shadow:0 7px 24px #0009,0 1px 20px #00a9ff18;font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif}
@@ -15,12 +15,15 @@ body.iatb-global-nav-ready>header.topbar,body.iatb-global-nav-ready>header.top,b
 body.iatb-global-nav-ready>.portfolioApp,
 body.iatb-global-nav-ready>.page,
 body.iatb-global-nav-ready>.shell,
-body.iatb-global-nav-ready>.app{margin-top:var(--iatb-nav-h)!important}
-body.iatb-global-nav-ready>.portfolioApp{height:calc(100vh - var(--iatb-nav-h))!important;grid-template-rows:minmax(0,1fr) var(--status)!important}
+body.iatb-global-nav-ready>.app{margin-top:calc(var(--iatb-nav-h) + var(--iatb-nav-gap))!important}
+body.iatb-global-nav-ready>.portfolioApp{height:calc(100vh - var(--iatb-nav-h) - var(--iatb-nav-gap))!important;grid-template-rows:minmax(0,1fr) var(--status)!important}
 body.iatb-global-nav-ready>.portfolioApp>.workspace{min-height:0!important;height:auto!important;display:block!important}
 body.iatb-global-nav-ready>.portfolioApp>.statusBar{grid-row:2!important}
-body.iatb-global-nav-ready>.shell{height:calc(100vh - var(--iatb-nav-h))!important}
-body.iatb-global-nav-ready>.page{min-height:calc(100vh - var(--iatb-nav-h))!important}
-body.iatb-global-nav-ready>.page>.fundSidebar{top:var(--iatb-nav-h)!important}
-body.iatb-global-nav-ready>.app{height:calc(100vh - var(--iatb-nav-h))!important}
-body.iatb-global-nav-ready>.adminShell{margin-top:var(--iatb-nav-h)!important;height:calc(100vh - var(--iatb-nav-h))!important;min-height:0!important}
+body.iatb-global-nav-ready>.shell{height:calc(100vh - var(--iatb-nav-h) - var(--iatb-nav-gap))!important}
+body.iatb-global-nav-ready>.page{min-height:calc(100vh - var(--iatb-nav-h) - var(--iatb-nav-gap))!important}
+body.iatb-global-nav-ready>.page>.fundSidebar{top:calc(var(--iatb-nav-h) + var(--iatb-nav-gap))!important}
+body.iatb-global-nav-ready>.app{height:calc(100vh - var(--iatb-nav-h) - var(--iatb-nav-gap))!important}
+body.iatb-global-nav-ready>.adminShell{margin-top:calc(var(--iatb-nav-h) + var(--iatb-nav-gap))!important;height:calc(100vh - var(--iatb-nav-h) - var(--iatb-nav-gap))!important;min-height:0!important}
+
+/* Breathing space below the fixed application chrome. */
+body.iatb-global-nav-ready{background:#040d17}
