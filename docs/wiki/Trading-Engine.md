@@ -4,6 +4,12 @@
 
 **Trading Engine :8016** est la couche d'exécution. Il ne produit pas de signal : il traduit une commande interne validée vers le format de l'exchange choisi.
 
+
+> **Lecture rapide :** la section ci-dessus donne l'essentiel. Ouvrez le bloc suivant pour le fonctionnement détaillé.
+
+<details>
+<summary><b>➕ En savoir plus — fonctionnement technique</b></summary>
+
 ## Chemin réel DEBUG 1.12
 
 ```text
@@ -46,3 +52,6 @@ Chaque résultat est normalisé, ajouté à l'historique, puis un événement Po
 ## Secrets
 
 Le `secret-provider` récupère les credentials depuis le stockage Settings/API. Aucun secret ne doit être codé dans un adapter.
+
+
+</details>
