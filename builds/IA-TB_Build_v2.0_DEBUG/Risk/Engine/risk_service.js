@@ -12,6 +12,7 @@
 var http=require('http'),path=require('path'),URL=require('url').URL;
 var CP=require('../../Core/Communication/communication_protocol_v1');
 var Risk=require('./risk_engine');
+var RiskGate=require('./risk_gate').RiskGate;
 var SettingsStore=require('../../Core/Settings/sqlite_settings_store');
 
 var APP_ROOT=path.resolve(__dirname,'../..');
@@ -20,6 +21,7 @@ var PORT=+(process.env.IATB_RISK_ENGINE_PORT||8019);
 var ROUTER_PORT=+(process.env.ROUTER_PORT||8021);
 var MAX_BODY=1024*1024;
 var SETTINGS_DB=new SettingsStore(APP_ROOT);
+var RISK_GATE=new RiskGate({secret:CP.ensureSecret(APP_ROOT),getSettings:riskSettings,ttlMs:30000});
 var DEFAULT_SETTINGS={enabled:true,defaultTimeframe:'1h',marketSamples:500,thresholds:{capitalRiskWarningPct:3,grossExposureWarningPct:100,leverageWarning:5,volatilityWarningPct:100,drawdownWarningPct:20,var95WarningPct:5},scoreWeights:{capitalAtRisk:8,grossExposure:0.20,leverage:5,volatility:0.20,drawdown:0.50}};
 function riskSettings(){var x=SETTINGS_DB.get('risk','settings',null)||{};var o=JSON.parse(JSON.stringify(DEFAULT_SETTINGS));Object.keys(x).forEach(function(k){if(k==='thresholds'||k==='scoreWeights')Object.assign(o[k],x[k]||{});else o[k]=x[k];});return o;}
 function saveRiskSettings(patch){var o=riskSettings();patch=patch||{};if(typeof patch.enabled==='boolean')o.enabled=patch.enabled;if(patch.defaultTimeframe)o.defaultTimeframe=String(patch.defaultTimeframe);if(+patch.marketSamples>=50&&+patch.marketSamples<=2000)o.marketSamples=Math.round(+patch.marketSamples);if(patch.thresholds)Object.keys(o.thresholds).forEach(function(k){if(isFinite(+patch.thresholds[k]))o.thresholds[k]=+patch.thresholds[k];});SETTINGS_DB.set('risk','settings',o);return o;}
@@ -31,7 +33,9 @@ var CAPABILITIES=[
   'risk.strategy.analyze',
   'risk.snapshot',
   'risk.settings.get',
-  'risk.settings.set'
+  'risk.settings.set',
+  'risk.gate.evaluate',
+  'risk.gate.verify'
 ];
 var EVENTS=[];
 
@@ -171,6 +175,8 @@ function buildAnalysis(args,detail,cb){
 }
 function cpAction(m,cb){
   var a=m.arguments||{};
+  if(m.action==='risk.gate.evaluate'){try{return cb(null,RISK_GATE.evaluate(a.intent||a));}catch(e){return cb(e);}}
+  if(m.action==='risk.gate.verify'){try{return cb(null,RISK_GATE.verify(a.risk_approval_id,a.intent||{},a.consume===true));}catch(e){return cb(e);}}
   if(m.action==='risk.settings.get')return cb(null,{schema:'risk.settings/1.0',settings:riskSettings(),storage:SETTINGS_DB.status()});
   if(m.action==='risk.settings.set'){try{return cb(null,{schema:'risk.settings/1.0',settings:saveRiskSettings(a),storage:SETTINGS_DB.status()});}catch(e){return cb(e);}}
   if(m.action==='risk.list_capabilities')
