@@ -131,7 +131,7 @@ function build(){
   topUtilities();
   watchSecondaryPages();
   var center=el('main','iatbCenterColumn'),right=exchangePanel(),services=serviceStrip();
-  center.appendChild(marketMaster());center.appendChild(chartShell(chart));center.appendChild(moduleDeck());
+  center.appendChild(marketMaster());center.appendChild(chartShell(chart));center.appendChild(indicatorDock());center.appendChild(moduleDeck());
   body.appendChild(center);body.appendChild(right);body.appendChild(services);
   var legacyRight=q('.body[data-mosaic-root]>.right');if(legacyRight){legacyRight.setAttribute('aria-hidden','true');legacyRight.style.display='none'}
   var legacyLeft=q('.body[data-mosaic-root]>.left');if(legacyLeft){legacyLeft.setAttribute('aria-hidden','true');legacyLeft.style.display='none'}
