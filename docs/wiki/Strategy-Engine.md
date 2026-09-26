@@ -4,6 +4,12 @@
 
 Dans **DEBUG 1.12**, Strategy v2 est **ACTIVE** sur **8018**. Il remplace le moteur historique pour les communications machine-to-machine.
 
+
+> **Lecture rapide :** la section ci-dessus donne l'essentiel. Ouvrez le bloc suivant pour le fonctionnement détaillé.
+
+<details>
+<summary><b>➕ En savoir plus — fonctionnement technique</b></summary>
+
 ## Rôle
 
 Strategy reçoit des snapshots `market`, `indicators`, `fundamental` et `portfolio`, évalue une ou plusieurs stratégies et produit une agrégation BUY/SELL/HOLD ainsi qu'un éventuel `strategy.signal/2.0`.
@@ -37,3 +43,6 @@ Les stratégies schema v1 d'`Annexes/Strategies` sont converties en mémoire ver
 ## Supervisor-ready
 
 Le moteur est conçu pour être appelé via Router par le futur Supervisor. Le Supervisor ne doit pas dépendre des anciennes routes Core de stratégie.
+
+
+</details>
