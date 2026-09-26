@@ -58,6 +58,43 @@
         }
       },
       {
+        "name": "supervisor.context",
+        "arguments": {
+          "allowed": [
+            "symbol",
+            "timeframe",
+            "source",
+            "limit",
+            "fundamentalLimit",
+            "correlationId"
+          ],
+          "required": [
+            "symbol"
+          ]
+        }
+      },
+      {
+        "name": "supervisor.analyze",
+        "arguments": {
+          "allowed": [
+            "symbol",
+            "timeframe",
+            "source",
+            "limit",
+            "fundamentalLimit",
+            "correlationId",
+            "prompt",
+            "system",
+            "model",
+            "temperature",
+            "maxTokens"
+          ],
+          "required": [
+            "symbol"
+          ]
+        }
+      },
+      {
         "name": "supervisor.reason",
         "arguments": {
           "allowed": [
