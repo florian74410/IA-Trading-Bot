@@ -6,6 +6,12 @@ IA-TB sépare **provider de données** et **adapter d'exécution**. Un exchange 
 
 DEBUG 1.12 contient des providers Kraken, Binance, OKX et GMX ainsi que CoinGecko, DeFi et RPC on-chain. Les providers produisent des données normalisées avec provenance.
 
+
+> **Lecture rapide :** l'essentiel est ci-dessus. Les détails sont disponibles sans quitter la page.
+
+<details>
+<summary><b>➕ En savoir plus — détails techniques</b></summary>
+
 ## Trading Engine
 
 Les adapters d'exécution présents sont :
@@ -27,3 +33,6 @@ Le protocole UI historique prévoit `wallet.connect`, refresh, switch Arbitrum e
 ## Ajouter un exchange
 
 Un nouvel exchange doit définir séparément : provider Market Data si nécessaire, normalisation symboles/timeframes, capabilities Trading, executor, secrets requis, tests, provenance et documentation. Il ne doit pas introduire de raccourci direct UI→Exchange qui contourne Router/Firewall.
+
+
+</details>
