@@ -1,39 +1,35 @@
-# Risk Engine
+# 🛡 Risk Engine & Risk Gate — V2.0 DEBUG
 
-## Rôle
+## Pour débuter
 
-**Risk Engine :8019** est un moteur analytique de risque. Dans DEBUG 1.12, son manifeste runtime est actif et dépend du Router, avec Market Data, Indicator et Portfolio comme dépendances optionnelles.
+**Risk ne sert plus seulement à afficher un niveau de risque. V2.0 lui ajoute un “sas” déterministe, le Risk Gate : avant qu'une intention de trading autonome puisse continuer vers l'exécution, elle doit respecter les règles de risque configurées et recevoir une autorisation temporaire.**
 
-Il ne possède aucun adapter Exchange.
+<small>🔧 Service :8019. Le moteur analytique reste séparé du `risk_gate.js`. Le Gate n'exécute jamais d'ordre et n'accepte pas les limites de risque fournies par le TradeIntent.</small>
 
+## Deux fonctions distinctes
 
-> **Lecture rapide :** l'essentiel est ci-dessus. Les détails sont disponibles sans quitter la page.
+**Analyse :** exposition, levier, volatilité, drawdown, VaR, Expected Shortfall, PnL et score de risque.
+
+**Gate :** validation d'une intention d'exécution et émission d'un `risk_approval_id`.
 
 <details>
-<summary><b>➕ En savoir plus — détails techniques</b></summary>
+<summary><b>➕ En savoir plus — contrôles du Risk Gate</b></summary>
 
-## Calculs
+Le Gate normalise `cp1.trade-intent/1.0` et contrôle notamment : Risk activé, schéma, source `supervisor.autonomous-trading`, mode PAPER/LIVE_GUARDED, exchange, symbole, BUY/SELL, taille et limite de levier.
 
-Le cœur calcule notamment : risque d'une position, perte théorique au stop, capital à risque, notionnel/marge/levier, exposition brute, concentration, PnL latent, drawdown historique, volatilité logarithmique/annualisée, VaR historique 95/99 %, Expected Shortfall et score synthétique 0–100.
+Une intention approuvée reçoit un identifiant `rap-...`, un hash SHA-256 et une expiration. Le TTL configuré dans le service est de 30 secondes. L'approbation est stockée en mémoire et peut être consommée une seule fois.
 
-Le résultat porte un niveau **VERY_LOW / LOW / MODERATE / HIGH / CRITICAL** et des warnings selon les seuils configurés.
+`risk.gate.verify` recalcule le hash de l'intention : si l'ordre a été modifié après approbation, la vérification échoue avec `RISK_APPROVAL_INTENT_MISMATCH`.
 
-> Le score est une mesure analytique, pas une prédiction de performance.
+</details>
 
-## CP/1
+<details>
+<summary><b>➕ En savoir plus — commandes CP/1 V2.0</b></summary>
 
-- `risk.position.analyze`
-- `risk.portfolio.analyze`
-- `risk.strategy.analyze`
-- `risk.snapshot`
-- `risk.settings.get/set`
-- `risk.list_capabilities`
+Aux commandes analytiques s'ajoutent :
+- `risk.gate.evaluate`
+- `risk.gate.verify`
 
-Il consomme `portfolio.snapshot`, `market.candles` et `indicator.analysis`, puis produit `risk.analysis/0.1`.
-
-## Position dans la chaîne
-
-Le code Risk porte encore la mention `ANALYTICAL_ONLY` / `NO_ORDER_APPROVAL_OR_BLOCKING`. Parallèlement, Trading exige un `risk_approval_id` pour ses commandes mutantes. Le Wiki distingue donc **analyse Risk actuelle** et **chaîne d'approbation d'exécution**, qui doit rester explicitement orchestrée par les couches supérieures plutôt que supposée.
-
+Le ProtocolRegistry déclare aussi le type produit `risk.approval` avec schéma `risk.gate-decision/1.0`.
 
 </details>
