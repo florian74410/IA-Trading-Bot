@@ -1,6 +1,6 @@
 :root{--iatb-nav-h:86px;--iatb-cyan:#12c8ff;--iatb-blue:#158cff;--iatb-line:#164f73;--iatb-nav-bg:#06111d}
 html{scroll-padding-top:var(--iatb-nav-h)}
-body{padding-top:var(--iatb-nav-h)!important}
+body{padding-top:0!important}
 #iatb-global-nav{position:fixed;z-index:2147483000;left:0;right:0;top:0;height:var(--iatb-nav-h);display:flex;align-items:center;justify-content:center;padding:8px 16px;background:linear-gradient(180deg,#071725 0%,#040d17 100%);border-bottom:1px solid #11618a;box-shadow:0 7px 24px #0009,0 1px 20px #00a9ff18;font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif}
 .iatb-nav-frame{width:100%;height:70px;display:grid;grid-template-columns:minmax(180px,260px) minmax(560px,1fr) minmax(300px,430px);align-items:stretch;border:1px solid #1479a8;border-radius:18px;background:linear-gradient(180deg,#071928 0%,#06111c 55%,#071521 100%);box-shadow:inset 0 0 0 1px #0a3048,inset 0 1px 0 #2cc9ff35,0 0 22px #00a9ff18;overflow:hidden;position:relative}
 .iatb-nav-frame:before,.iatb-nav-frame:after{content:"";position:absolute;top:0;width:130px;height:2px;background:linear-gradient(90deg,transparent,#16cfff,transparent);box-shadow:0 0 12px #16cfff}.iatb-nav-frame:before{left:20px}.iatb-nav-frame:after{right:20px}
@@ -10,3 +10,17 @@ body{padding-top:var(--iatb-nav-h)!important}
 body.iatb-global-nav-ready>header.topbar,body.iatb-global-nav-ready>header.top,body.iatb-global-nav-ready>.page>header.topbar,body.iatb-global-nav-ready>.portfolioApp>header.topbar,body.iatb-global-nav-ready>.app>header.top{display:none!important}
 @media(max-width:1100px){.iatb-nav-frame{grid-template-columns:150px 1fr 210px}.iatb-nav-brand{padding:0 12px}.iatb-nav-brand img{width:105px}.iatb-nav-label{font-size:10px}.iatb-nav-actions{padding:0 8px}.iatb-wallet{display:none}}
 @media(max-width:820px){:root{--iatb-nav-h:76px}#iatb-global-nav{height:var(--iatb-nav-h);padding:6px}.iatb-nav-frame{height:64px;grid-template-columns:90px 1fr 52px;border-radius:13px}.iatb-nav-brand{padding:0 8px}.iatb-nav-brand img{width:78px}.iatb-nav-links{overflow-x:auto;grid-template-columns:repeat(6,82px)}.iatb-nav-action{display:none}.iatb-nav-status{width:32px;height:32px}.iatb-nav-actions{justify-content:center}.iatb-nav-icon{font-size:15px}.iatb-nav-label{font-size:9px}}
+
+/* Layout contract: global nav owns the first viewport band; page roots fill only the remainder. */
+body.iatb-global-nav-ready>.portfolioApp,
+body.iatb-global-nav-ready>.page,
+body.iatb-global-nav-ready>.shell,
+body.iatb-global-nav-ready>.app{margin-top:var(--iatb-nav-h)!important}
+body.iatb-global-nav-ready>.portfolioApp{height:calc(100vh - var(--iatb-nav-h))!important;grid-template-rows:minmax(0,1fr) var(--status)!important}
+body.iatb-global-nav-ready>.portfolioApp>.workspace{min-height:0!important;height:auto!important;display:block!important}
+body.iatb-global-nav-ready>.portfolioApp>.statusBar{grid-row:2!important}
+body.iatb-global-nav-ready>.shell{height:calc(100vh - var(--iatb-nav-h))!important}
+body.iatb-global-nav-ready>.page{min-height:calc(100vh - var(--iatb-nav-h))!important}
+body.iatb-global-nav-ready>.page>.fundSidebar{top:var(--iatb-nav-h)!important}
+body.iatb-global-nav-ready>.app{height:calc(100vh - var(--iatb-nav-h))!important}
+body.iatb-global-nav-ready>.adminShell{margin-top:var(--iatb-nav-h)!important;height:calc(100vh - var(--iatb-nav-h))!important;min-height:0!important}
