@@ -17,6 +17,12 @@ Trading IA est le workspace central de marché. Dans DEBUG 1.12, la colonne **Ex
 └─────────────────────────────────────────────┴──────────────┘
 ```
 
+
+> **Lecture rapide :** la section ci-dessus donne l'essentiel. Ouvrez le bloc suivant pour le fonctionnement détaillé.
+
+<details>
+<summary><b>➕ En savoir plus — fonctionnement technique</b></summary>
+
 ## Flux des bougies
 
 ```text
@@ -40,3 +46,6 @@ L'IA peut demander des changements **déclaratifs** : symbole, timeframe, viewpo
 ## Mosaïques
 
 La zone basse est destinée aux modules d'information de la paire et des trades. Les définitions de mosaïque sont déclaratives ; HTML/CSS/JS arbitraires sont interdits dans le format de stockage.
+
+
+</details>
