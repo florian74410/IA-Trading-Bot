@@ -267,3 +267,26 @@ html.iatb-trading-workspace #iaChartHost{position:absolute;inset:0;width:100%;he
     width:100%!important;margin:0!important;align-self:end!important;
   }
 }
+
+
+/* v1.12.5 — compact top flow: nav -> market/chart -> indicators -> modules. */
+@media(min-width:981px){
+  html.iatb-trading-workspace:not(.iatb-secondary-page-active) body{padding-top:0!important}
+  html.iatb-trading-workspace:not(.iatb-secondary-page-active) .body[data-mosaic-root]{padding-top:0!important;margin-top:0!important}
+  html.iatb-trading-workspace:not(.iatb-secondary-page-active) .iatbCenterColumn{gap:0!important;margin-top:0!important;padding-top:0!important}
+  html.iatb-trading-workspace:not(.iatb-secondary-page-active) .iatbMarketMaster{
+    margin:0!important;border-radius:0!important;border-left:0!important;border-top:0!important;
+  }
+  html.iatb-trading-workspace:not(.iatb-secondary-page-active) #chartArea{
+    margin:0!important;border-radius:0!important;
+  }
+  html.iatb-trading-workspace:not(.iatb-secondary-page-active) #indicatorDock.active{
+    margin:0!important;border-radius:0!important;border-top:1px solid #25425a!important;
+  }
+  html.iatb-trading-workspace:not(.iatb-secondary-page-active) .iatbModuleWrap{
+    margin-top:10px!important;height:440px!important;min-height:440px!important;max-height:440px!important;
+  }
+  html.iatb-trading-workspace:not(.iatb-secondary-page-active) .iatbModuleDeck{
+    overflow-x:auto!important;overflow-y:hidden!important;scroll-behavior:smooth;
+  }
+}
