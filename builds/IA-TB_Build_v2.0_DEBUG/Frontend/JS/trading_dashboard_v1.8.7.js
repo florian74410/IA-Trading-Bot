@@ -38,7 +38,7 @@ function exchangePanel(){
     +exchangeRow('COINBASE','coinbase','Spot','PRÉVU','—',true)
     +exchangeRow('OKX','okx','Spot','PUBLIC','API',false)
     +exchangeRow('FUTURS CEX/DEX','future','Architecture extensible','PRÉVU','—',true)
-    +'</div><button class="iatbAddEx" type="button">＋ Ajouter un Exchange</button>'
+    +'</div>'
     +'<section class="iatbConsensus"><h3>VOLUME & PRICES CONSENSUS ⓘ</h3><div class="iatbConsensusTop"><div class="iatbConsensusBox"><small id="tdConsensusPair">BTC/USD</small><strong id="tdConsensusPrice">--</strong><small>Indice de consensus</small><strong class="iatbConsensusScore" id="tdConsensusScore">—</strong><div class="iatbGauge"><i id="tdConsensusGauge" style="width:0%"></i></div></div><div class="iatbConsensusBox"><small>Source principale</small><strong id="tdConsensusSource" style="font-size:12px">Market Data</strong><small style="margin-top:9px">Écart max prix</small><strong id="tdConsensusSpread" style="font-size:14px;color:#35d98b">—</strong></div></div><div class="iatbConsensusSources"><span class="iatbExLogo gmx">G</span><span class="iatbExLogo kraken">K</span><span class="iatbExLogo binance">B</span><span class="iatbExLogo coinbase">C</span><span class="iatbExLogo okx">O</span></div></section>'
     +'</div>';
   return s;
@@ -134,7 +134,6 @@ function build(){
   var legacyLeft=q('.body[data-mosaic-root]>.left');if(legacyLeft)legacyLeft.setAttribute('aria-hidden','true');
   var sl=byId('tdStrategiesLink');if(sl)sl.onclick=function(e){e.preventDefault();var b=byId('strategyBtn');if(b)b.click()};
   var close=right.querySelector('.iatbSideHead button');if(close)close.onclick=function(){right.classList.toggle('iatbSideCollapsed')};bindExchangeSwitches(right);
-  var add=right.querySelector('.iatbAddEx');if(add)add.onclick=function(){var b=byId('settingsBtn');if(b)b.click()};
   sync();loadStrategies();health();volume24h();
   setInterval(sync,1800);setInterval(loadStrategies,15000);setInterval(health,5000);setInterval(volume24h,30000);
   setTimeout(function(){try{window.dispatchEvent(new Event('resize'))}catch(e){}},120);
@@ -160,10 +159,30 @@ function volume24h(){
 }
 function formatCompact(n){n=+n;if(!isFinite(n))return'—';if(n>=1e9)return(n/1e9).toFixed(2)+'B';if(n>=1e6)return(n/1e6).toFixed(2)+'M';if(n>=1e3)return(n/1e3).toFixed(1)+'K';return n.toFixed(2)}
 
+var providerHealth={GMX:false,KRAKEN:false,BINANCE:false,OKX:false};
+function setProviderHealth(exchange,ok,detail){
+  exchange=String(exchange||'').toUpperCase();providerHealth[exchange]=!!ok;
+  var row=document.querySelector('[data-td-ex="'+exchange+'"]'),st=row&&row.querySelector('.iatbExStatus');
+  if(st){st.className='iatbExStatus'+(ok?'':' planned');st.innerHTML='<strong>'+(ok?'CONNECTÉ':'HORS LIGNE')+'</strong><span>'+esc(detail||(ok?'Market Data':'indisponible'))+'</span>'}
+}
+function probeProvider(exchange,symbol){
+  var url='/ui-data/market/candles?exchange='+encodeURIComponent(exchange)+'&symbol='+encodeURIComponent(symbol)+'&interval=1m&limit=100&force=1';
+  return fetch(url,{credentials:'same-origin',cache:'no-store'}).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json()}).then(function(d){
+    var ok=!!(d&&d.ok!==false&&Array.isArray(d.candles)&&d.candles.length);
+    setProviderHealth(exchange,ok,ok?((d.provider||exchange)+' · '+d.candles.length+' bougies'):'OHLCV vide');return ok;
+  }).catch(function(e){setProviderHealth(exchange,false,compact(e&&e.message||'indisponible',24));return false});
+}
+function probeMarketProviders(){
+  return Promise.all([probeProvider('GMX','BTCUSD'),probeProvider('KRAKEN','BTCUSD'),probeProvider('BINANCE','BTCUSDT'),probeProvider('OKX','BTCUSDT')]).then(function(v){
+    var connected=0;for(var i=0;i<v.length;i++)if(v[i])connected++;
+    var score=v.length?connected/v.length:0;setText('tdConsensusScore',connected?score.toFixed(2):'—');var gauge=byId('tdConsensusGauge');if(gauge)gauge.style.width=Math.round(score*100)+'%';
+  });
+}
 function health(){
   var start=Date.now();
   fetch('/api/health',{credentials:'same-origin'}).then(function(r){if(!r.ok)throw new Error();return r.json()}).then(function(){markDot('Core','ok');markDot('Router','ok');setText('tdLatency',(Date.now()-start)+' ms')}).catch(function(){markDot('Core','bad')});
   fetch('/api/status',{credentials:'same-origin'}).then(function(r){if(!r.ok)throw new Error();return r.json()}).then(function(){markDot('Market Data','ok');markDot('Trading Engine','ok');markDot('Trading FW','ok');setText('tdUptime','en ligne')}).catch(function(){});
+  probeMarketProviders();
 }
 
 function syncIndicatorDock(){var box=byId('tdIndicatorDockBody');if(!box)return;var st=null;try{st=window.IATBIndicatorUI&&IATBIndicatorUI.state?IATBIndicatorUI.state():null}catch(e){}var a=st&&Array.isArray(st.selected)?st.selected:[];if(!a.length){box.innerHTML='<div class="iatbIndicatorEmpty">Ajoute un indicateur avec le bouton ƒx Indicateurs ou via le Chat IA.</div>';return}box.innerHTML=a.slice(0,12).map(function(x){var id=typeof x==='string'?x:(x.id||x.name||'Indicateur');return '<div class="iatbIndicatorChip"><b>'+esc(id)+'</b><small>Indicator Engine · actif</small></div>'}).join('')}
@@ -173,11 +192,6 @@ function sync(){
   var pair=sym&&sym.options&&sym.selectedIndex>=0?sym.options[sym.selectedIndex].text:'BTC/USD';
   var source=src?String(src.textContent||'Market Data').split('·')[0].trim():'Market Data';
   setText('tdMasterPair',pair);setText('tdMasterTf',(byId('interval')&&byId('interval').value)||'--');setText('tdMasterProvider',source);setText('tdTilePair',pair);setText('tdTileProvider',source);var rows=window.IATBTradingState&&window.IATBTradingState.candles||null;var readout=byId('ohlc');setText('tdTileOhlc',readout?String(readout.textContent||'').replace(/^.*? · /,''):'O -- · H -- · L -- · C --');setText('tdTileClose',cleanPrice(p&&p.textContent));setText('tdTileTf',(byId('interval')&&byId('interval').value)||'--');setText('tdTileTime',ws?String(ws.textContent||'Market Data Collector'):'Market Data Collector');syncIndicatorDock();setText('tdConsensusPrice',cleanPrice(p&&p.textContent));setText('tdConsensusPair',pair);setText('tdChartPair',pair);setText('tdConsensusSource',source);setText('tdAiSource',src?String(src.textContent||'Market Data').replace(/·/g,' / '):'Market Data');setText('tdAiSummary',lastAiText());
-  var connected=0,total=0;
-  var kd=byId('krakenDot'),gd=byId('gmxDot');
-  if(gd){total++;if(gd.classList.contains('ok')){connected++;var g=document.querySelector('[data-td-ex="GMX"] .iatbExStatus');if(g){g.className='iatbExStatus';g.innerHTML='<strong>CONNECTÉ</strong><span>Arbitrum</span>'}}}
-  if(kd){total++;if(kd.classList.contains('ok')){connected++;var k=document.querySelector('[data-td-ex="KRAKEN"] .iatbExStatus');if(k){k.className='iatbExStatus';k.innerHTML='<strong>CONNECTÉ</strong><span>Public API</span>'}}}
-  if(total){var score=connected/total;setText('tdConsensusScore',score?score.toFixed(2):'—');var gauge=byId('tdConsensusGauge');if(gauge)gauge.style.width=Math.round(score*100)+'%'}
   if(ws&&/connect|en ligne|online|ok/i.test(String(ws.textContent||'')))markDot('Market Data','ok');
 }
 
