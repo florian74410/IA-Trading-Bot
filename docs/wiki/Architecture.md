@@ -1,98 +1,67 @@
-# Architecture générale — DEBUG 1.12
+# 🏗 Architecture générale — V2.0 DEBUG
 
-## Vue d'ensemble
+## Vue débutant
 
-IA-TB suit une architecture **multi-processus locale**. Les responsabilités sont volontairement séparées : l'acquisition d'une donnée ne donne pas le droit d'exécuter un ordre, et l'IA ne reçoit pas automatiquement des droits d'administration.
+**IA-TB fonctionne comme une équipe de spécialistes. Market Data observe le marché, les moteurs l'analysent, Strategy propose une lecture, Risk mesure et contrôle le risque, le Supervisor rassemble le tout pour le raisonnement IA, puis Firewall et Trading Engine forment la frontière d'exécution. Aucun de ces composants ne doit tout pouvoir faire seul.**
+
+<small>🔧 Architecture multi-processus locale. Les échanges inter-moteurs passent par Router CP/1 :8021. Le Supervisor V2.0 est un service actif :3000 et utilise lui aussi CP/1 plutôt que des imports directs des Engines.</small>
 
 ```text
-                         ┌──────────── UI :8000 ────────────┐
-                         │ Trading / Fundamental / Portfolio│
-                         │ Strategy / Settings / Admin / IA │
-                         └───────────────┬──────────────────┘
-                                         │
-                                  Core :8001
-                                         │
-                               Router CP/1 :8021
-          ┌──────────┬──────────┬────────┼─────────┬──────────┐
-          ▼          ▼          ▼        ▼         ▼          ▼
- Indicator:8012 Market:8013 Liquidity:8014 Fund.:8015 Strategy:8018
-          │          │          │        │         │
-          └──────────┴──────────┴────────┴─────────┤
-                                                   ▼
-                                              Risk :8019
+                           UI :8000
+                              │
+                         Core :8001
+                              │
+                      Router CP/1 :8021
+     ┌─────────┬─────────┬──────────┬─────────┬──────────┬─────────┐
+     ▼         ▼         ▼          ▼         ▼          ▼         ▼
+Indicator   Market    Liquidity  Fundamental Strategy   Risk   Portfolio
+ :8012      :8013      :8014      :8015      :8018    :8019    :8020
+     └─────────┴─────────┴──────────┴─────────┴──────────┴─────────┘
+                              │
+                              ▼
+                      Supervisor :3000
+                       LLM / Extensions
+                              │
+                         TradeIntent
+                              │
+                              ▼
+                        Risk Gate :8019
+                              │
+                              ▼
+ Router ───────────────► Firewall :8017 ─────────► Trading :8016
                                                    │
-                                              Portfolio:8020
-                                                   │
-                     Router ──► Firewall :8017 ──► Trading :8016
-                                                       │
-                                                Exchange adapters
+                                             Exchange adapters
 ```
-
-
-> **Lecture rapide :** la section ci-dessus donne l'essentiel. Ouvrez le bloc suivant pour le fonctionnement détaillé.
 
 <details>
-<summary><b>➕ En savoir plus — fonctionnement technique</b></summary>
+<summary><b>➕ En savoir plus — Supervisor V2.0</b></summary>
 
-## Couches
+Le `context_orchestrator.js` lance en parallèle sept demandes CP/1 : candles Market Data, analyse Indicator, Fundamental, snapshot Liquidity, snapshot Portfolio, évaluation Strategy et snapshot Risk. Chaque demande est isolée : une source indisponible ajoute un warning et marque le contexte `degraded` au lieu de masquer l'erreur.
 
-### 1. Présentation
-Le service UI 8000 sert les pages. La UI ne possède pas les données de marché : elle consomme des états en lecture et envoie des intentions de navigation/visualisation. Le graphique Trading IA reste le moteur natif IA-TB.
+Le contexte normalisé `supervisor.autonomous-context/1.0` est ensuite transmis au LLM Manager. Les providers présents sont `OPENAI_API`, `REMOTE_LLM` compatible OpenAI et `MOCK`, avec fallback optionnel.
 
-### 2. Core
-Core 8001 porte les fonctions applicatives communes : Settings, pipeline OpenAI, Update Manager, usage ledger et passerelles nécessaires à l'interface. Il ne remplace pas les Engines.
+Le Supervisor reste `ORCHESTRATOR / INTENTION_ONLY`. Il n'importe aucun adapter Exchange.
 
-### 3. Communication
-Router 8021 est le **bus de communication**. Il charge ProtocolRegistry, valide cible/action/arguments, protège contre le replay, signe les appels internes et vérifie les réponses. Il ne résume pas et ne score pas les sorties des Engines.
+</details>
 
-### 4. Données
-Market Data est l'entrée universelle READ des données financières. Il normalise symboles, timeframes, OHLCV et provenance. La Financial Data Layer étend le contrat aux données CEX, DEX, agrégateurs, RPC on-chain et DeFi.
+<details>
+<summary><b>➕ En savoir plus — chaîne d'exécution protégée</b></summary>
 
-### 5. Analyse
-Indicator calcule les indicateurs ; Liquidity produit zones/order book/liquidations ; Fundamental transforme des publications en événements et preuves ; Strategy v2 agrège les snapshots pour produire une intention ; Risk calcule l'exposition et les métriques de risque.
+Une intention exécutable doit respecter la chaîne :
 
-### 6. État financier
-Portfolio conserve événements d'exécution, balances, positions, statistiques et coûts. Les connexions wallet utilisées par l'interface sont conçues en lecture/confirmation externe : aucune seed ou clé privée ne doit entrer dans IA-TB.
+`Supervisor → TradeIntent → Router → Risk Gate → Firewall → Trading Engine → Exchange`.
 
-### 7. Exécution
-Les commandes Trading sensibles sont routées vers **Firewall 8017**, qui inspecte puis relaie vers **Trading Engine 8016**. Trading Engine sélectionne l'adapter Binance/OKX/Kraken/GMX et conserve LIVE à OFF par défaut.
+Le Risk Gate lie une approbation temporaire au hash SHA-256 de l'intention normalisée. Le Firewall demande ensuite au Risk Gate de vérifier cette approbation et peut la consommer. Modifier l'intention après approbation provoque donc un mismatch.
 
-## Flux de décision cible
+Le Firewall conserve en plus authentification CP/1, signature, timestamp, whitelist de commandes/paires et protection anti-duplication.
 
-```text
-Market + Indicators + Fundamental + Portfolio
-                    │
-                    ▼
-               Strategy v2
-                    │
-             strategy.signal
-                    │
-                    ▼
-                 Risk
-                    │
-          analyse / garde-fous
-                    │
-                    ▼
-        Supervisor IA (futur)
-                    │
-                    ▼
-                 Router
-                    │
-                    ▼
-                Firewall
-                    │
-                    ▼
-             Trading Engine
-                    │
-                    ▼
-                 Exchange
-```
+</details>
 
-**Important :** dans DEBUG 1.12, Strategy est actif, mais le **Supervisor autonome reste RESERVED**. Le flux ci-dessus représente donc la séparation architecturale prévue ; il ne faut pas présenter le Supervisor comme déjà opérationnel.
+<details>
+<summary><b>➕ En savoir plus — Bank / Vaults</b></summary>
 
-## Philosophie
+V2.0 introduit aussi une couche Bank/Vault. Le registre supporte Arbitrum, Avalanche, Ethereum, Polygon et Bitcoin avec actifs autorisés par réseau. Les Vaults créés par ADMIN commencent en `DRAFT` : créer leur configuration ne déploie pas un smart contract et ne déplace aucun fonds.
 
-IA-TB privilégie les contrats explicites : un Engine expose des capacités déclarées, pas son implémentation interne. Cela permet de remplacer un provider ou un moteur sans réécrire le Router, et facilite le passage du Mac local au futur VPS.
-
+Voir [Bank & Vaults](Bank-Vaults.md).
 
 </details>
