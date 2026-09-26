@@ -312,3 +312,18 @@ html.iatb-trading-workspace #iaChartHost{position:absolute;inset:0;width:100%;he
   html.iatb-trading-workspace:not(.iatb-secondary-page-active) #tdIndicatorDockBody .indicatorPane canvas{display:block!important;width:100%!important;height:100%!important}
   html.iatb-trading-workspace:not(.iatb-secondary-page-active) .iatbModuleWrap{order:4!important}
 }
+
+
+/* v1.12.7 — Trading IA reference layout; chart internals intentionally untouched. */
+@media(min-width:981px){
+ html.iatb-trading-workspace:not(.iatb-secondary-page-active) .body[data-mosaic-root]{padding-top:0!important;margin-top:0!important}
+ html.iatb-trading-workspace:not(.iatb-secondary-page-active) .iatbCenterColumn{gap:8px!important}
+ html.iatb-trading-workspace:not(.iatb-secondary-page-active) #chartArea{order:2!important}
+ html.iatb-trading-workspace:not(.iatb-secondary-page-active) #iatbIndicatorDock{order:3!important;display:flex!important;height:210px!important;min-height:210px!important;max-height:210px!important;border:1px solid #24445a!important;border-radius:8px!important}
+ html.iatb-trading-workspace:not(.iatb-secondary-page-active) #tdIndicatorDockBody{overflow-y:auto!important;min-height:0!important}
+ html.iatb-trading-workspace:not(.iatb-secondary-page-active) .iatbModuleWrap{order:4!important;height:390px!important;min-height:390px!important;max-height:390px!important}
+ html.iatb-trading-workspace:not(.iatb-secondary-page-active) .iatbModuleDeck{grid-auto-columns:minmax(250px,310px)!important;overflow-x:auto!important;overflow-y:hidden!important}
+ .iatbPositionList{display:flex;flex-direction:column;gap:5px;margin-top:8px;overflow:auto;max-height:230px}
+ .iatbPositionRow{display:grid;grid-template-columns:1.2fr .7fr .8fr .8fr;gap:7px;align-items:center;padding:7px 6px;border-top:1px solid #173247;font-size:10px}
+ .iatbPositionRow strong{text-align:right}
+}
