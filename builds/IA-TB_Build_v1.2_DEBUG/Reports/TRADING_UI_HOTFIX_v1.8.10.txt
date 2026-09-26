@@ -1,0 +1,7 @@
+IA-TB v1.8.10 Trading IA UI hotfix
+Source: v1.8.9 CP1 TEST
+
+1. Remove duplicate IA-TB logo in Supervisor rail; keep shared top logo.
+2. Remove redundant chart section header / vertical gap.
+3. Reduce chart section height to 80%: 520->416 px; 1280 profile 500->400 px.
+4. Modules/mosaics unchanged. Portfolio unchanged. CP/1 unchanged.

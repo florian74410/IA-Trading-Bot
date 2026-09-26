@@ -1,0 +1,10 @@
+IA-TB v1.9.0 — Strategy Engine v2 Full Migration
+
+- Strategy Engine v2 devient l'unique runtime Strategy.
+- Strategy Engine v1 runtime retire du Core.
+- UI Strategy lit directement le Router CP/1 via /communication/v1/ui/read.
+- Identite logique UI: READ_ONLY.
+- Allowlist UI Strategy: health, capabilities, catalog, stats, state.
+- Toute tentative WRITE/EXECUTE via ce canal retourne UI_WRITE_DENY.
+- Aucun adapter Exchange dans Strategy v2; execution.allowed reste false/INTENTION_ONLY.
+- Aucun changement de layout/CSS requis par cette migration.

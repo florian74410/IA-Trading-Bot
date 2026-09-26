@@ -1,0 +1,14 @@
+IA-TB v1.8.10 — Version state consistency fix
+
+Cause identifiee:
+- le build CP/1 avait VERSION=1.8.9 mais Updates/current_release.dat=1.8.8;
+- l'Update Manager utilise current_release.dat comme source de verite;
+- un patch declare 1.8.9 -> 1.8.10 etait donc refuse.
+
+Regle de packaging desormais obligatoire:
+1. Pour un PATCH, from_version doit etre lu depuis Updates/current_release.dat de la base cible.
+2. Pour un BUILD COMPLET, VERSION, manifest.json.version et Updates/current_release.dat.version doivent etre identiques.
+3. Avant livraison, une verification de coherence des trois versions doit etre executee.
+4. Le payload d'un patch ne tente jamais d'ecraser Updates/current_release.dat, fichier protege; l'Update Manager l'actualise atomiquement apres installation.
+
+Ce correctif est volontairement declare 1.8.8 -> 1.8.10 et reintegre CP/1 + Trading UI afin d'etre sur meme sur le build CP/1 qui se declare encore 1.8.8.

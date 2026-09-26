@@ -1,0 +1,21 @@
+IA-TB v1.8.13 — Chart Viewer Visual Cleanup
+
+Base: v1.8.12 Router Protocol Normalized
+Portee: visuelle uniquement / Chart Viewer
+
+Modification:
+- masque la sous-navigation locale Chart Viewer contenant les boutons redondants Parametres / API / Indicateurs;
+- conserve la navbar globale IA-TB actuelle sans modification;
+- conserve les badges OpenAI / LOCAL dans la sous-barre compacte;
+- ne modifie aucun moteur, Router, protocole CP/1, service ou logique backend.
+
+Fichier UI fonctionnel modifie:
+- Frontend/CSS/navigation_v1.6.2.css
+
+HOTFIX COMPLÉMENTAIRE v1.8.13 — Trading IA
+- Suppression de la sous-barre locale vide entre la navbar globale et le dashboard Trading IA.
+- Le dashboard commence immédiatement sous la navbar globale.
+- Réduction du scroll vertical inutile.
+- Navbar globale : inchangée.
+- Dimensions internes du chart et des modules : inchangées.
+- Backend / Router / CP1 / Engines : aucun changement.

@@ -1,0 +1,189 @@
+{
+  "id": "indicator",
+  "label": "Indicator Engine",
+  "type": "ENGINE",
+  "transport": "CP1",
+  "endpoint": {
+    "host": "127.0.0.1",
+    "port": 8012,
+    "cpPath": "/cp/v1",
+    "healthPath": "/health"
+  },
+  "table": {
+    "commands": [
+      {
+        "name": "indicator.language.info",
+        "arguments": {
+          "allowed": []
+        }
+      },
+      {
+        "name": "indicator.language.compile",
+        "arguments": {
+          "allowed": [
+            "source"
+          ],
+          "required": [
+            "source"
+          ]
+        }
+      },
+      {
+        "name": "indicator.language.validate",
+        "arguments": {
+          "allowed": [
+            "source"
+          ],
+          "required": [
+            "source"
+          ]
+        }
+      },
+      {
+        "name": "indicator.language.create",
+        "arguments": {
+          "allowed": [
+            "source",
+            "overwrite"
+          ],
+          "required": [
+            "source"
+          ]
+        }
+      },
+      {
+        "name": "indicator.definition.validate",
+        "arguments": {
+          "allowed": [
+            "definition"
+          ],
+          "required": [
+            "definition"
+          ]
+        }
+      },
+      {
+        "name": "indicator.definition.create",
+        "arguments": {
+          "allowed": [
+            "definition",
+            "overwrite"
+          ],
+          "required": [
+            "definition"
+          ]
+        }
+      },
+      {
+        "name": "indicator.compute",
+        "arguments": {
+          "allowed": [
+            "id",
+            "symbol",
+            "timeframe",
+            "params",
+            "force"
+          ],
+          "required": [
+            "id",
+            "symbol",
+            "timeframe"
+          ]
+        }
+      },
+      {
+        "name": "indicator.compute_batch",
+        "arguments": {
+          "allowed": [
+            "symbol",
+            "timeframe",
+            "requests",
+            "force"
+          ],
+          "required": [
+            "symbol",
+            "timeframe",
+            "requests"
+          ]
+        }
+      },
+      {
+        "name": "indicator.analyze",
+        "arguments": {
+          "allowed": [
+            "symbol",
+            "timeframe",
+            "force"
+          ],
+          "required": [
+            "symbol",
+            "timeframe"
+          ]
+        }
+      },
+      {
+        "name": "indicator.get_state",
+        "arguments": {
+          "allowed": [
+            "symbol",
+            "timeframe"
+          ]
+        }
+      },
+      {
+        "name": "indicator.get_levels",
+        "arguments": {
+          "allowed": [
+            "symbol",
+            "timeframe"
+          ],
+          "required": [
+            "symbol",
+            "timeframe"
+          ]
+        }
+      },
+      {
+        "name": "indicator.get_signals",
+        "arguments": {
+          "allowed": [
+            "symbol",
+            "timeframe"
+          ],
+          "required": [
+            "symbol",
+            "timeframe"
+          ]
+        }
+      },
+      {
+        "name": "indicator.list_capabilities",
+        "arguments": {
+          "allowed": []
+        }
+      },
+      {
+        "name": "indicator.list_indicators",
+        "arguments": {
+          "allowed": []
+        }
+      }
+    ],
+    "dataTypes": [
+      {
+        "name": "indicator.analysis",
+        "direction": "PRODUCE",
+        "schema": "indicator.analysis/1.0"
+      },
+      {
+        "name": "market.candles",
+        "direction": "CONSUME"
+      }
+    ],
+    "events": [
+      {
+        "name": "indicator.analysis.updated"
+      }
+    ]
+  }
+}

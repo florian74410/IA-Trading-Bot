@@ -1,0 +1,128 @@
+{
+  "id": "marketdata",
+  "label": "Market Data Collector",
+  "type": "MODULE",
+  "transport": "CP1",
+  "endpoint": {
+    "host": "127.0.0.1",
+    "port": 8013,
+    "cpPath": "/cp/v1",
+    "healthPath": "/health"
+  },
+  "table": {
+    "commands": [
+      {
+        "name": "marketdata.health",
+        "arguments": {
+          "allowed": []
+        }
+      },
+      {
+        "name": "marketdata.candles",
+        "arguments": {
+          "allowed": [
+            "symbol",
+            "timeframe",
+            "limit",
+            "force",
+            "exchange",
+            "source"
+          ],
+          "required": [
+            "symbol",
+            "timeframe"
+          ]
+        }
+      },
+      {
+        "name": "marketdata.providers",
+        "arguments": {
+          "allowed": []
+        }
+      },
+      {
+        "name": "marketdata.financial.capabilities",
+        "arguments": {
+          "allowed": []
+        },
+        "description": "Read-only catalogue of normalized financial data capabilities."
+      },
+      {
+        "name": "marketdata.registry.status",
+        "arguments": {
+          "allowed": []
+        }
+      },
+      {
+        "name": "marketdata.registry.asset",
+        "arguments": {
+          "allowed": [
+            "id",
+            "symbol",
+            "name",
+            "term",
+            "detail"
+          ]
+        }
+      },
+      {
+        "name": "marketdata.registry.search",
+        "arguments": {
+          "allowed": [
+            "term",
+            "query",
+            "limit"
+          ]
+        }
+      },
+      {
+        "name": "marketdata.registry.list",
+        "arguments": {
+          "allowed": [
+            "offset",
+            "limit",
+            "term"
+          ]
+        }
+      },
+      {
+        "name": "marketdata.registry.query",
+        "arguments": {
+          "allowed": [
+            "action",
+            "arguments",
+            "args"
+          ]
+        }
+      }
+    ],
+    "dataTypes": [
+      {
+        "name": "market.candles",
+        "direction": "PRODUCE",
+        "schema": "market.candles/1.0"
+      },
+      {
+        "name": "market.registry",
+        "direction": "PRODUCE",
+        "schema": "market.registry/1.0"
+      },
+      {
+        "name": "defi.position",
+        "direction": "PRODUCE",
+        "schema": "iatb.financial.data/1.0"
+      },
+      {
+        "name": "onchain.read",
+        "direction": "PRODUCE",
+        "schema": "iatb.financial.data/1.0"
+      },
+      {
+        "name": "market.liquidity.raw",
+        "direction": "PRODUCE",
+        "schema": "iatb.financial.data/1.0"
+      }
+    ],
+    "events": []
+  }
+}
