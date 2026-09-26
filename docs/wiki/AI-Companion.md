@@ -8,6 +8,12 @@ Il réutilise le pipeline Chat/OpenAI existant et **n'obtient pas de privilèges
 
 La saisie texte reste toujours disponible. La voix repose sur Web Speech du navigateur lorsque supporté.
 
+
+> **Lecture rapide :** la section ci-dessus donne l'essentiel. Ouvrez le bloc suivant pour le fonctionnement détaillé.
+
+<details>
+<summary><b>➕ En savoir plus — fonctionnement technique</b></summary>
+
 ## Pipeline OpenAI
 
 IA-TB utilise la Responses API pour les demandes complexes et décode une sortie structurée. Le parseur extrait le texte/refus, vérifie le JSON et convertit les actions en commandes déclaratives internes.
@@ -46,3 +52,6 @@ Une IA ne « parle » donc pas directement à la mémoire interne d'une autre IA
 ## Usage Ledger
 
 Chaque appel IA peut enregistrer modèle, tokens, durée, cache et coût estimé si tarif connu. Aucun prompt/réponse/secret n'est stocké dans ce ledger.
+
+
+</details>
