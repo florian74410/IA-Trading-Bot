@@ -26,6 +26,12 @@ Les actions `start`, `stop`, `restart` et `reset-safe` sont à risque élevé et
 
 Source machine-readable : `Core/Admin/debug_commands_registry.json`.
 
+
+> **Lecture rapide :** l'essentiel est ci-dessus. Les détails sont disponibles sans quitter la page.
+
+<details>
+<summary><b>➕ En savoir plus — détails techniques</b></summary>
+
 ## 2. Router Protocol / CP/1 — v1.8.12
 
 La Console Admin et les outils de diagnostic doivent respecter l'architecture CP/1 normalisée. Voir [Router Protocol / CP/1](Router-Protocol-CP1.md).
@@ -136,3 +142,6 @@ Les commandes natives macOS (`launchctl`) ou Linux (`systemctl`, `journalctl`) p
 - Spec humaine Router : `Docs/Architecture/ROUTER_PROTOCOL_SPEC_v1.8.12.md`
 
 Le Wiki doit distinguer strictement **fonction disponible**, **bridge de sécurité**, **RESERVED** et **fonction prévue**. Il ne doit jamais transformer une intention d'architecture en fonctionnalité réellement disponible.
+
+
+</details>
