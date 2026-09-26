@@ -61,3 +61,96 @@ html.iatb-trading-workspace #iaChartHost{position:absolute;inset:0;width:100%;he
   html.iatb-trading-workspace:not(.iatb-secondary-page-active) .body[data-mosaic-root]{grid-template-columns:minmax(0,1fr) 270px!important}
   html.iatb-trading-workspace:not(.iatb-secondary-page-active) .iatbCenterColumn{grid-template-rows:auto minmax(300px,1fr) auto 210px!important}
 }
+
+
+/* v1.12.1 — Trading IA document scroll override.
+   The previous workspace grid consumed the viewport with minmax(0,1fr),
+   so Firefox had nothing to scroll. Let the document own vertical height. */
+@media(min-width:981px){
+  html.iatb-trading-workspace:not(.iatb-secondary-page-active),
+  html.iatb-trading-workspace:not(.iatb-secondary-page-active) body{
+    height:auto!important;
+    min-height:100%!important;
+    max-height:none!important;
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+  }
+  html.iatb-trading-workspace:not(.iatb-secondary-page-active) .app{
+    height:auto!important;
+    min-height:100vh!important;
+    max-height:none!important;
+    overflow:visible!important;
+  }
+  html.iatb-trading-workspace:not(.iatb-secondary-page-active) .body[data-mosaic-root]{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) 292px!important;
+    grid-template-rows:auto!important;
+    height:auto!important;
+    min-height:0!important;
+    max-height:none!important;
+    overflow:visible!important;
+    align-content:start!important;
+  }
+  html.iatb-trading-workspace:not(.iatb-secondary-page-active) .iatbCenterColumn{
+    grid-column:1!important;
+    grid-row:1!important;
+    display:flex!important;
+    flex-direction:column!important;
+    gap:10px!important;
+    height:auto!important;
+    min-height:0!important;
+    max-height:none!important;
+    overflow:visible!important;
+  }
+  html.iatb-trading-workspace:not(.iatb-secondary-page-active) .iatbExchangeColumn{
+    grid-column:2!important;
+    grid-row:1!important;
+    align-self:start!important;
+    height:auto!important;
+    max-height:none!important;
+  }
+  html.iatb-trading-workspace:not(.iatb-secondary-page-active) .iatbMarketMaster{
+    flex:0 0 auto!important;
+  }
+  html.iatb-trading-workspace:not(.iatb-secondary-page-active) .iatbCenterColumn>#chartArea[data-mosaic-id="chart"]{
+    display:flex!important;
+    flex-direction:column!important;
+    width:100%!important;
+    height:650px!important;
+    min-height:650px!important;
+    max-height:none!important;
+    flex:0 0 650px!important;
+    overflow:hidden!important;
+  }
+  html.iatb-trading-workspace:not(.iatb-secondary-page-active) #chartBox{
+    min-height:0!important;
+    height:auto!important;
+    flex:1 1 auto!important;
+  }
+  html.iatb-trading-workspace:not(.iatb-secondary-page-active) .iatbIndicatorDock,
+  html.iatb-trading-workspace:not(.iatb-secondary-page-active) #indicatorDock.active{
+    display:flex!important;
+    flex-direction:column!important;
+    height:190px!important;
+    min-height:190px!important;
+    max-height:190px!important;
+    flex:0 0 190px!important;
+    overflow:hidden!important;
+  }
+  html.iatb-trading-workspace:not(.iatb-secondary-page-active) .iatbIndicatorDockBody,
+  html.iatb-trading-workspace:not(.iatb-secondary-page-active) #indicatorDockBody{
+    min-height:0!important;
+    overflow-y:auto!important;
+  }
+  html.iatb-trading-workspace:not(.iatb-secondary-page-active) .iatbModuleWrap,
+  html.iatb-trading-workspace:not(.iatb-secondary-page-active) #dynamicBottomRight{
+    display:grid!important;
+    height:440px!important;
+    min-height:440px!important;
+    max-height:440px!important;
+    flex:0 0 440px!important;
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    scrollbar-gutter:stable;
+  }
+}
