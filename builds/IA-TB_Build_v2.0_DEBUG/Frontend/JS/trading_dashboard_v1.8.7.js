@@ -147,11 +147,35 @@ function eventOrigin(e){return String((e&&((e.meta&&e.meta.source)||e.source||e.
 function eventNotional(e){var x=e&&e.data&&typeof e.data==='object'?e.data:e||{},n=+(x.notional_usd!=null?x.notional_usd:(x.notional!=null?x.notional:(x.size_usd!=null?x.size_usd:x.value_usd)));return isFinite(n)&&n>0?n:null}
 function loadTradingModules(){
   Promise.all([uiRead('portfolio','portfolio.positions'),uiRead('portfolio','portfolio.events')]).then(function(v){
-    var pos=Array.isArray(v[0].positions)?v[0].positions:[],box=byId('tdOpenPositions');setText('tdOpenPositionsCount',String(pos.length));
-    if(box)box.innerHTML=pos.length?pos.slice(0,8).map(function(x){var side=String(x.side||x.direction||'').toUpperCase(),sym=x.symbol||x.pair||'—',qty=x.quantity!=null?x.quantity:(x.size!=null?x.size:'—'),pnl=x.unrealized_pnl!=null?x.unrealized_pnl:x.pnl;return '<div class="iatbPositionRow"><b>'+esc(sym)+'</b><span>'+esc(side||'OPEN')+'</span><span>'+esc(qty)+'</span><strong>'+esc(pnl==null?'—':pnl)+'</strong></div>'}).join(''):'<p>Aucune position ouverte.</p>';
+    var pos=Array.isArray(v[0].positions)?v[0].positions:[],box=byId('tdOpenPositions');
+    setText('tdOpenPositionsCount',String(pos.length));
+    if(box)box.innerHTML=pos.length?pos.slice(0,8).map(function(x){
+      var side=String(x.side||x.direction||'').toUpperCase(),sym=x.symbol||x.pair||'—';
+      var qty=x.quantity!=null?x.quantity:(x.size!=null?x.size:'—');
+      var pnl=x.unrealized_pnl!=null?x.unrealized_pnl:x.pnl;
+      return '<div class="iatbPositionRow"><b>'+esc(sym)+'</b><span>'+esc(side||'OPEN')+'</span><span>'+esc(qty)+'</span><strong>'+esc(pnl==null?'—':pnl)+'</strong></div>';
+    }).join(''):'<p>Aucune position ouverte.</p>';
     var ev=Array.isArray(v[1].events)?v[1].events:[],llm=0,llmN=0,last=null;
-    for(var i=0;i<ev.length;i++){var e=ev[i]||{},origin=eventOrigin(e),type=String(e.type||e.event||e.event_type||'').toLowerCase();if(!last&&/(trade|fill|order|execution)/.test(type))last=e;if(/(supervisor|llm|autonomous)/.test(origin)){var n=eventNotional(e);if(n!=null){llm+=n;llmN++}}}
-    setText('tdLlmVolume',llmN?('
+    for(var i=0;i<ev.length;i++){
+      var e=ev[i]||{},origin=eventOrigin(e),type=String(e.type||e.event||e.event_type||'').toLowerCase();
+      if(!last&&/(trade|fill|order|execution)/.test(type))last=e;
+      if(/(supervisor|llm|autonomous)/.test(origin)){var n=eventNotional(e);if(n!=null){llm+=n;llmN++}}
+    }
+    setText('tdLlmVolume',llmN?(formatCompact(llm)+' USDT'):'—');
+    setText('tdLlmVolumeState',llmN?(llmN+' exécution'+(llmN>1?'s':'')+' attribuée'+(llmN>1?'s':'')):'aucun trade LLM attribuable');
+    setText('tdLlmVolumeDetail',llmN?'Somme des notionnels marqués Supervisor/LLM/Autonomous.':'Aucun événement Portfolio ne permet encore une attribution sûre au LLM.');
+    setText('tdPerfTrades',llmN?String(llmN):'—');
+    if(last){
+      var d=last.data&&typeof last.data==='object'?last.data:last;
+      setText('tdLiveTrading',d.symbol||d.pair||last.type||'EXÉCUTION');
+      setText('tdLiveTradingDetail',String(last.type||'trade')+' · '+String(d.side||d.direction||'—')+' · '+String(d.price||'—'));
+    }else{
+      setText('tdLiveTrading','—');setText('tdLiveTradingDetail','Aucune exécution récente.');
+    }
+  }).catch(function(){
+    setText('tdOpenPositionsCount','—');setText('tdLlmVolume','—');setText('tdLiveTrading','—');setText('tdPerfTrades','—');
+  });
+}
 
 var providerHealth={GMX:false,KRAKEN:false,BINANCE:false,OKX:false};
 function setProviderHealth(exchange,ok,detail){
