@@ -1,23 +1,27 @@
 # Indicator Engine
 
-L'Indicator Engine calcule les indicateurs techniques à partir des données normalisées fournies par Market Data.
+## Rôle
 
-## Principe
+**Indicator Engine :8012** transforme des bougies normalisées en valeurs et preuves techniques. Il **ne prend aucune décision de trading**.
 
-Le moteur reçoit un contexte comprenant au minimum la source, la paire, le timeframe et les chandeliers.
+## Catalogue intégré
 
-Les indicateurs basés uniquement sur le prix utilisent les OHLC/OHLCV de la source sélectionnée. Les indicateurs utilisant le volume doivent utiliser le volume correspondant à cette même plateforme, sauf stratégie explicitement conçue pour comparer plusieurs sources.
+DEBUG 1.12 contient notamment : ADX, ATR, Bollinger Bands, CCI, EMA, HMA, Ichimoku Cloud, Liquidity HeatMap, MACD, MFI, OBV, Parabolic SAR, ROC, RSI, SMA, Stochastic, Stochastic RSI, Supertrend, VWAP, VWMA et Williams %R.
 
-## Exemples d'indicateurs
+Les définitions officielles vivent dans `Indicators/BuiltIn/*.indicator.json`. Les créations utilisateur vont dans `Custom`; les définitions rejetées sont isolées dans `Quarantine`.
 
-- moyennes mobiles ;
-- RSI ;
-- MACD ;
-- Ichimoku ;
-- ATR ;
-- bandes de Bollinger ;
-- indicateurs volume lorsque les données nécessaires sont disponibles.
+## IIL et IR
 
-## Règle de reproductibilité
+L'**Indicator Interpretation Language (IIL)** est le langage déclaratif public de définition. Il est compilé vers une représentation interne (IR). Il n'expose ni `eval`, ni JavaScript arbitraire, ni shell, réseau ou filesystem.
 
-Un signal doit être traçable : source, paire, timeframe et données utilisées doivent pouvoir être retrouvés dans les logs ou le contexte de calcul.
+Les dépendances entre indicateurs sont contrôlées : cycles, dépendances absentes et profondeur >16 sont rejetés. Un batch est limité à 32 demandes et réutilise les bougies normalisées.
+
+## États de données
+
+Le contrat distingue **READY / WARMING / INVALID** afin qu'un consommateur sache si un calcul est exploitable, encore en chauffe ou invalide. Les protections liées au volume se propagent dans les dépendances.
+
+## CP/1
+
+Familles : `indicator.compute`, `compute_batch`, `analyze`, `get_state`, `get_levels`, `get_signals`, catalogue/capabilities, validation/création de définitions et compilation/validation IIL.
+
+Flux : **Market Data → Indicator → Router → Strategy/UI/IA**.
