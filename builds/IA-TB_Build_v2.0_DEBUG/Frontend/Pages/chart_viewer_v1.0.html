@@ -18,22 +18,6 @@
 
 <link rel="stylesheet" href="/assets/companion_v1.0.css"><link rel="stylesheet" href="/assets/global_navigation_v2.0.css"><script defer src="/assets/global_navigation_v2.0.js?v=2004"></script></head>
 <body>
-<div class="topbar">
-  <div class="brand">CRYPTO CHART VIEWER IA TRADER · <span id="viewerVersion">v…</span></div>
-  <div class="nav">
-    <button id="navTrading" class="btn" type="button">Trading IA</button>
-    <button class="btn active" type="button">📈 Chart Viewer</button>
-    <button id="navPortfolio" class="btn" type="button">📊 Portfolio</button>
-    <button id="navFundamental" class="btn" type="button">🧭 Fondamental</button>
-    <button id="navAdmin" class="btn hide" type="button">🛠 Admin</button>
-    <button id="navSettings" class="btn" type="button">⚙ Paramètres</button>
-    <button id="navApi" class="btn" type="button">🔑 API</button>
-  </div>
-  <div class="spacer"></div>
-  <span id="apiBadge" class="badge">OpenAI --</span>
-  <span class="badge local">Commandes simples = LOCAL</span>
-</div>
-
 <main class="page">
   <section class="toolbar">
     <label class="field"><span>Exchange TradingView</span><select id="exchange" class="exchangeSelect"><option value="BINANCE">Binance</option><option value="KRAKEN">Kraken</option><option value="COINBASE">Coinbase</option><option value="BYBIT">Bybit</option><option value="BITSTAMP">Bitstamp</option></select></label>
@@ -111,7 +95,7 @@ function showStrategy(x){x=x||{};if(!(x.title||x.summary||x.pineScript))return;$
 function sendComplex(text){$('chatMode').textContent='OPENAI…';$('chatMode').className='badge ai';var st={exchange:$('exchange').value,pair:normalizePair($('pair').value)||prefs.pair,tradingViewSymbol:tvSymbol(),interval:$('timeframe').value,intervalLabel:tfLabel($('timeframe').value),theme:prefs.theme};return api('/api/chart-viewer/chat',{method:'POST',body:{message:text,state:st,history:history.slice(-8)}}).then(function(r){$('chatMode').textContent=r.source==='openai'?'OPENAI':'LOCAL';$('chatMode').className='badge '+(r.source==='openai'?'ai':'local');if(r.command&&r.command.symbol){var sp=String(r.command.symbol).split(':').pop(),np=normalizePair(sp);if(np)$('pair').value=np;}if(r.command&&r.command.interval){$('timeframe').value=r.command.interval;}if(r.command&&(r.command.symbol||r.command.interval))renderChart();addMsg('assistant',r.message||'Analyse terminée.',r.source==='openai'?'OPENAI':'LOCAL');if(r.strategy)showStrategy(r.strategy);}).catch(function(e){$('chatMode').textContent='LOCAL prêt';$('chatMode').className='badge local';addMsg('sys','OpenAI : '+e.message,'LOCAL');});}
 function refreshStatus(){api('/api/chart-viewer/status').then(function(r){status=r;var b=$('apiBadge');b.textContent=r.openaiConfigured?'OpenAI '+(r.model||'configuré'):'OpenAI absent';b.className='badge '+(r.openaiConfigured?'ai':'');$('setModel').value=r.model||'gpt-5.6';}).catch(function(){$('apiBadge').textContent='OpenAI --';});}
 function openSettings(){loadPrefs();$('setExchange').value=prefs.exchange;$('setPair').value=prefs.pair;$('setTimeframe').value=prefs.timeframe;$('setTheme').value=prefs.theme;$('setModel').value=status.model||'gpt-5.6';$('settingsMask').classList.remove('hide');}
-$('navTrading').onclick=function(){location.href='/ia-trading';};$('navPortfolio').onclick=function(){location.href='/portfolio';};$('navFundamental').onclick=function(){location.href='/fundamental';};$('navAdmin').onclick=function(){location.href='/admin';};$('navSettings').onclick=openSettings;$('navApi').onclick=function(){$('apiMask').classList.remove('hide');refreshStatus();};$('settingsClose').onclick=function(){$('settingsMask').classList.add('hide');};$('apiClose').onclick=function(){$('apiMask').classList.add('hide');};$('closeStrategy').onclick=function(){$('strategyCard').classList.add('hide');};
+$('settingsClose').onclick=function(){$('settingsMask').classList.add('hide');};$('apiClose').onclick=function(){$('apiMask').classList.add('hide');};$('closeStrategy').onclick=function(){$('strategyCard').classList.add('hide');};
 $('applyChart').onclick=function(){renderChart();};$('refreshChart').onclick=function(){renderChart();};$('fullChart').onclick=function(){if($('chartShell').requestFullscreen)$('chartShell').requestFullscreen();};$('exchange').onchange=renderChart;$('timeframe').onchange=renderChart;
 $('pair').onkeydown=function(e){if(e.key==='Enter'){e.preventDefault();renderChart();}};
 $('saveViewerSettings').onclick=function(){var p=normalizePair($('setPair').value);if(!p){$('settingsResult').textContent='Paire invalide.';return;}prefs={exchange:$('setExchange').value,pair:p,timeframe:$('setTimeframe').value,theme:$('setTheme').value};savePrefs();$('exchange').value=prefs.exchange;$('pair').value=prefs.pair;$('timeframe').value=prefs.timeframe;renderChart();var model=$('setModel').value.trim();api('/api/settings/general',{method:'POST',body:{openaiModel:model}}).then(function(){status.model=model;$('settingsResult').textContent='Paramètres enregistrés.';refreshStatus();}).catch(function(e){$('settingsResult').textContent='Viewer enregistré localement. Modèle : '+e.message;});};
@@ -121,7 +105,7 @@ $('testApi').onclick=function(){$('apiResult').textContent='Test OpenAI…';api(
 $('clearApi').onclick=function(){if(!confirm('Effacer la clé OpenAI enregistrée ?'))return;api('/api/settings/apis/clear',{method:'POST',body:{name:'OPENAI_API_KEY'}}).then(function(){$('apiResult').textContent='Clé effacée.';refreshStatus();}).catch(function(e){$('apiResult').textContent='Erreur : '+e.message;});};
 $('copyPine').onclick=function(){var t=$('pineCode');t.select();try{document.execCommand('copy');$('copyPine').textContent='Copié';setTimeout(function(){$('copyPine').textContent='Copier';},1200);}catch(e){}};
 $('chatForm').onsubmit=function(e){e.preventDefault();var text=$('chatInput').value.trim();if(!text)return;$('chatInput').value='';addMsg('me',text);var r=localCommand(text);if(r.handled){$('chatMode').textContent='LOCAL · 0 token';$('chatMode').className='badge local';addMsg('assistant',r.message,'LOCAL');return;}sendComplex(text);};
-refreshViewerVersion();api('/api/bootstrap').then(function(b){if(!b.authenticated){location.replace('/');return;}if(b.role==='ADMIN')$('navAdmin').classList.remove('hide');loadPrefs();renderChart();refreshStatus();}).catch(function(){location.replace('/');});
+refreshViewerVersion();api('/api/bootstrap').then(function(b){if(!b.authenticated){location.replace('/');return;}if(b.role==='ADMIN'&&$('navAdmin'))$('navAdmin').classList.remove('hide');loadPrefs();renderChart();refreshStatus();}).catch(function(){location.replace('/');});
 })();
 </script>
 <script src="/assets/companion_v1.0.js"></script></body>
