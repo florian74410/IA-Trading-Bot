@@ -207,6 +207,7 @@ FIREWALL_LOG="$LOG_DIR/firewall.log"
 STRATEGY_LOG="$LOG_DIR/strategy.log"
 RISK_LOG="$LOG_DIR/risk.log"
 PORTFOLIO_LOG="$LOG_DIR/portfolio.log"
+SUPERVISOR_LOG="$LOG_DIR/supervisor.log"
 
 # v1.6.0 Fundamental Engine: dependance SQLite native testee avec Node 16.20.2.
 # Echec non bloquant: IA-TB reste disponible et le FE apparaitra OFFLINE dans ADMIN.
@@ -232,6 +233,7 @@ FIREWALL_PID=""
 STRATEGY_PID=""
 RISK_ENGINE_PID=""
 PORTFOLIO_PID=""
+SUPERVISOR_PID=""
 UI_PID=""
 ROUTER_PID=""
 APP_PID=""
@@ -247,6 +249,7 @@ cleanup() {
   [ -n "$FIREWALL_PID" ] && kill "$FIREWALL_PID" >/dev/null 2>&1 || true
   [ -n "$STRATEGY_PID" ] && kill "$STRATEGY_PID" >/dev/null 2>&1 || true
   [ -n "$RISK_ENGINE_PID" ] && kill "$RISK_ENGINE_PID" >/dev/null 2>&1 || true
+  [ -n "$SUPERVISOR_PID" ] && kill "$SUPERVISOR_PID" >/dev/null 2>&1 || true
   [ -n "$PORTFOLIO_PID" ] && kill "$PORTFOLIO_PID" >/dev/null 2>&1 || true
   [ -n "$APP_PID" ] && kill "$APP_PID" >/dev/null 2>&1 || true
   sleep 1
@@ -262,6 +265,7 @@ cleanup() {
   stop_known_on_port "$STRATEGY_PORT" >/dev/null 2>&1 || true
   stop_known_on_port "$RISK_ENGINE_PORT" >/dev/null 2>&1 || true
   stop_known_on_port "$PORTFOLIO_PORT" >/dev/null 2>&1 || true
+  stop_known_on_port "$SUPERVISOR_PORT" >/dev/null 2>&1 || true
 }
 trap cleanup EXIT INT TERM
 
@@ -279,6 +283,7 @@ mkdir -p Fundamental/Data
 : > "$STRATEGY_LOG"
 : > "$RISK_LOG"
 : > "$PORTFOLIO_LOG"
+: > "$SUPERVISOR_LOG"
 
 section "[ 2/4 ]  STARTING SERVICES"
 
@@ -339,6 +344,11 @@ status_wait "Risk Engine" "127.0.0.1:$RISK_ENGINE_PORT"
 
 IATB_RISK_ENGINE_PORT="$RISK_ENGINE_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Risk/Engine/risk_service.js >> "$RISK_LOG" 2>&1 &
 RISK_ENGINE_PID=$!
+
+sleep "$STARTUP_SPACING"
+status_wait "IA Supervisor" "127.0.0.1:$SUPERVISOR_PORT"
+IATB_SUPERVISOR_PORT="$SUPERVISOR_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Supervisor/supervisor_service.js >> "$SUPERVISOR_LOG" 2>&1 &
+SUPERVISOR_PID=$!
 
 section "[ 3/4 ]  HEALTH CHECK"
 
@@ -497,7 +507,24 @@ else
   status_skip "Fundamental Engine" "disabled"
 fi
 
-status_wait "Core Supervisor" "starting"
+supervisor_ok=0
+for i in 1 2 3 4 5 6 7 8; do
+  body="$(http_get "http://127.0.0.1:$SUPERVISOR_PORT/health")"
+  echo "$body" | grep -q 'IA-TB Supervisor' && { supervisor_ok=1; break; }
+  sleep 1
+done
+if [ "$supervisor_ok" -ne 1 ]; then
+  status_fail "IA Supervisor" ":$SUPERVISOR_PORT"
+  echo "--- $SUPERVISOR_LOG ---"
+  cat "$SUPERVISOR_LOG" 2>/dev/null || true
+  cleanup
+  read -p "Appuie sur Entree pour fermer..."
+  exit 1
+else
+  status_ok "IA Supervisor" ":$SUPERVISOR_PORT"
+fi
+
+status_wait "Core" "starting"
 IATB_PUBLIC_PORT="$CORE_PORT" IATB_UI_SEPARATED="1" ROUTER_PORT="$ROUTER_PORT" IATB_PORTFOLIO_PORT="$PORTFOLIO_PORT" IATB_TRADING_ENGINE_PORT="$TRADING_ENGINE_PORT" IATB_FIREWALL_PORT="$FIREWALL_PORT" IATB_TRADING_FIREWALL_PORT="$FIREWALL_PORT" "$NODE_BIN" launcher.js >> "$LAUNCHER_LOG" 2>&1 &
 APP_PID=$!
 
@@ -514,7 +541,6 @@ if [ "$ok" -ne 1 ]; then
   read -p "Appuie sur Entree pour fermer..."
   exit 1
 else
-  status_ok "Core Supervisor" "online"
   status_ok "Core" ":$CORE_PORT"
 fi
 
@@ -561,13 +587,14 @@ status_ok "UI Service" ":$UI_PORT"
 
 section "[ 4/4 ]  SYSTEM STATUS"
 
-printf "              ${C_GREEN}${C_BOLD}13 / 13 SERVICES ONLINE${C_RESET}\n"
+printf "              ${C_GREEN}${C_BOLD}14 / 14 SERVICES ONLINE${C_RESET}\n"
 echo
 printf "                 ${C_GREEN}${C_BOLD}IA-TB READY${C_RESET} · v1.12 DEBUG\n"
 echo
 echo "  UI        http://127.0.0.1:$UI_PORT"
 echo "  Core      http://127.0.0.1:$CORE_PORT"
 echo "  Router    http://127.0.0.1:$ROUTER_PORT"
+echo "  Supervisor http://127.0.0.1:$SUPERVISOR_PORT"
 echo
 echo "────────────────────────────────────────────────────────────────"
 echo
