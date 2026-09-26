@@ -290,3 +290,25 @@ html.iatb-trading-workspace #iaChartHost{position:absolute;inset:0;width:100%;he
     overflow-x:auto!important;overflow-y:hidden!important;scroll-behavior:smooth;
   }
 }
+
+
+/* v1.12.6 — one visible Indicator Engine box below chart. */
+@media(min-width:981px){
+  html.iatb-trading-workspace:not(.iatb-secondary-page-active) #chartArea>#indicatorDock{display:none!important}
+  html.iatb-trading-workspace:not(.iatb-secondary-page-active) #iatbIndicatorDock{
+    order:3!important;display:flex!important;flex-direction:column!important;
+    height:190px!important;min-height:190px!important;max-height:190px!important;
+    margin:0!important;border-radius:0!important;overflow:hidden!important;
+  }
+  html.iatb-trading-workspace:not(.iatb-secondary-page-active) #tdIndicatorDockBody{
+    flex:1 1 auto!important;min-height:0!important;max-height:none!important;
+    overflow-y:auto!important;overflow-x:hidden!important;display:grid!important;
+    grid-template-columns:1fr!important;gap:6px!important;padding:7px!important;
+  }
+  html.iatb-trading-workspace:not(.iatb-secondary-page-active) #tdIndicatorDockBody .indicatorPane{
+    position:relative!important;height:132px!important;min-height:132px!important;
+    border:1px solid #20303c!important;border-radius:5px!important;background:#070b10!important;overflow:hidden!important;
+  }
+  html.iatb-trading-workspace:not(.iatb-secondary-page-active) #tdIndicatorDockBody .indicatorPane canvas{display:block!important;width:100%!important;height:100%!important}
+  html.iatb-trading-workspace:not(.iatb-secondary-page-active) .iatbModuleWrap{order:4!important}
+}
