@@ -242,3 +242,28 @@ html.iatb-trading-workspace #iaChartHost{position:absolute;inset:0;width:100%;he
     position:sticky!important;bottom:0!important;
   }
 }
+
+
+/* v1.12.4 — final workspace flow: legacy mosaics gone, service strip follows content. */
+@media(min-width:981px){
+  html.iatb-trading-workspace:not(.iatb-secondary-page-active) .body[data-mosaic-root]>.left,
+  html.iatb-trading-workspace:not(.iatb-secondary-page-active) .body[data-mosaic-root]>.right{
+    display:none!important;
+  }
+  html.iatb-trading-workspace:not(.iatb-secondary-page-active) .body[data-mosaic-root]{
+    grid-template-columns:minmax(0,1fr) 292px!important;
+    grid-template-rows:auto auto!important;
+    min-height:0!important;
+  }
+  html.iatb-trading-workspace:not(.iatb-secondary-page-active) .iatbCenterColumn{
+    grid-column:1!important;grid-row:1!important;min-height:0!important;
+  }
+  html.iatb-trading-workspace:not(.iatb-secondary-page-active) .iatbExchangeColumn{
+    grid-column:2!important;grid-row:1!important;
+  }
+  html.iatb-trading-workspace:not(.iatb-secondary-page-active) .iatbServiceStrip{
+    grid-column:1 / -1!important;grid-row:2!important;
+    position:static!important;bottom:auto!important;
+    width:100%!important;margin:0!important;align-self:end!important;
+  }
+}
