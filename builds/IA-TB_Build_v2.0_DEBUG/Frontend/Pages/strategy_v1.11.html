@@ -218,7 +218,33 @@ html,body{background:radial-gradient(circle at 50% -20%,#1a2228 0,#090c0f 45%,#0
 }
 
 
-html,body{min-height:100%;height:auto!important;overflow:auto!important;background:#070b10!important}.standalonePage{position:relative!important;z-index:1!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;min-height:calc(100vh - var(--iatb-global-nav-h,52px))!important;padding-top:18px!important}.standalonePage .settingsInner,.standalonePage .strategyInner{padding-bottom:48px}body.iatb-global-nav-ready .standalonePage{margin-top:0!important}.standaloneStatus{position:fixed;right:12px;bottom:10px;z-index:50;border:1px solid #274251;background:#08131b;color:#829ba7;border-radius:5px;padding:5px 8px;font-size:10px}</style>
+html,body{min-height:100%;height:auto!important;overflow:auto!important;background:#070b10!important}.standalonePage{position:relative!important;z-index:1!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;min-height:calc(100vh - var(--iatb-global-nav-h,52px))!important;padding-top:18px!important}.standalonePage .settingsInner,.standalonePage .strategyInner{padding-bottom:48px}body.iatb-global-nav-ready .standalonePage{margin-top:0!important}.standaloneStatus{position:fixed;right:12px;bottom:10px;z-index:50;border:1px solid #274251;background:#08131b;color:#829ba7;border-radius:5px;padding:5px 8px;font-size:10px}
+/* v2.0 DEBUG — Strategy visual refresh. Scoped: Strategy page only. */
+.iatb-page-strategies{--st-bg:#050b13;--st-panel:#091621;--st-panel2:#0b1c29;--st-line:#174a6a;--st-cyan:#19cfff;--st-blue:#278cff;--st-violet:#775cff;--st-green:#37e29a;--st-text:#edf8ff;--st-muted:#83a7bd;background:radial-gradient(circle at 72% -18%,rgba(44,91,180,.18),transparent 36%),linear-gradient(180deg,#06101b,#040a11 72%)!important;color:var(--st-text)}
+.iatb-page-strategies .standalonePage{background:transparent!important;padding-top:26px!important}
+.iatb-page-strategies .strategyInner{max-width:1120px}
+.iatb-page-strategies .strategyEyebrow{color:#35cfff;font-weight:700;letter-spacing:1.35px}
+.iatb-page-strategies .strategyHead h2{font-size:24px;color:#f3fbff;text-shadow:0 0 18px rgba(25,207,255,.08)}
+.iatb-page-strategies .muted,.iatb-page-strategies .strategyHelp{color:#8caec2}
+.iatb-page-strategies .strategyMetric,.iatb-page-strategies .strategyCard{background:linear-gradient(155deg,rgba(11,30,43,.98),rgba(6,17,26,.98));border:1px solid #1a4965;box-shadow:inset 0 1px rgba(80,205,255,.05),0 8px 26px rgba(0,0,0,.18)}
+.iatb-page-strategies .strategyMetric{border-radius:10px;position:relative;overflow:hidden}
+.iatb-page-strategies .strategyMetric:after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:linear-gradient(90deg,#1bcfff,#286eff 58%,transparent);opacity:.75}
+.iatb-page-strategies .strategyMetric small{color:#6fa7c4}.iatb-page-strategies .strategyMetric strong{color:#effaff;font-size:18px}.iatb-page-strategies .strategyMetric span{color:#7fa1b5}
+.iatb-page-strategies .strategyCard{border-radius:10px;padding:15px}.iatb-page-strategies .strategyCard h3{color:#effaff}
+.iatb-page-strategies .strategyCatalog,.iatb-page-strategies .strategyInfo,.iatb-page-strategies .strategyDep,.iatb-page-strategies .strategyRuleBox,.iatb-page-strategies .strategyArchitecture div{background:linear-gradient(145deg,#07141e,#061019);border-color:#173e56}
+.iatb-page-strategies .strategyCatalogRow{border-color:#123348}.iatb-page-strategies .strategyCatalogRow:hover{background:#0a2130}.iatb-page-strategies .strategyCatalogRow.selected{background:linear-gradient(90deg,rgba(20,143,213,.25),rgba(72,55,170,.12));box-shadow:inset 3px 0 #22cfff}
+.iatb-page-strategies .strategyPill{border-color:#285570;color:#a8d6ef}.iatb-page-strategies .strategyPill.ok{border-color:#247552;color:#5ce6a1;background:rgba(30,133,88,.08)}
+.iatb-page-strategies .strategyRow select{background:#06121c;border-color:#24506a;color:#f0f9ff;border-radius:6px}
+.iatb-page-strategies .btn{background:linear-gradient(180deg,#126b9b,#0d4f77);border:1px solid #2489bb;border-radius:6px;color:#f5fcff;box-shadow:inset 0 1px rgba(255,255,255,.09),0 0 0 rgba(25,207,255,0);transition:.16s ease}
+.iatb-page-strategies .btn:hover{filter:none;background:linear-gradient(180deg,#1682b9,#0e608e);border-color:#31c7f6;box-shadow:0 0 14px rgba(25,207,255,.13);transform:translateY(-1px)}
+.iatb-page-strategies .secondary{background:linear-gradient(180deg,#31566d,#203d50);border-color:#54788d}
+.iatb-page-strategies .strategyRun{background:linear-gradient(180deg,#159765,#0e704b);border-color:#2acb8b}.iatb-page-strategies .strategyPause{background:linear-gradient(180deg,#9a7028,#70501b);border-color:#c4933e}.iatb-page-strategies .strategyStop{background:linear-gradient(180deg,#a33d50,#762938);border-color:#d1586b}
+.iatb-page-strategies .strategyState.RUNNING{color:#3ee79a;text-shadow:0 0 9px rgba(62,231,154,.25)}.iatb-page-strategies .strategyState.PAUSED{color:#ffd068}
+.iatb-page-strategies .strategyDep .ok{color:#46e59b}.iatb-page-strategies .strategyRuleBox h4{color:#45cfff}
+.iatb-page-strategies .strategyArchitecture b{color:#dff6ff}.iatb-page-strategies .strategyArchitecture span{color:#7fa4b9}
+.iatb-page-strategies .standaloneStatus{border-color:#18506c;background:rgba(5,20,31,.94);color:#78abc6;box-shadow:0 0 16px rgba(0,174,255,.08)}
+
+</style>
 <link rel="stylesheet" href="/assets/companion_v1.0.css"><link rel="stylesheet" href="/assets/global_navigation_v2.0.css"><script defer src="/assets/global_navigation_v2.0.js?v=2004"></script></head><body class="iatb-page-strategies"><div class="strategyPage standalonePage" id="strategyPage"><div class="strategyInner"><div class="strategyHead"><div><div class="strategyEyebrow">STRATEGY ENGINE · INSTANCE MANAGER</div><h2>Gestionnaire de stratégies</h2><div class="muted">IA-TB <span class="runtimeVersionInline">v…</span> · définitions persistantes, instance RAM et dépendances Indicator Engine</div></div><button class="btn" id="strategyClose">Retour au trading</button></div>
 <div class="strategyOverview"><div class="strategyMetric"><small>Définitions</small><strong id="strategyCatalogCount">0</strong><span>sauvegardées</span></div><div class="strategyMetric"><small>Instance RAM</small><strong id="strategyRuntimeState">AUCUNE</strong><span id="strategyRuntimeName">aucune stratégie chargée</span></div><div class="strategyMetric"><small>Readiness</small><strong id="strategyReadyState">--</strong><span id="strategyReadyMeta">dépendances non évaluées</span></div><div class="strategyMetric"><small>Multi-instance</small><strong>PRÉPARÉ</strong><span>1 instance active dans ce runtime</span></div></div>
 <div class="strategyGrid">
