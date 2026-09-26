@@ -1,119 +1,40 @@
-# Router Protocol / CP/1
+# Router & protocole CP/1
 
-> Référence documentaire : IA-TB v1.8.12 — Router Protocol Normalization.
+## Router
 
-Le **Communication Router** constitue le point de passage normalisé des communications inter-modules IA-TB. Les Engines et services ne doivent pas dépendre directement de l'implémentation interne d'un autre Engine.
+**Communication Router :8021** est le bus interne. Il charge `ProtocolRegistry`, connaît les endpoints/capacités et transmet une requête validée au composant cible. Il ne transforme pas le sens métier d'une réponse.
 
-## Statut des composants
+## Enveloppe CP/1
 
-### Actifs CP/1
+Requête :
+```json
+{"protocol":"CP/1","request_id":"...","timestamp":0,"target":"indicator","action":"indicator.analyze","detail":"analysis","arguments":{}}
+```
 
-- Indicator Engine
-- Trading Engine
-- Risk Engine
-- Portfolio Engine
-- Market Data
-- Liquidity Engine
-- Fundamental Engine — `INFORMATION_ONLY`
+Réponse : `protocol`, `request_id`, `engine`, `action`, `status`, `schema`, `generated_at`, `duration_ms`, `data_hash`, `data`, `warnings`.
 
-### Bridge de sécurité
+États : **OK, DEGRADED, PROTECTION, OFFLINE, ERROR**.
 
-- Trading Firewall — `SECURITY_BRIDGE` volontaire. Il protège le canal d'exécution et n'est pas une cible métier Router directe.
+## Sécurité
 
-### RESERVED
-
-- Strategy Engine — contrat préparé, aucun service runtime autonome présent dans le build v1.8.12.
-- Supervisor IA — contrat préparé, aucun service runtime CP/1 autonome présent dans le build v1.8.12.
-
-Ces composants ne doivent jamais être présentés dans le Wiki comme fonctionnels tant que leur runtime autonome n'est pas effectivement intégré et validé.
-
-## Contrat CP/1
-
-### Request
-
-Une requête CP/1 contient :
-
-- `protocol`
-- `request_id`
-- `timestamp`
-- `target`
-- `action`
-- `detail`
-- `arguments`
-
-### Response
-
-Une réponse CP/1 contient :
-
-- `protocol`
-- `request_id`
-- `engine`
-- `action`
-- `status`
-- `schema`
-- `generated_at`
-- `duration_ms`
-- `data_hash`
-- `data`
-- `warnings`
-
-## Règles de sécurité
-
-- communication locale `localhost` ;
-- token CP partagé ;
+- transport local `127.0.0.1` ;
+- token `X-IATB-CP-Token` ;
 - HMAC-SHA256 ;
-- whitelist via Registry ;
-- protection anti-replay dans le Router ;
-- aucun shell arbitraire ;
-- aucun chemin de fichier arbitraire ;
-- aucune URL arbitraire.
+- timestamp avec fenêtre de 30 s ;
+- protection anti-rejeu par `request_id` ;
+- actions et arguments déclarés dans ProtocolRegistry ;
+- pas de shell/path/URL arbitraire transporté comme action.
 
-## Commandes Market Data
+## Registry et découverte
 
-| Commande | Effet |
-|---|---|
-| `marketdata.health` | Etat et santé du service Market Data. |
-| `marketdata.candles` | Demande de bougies selon les arguments autorisés par le Registry. |
-| `marketdata.refresh` | Demande de rafraîchissement contrôlé des données. |
-| `marketdata.active` | Retourne l'état/source active exposée par Market Data. |
-| `marketdata.cache.clear` | Vide le cache Market Data selon le périmètre autorisé. |
+Chaque composant possède un manifeste `Core/Communication/ProtocolRegistry/<id>.json`. Le Router refuse une action inconnue ou un argument hors contrat. Les services dynamiques peuvent s'enregistrer, mais doivent correspondre à une déclaration.
 
-## Commandes Liquidity
+## Browser ACK
 
-| Commande | Effet |
-|---|---|
-| `liquidity.health` | Etat et santé du Liquidity Engine. |
-| `liquidity.zones` | Retourne les zones de liquidité calculées. |
-| `liquidity.realtime` | Retourne les informations temps réel disponibles. |
-| `liquidity.snapshot` | Produit un snapshot de liquidité. |
-| `liquidity.liquidations` | Retourne les liquidations explicitement disponibles. |
-| `liquidity.cache.clear` | Vide le cache Liquidity selon le périmètre autorisé. |
+Chart Viewer est un composant `BROWSER_ACK`. Pour une action visuelle, le Router prépare une action à durée limitée ; le navigateur l'exécute puis ACK `SUCCESS/REJECTED/ERROR`. Cela évite de confondre une intention serveur avec une modification effectivement appliquée dans le navigateur.
 
-## Commandes Fundamental
+## IA ↔ IA
 
-Le Fundamental Engine est exposé en mode **INFORMATION_ONLY** : il fournit du contexte et ne prend aucune décision d'exécution.
+Le protocole prévoit deux identités IA : `chat_ai` et `supervisor`. Elles ont des tables de capacités explicites. Dans DEBUG 1.12, leur accès Market Data/Liquidity est **READ_ONLY**. Le Supervisor autonome reste RESERVED ; la communication future se fera donc comme n'importe quel autre composant : **IA → requête CP/1 → Router → Engine → réponse CP/1**, jamais par accès direct aux internals.
 
-| Commande | Effet |
-|---|---|
-| `fundamental.health` | Etat et santé du Fundamental Engine. |
-| `fundamental.summary` | Retourne un résumé fondamental. |
-| `fundamental.context` | Retourne le contexte fondamental disponible. |
-| `fundamental.sources` | Liste les sources connues/exposées. |
-| `fundamental.events` | Retourne les événements fondamentaux disponibles. |
-| `fundamental.collect` | Déclenche une collecte contrôlée selon les paramètres autorisés. |
-
-## Sources de vérité
-
-- Machine-readable : `Core/Communication/router_protocol_spec_v1.8.12.json`
-- Documentation humaine du build : `Docs/Architecture/ROUTER_PROTOCOL_SPEC_v1.8.12.md`
-
-Le Wiki doit rester aligné sur ces sources. En cas de divergence, le registre/spec machine-readable sert à contrôler les capacités réellement déclarées et la documentation ne doit pas inventer de fonctionnalité.
-
-## QA v1.8.12
-
-- Router normalization : **OK**
-- Communication Protocol CP/1 : **OK**
-- Unified Admin Debug Framework v1.8.11 : **OK**
-- CP/1 Common Tools v1.8.9 : **OK**
-- VERSION-GUARD : **OK 1.8.12**
-- Contrôle visuel : **30 fichiers, 0 modification**
+Voir [Assistant IA](AI-Companion.md).
