@@ -19,6 +19,12 @@
 
 Les manifestes sont centralisés dans `Core/ProcessRegistry/manifests`. Le Process Registry donne à l'Admin une source commune pour statut, script, log, variables d'environnement et dépendances.
 
+
+> **Lecture rapide :** l'essentiel est ci-dessus. Les détails sont disponibles sans quitter la page.
+
+<details>
+<summary><b>➕ En savoir plus — détails techniques</b></summary>
+
 ## Démarrage
 
 `start.command` orchestre l'environnement local. Le mode DEBUG conserve aussi `start_no_firewall.command` pour le diagnostic et `start_with_kraken.command` pour le chemin historique Kraken.
@@ -34,3 +40,6 @@ Risk et Strategy dépendent explicitement du Router. UI dépend de Core + Router
 ## Compatibilité
 
 Le build vise Node 16 et conserve une attention particulière au vieux runtime macOS/Firefox. Le graphique natif a été conservé notamment pour éviter une dépendance externe lourde.
+
+
+</details>
