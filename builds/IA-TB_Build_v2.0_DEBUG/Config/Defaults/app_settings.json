@@ -55,7 +55,14 @@
     }
   },
   "ai": {
-    "orderExecution": "PREPARE_ONLY"
+    "orderExecution": "PREPARE_ONLY",
+    "autonomousTrading": {
+      "masterEnabled": false,
+      "mode": "OFF",
+      "paperRequiresConfirmation": true,
+      "liveGuardedEnabled": false,
+      "chatCommandsEnabled": true
+    }
   },
   "portfolio": {
     "snapshotRefreshSec": 300,
