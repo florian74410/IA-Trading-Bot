@@ -6,6 +6,12 @@
 
 Toute information privée requise doit être paramétrable ici : API Key, Secret, Passphrase, Token, identifiant / Key Name, clé privée, endpoint ou mode particulier lorsque nécessaire. Aucun secret ne doit être codé en dur dans l'application.
 
+
+> **Lecture rapide :** l'essentiel est ci-dessus. Les détails sont disponibles sans quitter la page.
+
+<details>
+<summary><b>➕ En savoir plus — détails techniques</b></summary>
+
 ## Données publiques et fonctions privées
 
 Lorsqu'une plateforme autorise ses Market Data publiques sans authentification, IA-TB doit pouvoir les récupérer sans exiger de clé privée. Les identifiants privés ne sont utilisés que pour les fonctions qui les nécessitent.
@@ -39,3 +45,6 @@ Le principe du moindre privilège s'applique. Une permission de retrait ne doit 
 ## Test de connexion
 
 Lorsqu'un connecteur possède des paramètres privés, l'interface doit permettre de distinguer clairement les états connecté, non configuré et erreur. Les diagnostics ne doivent jamais renvoyer le secret lui-même.
+
+
+</details>
