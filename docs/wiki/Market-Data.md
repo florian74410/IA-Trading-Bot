@@ -1,87 +1,50 @@
-# Market Data
+# Market Data Collector
 
-Le Market Data Engine fournit aux autres modules les données de marché normalisées tout en conservant leur provenance. La v1.7.9 étend ce rôle avec des sources complémentaires, un Collector multi-source et une source virtuelle de consensus `ƒx`.
+## Rôle
 
-## Principes
+**Market Data :8013** est l'entrée universelle READ des données de marché et financières. Il récupère les données des providers, les normalise, les met en cache et expose un contrat stable aux autres composants.
 
-- aucune source ne remplace silencieusement une autre ;
-- les symboles peuvent être normalisés, mais la provenance originale reste attachée aux données ;
-- aucun volume absent n'est fabriqué ;
-- les données complémentaires ne deviennent pas artificiellement des OHLCV d'exchange ;
-- le cache reste borné et séparé par provider / symbole / timeframe.
+```text
+Kraken / Binance / OKX / GMX / CoinGecko / RPC / DeFi
+                         │
+                         ▼
+                   Market Data
+              Normalizer + Registry + Cache
+                         │
+              Firewall Data (selon route)
+                         │
+        Router / UI / Indicator / Liquidity / IA
+```
 
-## Types de providers
+## Providers DEBUG 1.12
 
-IA-TB distingue les providers API et les providers `SOCKET`. Depuis la v1.7.8, `SOCKET` désigne un provider utilisant un flux WebSocket persistant pour les mises à jour temps réel ; une API HTTP peut rester utilisée pour l'historique ou les métadonnées.
+Le build contient des providers **Kraken, Binance, OKX, GMX, CoinGecko**, un adapter DeFi, un provider RPC on-chain et un provider de référence. Une présence dans le code ne signifie pas qu'une source distante non testée doit être présentée comme disponible : chaque adapter doit annoncer sa provenance et ses capacités réelles.
 
-Hyperliquid est le premier provider `SOCKET` intégré.
+Binance utilise les klines Spot publiques et renvoie du volume natif. OKX utilise les candles publiques, avec normalisation des paires et fallback USD→USDT. Les timeframes sont normalisés avant l'appel provider.
 
-## Sources v1.7.9
+## CP/1
 
-### CoinGecko — API
+Commandes principales :
+- `marketdata.health`
+- `marketdata.providers`
+- `marketdata.candles`
+- `marketdata.financial.capabilities`
+- `marketdata.registry.status/search/list/asset/query`
 
-CoinGecko est une source complémentaire `COINGECKO`. Sa provenance reste explicite et séparée des données natives CEX/DEX. L'application ne transforme pas une donnée CoinGecko en volume d'exchange lorsqu'un tel volume n'existe pas.
+`marketdata.candles` exige `symbol` + `timeframe` et accepte notamment `limit`, `force`, `exchange` et `source`.
 
-L'état du provider expose notamment la dernière réussite, la dernière erreur et l'état d'authentification. La clé API éventuelle est configurée dans `Settings > API`, stockée par le coffre existant et transmise au service Market Data uniquement en mémoire.
+## Normalisation
 
-### Blockchain.com — API
+Le Collector normalise **symboles, timeframes, candles et données financières**. Chaque réponse doit garder la provenance : provider, exchange/source, paire provider, timeframe, disponibilité du volume et source de prix.
 
-Le provider `BLOCKCHAIN` utilise actuellement le flux public Blockchain.com Exchange, notamment le canal WebSocket `prices`. Les OHLCV et volumes reçus restent natifs, les timeframes non supportés sont refusés plutôt qu'approximés et la provenance `BLOCKCHAIN.COM` est conservée.
+Le graphique ne doit jamais inventer un volume absent. Une incohérence de timeframe est refusée plutôt que d'afficher silencieusement des bougies d'une autre granularité.
 
-La v1.7.9 prévoit encore de recentrer cette source sur son rôle Bitcoin / on-chain afin d'éviter un doublon inutile avec les sources Exchange.
+## Registry
 
-### DefiLlama — API
+Le Market Registry fournit une couche de découverte : recherche d'actifs, liste paginée, fiche d'actif et requêtes de catalogue. Il permet aux consommateurs de demander « où trouver cet actif ? » sans connaître l'implémentation d'un provider.
 
-`DEFILLAMA` est une source analytique complémentaire et déclare `candleCapable:false`. Elle ne doit donc jamais remplacer silencieusement les chandeliers CEX/DEX.
+## Sécurité
 
-Les familles de données intégrées couvrent : TVL protocoles et chaînes, prix tokens actuels/historiques/chart/variations, stablecoins, pools de rendement et historiques APY/TVL, volumes DEX et options, open interest, fees et revenue. La provenance est `DEFILLAMA_PUBLIC_API`.
+La Financial Data Layer est READ_ONLY pour Chat/Supervisor. Le RPC on-chain autorise uniquement des méthodes de lecture sélectionnées ; aucune signature, clé privée ou `eth_sendTransaction` n'est exposée.
 
-## Hyperliquid / SOCKET
-
-Le provider Hyperliquid charge l'historique OHLCV via `candleSnapshot`, maintient les chandeliers avec l'abonnement WebSocket `candle` et dispose également des abonnements `trades` et `l2Book`. Les volumes natifs Hyperliquid sont conservés avec leur provenance et le cache provider est borné.
-
-## Market Data Collector
-
-Le Collector v1.7.9 rend les sources de prix explicites. Kraken fournit OHLCV et prix live. GMX fournit OHLC et prix Oracle ; aucun volume GMX absent n'est fabriqué.
-
-### Prix consensus
-
-`GET /price/consensus` calcule un prix consensus à partir des sources valides, Kraken et GMX étant les sources par défaut actuelles. Le résultat conserve les prix individuels, leur provenance, le nombre de sources et le spread entre sources.
-
-Le calcul utilise la moyenne des sources valides. À partir de trois sources, un filtre d'outliers autour de la médiane permet d'écarter une valeur incohérente avant le consensus.
-
-## Source virtuelle ƒx / consensus OHLCV
-
-La source virtuelle `FX`, affichée `ƒx Consensus`, est calculée directement dans le Collector et n'ajoute aucun service réseau.
-
-`GET /candles/consensus` produit les bougies synthétiques à la demande :
-
-- Open, High, Low et Close = moyenne arithmétique des bougies sources valides et alignées ;
-- Volume = somme des volumes natifs comparables réellement disponibles ;
-- correspondance stricte de la paire canonique ;
-- alignement des timestamps par bucket de timeframe ;
-- conservation des sources prix, sources volume, volumes par source, sources exclues et motifs d'exclusion.
-
-Le proxy Core `GET /api/market/fx-klines` permet au navigateur de rester sur le canal local existant. Le rafraîchissement `ƒx` est léger, à 15 secondes, sans historique consensus supplémentaire conservé en mémoire.
-
-## Catalogue des commandes
-
-Le catalogue central couvre GMX, Kraken/Reference, Hyperliquid, CoinGecko, Blockchain.com et DefiLlama, tout en signalant les connecteurs historiques Binance/Coinbase/OKX.
-
-Les états de capacité sont :
-
-- `IMPLEMENTED` : commande branchée dans le runtime courant ;
-- `LEGACY_IMPLEMENTED` : fonction disponible dans une intégration historique ;
-- `UPSTREAM_AVAILABLE` : possibilité connue côté fournisseur mais non branchée ici.
-
-`GET /capabilities` expose le catalogue complet, `GET /capabilities?provider=...` le filtre par provider et `POST /command` exécute les commandes analytiques génériques actuellement branchées. Les opérations privées de compte, trading et retrait restent hors de ce catalogue Market Data.
-
-La référence technique détaillée des commandes v1.7.9 se trouve dans `Update/v1.7.9/MarketData/API_COMMANDS.md`.
-
-## Diagnostic et cache
-
-Les endpoints `/providers`, `/health`, `/active`, `/refresh` et `/cache/clear` permettent de suivre l'état des providers et des contextes actifs. Les historiques importants restent chargés à la demande afin de limiter l'empreinte mémoire.
-
-## Validation restante v1.7.9
-
-Les providers CoinGecko, Blockchain.com et DefiLlama ainsi que Kraken/GMX et `ƒx` doivent encore être validés end-to-end sur la machine cible. La documentation décrit l'état fonctionnel actuel sans transformer ces validations restantes en succès acquis.
+Voir aussi : [Financial Data Layer](Financial-Data-Layer.md), [Firewall](Firewall-Module.md), [Trading IA](Trading-IA.md).
