@@ -6,6 +6,12 @@
 
 Il produit un `portfolio.snapshot` exploitable par Risk, Strategy et les interfaces.
 
+
+> **Lecture rapide :** la section ci-dessus donne l'essentiel. Ouvrez le bloc suivant pour le fonctionnement détaillé.
+
+<details>
+<summary><b>➕ En savoir plus — fonctionnement technique</b></summary>
+
 ## CP/1
 
 Commandes principales : `portfolio.health`, `event.record`, `balance.record`, `snapshot`, `positions`, `balances`, `history`, `statistics`, `events`, `sync`, `cost.summary`, `cost.history`.
@@ -22,3 +28,6 @@ IA-TB ne doit jamais recevoir la seed ou la clé privée. Une signature nécessa
 ## Coûts IA
 
 Le Portfolio peut lire le **Usage Ledger** : comptabilité append-only des tokens IA. Le ledger ne stocke ni prompts, ni réponses, ni secrets. Une estimation en EUR n'est enregistrée que lorsqu'une table de prix explicite existe.
+
+
+</details>
