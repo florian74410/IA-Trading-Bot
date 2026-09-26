@@ -4,6 +4,12 @@
 
 **Indicator Engine :8012** transforme des bougies normalisées en valeurs et preuves techniques. Il **ne prend aucune décision de trading**.
 
+
+> **Lecture rapide :** l'essentiel est ci-dessus. Les détails sont disponibles sans quitter la page.
+
+<details>
+<summary><b>➕ En savoir plus — détails techniques</b></summary>
+
 ## Catalogue intégré
 
 DEBUG 1.12 contient notamment : ADX, ATR, Bollinger Bands, CCI, EMA, HMA, Ichimoku Cloud, Liquidity HeatMap, MACD, MFI, OBV, Parabolic SAR, ROC, RSI, SMA, Stochastic, Stochastic RSI, Supertrend, VWAP, VWMA et Williams %R.
@@ -25,3 +31,6 @@ Le contrat distingue **READY / WARMING / INVALID** afin qu'un consommateur sache
 Familles : `indicator.compute`, `compute_batch`, `analyze`, `get_state`, `get_levels`, `get_signals`, catalogue/capabilities, validation/création de définitions et compilation/validation IIL.
 
 Flux : **Market Data → Indicator → Router → Strategy/UI/IA**.
+
+
+</details>
