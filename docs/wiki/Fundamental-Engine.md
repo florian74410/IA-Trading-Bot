@@ -6,6 +6,12 @@
 
 Il est explicitement **INFORMATION_ONLY** : aucune commande de trading n'est émise.
 
+
+> **Lecture rapide :** la section ci-dessus donne l'essentiel. Ouvrez le bloc suivant pour le fonctionnement détaillé.
+
+<details>
+<summary><b>➕ En savoir plus — fonctionnement technique</b></summary>
+
 ## Pipeline
 
 ```text
@@ -57,3 +63,6 @@ La réponse structurée contient headline, overview, marketTone, confidence, th�
 Le registre expose health/status/capabilities, news, events/evidence, sources/feeds, collecte, synthèses, historique, observabilité/logs, analyse, timeline et discovery/diagnostic.
 
 Les événements CP/1 incluent promotion/confirmation d'événement, changement de bias et changement de qualité des données.
+
+
+</details>
