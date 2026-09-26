@@ -1,73 +1,69 @@
-# IA-TB — Wiki complet
+# 📚 IA-TB — Manuel interactif
 
-> **Référence technique : build `IA-TB_Build_v1.12_DEBUG` de la branche `debug`.**  
-> Le Wiki est publié sur `main`. Il décrit le comportement du build DEBUG 1.12 ; lorsqu'un ancien document embarqué contredit le code, les manifestes runtime et ProtocolRegistry les plus récents font foi.
+> **Documentation publiée sur `main`, basée sur `IA-TB_Build_v1.12_DEBUG` de la branche `debug`.**
 
-IA-TB est une architecture locale modulaire de trading et d'analyse crypto. Elle sépare **collecte**, **analyse**, **stratégie**, **risque**, **exécution**, **sécurité**, **portefeuille**, **IA** et **interface** afin qu'aucun composant n'ait à lui seul tous les pouvoirs.
+<p align="center">
+  <img src="../../assets/app_architecture.jpg" alt="Architecture IA-Trading-Bot" width="100%" />
+</p>
 
-## 🧭 Comprendre IA-TB en 5 minutes
+IA-TB est une application modulaire de trading et d'analyse crypto. Cette documentation est conçue pour être comprise **par couches** : l'essentiel est visible immédiatement ; les détails sont repliés sous **➕ En savoir plus**.
+
+## 🗂️ Sommaire par chapitres
+
+| Chapitre | Sujet | Commencer ici |
+|---|---|---|
+| **01** | Découvrir IA-TB | [Architecture générale](Architecture.md) |
+| **02** | Utiliser l'application | [Interfaces](User-Interfaces.md) · [Trading IA](Trading-IA.md) |
+| **03** | Collecter les données | [Market Data](Market-Data.md) · [Financial Data](Financial-Data-Layer.md) |
+| **04** | Analyser | [Indicators](Indicator-Engine.md) · [Liquidity](Liquidity-Engine.md) · [Fundamental](Fundamental-Engine.md) |
+| **05** | Décider | [Strategy v2](Strategy-Engine.md) · [Risk](Risk-Engine.md) |
+| **06** | Exécuter et protéger | [Firewall](Firewall-Module.md) · [Trading Engine](Trading-Engine.md) |
+| **07** | Mémoriser le portefeuille | [Portfolio](Portfolio-Engine.md) |
+| **08** | Faire communiquer le système | [Router / CP1](Router-Protocol-CP1.md) · [Companion IA](AI-Companion.md) |
+| **09** | Connecter les marchés | [CEX / DEX](Connectors-CEX-DEX.md) |
+| **10** | Administrer IA-TB | [Runtime](Runtime-Services.md) · [Administration](Administration.md) |
+| **11** | Sécurité et configuration | [Security](Security.md) · [Settings/API](Settings-API.md) |
+| **12** | Installer et maintenir | [Installation](Installation.md) · [Update Manager](Update-Manager.md) · [Dépannage](Troubleshooting.md) |
+
+## 🧭 IA-TB en une image mentale
 
 ```text
-Exchanges / RPC / sources fondamentales
-              │
-              ▼
- Market Data + Fundamental
-        │          │
-        ├──► Indicator
-        ├──► Liquidity
-        │
-        ▼
-      Router CP/1 ◄──────── UI / Chat IA
-        │
-        ├──► Strategy v2 ──► signal/intention
-        ├──► Risk ─────────► analyse de risque
-        ├──► Portfolio ────► état/exécutions/coûts
-        │
-        ▼
- Firewall 8017 ──► Trading Engine 8016 ──► Exchange
+DONNÉES                    ANALYSE / DÉCISION                 EXÉCUTION
+────────                   ─────────────────                 ─────────
+CEX / DEX ─┐
+RPC / DeFi ├─► Market Data ─► Indicators ─┐
+News/Web ──┘               └► Liquidity ───┼─► Strategy ─► Risk
+                    Fundamental ────────────┘             │
+                                                          ▼
+UI / Companion IA ◄──────────── Router CP/1 ─────────► Firewall
+                         ▲                                │
+                         └──────── Portfolio ◄──── Trading Engine
+                                                          │
+                                                          ▼
+                                                       Exchange
 ```
 
-Le **Router** transporte les messages ; il ne prend pas de décision métier. **Strategy** fabrique des intentions, **Risk** mesure le risque, le **Firewall** inspecte les flux sensibles et **Trading Engine** traduit une commande autorisée vers l'adapter de l'exchange. Le **Supervisor IA** est encore un contrat réservé : il n'existe pas encore comme service autonome.
+**À retenir :** le Router transporte, les Engines analysent, Strategy propose, Risk mesure, le Firewall contrôle, Trading exécute et Portfolio mémorise.
 
-## 🧩 Rubriques
+<details>
+<summary><b>➕ En savoir plus — pourquoi autant de modules ?</b></summary>
 
-### Utilisation
-- [Trading IA](Trading-IA.md) — espace marché, graphique natif, indicateurs et mosaïque.
-- [Fondamental](Fundamental-Engine.md) — collecte, événements, corroboration, mémoire temporelle et synthèse IA.
-- [Portfolio](Portfolio-Engine.md) — positions, balances, historique, coûts et connexion wallet.
-- [Assistant IA / Companion](AI-Companion.md) — Chat IA, OpenAI, commandes déclaratives et limites.
-- [Interfaces et navigation](User-Interfaces.md) — pages Trading, Fundamental, Strategy, Portfolio, Admin et Settings.
+La séparation réduit les pouvoirs de chaque composant. Market Data peut lire le marché mais pas passer d'ordre. Strategy peut produire une intention mais ne possède pas d'adapter Exchange. Trading sait exécuter mais reçoit les commandes par le chemin protégé. L'IA n'obtient pas automatiquement de droits ADMIN.
 
-### Données et analyse
-- [Market Data Collector](Market-Data.md)
-- [Financial Data Layer](Financial-Data-Layer.md)
-- [Indicator Engine](Indicator-Engine.md)
-- [Liquidity Engine](Liquidity-Engine.md)
-- [Strategy Engine v2](Strategy-Engine.md)
-- [Risk Engine](Risk-Engine.md)
+Cette architecture facilite aussi le diagnostic : lorsqu'une donnée ou une décision paraît incorrecte, on peut identifier précisément la couche qui l'a produite.
 
-### Exécution et sécurité
-- [Trading Engine](Trading-Engine.md)
-- [CEX / DEX et adapters](Connectors-CEX-DEX.md)
-- [Firewall](Firewall-Module.md)
-- [Router & protocole CP/1](Router-Protocol-CP1.md)
-- [Sécurité](Security.md)
+</details>
 
-### Architecture et exploitation
-- [Architecture générale](Architecture.md)
-- [Services, ports et runtime](Runtime-Services.md)
-- [Administration](Administration.md)
-- [Settings / API](Settings-API.md)
-- [Update Manager](Update-Manager.md)
-- [Installation](Installation.md)
-- [Dépannage](Troubleshooting.md)
-- [Roadmap](Roadmap.md)
+## 🎯 Parcours conseillé
 
-## 🔐 Principe de sécurité
+**Nouveau lecteur :** Architecture → Trading IA → Market Data → Strategy → Firewall → Trading Engine.
 
-Les services métier sont liés à `127.0.0.1`. CP/1 utilise un secret local, une signature HMAC-SHA256, des identifiants de requête et une protection anti-rejeu. Les secrets Exchange/OpenAI restent hors des messages métier. Le Chat/Companion n'obtient pas de privilèges ADMIN.
+**Développeur :** Architecture → Runtime → Router/CP1 → ProtocolRegistry → Engines → Administration.
 
-## 📌 État DEBUG 1.12
+**Pour comprendre l'IA :** Companion IA → Fundamental → Strategy → futur Supervisor.
+
+<details>
+<summary><b>➕ En savoir plus — état des composants DEBUG 1.12</b></summary>
 
 | Composant | Port | État |
 |---|---:|---|
@@ -77,7 +73,7 @@ Les services métier sont liés à `127.0.0.1`. CP/1 utilise un secret local, un
 | Market Data | 8013 | actif |
 | Liquidity | 8014 | actif |
 | Fundamental | 8015 | actif |
-| Trading Engine | 8016 | actif, LIVE désactivé par défaut |
+| Trading Engine | 8016 | actif, LIVE OFF par défaut |
 | Firewall | 8017 | actif |
 | Strategy v2 | 8018 | actif |
 | Risk | 8019 | actif |
@@ -85,4 +81,10 @@ Les services métier sont liés à `127.0.0.1`. CP/1 utilise un secret local, un
 | Router CP/1 | 8021 | actif |
 | Supervisor IA autonome | — | réservé |
 
-> **Note de version :** le dossier DEBUG porte le nom v1.12, mais certains fichiers `VERSION/manifest` hérités affichent encore 1.11.7. Le Wiki décrit donc explicitement le **build DEBUG 1.12**, pas une promesse de release stable.
+</details>
+
+## 🔎 Convention de lecture
+
+Les liens **IA-TB** renvoient vers une autre page de ce Wiki. Les termes généraux complexes peuvent renvoyer vers une ressource encyclopédique. Les blocs **➕ En savoir plus** contiennent les détails techniques, contrats, commandes et exceptions sans alourdir la lecture principale.
+
+> ℹ️ Certains fichiers `VERSION/manifest` hérités du build DEBUG portent encore une ancienne version. Pour cette documentation, le dossier **IA-TB_Build_v1.12_DEBUG** est la référence fonctionnelle analysée.
