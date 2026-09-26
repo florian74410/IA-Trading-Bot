@@ -1,63 +1,88 @@
-# IA-TB — Wiki
+# IA-TB — Wiki complet
 
-Bienvenue dans la documentation officielle de **IA-TB / IA-Trading-Bot**.
+> **Référence technique : build `IA-TB_Build_v1.12_DEBUG` de la branche `debug`.**  
+> Le Wiki est publié sur `main`. Il décrit le comportement du build DEBUG 1.12 ; lorsqu'un ancien document embarqué contredit le code, les manifestes runtime et ProtocolRegistry les plus récents font foi.
 
-IA-TB est une application modulaire de trading crypto réunissant notamment des connecteurs CEX/DEX, un moteur Market Data, un Chart Viewer, des Engines spécialisés, une architecture de routage centralisée, une configuration centralisée des API et un système de mise à jour versionné.
+IA-TB est une architecture locale modulaire de trading et d'analyse crypto. Elle sépare **collecte**, **analyse**, **stratégie**, **risque**, **exécution**, **sécurité**, **portefeuille**, **IA** et **interface** afin qu'aucun composant n'ait à lui seul tous les pouvoirs.
 
-## Vue d’ensemble de l’architecture
+## 🧭 Comprendre IA-TB en 5 minutes
 
-<p align="center">
-  <a href="Architecture.md">
-    <img src="../../assets/architecture-overview.png" alt="IA-TB — Schéma de communication entre modules" width="100%" />
-  </a>
-</p>
+```text
+Exchanges / RPC / sources fondamentales
+              │
+              ▼
+ Market Data + Fundamental
+        │          │
+        ├──► Indicator
+        ├──► Liquidity
+        │
+        ▼
+      Router CP/1 ◄──────── UI / Chat IA
+        │
+        ├──► Strategy v2 ──► signal/intention
+        ├──► Risk ─────────► analyse de risque
+        ├──► Portfolio ────► état/exécutions/coûts
+        │
+        ▼
+ Firewall 8017 ──► Trading Engine 8016 ──► Exchange
+```
 
-<p align="center">
-  <sub>Schéma officiel IA-TB — <a href="Architecture.md">documentation d’architecture</a> · <a href="../../assets/architecture-overview.png">PNG</a> · <a href="../../assets/architecture-overview.svg">SVG</a></sub>
-</p>
+Le **Router** transporte les messages ; il ne prend pas de décision métier. **Strategy** fabrique des intentions, **Risk** mesure le risque, le **Firewall** inspecte les flux sensibles et **Trading Engine** traduit une commande autorisée vers l'adapter de l'exchange. Le **Supervisor IA** est encore un contrat réservé : il n'existe pas encore comme service autonome.
 
-## Commencer
+## 🧩 Rubriques
 
-- [Installation et démarrage](Installation.md)
-- [Architecture](Architecture.md)
-- [Router Protocol / CP/1](Router-Protocol-CP1.md) — contrat de communication normalisé v1.8.12, composants actifs, bridges et RESERVED.
-- [Connecteurs CEX / DEX](Connectors-CEX-DEX.md)
-- [Settings / API](Settings-API.md)
+### Utilisation
+- [Trading IA](Trading-IA.md) — espace marché, graphique natif, indicateurs et mosaïque.
+- [Fondamental](Fundamental-Engine.md) — collecte, événements, corroboration, mémoire temporelle et synthèse IA.
+- [Portfolio](Portfolio-Engine.md) — positions, balances, historique, coûts et connexion wallet.
+- [Assistant IA / Companion](AI-Companion.md) — Chat IA, OpenAI, commandes déclaratives et limites.
+- [Interfaces et navigation](User-Interfaces.md) — pages Trading, Fundamental, Strategy, Portfolio, Admin et Settings.
 
-## Données, analyse et risque
-
-- [Market Data](Market-Data.md)
-- [Chart Viewer](Chart-Viewer.md)
+### Données et analyse
+- [Market Data Collector](Market-Data.md)
+- [Financial Data Layer](Financial-Data-Layer.md)
 - [Indicator Engine](Indicator-Engine.md)
 - [Liquidity Engine](Liquidity-Engine.md)
-- [Risk Engine](Risk-Engine.md) — calcul et représentation analytique du risque.
+- [Strategy Engine v2](Strategy-Engine.md)
+- [Risk Engine](Risk-Engine.md)
 
-## Sécurité de l'exécution
+### Exécution et sécurité
+- [Trading Engine](Trading-Engine.md)
+- [CEX / DEX et adapters](Connectors-CEX-DEX.md)
+- [Firewall](Firewall-Module.md)
+- [Router & protocole CP/1](Router-Protocol-CP1.md)
+- [Sécurité](Security.md)
 
-- [Trading Firewall Module](Firewall-Module.md) — `SECURITY_BRIDGE` du canal d'exécution, modes Protection/Observation, whitelists, authentification, signatures, âge des messages et protection anti-doublon.
-- [Sécurité](Security.md) — secrets, moindre privilège, logs et règles du dépôt.
-
-## Exploitation et maintenance
-
-- [Administration — Manuel d'exploitation](Administration.md) — Console Générale Admin, Debug Framework, CP/1, logs, services, diagnostics, sécurité et procédures d'urgence.
+### Architecture et exploitation
+- [Architecture générale](Architecture.md)
+- [Services, ports et runtime](Runtime-Services.md)
+- [Administration](Administration.md)
+- [Settings / API](Settings-API.md)
 - [Update Manager](Update-Manager.md)
-- [Versionnage et releases](Versioning-and-Releases.md)
+- [Installation](Installation.md)
 - [Dépannage](Troubleshooting.md)
-- [Changelog fonctionnel](Changelog.md)
 - [Roadmap](Roadmap.md)
 
-## État d'architecture v1.8.12
+## 🔐 Principe de sécurité
 
-Actifs CP/1 : Indicator, Trading, Risk, Portfolio, Market Data, Liquidity et Fundamental (`INFORMATION_ONLY`). Trading Firewall est un `SECURITY_BRIDGE`. Strategy Engine et Supervisor IA restent `RESERVED` tant que leur runtime autonome n'est pas intégré et validé.
+Les services métier sont liés à `127.0.0.1`. CP/1 utilise un secret local, une signature HMAC-SHA256, des identifiants de requête et une protection anti-rejeu. Les secrets Exchange/OpenAI restent hors des messages métier. Le Chat/Companion n'obtient pas de privilèges ADMIN.
 
-## Règle documentaire
+## 📌 État DEBUG 1.12
 
-Le Wiki décrit les fonctions réellement publiées ou explicitement planifiées. Toute release doit faire l'objet d'une analyse d'impact documentaire.
+| Composant | Port | État |
+|---|---:|---|
+| UI | 8000 | actif |
+| Core | 8001 | actif |
+| Indicator | 8012 | actif |
+| Market Data | 8013 | actif |
+| Liquidity | 8014 | actif |
+| Fundamental | 8015 | actif |
+| Trading Engine | 8016 | actif, LIVE désactivé par défaut |
+| Firewall | 8017 | actif |
+| Strategy v2 | 8018 | actif |
+| Risk | 8019 | actif |
+| Portfolio | 8020 | actif |
+| Router CP/1 | 8021 | actif |
+| Supervisor IA autonome | — | réservé |
 
-La documentation doit distinguer clairement les composants `ACTIVE`, `SECURITY_BRIDGE`, `RESERVED` et les fonctions simplement prévues. Une spécification ou un registre ne suffit pas à déclarer un runtime fonctionnel.
-
-Chaque ajout d'un CEX ou DEX doit documenter au minimum : marchés/paires, OHLC/OHLCV, volumes propres à la plateforme, intégration Market Data, Chart Viewer, paramètres requis dans `Settings > API`, authentification et limitations connues.
-
-La provenance des données doit toujours rester identifiable : une donnée Binance, Coinbase, OKX ou GMX ne doit jamais être mélangée silencieusement avec celle d'une autre plateforme.
-
-Toute nouvelle composante serveur ou commande d'administration doit également mettre à jour le [Manuel d'exploitation Admin](Administration.md). Aucun secret ou credential ne doit être enregistré dans le Wiki.
+> **Note de version :** le dossier DEBUG porte le nom v1.12, mais certains fichiers `VERSION/manifest` hérités affichent encore 1.11.7. Le Wiki décrit donc explicitement le **build DEBUG 1.12**, pas une promesse de release stable.
