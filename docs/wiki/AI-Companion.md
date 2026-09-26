@@ -1,57 +1,53 @@
-# Assistant IA, Companion et communication IA ↔ IA
+# 🤖 Supervisor, LLM et Companion — V2.0 DEBUG
 
-## Companion v1.12
+## Pour débuter
 
-Le Companion est une UI flottante commune aux pages. Il possède 12 états visuels : HELLO, FUNNY, LAUGH, CONGRATS, MARKET_ANALYSIS, THINKING, IDEA, SUCCESS, ERROR, IDLE, CRYPTO et EXPLAIN.
+**Le Supervisor est désormais un vrai service d'IA-TB. Son rôle est de demander aux différents moteurs ce qu'ils savent, de réunir ces informations dans un contexte commun, puis de confier le raisonnement au modèle IA choisi. Il reste un orchestrateur : il ne possède pas les clés Exchange et n'exécute pas directement les ordres.**
 
-Il réutilise le pipeline Chat/OpenAI existant et **n'obtient pas de privilèges ADMIN**. Le contexte de page est indicatif et nettoyé avant utilisation.
+<small>🔧 `Supervisor/supervisor_service.js` écoute sur :3000. ProtocolRegistry le marque `ACTIVE`, transport `CP1`, avec enregistrement dynamique.</small>
 
-La saisie texte reste toujours disponible. La voix repose sur Web Speech du navigateur lorsque supporté.
-
-
-> **Lecture rapide :** la section ci-dessus donne l'essentiel. Ouvrez le bloc suivant pour le fonctionnement détaillé.
-
-<details>
-<summary><b>➕ En savoir plus — fonctionnement technique</b></summary>
-
-## Pipeline OpenAI
-
-IA-TB utilise la Responses API pour les demandes complexes et décode une sortie structurée. Le parseur extrait le texte/refus, vérifie le JSON et convertit les actions en commandes déclaratives internes.
-
-Pour le Fundamental, un helper séparé construit un contexte strictement informationnel et marque les publications comme données externes non fiables.
-
-## Local-first
-
-Les commandes simples d'interface doivent rester locales lorsqu'elles n'ont pas besoin d'un modèle. Cela réduit latence et consommation de tokens. L'IA est appelée lorsqu'une interprétation est réellement nécessaire.
-
-## Commandes déclaratives
-
-L'IA ne reçoit pas un shell. Elle propose des actions appartenant à des familles autorisées (chart, mosaïque, stratégie, wallet, settings, update, registry…). Le serveur/navigateur valide avant exécution.
-
-## IA ↔ IA
-
-`ProtocolRegistry/chat_ai.json` et `supervisor.json` définissent les identités IA. Leur accès Market Data/Liquidity est READ_ONLY. Le futur Supervisor produira `supervisor.decision` mais, dans DEBUG 1.12, il reste **RESERVED sans service autonome**.
-
-Le modèle de communication est :
+## Le pipeline
 
 ```text
-Chat/Companion ou futur Supervisor
-              │
-       commande autorisée
-              ▼
-          Router CP/1
-              │
-       Engine déclaré
-              │
-              ▼
-       réponse structurée
+MarketData ───┐
+Indicators ───┤
+Fundamental ──┤
+Liquidity ────┼─► Context Orchestrator ─► LLM Manager ─► raisonnement
+Portfolio ────┤
+Strategy ─────┤
+Risk ─────────┘
 ```
 
-Une IA ne « parle » donc pas directement à la mémoire interne d'une autre IA : elle échange des **contrats structurés via Router**, avec permissions et provenance.
+<details>
+<summary><b>➕ En savoir plus — collecte du contexte</b></summary>
 
-## Usage Ledger
+`context_orchestrator.js` lance les demandes en parallèle via `cp1_client.js`. Les cibles sont Market Data, Indicator, Fundamental, Liquidity, Portfolio, Strategy et Risk.
 
-Chaque appel IA peut enregistrer modèle, tokens, durée, cache et coût estimé si tarif connu. Aucun prompt/réponse/secret n'est stocké dans ce ledger.
-
+Chaque résultat possède un état de disponibilité. Une panne partielle ajoute un warning et `degraded:true`. Le transport déclaré dans le contexte est explicitement `CP/1 Router only`.
 
 </details>
+
+<details>
+<summary><b>➕ En savoir plus — LLM Manager</b></summary>
+
+Trois providers existent :
+- `OPENAI_API` utilisant l'API Responses ;
+- `REMOTE_LLM` utilisant une API `/chat/completions` compatible ;
+- `MOCK` pour tests.
+
+Le provider principal et le fallback sont configurables. Le défaut V2.0 est MOCK, fallback désactivé. Le Supervisor conserve provider, modèle, latence et éventuel fallback dans son état de raisonnement.
+
+</details>
+
+<details>
+<summary><b>➕ En savoir plus — AutonomousTrading</b></summary>
+
+L'extension découvre quatre modes : OFF, ANALYZE, PAPER et LIVE_GUARDED. PAPER demande une confirmation. LIVE_GUARDED retourne actuellement `LIVE_RUNTIME_NOT_ENABLED`.
+
+Le `DecisionEngine` normalise une décision en `cp1.trade-intent/1.0`, mais retourne `executionAllowed:false` et rappelle que le Risk Gate doit approuver avant toute exécution.
+
+</details>
+
+## Companion
+
+**Le Companion reste l'assistant visuel de l'interface ; il ne doit pas être confondu avec le Supervisor runtime.** Le Companion aide l'utilisateur dans l'UI, tandis que le Supervisor V2.0 orchestre les Engines et les providers LLM.
