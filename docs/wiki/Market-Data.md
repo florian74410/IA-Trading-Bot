@@ -16,6 +16,12 @@ Kraken / Binance / OKX / GMX / CoinGecko / RPC / DeFi
         Router / UI / Indicator / Liquidity / IA
 ```
 
+
+> **Lecture rapide :** la section ci-dessus donne l'essentiel. Ouvrez le bloc suivant pour le fonctionnement détaillé.
+
+<details>
+<summary><b>➕ En savoir plus — fonctionnement technique</b></summary>
+
 ## Providers DEBUG 1.12
 
 Le build contient des providers **Kraken, Binance, OKX, GMX, CoinGecko**, un adapter DeFi, un provider RPC on-chain et un provider de référence. Une présence dans le code ne signifie pas qu'une source distante non testée doit être présentée comme disponible : chaque adapter doit annoncer sa provenance et ses capacités réelles.
@@ -48,3 +54,6 @@ Le Market Registry fournit une couche de découverte : recherche d'actifs, liste
 La Financial Data Layer est READ_ONLY pour Chat/Supervisor. Le RPC on-chain autorise uniquement des méthodes de lecture sélectionnées ; aucune signature, clé privée ou `eth_sendTransaction` n'est exposée.
 
 Voir aussi : [Financial Data Layer](Financial-Data-Layer.md), [Firewall](Firewall-Module.md), [Trading IA](Trading-IA.md).
+
+
+</details>
