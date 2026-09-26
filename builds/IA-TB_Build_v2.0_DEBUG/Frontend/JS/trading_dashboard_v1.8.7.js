@@ -162,7 +162,7 @@ function volume24h(){
 }
 function formatCompact(n){n=+n;if(!isFinite(n))return'—';if(n>=1e9)return(n/1e9).toFixed(2)+'B';if(n>=1e6)return(n/1e6).toFixed(2)+'M';if(n>=1e3)return(n/1e3).toFixed(1)+'K';return n.toFixed(2)}
 function uiRead(target,action){return fetch('/communication/v1/ui/read',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({target:target,action:action,arguments:{}})}).then(function(r){return r.json().then(function(o){if(!r.ok||o.error)throw new Error(o.error||('HTTP '+r.status));return o.data||{}})})}
-function eventOrigin(e){return String(e&&((e.meta&&e.meta.source)||e.source||e.origin||e.actor||e.created_by||e.requested_by||e.caller)||'').toLowerCase()}
+function eventOrigin(e){return String((e&&((e.meta&&e.meta.source)||e.source||e.origin||e.actor||e.created_by||e.requested_by||e.caller))||'').toLowerCase()}
 function eventNotional(e){var x=e&&e.data&&typeof e.data==='object'?e.data:e||{},n=+(x.notional_usd!=null?x.notional_usd:(x.notional!=null?x.notional:(x.size_usd!=null?x.size_usd:x.value_usd)));return isFinite(n)&&n>0?n:null}
 function loadTradingModules(){
   Promise.all([uiRead('portfolio','portfolio.positions'),uiRead('portfolio','portfolio.events')]).then(function(v){
@@ -204,7 +204,7 @@ function sync(){
   var p=q('#price'),sym=q('#symbol'),src=q('#marketSourceBadge'),ws=q('#wsState');
   var pair=sym&&sym.options&&sym.selectedIndex>=0?sym.options[sym.selectedIndex].text:'BTC/USD';
   var source=src?String(src.textContent||'Market Data').split('·')[0].trim():'Market Data';
-  setText('tdMasterPair',pair);setText('tdMasterTf',(byId('interval')&&byId('interval').value)||'--');setText('tdMasterProvider',source);setText('tdTilePair',pair);setText('tdTileProvider',source);var rows=window.IATBTradingState&&window.IATBTradingState.candles||null;var readout=byId('ohlc');setText('tdTileOhlc',readout?String(readout.textContent||'').replace(/^.*? · /,''):'O -- · H -- · L -- · C --');setText('tdTileClose',cleanPrice(p&&p.textContent));setText('tdTileTf',(byId('interval')&&byId('interval').value)||'--');setText('tdTileTime',ws?String(ws.textContent||'Market Data Collector'):'Market Data Collector');syncIndicatorDock();setText('tdConsensusPrice',cleanPrice(p&&p.textContent));setText('tdConsensusPair',pair);setText('tdChartPair',pair);setText('tdConsensusSource',source);setText('tdAiSource',src?String(src.textContent||'Market Data').replace(/·/g,' / '):'Market Data');setText('tdAiSummary',lastAiText());
+  setText('tdMasterPair',pair);setText('tdMasterTf',(byId('interval')&&byId('interval').value)||'--');setText('tdMasterProvider',source);setText('tdTilePair',pair);setText('tdTileProvider',source);var rows=window.IATBTradingState&&window.IATBTradingState.candles||null;var readout=byId('ohlc');setText('tdTileOhlc',readout?String(readout.textContent||'').replace(/^.*? · /,''):'O -- · H -- · L -- · C --');setText('tdTileClose',cleanPrice(p&&p.textContent));setText('tdTileTf',(byId('interval')&&byId('interval').value)||'--');setText('tdTileTime',ws?String(ws.textContent||'Market Data Collector'):'Market Data Collector');setText('tdConsensusPrice',cleanPrice(p&&p.textContent));setText('tdConsensusPair',pair);setText('tdChartPair',pair);setText('tdConsensusSource',source);setText('tdAiSource',src?String(src.textContent||'Market Data').replace(/·/g,' / '):'Market Data');setText('tdAiSummary',lastAiText());
   if(ws&&/connect|en ligne|online|ok/i.test(String(ws.textContent||'')))markDot('Market Data','ok');
 }
 
