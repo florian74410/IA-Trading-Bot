@@ -6,9 +6,9 @@ Application modulaire de trading crypto : CEX/DEX, Market Data, Chart Viewer, In
   <img src="assets/app_architecture.jpg" alt="IA-Trading-Bot architecture" width="100%" />
 </p>
 
-## 📚 Wiki IA-TB — Documentation DEBUG 1.12
+## 📚 Wiki IA-TB — Documentation V2.0 DEBUG
 
-> **Le Wiki affiché sur `main` est documenté à partir du build `IA-TB_Build_v1.12_DEBUG` de la branche `debug`.**
+> **Le Wiki affiché sur `main` est désormais documenté à partir du code de `IA-TB_Build_v2.0_DEBUG` de la branche `debug`.**
 
 La documentation complète de l'application est accessible directement depuis l'accueil du projet :
 
@@ -30,7 +30,8 @@ La documentation complète de l'application est accessible directement depuis l'
 | **[🔥 Firewall](docs/wiki/Firewall-Module.md)** | Protection Trading et Market Data |
 | **[🔀 Router / CP1](docs/wiki/Router-Protocol-CP1.md)** | Communication inter-services et protocole CP/1 |
 | **[🔌 CEX / DEX](docs/wiki/Connectors-CEX-DEX.md)** | Binance, OKX, Kraken, GMX et adapters |
-| **[🤖 Companion & IA ↔ IA](docs/wiki/AI-Companion.md)** | OpenAI, Companion et futur Supervisor |
+| **[🤖 Supervisor & Companion](docs/wiki/AI-Companion.md)** | Supervisor actif, LLM Manager, Companion et IA ↔ IA |
+| **[🏦 Bank & Vaults](docs/wiki/Bank-Vaults.md)** | Vault Registry, réseaux, settlement et Strategy Wallets |
 | **[🖥 Interfaces](docs/wiki/User-Interfaces.md)** | Trading, Fundamental, Portfolio, Strategy, Admin |
 | **[🛠 Administration](docs/wiki/Administration.md)** | Exploitation, diagnostics, services et logs |
 | **[🔑 Settings / API](docs/wiki/Settings-API.md)** | Configuration et gestion des secrets |
@@ -40,7 +41,7 @@ La documentation complète de l'application est accessible directement depuis l'
 | **[🩺 Dépannage](docs/wiki/Troubleshooting.md)** | Diagnostic des problèmes |
 | **[🗺 Roadmap](docs/wiki/Roadmap.md)** | Feuille de route du projet |
 
-**Chemin de référence DEBUG 1.12 :** `builds/IA-TB_Build_v1.12_DEBUG/` sur la branche `debug`.
+**Chemin de référence V2.0 DEBUG :** `builds/IA-TB_Build_v2.0_DEBUG/` sur la branche `debug`.
 
 ---
 
