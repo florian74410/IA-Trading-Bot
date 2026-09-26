@@ -132,6 +132,21 @@ html,body{background:radial-gradient(circle at 50% -20%,#1a2228 0,#090c0f 45%,#0
 .indicatorPane canvas{display:block;width:100%;height:100%}
 .indicatorPaneTitle{position:absolute;left:8px;top:6px;z-index:2;font:10px Menlo,Monaco,monospace;color:#a8bac6;background:rgba(5,9,13,.78);padding:2px 5px;border-radius:3px;pointer-events:none}
 
+/* v2.0.2 — full-page Trading IA scroll; preserve chart/dock size */
+@media (min-width:821px){
+  html,body{height:auto!important;min-height:100%!important;max-height:none!important;overflow-y:auto!important;overflow-x:hidden!important}
+  .app{height:auto!important;min-height:100vh!important;max-height:none!important;overflow:visible!important}
+  .body[data-mosaic-root]{display:grid!important;grid-template-columns:minmax(300px,38%) minmax(0,1fr)!important;grid-template-rows:auto!important;height:auto!important;min-height:0!important;max-height:none!important;overflow:visible!important}
+  .body[data-mosaic-root] .left{grid-column:1!important;height:1120px!important;min-height:1120px!important;max-height:none!important;overflow-y:auto!important}
+  .body[data-mosaic-root] .right{grid-column:2!important;height:auto!important;min-height:1120px!important;max-height:none!important;overflow:visible!important;display:flex!important;flex-direction:column!important}
+  .body[data-mosaic-root] [data-mosaic-id="chart"]{height:auto!important;min-height:0!important;flex:0 0 auto!important;overflow:visible!important}
+  #chartBox{height:430px!important;min-height:430px!important;flex:0 0 430px!important}
+  .indicatorDock.active{height:180px!important;min-height:180px!important;display:flex!important;flex-direction:column!important}
+  .indicatorDockBody{flex:1 1 auto!important;min-height:0!important;overflow-y:auto!important}
+  .indicatorPane{height:132px!important;min-height:132px!important;flex:none!important}
+  .body[data-mosaic-root] [data-mosaic-id="modules"]{height:430px!important;min-height:430px!important;max-height:430px!important;flex:0 0 430px!important;overflow-y:auto!important;overflow-x:hidden!important;scrollbar-gutter:stable}
+}
+
 /* v1.7.3 — Desktop UI polish + Strategy control page */
 .appLogoWrap{height:38px;min-width:210px;max-width:290px;display:flex;align-items:center;overflow:hidden;flex:0 1 290px;margin-right:auto}.appLogo{display:block;max-height:36px;width:auto;max-width:100%;object-fit:contain;object-position:left center;filter:drop-shadow(0 0 4px rgba(0,196,255,.16))}.chatPrimary{height:100%;min-height:0}.chatPrimary .msgs{flex:1 1 auto!important;min-height:120px!important}.chatPrimary .aiHint,.chatPrimary .chatForm{flex:0 0 auto}@media(max-width:1000px){.appLogoWrap{max-width:235px;min-width:170px}.appLogo{max-height:32px}}@media(max-width:820px){.appLogoWrap{max-width:205px;min-width:150px}.appLogo{max-height:30px}}
 /* v1.7 — Indicator Engine + Communication */
