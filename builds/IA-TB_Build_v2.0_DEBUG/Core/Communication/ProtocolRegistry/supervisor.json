@@ -95,6 +95,17 @@
         }
       },
       {
+        "name": "supervisor.risk.evaluate",
+        "arguments": {
+          "allowed": [
+            "intent"
+          ],
+          "required": [
+            "intent"
+          ]
+        }
+      },
+      {
         "name": "supervisor.reason",
         "arguments": {
           "allowed": [
