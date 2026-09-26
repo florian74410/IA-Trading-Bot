@@ -6,6 +6,44 @@ Application modulaire de trading crypto : CEX/DEX, Market Data, Chart Viewer, In
   <img src="assets/app_architecture.jpg" alt="IA-Trading-Bot architecture" width="100%" />
 </p>
 
+## 📚 Wiki IA-TB — Documentation DEBUG 1.12
+
+> **Le Wiki affiché sur `main` est documenté à partir du build `IA-TB_Build_v1.12_DEBUG` de la branche `debug`.**
+
+La documentation complète de l'application est accessible directement depuis l'accueil du projet :
+
+| Rubrique | Description |
+|---|---|
+| **[🏠 Accueil du Wiki](docs/wiki/Home.md)** | Point d'entrée et vue générale de IA-TB |
+| **[🏗 Architecture](docs/wiki/Architecture.md)** | Architecture complète et flux entre services |
+| **[⚙ Runtime & ports](docs/wiki/Runtime-Services.md)** | Services, ports, dépendances et runtime |
+| **[📈 Trading IA](docs/wiki/Trading-IA.md)** | Workspace Trading, graphique, marchés et mosaïques |
+| **[🌍 Fundamental Engine V3](docs/wiki/Fundamental-Engine.md)** | Sources, événements, corroboration, bias et synthèse IA |
+| **[📡 Market Data](docs/wiki/Market-Data.md)** | Collecte, providers, OHLCV et normalisation |
+| **[💰 Financial Data Layer](docs/wiki/Financial-Data-Layer.md)** | CEX, DEX, DeFi, RPC et données financières |
+| **[📐 Indicator Engine](docs/wiki/Indicator-Engine.md)** | Indicateurs, IIL, calculs et états |
+| **[🌊 Liquidity Engine](docs/wiki/Liquidity-Engine.md)** | Liquidité, order book, OI et liquidations |
+| **[🧠 Strategy Engine v2](docs/wiki/Strategy-Engine.md)** | Stratégies et génération d'intentions |
+| **[🛡 Risk Engine](docs/wiki/Risk-Engine.md)** | Exposition, VaR, drawdown et analyse de risque |
+| **[💼 Portfolio Engine](docs/wiki/Portfolio-Engine.md)** | Positions, balances, historique et coûts |
+| **[⚡ Trading Engine](docs/wiki/Trading-Engine.md)** | Exécution et adapters Exchanges |
+| **[🔥 Firewall](docs/wiki/Firewall-Module.md)** | Protection Trading et Market Data |
+| **[🔀 Router / CP1](docs/wiki/Router-Protocol-CP1.md)** | Communication inter-services et protocole CP/1 |
+| **[🔌 CEX / DEX](docs/wiki/Connectors-CEX-DEX.md)** | Binance, OKX, Kraken, GMX et adapters |
+| **[🤖 Companion & IA ↔ IA](docs/wiki/AI-Companion.md)** | OpenAI, Companion et futur Supervisor |
+| **[🖥 Interfaces](docs/wiki/User-Interfaces.md)** | Trading, Fundamental, Portfolio, Strategy, Admin |
+| **[🛠 Administration](docs/wiki/Administration.md)** | Exploitation, diagnostics, services et logs |
+| **[🔑 Settings / API](docs/wiki/Settings-API.md)** | Configuration et gestion des secrets |
+| **[🔐 Sécurité](docs/wiki/Security.md)** | Principes de sécurité de IA-TB |
+| **[⬆ Update Manager](docs/wiki/Update-Manager.md)** | Mises à jour et rollback |
+| **[📦 Installation](docs/wiki/Installation.md)** | Installation locale |
+| **[🩺 Dépannage](docs/wiki/Troubleshooting.md)** | Diagnostic des problèmes |
+| **[🗺 Roadmap](docs/wiki/Roadmap.md)** | Feuille de route du projet |
+
+**Chemin de référence DEBUG 1.12 :** `builds/IA-TB_Build_v1.12_DEBUG/` sur la branche `debug`.
+
+---
+
 ## Architecture générale
 
 Le système repose sur un **Router central** qui assure la communication entre les modules. Les canaux bidirectionnels utilisent une flèche par sens et conservent la couleur du module d'origine ; les données binaires représentées entre les flux restent blanches.
