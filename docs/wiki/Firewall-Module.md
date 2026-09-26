@@ -1,96 +1,33 @@
-# Trading Firewall Module
+# Firewall IA-TB
 
-## Rôle
+## Architecture v1.12
 
-Le **Trading Firewall** est la couche de sécurité placée sur le canal d'exécution entre le `Trading Engine` et les `Exchanges`. Il ne produit pas de stratégie et ne remplace pas le Risk Engine : il contrôle qu'une commande d'exécution est autorisée avant qu'elle atteigne un connecteur CEX/DEX.
+Un seul coordinateur écoute sur **8017** et pilote deux Workers optionnels :
 
-Flux logique :
+| Thread | Fonction |
+|---:|---|
+| 0 | Firewall Coordinator / proxy |
+| 1 | Trading Protection |
+| 2 | Market Data Protection |
 
-```text
-Trading Engine -> Trading Firewall -> Exchange
-                      |
-                      +-> autoriser / bloquer / journaliser
-```
+## Trading Protection
 
-Le Firewall protège notamment contre les commandes non autorisées, les messages trop anciens, les doublons et l'utilisation d'une paire qui n'a pas été explicitement autorisée.
+Le Router adresse la cible Trading au port **8017**, pas directement à 8016. Le Firewall vérifie l'enveloppe CP/1, la signature/timestamp et les règles Trading, puis ajoute une preuve interne de forwarding avant d'appeler Trading Engine :8016.
 
-## Paramétrage
+Trading Engine conserve ses propres contrôles : même en bypass Firewall, CP/1 et les exigences de la commande restent applicables.
 
-La configuration est regroupée dans `Settings > Trading Firewall`.
+## Market Data Protection
 
-### Firewall ON/OFF
+Le coordinateur peut proxyfier les réponses Market Data et les soumettre au Worker Data. Les règles effectives incluent saut de prix maximum, bid/ask positifs/non inversés et spread maximum. Les décisions sont journalisées.
 
-- `ON` : les contrôles du Firewall sont actifs.
-- `OFF` : le Firewall est désactivé. Ce mode doit rester réservé au diagnostic et au développement.
+## Mode diagnostic sans protection
 
-### Mode
+`IATB_FIREWALL_ENABLED=0` ou `start_no_firewall.command` garde le coordinateur 8017 comme **pass-through** mais n'initialise aucun Worker. La topologie reste identique, ce qui permet de comparer avec/sans inspection sans recâbler Router/Trading.
 
-- **Protection** : une commande qui échoue à un contrôle est bloquée.
-- **Observation** : les contrôles sont exécutés et les anomalies sont journalisées, sans blocage automatique. Ce mode sert à tester une configuration avant de passer en Protection.
+Ce mode est destiné au diagnostic, pas à la production.
 
-## Security
+## Administration
 
-### Verify CP authentication
+ADMIN peut voir les threads, événements et configurations, activer/désactiver des règles, recharger ou redémarrer les Workers. Les règles critiques demandent une confirmation explicite. Les modifications sont hot-reloadées.
 
-Vérifie que le message provient d'un participant authentifié du protocole de communication interne.
-
-### Verify signatures
-
-Vérifie la signature du message lorsqu'une signature est exigée par le canal utilisé. Une signature invalide ou absente doit provoquer un refus en mode Protection.
-
-### Max message age
-
-Définit l'âge maximal accepté d'un message d'exécution. Un message plus ancien est considéré comme périmé afin d'éviter qu'une ancienne instruction soit rejouée après un délai réseau ou un redémarrage.
-
-## Command Whitelist
-
-Le Firewall utilise une liste blanche : seules les commandes explicitement autorisées peuvent franchir la couche d'exécution.
-
-Commandes prévues dans la configuration initiale :
-
-- `trading.execute`
-- `trading.cancel`
-- `trading.close_position`
-- `trading.health`
-
-Toute commande inconnue ou absente de la whitelist est refusée en mode Protection.
-
-## Trading Pair Whitelist
-
-Une seconde whitelist limite les paires sur lesquelles le Trading Engine est autorisé à agir. Exemple de configuration :
-
-- `BTC/EUR`
-- `BTC/USDT`
-- `ETH/EUR`
-
-La normalisation des symboles doit être effectuée avant le contrôle afin qu'une variante de notation ne contourne pas la règle.
-
-## Duplicate Protection
-
-La protection anti-doublon mémorise temporairement l'identité des commandes déjà traitées.
-
-Configuration initiale :
-
-- `Enabled` : active ou désactive le contrôle.
-- `Window` : fenêtre temporelle pendant laquelle une commande identique est considérée comme un doublon ; valeur de référence `30 sec`.
-
-Une commande identifiée comme doublon est bloquée en mode Protection et signalée dans les diagnostics.
-
-## Ordre recommandé des contrôles
-
-1. Firewall activé et mode courant.
-2. Authentification CP.
-3. Signature du message.
-4. Âge du message.
-5. Command Whitelist.
-6. Trading Pair Whitelist.
-7. Duplicate Protection.
-8. Transmission au connecteur Exchange uniquement si les contrôles obligatoires sont valides.
-
-## Journalisation et diagnostic
-
-Le Firewall doit rendre observable au minimum : état ON/OFF, mode, dernière commande contrôlée, résultat du contrôle et motif d'un éventuel refus. Les logs ne doivent jamais contenir de clé API, secret, passphrase, token ou clé privée.
-
-## Séparation des responsabilités
-
-Le **Risk Engine** mesure et décrit le risque. Le **Supervisor** prend les décisions de haut niveau. Le **Trading Firewall** applique les règles de sécurité du canal d'exécution. Le **Trading Engine** reste responsable de l'adaptation et de l'envoi des ordres aux Exchanges.
+Logs : `.runtime/logs/firewall.log`.
