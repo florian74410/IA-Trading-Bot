@@ -1,45 +1,39 @@
-# Services, ports et runtime
+# ⚙️ Services, ports et runtime — V2.0 DEBUG
 
-## Carte runtime DEBUG 1.12
+## Pour débuter
 
-| Ordre | Service | Type | Port | Redémarrable |
-|---:|---|---|---:|---|
-| 10 | Core Server | CORE | 8001 | non |
-| 15 | Graphical UI | UI | 8000 | oui |
-| 20 | Router | CORE | 8021 | non |
-| 40 | Indicator Engine | ENGINE | 8012 | oui |
-| 50 | Market Data Collector | SERVICE | 8013 | oui |
-| 60 | Liquidity Engine | ENGINE | 8014 | oui |
-| 70 | Fundamental Engine | ENGINE | 8015 | oui |
-| 80 | Trading Engine | ENGINE | 8016 | oui |
-| 90 | Firewall | FIREWALL | 8017 | oui |
-| 100 | Strategy Engine v2 | ENGINE | 8018 | oui |
-| 110 | Risk Manager Engine | ENGINE | 8019 | oui |
-| 115 | Portfolio Engine | ENGINE | 8020 | oui |
+**Chaque grande fonction d'IA-TB tourne comme un service séparé. Si un moteur tombe, cela permet de savoir précisément lequel pose problème et évite de donner à un seul processus tous les pouvoirs.**
 
-Les manifestes sont centralisés dans `Core/ProcessRegistry/manifests`. Le Process Registry donne à l'Admin une source commune pour statut, script, log, variables d'environnement et dépendances.
+<small>🔧 Source : `Core/ProcessRegistry/manifests/*.json` du build V2.0 DEBUG.</small>
 
-
-> **Lecture rapide :** l'essentiel est ci-dessus. Les détails sont disponibles sans quitter la page.
+| Ordre | Service | Port | Dépendance principale |
+|---:|---|---:|---|
+| 10 | Core | 8001 | — |
+| 15 | UI | 8000 | Core + Router |
+| 20 | Router | 8021 | — |
+| 40 | Indicator | 8012 | — |
+| 50 | Market Data | 8013 | — |
+| 60 | Liquidity | 8014 | — |
+| 70 | Fundamental | 8015 | — |
+| 80 | Trading | 8016 | — |
+| 90 | Firewall | 8017 | Trading/Market Data |
+| 100 | Strategy v2 | 8018 | Router |
+| 110 | Risk | 8019 | Router |
+| 115 | Portfolio | 8020 | Router/Trading optionnels |
+| **120** | **Supervisor** | **3000** | **Router** |
 
 <details>
-<summary><b>➕ En savoir plus — détails techniques</b></summary>
+<summary><b>➕ En savoir plus — Supervisor runtime</b></summary>
 
-## Démarrage
+Le Supervisor est `defaultEnabled:true`, redémarrable et journalise dans `.runtime/logs/supervisor.log`. Market Data, Indicators, Fundamental, Liquidity, Portfolio, Strategy, Risk, Trading et Firewall sont des dépendances optionnelles : l'orchestrateur peut donc signaler un contexte dégradé plutôt que prétendre disposer de données absentes.
 
-`start.command` orchestre l'environnement local. Le mode DEBUG conserve aussi `start_no_firewall.command` pour le diagnostic et `start_with_kraken.command` pour le chemin historique Kraken.
+Il se réenregistre dynamiquement auprès du Router au démarrage puis périodiquement.
 
-## Logs
+</details>
 
-Chaque service possède un log dédié sous `.runtime/logs` ou le dossier UI. Le Wiki Admin décrit les commandes d'exploitation et la génération de rapports.
+<details>
+<summary><b>➕ En savoir plus — sécurité par défaut</b></summary>
 
-## Dépendances
-
-Risk et Strategy dépendent explicitement du Router. UI dépend de Core + Router. Les autres relations métier passent par les contrats de communication plutôt que par des imports directs entre Engines.
-
-## Compatibilité
-
-Le build vise Node 16 et conserve une attention particulière au vieux runtime macOS/Firefox. Le graphique natif a été conservé notamment pour éviter une dépendance externe lourde.
-
+Trading démarre avec `IATB_TRADING_LIVE=0`. Les réglages V2.0 ont également `autonomousTrading.masterEnabled=false`, mode `OFF`, `liveGuardedEnabled=false` et provider LLM `MOCK` par défaut.
 
 </details>
