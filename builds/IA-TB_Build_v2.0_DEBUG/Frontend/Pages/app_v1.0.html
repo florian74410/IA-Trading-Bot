@@ -114,12 +114,14 @@ html,body{background:radial-gradient(circle at 50% -20%,#1a2228 0,#090c0f 45%,#0
 
 /* v2.0.1 — Trading IA scroll workspace + external indicator dock */
 @media (min-width:821px){
-  html,body{overflow:hidden!important}
-  .app{height:100%!important;overflow:hidden!important}
-  .body[data-mosaic-root]{overflow-y:auto!important;overflow-x:hidden!important;align-content:start!important;scrollbar-gutter:stable;overscroll-behavior:contain}
-  .body[data-mosaic-root] .right{height:auto!important;min-height:100%!important;overflow:visible!important}
-  .body[data-mosaic-root] [data-mosaic-id="chart"]{min-height:430px!important;flex:none!important}
-  .body[data-mosaic-root] [data-mosaic-id="modules"]{min-height:220px!important;overflow-y:auto!important}
+  html{height:100%!important;overflow:hidden!important}
+  body{height:100%!important;overflow-y:auto!important;overflow-x:hidden!important}
+  .app{height:auto!important;min-height:100vh!important;max-height:none!important;overflow:visible!important}
+  .body[data-mosaic-root]{height:auto!important;min-height:calc(100vh - 114px)!important;overflow:visible!important;align-content:start!important}
+  .body[data-mosaic-root] .left{height:auto!important;min-height:calc(100vh - 114px)!important;max-height:none!important}
+  .body[data-mosaic-root] .right{height:auto!important;min-height:calc(100vh - 114px)!important;overflow:visible!important}
+  .body[data-mosaic-root] [data-mosaic-id="chart"]{height:560px!important;min-height:560px!important;flex:0 0 560px!important}
+  .body[data-mosaic-root] [data-mosaic-id="modules"]{height:auto!important;min-height:260px!important;overflow:visible!important}
 }
 .indicatorDock{display:none;border-top:1px solid #20303c;border-bottom:1px solid #20303c;background:#080e14;flex:0 0 auto}
 .indicatorDock.active{display:block}
