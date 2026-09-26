@@ -1,0 +1,11 @@
+{
+  "id": "router",
+  "label": "Router",
+  "type": "CORE",
+  "order": 20,
+  "port": 8021,
+  "healthPath": "/router-health",
+  "marker": "router",
+  "restartable": false,
+  "defaultEnabled": true
+}

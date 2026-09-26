@@ -1,0 +1,2 @@
+'use strict';
+var P=require('../Provider/realtime_liquidity_provider'),f=[];function ok(c,m){if(c)console.log('PASS',m);else f.push(m)}var p=new P();ok(typeof p.getSnapshot==='function','getSnapshot');ok(typeof p.binance==='function','binance provider');ok(typeof p.hyperliquid==='function','hyperliquid provider');ok(typeof p.kraken==='function','kraken provider');if(f.length){console.error(f.join('\n'));process.exit(1)}console.log('ALL REALTIME PROVIDER STATIC TESTS PASS');

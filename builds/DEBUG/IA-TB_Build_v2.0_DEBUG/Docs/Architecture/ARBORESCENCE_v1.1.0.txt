@@ -1,0 +1,81 @@
+Crypto Chart Viewer IA Trader — Arborescence active v1.1.0
+================================================================
+
+OBJECTIF
+-------
+Réorganiser le CODE sans modifier les fonctions métier de la v1.0.7.
+
+ARBORESCENCE ACTIVE
+-------------------
+Core/
+  Server/
+    server_v1.0.js
+  Router/
+    router.js
+  Services/
+    openai_response_v1.0.js
+  Mosaics/
+    mosaic_store_v1.0.js
+  Updates/
+    update_manager_v1.0.js
+    ai_update_builder_v1.0.js
+  Shared/
+    paths.js
+
+Frontend/
+  Pages/
+    app_v1.0.html
+    chart_viewer_v1.0.html
+  JS/
+    chart_controller_v2.8.js
+    mosaic_controller_v2.9.js
+    custom_mosaic_v1.0.js
+    update_ui_v1.0.js
+  CSS/
+    mosaic_v2.9.css
+  Protocols/
+    ai_command_protocol_v1.0.json
+
+AddOns/
+  Kraken/        (inchangé)
+
+Indicators/
+  (réservé au futur Indicator Engine)
+
+Annexes/
+Updates/
+.runtime/
+NodeRuntime/
+.node/
+  (inchangés)
+
+RACINE STABLE
+-------------
+launcher.js
+start.command
+stop.command
+install_runtime.command
+install_node_high_sierra.command
+
+DONNÉES PERSISTANTES TEMPORAIREMENT CONSERVÉES À LEUR EMPLACEMENT HISTORIQUE
+-----------------------------------------------------------------------------
+config_v1.0.dat
+logs.dat
+user.dat
+secrets_v2.dat
+ai_settings_v2.dat (si présent)
+
+Pourquoi :
+- ne jamais inclure de secret utilisateur dans un patch ;
+- rollback v1.0.7 immédiat et fiable ;
+- éviter deux copies du coffre chiffré ;
+- préparer une future migration de Data/ via Core/Shared/paths.js.
+
+MIGRATION NON DESTRUCTIVE
+-------------------------
+Les anciens fichiers JS/HTML/CSS présents à la racine ne sont pas supprimés par
+l'UpdateManager. Ils deviennent INACTIFS après activation v1.1.0 et restent
+disponibles uniquement pour le rollback automatique vers v1.0.7.
+
+La release active v1.1.0 pointe sur :
+Core/Server/server_v1.0.js

@@ -1,0 +1,8 @@
+IA-TB v1.8.6 — UI final tuning
+
+- Status bar compacte et réservée dans la géométrie du viewport.
+- Chat IA, colonne centrale et Exchanges s'arrêtent au-dessus de la status bar.
+- Scroll indépendant pour le Chat, le centre et la colonne Exchanges.
+- Suppression du prix redondant dans la barre de contrôle du Chart Viewer.
+- Bouton ƒx Indicateurs repositionné avant l'état de connexion afin de rester visible.
+- Le prix reste visible directement sur le graphique TradingView.

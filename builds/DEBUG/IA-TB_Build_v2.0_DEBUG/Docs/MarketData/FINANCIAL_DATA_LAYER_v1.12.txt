@@ -1,0 +1,26 @@
+IA-TB Financial Data Layer v1.12 DEBUG
+=========================================
+Goal
+- Market Data Collector is the universal READ data ingress.
+- Liquidity Engine analyses liquidity; it does not own broker credentials or portfolio state.
+- Strategy, Portfolio, Supervisor and Chat consume normalized contracts.
+- Supervisor/Chat access is READ_ONLY.
+
+Provider families
+CEX_MARKET: Kraken/Binance/etc.
+DEX_MARKET: DEX pools/order books when an adapter exists.
+AGGREGATOR: CoinGecko / future DeFiLlama-style catalogues.
+ONCHAIN_RPC: generic read-only blockchain JSON-RPC.
+DEFI_PROTOCOL: protocol/indexer adapter producing VAULT/STAKING/LP/LENDING/BORROWING/FARM/LOCKED positions.
+
+Important: no single aggregator is assumed complete. Aggregators provide breadth; direct/indexed on-chain adapters provide wallet/protocol detail. Adding a broker/venue should add a provider capability when its liquidity cannot be supplied reliably by an existing aggregator.
+
+Canonical schema: iatb.financial.data/1.0. DeFi positions include chain, protocol, contract, wallet, asset, quantity/share, USD value, TVL, APR/APY, rewards, block and provenance. Liquidity includes venue, market type, bid/ask/spread, depth, OI, TVL, volume, reserves and provenance.
+
+Security
+- onchain RPC whitelist: eth_call, eth_getBalance, eth_getBlockByNumber, eth_blockNumber, eth_getCode, eth_getLogs.
+- NO eth_sendTransaction, signing, private keys, shell or arbitrary JS.
+- Chat/Supervisor manifests expose query/read commands only.
+- Configuration/write/refresh/cache commands are intentionally absent from AI manifests.
+
+This commit creates contracts and adapters without pretending unsupported providers return real data. Real DeFiLlama/protocol adapters require endpoint-specific implementation and runtime tests.

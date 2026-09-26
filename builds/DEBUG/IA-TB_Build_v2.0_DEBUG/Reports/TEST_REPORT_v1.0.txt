@@ -1,0 +1,45 @@
+Crypto Chart Viewer IA Trader — RAPPORT DE TEST v1.0
+===================================================
+Date : 2026-08-23
+
+TYPE DE LIVRAISON
+- Archive complète autonome, pas un patch.
+- Nouvelle identité/version : Crypto Chart Viewer IA Trader v1.0.
+- Base fonctionnelle dérivée de l’ancienne application Crypto Trading v3.2.
+
+CONTROLES EFFECTUES
+PASS - Syntaxe Node.js : launcher.js
+PASS - Syntaxe Node.js : server_v1.0.js
+PASS - Syntaxe Node.js : openai_response_v1.0.js
+PASS - Syntaxe Node.js : update_manager_v1.0.js
+PASS - Syntaxe Node.js : ai_update_builder_v1.0.js
+PASS - Syntaxe Node.js : mosaic_store_v1.0.js
+PASS - Syntaxe Node.js : custom_mosaic_v1.0.js
+PASS - Syntaxe Node.js : update_ui_v1.0.js
+PASS - Syntaxe des composants hérités chart_controller_v2.8.js / mosaic_controller_v2.9.js
+PASS - JSON : ai_command_protocol_v1.0.json
+PASS - JSON : paramètres et état de release v1.0
+PASS - JavaScript inline : app_v1.0.html
+PASS - JavaScript inline : chart_viewer_v1.0.html
+PASS - Démarrage depuis une arborescence fraîche sans user.dat ni secrets_v2.dat
+PASS - GET / : HTTP 200
+PASS - GET /trading : HTTP 200
+PASS - GET /chart-viewer : HTTP 200
+PASS - /api/health : application=Crypto Chart Viewer IA Trader, version=1.0
+PASS - Assets graphiques hérités servis : HTTP 200
+PASS - Builder de patch : génération 1.0 -> 1.1
+PASS - UpdateManager : inspection du patch v1.1 acceptée
+PASS - Nom futur de patch : Crypto Chart Viewer IA Trader.zip
+PASS - Aucun compte utilisateur ou clé API livré dans l’archive
+
+ARCHITECTURE
+- Interface utilisateur : http://localhost:8000
+- Trading IA : /trading
+- Chart Viewer : /chart-viewer
+- Port superviseur interne : 127.0.0.1:3000
+- Trading IA : GMX / Arbitrum, PREPARE_ONLY
+- Chart Viewer : TradingView + commandes simples locales + OpenAI pour demandes complexes
+
+NOTE MACOS HIGH SIERRA
+- start.command recherche d’abord le Node.js local dans .node/bin/node.
+- install_node_high_sierra.command installe Node.js 16.20.2 dans le dossier de l’application si nécessaire.

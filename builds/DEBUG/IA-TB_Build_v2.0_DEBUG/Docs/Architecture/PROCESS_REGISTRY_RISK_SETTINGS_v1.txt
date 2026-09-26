@@ -1,0 +1,10 @@
+IA-TB — Process Registry + Risk Manager + SQLite Settings
+
+- Process manifests: Core/ProcessRegistry/manifests/*.json
+- Runtime status (PID/health/RUNNING) stays in memory only.
+- Persistent ON/OFF preferences: external user_data.db / settings table.
+- AppSettings.dat profiles are imported once into SQLite, then retained only as migration backups.
+- Risk Manager Engine: analytical only, CP/1 through Router, port 8019.
+- Risk settings can be read/written by CP/1 (risk.settings.get / risk.settings.set) and local /api/settings.
+- Admin groups Firewalls and Engines/Services, shows counts/status and manual process ON/OFF.
+- No direct Risk -> Trading approval/blocking logic.

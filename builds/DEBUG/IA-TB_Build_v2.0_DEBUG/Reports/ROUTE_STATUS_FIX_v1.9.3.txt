@@ -1,0 +1,8 @@
+IA-TB v1.9.3
+
+Correctifs ciblés:
+1. /settings/ ouvre l'overlay Paramètres existant après start/auth.
+2. /strategy/ ouvre l'overlay Stratégies existant après start/auth.
+3. Admin Service Registry: timeout Core/Router 2600 ms au lieu de 1100 ms pour éviter les faux OFFLINE lors des health checks riches.
+
+Aucun changement visuel de mise en page. Aucun changement moteur de trading.
