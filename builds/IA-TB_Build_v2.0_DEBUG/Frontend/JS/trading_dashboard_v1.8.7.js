@@ -130,8 +130,8 @@ function build(){
   var center=el('main','iatbCenterColumn'),right=exchangePanel(),services=serviceStrip();
   center.appendChild(marketMaster());center.appendChild(chartShell(chart));center.appendChild(moduleDeck());
   body.appendChild(center);body.appendChild(right);body.appendChild(services);
-  var legacyRight=q('.body[data-mosaic-root]>.right');if(legacyRight)legacyRight.setAttribute('aria-hidden','true');
-  var legacyLeft=q('.body[data-mosaic-root]>.left');if(legacyLeft)legacyLeft.setAttribute('aria-hidden','true');
+  var legacyRight=q('.body[data-mosaic-root]>.right');if(legacyRight){legacyRight.setAttribute('aria-hidden','true');legacyRight.style.display='none'}
+  var legacyLeft=q('.body[data-mosaic-root]>.left');if(legacyLeft){legacyLeft.setAttribute('aria-hidden','true');legacyLeft.style.display='none'}
   var sl=byId('tdStrategiesLink');if(sl)sl.onclick=function(e){e.preventDefault();var b=byId('strategyBtn');if(b)b.click()};
   var close=right.querySelector('.iatbSideHead button');if(close)close.onclick=function(){right.classList.toggle('iatbSideCollapsed')};bindExchangeSwitches(right);
   sync();loadStrategies();health();volume24h();
