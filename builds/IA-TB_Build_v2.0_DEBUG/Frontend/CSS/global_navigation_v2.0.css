@@ -1,5 +1,5 @@
 :root{--iatb-nav-h:86px;--iatb-nav-gap:8px;--iatb-cyan:#12c8ff;--iatb-blue:#158cff;--iatb-line:#164f73;--iatb-nav-bg:#06111d}
-html{scroll-padding-top:var(--iatb-nav-h)}
+html{scroll-padding-top:calc(var(--iatb-nav-h) + var(--iatb-nav-gap))}
 body{padding-top:0!important}
 #iatb-global-nav{position:fixed;z-index:2147483000;left:0;right:0;top:0;height:var(--iatb-nav-h);display:flex;align-items:center;justify-content:center;padding:8px 16px;background:linear-gradient(180deg,#071725 0%,#040d17 100%);border-bottom:1px solid #11618a;box-shadow:0 7px 24px #0009,0 1px 20px #00a9ff18;font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif}
 .iatb-nav-frame{width:100%;height:70px;display:grid;grid-template-columns:minmax(180px,260px) minmax(560px,1fr) minmax(300px,430px);align-items:stretch;border:1px solid #1479a8;border-radius:18px;background:linear-gradient(180deg,#071928 0%,#06111c 55%,#071521 100%);box-shadow:inset 0 0 0 1px #0a3048,inset 0 1px 0 #2cc9ff35,0 0 22px #00a9ff18;overflow:hidden;position:relative}
@@ -15,7 +15,7 @@ body.iatb-global-nav-ready>header.topbar,body.iatb-global-nav-ready>header.top,b
 body.iatb-global-nav-ready>.portfolioApp,
 body.iatb-global-nav-ready>.page,
 body.iatb-global-nav-ready>.shell,
-body.iatb-global-nav-ready>.app{margin-top:calc(var(--iatb-nav-h) + var(--iatb-nav-gap))!important}
+body.iatb-global-nav-ready>.app{margin-top:0!important}
 body.iatb-global-nav-ready>.portfolioApp{height:calc(100vh - var(--iatb-nav-h) - var(--iatb-nav-gap))!important;grid-template-rows:minmax(0,1fr) var(--status)!important}
 body.iatb-global-nav-ready>.portfolioApp>.workspace{min-height:0!important;height:auto!important;display:block!important}
 body.iatb-global-nav-ready>.portfolioApp>.statusBar{grid-row:2!important}
@@ -23,7 +23,9 @@ body.iatb-global-nav-ready>.shell{height:calc(100vh - var(--iatb-nav-h) - var(--
 body.iatb-global-nav-ready>.page{min-height:calc(100vh - var(--iatb-nav-h) - var(--iatb-nav-gap))!important}
 body.iatb-global-nav-ready>.page>.fundSidebar{top:calc(var(--iatb-nav-h) + var(--iatb-nav-gap))!important}
 body.iatb-global-nav-ready>.app{height:calc(100vh - var(--iatb-nav-h) - var(--iatb-nav-gap))!important}
-body.iatb-global-nav-ready>.adminShell{margin-top:calc(var(--iatb-nav-h) + var(--iatb-nav-gap))!important;height:calc(100vh - var(--iatb-nav-h) - var(--iatb-nav-gap))!important;min-height:0!important}
+body.iatb-global-nav-ready>.adminShell{margin-top:0!important;height:calc(100vh - var(--iatb-nav-h) - var(--iatb-nav-gap))!important;min-height:0!important}
 
 /* Breathing space below the fixed application chrome. */
 body.iatb-global-nav-ready{background:#040d17}
+
+#iatb-global-nav-spacer{display:block!important;width:100%;height:calc(var(--iatb-nav-h) + var(--iatb-nav-gap));min-height:calc(var(--iatb-nav-h) + var(--iatb-nav-gap));flex:0 0 calc(var(--iatb-nav-h) + var(--iatb-nav-gap));pointer-events:none}
