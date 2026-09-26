@@ -1,42 +1,40 @@
-# Firewall IA-TB
+# 🔥 Firewall IA-TB — V2.0 DEBUG
 
-## Architecture v1.12
+## Pour débuter
 
-Un seul coordinateur écoute sur **8017** et pilote deux Workers optionnels :
+**Le Firewall est la dernière barrière logicielle avant Trading Engine. Il ne se contente plus de vérifier la forme d'une commande : pour une opération qui modifie réellement le trading, V2.0 exige aussi une approbation Risk valide.**
 
-| Thread | Fonction |
-|---:|---|
-| 0 | Firewall Coordinator / proxy |
-| 1 | Trading Protection |
-| 2 | Market Data Protection |
+<small>🔧 Coordinateur :8017 ; Trading Engine réel :8016. Threads : 0 coordinateur, 1 Trading Protection, 2 Market Data Protection.</small>
 
-
-> **Lecture rapide :** la section ci-dessus donne l'essentiel. Ouvrez le bloc suivant pour le fonctionnement détaillé.
+```text
+Router
+  │
+  ▼
+Firewall :8017
+  ├─ CP/1 / signature / timestamp
+  ├─ whitelist commandes
+  ├─ whitelist paires
+  ├─ anti-duplicate
+  └─► Risk Gate verify + consume
+             │
+             ▼
+       Trading Engine :8016
+```
 
 <details>
-<summary><b>➕ En savoir plus — fonctionnement technique</b></summary>
+<summary><b>➕ En savoir plus — approbation Risk</b></summary>
 
-## Trading Protection
+Pour `trading.execute`, `trading.cancel` et `trading.close_position`, le Firewall exige `risk_approval_id`. Il reconstruit l'intention originale depuis `metadata.trade_intent` lorsqu'elle est disponible, puis appelle `risk.gate.verify` via Router CP/1 avec `consume:true`.
 
-Le Router adresse la cible Trading au port **8017**, pas directement à 8016. Le Firewall vérifie l'enveloppe CP/1, la signature/timestamp et les règles Trading, puis ajoute une preuve interne de forwarding avant d'appeler Trading Engine :8016.
+L'approbation n'est donc pas un simple texte accepté aveuglément par le Firewall : elle doit encore exister, ne pas être expirée/consommée et correspondre au hash de l'intention.
 
-Trading Engine conserve ses propres contrôles : même en bypass Firewall, CP/1 et les exigences de la commande restent applicables.
+</details>
 
-## Market Data Protection
+<details>
+<summary><b>➕ En savoir plus — protections Trading</b></summary>
 
-Le coordinateur peut proxyfier les réponses Market Data et les soumettre au Worker Data. Les règles effectives incluent saut de prix maximum, bid/ask positifs/non inversés et spread maximum. Les décisions sont journalisées.
+Le Worker Trading vérifie authentification CP, signature, fenêtre temporelle, commandes autorisées, paires autorisées et doublons. Les empreintes d'ordres permettent de détecter une répétition même lorsque le `request_id` diffère.
 
-## Mode diagnostic sans protection
-
-`IATB_FIREWALL_ENABLED=0` ou `start_no_firewall.command` garde le coordinateur 8017 comme **pass-through** mais n'initialise aucun Worker. La topologie reste identique, ce qui permet de comparer avec/sans inspection sans recâbler Router/Trading.
-
-Ce mode est destiné au diagnostic, pas à la production.
-
-## Administration
-
-ADMIN peut voir les threads, événements et configurations, activer/désactiver des règles, recharger ou redémarrer les Workers. Les règles critiques demandent une confirmation explicite. Les modifications sont hot-reloadées.
-
-Logs : `.runtime/logs/firewall.log`.
-
+Le mode OBSERVATION peut transformer certaines violations de règles en avertissements, mais les contrôles classés sécurité restent bloquants.
 
 </details>
