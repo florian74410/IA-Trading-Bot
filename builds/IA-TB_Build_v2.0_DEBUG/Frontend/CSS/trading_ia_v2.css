@@ -170,3 +170,15 @@ html.iatb-trading-workspace:not(.iatb-secondary-page-active) .iatbServiceStrip{
   html.iatb-trading-workspace:not(.iatb-secondary-page-active) .iatbModuleDeck{grid-template-columns:1fr!important}
   html.iatb-trading-workspace:not(.iatb-secondary-page-active) .iatbDashCard{height:auto!important;min-height:190px!important}
 }
+
+
+/* Trading IA v2.2.1 — remove the last legacy spacer above the market/chart. */
+html.iatb-trading-workspace:not(.iatb-secondary-page-active) .body[data-mosaic-root]{
+  padding-top:0!important;
+}
+html.iatb-trading-workspace:not(.iatb-secondary-page-active) .iatbCenterColumn{
+  padding-top:0!important;margin-top:0!important;
+}
+html.iatb-trading-workspace:not(.iatb-secondary-page-active) .iatbMarketMaster{
+  margin-top:0!important;
+}
