@@ -182,3 +182,17 @@ html.iatb-trading-workspace:not(.iatb-secondary-page-active) .iatbCenterColumn{
 html.iatb-trading-workspace:not(.iatb-secondary-page-active) .iatbMarketMaster{
   margin-top:0!important;
 }
+
+
+/* Trading IA v2.2.2 — neutralize the old fixed-workspace top offset.
+   v1.8.6 still imposed position:fixed + top:var(--ia-top-h), which created
+   the black rectangle below the shared global navigation. */
+@media(min-width:821px){
+  html.iatb-trading-workspace:not(.iatb-secondary-page-active) .body[data-mosaic-root]{
+    position:static!important;
+    inset:auto!important;
+    top:auto!important;right:auto!important;bottom:auto!important;left:auto!important;
+    max-height:none!important;
+    transform:none!important;
+  }
+}
