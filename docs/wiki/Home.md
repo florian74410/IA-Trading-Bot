@@ -24,6 +24,10 @@ IA-TB est une application modulaire de trading crypto réunissant notamment des 
 - [Connecteurs CEX / DEX](Connectors-CEX-DEX.md)
 - [Settings / API](Settings-API.md)
 
+## Intelligence fondamentale
+
+- [Fundamental Engine V3](Fundamental-Engine.md) — collecte et provenance des news, News Query Engine, événements, evidence, mémoire temporelle, synthèses et consommation par le Supervisor.
+
 ## Données, analyse et risque
 
 - [Market Data](Market-Data.md)
