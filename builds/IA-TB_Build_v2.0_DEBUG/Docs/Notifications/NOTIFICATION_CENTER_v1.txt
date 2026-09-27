@@ -11,3 +11,17 @@ Per-user SQLite stores settings and bounded history. Settings include global ena
 CRITICAL is intended to bypass quiet mode at delivery time.
 
 This commit provides the persistent backend contract and Settings UI. Existing Engines are not modified to invent events they do not currently emit; integration should map real CP1 events to these families as each Engine event contract is confirmed.
+
+
+Notification Center v2 additions (v2.0 DEBUG)
+=============================================
+Channels exposed in Settings:
+- IA-TB: live in-app popup + persistent history.
+- Desktop: browser/macOS Notification API after explicit browser permission.
+- Email: per-user destination. Local macOS build uses configured Mail.app; deployment/VPS should replace this transport with an SMTP or transactional-email adapter without changing Engine event contracts.
+- Sound: routing flag retained.
+
+Email can be globally enabled, restricted to CRITICAL events, and independently enabled per event family.
+The global navigation runtime polls the Notification Center and can display notifications over any main IA-TB page that loads global_navigation_v2.0.js.
+Actionable notifications use meta.actionRequest as the UI contract for future approval workflows (for example Fundamental feed repair). An approval must authorize one specific proposed mutation; a general LLM permission is not implied.
+Trading/Portfolio/Risk notifications must always use real Engine event data for positions, execution, PnL and risk state; the UI must never invent financial outcomes.
