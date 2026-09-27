@@ -191,7 +191,8 @@ function generateFundamentalAiSummary(sess,opts,cb){
    var data={generatedAt:new Date().toISOString(),model:model,language:ctx.language,synthesis:parsed,basis:basis,usage:{inputTokens:inp,outputTokens:out,totalTokens:tot}};
    FUNDAMENTAL_AI_CACHE={key:keyHash,at:Date.now(),data:data,model:model,usage:data.usage,basis:basis};
    log('FUNDAMENTAL','Synthese IA OpenAI OK','items='+basis.itemsUsed+' bodies='+basis.itemsWithBody+' tone='+parsed.marketTone+' confidence='+parsed.confidence+' tokens='+tot);
-   cb(null,{ok:true,cached:false,data:data});
+   /* Persist every newly generated synthesis in Fundamental's shared database. It is application knowledge, never user-private data. */
+   fundamentalRequestJson('POST','/api/syntheses/import',{scope:'MARKET',query:{window:ctx.window,language:ctx.language},inputHash:keyHash,model:model,result:parsed,evidenceCount:basis.itemsUsed},function(pe,po){if(pe){log('FUNDAMENTAL','Synthese persistence ERROR',pe.message);data.persistence={shared:true,saved:false,error:pe.message};}else{data.persistence={shared:true,saved:true,id:po&&po.synthesis&&po.synthesis.id||null};}cb(null,{ok:true,cached:false,data:data});},5000);
   },35000);
  });
 }
@@ -450,6 +451,7 @@ function route(req,res){var u=new URL(req.url,'http://'+HOST+':'+PORT),p=u.pathn
  if(req.method==='POST'&&p==='/api/fundamental/translate')return body(req,function(e,b){if(e)return json(res,400,{error:'JSON invalide'});translateFundamentalItem(b&&b.itemId,sess,function(te,to){if(te)return json(res,te.statusCode||502,{ok:false,error:te.message});json(res,200,to);});});
  if(req.method==='GET'&&p==='/api/fundamental/ai-summary')return json(res,200,fundamentalAiPublicState());
  if(req.method==='POST'&&p==='/api/fundamental/ai-summary')return body(req,function(e,b){if(e)return json(res,400,{ok:false,error:'JSON_INVALID'});generateFundamentalAiSummary(sess,{force:!!(b&&b.force)},function(ae,ao){if(ae)return json(res,ae.statusCode||502,{ok:false,error:ae.message});json(res,200,ao);});});
+ if(p==='/api/fundamental/syntheses/import')return json(res,403,{ok:false,error:'INTERNAL_SYNTHESIS_PERSISTENCE_ONLY'});
  if(p==='/api/fundamental'||p.indexOf('/api/fundamental/')===0)return proxyFundamental(req,res,u,p);
  if(req.method==='GET'&&p==='/api/bank/vaults')return json(res,200,{ok:true,vaults:BankVaultRegistry.publicList()});
  if(req.method==='GET'&&p==='/api/admin/bank/vaults')return json(res,200,{ok:true,networks:BankVaultRegistry.NETWORKS,vaults:BankVaultRegistry.list()});
