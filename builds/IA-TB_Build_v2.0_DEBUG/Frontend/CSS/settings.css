@@ -34,3 +34,9 @@
 
 /* Main IA-TB navigation in Settings — v2.0 DEBUG */
 .settingsAppNav{height:64px;flex:0 0 64px;padding:0 20px;gap:20px}.settingsBrand{display:flex;align-items:baseline;gap:8px;text-decoration:none;color:#eaf5ff;white-space:nowrap}.settingsBrand b{font-size:24px;letter-spacing:.4px}.settingsBrand small{font-size:10px;color:#24b8ff}.settingsMainNav{height:100%;display:flex;align-items:stretch;gap:2px;flex:1}.settingsMainNav a{position:relative;display:flex;align-items:center;padding:0 16px;color:#b9cbd9;text-decoration:none;font-weight:650;white-space:nowrap}.settingsMainNav a:hover{color:#fff;background:#0b1c29}.settingsMainNav a.active{color:#37c8ff;background:#0a1b28}.settingsMainNav a.active:after{content:'';position:absolute;left:12px;right:12px;bottom:0;height:2px;background:#22bfff}.settingsAppNav .clock{margin-left:auto}.settingsAppNav .engineStrip{display:none}@media(max-width:1050px){.settingsAppNav{padding:0 10px;gap:8px}.settingsMainNav a{padding:0 8px;font-size:11px}.settingsBrand b{font-size:19px}.settingsBrand small{display:none}}@media(max-width:760px){.settingsMainNav{overflow-x:auto}.settingsAppNav .clock{display:none}}
+
+/* Notification Center v2 */
+.notifEmailConfig{margin-top:10px;padding:10px 12px;border:1px solid #174f72;border-radius:7px;background:#071725;display:grid;grid-template-columns:minmax(260px,1fr) auto;gap:10px;align-items:end}
+.notifEmailConfig label:first-child{display:flex;flex-direction:column;gap:5px;color:#b8d5e7}.notifEmailConfig input[type=email]{background:#06111c;border:1px solid #285b79;border-radius:5px;color:#eefaff;padding:8px}
+.notifEmailConfig small{grid-column:1/-1;color:#6f9bb7;font-size:10px}.notifEmailCritical{display:flex;align-items:center;gap:7px;padding-bottom:8px;color:#9fc8df}
+@media(max-width:760px){.notifEmailConfig{grid-template-columns:1fr}}
