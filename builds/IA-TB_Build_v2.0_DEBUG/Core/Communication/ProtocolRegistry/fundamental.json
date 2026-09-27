@@ -34,9 +34,16 @@
         "arguments": {
           "allowed": [
             "query",
+            "asset",
+            "category",
             "source",
             "feed",
+            "minGrade",
+            "minReliability",
+            "minImportance",
             "since",
+            "until",
+            "sort",
             "limit"
           ]
         }
@@ -353,15 +360,36 @@
       },
       {
         "name": "fundamental.timeline.get",
-        "arguments": {"allowed": ["eventId", "event_id", "id", "since", "limit"]}
+        "arguments": {
+          "allowed": [
+            "eventId",
+            "event_id",
+            "id",
+            "since",
+            "limit"
+          ]
+        }
       },
       {
         "name": "fundamental.timeline.context",
-        "arguments": {"allowed": ["eventId", "event_id", "id", "limit"]}
+        "arguments": {
+          "allowed": [
+            "eventId",
+            "event_id",
+            "id",
+            "limit"
+          ]
+        }
       },
       {
         "name": "fundamental.timeline.rebuild",
-        "arguments": {"allowed": ["eventId", "event_id", "id"]}
+        "arguments": {
+          "allowed": [
+            "eventId",
+            "event_id",
+            "id"
+          ]
+        }
       },
       {
         "name": "fundamental.discovery.inspect",
