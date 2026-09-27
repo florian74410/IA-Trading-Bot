@@ -48,3 +48,24 @@ body{background:radial-gradient(circle at 70% -20%,rgba(31,75,153,.18),transpare
 .earthLimitLabel{display:flex;align-items:center;gap:5px;margin-left:6px;color:#7696bc;font-size:9px;font-weight:700}.earthLimitLabel select{border:1px solid #254e82;background:#07172b;color:#d9eaff;border-radius:6px;padding:4px 6px;font-size:10px}.earthDetailDomain{display:inline-block;margin-bottom:9px;padding:4px 7px;border:1px solid #285b91;border-radius:10px;color:#75b9ff;font-size:9px;font-weight:800}.earthDetailSource{margin:7px 0 12px;color:#6787ad;font-size:10px}.earthArticleBody{white-space:pre-wrap;overflow-wrap:anywhere;color:#b8cbe2;font-size:12px;line-height:1.58;border-top:1px solid #17345b;border-bottom:1px solid #17345b;padding:12px 0;margin-bottom:10px}.earthEventDetail .earthOpenNews{text-decoration:none;text-align:center;font-weight:700}.earthRadarTools .earthCount{white-space:nowrap}
 
 .earthCloseBtn{width:42px!important;height:42px!important;display:flex!important;align-items:center;justify-content:center;border:1px solid #2f6da5!important;border-radius:9px!important;background:#0a1c31!important;color:#e9f6ff!important;font-size:20px!important;font-weight:800!important;cursor:pointer!important;z-index:10}.earthCloseBtn:hover{background:#12355b!important;border-color:#52bfff!important}.earthRadarModal>header{min-height:66px}.earthFilter#earthHubToggle{border-color:#087b91;color:#54eaff}.earthFilter#earthHubToggle.active{background:#073b48;color:#7af3ff;box-shadow:0 0 9px rgba(0,229,255,.2)}
+
+/* Fundamental overview cleanup v3.1 — compact blue synthesis + unified news status/actions. */
+.summaryGridAi{display:block;margin-bottom:12px}
+.summaryGridAi .aiSummaryCard{min-height:96px;background:linear-gradient(180deg,#071d31 0%,#081827 100%);border:1px solid #155b88;box-shadow:inset 0 1px 0 rgba(65,183,245,.08);padding:12px 14px}
+.aiSummaryTop>div:first-child{display:flex;align-items:baseline;gap:10px;min-width:0}
+.aiSummaryLastGenerated{font-size:10px!important;color:#62a8d1!important;text-transform:none;letter-spacing:0}
+.aiSummaryState{display:flex;align-items:center;gap:9px;flex-wrap:wrap;justify-content:flex-end}
+.aiSummaryState .aiToneTop{font-size:12px!important;margin:0!important}
+.aiSummaryState>small{font-size:10px;color:#79a8c5}
+.aiSummaryBtn{border-color:#176b9e;background:#0b3552;color:#b8e8ff;padding:5px 9px}
+.aiSummaryBtn:hover{border-color:#29aee9;background:#0d4265}
+.newsControlBar{min-height:36px;margin:12px 0 8px;border:1px solid #15577f;background:linear-gradient(180deg,#071b2b,#071725);border-radius:7px;display:flex;align-items:center;gap:10px;padding:4px 6px 4px 11px}
+.newsControlBar .notice{flex:1;min-width:0;margin:0;padding:0;border:0;background:transparent;border-radius:0;color:#78bde4;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.newsControlBar .notice.ok{color:#5fe0a3}.newsControlBar .notice.warn{color:#e8c969}.newsControlBar .notice.bad{color:#f08a96}
+.newsControlActions{display:flex;align-items:center;gap:5px;flex:0 0 auto}
+.newsRefreshBtn,.newsPurgeBtn{height:27px;border-radius:5px;padding:0 9px;font-size:10px;cursor:pointer}
+.newsRefreshBtn{border:1px solid #176b9e;background:#0b3552;color:#b9e8ff}.newsRefreshBtn:hover{border-color:#29aee9;background:#0d4265}
+.newsPurgeBtn{border:1px solid #70404a;background:#25141b;color:#efa0aa}.newsPurgeBtn:hover{border-color:#ad5664;background:#321820}
+.newsRefreshBtn:disabled,.newsPurgeBtn:disabled{opacity:.55;cursor:default}
+.publicationsSection{margin-top:8px}
+@media(max-width:760px){.newsControlBar{align-items:flex-start;flex-direction:column}.newsControlActions{width:100%;justify-content:flex-end}.newsControlBar .notice{white-space:normal}.aiSummaryTop{align-items:flex-start}.aiSummaryTop>div:first-child{flex-direction:column;gap:2px}.aiSummaryState{justify-content:flex-start}}
