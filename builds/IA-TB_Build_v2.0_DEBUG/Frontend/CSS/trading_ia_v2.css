@@ -207,3 +207,14 @@ html.iatb-dashboard-v186-final.iatb-trading-workspace:not(.iatb-secondary-page-a
   flex:0 0 0!important;
   width:0!important;height:0!important;min-height:0!important;
 }
+
+
+/* Trading IA v2.2.4 — chart height -30% (500px -> 350px). */
+@media(min-width:821px){
+  html.iatb-trading-workspace:not(.iatb-secondary-page-active) #chartBox{
+    height:350px!important;
+    min-height:350px!important;
+    max-height:350px!important;
+    flex:0 0 350px!important;
+  }
+}
