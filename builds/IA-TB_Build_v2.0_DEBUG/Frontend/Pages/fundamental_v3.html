@@ -16,16 +16,10 @@
   <main class="content">
     <section class="hero">
       <div><div class="eyebrow">FUNDAMENTAL ENGINE V3 · INFORMATION_ONLY</div><h1>Contexte fondamental</h1><p>Une mémoire structurée des sources et publications. Le moteur reste <strong>informationnel</strong> : le biais par news est une aide visuelle et n'influence aucune stratégie.</p></div>
-      <div class="heroActions"><button id="collectNow" class="primary">Actualiser les flux</button><button id="purgeNews" class="dangerBtn" type="button" title="Supprime les publications et traductions puis recharge les flux">Purger les news</button></div>
     </section>
 
-    <section class="summaryGrid" aria-label="Synthèse compacte">
-      <article class="metric"><span>Sources enregistrées</span><strong id="sourcesCount">--</strong><small id="sourcesEnabled">-- actives</small></article>
-      <article class="metric"><span>Flux actifs</span><strong id="feedsCount">--</strong><small id="feedsTotal">-- enregistrés</small></article>
-      <article class="metric"><span>Publications 24 h</span><strong id="raw24h">--</strong><small id="rawTotal">-- en mémoire</small></article>
-      <article class="metric"><span>Mode</span><strong class="mode">INFO</strong><small>INFORMATION_ONLY</small></article>
-      <article class="metric aiToneMetric"><span>Synthèse IA</span><strong id="aiToneTop" class="aiToneTop uncertain">--</strong><small id="aiConfidenceTop">Confiance synthèse · --</small></article>
-      <article class="metric wide aiSummaryCard"><div class="aiSummaryTop"><span>Synthèse IA</span><button id="aiSummaryRefresh" class="aiSummaryBtn" type="button">Actualiser</button></div><strong id="aiSummaryHeadline" class="pending">Initialisation…</strong><small id="aiSummaryText">La synthèse OpenAI reste INFORMATION_ONLY et n’exécute aucune action de trading.</small><div id="aiSummaryMeta" class="aiSummaryMeta"></div><div id="aiSummaryThemes" class="aiSummaryThemes"></div></article>
+    <section class="summaryGrid summaryGridAi" aria-label="Synthèse fondamentale">
+      <article class="metric wide aiSummaryCard"><div class="aiSummaryTop"><div><span>Synthèse IA</span><small id="aiSummaryLastGenerated" class="aiSummaryLastGenerated">Dernière génération · --</small></div><div class="aiSummaryState"><strong id="aiToneTop" class="aiToneTop uncertain">--</strong><small id="aiConfidenceTop">Confiance · --</small><button id="aiSummaryRefresh" class="aiSummaryBtn" type="button" title="Régénérer la synthèse">↻ Refresh</button></div></div><strong id="aiSummaryHeadline" class="pending">Initialisation…</strong><small id="aiSummaryText">La synthèse OpenAI reste INFORMATION_ONLY et n’exécute aucune action de trading.</small><div id="aiSummaryMeta" class="aiSummaryMeta"></div><div id="aiSummaryThemes" class="aiSummaryThemes"></div></article>
     </section>
 
     <section id="cockpit" class="cockpit">
@@ -53,9 +47,9 @@
     <article class="miniPanel domainPreview"><div class="panelHead"><b>DOMAINES</b><button class="plusBtn" data-expand-target="domainGrid">＋</button></div><div id="dashDomainPreview" class="previewBody">Chargement…</div></article>
   </div>
 </section>
-<div id="notice" class="notice">Chargement du Fundamental Engine…</div>
+<div class="newsControlBar"><div id="notice" class="notice">Chargement du Fundamental Engine…</div><div class="newsControlActions"><button id="collectNow" class="newsRefreshBtn" type="button">↻ Actualiser</button><button id="purgeNews" class="newsPurgeBtn" type="button" title="Supprime les publications et traductions puis recharge les flux">Purger</button></div></div>
 
-    <details class="section" open><summary><span>Publications récentes</span><small>5 visibles · défilement interne pour la suite</small></summary><div class="sectionBody"><div id="recentList" class="newsList"><div class="empty">Aucune publication collectée pour le moment.</div></div></div></details>
+    <details class="section publicationsSection" open><summary><span>Publications récentes</span><small>5 visibles · défilement interne pour la suite</small></summary><div class="sectionBody"><div id="recentList" class="newsList"><div class="empty">Aucune publication collectée pour le moment.</div></div></div></details>
     <details class="section providersSection" open><summary><span>Providers</span><span id="providerTestResult" class="providerTestResult" aria-live="polite"></span><small id="providersMeta">Diagnostic RSS / Atom / Web</small></summary><div class="sectionBody"><div id="providerSummary" class="providerSummary"></div><div class="tableWrap fiveRowsWrap providerRowsWrap"><table class="providersTable"><thead><tr><th>Provider</th><th>Type</th><th>État</th><th>Dernière tentative</th><th>Dernier succès</th><th>Items</th><th>Latence</th><th>Actions</th></tr></thead><tbody id="providersBody"><tr><td colspan="8" class="empty">Chargement des providers…</td></tr></tbody></table></div><div id="providerDetail" class="providerDetail hide"></div></div></details>
     <details class="section" open><summary><span>Couverture des domaines</span><small>Répartition des sources par compétence</small></summary><div class="sectionBody"><div id="domainGrid" class="domainGrid"></div></div></details>
     <details class="section"><summary><span>Sources & qualité</span><small>Source Registry central · grades, domaines, flux</small></summary><div class="sectionBody"><div class="toolbar"><input id="sourceSearch" placeholder="Rechercher une source…"><select id="domainFilter"><option value="">Tous les domaines</option><option>MACRO</option><option>MONETARY</option><option>MARKET_RISK</option><option>REGULATION</option><option>CRYPTO_NETWORK</option><option>ADOPTION</option><option>SECURITY</option><option>DEFI</option></select><button id="applySourceFilter">Filtrer</button></div><div class="tableWrap fiveRowsWrap sourceRowsWrap"><table><thead><tr><th>Source</th><th>Type</th><th>Priorité</th><th>Grade</th><th>Fiabilité</th><th>Rapidité</th><th>Flux</th></tr></thead><tbody id="sourcesBody"></tbody></table></div></div></details>
