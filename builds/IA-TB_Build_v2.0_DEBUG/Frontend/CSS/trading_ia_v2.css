@@ -65,3 +65,108 @@ html.iatb-trading-workspace .iatbServiceStrip{
   html.iatb-trading-workspace .iatbModuleWrap{order:4!important}
   html.iatb-trading-workspace .iatbServiceStrip{order:5!important}
 }
+
+
+/* Trading IA v2.2 — authoritative non-overlapping flow.
+   The chart engine is untouched; only page composition is controlled here. */
+html.iatb-trading-workspace:not(.iatb-secondary-page-active) #app.app{
+  height:auto!important;min-height:calc(100vh - var(--iatb-nav-h,68px))!important;
+  margin:0!important;padding:0!important;overflow:visible!important;
+}
+html.iatb-trading-workspace:not(.iatb-secondary-page-active) .body[data-mosaic-root]{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) 282px!important;
+  grid-template-rows:auto auto auto auto!important;
+  column-gap:10px!important;row-gap:10px!important;
+  width:100%!important;height:auto!important;min-height:0!important;
+  margin:0!important;padding:0 10px 10px!important;
+  align-items:start!important;overflow:visible!important;
+}
+html.iatb-trading-workspace:not(.iatb-secondary-page-active) .iatbCenterColumn{
+  grid-column:1!important;grid-row:1!important;
+  width:100%!important;min-width:0!important;height:auto!important;
+  margin:0!important;padding:0!important;gap:8px!important;overflow:visible!important;
+}
+html.iatb-trading-workspace:not(.iatb-secondary-page-active) .iatbMarketMaster{
+  margin:0!important;min-height:42px!important;border-radius:0 0 7px 7px!important;
+}
+html.iatb-trading-workspace:not(.iatb-secondary-page-active) #chartArea{
+  width:100%!important;height:auto!important;min-height:0!important;max-height:none!important;
+  margin:0!important;flex:none!important;overflow:hidden!important;
+}
+html.iatb-trading-workspace:not(.iatb-secondary-page-active) #chartBox{
+  width:100%!important;height:500px!important;min-height:500px!important;max-height:500px!important;
+  flex:none!important;
+}
+html.iatb-trading-workspace:not(.iatb-secondary-page-active) .iatbExchangeColumn{
+  grid-column:2!important;grid-row:1!important;
+  position:static!important;top:auto!important;align-self:stretch!important;
+  width:282px!important;min-width:282px!important;
+  height:auto!important;min-height:0!important;max-height:none!important;
+  margin:0!important;overflow:hidden!important;
+}
+html.iatb-trading-workspace:not(.iatb-secondary-page-active) .iatbIndicatorDock{
+  grid-column:1 / -1!important;grid-row:2!important;
+  position:relative!important;z-index:2!important;
+  display:flex!important;flex-direction:column!important;
+  width:100%!important;height:220px!important;min-height:220px!important;max-height:220px!important;
+  margin:0!important;overflow:hidden!important;background:#05111b!important;
+}
+html.iatb-trading-workspace:not(.iatb-secondary-page-active) #tdIndicatorDockBody{
+  flex:1 1 auto!important;min-height:0!important;max-height:none!important;
+  width:100%!important;padding:7px!important;overflow-y:auto!important;overflow-x:hidden!important;
+}
+html.iatb-trading-workspace:not(.iatb-secondary-page-active) #tdIndicatorDockBody .indicatorPane{
+  position:relative!important;z-index:1!important;
+  width:100%!important;height:150px!important;min-height:150px!important;
+  margin:0 0 7px!important;overflow:hidden!important;background:#030a10!important;
+}
+html.iatb-trading-workspace:not(.iatb-secondary-page-active) .iatbModuleWrap{
+  grid-column:1 / -1!important;grid-row:3!important;
+  position:relative!important;z-index:2!important;
+  display:flex!important;flex-direction:column!important;
+  width:100%!important;height:auto!important;min-height:260px!important;max-height:none!important;
+  margin:0!important;overflow:visible!important;background:#05111b!important;
+}
+html.iatb-trading-workspace:not(.iatb-secondary-page-active) .iatbModuleDeck{
+  display:grid!important;
+  grid-template-columns:repeat(5,minmax(0,1fr))!important;
+  gap:10px!important;width:100%!important;
+  padding:10px!important;overflow:visible!important;
+}
+html.iatb-trading-workspace:not(.iatb-secondary-page-active) .iatbDashCard{
+  box-sizing:border-box!important;
+  width:100%!important;min-width:0!important;height:210px!important;
+  overflow:auto!important;
+}
+html.iatb-trading-workspace:not(.iatb-secondary-page-active) .iatbServiceStrip{
+  grid-column:1 / -1!important;grid-row:4!important;
+  position:relative!important;z-index:2!important;
+  width:100%!important;margin:0!important;
+}
+@media(max-width:1180px) and (min-width:821px){
+  html.iatb-trading-workspace:not(.iatb-secondary-page-active) .body[data-mosaic-root]{
+    grid-template-columns:minmax(0,1fr) 260px!important;
+  }
+  html.iatb-trading-workspace:not(.iatb-secondary-page-active) .iatbExchangeColumn{
+    width:260px!important;min-width:260px!important;
+  }
+  html.iatb-trading-workspace:not(.iatb-secondary-page-active) .iatbModuleDeck{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  }
+  html.iatb-trading-workspace:not(.iatb-secondary-page-active) .iatbDashCard{height:210px!important}
+}
+@media(max-width:820px){
+  html.iatb-trading-workspace:not(.iatb-secondary-page-active) .body[data-mosaic-root]{
+    display:flex!important;flex-direction:column!important;gap:8px!important;padding:0 6px 8px!important;
+  }
+  html.iatb-trading-workspace:not(.iatb-secondary-page-active) .iatbCenterColumn{order:1!important}
+  html.iatb-trading-workspace:not(.iatb-secondary-page-active) .iatbExchangeColumn{
+    order:2!important;width:100%!important;min-width:0!important;height:auto!important;
+  }
+  html.iatb-trading-workspace:not(.iatb-secondary-page-active) .iatbIndicatorDock{order:3!important;width:100%!important}
+  html.iatb-trading-workspace:not(.iatb-secondary-page-active) .iatbModuleWrap{order:4!important;width:100%!important}
+  html.iatb-trading-workspace:not(.iatb-secondary-page-active) .iatbServiceStrip{order:5!important;width:100%!important}
+  html.iatb-trading-workspace:not(.iatb-secondary-page-active) .iatbModuleDeck{grid-template-columns:1fr!important}
+  html.iatb-trading-workspace:not(.iatb-secondary-page-active) .iatbDashCard{height:auto!important;min-height:190px!important}
+}
