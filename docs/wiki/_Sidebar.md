@@ -4,6 +4,10 @@
 - [Installation](Installation.md)
 - [Architecture](Architecture.md)
 
+### Intelligence & analyse
+
+- [Fundamental Engine V3](Fundamental-Engine.md) — news, événements, synthèses et sélection Supervisor
+
 ### Trading & données
 
 - [Connecteurs CEX / DEX](Connectors-CEX-DEX.md)
