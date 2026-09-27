@@ -1,12 +1,14 @@
 {
-  "schema": 1,
+  "schema": 2,
   "application": "IA-Trading-Bot",
-  "version": "1.11.7",
-  "status": "DEV-FUNDAMENTAL-EVENT-ENGINE",
-  "source_version": "1.11.6",
-  "entrypoint": "Core/Server/server_v1.8.js",
-  "update_artifact": "Any .zip filename using IA-TB update manifest format",
+  "version": "2.0.0",
+  "status": "DEBUG",
+  "entrypoint": "Core/Server/server.js",
   "ui_entrypoint": "UI/Gateway/ui_service.js",
   "ui_port": 8000,
-  "router_port": 8021
+  "core_port": 8001,
+  "router_port": 8021,
+  "market_data_port": 8013,
+  "fundamental_port": 8015,
+  "supervisor_port": 3000
 }
