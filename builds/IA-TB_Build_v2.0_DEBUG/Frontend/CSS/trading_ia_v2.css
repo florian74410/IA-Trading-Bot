@@ -196,3 +196,14 @@ html.iatb-trading-workspace:not(.iatb-secondary-page-active) .iatbMarketMaster{
     transform:none!important;
   }
 }
+
+
+/* Trading IA v2.2.3 — remove obsolete v1.8.6 center safety spacer.
+   The old ::after flex item has order:0 while market/chart use order:1/2,
+   so Firefox renders that ~status-height spacer BEFORE the graph. */
+html.iatb-dashboard-v186-final.iatb-trading-workspace:not(.iatb-secondary-page-active) .iatbCenterColumn:after{
+  content:none!important;
+  display:none!important;
+  flex:0 0 0!important;
+  width:0!important;height:0!important;min-height:0!important;
+}
