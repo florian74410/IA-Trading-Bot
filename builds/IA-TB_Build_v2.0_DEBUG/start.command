@@ -74,7 +74,7 @@ startup_banner(){
   echo "╔══════════════════════════════════════════════════════════════╗"
   echo "║                                                              ║"
   echo "║                     IA TRADING BOT                           ║"
-  echo "║                      v1.12 DEBUG                             ║"
+  echo "║                      v2.0 DEBUG                              ║"
   echo "║                                                              ║"
   echo "║                  SYSTEM STARTUP CONSOLE                      ║"
   echo "║                                                              ║"
@@ -587,9 +587,11 @@ status_ok "UI Service" ":$UI_PORT"
 
 section "[ 4/4 ]  SYSTEM STATUS"
 
-printf "              ${C_GREEN}${C_BOLD}14 / 14 SERVICES ONLINE${C_RESET}\n"
+ONLINE_COUNT=0
+for x in "$fw_ok" "$ind_ok" "$md_ok" "$liq_ok" "$portfolio_ok" "$te_ok" "$strategy_ok" "$risk_ok" "$fe_ok" "$supervisor_ok" "$ok" "$ui_ok"; do [ "${x:-0}" -eq 1 ] && ONLINE_COUNT=$((ONLINE_COUNT+1)); done
+printf "              ${C_GREEN}${C_BOLD}%s CORE SERVICES HEALTHY${C_RESET}\n" "$ONLINE_COUNT"
 echo
-printf "                 ${C_GREEN}${C_BOLD}IA-TB READY${C_RESET} · v1.12 DEBUG\n"
+printf "                 ${C_GREEN}${C_BOLD}IA-TB READY${C_RESET} · v2.0 DEBUG\n"
 echo
 echo "  UI        http://127.0.0.1:$UI_PORT"
 echo "  Core      http://127.0.0.1:$CORE_PORT"
