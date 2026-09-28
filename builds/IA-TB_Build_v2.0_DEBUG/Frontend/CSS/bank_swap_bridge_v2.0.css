@@ -74,3 +74,6 @@
 @media(min-width:1251px){.swapBridgeV2 .sbTop{grid-auto-rows:minmax(168px,auto)}}
 @media(max-width:1250px){.swapBridgeV2 .sbTop{grid-auto-rows:auto}.swapBridgeV2 .sbTop>.sbCard{min-height:164px;height:auto}}
 @media(max-width:800px){.servicePlaceholder.swapMode{padding-top:34px!important}.swapBridgeV2 .sbTop>.sbCard{min-height:0;height:auto}}
+
+/* network selector inside source/destination cards */
+.swapBridgeV2 .sbNetworkSelect select{max-width:125px;min-width:0;background:#071b2b;color:#eaf7ff;border:1px solid #174866;border-radius:6px;padding:5px 6px;font-size:9px}
