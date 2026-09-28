@@ -87,7 +87,7 @@ ClientService.prototype.active=function(){if(!this.store)return null;var id=Stri
 ClientService.prototype.byId=function(id){var x=this.repo.byId(String(id||''));return x?this._public(x):null;};
 ClientService.prototype.findByEmail=function(email){var h=this.crypto.lookupHash(cleanEmail(email));if(!h)return null;var x=this.repo.byEmailHash(h);return x?this._public(x):null;};
 ClientService.prototype.me=function(sess){var p=this.resolveSession(sess),a=this.accountByClientId(p.clientId);if(a){p.username=a.username;p.role=a.role;p.enabled=a.enabled;}p.walletIds=this.repo.walletIds(p.clientId,true);return p;};
-ClientService.prototype.listAdmin=function(){var self=this;return this.repo.list().map(function(x){var p=self._public(x);p.walletIds=self.repo.walletIds(p.clientId,true);return p;});};
+ClientService.prototype.listAdmin=function(){var self=this;return this.repo.list().map(function(x){var p=self._public(x),a=self.accountByClientId(p.clientId);if(a){p.username=a.username;p.role=a.role;p.enabled=a.enabled;}p.walletIds=self.repo.walletIds(p.clientId,true);return p;});};
 ClientService.prototype.linkWallet=function(sess,walletId){var me=this.resolveSession(sess);this.repo.linkWallet(me.clientId,walletId);this.repo.audit(me.clientId,'WALLET_LINKED',walletId,'');return me.clientId;};
 ClientService.prototype.archiveWallet=function(sess,walletId){var me=this.resolveSession(sess);this.repo.archiveWallet(me.clientId,walletId);this.repo.audit(me.clientId,'WALLET_ARCHIVED',walletId,'');return me.clientId;};
 ClientService.prototype.status=function(){var s=this.repo.status();return{ready:s.ready,schemaVersion:s.schemaVersion,backend:s.backend,lastError:s.lastError};};
