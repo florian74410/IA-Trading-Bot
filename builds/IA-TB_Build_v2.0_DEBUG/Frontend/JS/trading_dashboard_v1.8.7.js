@@ -14,16 +14,76 @@ function topUtilities(){var nav=q('.navActions');if(!nav||byId('iatbTopUtilities
 
 function marketMaster(){var n=el('section','iatbMarketMaster');n.id='iatbMarketMaster';n.innerHTML='<b>MARCHÉ DE RÉFÉRENCE</b><strong class="masterPair" id="tdMasterPair">--</strong><span class="masterProvider" id="tdMasterProvider">Market Data</span><small id="tdMasterTf">--</small>';return n}
 function indicatorDock(){var n=el('section','iatbIndicatorDock');n.id='iatbIndicatorDock';n.innerHTML='<div class="iatbIndicatorDockHead"><b>INDICATEURS EXTERNES</b><span>Indicator Engine · panneaux synchronisés avec le graphique</span></div><div class="iatbIndicatorDockBody" id="tdIndicatorDockBody"><div class="iatbIndicatorEmpty">Ajoute RSI, MACD, ADX ou un autre indicateur avec ƒx Indicateurs.</div></div>';return n}
+var MODULE_GRID_KEY='iatb.trading.moduleGrid.v2',MODULE_GRID_COLS=5,MODULE_GRID_ROWS=3;
+function moduleCard(no,id,cls,body){
+ return '<section class="iatbDashCard iatbGridModule '+(cls||'')+'" data-grid-id="'+id+'" data-grid-number="'+no+'" data-span-x="1" data-span-y="1" style="grid-column:span 1;grid-row:span 1">'
+  +'<div class="iatbModuleChrome"><span class="iatbModuleGrip" draggable="true" title="Glisser pour déplacer">⠿</span><span class="iatbModuleSize">1×1</span><span class="iatbModuleNo">'+('0'+no).slice(-2)+'</span></div>'
+  +body+'<span class="iatbModuleResize" title="Glisser pour redimensionner · double-clic = 1×1">↘</span></section>';
+}
 function moduleDeck(){
- var wrap=el('section','iatbModuleWrap');wrap.id='iatbModuleWrap';wrap.innerHTML='<div class="iatbModuleLabel"><b>MODULES</b><span>Trading IA · données moteurs</span></div>';
+ var wrap=el('section','iatbModuleWrap');wrap.id='iatbModuleWrap';wrap.innerHTML='<div class="iatbModuleLabel"><b>MODULES</b><span>Grille 5×3 · glisser pour déplacer · coin ↘ pour redimensionner</span></div>';
  var d=el('div','iatbModuleDeck');d.id='iatbModuleDeck';
  d.innerHTML=''
- +'<section class="iatbDashCard positionsCard"><h3>POSITIONS OUVERTES <span class="accent">↗</span></h3><div class="iatbMetricBig"><strong id="tdOpenPositionsCount">—</strong><span>Portfolio Engine · temps réel</span></div><div class="iatbPositionList" id="tdOpenPositions"><p>Aucune donnée reçue.</p></div></section>'
- +'<section class="iatbDashCard"><h3>VOLUME TRADÉ (LLM) <span class="accent">↗</span></h3><div class="iatbMetricBig"><strong id="tdLlmVolume">—</strong><span id="tdLlmVolumeState">Portfolio · Supervisor</span></div><div class="iatbBars"><i style="height:29%"></i><i style="height:44%"></i><i style="height:36%"></i><i style="height:61%"></i><i style="height:52%"></i><i style="height:72%"></i><i style="height:46%"></i><i style="height:80%"></i></div><div class="iatbAiSummary"><p id="tdLlmVolumeDetail">En attente de trades attribuables au LLM.</p></div></section>'
- +'<section class="iatbDashCard"><h3>TRADING EN DIRECT (LLM) <span class="livePill">● Actif</span></h3><div class="iatbMetricBig"><strong id="tdLiveTrading">—</strong><span>Portfolio ← Trading Engine</span></div><div class="iatbAiSummary"><p id="tdLiveTradingDetail">Aucune exécution récente.</p></div></section>'
- +'<section class="iatbDashCard"><h3>PERFORMANCE (LLM) <span class="accent">24h</span></h3><div class="iatbPerfGrid"><span>PnL réalisé</span><b id="tdPerfRealized">—</b><span>PnL ouvert</span><b id="tdPerfOpen">—</b><span>Win Rate</span><b id="tdPerfWin">—</b><span>Trades</span><b id="tdPerfTrades">—</b></div></section>'
- +'<section class="iatbDashCard"><h3>STRATÉGIE ACTUELLE <span class="accent">↗</span></h3><table class="iatbMiniTable"><tbody id="tdStrategies"><tr><td>Chargement…</td></tr></tbody></table><a class="iatbMore" href="#" id="tdStrategiesLink">Voir les stratégies →</a></section>';
- wrap.appendChild(d);return wrap;
+ +moduleCard(1,'positions','positionsCard','<h3>POSITIONS OUVERTES <span class="accent">↗</span></h3><div class="iatbMetricBig"><strong id="tdOpenPositionsCount">—</strong><span>Portfolio Engine · temps réel</span></div><div class="iatbPositionList" id="tdOpenPositions"><p>Aucune donnée reçue.</p></div>')
+ +moduleCard(2,'llm-volume','','<h3>VOLUME TRADÉ (LLM) <span class="accent">↗</span></h3><div class="iatbMetricBig"><strong id="tdLlmVolume">—</strong><span id="tdLlmVolumeState">Portfolio · Supervisor</span></div><div class="iatbBars"><i style="height:29%"></i><i style="height:44%"></i><i style="height:36%"></i><i style="height:61%"></i><i style="height:52%"></i><i style="height:72%"></i><i style="height:46%"></i><i style="height:80%"></i></div><div class="iatbAiSummary"><p id="tdLlmVolumeDetail">En attente de trades attribuables au LLM.</p></div>')
+ +moduleCard(3,'live-trading','','<h3>TRADING EN DIRECT (LLM) <span class="livePill">● Actif</span></h3><div class="iatbMetricBig"><strong id="tdLiveTrading">—</strong><span>Portfolio ← Trading Engine</span></div><div class="iatbAiSummary"><p id="tdLiveTradingDetail">Aucune exécution récente.</p></div>')
+ +moduleCard(4,'llm-performance','','<h3>PERFORMANCE (LLM) <span class="accent">24h</span></h3><div class="iatbPerfGrid"><span>PnL réalisé</span><b id="tdPerfRealized">—</b><span>PnL ouvert</span><b id="tdPerfOpen">—</b><span>Win Rate</span><b id="tdPerfWin">—</b><span>Trades</span><b id="tdPerfTrades">—</b></div>')
+ +moduleCard(5,'strategy','','<h3>STRATÉGIE ACTUELLE <span class="accent">↗</span></h3><table class="iatbMiniTable"><tbody id="tdStrategies"><tr><td>Chargement…</td></tr></tbody></table><a class="iatbMore" href="#" id="tdStrategiesLink">Voir les stratégies →</a>');
+ wrap.appendChild(d);setTimeout(function(){initModuleGrid(d)},0);return wrap;
+}
+function moduleGridCards(deck){return [].slice.call((deck||byId('iatbModuleDeck')).querySelectorAll('.iatbGridModule'))}
+function moduleGridAreaExcept(card){return moduleGridCards(card.parentNode).reduce(function(n,x){if(x===card)return n;return n+(+(x.getAttribute('data-span-x')||1))*(+(x.getAttribute('data-span-y')||1))},0)}
+function moduleGridApplySpan(card,x,y){
+ x=Math.max(1,Math.min(MODULE_GRID_COLS,Math.round(+x||1)));y=Math.max(1,Math.min(MODULE_GRID_ROWS,Math.round(+y||1)));
+ var free=MODULE_GRID_COLS*MODULE_GRID_ROWS-moduleGridAreaExcept(card);
+ while(x*y>free&&y>1)y--;while(x*y>free&&x>1)x--;
+ if(x*y>free){x=1;y=1}
+ card.setAttribute('data-span-x',x);card.setAttribute('data-span-y',y);card.style.gridColumn='span '+x;card.style.gridRow='span '+y;
+ var s=card.querySelector('.iatbModuleSize');if(s)s.textContent=x+'×'+y;
+}
+function saveModuleGrid(deck){
+ try{
+  var cards=moduleGridCards(deck),layout={order:[],spans:{}};
+  cards.forEach(function(card){var id=card.getAttribute('data-grid-id');layout.order.push(id);layout.spans[id]=[+(card.getAttribute('data-span-x')||1),+(card.getAttribute('data-span-y')||1)]});
+  localStorage.setItem(MODULE_GRID_KEY,JSON.stringify(layout));
+ }catch(e){}
+}
+function restoreModuleGrid(deck){
+ var layout=null;try{layout=JSON.parse(localStorage.getItem(MODULE_GRID_KEY)||'null')}catch(e){}
+ if(!layout)return;
+ var map={};moduleGridCards(deck).forEach(function(card){map[card.getAttribute('data-grid-id')]=card});
+ (layout.order||[]).forEach(function(id){if(map[id])deck.appendChild(map[id])});
+ moduleGridCards(deck).forEach(function(card){var s=layout.spans&&layout.spans[card.getAttribute('data-grid-id')];if(s)moduleGridApplySpan(card,s[0],s[1])});
+}
+function initModuleGrid(deck){
+ if(!deck||deck.dataset.gridReady==='1')return;deck.dataset.gridReady='1';restoreModuleGrid(deck);
+ var dragging=null;
+ moduleGridCards(deck).forEach(function(card){
+  var grip=card.querySelector('.iatbModuleGrip'),resize=card.querySelector('.iatbModuleResize');
+  if(grip){
+   grip.ondragstart=function(e){dragging=card;card.classList.add('dragging');try{e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',card.getAttribute('data-grid-id'))}catch(x){}};
+   grip.ondragend=function(){card.classList.remove('dragging');dragging=null;saveModuleGrid(deck)};
+  }
+  if(resize){
+   resize.ondblclick=function(e){e.preventDefault();moduleGridApplySpan(card,1,1);saveModuleGrid(deck)};
+   resize.onmousedown=function(e){
+    e.preventDefault();e.stopPropagation();
+    var sx=+(card.getAttribute('data-span-x')||1),sy=+(card.getAttribute('data-span-y')||1),startX=e.clientX,startY=e.clientY,cs=getComputedStyle(deck),gap=parseFloat(cs.columnGap||cs.gap)||6,pL=parseFloat(cs.paddingLeft)||0,pR=parseFloat(cs.paddingRight)||0,pT=parseFloat(cs.paddingTop)||0,pB=parseFloat(cs.paddingBottom)||0,innerW=deck.clientWidth-pL-pR,innerH=deck.clientHeight-pT-pB,col=(innerW-gap*(MODULE_GRID_COLS-1))/MODULE_GRID_COLS,row=(innerH-gap*(MODULE_GRID_ROWS-1))/MODULE_GRID_ROWS,startW=card.getBoundingClientRect().width,startH=card.getBoundingClientRect().height;
+    document.documentElement.classList.add('iatb-grid-resizing');
+    function move(ev){var x=Math.max(1,Math.min(MODULE_GRID_COLS,Math.round((startW+(ev.clientX-startX)+gap)/(col+gap)))),y=Math.max(1,Math.min(MODULE_GRID_ROWS,Math.round((startH+(ev.clientY-startY)+gap)/(row+gap))));moduleGridApplySpan(card,x,y)}
+    function up(){document.removeEventListener('mousemove',move);document.removeEventListener('mouseup',up);document.documentElement.classList.remove('iatb-grid-resizing');saveModuleGrid(deck)}
+    document.addEventListener('mousemove',move);document.addEventListener('mouseup',up);
+   };
+  }
+ });
+ deck.ondragover=function(e){if(dragging){e.preventDefault();try{e.dataTransfer.dropEffect='move'}catch(x){}}};
+ deck.ondrop=function(e){
+  if(!dragging)return;e.preventDefault();
+  var target=e.target.closest?e.target.closest('.iatbGridModule'):null;
+  if(target&&target!==dragging){var r=target.getBoundingClientRect(),after=e.clientY>r.top+r.height/2||e.clientX>r.left+r.width/2;deck.insertBefore(dragging,after?target.nextSibling:target)}
+  else deck.appendChild(dragging);
+  saveModuleGrid(deck);
+ };
 }
 function exchangeRow(name,logo,sub,status,detail,planned){var enabled=!planned&&(['GMX','KRAKEN','BINANCE','OKX'].indexOf(name)>=0);return '<div class="iatbExchangeRow '+(enabled?'selectable':'planned')+'" data-td-ex="'+name+'" data-exchange-selectable="'+(enabled?'1':'0')+'" role="'+(enabled?'button':'group')+'" tabindex="'+(enabled?'0':'-1')+'"><span class="iatbExLogo '+logo+'">'+name.charAt(0)+'</span><span class="iatbExName"><strong>'+name+'</strong><span>'+sub+'</span></span><span class="iatbExStatus '+(planned?'planned':'')+'"><strong>'+status+'</strong><span>'+detail+'</span></span></div>'}
 function exchangePanel(){var s=el('aside','iatbExchangeColumn');s.id='iatbExchangeDashboard';s.innerHTML='<div class="iatbSideHead">EXCHANGES & MARCHÉS</div><div class="iatbMarketTabs"><button class="active">Favoris</button><button>Tous</button></div><div class="iatbExchangeList">'+exchangeRow('BINANCE','binance','Spot','PUBLIC','API',false)+exchangeRow('KRAKEN','kraken','Spot','PUBLIC','API',false)+exchangeRow('OKX','okx','Spot','PUBLIC','API',false)+exchangeRow('GMX','gmx','Perp · Arbitrum','PUBLIC','Oracle',false)+'</div><section class="iatbConsensus"><h3>MARCHÉ DE RÉFÉRENCE</h3><div class="iatbConsensusTop"><div class="iatbConsensusBox"><small id="tdConsensusPair">BTC/USD</small><strong id="tdConsensusPrice">--</strong><small>Indice de consensus</small><strong class="iatbConsensusScore" id="tdConsensusScore">—</strong><div class="iatbGauge"><i id="tdConsensusGauge" style="width:0%"></i></div></div><div class="iatbConsensusBox"><small>Source principale</small><strong id="tdConsensusSource">Market Data</strong><small>Écart max prix</small><strong id="tdConsensusSpread">—</strong></div></div></section></div>';return s}
