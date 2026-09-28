@@ -1,5 +1,5 @@
 'use strict';
-/* IA-TB UI Service v1.12
+/* IA-TB UI Service v2.0
    Dedicated graphical-interface process.
    - Serves Frontend files only.
    - Proxies Core APIs and Router read channels through explicit boundaries.
@@ -32,7 +32,7 @@ function authorizePage(req,res,required,cb){if(AUTH_MODE==='disabled'){var r=BYP
 function allowCore(req,res,p){var c=Permissions.classify(req.method,p),role=currentRole();if(AUTH_MODE==='disabled'&&!Permissions.allowed(role,c)){json(res,403,{ok:false,error:'ACCESS_DENIED',role:role,required:c.permission});return false;}return c;}
 function routerReadPath(p){return p.indexOf('/communication/')===0||p.indexOf('/router-api/')===0||p.indexOf('/market-data')===0||p==='/firewall-events'||p.indexOf('/indicator-api')===0||p.indexOf('/fundamental-api')===0||p.indexOf('/liquidity-data')===0||p.indexOf('/portfolio-api')===0||p.indexOf('/kraken-api')===0;}
 var server=http.createServer(function(req,res){var u=new URL(req.url,'http://'+HOST+':'+PORT),p=u.pathname;
- if(req.method==='GET'&&p==='/ui-health')return json(res,200,{ok:true,name:'IA-TB UI Service',version:'1.12',pid:process.pid,host:HOST,port:PORT,corePort:CORE_PORT,routerPort:ROUTER_PORT,firewallPort:FIREWALL_PORT,authMode:AUTH_MODE,bypassRole:AUTH_MODE==='disabled'?BYPASS_ROLE:null,separation:'UI_PROCESS_ISOLATED'});
+ if(req.method==='GET'&&p==='/ui-health')return json(res,200,{ok:true,name:'IA-TB UI Service',version:'2.0.0',pid:process.pid,host:HOST,port:PORT,corePort:CORE_PORT,routerPort:ROUTER_PORT,firewallPort:FIREWALL_PORT,authMode:AUTH_MODE,bypassRole:AUTH_MODE==='disabled'?BYPASS_ROLE:null,separation:'UI_PROCESS_ISOLATED'});
  if(req.method==='GET'&&p==='/ui-api/project-tree')return authorizePage(req,res,'ADMIN',function(){json(res,200,{ok:true,root:path.basename(ROOT),tree:projectTree(ROOT,'',0)});});
  if(req.method==='GET'&&p==='/ui-api/project-file')return authorizePage(req,res,'ADMIN',function(){projectFilePreview(res,u.searchParams.get('path')||'');});
  if(req.method==='GET'&&p==='/ui-api/session')return json(res,200,{ok:true,authenticated:AUTH_MODE!=='disabled',authMode:AUTH_MODE,role:currentRole(),permissions:{read:true,userWrite:true,adminWrite:currentRole()==='ADMIN'},policy:'SERVER_SIDE'});
@@ -46,5 +46,5 @@ var server=http.createServer(function(req,res){var u=new URL(req.url,'http://'+H
  json(res,404,{ok:false,error:'UI_ROUTE_NOT_FOUND'});
 });
 server.on('error',function(e){console.error('IA-TB UI Service bind error:',e&&e.message||e);process.exit(17);});
-server.listen(PORT,HOST,function(){console.log('IA-TB UI Service v1.12 : http://'+HOST+':'+PORT);console.log('Core API interne : http://'+HOST+':'+CORE_PORT);console.log('Router interne   : http://'+HOST+':'+ROUTER_PORT);console.log('Firewall interne : http://'+HOST+':'+FIREWALL_PORT);});
+server.listen(PORT,HOST,function(){console.log('IA-TB UI Service v2.0 : http://'+HOST+':'+PORT);console.log('Core API interne : http://'+HOST+':'+CORE_PORT);console.log('Router interne   : http://'+HOST+':'+ROUTER_PORT);console.log('Firewall interne : http://'+HOST+':'+FIREWALL_PORT);});
 function stop(){server.close(function(){process.exit(0);});setTimeout(function(){process.exit(0);},1200);}process.on('SIGINT',stop);process.on('SIGTERM',stop);
