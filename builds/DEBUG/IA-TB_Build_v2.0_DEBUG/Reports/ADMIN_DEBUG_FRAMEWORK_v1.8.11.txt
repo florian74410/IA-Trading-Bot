@@ -1,9 +1,0 @@
-IA-TB v1.8.11
-Unified Admin Console + Debug Control Framework v1
-- Console Admin unique; pas de seconde console
-- CP/1 + logs + debug actif fusionnés
-- Debug targets dynamiques via ProcessRegistry
-- Actions actives start/stop/restart/reset-safe/trace
-- Observabilité health/self-test/metrics/dependencies/state/logs/errors
-- Whitelist + confirmations + audit logs.dat
-- Aucun shell arbitraire
