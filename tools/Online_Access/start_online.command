@@ -12,6 +12,23 @@ LEGACY_URL="https://github.com/cloudflare/cloudflared/releases/download/${LEGACY
 LEGACY_BIN="./cloudflared-highsierra"
 RUNTIME_DIR="./.runtime"
 TUNNEL_LOG="$RUNTIME_DIR/cloudflared.log"
+
+# Couleurs ANSI - compatibles Terminal.app / High Sierra.
+if [ -t 1 ]; then
+  C_RESET='\033[0m'
+  C_BOLD='\033[1m'
+  C_DIM='\033[2m'
+  C_GREEN='\033[1;32m'
+  C_CYAN='\033[1;36m'
+  C_BLUE='\033[1;34m'
+  C_YELLOW='\033[1;33m'
+  C_RED='\033[1;31m'
+  C_MAGENTA='\033[1;35m'
+  C_GRAY='\033[0;90m'
+else
+  C_RESET=''; C_BOLD=''; C_DIM=''; C_GREEN=''; C_CYAN=''
+  C_BLUE=''; C_YELLOW=''; C_RED=''; C_MAGENTA=''; C_GRAY=''
+fi
 TUNNEL_PID=""
 PUBLIC_URL=""
 
@@ -23,12 +40,17 @@ pause_exit() {
 
 banner() {
   clear
-  echo "============================================================"
-  echo "              IA-TB - ONLINE ACCESS CONSOLE"
-  echo "============================================================"
+  printf "${C_CYAN}${C_BOLD}"
+  echo "╔══════════════════════════════════════════════════════════════╗"
+  echo "║                                                              ║"
+  echo "║                 IA-TB · ONLINE ACCESS                       ║"
+  echo "║                    CONTROL CONSOLE                           ║"
+  echo "║                                                              ║"
+  echo "╚══════════════════════════════════════════════════════════════╝"
+  printf "${C_RESET}"
+  printf "  ${C_GRAY}Secure temporary gateway · localhost → Internet${C_RESET}\n"
   echo ""
 }
-
 local_health() {
   curl -fsS --max-time 3 "http://127.0.0.1:$PORT/ui-health" >/dev/null 2>&1
 }
@@ -52,45 +74,44 @@ trap cleanup EXIT INT TERM
 
 show_status() {
   echo ""
-  echo "----------------------- STATUS -----------------------------"
+  printf "${C_BLUE}${C_BOLD}┌──────────────────────── LIVE STATUS ─────────────────────────┐${C_RESET}\n"
   if local_health; then
-    echo " IA-TB local ......... ONLINE"
+    printf "│  IA-TB LOCAL       ${C_GREEN}● ONLINE${C_RESET}                                │\n"
   else
-    echo " IA-TB local ......... OFFLINE"
+    printf "│  IA-TB LOCAL       ${C_RED}● OFFLINE${C_RESET}                               │\n"
   fi
-  echo " Adresse locale ...... http://127.0.0.1:$PORT"
   if tunnel_alive; then
-    echo " Tunnel .............. ONLINE"
+    printf "│  INTERNET TUNNEL   ${C_GREEN}● ONLINE${C_RESET}                                │\n"
   else
-    echo " Tunnel .............. OFFLINE"
+    printf "│  INTERNET TUNNEL   ${C_RED}● OFFLINE${C_RESET}                               │\n"
   fi
+  printf "│  LOCAL             ${C_CYAN}http://127.0.0.1:%-5s${C_RESET}                  │\n" "$PORT"
   if [ -n "$PUBLIC_URL" ]; then
-    echo " URL publique ........ $PUBLIC_URL"
+    printf "└──────────────────────────────────────────────────────────────┘\n"
+    printf "  ${C_YELLOW}${C_BOLD}PUBLIC URL${C_RESET}  ${C_CYAN}%s${C_RESET}\n" "$PUBLIC_URL"
   else
-    echo " URL publique ........ indisponible"
+    printf "└──────────────────────────────────────────────────────────────┘\n"
+    printf "  ${C_YELLOW}PUBLIC URL${C_RESET}  indisponible\n"
   fi
   if [ -f "$TUNNEL_LOG" ]; then
     CONNECTIONS="$(grep -c 'registered connIndex=' "$TUNNEL_LOG" 2>/dev/null || echo 0)"
-    echo " Connexions tunnel ... $CONNECTIONS enregistree(s)"
+    printf "  ${C_MAGENTA}Cloudflare links${C_RESET} : %s connexion(s) enregistree(s)\n" "$CONNECTIONS"
   fi
-  echo "------------------------------------------------------------"
   echo ""
 }
-
 show_help() {
-  echo ""
-  echo "Commandes disponibles :"
-  echo "  status       Etat IA-TB, tunnel, URL et connexions"
-  echo "  url          Affiche uniquement l'URL publique"
-  echo "  connections  Affiche les connexions Cloudflare enregistrees"
-  echo "  logs         Affiche les 30 dernieres lignes du tunnel"
-  echo "  health       Teste IA-TB local et le tunnel"
-  echo "  clear        Nettoie l'ecran et reaffiche le statut"
-  echo "  help         Affiche cette aide"
-  echo "  stop         Coupe le tunnel et ferme cette console"
+  printf "${C_BLUE}${C_BOLD}┌──────────────────────── COMMANDES ───────────────────────────┐${C_RESET}\n"
+  printf "│  ${C_CYAN}status${C_RESET}       Tableau de bord du tunnel                     │\n"
+  printf "│  ${C_CYAN}url${C_RESET}          Afficher l'adresse publique                   │\n"
+  printf "│  ${C_CYAN}connections${C_RESET}  Connexions Cloudflare                        │\n"
+  printf "│  ${C_CYAN}logs${C_RESET}         30 derniers evenements du tunnel              │\n"
+  printf "│  ${C_CYAN}health${C_RESET}       Diagnostic IA-TB + tunnel                     │\n"
+  printf "│  ${C_CYAN}clear${C_RESET}        Rafraichir la console                         │\n"
+  printf "│  ${C_CYAN}help${C_RESET}         Afficher cette aide                           │\n"
+  printf "│  ${C_RED}stop${C_RESET}         Couper immediatement l'acces Internet          │\n"
+  printf "└──────────────────────────────────────────────────────────────┘\n"
   echo ""
 }
-
 banner
 
 # 1) IA-TB doit deja etre demarre.
@@ -176,10 +197,10 @@ if [ -z "$PUBLIC_URL" ]; then
 fi
 
 banner
-echo "[OK] Tunnel Internet actif."
+printf "\${C_GREEN}\${C_BOLD}[ OK ] Tunnel Internet actif.\${C_RESET}\\n"
 echo ""
-echo " URL PUBLIQUE :"
-echo " $PUBLIC_URL"
+printf " \${C_YELLOW}\${C_BOLD}URL PUBLIQUE :\${C_RESET}\\n"
+printf " \${C_CYAN}\${C_BOLD}%s\${C_RESET}\\n" "$PUBLIC_URL"
 echo ""
 echo " Cette URL est temporaire et publique : partage-la uniquement"
 echo " avec la personne autorisee. 'stop' coupe immediatement l'acces."
@@ -188,7 +209,7 @@ show_help
 
 # Console interactive. cloudflared reste en arriere-plan et ecrit dans TUNNEL_LOG.
 while tunnel_alive; do
-  printf "ONLINE > "
+  printf "\${C_GREEN}\${C_BOLD}ONLINE\${C_RESET}\${C_CYAN} > \${C_RESET}"
   if ! read CMD; then
     break
   fi
