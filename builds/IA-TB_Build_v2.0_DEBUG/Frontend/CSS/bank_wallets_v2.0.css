@@ -27,3 +27,11 @@
 .wvCreateOwner span{color:#7898aa;font-size:9px;text-transform:uppercase;letter-spacing:.05em}
 .wvCreateOwner b{color:#5bd7ff;font-size:12px}
 .wvCreateOwner small{color:#8db0bf;font-size:8px;font-family:Menlo,Monaco,monospace}
+
+/* v2.0 DEBUG — wallet creation mode selector */
+.wvCreateMode{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:14px 20px 0;padding:5px;border:1px solid #1d465d;border-radius:9px;background:#061722}
+.wvCreateMode button{border:1px solid transparent;border-radius:6px;background:transparent;color:#86a9ba;padding:8px 12px;font-size:10px;font-weight:800;cursor:pointer}
+.wvCreateMode button:hover{color:#dff6ff;border-color:#1c607f}
+.wvCreateMode button.active{border-color:#1aa8ff;background:linear-gradient(180deg,#0b77d5,#075aa8);color:#fff;box-shadow:0 0 12px rgba(18,158,255,.15)}
+.wvImportOnly[hidden]{display:none!important}
+.wvCreateGrid .wvImportOnly input{font-family:Menlo,Monaco,monospace;font-size:9px;letter-spacing:.02em}
