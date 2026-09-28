@@ -19,7 +19,8 @@ function render(){
  bind();
 }
 function bind(){
- $$('.wvCard').forEach(function(b){b.onclick=function(){state.selected=b.getAttribute('data-wv');render()}});
+ var w=state.wallets.filter(function(x){return x.id===state.selected})[0]||null;
+ $('.wvCard').forEach(function(b){b.onclick=function(){state.selected=b.getAttribute('data-wv');render()}});
  var search=$('.wvSearch');if(search)search.oninput=function(){var q=this.value.toLowerCase();$$('.wvCard').forEach(function(c){c.style.display=c.textContent.toLowerCase().indexOf(q)>=0?'':'none'})};
  var focus=$('.wvTransferFocus');if(focus)focus.onclick=function(){var x=document.getElementById('wvTransfer');if(x)x.scrollIntoView({behavior:'smooth',block:'center'})};
  var create=document.getElementById('wvCreate');if(create)create.onclick=function(){var name=document.getElementById('wvNewName').value.trim(),network=document.getElementById('wvNewNetwork').value;if(!name)return notify({size:'small',title:'Nom requis',text:'Donnez un nom à votre nouveau wallet.',icon:'!' });create.disabled=true;fetch('/api/security/wallets/create',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:name,network:network})}).then(function(r){return r.json().then(function(o){if(!r.ok)throw new Error(o.error||'WALLET_CREATE_FAILED');return o})}).then(function(o){notify({size:'small',title:'Wallet créé',text:o.item.name+' · '+o.item.network,icon:'✓'});return load()}).catch(function(e){notify({size:'medium',title:'Création impossible',text:e.message,icon:'!'});}).then(function(){create.disabled=false})};
