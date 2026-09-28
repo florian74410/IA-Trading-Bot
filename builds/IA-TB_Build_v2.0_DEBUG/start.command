@@ -600,4 +600,34 @@ echo "────────────────────────�
 echo
 
 open "http://127.0.0.1:$UI_PORT" >/dev/null 2>&1 || true
+
+# Acces Internet temporaire optionnel.
+# Le tunnel reste un outil externe au runtime : start.command ne fait que proposer
+# de lancer tools/Online_Access/start_online.command dans une nouvelle fenetre Terminal.
+echo
+printf "  Activer l'acces Internet temporaire (Cloudflare Tunnel) ? [o/N] "
+read IATB_TUNNEL_REPLY
+case "$IATB_TUNNEL_REPLY" in
+  o|O|oui|OUI|y|Y|yes|YES)
+    ONLINE_SCRIPT="$PWD/../../tools/Online_Access/start_online.command"
+    if [ -f "$ONLINE_SCRIPT" ]; then
+      chmod +x "$ONLINE_SCRIPT" >/dev/null 2>&1 || true
+      ONLINE_SCRIPT_ABS="$(cd "$(dirname "$ONLINE_SCRIPT")" 2>/dev/null && pwd)/$(basename "$ONLINE_SCRIPT")"
+      if [ -n "$ONLINE_SCRIPT_ABS" ]; then
+        osascript -e 'tell application "Terminal"' -e "do script \"\\\"$ONLINE_SCRIPT_ABS\\\"\"" -e 'activate' -e 'end tell' >/dev/null 2>&1 &
+        status_ok "Online Access" "launch requested"
+        echo "         ↳ Une nouvelle fenetre Terminal va afficher le lien HTTPS."
+      else
+        status_warn "Online Access" "path unavailable"
+      fi
+    else
+      status_warn "Online Access" "tool not found"
+      echo "         ↳ Attendu: tools/Online_Access/start_online.command"
+    fi
+    ;;
+  *)
+    status_skip "Online Access" "local only"
+    ;;
+esac
+
 wait "$APP_PID"
