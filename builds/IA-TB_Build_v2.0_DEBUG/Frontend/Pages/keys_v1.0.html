@@ -1,11 +1,11 @@
 <!doctype html>
 <html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer">
 <title>IA-TB · Clés</title>
-<link rel="stylesheet" href="/assets/global_navigation_v2.0.css"><link rel="stylesheet" href="/assets/keys_v1.0.css?v=1000">
-<script defer src="/assets/global_navigation_v2.0.js?v=2010"></script><script defer src="/assets/keys_controller_v1.0.js?v=1000"></script>
+<link rel="stylesheet" href="/assets/global_navigation_v2.0.css"><link rel="stylesheet" href="/assets/keys_v1.0.css?v=1003">
+<script defer src="/assets/global_navigation_v2.0.js?v=2010"></script><script defer src="/assets/keys_controller_v1.0.js?v=1003"></script>
 </head><body>
 <main class="keysApp">
-<header class="keysHero"><div><h1><span>⚿</span> Gestion des Clés</h1><p>Stockez, affichez et récupérez vos clés de portefeuilles en toute sécurité.</p></div><div class="heroActions"><button id="addKey" class="primary">＋ Ajouter une clé⌄</button><button id="importKeys">⇧ Importer</button><button id="exportKeys">⇩ Exporter</button><button id="keySettings">⚙ Paramètres</button></div></header>
+<header class="keysHero"><div><h1><span>⚿</span> Gestion des Clés</h1><p>Stockez, affichez et récupérez vos clés de portefeuilles en toute sécurité.</p></div><div class="heroActions"><button id="addKey" class="primary">＋ Ajouter une clé⌄</button><button id="exportKeys">⇩ Exporter</button><button id="keySettings">⚙ Paramètres</button></div></header>
 <section class="keyMetrics"><article><i>▣</i><div><small>Portefeuilles</small><strong id="walletCount">0</strong><span>Actifs</span></div></article><article><i>⚿</i><div><small>Clés stockées</small><strong id="keyCount">0</strong><span>Publiques & Privées</span></div></article><article><i>◇</i><div><small>Chiffrement</small><strong class="green">Activé</strong><span>RSA-OAEP + coffre AES-256</span></div></article><article><i>◷</i><div><small>Dernière sauvegarde</small><strong id="backupState">Locale</strong><span>Coffre IA-TB protégé</span></div></article></section>
 <section class="keyToolbar"><div class="filters"><button data-filter="ALL" class="active">Tous <b id="allCount">(0)</b></button><button data-filter="EXCHANGE">Exchange</button><button data-filter="HOT">Hot Wallet</button><button data-filter="COLD">Cold Wallet</button></div><div class="searchSort"><input id="keySearch" placeholder="⌕ Rechercher un portefeuille..."><select id="keySort"><option value="name">Trier par : Nom</option><option value="type">Trier par : Type</option><option value="network">Trier par : Réseau</option></select></div></section>
 <section class="keyTable"><div class="keyHead"><span>NOM</span><span>TYPE</span><span>RÉSEAU / EXCHANGE</span><span>ADRESSE PUBLIQUE</span><span>CLÉ PRIVÉE</span><span>ACTIONS</span></div><div id="keyRows" class="keyRows"></div></section>
