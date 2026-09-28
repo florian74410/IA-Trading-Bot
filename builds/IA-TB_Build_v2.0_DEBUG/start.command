@@ -74,7 +74,7 @@ startup_banner(){
   echo "╔══════════════════════════════════════════════════════════════╗"
   echo "║                                                              ║"
   echo "║                     IA TRADING BOT                           ║"
-  echo "║                      v1.12 DEBUG                             ║"
+  echo "║                      v2.0 DEBUG                              ║"
   echo "║                                                              ║"
   echo "║                  SYSTEM STARTUP CONSOLE                      ║"
   echo "║                                                              ║"
