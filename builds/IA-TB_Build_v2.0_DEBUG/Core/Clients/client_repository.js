@@ -20,7 +20,7 @@ function ClientRepository(opts){
 ClientRepository.prototype.run=function(sql,read){
   var dir=path.dirname(this.dbPath);
   try{if(!fs.existsSync(dir))fs.mkdirSync(dir,{recursive:true,mode:448});fs.chmodSync(dir,448);}catch(e){}
-  var pre='PRAGMA foreign_keys=ON; PRAGMA busy_timeout=5000; PRAGMA secure_delete=ON; ';
+  var pre='.timeout 5000\nPRAGMA foreign_keys=ON;\n';
   var args=read?['-batch','-noheader','-separator','\t',this.dbPath]:['-batch',this.dbPath];
   var r=child.spawnSync(this.sqlite,args,{input:pre+String(sql||''),encoding:'utf8',timeout:7000,maxBuffer:2*1024*1024});
   if(r.error)throw r.error;
