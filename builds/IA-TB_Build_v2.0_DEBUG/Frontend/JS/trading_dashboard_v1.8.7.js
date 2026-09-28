@@ -1,6 +1,6 @@
 (function(){
 'use strict';
-var VERSION='1.12-workspace';
+var VERSION='2.0.0';
 function el(tag,cls,html){var n=document.createElement(tag);if(cls)n.className=cls;if(html!==undefined)n.innerHTML=html;return n}
 function q(s){return document.querySelector(s)}
 function byId(id){return document.getElementById(id)}
@@ -27,7 +27,15 @@ function moduleDeck(){
 }
 function exchangeRow(name,logo,sub,status,detail,planned){var enabled=!planned&&(['GMX','KRAKEN','BINANCE','OKX'].indexOf(name)>=0);return '<div class="iatbExchangeRow '+(enabled?'selectable':'planned')+'" data-td-ex="'+name+'" data-exchange-selectable="'+(enabled?'1':'0')+'" role="'+(enabled?'button':'group')+'" tabindex="'+(enabled?'0':'-1')+'"><span class="iatbExLogo '+logo+'">'+name.charAt(0)+'</span><span class="iatbExName"><strong>'+name+'</strong><span>'+sub+'</span></span><span class="iatbExStatus '+(planned?'planned':'')+'"><strong>'+status+'</strong><span>'+detail+'</span></span></div>'}
 function exchangePanel(){var s=el('aside','iatbExchangeColumn');s.id='iatbExchangeDashboard';s.innerHTML='<div class="iatbSideHead">EXCHANGES & MARCHÉS</div><div class="iatbMarketTabs"><button class="active">Favoris</button><button>Tous</button></div><div class="iatbExchangeList">'+exchangeRow('BINANCE','binance','Spot','PUBLIC','API',false)+exchangeRow('KRAKEN','kraken','Spot','PUBLIC','API',false)+exchangeRow('OKX','okx','Spot','PUBLIC','API',false)+exchangeRow('GMX','gmx','Perp · Arbitrum','PUBLIC','Oracle',false)+'</div><section class="iatbConsensus"><h3>MARCHÉ DE RÉFÉRENCE</h3><div class="iatbConsensusTop"><div class="iatbConsensusBox"><small id="tdConsensusPair">BTC/USD</small><strong id="tdConsensusPrice">--</strong><small>Indice de consensus</small><strong class="iatbConsensusScore" id="tdConsensusScore">—</strong><div class="iatbGauge"><i id="tdConsensusGauge" style="width:0%"></i></div></div><div class="iatbConsensusBox"><small>Source principale</small><strong id="tdConsensusSource">Market Data</strong><small>Écart max prix</small><strong id="tdConsensusSpread">—</strong></div></div></section></div>';return s}
-function serviceStrip(){var n=el('footer','iatbServiceStrip');n.id='iatbServiceStrip';var services=[['Core','8001'],['Market Data','8013'],['Indicators','8012'],['Liquidity','8014'],['Fundamental','8015'],['Risk Engine','8019'],['Trading Engine','8016'],['Strategy Engine','8018'],['UserData Server','8020'],['Router','8021']];var h='<div class="iatbSvcTitle">ÉTAT DES SERVICES</div><div class="iatbSvcList">';for(var i=0;i<services.length;i++)h+='<div class="iatbSvc"><span class="iatbSvcTop"><i class="iatbSvcDot" data-svc="'+services[i][0]+'"></i>'+services[i][0]+'</span><small>'+services[i][1]+'</small></div>';h+='</div><div class="iatbSvcMetric"><small>LATENCE</small><strong id="tdLatency">—</strong></div><div class="iatbSvcMetric"><small>UPTIME</small><strong id="tdUptime">—</strong></div>';n.innerHTML=h;return n}
+function serviceStrip(){
+  var n=el('footer','iatbServiceStrip');n.id='iatbServiceStrip';
+  /* Runtime topology mirrors start.command. Firewall Trading/Data are internal
+     protection threads on the single Firewall service (8017), not extra ports. */
+  var services=[['Core','8001'],['Market Data','8013'],['Indicators','8012'],['Liquidity','8014'],['Fundamental','8015'],['Risk Engine','8019'],['Trading Engine','8016'],['Strategy Engine','8018'],['Portfolio Engine','8020'],['Router','8021'],['Firewall','8017'],['IA Supervisor','3000']];
+  var h='<div class="iatbSvcTitle">ÉTAT DES SERVICES <span>runtime local v'+VERSION+'</span></div><div class="iatbSvcList">';
+  for(var i=0;i<services.length;i++)h+='<div class="iatbSvc"><span class="iatbSvcTop"><i class="iatbSvcDot" data-svc="'+services[i][0]+'"></i>'+services[i][0]+'</span><span class="iatbSvcPort">'+services[i][1]+'</span></div>';
+  h+='</div><div class="iatbSvcTail"><div><small>LATENCE</small><strong id="tdLatency">—</strong></div><div><small>UPTIME</small><strong id="tdUptime">—</strong></div></div>';n.innerHTML=h;return n;
+}
 
 function syncExchangeSelection(){
   var active=String((window.IATBTradingState&&window.IATBTradingState.marketSource)||'').toUpperCase();
@@ -54,14 +62,6 @@ function bindExchangeSwitches(root){
     row.onkeydown=function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();requestExchangeSwitch(row.getAttribute('data-td-ex'))}};
   });
   syncExchangeSelection();
-}
-
-function serviceStrip(){
-  var n=el('footer','iatbServiceStrip');n.id='iatbServiceStrip';
-  var services=[['Core','8001'],['Market Data','8013'],['Indicators','8012'],['Liquidity','8014'],['Fundamental','8015'],['Risk Engine','8019'],['Trading Engine','8016'],['Strategy Engine','8010'],['UserData Server','8020'],['Router','8010'],['Trading FW','8017'],['Data FW','8018']];
-  var h='<div class="iatbSvcTitle">ÉTAT DES SERVICES <span>runtime local v'+VERSION+'</span></div><div class="iatbSvcList">';
-  for(var i=0;i<services.length;i++)h+='<div class="iatbSvc"><span class="iatbSvcTop"><i class="iatbSvcDot" data-svc="'+services[i][0]+'"></i>'+services[i][0]+'</span><span class="iatbSvcPort">'+services[i][1]+'</span></div>';
-  h+='</div><div class="iatbSvcTail"><div><small>LATENCE</small><strong id="tdLatency">—</strong></div><div><small>UPTIME</small><strong id="tdUptime">—</strong></div></div>';n.innerHTML=h;return n;
 }
 
 function markDot(name,state){var x=document.querySelector('.iatbSvcDot[data-svc="'+name+'"]');if(x)x.className='iatbSvcDot '+(state||'')}
@@ -199,7 +199,7 @@ function probeMarketProviders(){
 function health(){
   var start=Date.now();
   fetch('/api/health',{credentials:'same-origin'}).then(function(r){if(!r.ok)throw new Error();return r.json()}).then(function(){markDot('Core','ok');markDot('Router','ok');setText('tdLatency',(Date.now()-start)+' ms')}).catch(function(){markDot('Core','bad')});
-  fetch('/api/status',{credentials:'same-origin'}).then(function(r){if(!r.ok)throw new Error();return r.json()}).then(function(){markDot('Market Data','ok');markDot('Trading Engine','ok');markDot('Trading FW','ok');setText('tdUptime','en ligne')}).catch(function(){});
+  fetch('/api/status',{credentials:'same-origin'}).then(function(r){if(!r.ok)throw new Error();return r.json()}).then(function(){markDot('Market Data','ok');markDot('Trading Engine','ok');markDot('Firewall','ok');setText('tdUptime','en ligne')}).catch(function(){});
   probeMarketProviders();
 }
 
