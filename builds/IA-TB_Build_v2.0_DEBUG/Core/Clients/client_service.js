@@ -38,7 +38,7 @@ ClientService.prototype.resolveSession=function(sess){
   return this._public(x);
 };
 ClientService.prototype.update=function(sess,input){
-  var me=this.resolveSession(sess),cur=this.repo.byId(me.clientId),n=splitName(input&&input.username||''),first=cleanName(input&&input.firstName!=null?input.firstName:n.firstName),last=cleanName(input&&input.lastName!=null?input.lastName:n.lastName),email=cleanEmail(input&&input.email!=null?input.email:me.email),emailHash=email?this.crypto.lookupHash(email):'';
+  input=input||{};var me=this.resolveSession(sess),hasUsername=input.username!=null&&String(input.username).trim()!=='',n=hasUsername?splitName(input.username):{firstName:me.firstName,lastName:me.lastName},first=cleanName(input.firstName!=null?input.firstName:n.firstName),last=cleanName(input.lastName!=null?input.lastName:n.lastName),email=cleanEmail(input.email!=null?input.email:me.email),emailHash=email?this.crypto.lookupHash(email):'';
   if(emailHash){var other=this.repo.byEmailHash(emailHash);if(other&&other.clientId!==me.clientId)throw new Error('CLIENT_EMAIL_ALREADY_USED');}
   var out=this.repo.updateIdentity(me.clientId,{firstNameEnc:this.crypto.seal(first),lastNameEnc:this.crypto.seal(last),emailEnc:this.crypto.seal(email),emailHash:emailHash,updatedAt:new Date().toISOString()});
   this.repo.audit(me.clientId,'CLIENT_PROFILE_UPDATED',null,this.crypto.seal(JSON.stringify({fields:['firstName','lastName','email']})));
