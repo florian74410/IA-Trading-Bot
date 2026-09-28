@@ -20,10 +20,10 @@ function render(){
 }
 function bind(){
  var w=state.wallets.filter(function(x){return x.id===state.selected})[0]||null;
- $('.wvCard').forEach(function(b){b.onclick=function(){state.selected=b.getAttribute('data-wv');render()}});
- var search=$('.wvSearch');if(search)search.oninput=function(){var q=this.value.toLowerCase();$$('.wvCard').forEach(function(c){c.style.display=c.textContent.toLowerCase().indexOf(q)>=0?'':'none'})};
- var focus=$('.wvTransferFocus');if(focus)focus.onclick=function(){var x=document.getElementById('wvTransfer');if(x)x.scrollIntoView({behavior:'smooth',block:'center'})};
  var create=document.getElementById('wvCreate');if(create)create.onclick=openCreateWallet;
+ $('.wvCard').forEach(function(b){b.onclick=function(){state.selected=b.getAttribute('data-wv');render()}});
+ var search=$('.wvSearch');if(search)search.oninput=function(){var q=this.value.toLowerCase();$('.wvCard').forEach(function(c){c.style.display=c.textContent.toLowerCase().indexOf(q)>=0?'':'none'})};
+ var focus=$('.wvTransferFocus');if(focus)focus.onclick=function(){var x=document.getElementById('wvTransfer');if(x)x.scrollIntoView({behavior:'smooth',block:'center'})};
  var pub=$('.wvPublicKey');if(pub&&w)pub.onclick=function(){var h=w.accounts.map(function(a){return '<div class="iaSecretBox"><b>'+esc(a.family)+'</b><br>'+esc(a.publicKey||a.address)+'</div>'}).join('');notify({size:'medium',title:'Clés publiques · '+w.name,subtitle:'Une identité IA-TB, plusieurs familles blockchain.',html:h,icon:'⌘'})};
  var priv=$('.wvPrivateKey');if(priv&&w)priv.onclick=function(){notify({size:'medium',title:'Afficher la clé privée ?',subtitle:'Action sensible · confirmation requise',icon:'🔐',html:'<div class="iaNtfSensitive"><b>Attention.</b> Toute personne possédant cette clé peut contrôler les actifs de ce wallet. IA-TB ne vous demandera jamais de la transmettre. Vérifiez que personne ne voit votre écran avant de continuer.</div>',actions:[{label:'Annuler'},{label:'Je comprends · Afficher',kind:'danger',onClick:function(close){close();choosePrivate(w)}}]})};
  var archive=$('.wvArchive');if(archive&&w)archive.onclick=function(){notify({size:'medium',title:'Retirer ce wallet de la Banque ?',subtitle:'Le wallet ne sera pas détruit.',icon:'×',text:'Il disparaîtra de votre interface active, mais ses données chiffrées resteront conservées afin de respecter le principe de récupération.',actions:[{label:'Annuler'},{label:'Retirer',kind:'danger',onClick:function(close){close();archiveWallet(w)}}]})};
