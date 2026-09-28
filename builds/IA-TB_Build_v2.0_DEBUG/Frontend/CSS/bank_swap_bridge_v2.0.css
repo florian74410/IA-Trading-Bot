@@ -46,3 +46,11 @@
 .swapBridgeV2 .sbTop .sbHelp{font-size:8px;margin-top:4px}
 .swapBridgeV2 .sbMain{margin-top:8px}
 @media(max-width:1250px){.swapBridgeV2 .sbTop>.sbCard{height:auto;min-height:176px}}
+
+/* FIX after network rail removal: workspace must no longer reserve the old 48px rail column.
+   Keep the compact-card tuning from c8508e6, now applied at full available width. */
+.swapBridgeV2 .sbWorkspace{display:block!important;grid-template-columns:none!important;gap:0!important;width:100%}
+.swapBridgeV2 .sbWorkspaceBody{display:block;width:100%;min-width:0}
+.swapBridgeV2 .sbTop{width:100%;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,.86fr) minmax(0,.8fr);gap:9px}
+@media(max-width:1250px){.swapBridgeV2 .sbWorkspace{display:block!important}.swapBridgeV2 .sbTop{grid-template-columns:1fr 1fr}}
+@media(max-width:800px){.swapBridgeV2 .sbTop{grid-template-columns:1fr}}
