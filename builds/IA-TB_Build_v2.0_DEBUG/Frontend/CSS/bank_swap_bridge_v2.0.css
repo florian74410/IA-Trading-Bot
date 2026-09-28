@@ -77,3 +77,80 @@
 
 /* network selector inside source/destination cards */
 .swapBridgeV2 .sbNetworkSelect select{max-width:125px;min-width:0;background:#071b2b;color:#eaf7ff;border:1px solid #174866;border-radius:6px;padding:5px 6px;font-size:9px}
+
+
+/* v2.0 — Swap & Bridge breathing room + compact visual banner */
+.servicePlaceholder.swapMode{padding-top:12px!important}
+.swapBridgeV2 .sbHead{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) 330px;
+  gap:16px;
+  align-items:stretch;
+  margin:0 0 12px!important;
+  min-width:0
+}
+.swapBridgeV2 .sbHeadCopy{min-width:0;padding:5px 0 2px}
+.swapBridgeV2 .sbHeroBanner{
+  position:relative;
+  min-width:0;
+  height:92px;
+  border:1px solid #175070;
+  border-radius:12px;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 72% 22%,rgba(40,190,255,.22),transparent 34%),
+    linear-gradient(135deg,#08243a 0%,#061725 52%,#04101a 100%);
+  box-shadow:inset 0 1px rgba(255,255,255,.05),0 8px 24px rgba(0,0,0,.18)
+}
+.swapBridgeV2 .sbHeroBanner:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  opacity:.18;
+  background:
+    linear-gradient(90deg,transparent 49%,#20a8ff 50%,transparent 51%),
+    linear-gradient(0deg,transparent 49%,#20a8ff 50%,transparent 51%);
+  background-size:38px 38px
+}
+.swapBridgeV2 .sbHeroGlow{position:absolute;right:-22px;bottom:-36px;width:150px;height:150px;border-radius:50%;background:rgba(8,124,240,.16);filter:blur(10px)}
+.swapBridgeV2 .sbHeroRoute{position:absolute;left:16px;bottom:14px;display:flex;align-items:center;gap:7px;z-index:2}
+.swapBridgeV2 .sbHeroNode{width:31px;height:31px;border:1px solid #24779d;border-radius:50%;display:grid;place-items:center;background:#061725;box-shadow:0 0 12px rgba(22,153,255,.16)}
+.swapBridgeV2 .sbHeroNode img{width:20px;height:20px;object-fit:contain}
+.swapBridgeV2 .sbHeroLink{color:#2dddb6;font-size:15px;font-weight:800}
+.swapBridgeV2 .sbHeroText{position:absolute;left:16px;top:13px;z-index:2}
+.swapBridgeV2 .sbHeroText b{display:block;font-size:10px;letter-spacing:.09em;color:#67d8ff}
+.swapBridgeV2 .sbHeroText small{display:block;margin-top:3px;font-size:9px;color:#8fb0c2}
+.servicePlaceholder.swapMode>#closeService{
+  top:21px!important;
+  right:23px!important;
+  z-index:12;
+  padding:7px 11px;
+  border-color:#2489b7;
+  background:rgba(3,16,26,.78);
+  backdrop-filter:blur(4px);
+  box-shadow:0 4px 14px rgba(0,0,0,.24)
+}
+
+/* Slightly more air without increasing the overall page width. */
+.swapBridgeV2 .sbTabs{gap:9px;margin:8px 0 12px}
+.swapBridgeV2 .sbWalletBar{gap:12px;margin-bottom:11px}
+.swapBridgeV2 .sbTop{gap:12px}
+.swapBridgeV2 .sbMain{gap:12px;margin-top:12px}
+.swapBridgeV2 .sbBottom{gap:12px;margin-top:12px}
+.swapBridgeV2 .sbHistory{margin-top:12px}
+.swapBridgeV2 .sbTop>*,
+.swapBridgeV2 .sbMain>*,
+.swapBridgeV2 .sbBottom>*,
+.swapBridgeV2 .sbWalletBar>*{min-width:0}
+
+@media(max-width:1250px){
+  .swapBridgeV2 .sbHead{grid-template-columns:minmax(0,1fr) 290px;gap:12px}
+  .swapBridgeV2 .sbHeroBanner{height:86px}
+  .servicePlaceholder.swapMode>#closeService{right:19px;top:19px!important}
+}
+@media(max-width:850px){
+  .servicePlaceholder.swapMode{padding-top:10px!important}
+  .swapBridgeV2 .sbHead{grid-template-columns:1fr}
+  .swapBridgeV2 .sbHeroBanner{height:88px;width:100%}
+  .servicePlaceholder.swapMode>#closeService{top:91px!important;right:18px!important}
+}
