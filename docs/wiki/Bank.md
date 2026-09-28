@@ -20,15 +20,29 @@ Le modèle produit prévoit des utilisateurs inscrits **sur invitation**. Un com
 
 **Cette page rassemble uniquement les wallets du compte courant.** Elle sert de tableau de bord : création, consultation de l’adresse, clé publique, demande de clé privée, historique futur, transferts et retrait de l’interface.
 
-### Création
+### Création multi-réseaux
 
-Pour les réseaux EVM actuellement proposés — **Ethereum, BNB Chain, Polygon, Arbitrum et Base** — IA-TB génère localement une paire de clés secp256k1 et dérive l’adresse EVM. La clé privée n’est jamais renvoyée dans la liste générale des wallets.
+**Un Wallet IA-TB n’est plus limité à un réseau.** Une création produit une identité de portefeuille logique qui regroupe plusieurs comptes blockchain sous un même nom. L’utilisateur manipule donc `Wallet Principal`, `Wallet Trading`, etc., et choisit ensuite le réseau/compte nécessaire à l’action.
 
-La clé privée est chiffrée en **AES-256-GCM** avant stockage. Une clé maître de wallet est générée localement avec permissions fichier restrictives. Les métadonnées et l’enveloppe chiffrée sont ensuite associées au propriétaire dans SQLite.
+```text
+Wallet IA-TB
+├── Compte EVM (une même identité secp256k1)
+│   ├── Ethereum
+│   ├── Arbitrum
+│   ├── Polygon
+│   ├── BNB Chain
+│   └── Base
+├── Compte Bitcoin (secp256k1 / adresse BTC)
+└── Compte Solana (Ed25519 / adresse SOL)
+```
+
+Les réseaux EVM partagent la même identité EVM et donc la même adresse EVM. Bitcoin et Solana possèdent des comptes cryptographiques distincts, car leurs formats et mécanismes de clés ne sont pas interchangeables avec EVM.
+
+Les secrets de **chaque famille blockchain** sont chiffrés séparément en **AES-256-GCM** avant stockage. Une clé maître locale est créée avec des permissions fichier restrictives. SQLite conserve le wallet logique, son `ownerId`, ses comptes, ses réseaux et les enveloppes chiffrées. La liste publique de l’API ne renvoie jamais les secrets.
 
 <details><summary><b>➕ En savoir plus — dérivation EVM</b></summary>
 
-Le module `Bank/Core/evm_wallet.js` utilise le générateur cryptographique de Node.js, secp256k1 et Keccak-256. Le code a été conçu sans dépendance npm afin de rester compatible avec le runtime léger du projet.
+`Bank/Core/evm_wallet.js` gère l’identité EVM avec secp256k1 et Keccak-256. `Bank/Core/multichain_wallet.js` orchestre les familles : EVM, Bitcoin et Solana. Le code reste sans dépendance npm afin de limiter mémoire, surface de dépendances et coût de déploiement sur le runtime Node.js du projet.
 
 </details>
 
@@ -38,7 +52,7 @@ Le module `Bank/Core/evm_wallet.js` utilise le générateur cryptographique de N
 
 ## 3. Affichage de la clé privée
 
-La clé publique peut être affichée directement. La **clé privée** suit un parcours plus strict :
+Les clés publiques peuvent être consultées par famille blockchain. Pour un wallet multi-réseaux, l’utilisateur choisit d’abord **EVM**, **Bitcoin** ou **Solana** avant de récupérer le secret correspondant. La **clé privée / donnée de récupération** suit un parcours plus strict :
 
 ```text
 Utilisateur
@@ -49,9 +63,11 @@ Notification MOYENNE de sécurité
    ↓
 Disclaimer + risque + confirmation explicite
    ↓
+Choix de la famille (EVM / Bitcoin / Solana)
+   ↓
 API /api/security/wallets/reveal
    ↓
-Déchiffrement temporaire
+Déchiffrement temporaire de cette famille uniquement
    ↓
 Affichage limité dans une box sensible
 ```
@@ -81,7 +97,7 @@ La Banque doit proposer deux chemins :
 
 ## 6. Swap et Bridge
 
-**Swap** échange rapidement un token contre un autre. **Bridge** transfère une valeur entre deux réseaux. La page Swap & Bridge permet de choisir le wallet source et le wallet de réception, puis doit comparer plusieurs routes/providers avant signature.
+**Swap** échange rapidement un token contre un autre. **Bridge** transfère une valeur entre deux réseaux. La page Swap & Bridge choisit d’abord le **wallet logique** source et le wallet de réception. Le réseau source et le réseau destination sont ensuite sélectionnés parmi les comptes/réseaux réellement disponibles dans ces wallets. Un bridge peut ainsi effectuer `Wallet Principal / Ethereum → Wallet Principal / Arbitrum`, ou utiliser deux wallets IA-TB différents. Le moteur doit ensuite comparer plusieurs routes/providers avant signature.
 
 La règle d’architecture est :
 
@@ -120,3 +136,30 @@ La Banque simplifie l’expérience mais ne doit jamais masquer la différence e
 5. archiver un wallet dans l’interface.
 
 Ces étapes restent séparées afin que l’interface reste simple sans affaiblir le modèle de sécurité.
+
+
+## 9. Modèle de données multi-réseaux et montée en charge
+
+Le modèle sépare volontairement **l’identité utilisateur**, le **wallet logique**, les **comptes cryptographiques**, les **réseaux** et, à terme, les **actifs**. Cette séparation évite de dupliquer un wallet entier pour chaque blockchain et permet d’ajouter un réseau sans casser les wallets existants.
+
+```text
+User / ownerId
+  └── Wallet logique
+       ├── Account EVM ──► plusieurs réseaux EVM
+       ├── Account Bitcoin ──► Bitcoin
+       └── Account Solana ──► Solana
+            └── Actifs / soldes / transactions (indexation future)
+```
+
+Les anciens wallets mono-réseau restent lisibles comme `LEGACY_SINGLE_CHAIN` : ils ne sont pas transformés silencieusement et leurs clés ne sont pas remplacées. Les nouveaux wallets sont marqués `MULTICHAIN` avec `schemaVersion: 2`. Cette compatibilité est importante pour les migrations futures.
+
+### Règles de performance
+
+- les secrets ne sont pas déchiffrés pour afficher une liste de wallets ;
+- la liste publique ne transporte que métadonnées, adresses et clés publiques ;
+- un secret n’est déchiffré qu’à la demande explicite de récupération/signature ;
+- un seul compte EVM représente plusieurs réseaux EVM, ce qui évite les duplications inutiles ;
+- le registre de réseaux est centralisé afin que l’ajout futur d’une chaîne soit indépendant de l’UI ;
+- les historiques, soldes et tokens devront être indexés séparément des secrets pour permettre cache, pagination et synchronisation asynchrone.
+
+> **Limite actuelle V2.0 DEBUG :** la structure multi-réseaux, la génération locale et le stockage chiffré sont intégrés. L’indexation live des soldes/tokens, le Signer de transactions et les adapters RPC Bitcoin/Solana/EVM restent à raccorder avant toute utilisation avec des fonds réels.
