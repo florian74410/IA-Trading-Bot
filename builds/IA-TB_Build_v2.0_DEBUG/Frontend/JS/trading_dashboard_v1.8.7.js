@@ -31,15 +31,34 @@ function moduleDeck(){
  +moduleCard(5,'strategy','','<h3>STRATÉGIE ACTUELLE <span class="accent">↗</span></h3><table class="iatbMiniTable"><tbody id="tdStrategies"><tr><td>Chargement…</td></tr></tbody></table><a class="iatbMore" href="#" id="tdStrategiesLink">Voir les stratégies →</a>');
  wrap.appendChild(d);setTimeout(function(){initModuleGrid(d)},0);return wrap;
 }
-function moduleGridCards(deck){return [].slice.call((deck||byId('iatbModuleDeck')).querySelectorAll('.iatbGridModule'))}
-function moduleGridAreaExcept(card){return moduleGridCards(card.parentNode).reduce(function(n,x){if(x===card)return n;return n+(+(x.getAttribute('data-span-x')||1))*(+(x.getAttribute('data-span-y')||1))},0)}
+function moduleGridCards(deck){deck=deck||byId('iatbModuleDeck');return deck?[].slice.call(deck.querySelectorAll('.iatbGridModule')):[]}
+function moduleGridPack(deck,overrideCard,overrideX,overrideY,apply){
+ var cells=[],r,c;for(r=0;r<MODULE_GRID_ROWS;r++){cells[r]=[];for(c=0;c<MODULE_GRID_COLS;c++)cells[r][c]=false}
+ var cards=moduleGridCards(deck),placed=[];
+ for(var i=0;i<cards.length;i++){
+  var card=cards[i],x=card===overrideCard?overrideX:+(card.getAttribute('data-span-x')||1),y=card===overrideCard?overrideY:+(card.getAttribute('data-span-y')||1);
+  x=Math.max(1,Math.min(MODULE_GRID_COLS,Math.round(+x||1)));y=Math.max(1,Math.min(MODULE_GRID_ROWS,Math.round(+y||1)));
+  var found=null;
+  for(r=0;r<=MODULE_GRID_ROWS-y&&!found;r++)for(c=0;c<=MODULE_GRID_COLS-x&&!found;c++){
+   var ok=true,rr,cc;for(rr=r;rr<r+y&&ok;rr++)for(cc=c;cc<c+x;cc++)if(cells[rr][cc]){ok=false;break}
+   if(ok)found={row:r+1,col:c+1,x:x,y:y};
+  }
+  if(!found)return false;
+  for(var rr2=found.row-1;rr2<found.row-1+y;rr2++)for(var cc2=found.col-1;cc2<found.col-1+x;cc2++)cells[rr2][cc2]=true;
+  placed.push({card:card,pos:found});
+ }
+ if(apply)placed.forEach(function(p){
+  var card=p.card,pos=p.pos;
+  card.setAttribute('data-span-x',pos.x);card.setAttribute('data-span-y',pos.y);
+  card.style.gridColumnStart=String(pos.col);card.style.gridColumnEnd='span '+pos.x;
+  card.style.gridRowStart=String(pos.row);card.style.gridRowEnd='span '+pos.y;
+  var s=card.querySelector('.iatbModuleSize');if(s)s.textContent=pos.x+'×'+pos.y;
+ });
+ return true;
+}
 function moduleGridApplySpan(card,x,y){
  x=Math.max(1,Math.min(MODULE_GRID_COLS,Math.round(+x||1)));y=Math.max(1,Math.min(MODULE_GRID_ROWS,Math.round(+y||1)));
- var free=MODULE_GRID_COLS*MODULE_GRID_ROWS-moduleGridAreaExcept(card);
- while(x*y>free&&y>1)y--;while(x*y>free&&x>1)x--;
- if(x*y>free){x=1;y=1}
- card.setAttribute('data-span-x',x);card.setAttribute('data-span-y',y);card.style.gridColumn='span '+x;card.style.gridRow='span '+y;
- var s=card.querySelector('.iatbModuleSize');if(s)s.textContent=x+'×'+y;
+ return moduleGridPack(card.parentNode,card,x,y,true);
 }
 function saveModuleGrid(deck){
  try{
@@ -53,15 +72,16 @@ function restoreModuleGrid(deck){
  if(!layout)return;
  var map={};moduleGridCards(deck).forEach(function(card){map[card.getAttribute('data-grid-id')]=card});
  (layout.order||[]).forEach(function(id){if(map[id])deck.appendChild(map[id])});
- moduleGridCards(deck).forEach(function(card){var s=layout.spans&&layout.spans[card.getAttribute('data-grid-id')];if(s)moduleGridApplySpan(card,s[0],s[1])});
+ moduleGridCards(deck).forEach(function(card){var s=layout.spans&&layout.spans[card.getAttribute('data-grid-id')];if(s){card.setAttribute('data-span-x',Math.max(1,Math.min(MODULE_GRID_COLS,+s[0]||1)));card.setAttribute('data-span-y',Math.max(1,Math.min(MODULE_GRID_ROWS,+s[1]||1)));}});
+ if(!moduleGridPack(deck,null,0,0,true)){moduleGridCards(deck).forEach(function(card){card.setAttribute('data-span-x','1');card.setAttribute('data-span-y','1')});moduleGridPack(deck,null,0,0,true)}
 }
 function initModuleGrid(deck){
- if(!deck||deck.dataset.gridReady==='1')return;deck.dataset.gridReady='1';restoreModuleGrid(deck);
- var dragging=null;
+ if(!deck||deck.dataset.gridReady==='1')return;deck.dataset.gridReady='1';restoreModuleGrid(deck);moduleGridPack(deck,null,0,0,true);
+ var dragging=null,dragOriginNext=null;
  moduleGridCards(deck).forEach(function(card){
   var grip=card.querySelector('.iatbModuleGrip'),resize=card.querySelector('.iatbModuleResize');
   if(grip){
-   grip.ondragstart=function(e){dragging=card;card.classList.add('dragging');try{e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',card.getAttribute('data-grid-id'))}catch(x){}};
+   grip.ondragstart=function(e){dragging=card;dragOriginNext=card.nextSibling;card.classList.add('dragging');try{e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',card.getAttribute('data-grid-id'))}catch(x){}};
    grip.ondragend=function(){card.classList.remove('dragging');dragging=null;saveModuleGrid(deck)};
   }
   if(resize){
@@ -82,6 +102,7 @@ function initModuleGrid(deck){
   var target=e.target.closest?e.target.closest('.iatbGridModule'):null;
   if(target&&target!==dragging){var r=target.getBoundingClientRect(),after=e.clientY>r.top+r.height/2||e.clientX>r.left+r.width/2;deck.insertBefore(dragging,after?target.nextSibling:target)}
   else deck.appendChild(dragging);
+  if(!moduleGridPack(deck,null,0,0,true)){if(dragOriginNext&&dragOriginNext.parentNode===deck)deck.insertBefore(dragging,dragOriginNext);else deck.appendChild(dragging);moduleGridPack(deck,null,0,0,true)}
   saveModuleGrid(deck);
  };
 }
