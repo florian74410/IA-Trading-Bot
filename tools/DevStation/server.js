@@ -1,31 +1,30 @@
 'use strict';
 const http=require('http'),fs=require('fs'),path=require('path'),os=require('os'),cp=require('child_process');
-const ROOT=__dirname, cfg=JSON.parse(fs.readFileSync(path.join(ROOT,'config.json'),'utf8'));
-const HOST=process.env.DEVSTATION_HOST||cfg.host||'127.0.0.1', PORT=+(process.env.DEVSTATION_PORT||cfg.port||8765);
-const WORK=path.resolve(ROOT,cfg.workspace||'workspace');
-['screenshots','assets','logs','reports','crash'].forEach(x=>fs.mkdirSync(path.join(WORK,x),{recursive:true}));
-const repoRoot=path.resolve(ROOT,'../..');
+const ROOT=__dirname,cfg=JSON.parse(fs.readFileSync(path.join(ROOT,'config.json'),'utf8'));
+const HOST=process.env.DEVSTATION_HOST||cfg.host||'127.0.0.1',PORT=+(process.env.DEVSTATION_PORT||cfg.port||8765);
+const WORK=path.resolve(ROOT,cfg.workspace||'workspace'),SHOT=path.join(WORK,'screenshots'),ARCH=path.join(SHOT,'archive');
+['screenshots','assets','logs','reports','crash'].forEach(x=>fs.mkdirSync(path.join(WORK,x),{recursive:true}));fs.mkdirSync(ARCH,{recursive:true});
+function findRepo(start){let d=path.resolve(start);for(let i=0;i<8;i++){if(fs.existsSync(path.join(d,'.git')))return d;let p=path.dirname(d);if(p===d)break;d=p;}return path.resolve(ROOT,'../..');}
+const repoRoot=findRepo(ROOT);
 function json(res,code,obj){const b=Buffer.from(JSON.stringify(obj,null,2));res.writeHead(code,{'Content-Type':'application/json; charset=utf-8','Content-Length':b.length,'Cache-Control':'no-store'});res.end(b);}
-function system(){const m=process.memoryUsage();return{hostname:os.hostname(),platform:os.platform(),release:os.release(),arch:os.arch(),cpus:os.cpus().length,loadavg:os.loadavg(),uptimeSec:Math.round(os.uptime()),memory:{total:os.totalmem(),free:os.freemem(),processRss:m.rss},node:process.version,at:new Date().toISOString()};}
-function screenshots(){const d=path.join(WORK,'screenshots');return fs.readdirSync(d).filter(f=>/\.(png|jpe?g|webp)$/i.test(f)).map(f=>{const p=path.join(d,f),s=fs.statSync(p);return{name:f,mtimeMs:s.mtimeMs,size:s.size,path:p};}).sort((a,b)=>b.mtimeMs-a.mtimeMs);}
-function git(args){return cp.execFileSync('git',args,{cwd:repoRoot,encoding:'utf8',timeout:4000,maxBuffer:256*1024}).trim();}
-function projectStatus(){let out={id:'ia-tb',root:repoRoot};try{out.branch=git(['rev-parse','--abbrev-ref','HEAD']);out.commit=git(['rev-parse','--short','HEAD']);out.status=git(['status','--short']);out.ok=true;}catch(e){out.ok=false;out.error=e.message;}return out;}
-const ACTIONS={
- 'ia-tb.git-status':()=>projectStatus(),
- 'ia-tb.git-log':()=>({log:git(['log','-8','--oneline','--decorate'])}),
- 'system.snapshot':()=>system()
-};
-function body(req,cb){let a=[],n=0;req.on('data',c=>{n+=c.length;if(n>65536){req.destroy();return;}a.push(c)});req.on('end',()=>{try{cb(null,JSON.parse(Buffer.concat(a).toString('utf8')||'{}'))}catch(e){cb(e)}});}
-function ui(res){const h=`<!doctype html><meta charset="utf-8"><title>DevStation Bridge</title><style>body{font:14px system-ui;background:#101318;color:#e7edf5;margin:32px}main{max-width:900px;margin:auto}.card{background:#171c24;border:1px solid #2b3442;border-radius:12px;padding:18px;margin:14px 0}button{padding:9px 13px}pre{white-space:pre-wrap;color:#a9d7ff}</style><main><h1>DevStation Bridge v0.1</h1><div class=card><b>Status</b><pre id=o>Loading…</pre></div><div class=card><button onclick="load()">Refresh</button> <button onclick="shot()">Latest screenshot</button></div><script>async function load(){let a=await fetch('/api/system').then(r=>r.json()),b=await fetch('/api/projects/ia-tb/status').then(r=>r.json());o.textContent=JSON.stringify({system:a,ia_tb:b},null,2)}async function shot(){let r=await fetch('/api/screenshots/latest');if(!r.ok)return alert('No screenshot');location='/api/screenshots/latest'}load()</script></main>`;res.writeHead(200,{'Content-Type':'text/html; charset=utf-8'});res.end(h);}
+function system(){const m=process.memoryUsage();return{hostname:os.hostname(),platform:os.platform(),release:os.release(),arch:os.arch(),cpus:os.cpus().length,loadavg:os.loadavg(),uptimeSec:Math.round(os.uptime()),memory:{total:os.totalmem(),free:os.freemem(),used:os.totalmem()-os.freemem(),processRss:m.rss},node:process.version,at:new Date().toISOString()};}
+function shots(){return fs.readdirSync(SHOT).filter(f=>/\.(png|jpe?g|webp)$/i.test(f)&&f!=='latest.png').map(f=>{const p=path.join(SHOT,f),s=fs.statSync(p);return{name:f,mtimeMs:s.mtimeMs,size:s.size,path:p};}).sort((a,b)=>b.mtimeMs-a.mtimeMs);}
+function syncLatest(){const a=shots();if(!a.length)return null;const src=a[0].path,dst=path.join(SHOT,'latest.png');try{fs.copyFileSync(src,dst)}catch(_){}return a[0];}
+function git(args){return cp.execFileSync('git',args,{cwd:repoRoot,encoding:'utf8',timeout:4000,maxBuffer:512*1024}).trim();}
+function parseGit(s){let x={modified:[],added:[],deleted:[],untracked:[],other:[]};String(s||'').split(/\r?\n/).filter(Boolean).forEach(l=>{let c=l.slice(0,2),n=l.slice(3);if(c==='??')x.untracked.push(n);else if(c.indexOf('M')>=0)x.modified.push(n);else if(c.indexOf('A')>=0)x.added.push(n);else if(c.indexOf('D')>=0)x.deleted.push(n);else x.other.push(n)});x.total=Object.keys(x).filter(k=>Array.isArray(x[k])).reduce((n,k)=>n+x[k].length,0);return x;}
+function projectStatus(){let out={id:'ia-tb',root:repoRoot};try{out.branch=git(['rev-parse','--abbrev-ref','HEAD']);out.commit=git(['rev-parse','--short','HEAD']);out.changes=parseGit(git(['status','--short']));out.ok=true}catch(e){out.ok=false;out.error=e.message}return out;}
+const ACTIONS={'ia-tb.git-status':()=>projectStatus(),'ia-tb.git-log':()=>({log:git(['log','-8','--oneline','--decorate'])}),'system.snapshot':()=>system()};
+function body(req,cb){let a=[],n=0;req.on('data',c=>{n+=c.length;if(n>65536){req.destroy();return}a.push(c)});req.on('end',()=>{try{cb(null,JSON.parse(Buffer.concat(a).toString('utf8')||'{}'))}catch(e){cb(e)}})}
+function human(n){return(n/1073741824).toFixed(2)+' GB'}
+function ui(res){const h=`<!doctype html><meta charset="utf-8"><meta name=viewport content="width=device-width"><title>DevStation Bridge</title><style>*{box-sizing:border-box}body{font:14px -apple-system,BlinkMacSystemFont,system-ui;background:#0d1117;color:#e6edf3;margin:0}main{max-width:1100px;margin:auto;padding:24px}h1{margin:0 0 4px}.sub{color:#8b949e}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-top:18px}.card{background:#161b22;border:1px solid #30363d;border-radius:12px;padding:16px}.big{font-size:24px}.ok{color:#3fb950}.warn{color:#d29922}button{background:#21262d;color:#e6edf3;border:1px solid #30363d;border-radius:7px;padding:8px 12px}pre{white-space:pre-wrap;max-height:260px;overflow:auto}.shot{width:100%;max-height:360px;object-fit:contain;background:#010409;border-radius:8px;margin-top:8px}</style><main><h1>DevStation Bridge <span class=ok>●</span></h1><div class=sub>v0.2 · local development control plane</div><div class=grid><div class=card><b>MACHINE</b><div id=sys class=big>…</div><div id=mem></div><div id=load></div></div><div class=card><b>IA-TB / GIT</b><div id=git class=big>…</div><div id=chg></div></div><div class=card><b>LATEST SCREENSHOT</b><div id=shotmeta class=sub>…</div><img class=shot id=shot><br><button onclick="refresh()">Refresh</button></div></div><div class=card><b>CHANGES</b><pre id=files>…</pre></div><script>async function refresh(){let s=await fetch('/api/system').then(r=>r.json()),g=await fetch('/api/projects/ia-tb/status').then(r=>r.json()),q=await fetch('/api/screenshots').then(r=>r.json());sys.textContent=s.hostname;mem.textContent='RAM '+(s.memory.used/1073741824).toFixed(2)+' / '+(s.memory.total/1073741824).toFixed(2)+' GB';load.textContent='CPU '+s.cpus+' cores · load '+s.loadavg.map(x=>x.toFixed(2)).join(' / ');git.textContent=g.branch+' @ '+g.commit;chg.textContent=(g.changes.total?g.changes.total+' changement(s)':'Working tree propre');files.textContent=JSON.stringify(g.changes,null,2);if(q.length){shot.src='/api/screenshots/latest?t='+Date.now();shotmeta.textContent=q[0].name}else{shot.removeAttribute('src');shotmeta.textContent='Aucune capture dans workspace/screenshots'}}refresh();setInterval(refresh,10000)</script></main>`;res.writeHead(200,{'Content-Type':'text/html; charset=utf-8'});res.end(h)}
 const srv=http.createServer((req,res)=>{const u=new URL(req.url,'http://localhost');
- if(req.method==='GET'&&u.pathname==='/')return ui(res);
- if(req.method==='GET'&&u.pathname==='/api/health')return json(res,200,{ok:true,name:'DevStation Bridge',version:'0.1.0',host:HOST,port:PORT});
- if(req.method==='GET'&&u.pathname==='/api/system')return json(res,200,system());
- if(req.method==='GET'&&u.pathname==='/api/projects')return json(res,200,[{id:'ia-tb',root:repoRoot}]);
- if(req.method==='GET'&&u.pathname==='/api/projects/ia-tb/status')return json(res,200,projectStatus());
- if(req.method==='GET'&&u.pathname==='/api/screenshots')return json(res,200,screenshots().map(x=>({name:x.name,mtimeMs:x.mtimeMs,size:x.size})));
- if(req.method==='GET'&&u.pathname==='/api/screenshots/latest'){const a=screenshots();if(!a.length)return json(res,404,{error:'NO_SCREENSHOT'});const p=a[0].path,t=/\.png$/i.test(p)?'image/png':/\.webp$/i.test(p)?'image/webp':'image/jpeg';res.writeHead(200,{'Content-Type':t,'Content-Length':a[0].size,'Cache-Control':'no-store'});return fs.createReadStream(p).pipe(res);}
- if(req.method==='POST'&&u.pathname==='/api/actions')return body(req,(e,o)=>{if(e)return json(res,400,{error:'BAD_JSON'});const a=String(o.action||'');if(!ACTIONS[a])return json(res,403,{error:'ACTION_NOT_ALLOWED',allowed:Object.keys(ACTIONS)});try{json(res,200,{ok:true,action:a,result:ACTIONS[a]()})}catch(x){json(res,500,{ok:false,error:x.message})}});
- json(res,404,{error:'NOT_FOUND'});
-});
-srv.listen(PORT,HOST,()=>console.log('[DevStation] http://'+HOST+':'+PORT));
+if(req.method==='GET'&&u.pathname==='/')return ui(res);
+if(req.method==='GET'&&u.pathname==='/api/health')return json(res,200,{ok:true,name:'DevStation Bridge',version:'0.2.0',host:HOST,port:PORT});
+if(req.method==='GET'&&u.pathname==='/api/system')return json(res,200,system());
+if(req.method==='GET'&&u.pathname==='/api/projects')return json(res,200,[{id:'ia-tb',root:repoRoot}]);
+if(req.method==='GET'&&u.pathname==='/api/projects/ia-tb/status')return json(res,200,projectStatus());
+if(req.method==='GET'&&u.pathname==='/api/screenshots'){syncLatest();return json(res,200,shots().map(x=>({name:x.name,mtimeMs:x.mtimeMs,size:x.size})))}
+if(req.method==='GET'&&u.pathname==='/api/screenshots/latest'){let x=syncLatest();if(!x)return json(res,404,{error:'NO_SCREENSHOT'});let p=path.join(SHOT,'latest.png'),t=/\.webp$/i.test(x.name)?'image/webp':/\.jpe?g$/i.test(x.name)?'image/jpeg':'image/png';res.writeHead(200,{'Content-Type':t,'Content-Length':fs.statSync(p).size,'Cache-Control':'no-store'});return fs.createReadStream(p).pipe(res)}
+if(req.method==='POST'&&u.pathname==='/api/actions')return body(req,(e,o)=>{if(e)return json(res,400,{error:'BAD_JSON'});let a=String(o.action||'');if(!ACTIONS[a])return json(res,403,{error:'ACTION_NOT_ALLOWED',allowed:Object.keys(ACTIONS)});try{json(res,200,{ok:true,action:a,result:ACTIONS[a]()})}catch(x){json(res,500,{ok:false,error:x.message})}});
+json(res,404,{error:'NOT_FOUND'})});
+srv.listen(PORT,HOST,()=>console.log('[DevStation v0.2] http://'+HOST+':'+PORT+' repo='+repoRoot));
