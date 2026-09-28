@@ -46,6 +46,8 @@ ClientService.prototype.update=function(sess,input){
   return this._public(out);
 };
 ClientService.prototype.active=function(){if(!this.store)return null;var id=String(this.store.get(this.bindingScope,this.bindingKey,'')||'');if(!id)return null;var x=this.repo.byId(id);return x?this._public(x):null;};
+ClientService.prototype.byId=function(id){var x=this.repo.byId(String(id||''));return x?this._public(x):null;};
+ClientService.prototype.findByEmail=function(email){var h=this.crypto.lookupHash(cleanEmail(email));if(!h)return null;var x=this.repo.byEmailHash(h);return x?this._public(x):null;};
 ClientService.prototype.me=function(sess){var p=this.resolveSession(sess);p.walletIds=this.repo.walletIds(p.clientId,true);return p;};
 ClientService.prototype.listAdmin=function(){var self=this;return this.repo.list().map(function(x){var p=self._public(x);p.walletIds=self.repo.walletIds(p.clientId,true);return p;});};
 ClientService.prototype.linkWallet=function(sess,walletId){var me=this.resolveSession(sess);this.repo.linkWallet(me.clientId,walletId);this.repo.audit(me.clientId,'WALLET_LINKED',walletId,'');return me.clientId;};
