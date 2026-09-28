@@ -25,8 +25,8 @@ var RUNTIME_SECRET_FILES={internalServiceKey:path.join(RUNTIME_SECURITY_DIR,'int
 var DEFAULT_CONFIG={appSettings:path.join(ROOT,'Config','Defaults','app_settings.json')};
 
 var PERSISTENT_ROOT=process.env.IATB_DATA_ROOT||path.join(os.homedir(),'IA-TB-UserData-Server');
-var SHARED_DATA=path.join(PERSISTENT_ROOT,'Shared Data'),FUNDAMENTAL_DATA=path.join(SHARED_DATA,'Fundamental');
-var PERSISTENT_DATA={root:PERSISTENT_ROOT,shared:SHARED_DATA,fundamental:FUNDAMENTAL_DATA,fundamentalDb:path.join(FUNDAMENTAL_DATA,'fundamental.db')};
+var SHARED_DATA=path.join(PERSISTENT_ROOT,'Shared Data'),FUNDAMENTAL_DATA=path.join(SHARED_DATA,'Fundamental'),CLIENT_DATABASE_DIR=path.join(PERSISTENT_ROOT,'Database'),CLIENT_SECURITY_DIR=path.join(PERSISTENT_ROOT,'Security');
+var PERSISTENT_DATA={root:PERSISTENT_ROOT,shared:SHARED_DATA,fundamental:FUNDAMENTAL_DATA,fundamentalDb:path.join(FUNDAMENTAL_DATA,'fundamental.db'),clientDatabaseDir:CLIENT_DATABASE_DIR,clientDb:path.join(CLIENT_DATABASE_DIR,'clients.sqlite'),clientSecurityDir:CLIENT_SECURITY_DIR,clientMasterKey:path.join(CLIENT_SECURITY_DIR,'client_master.key')};
 function ensureAppRuntimeDirs(){
   Object.keys(APP_RUNTIME_DIRS).forEach(function(k){try{fs.mkdirSync(APP_RUNTIME_DIRS[k],{recursive:true});}catch(e){}});
   try{fs.mkdirSync(RUNTIME_LAUNCHER_DIR,{recursive:true});}catch(e){}
