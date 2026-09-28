@@ -53,6 +53,12 @@ ClientService.prototype.accountByClientId=function(clientId){
   var a=this.repo.authByClientId(String(clientId||''));if(!a)return null;
   return{clientId:a.clientId,username:this.crypto.open(a.usernameEnc),role:String(a.role||'USER').toUpperCase(),enabled:a.enabled,createdAt:a.createdAt,updatedAt:a.updatedAt};
 };
+ClientService.prototype.verifyPassword=function(clientId,password){
+  var a=this.repo.authByClientId(String(clientId||''));if(!a||!a.enabled)return false;
+  var candidate=this._passwordHash(password,a.passwordSalt,a.passwordIterations),stored=String(a.passwordHash||'');
+  if(candidate.length!==stored.length)return false;
+  try{return crypto.timingSafeEqual(Buffer.from(candidate,'hex'),Buffer.from(stored,'hex'));}catch(e){return false;}
+};
 ClientService.prototype.bootstrapDebugUser=function(opts){
   opts=opts||{};this.repo.assertReady();
   var username=String(opts.username||'OVERKILL').trim().toUpperCase(),password=String(opts.password||'root'),role=String(opts.role||'SUPERADMIN').trim().toUpperCase();
