@@ -10,11 +10,15 @@ WalletService.prototype._all=function(sess){
  var client=this._client(sess),key='wallets:client:'+client.clientId,a=this.store.get('bank_wallets',key,[]);
  if(!Array.isArray(a))a=[];
  if(!a.length){
-  var legacy=this.store.get('bank_wallets',this._legacyKey(sess),[]);
+  var legacyKey=this._legacyKey(sess),legacy=this.store.get('bank_wallets',legacyKey,[]);
+  if((!Array.isArray(legacy)||!legacy.length)&&this.store.listKeys){
+   var candidates=this.store.listKeys('bank_wallets').filter(function(k){return /^wallets:(?!client:)/.test(k);});
+   if(candidates.length===1){legacyKey=candidates[0];legacy=this.store.get('bank_wallets',legacyKey,[]);}
+  }
   if(Array.isArray(legacy)&&legacy.length){
    a=legacy.map(function(w){var x=Object.assign({},w);if(x.ownerId&&!x.legacyOwnerId)x.legacyOwnerId=x.ownerId;delete x.ownerId;x.clientId=client.clientId;x.schemaVersion=Math.max(+x.schemaVersion||1,3);return x;});
    this.store.set('bank_wallets',key,a);
-   if(this.store.markMigration)this.store.markMigration('wallet-client-link-'+client.clientId,{wallets:a.length,legacyKey:this._legacyKey(sess),newKey:key});
+   if(this.store.markMigration)this.store.markMigration('wallet-client-link-'+client.clientId,{wallets:a.length,legacyKey:legacyKey,newKey:key});
    for(var i=0;i<a.length;i++)this.clientService.linkWallet(sess,a[i].id);
   }
  }
