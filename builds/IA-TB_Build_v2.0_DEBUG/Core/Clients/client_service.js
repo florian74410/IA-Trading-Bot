@@ -23,9 +23,9 @@ ClientService.prototype.resolveSession=function(sess){
   this.repo.assertReady();
   var explicit=String(sess&&sess.clientId||'').trim(),x=null,bound='';
   if(explicit)x=this.repo.byId(explicit);
-  if(!x&&this.store){bound=String(this.store.get(this.bindingScope,this.bindingKey,'')||'');if(bound)x=this.repo.byId(bound);}
   var email=cleanEmail(sess&&sess.email||'');
   if(!x&&email)x=this.repo.byEmailHash(this.crypto.lookupHash(email));
+  if(!x&&this.store){bound=String(this.store.get(this.bindingScope,this.bindingKey,'')||'');if(bound)x=this.repo.byId(bound);}
   var extHash=this.crypto.externalHash(this._externalRef(sess));
   if(!x)x=this.repo.byExternalHash(extHash);
   if(!x){
@@ -33,7 +33,7 @@ ClientService.prototype.resolveSession=function(sess){
     x=this.repo.insert({clientId:this.repo.nextClientId(),externalRefHash:extHash,firstNameEnc:this.crypto.seal(n.firstName),lastNameEnc:this.crypto.seal(n.lastName),emailEnc:this.crypto.seal(email),emailHash:email?this.crypto.lookupHash(email):'',status:'ACTIVE',securityVersion:1,createdAt:now,updatedAt:now});
     this.repo.audit(x.clientId,'CLIENT_CREATED',null,this.crypto.seal(JSON.stringify({source:'session-bootstrap'})));
   }
-  if(this.store)this.store.set(this.bindingScope,this.bindingKey,x.clientId);
+  if(this.store){this.store.set(this.bindingScope,this.bindingKey,x.clientId);this.store.set('local_profile','username','');this.store.set('local_profile','email','');}
   if(sess)sess.clientId=x.clientId;
   return this._public(x);
 };
