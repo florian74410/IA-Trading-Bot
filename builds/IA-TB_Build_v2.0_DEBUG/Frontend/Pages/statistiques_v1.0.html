@@ -1,0 +1,102 @@
+<!doctype html><html lang="fr"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer">
+<title>IA-TB · Statistiques</title>
+<link rel="stylesheet" href="/assets/global_navigation_v2.0.css">
+<link rel="stylesheet" href="/assets/ia_icons_v1.css">
+<link rel="stylesheet" href="/assets/statistiques_v1.0.css?v=1000">
+<script defer src="/assets/global_navigation_v2.0.js?v=2011"></script>
+<script defer src="/assets/ia_icons_v1.js"></script>
+<script defer src="/assets/statistiques_v1.0.js?v=1000"></script>
+</head><body>
+<div class="statsApp">
+ <aside class="statsSide">
+  <div class="statsSideTitle"><span class="iaIconBox" data-ia-icon="bank"></span><b>BANQUE</b></div>
+  <nav class="statsSideNav">
+   <a href="/bank"><span class="iaIconBox" data-ia-icon="home"></span>Accueil</a>
+   <div class="statsSideGroup">
+    <div class="statsGroupTitle"><span class="iaIconBox" data-ia-icon="account"></span>Comptes Personnelle <i>›</i></div>
+    <a href="/bank#wallets"><span class="iaIconBox" data-ia-icon="wallet"></span>Mes Portefeuilles</a>
+    <a href="/bank#accounting"><span class="iaIconBox" data-ia-icon="ledger"></span>Ma Comptabilités</a>
+    <a href="/bank#keys"><span class="iaIconBox" data-ia-icon="key"></span>Mes Clés</a>
+   </div>
+   <a href="/bank#vault-personal"><span class="iaIconBox" data-ia-icon="vault"></span>Coffres Forts <i>›</i></a>
+   <a href="/bank#loans"><span class="iaIconBox" data-ia-icon="loan"></span>Prets <i>›</i></a>
+   <a href="/bank#swap"><span class="iaIconBox" data-ia-icon="swap"></span>Swap et Bridges <i>›</i></a>
+   <a class="active" href="/statistiques"><span class="statsBarsIcon" aria-hidden="true"><i></i><i></i><i></i></span>Statistiques</a>
+   <a href="/admin"><span class="statsHelpIcon">?</span>Aide & Support</a>
+  </nav>
+ </aside>
+ <main class="statsMain">
+  <section class="statsIntro statsPanel">
+   <div class="statsIntroCopy"><h1>Statistiques</h1><p>Vue d’ensemble temps réel des exchanges, engines, oracles et réseaux utilisés par IA-TB.</p></div>
+   <div class="statsGlobalBanner">
+    <img src="/assets/stats_network_banner_v1.svg" alt="">
+    <div class="statsBannerCopy"><b>RÉSEAU IA-TB GLOBAL</b><span>Surveillance en temps réel</span><small>Multi-exchanges • Multi-chains • IA</small></div>
+    <a href="/ia-trading">← Retour Tableau de bord</a>
+   </div>
+  </section>
+
+  <section class="statsGrid statsGridTop">
+   <article class="statsPanel cexMapPanel">
+    <header class="statsCardHead"><div><h2><span class="panelIcon">⛓</span> Connexions CEX ↔ IA-TB</h2><p>Latence temps réel depuis nos serveurs</p></div><span class="statusPill good" id="cexConnectedState">● 5/5 connectés</span></header>
+    <div class="cexMapStage">
+     <img class="worldMapAsset" src="/assets/stats_world_map_v1.svg" alt="">
+     <svg class="cexLines" viewBox="0 0 1000 430" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M500 310 C360 250 260 190 165 142"/><path d="M500 310 C460 220 450 145 465 88"/><path d="M500 310 C650 220 720 165 825 138"/><path d="M500 310 C350 315 260 335 160 355"/><path d="M500 310 C655 315 745 338 845 360"/>
+     </svg>
+     <div class="mapHub"><span class="hubLogo">▥</span><b>IA-TB</b><small>Serveur principal</small></div>
+     <div class="exchangeNode nodeCoinbase" data-exchange="coinbase"><span class="brandIcon coinbase">C</span><span><b>Coinbase</b><small><i></i><em data-stat="coinbase-latency">12 ms</em></small></span></div>
+     <div class="exchangeNode nodeBinance" data-exchange="binance"><span class="brandIcon binance">◆</span><span><b>Binance</b><small><i></i><em data-stat="binance-latency">8 ms</em></small></span></div>
+     <div class="exchangeNode nodeOkx" data-exchange="okx"><span class="brandIcon okx">✣</span><span><b>OKX</b><small><i></i><em data-stat="okx-latency">15 ms</em></small></span></div>
+     <div class="exchangeNode nodeKraken" data-exchange="kraken"><span class="brandIcon kraken">K</span><span><b>Kraken</b><small><i></i><em data-stat="kraken-latency">18 ms</em></small></span></div>
+     <div class="exchangeNode nodeGmx" data-exchange="gmx"><span class="brandIcon gmx">▲</span><span><b>GMX (DEX)</b><small><i></i><em data-stat="gmx-latency">22 ms</em></small></span></div>
+    </div>
+   </article>
+
+   <article class="statsPanel enginesPanel">
+    <header class="statsCardHead"><div><h2><span class="panelIcon">⌘</span> Topologie des Engines & latence</h2><p>Architecture interne et latences inter-services</p></div><span class="statusPill good" id="engineGlobalState">● Tous les services opérationnels</span></header>
+    <div class="engineStage">
+     <svg class="engineLines" viewBox="0 0 760 410" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M380 205L205 104"/><path d="M380 205L380 62"/><path d="M380 205L565 104"/><path d="M380 205L665 175"/><path d="M380 205L650 272"/><path d="M380 205L560 352"/><path d="M380 205L380 360"/><path d="M380 205L198 344"/><path d="M380 205L95 274"/><path d="M380 205L88 175"/>
+     </svg>
+     <div class="engineHub"><img src="/assets/stats_core_hub_v1.svg" alt="IA-TB Core"></div>
+     <div class="engineNode eRouter"><span>⇄</span><b>Router</b><em data-engine-ms="router">5 ms</em></div>
+     <div class="engineNode eMarket"><span>▤</span><b>Market Data</b><em data-engine-ms="market">3 ms</em></div>
+     <div class="engineNode eIndicator"><span>▥</span><b>Indicator</b><em data-engine-ms="indicator">7 ms</em></div>
+     <div class="engineNode eStrategy"><span>◉</span><b>Strategy</b><em data-engine-ms="strategy">9 ms</em></div>
+     <div class="engineNode eTrading"><span>↔</span><b>Trading</b><em data-engine-ms="trading">6 ms</em></div>
+     <div class="engineNode eRisk"><span>⬡</span><b>Risk</b><em data-engine-ms="risk">4 ms</em></div>
+     <div class="engineNode ePortfolio"><span>◔</span><b>Portfolio</b><em data-engine-ms="portfolio">8 ms</em></div>
+     <div class="engineNode eFundamental"><span>▤</span><b>Fundamental</b><em data-engine-ms="fundamental">12 ms</em></div>
+     <div class="engineNode eSupervisor"><span>⚙</span><b>Supervisor</b><em data-engine-ms="supervisor">6 ms</em></div>
+     <div class="engineNode eUi"><span>▣</span><b>UI</b><em data-engine-ms="ui">3 ms</em></div>
+    </div>
+   </article>
+  </section>
+
+  <section class="statsGrid statsGridMid">
+   <article class="statsPanel platformPanel">
+    <header class="statsCardHead compact"><div><h2><span class="panelIcon">▤</span> État des DEX & CEX</h2><p>Statut des plateformes, latence et liquidité</p></div><button class="ghostLink">Voir tous les exchanges →</button></header>
+    <div class="platformCards" id="platformCards"></div>
+   </article>
+
+   <article class="statsPanel oraclePanel">
+    <header class="statsCardHead compact"><div><h2><span class="panelIcon">⌘</span> Oracles & Bridges</h2><p>Fiabilité des flux de prix et ponts cross-chain</p></div><button class="ghostLink">Voir tous les oracles →</button></header>
+    <div class="oracleCards" id="oracleCards"></div>
+   </article>
+  </section>
+
+  <section class="statsGrid statsGridBottom">
+   <article class="statsPanel adoptionPanel">
+    <header class="statsCardHead compact adoptionHead"><div><h2><span class="panelIcon">▥</span> Adoption crypto</h2><p>Évolution des utilisateurs, volumes et part de marché</p></div><div class="chartLegend"><span><i class="blue"></i>Utilisateurs</span><span><i class="green"></i>Volumes (M$)</span><span><i class="purple"></i>Dominance DeFi (%)</span></div><div class="rangeBtns"><button data-range="7J">7J</button><button class="active" data-range="30J">30J</button><button data-range="3M">3M</button><button data-range="1A">1A</button></div></header>
+    <div class="adoptionChart" id="adoptionChart"></div>
+   </article>
+
+   <article class="statsPanel summaryPanel">
+    <header class="statsCardHead compact"><div><h2><span class="panelIcon">◔</span> Résumé réseau</h2><p>Métriques globales IA-TB en temps réel</p></div></header>
+    <div class="summaryGrid" id="summaryGrid"></div>
+   </article>
+  </section>
+ </main>
+</div>
+</body></html>
