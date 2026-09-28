@@ -6,7 +6,7 @@
    role resolver without changing page contracts.
 */
 var LEVELS={PUBLIC:0,READ:1,USER_WRITE:2,ADMIN_WRITE:3};
-function normalizeRole(role){role=String(role||'USER').toUpperCase();return role==='ADMIN'?'ADMIN':'USER';}
+function normalizeRole(role){role=String(role||'USER').toUpperCase();if(role==='SUPERADMIN')return'SUPERADMIN';return role==='ADMIN'?'ADMIN':'USER';}
 function classify(method,pathname){
  method=String(method||'GET').toUpperCase();pathname=String(pathname||'/');
  if(method==='GET'||method==='HEAD')return{permission:'READ',level:LEVELS.READ};
@@ -14,5 +14,5 @@ function classify(method,pathname){
  if(pathname==='/api/settings'||pathname.indexOf('/api/settings/')===0||pathname==='/api/profile'||pathname==='/api/app-settings/select'||pathname.indexOf('/api/session/')===0)return{permission:'USER_WRITE',level:LEVELS.USER_WRITE};
  return{permission:'USER_WRITE',level:LEVELS.USER_WRITE};
 }
-function allowed(role,classification){role=normalizeRole(role);if(!classification)return false;if(classification.level<=LEVELS.USER_WRITE)return true;return role==='ADMIN';}
+function allowed(role,classification){role=normalizeRole(role);if(!classification)return false;if(classification.level<=LEVELS.USER_WRITE)return true;return role==='ADMIN'||role==='SUPERADMIN';}
 module.exports={LEVELS:LEVELS,normalizeRole:normalizeRole,classify:classify,allowed:allowed};
