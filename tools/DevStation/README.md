@@ -1,44 +1,53 @@
-# DevStation Bridge v0.1
+# DevStation Bridge v0.2
 
-Lightweight local development bridge for IA-TB and other projects.
+Lightweight local development bridge for IA-TB and future projects.
 
-## v0.1 goals
-- zero npm dependencies (Node.js built-ins only)
-- local-only HTTP API by default
-- screenshot inbox with latest.png
-- machine snapshot (CPU/RAM/load/uptime)
-- project adapter for IA-TB
-- read-only Git status/log inspection
-- controlled command allowlist (no arbitrary shell)
-- reports and crash inbox
-- compatible with the IA-TB DEBUG philosophy: explicit capabilities, audit, least privilege
+## Current features
+- Node.js built-ins only; no npm install
+- localhost-only by default
+- dashboard for machine + IA-TB Git state
+- structured Git changes (modified/added/deleted/untracked)
+- screenshot inbox and automatic `latest.png`
+- safe read-only/allowlisted actions
+- smoke tests
+- automatic repository-root discovery
 
 ## Start
 ```bash
 cd tools/DevStation
+node test.js
 node server.js
 ```
-Open http://127.0.0.1:8765/
+Dashboard: http://127.0.0.1:8765/
 
-Optional:
+## Screenshot Bridge — macOS
+DevStation watches files placed in:
+```
+tools/DevStation/workspace/screenshots/
+```
+The newest PNG/JPG/WebP is mirrored as `latest.png` and displayed on the dashboard.
+
+To route macOS screenshots directly there, from the repository root:
 ```bash
-DEVSTATION_PORT=8765 DEVSTATION_HOST=127.0.0.1 node server.js
+mkdir -p "$PWD/tools/DevStation/workspace/screenshots"
+defaults write com.apple.screencapture location "$PWD/tools/DevStation/workspace/screenshots"
+killall SystemUIServer
+```
+Take a screenshot with Cmd-Shift-3 or Cmd-Shift-4, then refresh the dashboard.
+
+To restore Desktop:
+```bash
+defaults write com.apple.screencapture location "$HOME/Desktop"
+killall SystemUIServer
 ```
 
-## API
-- GET /api/health
-- GET /api/system
-- GET /api/screenshots
-- GET /api/screenshots/latest
-- GET /api/projects
-- GET /api/projects/ia-tb/status
-- POST /api/actions with {"action":"ia-tb.git-status"}
+## Security
+v0.2 binds to 127.0.0.1. Do not expose port 8765 directly to the Internet.
+Remote ChatGPT access will be added separately through an authenticated bridge/tunnel with explicit permission levels.
 
-The first release deliberately binds to localhost and does not expose SSH or a public port.
-Remote access should later be provided through an authenticated connector/VPN, never by exposing this service directly.
-
-## Screenshot folder
-Drop PNG/JPG/WebP files in `workspace/screenshots/`. The newest image is returned by `/api/screenshots/latest`.
-
-## IA-TB integration
-DevStation does not modify IA-TB runtime. It detects the repository root and exposes safe diagnostics. Existing CP/1/Admin Debug modules remain authoritative for IA-TB engine control; a later adapter can call their whitelisted interfaces instead of duplicating them.
+## Next
+- CP/1 read-only adapter
+- logs/crash collector
+- benchmark module
+- authenticated remote screenshot/file bridge
+- permission-gated DEV/WRITE actions
