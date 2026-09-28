@@ -28,6 +28,10 @@ IA-TB est une application modulaire de trading crypto réunissant notamment des 
 
 - [Fundamental Engine V3](Fundamental-Engine.md) — collecte et provenance des news, News Query Engine, événements, evidence, mémoire temporelle, synthèses et consommation par le Supervisor.
 
+## Banque et services crypto
+
+- [Banque IA-TB](Bank.md) — wallets par utilisateur, propriété des clés, création EVM, notifications de sécurité, transferts, Swap/Bridge et services bancaires prévus.
+
 ## Données, analyse et risque
 
 - [Market Data](Market-Data.md)
