@@ -54,3 +54,23 @@
 .swapBridgeV2 .sbTop{width:100%;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,.86fr) minmax(0,.8fr);gap:9px}
 @media(max-width:1250px){.swapBridgeV2 .sbWorkspace{display:block!important}.swapBridgeV2 .sbTop{grid-template-columns:1fr 1fr}}
 @media(max-width:800px){.swapBridgeV2 .sbTop{grid-template-columns:1fr}}
+
+/* final density pass from Firefox/High Sierra screenshot */
+.servicePlaceholder.swapMode{padding-top:36px!important}
+.servicePlaceholder.swapMode>#closeService{top:8px}
+.servicePlaceholder.swapMode .sbHead{margin-bottom:7px}
+.servicePlaceholder.swapMode .sbHead h2{margin-bottom:1px;font-size:28px;line-height:1.05}
+.servicePlaceholder.swapMode .sbHead p{font-size:12px;line-height:1.25}
+.servicePlaceholder.swapMode .sbHead .sbHelp{margin-top:4px}
+.swapBridgeV2 .sbTabs{margin:6px 0 9px}
+.swapBridgeV2 .sbWalletBar{margin-bottom:7px}
+.swapBridgeV2 .sbTop>.sbCard{height:auto;min-height:168px;padding:9px 11px}
+.swapBridgeV2 .sbTop{grid-auto-rows:1fr}
+.swapBridgeV2 .sbTop>.sbCard{height:100%}
+.swapBridgeV2 .sbFilter{gap:4px}
+.swapBridgeV2 .sbFilter button{padding:6px 8px!important;font-size:9px!important;min-width:0!important;border-radius:6px}
+.swapBridgeV2 .sbRoutesHead{margin-bottom:6px}
+.swapBridgeV2 .sbMain{margin-top:7px}
+@media(min-width:1251px){.swapBridgeV2 .sbTop{grid-auto-rows:minmax(168px,auto)}}
+@media(max-width:1250px){.swapBridgeV2 .sbTop{grid-auto-rows:auto}.swapBridgeV2 .sbTop>.sbCard{min-height:164px;height:auto}}
+@media(max-width:800px){.servicePlaceholder.swapMode{padding-top:34px!important}.swapBridgeV2 .sbTop>.sbCard{min-height:0;height:auto}}
