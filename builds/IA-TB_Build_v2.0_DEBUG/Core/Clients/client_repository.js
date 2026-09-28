@@ -79,6 +79,27 @@ ClientRepository.prototype.list=function(){
   var ids=this.run('SELECT client_id FROM clients ORDER BY created_at;',true).split(/\r?\n/).filter(Boolean),self=this;
   return ids.map(function(id){return self.byId(id);}).filter(Boolean);
 };
+ClientRepository.prototype.authByClientId=function(clientId){
+  this.assertReady();
+  var r=rows(this.run('SELECT client_id,username_enc,username_hash,password_salt,password_hash,password_iterations,role,enabled,created_at,updated_at FROM client_accounts WHERE client_id='+q(clientId)+' LIMIT 1;',true))[0];
+  return r?{clientId:r[0],usernameEnc:r[1],usernameHash:r[2],passwordSalt:r[3],passwordHash:r[4],passwordIterations:+r[5]||180000,role:r[6]||'USER',enabled:+r[7]!==0,createdAt:r[8],updatedAt:r[9]}:null;
+};
+ClientRepository.prototype.authByUsernameHash=function(hash){
+  this.assertReady();if(!hash)return null;
+  var id=this.run('SELECT client_id FROM client_accounts WHERE username_hash='+q(hash)+' LIMIT 1;',true).trim();
+  return id?this.authByClientId(id):null;
+};
+ClientRepository.prototype.upsertAuth=function(x){
+  this.assertReady();
+  var now=x.updatedAt||new Date().toISOString(),created=x.createdAt||now;
+  this.run('INSERT INTO client_accounts(client_id,username_enc,username_hash,password_salt,password_hash,password_iterations,role,enabled,created_at,updated_at) VALUES('+
+    [x.clientId,x.usernameEnc,x.usernameHash,x.passwordSalt,x.passwordHash,+x.passwordIterations||180000,x.role||'USER',x.enabled===false?0:1,created,now].map(function(v,i){return(i===5||i===7)?String(+v||0):q(v);}).join(',')+
+    ') ON CONFLICT(client_id) DO UPDATE SET username_enc=excluded.username_enc,username_hash=excluded.username_hash,password_salt=excluded.password_salt,password_hash=excluded.password_hash,password_iterations=excluded.password_iterations,role=excluded.role,enabled=excluded.enabled,updated_at=excluded.updated_at;');
+  return this.authByClientId(x.clientId);
+};
+ClientRepository.prototype.countClients=function(){
+  this.assertReady();return +(this.run('SELECT COUNT(*) FROM clients;',true).trim()||0);
+};
 ClientRepository.prototype.linkWallet=function(clientId,walletId){
   this.assertReady();
   this.run('INSERT OR IGNORE INTO client_wallets(client_id,wallet_id,created_at) VALUES('+q(clientId)+','+q(walletId)+','+q(new Date().toISOString())+');');
