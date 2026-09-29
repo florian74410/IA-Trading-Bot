@@ -379,3 +379,96 @@ body.iatb-no-bank-side>.strategyPage{
     overflow-x:auto!important;
   }
 }
+
+
+/* Fundamental: restore the original dedicated left sidebar layout. */
+body.iatb-no-bank-side.iatb-fundamental-page{
+  padding-left:0!important;
+}
+body.iatb-no-bank-side.iatb-fundamental-page>.page{
+  width:100%!important;
+  max-width:none!important;
+  margin-left:0!important;
+  padding-left:214px!important;
+}
+body.iatb-no-bank-side.iatb-fundamental-page .fundSidebar{
+  position:fixed!important;
+  left:0!important;
+  top:calc(var(--iatb-nav-h,68px) + var(--iatb-nav-gap,6px))!important;
+  bottom:0!important;
+  width:214px!important;
+  height:auto!important;
+  z-index:8!important;
+  padding:18px 10px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:stretch!important;
+  gap:5px!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  border-right:1px solid #18335a!important;
+  border-bottom:0!important;
+  background:linear-gradient(180deg,#071225,#06101d)!important;
+  box-shadow:12px 0 35px rgba(0,0,0,.18)!important;
+}
+body.iatb-no-bank-side.iatb-fundamental-page .fundSidebar .sideTitle{
+  display:flex!important;
+  align-items:center!important;
+  gap:9px!important;
+  padding:8px 10px 16px!important;
+  color:#dcecff!important;
+  letter-spacing:.5px!important;
+}
+body.iatb-no-bank-side.iatb-fundamental-page .fundSidebar .sideOrb{
+  display:grid!important;
+  place-items:center!important;
+  width:30px!important;
+  height:30px!important;
+  min-width:30px!important;
+  border:1px solid #784cff!important;
+  border-radius:9px!important;
+  color:#9c7cff!important;
+  box-shadow:0 0 18px rgba(126,74,255,.32)!important;
+}
+body.iatb-no-bank-side.iatb-fundamental-page .fundSidebar button{
+  width:100%!important;
+  min-height:38px!important;
+  flex:0 0 auto!important;
+  text-align:left!important;
+  padding:10px 11px!important;
+  border:1px solid transparent!important;
+  border-radius:8px!important;
+  background:transparent!important;
+  color:#aabbd5!important;
+  font-size:11px!important;
+  white-space:normal!important;
+  box-shadow:none!important;
+}
+body.iatb-no-bank-side.iatb-fundamental-page .fundSidebar button:hover,
+body.iatb-no-bank-side.iatb-fundamental-page .fundSidebar button.active{
+  color:#fff!important;
+  background:linear-gradient(90deg,rgba(42,83,202,.35),rgba(40,70,160,.12))!important;
+  border-color:#203d84!important;
+  box-shadow:inset 2px 0 #437dff!important;
+}
+body.iatb-no-bank-side.iatb-fundamental-page .fundSidebar .sideFoot{
+  display:block!important;
+  margin-top:auto!important;
+  padding:10px!important;
+  color:#56708e!important;
+  font-size:10px!important;
+  letter-spacing:1px!important;
+}
+body.iatb-no-bank-side.iatb-fundamental-page .fundMain{
+  margin-left:0!important;
+  width:100%!important;
+  max-width:none!important;
+}
+@media(max-width:1100px){
+  body.iatb-no-bank-side.iatb-fundamental-page>.page{
+    padding-left:0!important;
+  }
+  body.iatb-no-bank-side.iatb-fundamental-page .fundSidebar{
+    display:none!important;
+  }
+}
