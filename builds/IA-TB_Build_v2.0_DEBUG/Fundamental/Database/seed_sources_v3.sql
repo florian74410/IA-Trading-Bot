@@ -119,7 +119,7 @@ SELECT id,'TRUMP_TRUTH','Donald Trump · Truth Social','SOCIAL','https://truthso
 
 -- Une prevision reste une PREVISION meme si la source est reconnue.
 INSERT OR IGNORE INTO feeds(source_id,code,label,provider_type,endpoint,platform,account_identifier,enabled,poll_interval_sec,base_importance,content_role,content_class,status,created_at,updated_at)
-SELECT id,'CME_FEDWATCH','CME · FedWatch','WEB','https://www.cmegroup.com/markets/interest-rates/cme-fedwatch-tool.html',NULL,NULL,0,900,75,'ORIGINAL','PREDICTION','PROVIDER_PENDING','2026-08-28T00:00:00Z','2026-08-28T00:00:00Z' FROM sources WHERE code='CME';
+SELECT id,'CME_FEDWATCH','CME · FedWatch','WEB','https://www.cmegroup.com/markets/interest-rates/cme-fedwatch-tool.html',NULL,NULL,1,900,75,'ORIGINAL','PREDICTION','IDLE','2026-08-28T00:00:00Z','2026-08-28T00:00:00Z' FROM sources WHERE code='CME';
 
 -- v1.6.2 WEB Provider : deux pages officielles statiques utiles au contexte macro/reglementaire.
 INSERT OR IGNORE INTO feeds(source_id,code,label,provider_type,endpoint,platform,account_identifier,enabled,poll_interval_sec,base_importance,content_role,content_class,status,created_at,updated_at)
@@ -134,7 +134,7 @@ SELECT id,'{"mode":"LINK_LIST","include_regex":"^https://www\\.whitehouse\\.gov/
 
 -- CME FedWatch reste volontairement PROVIDER_PENDING : la page publique charge les probabilites via un composant/API dedie.
 INSERT OR IGNORE INTO provider_configs(feed_id,config_json,updated_at)
-SELECT id,'{"mode":"PAGE_SNAPSHOT","language":"en","adapter":"CME_FEDWATCH_REQUIRED"}','2026-08-28T02:30:00Z' FROM feeds WHERE code='CME_FEDWATCH';
+SELECT id,'{"mode":"PAGE_SNAPSHOT","language":"en","label":"CME FedWatch","detail_fetch_count":1}','2026-08-28T02:30:00Z' FROM feeds WHERE code='CME_FEDWATCH';
 
 
 -- v1.6.8 : nouvelles sources media. Les grades B/C rappellent qu'elles doivent etre recoupees.
