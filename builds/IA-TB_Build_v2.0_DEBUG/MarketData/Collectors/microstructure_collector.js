@@ -34,8 +34,9 @@ Collector.prototype.openInterestAggregate=function(symbol,sources,cb){
    self.firewall.inspect(msg,function(fe,fw){
     if(fe)rejected.push({source:x.source,error:fe.message});else{ x.firewall={decision:fw.decision||'PASS',reason:fw.reason||null};valid.push(x); }
     if(--left)return;
-    var total=valid.reduce(function(z,v){return z+(isFinite(+v.openInterestNotionalUsd)?+v.openInterestNotionalUsd:0);},0);
-    cb(null,{ok:true,schema:'marketdata.open_interest.aggregate/1.0',symbol:o.symbol||symbol,scope:'CONNECTED_PERPETUAL_VENUES',coveredOpenInterestUsd:total,venues:valid.sort(function(a,b){return(+b.openInterestNotionalUsd||0)-(+a.openInterestNotionalUsd||0)}),coverage:{requested:o.coverage&&o.coverage.requested||[],received:valid.map(function(v){return v.source;}),missing:(o.coverage&&o.coverage.missing||[]).concat(rejected.map(function(v){return v.source;})),complete:false,label:'COVERED_NOT_GLOBAL'},observedAt:Date.now()});
+    var total=0,cex=0,dex=0;valid.forEach(function(v){var n=isFinite(+v.openInterestNotionalUsd)?+v.openInterestNotionalUsd:0;total+=n;if(String(v.venueType||'').toUpperCase()==='DEX')dex+=n;else cex+=n;});
+    var out={ok:true,schema:'marketdata.open_interest.aggregate/1.0',symbol:o.symbol||symbol,scope:'CONNECTED_PERPETUAL_VENUES',coveredOpenInterestUsd:total,cexOpenInterestUsd:cex,dexOpenInterestUsd:dex,venueCount:valid.length,venues:valid.sort(function(a,b){return(+b.openInterestNotionalUsd||0)-(+a.openInterestNotionalUsd||0)}),coverage:{requested:o.coverage&&o.coverage.requested||[],received:valid.map(function(v){return v.source;}),missing:(o.coverage&&o.coverage.missing||[]).concat(rejected.map(function(v){return v.source;})),complete:false,label:'COVERED_NOT_GLOBAL'},observedAt:Date.now()};
+    if(self.store&&self.store.saveOpenInterest)self.store.saveOpenInterest(out);cb(null,out);
    });
   });
  });
@@ -58,6 +59,7 @@ Collector.prototype.recentLiquidations=function(o){
  if(a.length<Math.min(50,limit)&&this.store){var db=this.store.liquidations({symbol:symbol,provider:provider,limit:limit,since:since});if(db.ok)a=db.items;}
  if(a.length>limit)a=a.slice(a.length-limit);return{ok:true,schema:'marketdata.liquidations/1.0',items:a,count:a.length,since:since,to:now};
 };
+Collector.prototype.openInterestHistory=function(o){return this.store&&this.store.openInterestHistory?this.store.openInterestHistory(o):{ok:false,error:'OPEN_INTEREST_HISTORY_DISABLED',items:[]};};
 Collector.prototype.liquidationStats=function(o){
  var r=this.recentLiquidations(o),longUsd=0,shortUsd=0,longCount=0,shortCount=0;
  r.items.forEach(function(x){var v=+x.notionalUsd||0;if(String(x.side).toUpperCase()==='LONG'){longUsd+=v;longCount++;}else if(String(x.side).toUpperCase()==='SHORT'){shortUsd+=v;shortCount++;}});
