@@ -287,3 +287,60 @@
   .servicePlaceholder.keysMode .keyMetrics article>i{width:54px!important;height:54px!important;min-width:54px!important}
   .servicePlaceholder.keysMode .keyMetrics article>i svg{width:39px!important;height:39px!important}
 }
+
+
+/* v2.0 DEBUG — Secure Key Vault banner icon: treasure vault + single key */
+.keysBannerTreasure{
+  left:18px!important;
+  bottom:8px!important;
+  gap:10px!important;
+}
+.keysTreasureVault{
+  width:58px;
+  height:48px;
+  display:grid;
+  place-items:center;
+  filter:drop-shadow(0 0 7px rgba(27,193,255,.22));
+}
+.keysTreasureVault svg{
+  width:58px;
+  height:48px;
+  display:block;
+  overflow:visible;
+}
+.keysBannerPlus{
+  width:22px;
+  height:22px;
+  display:grid;
+  place-items:center;
+  color:#42e8b6;
+  font-size:21px;
+  font-weight:900;
+  line-height:1;
+  text-shadow:0 0 8px rgba(66,232,182,.42);
+}
+.keysSingleKey{
+  width:46px;
+  height:46px;
+  display:grid;
+  place-items:center;
+  filter:drop-shadow(0 0 7px rgba(255,196,52,.22));
+}
+.keysSingleKey svg{
+  width:44px;
+  height:44px;
+  display:block;
+  overflow:visible;
+}
+.keysBannerTreasure .keysTreasureVault,
+.keysBannerTreasure .keysSingleKey{
+  transition:transform .16s ease,filter .16s ease;
+}
+.keysHeroBanner:hover .keysTreasureVault{
+  transform:translateY(-1px);
+  filter:drop-shadow(0 0 10px rgba(27,193,255,.28));
+}
+.keysHeroBanner:hover .keysSingleKey{
+  transform:rotate(-3deg) translateY(-1px);
+  filter:drop-shadow(0 0 10px rgba(255,196,52,.30));
+}
