@@ -150,6 +150,14 @@
       {
         "name": "supervisor.decision",
         "direction": "PRODUCE"
+      },
+      {
+        "name": "portfolio.position.health",
+        "direction": "CONSUME"
+      },
+      {
+        "name": "portfolio.trade",
+        "direction": "CONSUME"
       }
     ],
     "events": [
