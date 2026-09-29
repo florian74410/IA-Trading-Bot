@@ -48,6 +48,28 @@
     <article class="miniPanel domainPreview"><div class="panelHead"><b>DOMAINES</b><button class="plusBtn" data-expand-target="domainGrid">＋</button></div><div id="dashDomainPreview" class="previewBody">Chargement…</div></article>
   </div>
 </section>
+<section class="fedwatchPanel" id="fedwatchPanel">
+  <div class="fedwatchHead">
+    <div><span class="eyebrow">MONETARY EXPECTATIONS</span><h2>FedWatch IA-TB</h2><p>Probabilités FOMC reconstruites à partir de données publiques + validation tierce.</p></div>
+    <div class="fedwatchHeadActions"><span id="fedwatchState" class="fedwatchState">CHARGEMENT</span><button id="fedwatchRefresh" type="button">↻ Actualiser</button></div>
+  </div>
+  <div class="fedwatchGrid">
+    <article class="fedwatchMeeting">
+      <div class="fedwatchMetric"><span>Prochaine réunion</span><b id="fedwatchMeetingDate">--</b><small id="fedwatchMeetingMeta">Calendrier Federal Reserve</small></div>
+      <div class="fedwatchMetric"><span>EFFR actuel</span><b id="fedwatchEffr">--</b><small id="fedwatchTarget">Target --</small></div>
+      <div class="fedwatchMetric"><span>Future Fed Funds</span><b id="fedwatchFuture">--</b><small id="fedwatchFutureMeta">ZQ / prix public</small></div>
+    </article>
+    <article class="fedwatchProbBox">
+      <div class="fedwatchProbTitle"><b>Probabilités de taux · IA-TB</b><span id="fedwatchMethod">Weighted month · 25 bp</span></div>
+      <div id="fedwatchProbabilities" class="fedwatchProbabilities"><div class="fedwatchEmpty">Calcul en cours…</div></div>
+    </article>
+    <article class="fedwatchSources">
+      <div class="fedwatchProbTitle"><b>Sources & validation</b><span>sans API CME payante</span></div>
+      <div id="fedwatchSources" class="fedwatchSourceList"><div class="fedwatchEmpty">Vérification des sources…</div></div>
+    </article>
+  </div>
+  <div class="fedwatchFoot"><span id="fedwatchUpdated">Dernière mise à jour · --</span><small>Estimation IA-TB informative · ne pas confondre avec une publication officielle CME FedWatch.</small></div>
+</section>
 <div class="newsControlBar"><div id="notice" class="notice">Chargement du Fundamental Engine…</div><div class="newsControlActions"><button id="collectNow" class="newsRefreshBtn" type="button">↻ Actualiser</button><button id="purgeNews" class="newsPurgeBtn" type="button" title="Supprime les publications et traductions puis recharge les flux">Purger</button></div></div>
 
     <details class="section publicationsSection" open><summary><span>Publications récentes</span><small>5 visibles · défilement interne pour la suite</small></summary><div class="sectionBody"><div id="recentList" class="newsList"><div class="empty">Aucune publication collectée pour le moment.</div></div></div></details>
@@ -102,5 +124,5 @@
   </div>
 </div>
 
-<script src="/assets/fundamental_globe_v3.js?v=2007"></script><script src="/assets/fundamental_controller_v3.js?v=2007"></script>
+<script src="/assets/fundamental_globe_v3.js?v=2007"></script><script src="/assets/fundamental_controller_v3.js?v=2008"></script>
 <script src="/assets/companion_v1.0.js"></script></body></html>
