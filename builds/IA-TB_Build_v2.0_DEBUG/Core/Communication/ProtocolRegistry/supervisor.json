@@ -227,6 +227,12 @@
         "arguments": {
           "allowed": []
         }
+      },
+      {
+        "name": "supervisor.calendar.cme.expirations",
+        "arguments": {
+          "allowed": []
+        }
       }
     ],
     "dataTypes": [
