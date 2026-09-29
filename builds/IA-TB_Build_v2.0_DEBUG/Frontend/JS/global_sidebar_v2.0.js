@@ -58,7 +58,6 @@ function bankConfig(){
   item('Coffres Forts','vault',{href:'/bank#vault-personal',active:'vault',arrow:true}),
   item('Prets','loan',{href:'/bank#loans',active:'loans',arrow:true}),
   item('Swap et Bridges','swap',{href:'/bank#swap',active:'swap',arrow:true}),
-  item('Statistiques','stats',{href:'/statistiques',active:'stats'}),
   item('Aide & Support','help',{href:'/admin'})
  ]};
 }
