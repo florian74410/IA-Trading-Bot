@@ -66,6 +66,7 @@ flowchart LR
 ## 📚 Lire le Wiki par fonction
 
 ### 🏗️ Architecture et communication
+- [🚦 État fonctionnel V2.0 DEBUG](Etat-V2.0-DEBUG.md)
 - [🏗️ Architecture complète](Architecture.md)
 - [🔀 Router Protocol / CP/1](Router-Protocol-CP1.md)
 - [🖥️ Interface et pages de l’application](Application-UI.md)
