@@ -55,6 +55,7 @@ assert(/api\.hyperliquid\.xyz/.test(providerSrc),'Hyperliquid microstructure pro
 assert(/api\.kraken\.com/.test(providerSrc),'Kraken microstructure provider missing');
 assert(/\/api\/v5\/public\/open-interest/.test(providerSrc),'OKX open interest provider missing');
 assert(/aggregateOpenInterest/.test(providerSrc),'covered OI aggregator missing');
+assert(/arbitrum\.gmxapi\.io/.test(providerSrc)&&/avalanche\.gmxapi\.io/.test(providerSrc),'GMX DEX OI coverage missing');
 
 var md=fs.readFileSync(path.join(root,'MarketData','market_data_service.js'),'utf8');
 assert(/MicrostructureProvider/.test(md)&&/LiquidationStreamManager/.test(md),'microstructure must be owned by Market Data service');
