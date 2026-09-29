@@ -33,3 +33,37 @@ button,input,select{font:inherit}
 @media(max-width:1180px){.statsApp{grid-template-columns:205px minmax(0,1fr)}.statsSideTitle{padding:0 15px}.statsSideNav>a,.statsGroupTitle{padding-left:11px;font-size:11px}.statsSideGroup>a{padding-left:35px}.statsIntro{grid-template-columns:1fr 390px}.statsGridTop,.statsGridMid{grid-template-columns:1fr}.statsGridBottom{grid-template-columns:1fr}.cexMapStage,.engineStage{height:300px}.platformCards{grid-template-columns:repeat(5,minmax(118px,1fr));overflow-x:auto}.oracleCards{grid-template-columns:repeat(4,minmax(130px,1fr));overflow-x:auto}.summaryPanel{min-height:auto!important}}
 @media(max-width:820px){.statsApp{display:block}.statsSide{position:relative}.statsSideTitle{height:58px}.statsSideNav{display:grid;grid-template-columns:1fr 1fr;gap:5px}.statsSideNav>a,.statsGroupTitle{min-height:42px;border:1px solid #103448;border-radius:6px}.statsSideGroup{display:contents}.statsSideGroup>a{display:none}.statsIntro{grid-template-columns:1fr}.statsGlobalBanner{height:100px}.statsMain{padding:8px}.statsIntro h1{font-size:28px}.cexMapStage{height:290px}.exchangeNode{transform:scale(.88);transform-origin:center}.engineStage{height:360px}.engineNode{transform:scale(.86)}.eMarket,.ePortfolio{transform:translateX(-50%) scale(.86)}.statsCardHead{flex-wrap:wrap}.chartLegend{order:3;width:100%;flex-wrap:wrap}.summaryGrid{grid-template-columns:1fr 1fr}}
 @media(max-width:560px){.statsSideNav{grid-template-columns:1fr}.statsIntro{padding:12px}.statsIntro p{font-size:12px}.statsGlobalBanner>a{display:none}.cexMapStage{height:330px}.nodeCoinbase{left:1%;top:14%}.nodeBinance{left:37%;top:3%}.nodeOkx{right:1%;top:16%}.nodeKraken{left:1%;bottom:12%}.nodeGmx{right:1%;bottom:10%}.engineStage{height:430px}.engineHub{width:92px;height:92px}.engineNode{min-width:90px}.eRouter{left:17%}.eIndicator{right:8%}.eStrategy{right:0;top:35%}.eTrading{right:0;top:58%}.eRisk{right:2%;bottom:4%}.eFundamental{left:2%;bottom:4%}.eSupervisor{left:0}.summaryGrid{grid-template-columns:1fr}.adoptionChart{height:170px}}
+
+
+/* v2.0 DEBUG — harmonise les pictogrammes de la barre latérale */
+.statsSideNav .iaIconBox,
+.statsSideNav .statsBarsIcon,
+.statsSideNav .statsHelpIcon{
+  width:22px!important;
+  height:22px!important;
+  min-width:22px!important;
+  flex:0 0 22px!important;
+}
+.statsSideNav .iaIconBox{
+  display:grid!important;
+  place-items:center!important;
+  font-size:21px!important;
+  line-height:1!important;
+  color:#1dccff!important;
+}
+.statsSideNav .iaIconBox svg{
+  width:22px!important;
+  height:22px!important;
+}
+.statsSideNav .statsBarsIcon{
+  align-items:flex-end!important;
+  justify-content:center!important;
+}
+.statsSideNav .statsHelpIcon{
+  font-size:13px!important;
+}
+.statsSideNav>a,
+.statsSideNav .statsGroupTitle,
+.statsSideNav .statsSideGroup>a{
+  gap:13px!important;
+}
