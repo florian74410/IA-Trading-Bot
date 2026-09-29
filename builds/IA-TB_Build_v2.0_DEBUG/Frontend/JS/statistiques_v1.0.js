@@ -38,7 +38,7 @@ var state={
  }
 };
 state.cefi={shares:[],volume:[],volumeHistory:[],volumeRange:'24H',exchanges:[],assets:[],health:[]};
-state.defi={shares:[],volume:[],volumeHistory:[],volumeDaily:[],volumeRange:'24H',protocols:[],protocolsRaw:[],stableIn:[],stableOut:[],networks:[],yieldPools:[],dexFeeProtocols:[],leaders:null};
+state.defi={shares:[],volume:[],volumeHistory:[],volumeDaily:[],volumeRange:'24H',protocols:[],protocolsRaw:[],stableIn:[],stableOut:[],networks:[],yieldPools:[],dexFeeProtocols:[],swapLiquidity:null,leaders:null};
 
 function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 function q(s,r){return (r||document).querySelector(s)}
@@ -169,11 +169,12 @@ function parsePoolFeePct(p){var s=String(p&&p.poolMeta||''),m=s.match(/(?:fee(?:
 function buildLeaders(){var pools=(state.defi.yieldPools||[]).slice(),tvl=pools.slice().sort(function(a,b){return(+b.tvlUsd||0)-(+a.tvlUsd||0);})[0]||null,apr=pools.filter(function(x){return+x.tvlUsd>=1000000&&isFinite(+x.apy)&&+x.apy>0&&+x.apy<5000;}).sort(function(a,b){return+b.apy-+a.apy;})[0]||null,vol=(state.defi.protocolsRaw||[]).slice().sort(function(a,b){return(+b.volume24hUsd||0)-(+a.volume24hUsd||0);})[0]||null,fee=(state.defi.dexFeeProtocols||[]).slice().sort(function(a,b){return(+b.fees24hUsd||0)-(+a.fees24hUsd||0);})[0]||null;state.defi.leaders={tvl:tvl,apr:apr,volume:vol,fees:fee};}
 function renderTopPools(){buildLeaders();var h=q('#defiTopPools'),z=state.defi.leaders||{};if(!h)return;h.innerHTML=leaderCard('MEILLEURE TVL','◆',z.tvl,money(z.tvl&&z.tvl.tvlUsd),(z.tvl&&z.tvl.project||'')+' · '+(z.tvl&&z.tvl.chain||''),'POOL')+leaderCard('MEILLEUR VOLUME','↗',z.volume,money(z.volume&&z.volume.volume24hUsd),'Volume DEX · 24h','DEX')+leaderCard('MEILLEUR APR','%',z.apr,z.apr&&isFinite(+z.apr.apy)?(+z.apr.apy).toFixed(2).replace('.',',')+' %':'--',(z.apr&&z.apr.project||'')+' · TVL '+money(z.apr&&z.apr.tvlUsd),'POOL')+leaderCard('MEILLEURS FEES','$',z.fees,money(z.fees&&z.fees.fees24hUsd),'Fees · 24h','DEX');}
 function renderExecutionCost(){
- var h=q('#defiExecutionCost');if(!h)return;var pools=(state.defi.yieldPools||[]).slice(),feePools=pools.filter(function(x){return+x.tvlUsd>0&&parsePoolFeePct(x)!=null;}).sort(function(a,b){return(+b.tvlUsd||0)-(+a.tvlUsd||0);}),pool=feePools[0]||pools.sort(function(a,b){return(+b.tvlUsd||0)-(+a.tvlUsd||0);})[0],sel=q('#execTradeSize'),amount=sel?(+sel.value||10000):10000;
- if(!pool){h.innerHTML='<div class="modulePlaceholder">Aucune pool exploitable reçue du provider.</div>';return;}
- var feePct=parsePoolFeePct(pool),feeUsd=feePct==null?null:amount*feePct/100,tvl=+pool.tvlUsd||0,slipPct=tvl>0?amount/(tvl/2+amount)*100:null,slipUsd=slipPct==null?null:amount*slipPct/100,known=(feeUsd||0)+(slipUsd||0);
+ var h=q('#defiExecutionCost');if(!h)return;var snap=state.defi.swapLiquidity||{},pools=(snap.pools||[]).filter(function(x){return+x.liquidityUsd>0;}).sort(function(a,b){return(+b.liquidityUsd||0)-(+a.liquidityUsd||0);}),pool=snap.bestPool||pools[0]||null,sel=q('#execTradeSize'),amount=sel?(+sel.value||10000):10000;
+ if(!pool){h.innerHTML='<div class="modulePlaceholder">Aucune pool DEX exploitable reçue du Market Data Collector · DexScreener.</div>';return;}
+ var liq=+pool.liquidityUsd||0,feePct=parsePoolFeePct({poolMeta:(pool.labels||[]).join(' ')}),feeUsd=feePct==null?null:amount*feePct/100,slipPct=liq>0?amount/(liq/2+amount)*100:null,slipUsd=slipPct==null?null:amount*slipPct/100,known=(feeUsd||0)+(slipUsd||0);
  var a=feeUsd==null?0:feeUsd,b=slipUsd==null?0:slipUsd,sum=Math.max(.000001,a+b),gasFlex=18,feeFlex=(a||b)?Math.max(10,82*a/sum):41,slipFlex=(a||b)?Math.max(10,82*b/sum):41,totalFlex=gasFlex+feeFlex+slipFlex;gasFlex=gasFlex/totalFlex*100;feeFlex=feeFlex/totalFlex*100;slipFlex=slipFlex/totalFlex*100;
- h.innerHTML='<div class="execVisual"><div class="execTotal"><span>COÛT CONNU</span><b>≥ '+esc(money(known))+'</b><small>hors gas · ordre '+esc(money(amount))+'</small></div><div class="execStack" title="La partie Gas reste grisée tant qu’un RPC gas n’est pas connecté"><i class="execGas" style="height:'+gasFlex.toFixed(1)+'%"></i><i class="execFee" style="height:'+feeFlex.toFixed(1)+'%"></i><i class="execSlip" style="height:'+slipFlex.toFixed(1)+'%"></i></div></div><div class="execDetails"><div class="execCostRow gas"><span class="costMini">⛽</span><div><b>Gas Fees</b><small>RPC gas non connecté pour '+esc(pool.chain||'cette chaîne')+'</small></div><strong>N/D</strong></div><div class="execCostRow fee"><span class="costMini">◆</span><div><b>Frais DEX</b><small>'+(feePct==null?'Fee tier absent des métadonnées':esc(feePct.toFixed(3).replace('.',',')+' % · '+(pool.poolMeta||pool.project)))+'</small></div><strong>'+(feeUsd==null?'N/D':esc(money(feeUsd)))+'</strong></div><div class="execCostRow slip"><span class="costMini">⇵</span><div><b>Slippage estimé</b><small>Impact simplifié selon taille / TVL · '+esc(slipPct==null?'N/D':slipPct.toFixed(4).replace('.',',')+' %')+'</small></div><strong>'+(slipUsd==null?'N/D':esc(money(slipUsd)))+'</strong></div><div class="execPoolRef"><span>Pool de référence</span><b>'+esc(pool.symbol||pool.project||'Pool')+'</b><small>'+esc(pool.project||'')+' · '+esc(pool.chain||'')+' · TVL '+esc(money(pool.tvlUsd))+'</small></div></div>';
+ var poolName=(pool.base&&pool.base.symbol||'')+'/'+(pool.quote&&pool.quote.symbol||''),dex=pool.dexId||'DEX',chain=pool.chainId||'';
+ h.innerHTML='<div class="execVisual"><div class="execTotal"><span>COÛT CONNU</span><b>≥ '+esc(money(known))+'</b><small>hors gas · ordre '+esc(money(amount))+'</small></div><div class="execStack" title="La partie Gas reste grisée tant qu’un RPC gas n’est pas connecté"><i class="execGas" style="height:'+gasFlex.toFixed(1)+'%"></i><i class="execFee" style="height:'+feeFlex.toFixed(1)+'%"></i><i class="execSlip" style="height:'+slipFlex.toFixed(1)+'%"></i></div></div><div class="execDetails"><div class="execCostRow gas"><span class="costMini">⛽</span><div><b>Gas Fees</b><small>RPC gas non connecté pour '+esc(chain||'cette chaîne')+'</small></div><strong>N/D</strong></div><div class="execCostRow fee"><span class="costMini">◆</span><div><b>Frais DEX</b><small>'+(feePct==null?'Fee tier non exposé par DexScreener':esc(feePct.toFixed(3).replace('.',',')+' % · '+dex))+'</small></div><strong>'+(feeUsd==null?'N/D':esc(money(feeUsd)))+'</strong></div><div class="execCostRow slip"><span class="costMini">⇵</span><div><b>Slippage estimé</b><small>Impact simplifié taille / liquidité pool · '+esc(slipPct==null?'N/D':slipPct.toFixed(4).replace('.',',')+' %')+'</small></div><strong>'+(slipUsd==null?'N/D':esc(money(slipUsd)))+'</strong></div><div class="execPoolRef"><span>Pool de référence · DexScreener</span><b>'+esc(poolName||'Pool')+'</b><small>'+esc(dex)+' · '+esc(chain)+' · Liquidité '+esc(money(liq))+' · Volume 24h '+esc(money(pool.volume24hUsd))+'</small></div></div>';
 }
 function renderFinance(){
  renderCefiVolume();
@@ -230,8 +231,8 @@ function historyValues(h,family,pathName){
  });
  return out.slice(-24);
 }
-function applyFinancialSnapshot(s,cefiHistory,defiHistory,oi,liq){
- s=s||{};var c=s.cefi||{},d=s.defi||{},meta=s.meta||{};
+function applyFinancialSnapshot(s,cefiHistory,defiHistory,oi,liq,dexLiquidity){
+ s=s||{};var c=s.cefi||{},d=s.defi||{},meta=s.meta||{};state.defi.swapLiquidity=dexLiquidity&&dexLiquidity.ok!==false?dexLiquidity:null;
  if(c&&Object.keys(c).length){
   var exTotal=c.spotVolume24hUsd==null?null:+c.spotVolume24hUsd,
       exAvailable=Array.isArray(c.exchanges)&&c.exchanges.length>0&&isFinite(exTotal)&&exTotal>0,
@@ -295,8 +296,9 @@ function loadFinancialData(){
   uiRead('marketdata.financial.history',{family:'CEFI',limit:cfg.limit,since:Date.now()-cfg.ms}),
   uiRead('marketdata.financial.history',{family:'DEFI',limit:96}),
   uiRead('marketdata.derivatives.open_interest',{symbol:'BTCUSD'}).catch(function(e){return{ok:false,error:e.message}}),
-  uiRead('marketdata.liquidations.stats',{windowMs:86400000}).catch(function(e){return{ok:false,error:e.message}})
- ]).then(function(x){applyFinancialSnapshot(x[0],x[1],x[2],x[3],x[4])}).catch(function(e){
+  uiRead('marketdata.liquidations.stats',{windowMs:86400000}).catch(function(e){return{ok:false,error:e.message}}),
+  uiRead('marketdata.dex.liquidity.snapshot',{symbol:'BTCUSD',force:false}).catch(function(e){return{ok:false,error:e.message}})
+ ]).then(function(x){applyFinancialSnapshot(x[0],x[1],x[2],x[3],x[4],x[5])}).catch(function(e){
   if(window.console&&console.warn)console.warn('[STATISTICS] financial data unavailable:',e.message);
  });
 }
