@@ -1,16 +1,17 @@
 {
   "id": "marketdata",
-  "label": "Market Data Collector",
+  "label": "Market Data Collector V2.0",
   "type": "SERVICE",
   "order": 50,
   "port": 8013,
   "healthPath": "/health",
-  "marker": "IA-TB Market Data",
+  "marker": "IA-TB Market Data Collector V2.0",
   "restartable": true,
   "defaultEnabled": true,
   "script": "MarketData/market_data_service.js",
   "log": ".runtime/logs/market_data.log",
   "env": {
     "IATB_MARKET_DATA_PORT": "8013"
-  }
+  },
+  "version": "2.0.0"
 }
