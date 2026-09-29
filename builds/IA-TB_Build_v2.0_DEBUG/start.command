@@ -192,6 +192,16 @@ if [ ! -x "$NODE_BIN" ]; then
 fi
 status_ok "Node Runtime" "$($NODE_BIN -v)"
 
+if [ -f "$PWD/Bank/install_dependencies.command" ]; then
+  status_wait "Bank EVM Signer" "checking"
+  if /bin/bash "$PWD/Bank/install_dependencies.command"; then
+    status_ok "Bank EVM Signer" "ethers 5.7.2"
+  else
+    status_warn "Bank EVM Signer" "unavailable"
+    echo "         ↳ Swap/Bridge quotes remain available, internal signing is disabled."
+  fi
+fi
+
 LOG_DIR="$PWD/.runtime/logs"
 mkdir -p "$LOG_DIR"
 ROUTER_LOG="$LOG_DIR/router.log"
