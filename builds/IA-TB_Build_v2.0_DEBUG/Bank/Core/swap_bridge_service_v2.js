@@ -79,7 +79,7 @@ SwapBridgeService.prototype._apiKey=function(sess){return String(this.getSecret(
 SwapBridgeService.prototype._feeRecipient=function(){return String(this.getFeeRecipient()||process.env.IATB_FEE_RECIPIENT||'').trim()};
 SwapBridgeService.prototype._rpc=function(network){var n=NETWORKS[network];return n?String(this.getRpc(network)||process.env[n.rpcEnv]||'').trim():''};
 SwapBridgeService.prototype.status=function(sess){
- var signer=false;try{var ep=require('ethers/package.json');signer=ep&&ep.version==='5.7.2'}catch(e){}return{ok:true,engine:'SWAP_BRIDGE_V2',provider:'0x Cross-Chain',feeBps:this.feeBps,feePercent:1,apiConfigured:!!this._apiKey(sess),feeRecipientConfigured:validEvm(this._feeRecipient()),internalSignerReady:signer,rpc:Object.keys(NETWORKS).reduce(function(o,k){o[k]=!!String(this._rpc(k)||'').trim();return o}.bind(this),{})};
+ var signer=false;try{var ep=require('ethers');signer=!!(ep&&ep.Wallet&&ep.providers&&ep.providers.JsonRpcProvider)}catch(e){}return{ok:true,engine:'SWAP_BRIDGE_V2',provider:'0x Cross-Chain',feeBps:this.feeBps,feePercent:1,apiConfigured:!!this._apiKey(sess),feeRecipientConfigured:validEvm(this._feeRecipient()),internalSignerReady:signer,rpc:Object.keys(NETWORKS).reduce(function(o,k){o[k]=!!String(this._rpc(k)||'').trim();return o}.bind(this),{})};
 };
 SwapBridgeService.prototype._context=function(sess,input){
  input=input||{};var sourceNetwork=String(input.sourceNetwork||'').toLowerCase(),destNetwork=String(input.destNetwork||'').toLowerCase(),sn=NETWORKS[sourceNetwork],dn=NETWORKS[destNetwork];
@@ -128,7 +128,7 @@ SwapBridgeService.prototype.prepare=function(sess,input){
  input=input||{};var id=String(input.routeId||input.quoteId||''),x=this.cache[id];if(!x)throw new Error('QUOTE_NOT_FOUND');if(Date.now()-x.ts>this.quoteTtlMs){delete this.cache[id];throw new Error('QUOTE_EXPIRED')}
  var r=x.route,ctx=x.ctx;if(!r.tokenEnough)throw new Error('INSUFFICIENT_TOKEN_BALANCE');if(!r.gasVerified)throw new Error('GAS_NOT_VERIFIED');if(!r.gasEnough)throw new Error('INSUFFICIENT_GAS_BALANCE');if(!r.iatbFeeApplied)throw new Error('IATB_FEE_NOT_APPLIED');if(r.simulationIncomplete)throw new Error('SIMULATION_INCOMPLETE');
  var approval=null;if(r.needsAllowance&&r.allowance&&validEvm(r.allowance.spender))approval={to:ctx.sell.addresses[ctx.sourceNetwork],data:approvalData(r.allowance.spender,ctx.amountRaw),value:'0',chainId:ctx.sn.chainId,spender:r.allowance.spender,amount:ctx.amountRaw.toString()};
- var signerReady=false;try{var ep=require('ethers/package.json');signerReady=ep&&ep.version==='5.7.2'}catch(e){}
+ var signerReady=false;try{var ep=require('ethers');signerReady=!!(ep&&ep.Wallet&&ep.providers&&ep.providers.JsonRpcProvider)}catch(e){}
  return{ok:true,stage:'SIGNATURE_REQUIRED',signatureRequired:true,routeId:id,quoteId:r.quoteId,provider:r.provider,sourceAddress:ctx.sourceAddress,destinationAddress:ctx.destAddress,sourceNetwork:ctx.sourceNetwork,destinationNetwork:ctx.destNetwork,sellSymbol:ctx.sellSymbol,buySymbol:ctx.buySymbol,sellAmount:ctx.amount,buyAmount:r.buyAmount,minBuyAmount:r.minBuyAmount,fee:{percent:1,bps:this.feeBps,amount:r.iatbFee,symbol:ctx.sellSymbol},approval:approval,transaction:r.transaction,estimatedTimeSeconds:r.estimatedTimeSeconds,signer:{internal:signerReady,eip1193:true,reason:signerReady?'IA-TB Bank signer ready.':'Ethers signer runtime missing.'}};
 };
 SwapBridgeService.prototype.executeInternal=function(sess,input,cb){
