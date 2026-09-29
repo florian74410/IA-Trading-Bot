@@ -157,7 +157,7 @@ function walletAssetPriceEUR(symbol,cb){
 
 var CRYPTO_CATALOG_CACHE=Object.create(null),CRYPTO_DETAIL_CACHE=Object.create(null);
 var CG_PLATFORM={ethereum:'ethereum',arbitrum:'arbitrum-one',polygon:'polygon-pos',bnb:'binance-smart-chain',base:'base'};
-var CG_NATIVE={ethereum:'ethereum',arbitrum:'ethereum',polygon:'polygon-ecosystem-token',bnb:'binancecoin',base:'ethereum'};
+var CG_NATIVE={bitcoin:'bitcoin',ethereum:'ethereum',arbitrum:'ethereum',polygon:'polygon-ecosystem-token',bnb:'binancecoin',base:'ethereum',solana:'solana'};
 function cgGet(path,cb){
  request('GET','https://api.coingecko.com/api/v3'+path,{'Accept':'application/json','User-Agent':'IA-TB/2.0'},null,cb,12000);
 }
@@ -182,11 +182,13 @@ function cryptoCatalog(query,page,perPage,cb){
  });
 }
 function cryptoResolve(id,network,cb){
- id=String(id||'').trim();network=String(network||'').toLowerCase();if(!id)return cb(new Error('CRYPTO_ID_REQUIRED'));if(!CG_PLATFORM[network])return cb(new Error('NETWORK_NOT_SUPPORTED'));
+ id=String(id||'').trim();network=String(network||'').toLowerCase();if(!id)return cb(new Error('CRYPTO_ID_REQUIRED'));if(!CG_NATIVE[network])return cb(new Error('NETWORK_NOT_SUPPORTED'));
  var key=id+'|'+network,hit=CRYPTO_DETAIL_CACHE[key];if(hit&&Date.now()-hit.at<300000)return cb(null,hit.data);
  cgGet('/coins/'+encodeURIComponent(id)+'?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false&sparkline=false',function(e,o){if(e)return cb(e);
-  var nativeId=CG_NATIVE[network],isNative=id===nativeId,platform=CG_PLATFORM[network],address=o&&o.platforms&&o.platforms[platform]||'',md=o&&o.market_data||{},cp=md.current_price||{};
-  var data={id:id,name:o.name||id,symbol:String(o.symbol||'').toUpperCase(),image:o.image&&o.image.small||'',network:network,isNative:isNative,tokenAddress:isNative?'':String(address||''),transferable:isNative||/^0x[a-fA-F0-9]{40}$/.test(String(address||'')),priceEUR:cp.eur==null?null:+cp.eur,priceUSD:cp.usd==null?null:+cp.usd,source:'CoinGecko'};
+  var nativeId=CG_NATIVE[network],isNative=id===nativeId,platform=CG_PLATFORM[network]||'',address=platform&&o&&o.platforms&&o.platforms[platform]||'',md=o&&o.market_data||{},cp=md.current_price||{},family=(network==='bitcoin'?'BITCOIN':network==='solana'?'SOLANA':'EVM');
+  var transferable=family==='EVM'?(isNative||/^0x[a-fA-F0-9]{40}$/.test(String(address||''))):isNative;
+  var assetType=family==='BITCOIN'?'BTC':family==='SOLANA'?'SOL':(isNative?'NATIVE':'ERC20'),decimals=family==='BITCOIN'?8:family==='SOLANA'?9:(isNative?18:null);
+  var data={id:id,name:o.name||id,symbol:String(o.symbol||'').toUpperCase(),image:o.image&&o.image.small||'',network:network,family:family,assetType:assetType,isNative:isNative,tokenAddress:family==='EVM'&&!isNative?String(address||''):'',transferable:transferable,decimals:decimals,priceEUR:cp.eur==null?null:+cp.eur,priceUSD:cp.usd==null?null:+cp.usd,source:'CoinGecko'};
   CRYPTO_DETAIL_CACHE[key]={at:Date.now(),data:data};cb(null,data);
  });
 }
@@ -639,8 +641,9 @@ function route(req,res){var u=new URL(req.url,'http://'+HOST+':'+PORT),p=u.pathn
  if(req.method==='POST'&&p==='/api/app-settings/select')return body(req,function(e,b){if(e)return json(res,400,{error:'JSON invalide'});var fn=appSettingsFilename(b.filename||'DefaultAppSettings.dat');if(b.createIfMissing&&listAppSettingsFiles().indexOf(fn)<0)writeAppSettings(fn,{general:{}});setActiveAppSettingsFile(fn);var aps=readAppSettings(fn);json(res,200,{ok:true,activeFile:aps.filename,files:listAppSettingsFiles(),profile:aps.data});});
 
  if(req.method==='GET'&&p==='/api/transfers/status')return json(res,200,TRANSFER_SERVICE.status());
+ if(req.method==='GET'&&p==='/api/transfers/assets'){try{return json(res,200,TRANSFER_SERVICE.assets(u.searchParams.get('network')))}catch(e){return json(res,400,{ok:false,error:e.message})}}
  if(req.method==='POST'&&p==='/api/transfers/preview')return body(req,function(e,b){if(e||!b)return json(res,400,{ok:false,error:'JSON invalide'});TRANSFER_SERVICE.preview(sess,b,function(x,o){if(x){log('TRANSFER','Preview refused',String(x.message||x));return json(res,400,{ok:false,error:x.message})}json(res,200,o)})});
- if(req.method==='POST'&&p==='/api/transfers/execute')return body(req,function(e,b){if(e||!b)return json(res,400,{ok:false,error:'JSON invalide'});TRANSFER_SERVICE.executeInternal(sess,b,function(x,o){if(x){log('TRANSFER','Execution failed',String(x.message||x));return json(res,400,{ok:false,error:x.message})}var h=SETTINGS_DB.get('transfer','history',[]);if(!Array.isArray(h))h=[];h.push(o);if(h.length>300)h=h.slice(-300);SETTINGS_DB.set('transfer','history',h);addNotification('bank.transfer','NOTICE','Transfert crypto confirmé','Le transfert a été confirmé on-chain.',{layout:'medium',transfer:true,direction:'sent',txHash:o.txHash,network:o.network,symbol:o.symbol,amount:o.amount,sourceAddress:o.sourceAddress,destinationAddress:o.destinationAddress});if(o.internalDestination)addNotification('bank.transfer','NOTICE','Crypto reçue','Un transfert entrant a été confirmé.',{layout:'medium',transfer:true,direction:'received',txHash:o.txHash,network:o.network,symbol:o.symbol,amount:o.amount,sourceAddress:o.sourceAddress,destinationAddress:o.destinationAddress});log('TRANSFER','Confirmed',o.txHash);json(res,200,o)})});
+ if(req.method==='POST'&&p==='/api/transfers/execute')return body(req,function(e,b){if(e||!b)return json(res,400,{ok:false,error:'JSON invalide'});TRANSFER_SERVICE.executeInternal(sess,b,function(x,o){if(x){log('TRANSFER','Execution failed',String(x.message||x));return json(res,400,{ok:false,error:x.message})}var h=SETTINGS_DB.get('transfer','history',[]);if(!Array.isArray(h))h=[];h.push(o);if(h.length>300)h=h.slice(-300);SETTINGS_DB.set('transfer','history',h);var confirmed=o.status==='CONFIRMED',title=confirmed?'Transfert crypto confirmé':'Transfert crypto soumis',message=confirmed?'Le transfert a été confirmé on-chain.':'Le transfert a été signé et soumis au réseau; confirmation en attente.';addNotification('bank.transfer','NOTICE',title,message,{layout:'medium',transfer:true,direction:'sent',status:o.status,txHash:o.txHash,network:o.network,symbol:o.symbol,amount:o.amount,sourceAddress:o.sourceAddress,destinationAddress:o.destinationAddress});if(confirmed&&o.internalDestination)addNotification('bank.transfer','NOTICE','Crypto reçue','Un transfert entrant a été confirmé.',{layout:'medium',transfer:true,direction:'received',txHash:o.txHash,network:o.network,symbol:o.symbol,amount:o.amount,sourceAddress:o.sourceAddress,destinationAddress:o.destinationAddress});log('TRANSFER',String(o.status||'SUBMITTED'),o.txHash);json(res,200,o)})});
  if(req.method==='GET'&&p==='/api/transfers/history'){var th=SETTINGS_DB.get('transfer','history',[]);if(!Array.isArray(th))th=[];return json(res,200,{ok:true,items:th.slice(-100).reverse()});}
 
  if(req.method==='GET'&&p==='/api/onchain/status')return json(res,200,ONCHAIN_READER.status());
