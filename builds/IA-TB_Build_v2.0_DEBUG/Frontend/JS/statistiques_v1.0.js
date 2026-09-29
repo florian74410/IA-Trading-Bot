@@ -91,6 +91,8 @@ function renderAdoption(){
 }
 
 function barChart(values,klass){
+ values=(values||[]).filter(function(v){return isFinite(+v)}).map(Number);
+ if(values.length<2)return '<div class="financeChartEmpty"><b>Historique en cours de constitution</b><span>Le graphique apparaîtra dès que plusieurs points temporels auront été enregistrés.</span></div>';
  var w=760,h=210,pad=22,max=Math.max.apply(Math,values.concat([1])),bw=(w-pad*2)/values.length*.64,out='',grid='';
  for(var g=0;g<5;g++){var y=pad+g*((h-pad*2)/4);grid+='<line x1="'+pad+'" y1="'+y+'" x2="'+(w-pad)+'" y2="'+y+'"/>'}
  values.forEach(function(v,i){var step=(w-pad*2)/values.length,x=pad+i*step+step*.18,bh=(v/max)*(h-pad*2),y=h-pad-bh;out+='<rect x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+bh.toFixed(1)+'" rx="2"/>'});
@@ -210,7 +212,7 @@ function applyFinancialSnapshot(s,cefiHistory,defiHistory){
   setKpi('defiTvl',money(d.tvlUsd),trend(tvlHist),'DeFiLlama · TVL protocoles/chains');
   setKpi('defiDexVolume',money(d.dexVolume24hUsd),trend(dv),'DeFiLlama · DEX 24h');
   setKpi('defiStable',money(d.stablecoinMarketCapUsd),trend(stableHist),'DeFiLlama · stablecoins');
-  setKpi('defiBridgeVolume','N/D','','Donnée non disponible · provider de volume bridge non connecté');
+  setKpi('defiBridgeVolume','N/D','Non suivi','Donnée non disponible · provider de volume bridge non connecté');
   var dd=q('.defiDonut b');if(dd)dd.textContent=money(d.tvlUsd);
   var stable=stableHist,ins=[],outs=[];
   for(var i=1;i<stable.length;i++){var delta=stable[i]-stable[i-1];ins.push(delta>0?delta/1e9:0);outs.push(delta<0?-delta/1e9:0)}
