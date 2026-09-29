@@ -34,3 +34,31 @@
 
 /* Main IA-TB navigation in Settings — v2.0 DEBUG */
 .settingsAppNav{height:64px;flex:0 0 64px;padding:0 20px;gap:20px}.settingsBrand{display:flex;align-items:baseline;gap:8px;text-decoration:none;color:#eaf5ff;white-space:nowrap}.settingsBrand b{font-size:24px;letter-spacing:.4px}.settingsBrand small{font-size:10px;color:#24b8ff}.settingsMainNav{height:100%;display:flex;align-items:stretch;gap:2px;flex:1}.settingsMainNav a{position:relative;display:flex;align-items:center;padding:0 16px;color:#b9cbd9;text-decoration:none;font-weight:650;white-space:nowrap}.settingsMainNav a:hover{color:#fff;background:#0b1c29}.settingsMainNav a.active{color:#37c8ff;background:#0a1b28}.settingsMainNav a.active:after{content:'';position:absolute;left:12px;right:12px;bottom:0;height:2px;background:#22bfff}.settingsAppNav .clock{margin-left:auto}.settingsAppNav .engineStrip{display:none}@media(max-width:1050px){.settingsAppNav{padding:0 10px;gap:8px}.settingsMainNav a{padding:0 8px;font-size:11px}.settingsBrand b{font-size:19px}.settingsBrand small{display:none}}@media(max-width:760px){.settingsMainNav{overflow-x:auto}.settingsAppNav .clock{display:none}}
+
+
+/* Swap & Bridge API configuration */
+.rpcGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:7px;
+  margin:9px 0 6px;
+}
+.rpcGrid label{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  color:#8fb0c2;
+  font-size:9px;
+}
+.rpcGrid input{
+  min-width:0;
+  border:1px solid #173f5a;
+  border-radius:6px;
+  background:#061522;
+  color:#eaf7ff;
+  padding:7px 8px;
+  font-size:9px;
+}
+@media(max-width:760px){
+  .rpcGrid{grid-template-columns:1fr}
+}
