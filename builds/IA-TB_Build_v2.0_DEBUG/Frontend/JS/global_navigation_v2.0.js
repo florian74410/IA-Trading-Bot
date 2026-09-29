@@ -13,7 +13,24 @@ function iconSvg(name){
 }
 
 function current(){var p=location.pathname;if(p.indexOf('/chart')===0)return'/chart-viewer';if(p.indexOf('/portfolio')===0)return'/portfolio';if(p.indexOf('/bank')===0)return'/bank';if(p.indexOf('/fundamental')===0)return'/fundamental';if(p.indexOf('/settings')===0)return'/settings';if(p.indexOf('/strategy')===0)return'/strategy';if(p.indexOf('/statistiques')===0)return'/statistiques';return'/ia-trading'}
-function mount(){if(document.getElementById('iatb-global-nav'))return;var active=current(),n=document.createElement('header');n.id='iatb-global-nav';n.setAttribute('role','banner');n.innerHTML='<div class="iatb-nav-frame"><a class="iatb-nav-brand" href="/ia-trading" aria-label="IA-TB"><img src="/assets/ia_tb_logo_v1.7.2.png" alt="IA-TB" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'block\'"><span class="iatb-nav-brand-fallback" style="display:none">IA-TB</span></a><nav class="iatb-nav-links" aria-label="Navigation principale">'+routes.map(function(x){return'<a class="iatb-nav-link '+(x[0]===active?'active':'')+'" href="'+x[0]+'"><span class="iatb-nav-icon">'+iconSvg(x[2])+'</span><span class="iatb-nav-label">'+x[1]+'</span></a>'}).join('')+'</nav><div class="iatb-nav-actions"><a class="iatb-nav-action" href="/admin">♙ ADMIN</a><span class="iatb-nav-status" title="IA-TB"><i></i></span></div></div>';document.body.insertBefore(n,document.body.firstChild);var spacer=document.createElement('div');spacer.id='iatb-global-nav-spacer';spacer.setAttribute('aria-hidden','true');n.parentNode.insertBefore(spacer,n.nextSibling);document.body.classList.add('iatb-global-nav-ready');n.querySelectorAll('.iatb-nav-link').forEach(function(a){a.addEventListener('click',function(e){var target=a.getAttribute('href');if(!target)return;e.preventDefault();e.stopPropagation();location.assign(target)},true)})}
+function ensureGlobalSidebar(){
+ if(!document.querySelector('link[data-iatb-global-side]')){
+  var l=document.createElement('link');l.rel='stylesheet';l.href='/assets/global_sidebar_v2.0.css?v=2000';l.setAttribute('data-iatb-global-side','1');document.head.appendChild(l);
+ }
+ if(!document.querySelector('script[data-iatb-global-side]')){
+  var s=document.createElement('script');s.src='/assets/global_sidebar_v2.0.js?v=2000';s.setAttribute('data-iatb-global-side','1');document.head.appendChild(s);
+ }
+}
+function resolveAdminVisibility(){
+ var a=document.getElementById('iatb-admin-link');if(!a)return;
+ a.style.display='none';
+ fetch('/api/bootstrap',{cache:'no-store'}).then(function(r){if(!r.ok)throw new Error('BOOTSTRAP_'+r.status);return r.json()}).then(function(o){
+  var role=String(o&&o.role||'').toUpperCase();
+  if(role==='ADMIN'||role==='SUPERADMIN')a.style.display='inline-flex';
+ }).catch(function(){a.style.display='none'});
+}
+
+function mount(){if(document.getElementById('iatb-global-nav'))return;ensureGlobalSidebar();var active=current(),n=document.createElement('header');n.id='iatb-global-nav';n.setAttribute('role','banner');n.innerHTML='<div class="iatb-nav-frame"><a class="iatb-nav-brand" href="/ia-trading" aria-label="IA-TB"><img src="/assets/ia_tb_logo_v1.7.2.png" alt="IA-TB" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'block\'"><span class="iatb-nav-brand-fallback" style="display:none">IA-TB</span></a><nav class="iatb-nav-links" aria-label="Navigation principale">'+routes.map(function(x){return'<a class="iatb-nav-link '+(x[0]===active?'active':'')+'" href="'+x[0]+'"><span class="iatb-nav-icon">'+iconSvg(x[2])+'</span><span class="iatb-nav-label">'+x[1]+'</span></a>'}).join('')+'</nav><div class="iatb-nav-actions"><a id="iatb-admin-link" class="iatb-nav-action" href="/admin" style="display:none">♙ ADMIN</a><span class="iatb-nav-status" title="IA-TB"><i></i></span></div></div>';document.body.insertBefore(n,document.body.firstChild);var spacer=document.createElement('div');spacer.id='iatb-global-nav-spacer';spacer.setAttribute('aria-hidden','true');n.parentNode.insertBefore(spacer,n.nextSibling);document.body.classList.add('iatb-global-nav-ready');resolveAdminVisibility();n.querySelectorAll('.iatb-nav-link').forEach(function(a){a.addEventListener('click',function(e){var target=a.getAttribute('href');if(!target)return;e.preventDefault();e.stopPropagation();location.assign(target)},true)})}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount);else mount();
 })();
 /* Rich Notification Overlay v2 bootstrap — available on every IA-TB page. */
