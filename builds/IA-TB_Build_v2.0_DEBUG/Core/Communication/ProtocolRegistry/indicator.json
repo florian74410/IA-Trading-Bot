@@ -132,6 +132,22 @@
         "description": "Read-only numeric financial time series extracted from persisted Market Data snapshots."
       },
       {
+        "name": "indicator.financial_analyze",
+        "arguments": {
+          "allowed": [
+            "family",
+            "metric",
+            "limit",
+            "since",
+            "period"
+          ],
+          "required": [
+            "metric"
+          ]
+        },
+        "description": "Calculate change, min/max, mean, SMA and EMA from persisted Market Data financial series."
+      },
+      {
         "name": "indicator.definition.get",
         "arguments": {
           "allowed": [
