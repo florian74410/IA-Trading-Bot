@@ -19,7 +19,7 @@ Store.prototype.init=function(){try{
  " CREATE TABLE IF NOT EXISTS microstructure_snapshots(id INTEGER PRIMARY KEY AUTOINCREMENT,timestamp INTEGER NOT NULL,provider TEXT NOT NULL,symbol TEXT NOT NULL,depth INTEGER NOT NULL,firewall_decision TEXT,data_json TEXT NOT NULL);"+
  " CREATE INDEX IF NOT EXISTS idx_micro_ts ON microstructure_snapshots(timestamp);"+
  " CREATE INDEX IF NOT EXISTS idx_micro_provider_symbol_ts ON microstructure_snapshots(provider,symbol,timestamp);"+
- " CREATE TABLE IF NOT EXISTS liquidation_events(id INTEGER PRIMARY KEY AUTOINCREMENT,timestamp INTEGER NOT NULL,provider TEXT NOT NULL,symbol TEXT NOT NULL,side TEXT NOT NULL,price REAL NOT NULL,quantity REAL NOT NULL,notional_usd REAL,event_key TEXT UNIQUE,data_json TEXT NOT NULL);"+
+ " CREATE TABLE IF NOT EXISTS liquidation_events(id INTEGER PRIMARY KEY AUTOINCREMENT,timestamp INTEGER NOT NULL,provider TEXT NOT NULL,symbol TEXT NOT NULL,side TEXT NOT NULL,price REAL NOT NULL,quantity REAL NOT NULL,notional_usd REAL,event_key TEXT UNIQUE,data_json TEXT NOT NULL); CREATE TABLE IF NOT EXISTS open_interest_snapshots(id INTEGER PRIMARY KEY AUTOINCREMENT,timestamp INTEGER NOT NULL,symbol TEXT NOT NULL,total_usd REAL,cex_usd REAL,dex_usd REAL,coverage_json TEXT,data_json TEXT NOT NULL); CREATE INDEX IF NOT EXISTS idx_oi_symbol_ts ON open_interest_snapshots(symbol,timestamp);"+
  " CREATE INDEX IF NOT EXISTS idx_liqevt_ts ON liquidation_events(timestamp);"+
  " CREATE INDEX IF NOT EXISTS idx_liqevt_symbol_ts ON liquidation_events(symbol,timestamp);");
  this.ready=true;this.prune(true);
@@ -39,7 +39,19 @@ Store.prototype.saveLiquidation=function(x){
 };
 Store.prototype.prune=function(force){
  if(!this.ready)return;if(!force&&Date.now()-this.lastPruneAt<3600000)return;
- try{var cut=Date.now()-this.retentionDays*86400000;this.run('DELETE FROM microstructure_snapshots WHERE timestamp < '+Math.round(cut)+'; DELETE FROM liquidation_events WHERE timestamp < '+Math.round(cut)+';');this.lastPruneAt=Date.now();this.lastError='';}catch(e){this.lastError=e.message;}
+ try{var cut=Date.now()-this.retentionDays*86400000;this.run('DELETE FROM microstructure_snapshots WHERE timestamp < '+Math.round(cut)+'; DELETE FROM liquidation_events WHERE timestamp < '+Math.round(cut)+'; DELETE FROM open_interest_snapshots WHERE timestamp < '+Math.round(cut)+';');this.lastPruneAt=Date.now();this.lastError='';}catch(e){this.lastError=e.message;}
+};
+Store.prototype.saveOpenInterest=function(x){
+ if(!this.ready||!x)return false;var ts=+x.observedAt||Date.now(),symbol=String(x.symbol||'').toUpperCase(),key='OI|'+symbol,last=this.lastPersistByKey[key]||0;
+ if(ts-last<this.persistIntervalMs)return false;
+ try{this.run("INSERT INTO open_interest_snapshots(timestamp,symbol,total_usd,cex_usd,dex_usd,coverage_json,data_json) VALUES("+[
+  Math.round(ts),q(symbol),isFinite(+x.coveredOpenInterestUsd)?+x.coveredOpenInterestUsd:'NULL',isFinite(+x.cexOpenInterestUsd)?+x.cexOpenInterestUsd:'NULL',isFinite(+x.dexOpenInterestUsd)?+x.dexOpenInterestUsd:'NULL',q(JSON.stringify(x.coverage||{})),q(JSON.stringify(x))
+ ].join(',')+");");this.lastPersistByKey[key]=ts;this.lastError='';this.prune(false);return true;}catch(e){this.lastError=e.message;return false;}
+};
+Store.prototype.openInterestHistory=function(o){
+ o=o||{};if(!this.ready)return{ok:false,error:'MARKET_MICROSTRUCTURE_SQL_UNAVAILABLE',items:[]};var symbol=String(o.symbol||'').toUpperCase(),limit=Math.max(1,Math.min(5000,+o.limit||500)),since=Math.max(0,+o.since||0),where=[];
+ if(symbol)where.push('symbol='+q(symbol));if(since)where.push('timestamp>='+Math.round(since));
+ try{var raw=this.run('SELECT data_json FROM open_interest_snapshots'+(where.length?' WHERE '+where.join(' AND '):'')+' ORDER BY timestamp DESC LIMIT '+limit+';',true).trim(),items=[];if(raw)raw.split(/\r?\n/).filter(Boolean).forEach(function(line){try{items.push(JSON.parse(line));}catch(e){}});items.reverse();return{ok:true,schema:'marketdata.open_interest.history/1.0',items:items,count:items.length,retentionDays:this.retentionDays};}catch(e){this.lastError=e.message;return{ok:false,error:e.message,items:[]};}
 };
 Store.prototype.history=function(o){
  o=o||{};if(!this.ready)return{ok:false,error:'MARKET_MICROSTRUCTURE_SQL_UNAVAILABLE',items:[]};
@@ -54,7 +66,7 @@ Store.prototype.liquidations=function(o){
  try{var raw=this.run('SELECT data_json FROM liquidation_events'+(where.length?' WHERE '+where.join(' AND '):'')+' ORDER BY timestamp DESC LIMIT '+limit+';',true).trim(),items=[];if(raw)raw.split(/\r?\n/).filter(Boolean).forEach(function(line){try{items.push(JSON.parse(line));}catch(e){}});return{ok:true,schema:'marketdata.liquidations/1.0',items:items,count:items.length,retentionDays:this.retentionDays};}catch(e){this.lastError=e.message;return{ok:false,error:e.message,items:[]};}
 };
 Store.prototype.status=function(){
- var snapshots=0,liquidations=0,oldest=null,newest=null;if(this.ready)try{var r=this.run('SELECT COUNT(*),MIN(timestamp),MAX(timestamp) FROM microstructure_snapshots;',true).trim().split('\t'),l=this.run('SELECT COUNT(*) FROM liquidation_events;',true).trim();snapshots=+r[0]||0;oldest=+r[1]||null;newest=+r[2]||null;liquidations=+l||0;}catch(e){this.lastError=e.message;}
+ var snapshots=0,liquidations=0,openInterestSnapshots=0,oldest=null,newest=null;if(this.ready)try{var r=this.run('SELECT COUNT(*),MIN(timestamp),MAX(timestamp) FROM microstructure_snapshots;',true).trim().split('\t'),l=this.run('SELECT COUNT(*) FROM liquidation_events;',true).trim();snapshots=+r[0]||0;oldest=+r[1]||null;newest=+r[2]||null;liquidations=+l||0;openInterestSnapshots=+(this.run('SELECT COUNT(*) FROM open_interest_snapshots;',true).trim())||0;}catch(e){this.lastError=e.message;}
  return{ok:this.ready,mode:'SQLITE',file:this.file,retentionDays:this.retentionDays,persistIntervalMs:this.persistIntervalMs,snapshots:snapshots,liquidations:liquidations,oldestTimestamp:oldest,newestTimestamp:newest,lastError:this.lastError||null};
 };
 module.exports=Store;
