@@ -17,7 +17,7 @@
 
 ### 💧 Liquidity / Market Data V2.1
 - un seul service Market Data 8013 ; microstructure rangée en Provider/Collectors/Storage ;
-- OI couvert Binance Futures + OKX + Hyperliquid avec séparation CEX/DEX ;
+- OI couvert Binance Futures + OKX + Hyperliquid + GMX avec séparation CEX/DEX ;
 - historique OI SQLite 30–90 jours ;
 - Worker Threads de liquidations Binance Futures et OKX ;
 - statut des streams exposé par CP/1 ;
