@@ -12,6 +12,13 @@
   "table": {
     "commands": [
       {
+        "name": "marketdata.audit",
+        "arguments": {
+          "allowed": []
+        },
+        "description": "Market Data Collector V2.0 integrity, freshness, quality and routing audit."
+      },
+      {
         "name": "marketdata.health",
         "arguments": {
           "allowed": []
