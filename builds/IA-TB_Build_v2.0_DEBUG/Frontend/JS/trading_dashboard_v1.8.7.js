@@ -13,7 +13,7 @@ function cleanPrice(v){v=String(v||'').trim();return v&&v!=='--'?v:'--'}
 function topUtilities(){var nav=q('.navActions');if(!nav||byId('iatbTopUtilities'))return;var u=el('div','iatbTopUtilities');u.id='iatbTopUtilities';u.innerHTML='<span class="iatbTopLive" title="Runtime actif"></span><span class="iatbTopUtility" title="Notifications">♢</span><span class="iatbTopUtility" title="État système">⚙</span>';nav.appendChild(u)}
 
 function marketMaster(){var n=el('section','iatbMarketMaster');n.id='iatbMarketMaster';n.innerHTML='<b>MARCHÉ DE RÉFÉRENCE</b><strong class="masterPair" id="tdMasterPair">--</strong><span class="masterProvider" id="tdMasterProvider">Market Data</span><small id="tdMasterTf">--</small>';return n}
-function indicatorDock(){var n=el('section','iatbIndicatorDock');n.id='iatbIndicatorDock';n.innerHTML='<div class="iatbIndicatorDockHead"><b>INDICATEURS EXTERNES</b><span>Indicator Engine · panneaux synchronisés avec le graphique</span></div><div class="iatbIndicatorDockBody" id="tdIndicatorDockBody"><div class="iatbIndicatorEmpty">Ajoute RSI, MACD, ADX ou un autre indicateur avec ƒx Indicateurs.</div></div>';return n}
+function indicatorDock(){return byId('indicatorDock')||null}
 var MODULE_GRID_KEY='iatb.trading.moduleGrid.v2',MODULE_GRID_COLS=5,MODULE_GRID_ROWS=3;
 function moduleCard(no,id,cls,body){
  return '<section class="iatbDashCard iatbGridModule '+(cls||'')+'" data-grid-id="'+id+'" data-grid-number="'+no+'" data-span-x="1" data-span-y="1" style="grid-column:span 1;grid-row:span 1">'
@@ -194,7 +194,7 @@ function build(){
   watchSecondaryPages();
   var center=el('main','iatbCenterColumn'),right=exchangePanel(),services=serviceStrip();
   center.appendChild(marketMaster());center.appendChild(chartShell(chart));
-  body.appendChild(center);body.appendChild(right);body.appendChild(indicatorDock());body.appendChild(moduleDeck());body.appendChild(services);
+  body.appendChild(center);body.appendChild(right);body.appendChild(moduleDeck());body.appendChild(services);
   var legacyRight=q('.body[data-mosaic-root]>.right');if(legacyRight){legacyRight.setAttribute('aria-hidden','true');legacyRight.style.display='none'}
   var legacyLeft=q('.body[data-mosaic-root]>.left');if(legacyLeft){legacyLeft.setAttribute('aria-hidden','true');legacyLeft.style.display='none'}
   var sl=byId('tdStrategiesLink');if(sl)sl.onclick=function(e){e.preventDefault();var b=byId('strategyBtn');if(b)b.click()};
@@ -285,7 +285,7 @@ function health(){
   probeMarketProviders();
 }
 
-function syncIndicatorDock(){var box=byId('tdIndicatorDockBody');if(!box)return;var st=null;try{st=window.IATBIndicatorUI&&IATBIndicatorUI.state?IATBIndicatorUI.state():null}catch(e){}var a=st&&Array.isArray(st.selected)?st.selected:[];if(!a.length){box.innerHTML='<div class="iatbIndicatorEmpty">Ajoute un indicateur avec le bouton ƒx Indicateurs ou via le Chat IA.</div>';return}box.innerHTML=a.slice(0,12).map(function(x){var id=typeof x==='string'?x:(x.id||x.name||'Indicateur');return '<div class="iatbIndicatorChip"><b>'+esc(id)+'</b><small>Indicator Engine · actif</small></div>'}).join('')}
+function syncIndicatorDock(){var state=byId('indicatorDockState');if(!state)return;var st=null;try{st=window.IATBIndicatorUI&&IATBIndicatorUI.state?IATBIndicatorUI.state():null}catch(e){}var n=st&&Array.isArray(st.selected)?st.selected.length:0;state.textContent=n?('Lecteur JSON · '+n+' actif'+(n>1?'s':'')):'Lecteur JSON · prêt'}
 function sync(){
   syncExchangeSelection();
   var p=q('#price'),sym=q('#symbol'),src=q('#marketSourceBadge'),ws=q('#wsState');
