@@ -1,61 +1,83 @@
-# Changelog fonctionnel
+# 🧾 Changelog fonctionnel du Wiki
 
-Cette page donne une vue humaine des changements importants. Le détail technique reste dans les commits, builds et rapports QA.
+> **🟢 En simple : cette page résume les évolutions visibles dans le code. Elle ne déclare pas V2.0 STABLE ; la branche documentée reste DEBUG.**
 
-## v1.8.12 — Router Protocol Normalization
+---
 
-- normalisation backend des communications IA-TB via **Communication Router + CP/1** ;
-- aucun changement visuel associé à cette évolution ;
-- composants CP/1 actifs : Indicator Engine, Trading Engine, Risk Engine, Portfolio Engine, Market Data, Liquidity Engine et Fundamental Engine ;
-- nouveaux adapters CP/1 normalisés pour Market Data, Liquidity et Fundamental ;
-- Fundamental Engine maintenu en mode `INFORMATION_ONLY` ;
-- Trading Firewall documenté comme `SECURITY_BRIDGE`, et non comme cible métier Router directe ;
-- Strategy Engine et Supervisor IA documentés `RESERVED` : contrat préparé, runtime autonome non encore présent ;
-- contrat Request/Response CP/1 normalisé ;
-- sécurité maintenue : localhost, token CP partagé, HMAC-SHA256, whitelist Registry et anti-replay Router ;
-- interdiction du shell, des chemins de fichiers et des URL arbitraires ;
-- nouvelles commandes CP/1 Market Data : `health`, `candles`, `refresh`, `active`, `cache.clear` ;
-- nouvelles commandes CP/1 Liquidity : `health`, `zones`, `realtime`, `snapshot`, `liquidations`, `cache.clear` ;
-- nouvelles commandes CP/1 Fundamental : `health`, `summary`, `context`, `sources`, `events`, `collect` ;
-- source machine-readable : `Core/Communication/router_protocol_spec_v1.8.12.json` ;
-- spec humaine : `Docs/Architecture/ROUTER_PROTOCOL_SPEC_v1.8.12.md` ;
-- QA Router/CP1/Debug/Common Tools annoncée OK ; VERSION-GUARD OK 1.8.12 ; 30 fichiers visuels contrôlés sans modification.
+## V2.0 DEBUG — état analysé au 29 septembre 2026
 
-## v1.8.11 — Unified Admin Console / Debug Control Framework v1
+**🟢 En simple : l’architecture est passée d’un ensemble de contrats préparés à un système où Strategy, Risk Gate, Portfolio et Supervisor possèdent réellement leur runtime.**
 
-- une seule **Console Générale Admin** ;
-- fusion des commandes Admin, logs, CP/1/Common Tools et Debug ;
-- syntaxe officielle `debug <target> <action> [key=value]` ;
-- cibles de base `server`, `client`, `router` et découverte dynamique des Engines/modules ;
-- actions d'observation et de contrôle déclarées dans `Core/Admin/debug_commands_registry.json` ;
-- actions sensibles `start`, `stop`, `restart`, `reset-safe` soumises à confirmation ;
-- aucune interface shell libre ;
-- audit des actions Debug dans `logs.dat` ;
-- une fonction non implémentée doit retourner `UNSUPPORTED` / `NOT_ALLOWED` et ne jamais simuler une réussite.
+### 🏗️ Architecture
+- UI Service séparé sur 8000 ;
+- Core sur 8001 ;
+- Router CP/1 sur 8021 ;
+- Process Registry par manifests ;
+- 14 services attendus au démarrage.
 
-## v1.7.8
+### 📡 Market Data
+- Market Data Collector V2.0 ;
+- Candle registry : Kraken, Binance, OKX, GMX ;
+- CoinGecko = token market / Market Registry / CeFi ;
+- DeFiLlama = DeFi protocols / chains / DEX / stablecoins ;
+- snapshots financiers contrôlés par Data Firewall ;
+- historique financier hybride mémoire + JSONL ;
+- données réutilisables par Indicator/Liquidity/Strategy/Portfolio/Supervisor/UI.
 
-- ajout du type de provider `SOCKET` pour les flux WebSocket persistants ;
-- intégration d'Hyperliquid comme premier provider Market Data `SOCKET` ;
-- historique OHLCV Hyperliquid via `candleSnapshot`, complété ensuite par le flux WebSocket `candle` ;
-- conservation des volumes natifs Hyperliquid avec provenance explicite ;
-- ajout d'un registre Market Data multi-provider avec Kraken comme provider de référence par défaut ;
-- cache Market Data séparé par provider / symbole / timeframe et borné pour limiter l'empreinte mémoire ;
-- enrichissement des endpoints `/providers` et `/health` avec état de connexion, dernier événement et erreurs ;
-- ajout des endpoints de diagnostic `/active`, `/refresh` et `/cache/clear` ;
-- ajout de la dépendance `ws@8.18.0` limitée au module MarketData ;
-- `install_runtime.command` installe la dépendance MarketData lorsque nécessaire ;
-- maintien de la compatibilité macOS High Sierra / Intel et Node.js 16.20.2.
+### 🧠 Strategy / Supervisor
+- Strategy Engine v2 ACTIVE sur 8018 ;
+- génération de signaux, `INTENTION_ONLY` ;
+- IA Supervisor ACTIVE sur 3000 ;
+- collecte de contexte CP/1 ;
+- LLM configurable ;
+- exécution Supervisor limitée à l’intention.
 
-## v1.7.4
+### 🛡️ Risk / Firewall / Trading
+- Risk Gate `evaluate/verify` ;
+- `risk_approval_id` requis ;
+- Trading Firewall vérifie/consomme l’approval ;
+- Trading Engine exige un forward Firewall signé ;
+- Trading Live OFF au démarrage ;
+- exécutions normalisées vers Portfolio.
 
-- extension de l'architecture multi-exchange ;
-- prise en charge documentaire de Coinbase et OKX ;
-- règle obligatoire : tout nouveau CEX/DEX apporte parallèlement ses données OHLC/OHLCV et volumes propres ;
-- centralisation de tous les paramètres requis par les connecteurs dans `Settings > API` ;
-- renforcement du protocole de release et de compatibilité des patchs ;
-- mise en place de la documentation Wiki versionnée.
+### 📊 Portfolio
+- moteur actif sur 8020 ;
+- stockage SQLite ;
+- positions, balances, trades, historique, statistiques ;
+- resynchronisation depuis Trading history ;
+- coûts IA via Usage Ledger.
 
-## Politique
+### 🏦 Banque
+- Wallet Service schéma v3 ;
+- comptes EVM + Bitcoin + Solana ;
+- secrets wallet AES-256-GCM ;
+- transfert modulaire EVM/ERC20, BTC, SOL ;
+- BTC/SOL en état SUBMITTED après broadcast ;
+- Swap/Bridge EVM via 0x Cross-Chain ;
+- OnChain Reader principalement EVM.
 
-Lorsqu'une nouvelle version modifie le comportement utilisateur, l'architecture, un connecteur, les Settings, l'Update Manager, la sécurité ou les contrats CP/1, cette page et les pages concernées doivent être mises à jour dans la même release.
+### 🖥️ UI
+- navigation globale commune ;
+- sidebars harmonisées Banque/Fundamental/Settings/Strategy/Statistiques ;
+- sidebar Admin d’origine conservée ;
+- Mes Clés : barre Ajouter/Exporter/Paramètres sous le tableau de clés ;
+- Statistiques connectées au Financial Snapshot Market Data.
+
+### 📚 Wiki
+- réécriture du Wiki sur l’état runtime V2.0 DEBUG ;
+- ajout des pages Strategy Engine, Supervisor, Trading Engine, Portfolio et Application UI ;
+- ajout d’un état fonctionnel ACTIVE/PARTIAL/PLANNED ;
+- suppression des anciennes affirmations Strategy/Supervisor `RESERVED`.
+
+---
+
+## Historique v1.x
+
+**🟢 En simple : les versions v1.x ont construit progressivement les briques aujourd’hui réunies dans V2.0 DEBUG.**
+
+Les étapes historiques importantes restent :
+- v1.7.x : multi-provider, connecteurs et Market Data ;
+- v1.8.11 : Console Admin / Debug Framework ;
+- v1.8.12 : normalisation Router / CP1.
+
+Pour le détail exact des anciens commits, utiliser l’historique Git et les anciens documents de release. La documentation fonctionnelle courante doit privilégier l’état V2.0 DEBUG.
