@@ -567,3 +567,78 @@ html{scroll-padding-top:82px}
  .platformCards.expanded{grid-template-columns:repeat(5,minmax(118px,1fr));overflow-x:auto}
  .oracleCards.expanded{grid-template-columns:repeat(4,minmax(130px,1fr));overflow-x:auto}
 }
+
+
+/* v2.0 DEBUG — slightly larger detail text across Server / CeFi / DeFi.
+   Titles (h1/h2, main KPI values) intentionally unchanged. */
+body[data-stats-view="server"] .statsCardHead p,
+body[data-stats-view="cefi"] .statsCardHead p,
+body[data-stats-view="defi"] .statsCardHead p{font-size:11px}
+
+body[data-stats-view="server"] .statsSectionIntro p,
+body[data-stats-view="cefi"] .statsSectionIntro p,
+body[data-stats-view="defi"] .statsSectionIntro p{font-size:12px}
+
+body[data-stats-view="server"] .marketKpi>span,
+body[data-stats-view="cefi"] .marketKpi>span,
+body[data-stats-view="defi"] .marketKpi>span{font-size:9px}
+
+body[data-stats-view="server"] .marketKpi>small,
+body[data-stats-view="cefi"] .marketKpi>small,
+body[data-stats-view="defi"] .marketKpi>small{font-size:9px}
+
+body[data-stats-view="server"] .platformMeta span,
+body[data-stats-view="cefi"] .platformMeta span,
+body[data-stats-view="defi"] .platformMeta span,
+body[data-stats-view="server"] .oracleMeta span,
+body[data-stats-view="cefi"] .oracleMeta span,
+body[data-stats-view="defi"] .oracleMeta span{font-size:9px}
+
+body[data-stats-view="server"] .platformMeta strong,
+body[data-stats-view="cefi"] .platformMeta strong,
+body[data-stats-view="defi"] .platformMeta strong,
+body[data-stats-view="server"] .oracleMeta strong,
+body[data-stats-view="cefi"] .oracleMeta strong,
+body[data-stats-view="defi"] .oracleMeta strong{font-size:10px}
+
+body[data-stats-view="server"] .miniState,
+body[data-stats-view="cefi"] .miniState,
+body[data-stats-view="defi"] .miniState,
+body[data-stats-view="server"] .miniLatency,
+body[data-stats-view="cefi"] .miniLatency,
+body[data-stats-view="defi"] .miniLatency{font-size:9px}
+
+body[data-stats-view="server"] .summaryCell span,
+body[data-stats-view="cefi"] .summaryCell span,
+body[data-stats-view="defi"] .summaryCell span{font-size:8px}
+
+body[data-stats-view="server"] .financeLegendRow,
+body[data-stats-view="cefi"] .financeLegendRow,
+body[data-stats-view="defi"] .financeLegendRow{font-size:10px}
+
+body[data-stats-view="server"] .financeTableRow,
+body[data-stats-view="cefi"] .financeTableRow,
+body[data-stats-view="defi"] .financeTableRow{font-size:9.5px}
+
+body[data-stats-view="server"] .financeTableRow>div small,
+body[data-stats-view="cefi"] .financeTableRow>div small,
+body[data-stats-view="defi"] .financeTableRow>div small{font-size:8px}
+
+body[data-stats-view="server"] .assetBarRow>div:first-child,
+body[data-stats-view="cefi"] .assetBarRow>div:first-child,
+body[data-stats-view="defi"] .assetBarRow>div:first-child{font-size:9px}
+
+body[data-stats-view="server"] .execCostRow small,
+body[data-stats-view="cefi"] .execCostRow small,
+body[data-stats-view="defi"] .execCostRow small,
+body[data-stats-view="server"] .execPoolRef small,
+body[data-stats-view="cefi"] .execPoolRef small,
+body[data-stats-view="defi"] .execPoolRef small{font-size:8.5px}
+
+body[data-stats-view="server"] .modulePlaceholder,
+body[data-stats-view="cefi"] .modulePlaceholder,
+body[data-stats-view="defi"] .modulePlaceholder{font-size:10px}
+
+body[data-stats-view="server"] .financeDataEmpty span,
+body[data-stats-view="cefi"] .financeDataEmpty span,
+body[data-stats-view="defi"] .financeDataEmpty span{font-size:9px}
