@@ -23,9 +23,9 @@ P.prototype._call=function(action,args,cb){
  q.on('timeout',function(){q.destroy(new Error('MARKET_DATA_CP1_TIMEOUT'))});q.on('error',cb);q.end(raw);
 };
 P.prototype.getCandles=function(s,t,l,cb){this._call('marketdata.candles',{symbol:s,timeframe:t,limit:l,force:false},cb);};
-P.prototype.getLiquiditySnapshot=function(s,source,depth,force,cb){this._call('marketdata.liquidity.snapshot',{symbol:s,source:source||'AUTO',depth:depth||20,force:force===true},cb);};
-P.prototype.getLiquidityHistory=function(o,cb){o=o||{};this._call('marketdata.liquidity.history',{symbol:o.symbol||'',source:o.source||'',limit:o.limit||240,since:o.since||0},cb);};
-P.prototype.getLiquidityStorage=function(cb){this._call('marketdata.liquidity.storage',{},cb);};
+P.prototype.getLiquiditySnapshot=function(s,source,depth,force,cb){this._call('marketdata.microstructure.snapshot',{symbol:s,source:source||'AUTO',depth:depth||20,force:force===true},cb);};
+P.prototype.getLiquidityHistory=function(o,cb){o=o||{};this._call('marketdata.microstructure.history',{symbol:o.symbol||'',source:o.source||'',limit:o.limit||240,since:o.since||0},cb);};
+P.prototype.getLiquidityStorage=function(cb){this._call('marketdata.microstructure.storage',{},cb);};
 P.prototype.getOpenInterestAggregate=function(symbol,sources,cb){this._call('marketdata.derivatives.open_interest',{symbol:symbol,sources:Array.isArray(sources)?sources:[]},cb);};
 P.prototype.getLiquidationStats=function(o,cb){o=o||{};this._call('marketdata.liquidations.stats',{symbol:o.symbol||'',source:o.source||'',windowMs:o.windowMs||900000},cb);};
 P.prototype.getRecentLiquidations=function(o,cb){o=o||{};this._call('marketdata.liquidations.recent',{symbol:o.symbol||'',source:o.source||'',windowMs:o.windowMs||900000,limit:o.limit||500,since:o.since||0},cb);};
