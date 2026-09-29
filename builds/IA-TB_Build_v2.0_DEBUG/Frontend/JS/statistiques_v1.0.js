@@ -179,8 +179,8 @@ function applyFinancialSnapshot(s,cefiHistory,defiHistory){
   var cv=historyValues(cefiHistory,'CEFI','global.totalVolume24hUsd');
   var spotHist=historyValues(cefiHistory,'CEFI','spotVolume24hUsd');
   if(spotHist.length)state.cefi.volume=spotHist;
-  setKpi('cefiVolume24',money(c.global&&c.global.totalVolume24hUsd),trend(cv),'CoinGecko · volume marché crypto agrégé');
-  setKpi('cefiSpot24',money(c.spotVolume24hUsd),trend(spotHist),'CoinGecko · volume CEX spot suivi');
+  setKpi('cefiVolume24',money(c.cexVolume24hUsdSampled||c.spotVolume24hUsd),trend(spotHist),'CoinGecko · échantillon des exchanges CEX suivis');
+  setKpi('cefiSpot24',money(c.global&&c.global.totalVolume24hUsd),trend(cv),'CoinGecko · volume global du marché crypto');
   setKpi('cefiOi','--','--','Provider dérivés / OI requis');
   setKpi('cefiLiq','--','--','Provider liquidations requis');
   var donut=q('.cefiDonut b');if(donut)donut.textContent=money(c.spotVolume24hUsd);
