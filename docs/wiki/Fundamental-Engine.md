@@ -1,315 +1,175 @@
-# Fundamental Engine V3 — renseignement, News Query et synthèses
+# 🧭 Fundamental Engine V3 — V2.0 DEBUG
 
-> **À retenir : Fundamental V3 est le centre de renseignement d’IA‑TB. Il collecte les informations, les conserve avec leur provenance, construit des événements et des synthèses, puis permet au Supervisor de demander uniquement les informations utiles. Il reste `INFORMATION_ONLY` : il ne passe aucun ordre.**
+> **🟢 En simple : Fundamental Engine collecte et organise les informations extérieures au graphique — actualités, événements, sources et contexte — puis peut demander une synthèse IA. Il informe les décisions mais n’exécute jamais un trade.**
 
-<details>
-<summary><strong>Voir les détails techniques</strong></summary>
-
-Le consommateur métier est le **Supervisor**. Les échanges passent par **Router / CP/1** : le Supervisor ne lit pas directement SQLite. Cela conserve une frontière claire entre les Engines et rend les requêtes auditables.
-
-</details>
+Le service est **ACTIVE** sur **8015**, communique en **CP/1** et reste explicitement en mode **INFORMATION_ONLY**.
 
 ---
 
-## 1. Vue d’ensemble
+## 🎯 Rôle
 
-```text
- Sources / flux
-      │
-      ▼
-┌─────────────────────┐
-│   FUNDAMENTAL V3    │
-│ collecte + stockage │
-└──────────┬──────────┘
-           │
-     ┌─────┴─────┐
-     ▼           ▼
- Event Engine   News Query
-     │           │
-     ▼           ▼
- Synthèses    Sélection
-     └─────┬─────┘
-           ▼
-       Router / CP1
-           │
-           ▼
-       Supervisor
-```
+**🟢 En simple : ce moteur transforme un flux de publications en contexte vérifiable, avec sources, preuves et chronologie.**
 
-**Le but n’est pas d’envoyer toutes les news au modèle IA.** Fundamental effectue d’abord une sélection déterministe. Cela réduit le volume de contexte, les tokens consommés et le bruit informationnel.
+Fundamental V3 couvre notamment :
+- sources et feeds ;
+- collecte RSS / Atom / Web selon providers configurés ;
+- publications brutes ;
+- événements structurés ;
+- evidence ;
+- mémoire temporelle / timeline ;
+- recherche ;
+- diagnostics ;
+- synthèses IA à la demande ;
+- observability et logs privés.
+
+Il ne modifie pas une stratégie à lui seul.
 
 ---
 
-## 2. De la source à la news
+## 🧠 Principe INFORMATION_ONLY
 
-Fundamental collecte plusieurs types de flux (RSS, Atom, Web et sources sociales prises en charge), puis normalise les éléments dans son stockage privé.
+**🟢 En simple : “news haussière” ne signifie pas “acheter”.**
 
-Une news conserve notamment :
-- titre et résumé ;
-- URL et auteur lorsqu’ils existent ;
-- date de publication et date de collecte ;
-- langue ;
-- source et feed ;
-- classe/rôle du contenu ;
-- importance de base du feed ;
-- grade et fiabilité de la source.
+Le moteur peut produire :
+- information ;
+- contexte ;
+- sentiment/biais descriptif ;
+- synthèse ;
+- événement ;
+- niveau de confiance.
 
-> **Provenance :** une information garde son origine. Les données de sources différentes ne doivent pas être fusionnées silencieusement.
+Mais l’utilisation de cette information appartient ensuite à Strategy/Supervisor/Risk. Fundamental ne possède pas de chemin d’exécution vers l’exchange.
 
 ---
 
-## 3. News Query Engine
+## 🔄 Pipeline
 
-### Pour débuter
-
-**Le News Query Engine agit comme un documentaliste.** Le Supervisor ne dit plus seulement « donne-moi les dernières news ». Il peut demander « donne-moi les news BTC récentes, suffisamment fiables, et classe-les par pertinence ».
-
-### Filtres actuellement exposés via CP/1
-
-| Paramètre | Rôle |
-|---|---|
-| `query` | recherche textuelle |
-| `asset` | recherche d’un actif dans titre/résumé |
-| `category` | filtre sur les classifications disponibles du feed |
-| `source` | source précise |
-| `feed` | flux précis |
-| `minGrade` | grade minimum de source |
-| `minReliability` | fiabilité minimale |
-| `minImportance` | importance minimale du feed |
-| `since` / `until` | fenêtre temporelle |
-| `sort` | ordre de classement |
-| `limit` | nombre maximal de résultats |
-
-### Modes de tri
-
-- `DATE_DESC` — plus récent en premier ;
-- `DATE_ASC` — plus ancien en premier ;
-- `IMPORTANCE_DESC` — importance du feed ;
-- `RELIABILITY_DESC` — fiabilité de la source ;
-- `RELEVANCE_DESC` — classement déterministe combinant actuellement importance du feed et fiabilité de la source, puis récence.
-
-> **Important : `RELEVANCE_DESC` n’est pas encore un jugement sémantique complet de l’IA.** C’est un classement déterministe basé sur les métadonnées actuellement disponibles.
-
-### Exemple conceptuel
-
-```text
-Supervisor :
-« BTC, 24 dernières heures,
-  sources fiables,
-  12 résultats maximum,
-  pertinence décroissante »
-
-             ↓
-
-fundamental.news.search
-             ↓
-       News Query Engine
-             ↓
-       12 éléments max.
+```mermaid
+flowchart LR
+  S[🌐 Sources / Feeds] --> C[Collecte]
+  C --> N[📰 Publications]
+  N --> E[⚡ Événements]
+  E --> T[🕒 Timeline / Mémoire]
+  N --> V[🔎 Evidence]
+  E --> V
+  V --> A[🤖 Synthèse IA]
+  A --> R[🔀 Router CP/1]
+  R --> SUP[Supervisor]
+  R --> STR[Strategy]
+  R --> UI[UI Fundamental]
 ```
 
 ---
 
-## 4. Supervisor : comment il utilise Fundamental
+## 📰 News et événements
 
-**Le Supervisor reçoit désormais trois niveaux d’information fondamentale :**
+**🟢 En simple : une publication brute et un événement confirmé ne sont pas la même chose.**
 
-1. l’analyse Fundamental générale ;
-2. une sélection de news ;
-3. l’historique récent des synthèses.
+Le moteur sépare :
+- `fundamental.news` ;
+- `fundamental.event` ;
+- `fundamental.evidence`.
 
-Dans son contexte automatique, le Supervisor peut préciser notamment la fenêtre de news, le nombre de résultats, la catégorie/source, les seuils et le tri. Le comportement par défaut utilise une fenêtre récente et `RELEVANCE_DESC`.
+La recherche peut filtrer par :
+- asset ;
+- catégorie ;
+- source/feed ;
+- grade ;
+- fiabilité ;
+- importance ;
+- dates ;
+- limite.
 
-```text
-Market Data ──────┐
-Indicators ───────┤
-Liquidity ────────┤
-Strategy ─────────┤
-Risk ─────────────┤
-Portfolio ────────┤
-Fundamental ──────┤
-News sélectionnées├──► SUPERVISOR
-Synthèses ────────┘
-```
-
-Cela évite de faire du LLM le moteur de recherche de la base Fundamental.
+Cette séparation évite de présenter une seule publication comme une vérité consolidée.
 
 ---
 
-## 5. News, Event, Evidence et Synthèse
+## 🕒 Mémoire temporelle
 
-Ces objets ne représentent pas la même chose.
+**🟢 En simple : le moteur essaie de comprendre comment une histoire évolue dans le temps, au lieu de considérer chaque article comme totalement indépendant.**
 
-| Objet | Signification |
-|---|---|
-| **News** | information collectée auprès d’une source |
-| **Event** | événement construit/normalisé par Fundamental |
-| **Evidence** | élément servant de preuve/contexte d’un événement |
-| **Timeline** | évolution temporelle des éléments d’un événement |
-| **Synthèse** | résumé analytique produit à partir d’un ensemble d’informations |
+Les commandes Timeline permettent :
+- lecture d’une timeline ;
+- récupération du contexte ;
+- reconstruction.
 
-Une synthèse peut conserver un headline, un aperçu, un ton de marché, une confiance, des thèmes, des éléments à surveiller, des limitations et le nombre d’éléments utilisés.
-
-### Exemple
-
-```text
-News A ─┐
-News B ─┼──► Event ───► Evidence / Timeline
-News C ─┘                    │
-                            ▼
-                         Synthèse
-```
-
-Le Supervisor peut consulter les synthèses existantes au lieu de demander systématiquement une nouvelle analyse.
+Le modèle V3 conserve les éléments nécessaires à la nouveauté et à la continuité d’un événement.
 
 ---
 
-## 6. Mémoire temporelle
+## 🤖 Synthèses IA
 
-Fundamental dispose d’une timeline d’événement. Elle permet de distinguer les nouvelles informations des répétitions et de suivre l’évolution d’un sujet.
+**🟢 En simple : la synthèse IA résume des éléments déjà collectés ; elle ne remplace pas les sources.**
 
-**Une dépêche répétée dix fois n’équivaut donc pas automatiquement à dix nouvelles informations.**
+Synthèses disponibles :
+- news ;
+- événement ;
+- marché ;
+- historique de synthèses.
 
-La timeline mémorise notamment les evidence et synthèses liées à l’événement et utilise un score de nouveauté pour aider à identifier ce qui a changé.
-
----
-
-## 7. Globe Fundamental
-
-Le Globe et le Supervisor doivent à terme exploiter le **même catalogue structuré**.
-
-```text
-             News enrichie
-                  │
-       ┌──────────┴──────────┐
-       ▼                     ▼
-  Géolocalisation      Métadonnées marché
-       │                     │
-       ▼                     ▼
-  Globe Fundamental       Supervisor
-```
-
-Le Globe est une représentation visuelle. Le Supervisor est un consommateur analytique. Il ne faut pas créer deux bases de vérité différentes.
+La page Fundamental peut demander une nouvelle synthèse mais doit conserver les éléments utilisés et le caractère informationnel du résultat.
 
 ---
 
-## 8. Limites actuelles
+## 🔎 Sources, providers et découverte
 
-### Association d’un actif
+**🟢 En simple : les sources ne sont pas codées comme une seule liste figée dans l’interface. Le moteur possède un registre et des outils de diagnostic.**
 
-Le filtre `asset` est actuellement principalement textuel : il cherche l’actif dans le titre/résumé. Une news peut concerner Bitcoin sans contenir littéralement « BTC ».
+Fonctions :
+- recherche de sources ;
+- recherche de feeds ;
+- état providers ;
+- diagnostic feed ;
+- diagnostic d’un brouillon ;
+- inspection/préparation/test d’un candidat de découverte.
 
-### Catégories
-
-Le filtre `category` exploite les classifications actuellement disponibles dans les feeds. Il ne constitue pas encore une taxonomie sémantique complète.
-
-### Importance et pertinence
-
-L’importance disponible provient notamment du feed et la fiabilité de la source. Cela ne signifie pas encore que chaque article possède son propre score sémantique d’impact marché.
-
-**Ces limites doivent rester visibles dans la documentation afin de ne pas présenter une capacité future comme déjà opérationnelle.**
+Cela permet d’ajouter progressivement de nouvelles sources sans transformer chaque provider en logique spéciale dans l’UI.
 
 ---
 
-## 9. Évolution prévue : enrichissement sémantique
+## 📋 Commandes CP/1 importantes
 
-La prochaine grande étape envisagée consiste à enrichir chaque information avec des métadonnées plus fines :
-
-```text
-NEWS
-├── assets[]
-├── categories[]
-├── entities[]
-├── event
-├── geolocation
-├── importance
-├── reliability
-├── novelty
-└── market relevance
-```
-
-Exemple conceptuel :
-
-```text
-Publication sur une décision de la Fed
-        │
-        ▼
-Entity      : Federal Reserve
-Category    : MACRO
-Assets      : BTC / ETH / USD (si relation établie)
-Event       : décision de taux
-Importance  : score à définir
-Location    : lieu vérifié ou niveau GLOBAL
-Novelty     : comparaison avec l’historique
-```
-
-> Cette section décrit une **évolution**, pas l’état actuel du runtime.
-
----
-
-## 10. Contrat CP/1 utile au Supervisor
-
-Commandes importantes :
-
+- `fundamental.health`
+- `fundamental.status`
+- `fundamental.capabilities`
 - `fundamental.news.search`
 - `fundamental.news.get`
 - `fundamental.events.search`
 - `fundamental.event.get`
 - `fundamental.event.evidence`
-- `fundamental.timeline.get`
-- `fundamental.timeline.context`
-- `fundamental.synthesis.news`
-- `fundamental.synthesis.event`
-- `fundamental.synthesis.market`
-- `fundamental.synthesis.history`
-
-**Règle d’architecture : le Supervisor demande des données par CP/1 ; il ne reçoit pas un accès SQL direct.**
-
----
-
-## 11. Pourquoi cette architecture ?
-
-### Rapidité
-Fundamental filtre avant d’envoyer les informations au Supervisor.
-
-### Coût IA
-Moins de texte inutile signifie moins de tokens envoyés au modèle.
-
-### Qualité
-Le contexte est plus ciblé et la provenance reste identifiable.
-
-### Sécurité
-Le stockage Fundamental reste privé derrière le service.
-
-### Modularité
-Le Globe, le Supervisor et les futures interfaces peuvent réutiliser les mêmes objets sans dupliquer la logique.
+- `fundamental.sources.search`
+- `fundamental.collect`
+- `fundamental.synthesis.*`
+- `fundamental.timeline.*`
+- `fundamental.providers.status`
+- `fundamental.diagnostic.*`
+- `fundamental.discovery.*`
+- `fundamental.logs.*`
 
 ---
 
-## 12. Résumé du pipeline
+## 🖥️ Page Fundamental
 
-```text
-INTERNET / APIs
-      │
-      ▼
-COLLECTE
-      │
-      ▼
-NORMALISATION
-      │
-      ├────────────► NEWS QUERY ─────┐
-      │                              │
-      ▼                              │
-EVENT ENGINE                         │
-      │                              │
-      ├── Evidence                   │
-      ├── Timeline                   │
-      └── Synthèses ─────────────────┤
-                                     ▼
-                                ROUTER / CP1
-                                     │
-                                     ▼
-                                 SUPERVISOR
-```
+**🟢 En simple : la page donne une vue humaine de ce que le moteur sait et de l’état de ses sources.**
 
-**Fundamental renseigne. Supervisor orchestre. Risk contrôle le risque. Trading exécute.** Ces responsabilités doivent rester séparées.
+Sections :
+- Vue d’ensemble ;
+- News & Événements ;
+- Analyse IA ;
+- Sources & Providers ;
+- Domaines & DeFi ;
+- Source Manager ;
+- Collecte & Scheduler ;
+- Diagnostics ;
+- Observability ;
+- Fundamental Console.
+
+La navigation latérale utilise le style commun IA-TB inspiré de Banque.
+
+---
+
+## 🔐 Limite
+
+**🟢 En simple : une synthèse Fundamental peut influencer une réflexion, jamais contourner Strategy, Risk ou Firewall.**
+
+Le contrat protocolaire décrit Fundamental comme moteur canonique d’information avec comme consommateur métier principal le Supervisor et comme outils de gestion/diagnostic l’Admin via Router/CP1.
