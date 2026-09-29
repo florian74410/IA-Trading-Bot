@@ -116,3 +116,98 @@
  .iaScFlow{flex-wrap:wrap}
  .iaScFlow .iaTxFee{width:100%;margin-left:0;padding-left:34px}
 }
+
+
+/* Universal smart-contract signature modal */
+.iaNtf.xlarge{
+  width:920px;
+  max-width:calc(100vw - 36px);
+}
+.iaNtf.xlarge .iaNtfBody{
+  max-height:620px;
+  overflow:auto;
+}
+.iaContractSign{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+.iaContractWarning{
+  padding:12px 14px;
+  border:1px solid rgba(255,190,67,.42);
+  border-radius:9px;
+  background:linear-gradient(90deg,rgba(92,60,9,.23),rgba(44,29,7,.08));
+}
+.iaContractWarning b{
+  display:block;
+  color:#ffd46e;
+  font-size:14px;
+  margin-bottom:4px;
+}
+.iaContractWarning span{
+  display:block;
+  color:#c8dce7;
+  font-size:10px;
+  line-height:1.45;
+}
+.iaContractRows{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:7px 10px;
+}
+.iaContractRows>div{
+  min-height:48px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  padding:8px 10px;
+  border:1px solid rgba(35,111,145,.36);
+  border-radius:8px;
+  background:#051620;
+  min-width:0;
+}
+.iaContractRows span{
+  color:#7197aa;
+  font-size:8px;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+}
+.iaContractRows b{
+  margin-top:4px;
+  color:#effaff;
+  font-size:11px;
+  line-height:1.25;
+  word-break:break-all;
+}
+.iaContractFlow{
+  display:grid;
+  grid-template-columns:auto auto 34px auto auto;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding:13px;
+  border:1px solid rgba(41,185,232,.30);
+  border-radius:9px;
+  background:linear-gradient(90deg,#061a27,#07111b);
+}
+.iaContractFlow span{
+  color:#56d2ff;
+  font-size:11px;
+  font-weight:800;
+}
+.iaContractFlow strong{
+  color:#fff;
+  font-size:16px;
+}
+.iaContractFlow i{
+  color:#2ce6b2;
+  font-style:normal;
+  font-size:22px;
+  text-align:center;
+}
+@media(max-width:720px){
+  .iaNtf.xlarge{width:calc(100vw - 20px)}
+  .iaContractRows{grid-template-columns:1fr}
+  .iaContractFlow{grid-template-columns:1fr auto;justify-content:stretch}
+  .iaContractFlow i{grid-column:1/-1}
+}
