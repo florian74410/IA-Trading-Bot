@@ -84,17 +84,18 @@ Voir [Router Protocol / CP/1](Router-Protocol-CP1.md).
 
 ```mermaid
 flowchart LR
-  K[Kraken] --> MDC[📡 Market Data Collector]
-  B[Binance] --> MDC
+  K[Kraken] --> MDC[📡 Market Data V2.1]
+  B[Binance / Futures] --> MDC
   O[OKX] --> MDC
   G[GMX] --> MDC
+  H[Hyperliquid] --> MDC
   CG[CoinGecko] --> MDC
   DL[DeFiLlama] --> MDC
   MDC --> DF[🧱 Data Firewall]
-  DF --> STORE[(Cache + historique financier)]
+  DF --> STORE[(Cache + JSONL/SQLite)]
   STORE --> R[🔀 Router CP/1]
   R --> I[Indicator]
-  R --> L[Liquidity]
+  R --> L[💧 Liquidity V2.0]
   R --> S[Strategy]
   R --> P[Portfolio]
   R --> A[Supervisor]
@@ -102,6 +103,8 @@ flowchart LR
 ```
 
 CoinGecko est la référence du **marché token / registre d’actifs**. DeFiLlama est la référence des familles **DeFi protocol, DEX market et stablecoin DeFi**. Cette séparation évite les doublons inutiles.
+
+**Liquidity Engine ne possède plus d’accès Internet pour les Market Data.** Les carnets Binance Futures/Hyperliquid/Kraken et l’Open Interest sont collectés par Market Data, inspectés par le Data Firewall, puis envoyés à Liquidity via Router/CP1. L’historique de microstructure est conservé en SQLite 30–90 jours côté Collector ; Liquidity ne garde qu’un cache court pour ses calculs.
 
 ---
 
