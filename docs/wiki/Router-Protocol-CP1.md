@@ -1,119 +1,168 @@
-# Router Protocol / CP/1
+# 🔀 Router Protocol / CP/1 — V2.0 DEBUG
 
-> Référence documentaire : IA-TB v1.8.12 — Router Protocol Normalization.
+> **🟢 En simple : CP/1 est la langue commune des moteurs IA-TB et le Router est leur standard téléphonique. Un moteur indique une cible et une action ; le Router vérifie puis transmet la demande.**
 
-Le **Communication Router** constitue le point de passage normalisé des communications inter-modules IA-TB. Les Engines et services ne doivent pas dépendre directement de l'implémentation interne d'un autre Engine.
+---
 
-## Statut des composants
+## 🎯 Rôle
 
-### Actifs CP/1
+**🟢 En simple : le Router empêche l’application de devenir un réseau de connexions directes impossibles à contrôler.**
 
-- Indicator Engine
-- Trading Engine
-- Risk Engine
-- Portfolio Engine
-- Market Data
-- Liquidity Engine
-- Fundamental Engine — `INFORMATION_ONLY`
+Le Communication Router écoute sur **127.0.0.1:8021**. Il assure :
+- l’enregistrement des composants ;
+- le routage requête/réponse ;
+- la publication d’événements ;
+- l’exposition des capacités ;
+- le registre protocolaire ;
+- les contrôles d’accès ;
+- la séparation entre UI et appels internes.
 
-### Bridge de sécurité
+---
 
-- Trading Firewall — `SECURITY_BRIDGE` volontaire. Il protège le canal d'exécution et n'est pas une cible métier Router directe.
+## 🧱 Composants CP/1 actuels
 
-### RESERVED
+**🟢 En simple : contrairement à l’ancien Wiki v1.8.12, Strategy Engine et IA Supervisor ne sont plus RESERVED : ils possèdent désormais un runtime actif.**
 
-- Strategy Engine — contrat préparé, aucun service runtime autonome présent dans le build v1.8.12.
-- Supervisor IA — contrat préparé, aucun service runtime CP/1 autonome présent dans le build v1.8.12.
+| Composant | État V2.0 DEBUG | Transport |
+|---|---|---|
+| Market Data | ACTIVE | CP/1 |
+| Indicator | ACTIVE | CP/1 |
+| Liquidity | ACTIVE | CP/1 |
+| Fundamental | ACTIVE · INFORMATION_ONLY | CP/1 |
+| Strategy Engine v2 | ACTIVE · INTENTION_ONLY | CP/1 |
+| Risk Engine | ACTIVE | CP/1 |
+| Portfolio Engine | ACTIVE | CP/1 |
+| Trading Engine | ACTIVE · LIVE OFF par défaut | CP/1 derrière Firewall |
+| IA Supervisor | ACTIVE · INTENTION_ONLY | CP/1 |
+| Chat IA registry | RESERVED | CP/1 préparé |
+| Firewall | SECURITY_BRIDGE | frontière de sécurité |
 
-Ces composants ne doivent jamais être présentés dans le Wiki comme fonctionnels tant que leur runtime autonome n'est pas effectivement intégré et validé.
+---
 
-## Contrat CP/1
+## 📦 Forme d’une requête
 
-### Request
+**🟢 En simple : toutes les demandes ont un format prévisible qui permet de les valider et de les tracer.**
 
-Une requête CP/1 contient :
+Une requête CP/1 comprend notamment :
 
-- `protocol`
-- `request_id`
-- `timestamp`
-- `target`
-- `action`
-- `detail`
-- `arguments`
+```json
+{
+  "protocol": "CP/1",
+  "request_id": "…",
+  "timestamp": 0,
+  "target": "indicator",
+  "action": "indicator.compute",
+  "detail": "analysis",
+  "arguments": {}
+}
+```
 
-### Response
+La réponse conserve le même `request_id` et ajoute le moteur, l’action, le statut, le schéma, la durée, les données et les warnings.
 
-Une réponse CP/1 contient :
+---
 
-- `protocol`
-- `request_id`
-- `engine`
-- `action`
-- `status`
-- `schema`
-- `generated_at`
-- `duration_ms`
-- `data_hash`
-- `data`
-- `warnings`
+## 🔐 Authentification et intégrité
 
-## Règles de sécurité
+**🟢 En simple : connaître le port d’un Engine ne suffit pas pour lui envoyer n’importe quelle commande.**
 
-- communication locale `localhost` ;
+Selon le chemin, IA-TB utilise :
 - token CP partagé ;
 - HMAC-SHA256 ;
-- whitelist via Registry ;
-- protection anti-replay dans le Router ;
-- aucun shell arbitraire ;
-- aucun chemin de fichier arbitraire ;
-- aucune URL arbitraire.
+- vérification du timestamp ;
+- registre/whitelist d’actions ;
+- protection anti-replay ;
+- limites de taille ;
+- vérification des arguments attendus.
 
-## Commandes Market Data
+Le Trading Engine ajoute une règle supplémentaire : ses commandes mutantes doivent porter la preuve qu’elles ont été **forwardées par le Trading Firewall**.
 
-| Commande | Effet |
-|---|---|
-| `marketdata.health` | Etat et santé du service Market Data. |
-| `marketdata.candles` | Demande de bougies selon les arguments autorisés par le Registry. |
-| `marketdata.refresh` | Demande de rafraîchissement contrôlé des données. |
-| `marketdata.active` | Retourne l'état/source active exposée par Market Data. |
-| `marketdata.cache.clear` | Vide le cache Market Data selon le périmètre autorisé. |
+---
 
-## Commandes Liquidity
+## 🖥️ Canal UI READ_ONLY
 
-| Commande | Effet |
-|---|---|
-| `liquidity.health` | Etat et santé du Liquidity Engine. |
-| `liquidity.zones` | Retourne les zones de liquidité calculées. |
-| `liquidity.realtime` | Retourne les informations temps réel disponibles. |
-| `liquidity.snapshot` | Produit un snapshot de liquidité. |
-| `liquidity.liquidations` | Retourne les liquidations explicitement disponibles. |
-| `liquidity.cache.clear` | Vide le cache Liquidity selon le périmètre autorisé. |
+**🟢 En simple : une page web ne peut pas utiliser le Router comme une télécommande administrative universelle.**
 
-## Commandes Fundamental
+Le Router expose `/communication/v1/ui/read` avec une liste limitée d’actions de lecture, notamment :
+- état/catalogue Strategy ;
+- positions, trades, statistiques et historique Portfolio ;
+- registre et données financières Market Data.
 
-Le Fundamental Engine est exposé en mode **INFORMATION_ONLY** : il fournit du contexte et ne prend aucune décision d'exécution.
+Les écritures non prévues sont refusées avec `UI_WRITE_DENY`. Les arguments de lecture sont eux aussi filtrés.
 
-| Commande | Effet |
-|---|---|
-| `fundamental.health` | Etat et santé du Fundamental Engine. |
-| `fundamental.summary` | Retourne un résumé fondamental. |
-| `fundamental.context` | Retourne le contexte fondamental disponible. |
-| `fundamental.sources` | Liste les sources connues/exposées. |
-| `fundamental.events` | Retourne les événements fondamentaux disponibles. |
-| `fundamental.collect` | Déclenche une collecte contrôlée selon les paramètres autorisés. |
+---
 
-## Sources de vérité
+## 🧠 Enregistrement dynamique
 
-- Machine-readable : `Core/Communication/router_protocol_spec_v1.8.12.json`
-- Documentation humaine du build : `Docs/Architecture/ROUTER_PROTOCOL_SPEC_v1.8.12.md`
+**🟢 En simple : un moteur actif peut annoncer au Router qui il est et quelles commandes il sait traiter.**
 
-Le Wiki doit rester aligné sur ces sources. En cas de divergence, le registre/spec machine-readable sert à contrôler les capacités réellement déclarées et la documentation ne doit pas inventer de fonctionnalité.
+Strategy, Risk, Portfolio, Supervisor et d’autres composants utilisent les mécanismes d’enregistrement CP/1. Le Router maintient un Runtime Registry et un Protocol Registry.
 
-## QA v1.8.12
+Cela permet aux outils Admin de distinguer :
+- une capacité définie dans un fichier ;
+- un composant réellement enregistré ;
+- un composant actuellement joignable.
 
-- Router normalization : **OK**
-- Communication Protocol CP/1 : **OK**
-- Unified Admin Debug Framework v1.8.11 : **OK**
-- CP/1 Common Tools v1.8.9 : **OK**
-- VERSION-GUARD : **OK 1.8.12**
-- Contrôle visuel : **30 fichiers, 0 modification**
+---
+
+## 📨 Événements
+
+**🟢 En simple : certains moteurs peuvent publier une information sans qu’un autre moteur l’ait demandée juste avant.**
+
+Exemples :
+- `strategy.signal.generated` ;
+- `strategy.evaluation.completed` ;
+- événements Fundamental ;
+- événements Supervisor.
+
+Le Router expose un canal événementiel séparé des requêtes synchrones.
+
+---
+
+## 🔥 Cas spécial Trading
+
+**🟢 En simple : le Router ne transmet pas directement un ordre mutant au Trading Engine : la requête passe par le Firewall.**
+
+```mermaid
+flowchart LR
+  A[CP/1 trading.execute] --> R[Router]
+  R --> F[Trading Firewall]
+  F --> G[Risk Gate verify]
+  G -->|OK| T[Trading Engine :8016]
+  G -->|REFUS| X[Blocage]
+```
+
+Le Trading Engine vérifie ensuite la signature interne du forward Firewall. Sans elle, il renvoie `FIREWALL_FORWARD_REQUIRED`.
+
+---
+
+## 📡 Cas spécial Market Data
+
+**🟢 En simple : les réglages peuvent être lus directement au service Market Data, mais les données destinées au reste de l’application suivent la frontière de validation Data Firewall.**
+
+Le chemin V2.0 de référence est :
+
+```text
+Provider → Market Data → Data Firewall → stockage/Router → consommateur
+```
+
+---
+
+## ⚠️ Point QA connu
+
+**🟢 En simple : une entrée du registre Trading contient encore le port 8017 alors que Trading tourne sur 8016.**
+
+Le runtime, le Process Registry et le service Trading utilisent **8016**. Le port **8017** est celui du Firewall. Cette métadonnée devra être corrigée côté code/registry ; le Wiki ne la reproduit pas comme vérité.
+
+---
+
+## 📌 Règle de développement
+
+**🟢 En simple : ajouter un nouveau moteur signifie d’abord définir son contrat, puis son runtime, puis ses tests.**
+
+Toute nouvelle capacité doit :
+1. avoir une action explicitement nommée ;
+2. limiter ses arguments ;
+3. être déclarée dans le registre adapté ;
+4. respecter les droits de l’appelant ;
+5. conserver un schéma de réponse stable ;
+6. être testée avant d’être annoncée comme ACTIVE.
