@@ -25,7 +25,15 @@
   var c=document.createElement('canvas');c.className='iatbNativeChartCanvas';c.style.position='absolute';c.style.inset='0';c.style.width='100%';c.style.height='100%';c.style.display='block';c.style.cursor='crosshair';c.style.touchAction='none';c.style.userSelect='none';this.container.appendChild(c);this.canvas=c;this.ctx=c.getContext('2d');
   var self=this;this.chart={timeScale:function(){return{fitContent:function(){self.fitContent()},subscribeVisibleLogicalRangeChange:function(){}}},removeSeries:function(s){if(s&&s.__id)self.removeSeries(s.__id)},panes:function(){return self._paneLayout||[]}};
   this.candles={setData:function(r){self.setCandles(r)},update:function(r){self.updateCandle(r)},priceToCoordinate:function(v){return self.priceToCoordinate(v)},createPriceLine:function(opt){var id='native:'+Date.now()+':'+Math.random();self.priceLines[id]=Object.assign({},opt||{});self.invalidate();return{id:id,__id:id}},removePriceLine:function(l){if(l&&l.__id)delete self.priceLines[l.__id];self.invalidate()}};this.series.price=this.candles;
-  if(global.ResizeObserver){this.ro=new ResizeObserver(function(){self.invalidate()});this.ro.observe(this.container)}else global.addEventListener('resize',function(){self.invalidate()});this.invalidate()
+  if(global.ResizeObserver){this.ro=new ResizeObserver(function(){self.refreshLayout()});this.ro.observe(this.container);if(this.container.parentNode&&this.container.parentNode.nodeType===1)this.ro.observe(this.container.parentNode)}
+  global.addEventListener('resize',function(){self.refreshLayout()});
+  this.container.addEventListener('ia-tb:chart-resize',function(){self.refreshLayout()});
+  this.refreshLayout()
+ };
+ IATBChartController.prototype.refreshLayout=function(){
+  var w=this.container&&this.container.clientWidth||0,h=this.container&&this.container.clientHeight||0;
+  if(w<2||h<2){var self=this;clearTimeout(this._layoutRetry);this._layoutRetry=setTimeout(function(){self.invalidate()},80);return false}
+  this.invalidate();return true
  };
  IATBChartController.prototype.bindIndicatorEngine=function(){var self=this;this.container.addEventListener('ia-tb:indicator-batch',function(e){try{self.applyIndicatorBatch(e&&e.detail&&e.detail.results||[])}catch(x){try{console.error('Indicator Engine chart:',x.message)}catch(ignore){}}})};
  IATBChartController.prototype.bindFocusControls=function(){var self=this;if(this.focusButton)this.focusButton.addEventListener('click',function(){self.setFocus(true)});if(this.restoreButton)this.restoreButton.addEventListener('click',function(){self.setFocus(false)})};
