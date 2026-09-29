@@ -24,11 +24,12 @@ function repairV162(db){
  /* A 1.6.1 database is deliberately preserved by UpdateManager. Re-apply the
     v1.6.2 WEB activation explicitly so existing installations do not stay
     stuck in PROVIDER_PENDING/disabled state after a file-only update. */
- db.prepare("UPDATE feeds SET enabled=1,provider_type='WEB',status=CASE WHEN status='PROVIDER_PENDING' THEN 'IDLE' ELSE status END,last_error=CASE WHEN status='PROVIDER_PENDING' THEN NULL ELSE last_error END,updated_at=? WHERE code IN ('UST_PRESS_WEB','WHITE_HOUSE_ACTIONS_WEB')").run(t);
+ db.prepare("UPDATE feeds SET enabled=1,provider_type='WEB',status=CASE WHEN status IN ('PROVIDER_PENDING','ERROR') THEN 'IDLE' ELSE status END,last_error=CASE WHEN status IN ('PROVIDER_PENDING','ERROR') THEN NULL ELSE last_error END,updated_at=? WHERE code IN ('UST_PRESS_WEB','WHITE_HOUSE_ACTIONS_WEB','CME_FEDWATCH','BEINCRYPTO_WEB')").run(t);
  var cfgs={
   UST_PRESS_WEB:'{"mode":"LINK_LIST","include_regex":"^https://home\\.treasury\\.gov/news/press-releases/[^?#]+$","exclude_regex":"/news/press-releases/?$","max_items":45,"min_title_chars":16,"language":"en"}',
   WHITE_HOUSE_ACTIONS_WEB:'{"mode":"LINK_LIST","include_regex":"^https://www\\.whitehouse\\.gov/presidential-actions/(?:20[0-9]{2}/)?[^?#]+$","exclude_regex":"/presidential-actions/?$|/page/","max_items":45,"min_title_chars":16,"language":"en"}',
-  CME_FEDWATCH:'{"mode":"PAGE_SNAPSHOT","language":"en","adapter":"CME_FEDWATCH_REQUIRED"}'
+  CME_FEDWATCH:'{"mode":"PAGE_SNAPSHOT","language":"en","label":"CME FedWatch","detail_fetch_count":1}',
+  BEINCRYPTO_WEB:'{"mode":"LINK_LIST","include_regex":"^https://fr\\.beincrypto\\.com/[^?#]+/?$","exclude_regex":"/(archive|tag|category|type|a-propos|author|press|learn|jobs|contact|privacy|terms)/","max_items":35,"min_title_chars":16,"language":"fr","detail_fetch_count":6}'
  };
  var st=db.prepare('INSERT OR REPLACE INTO provider_configs(feed_id,config_json,updated_at) SELECT id,?,? FROM feeds WHERE code=?');
  Object.keys(cfgs).forEach(function(code){st.run(cfgs[code],t,code);});
