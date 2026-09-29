@@ -19,6 +19,7 @@ SupervisorCore.prototype.computeIndicators=function(a){
 SupervisorCore.prototype.calendarUpcoming=function(a){a=a||{};return this.cp.request('fundamental','fundamental.calendar.upcoming',{days:a.days||30,country:a.country||'',impact:a.impact||'',limit:a.limit||100},'analysis');};
 SupervisorCore.prototype.calendarFed=function(){return this.cp.request('fundamental','fundamental.calendar.fed',{},'analysis');};
 SupervisorCore.prototype.calendarCme=function(){return this.cp.request('fundamental','fundamental.calendar.cme',{},'analysis');};
+SupervisorCore.prototype.calendarCmeExpirations=function(){return this.cp.request('fundamental','fundamental.calendar.cme.expirations',{},'analysis');};
 SupervisorCore.prototype.fedwatch=function(){return this.cp.request('fundamental','fundamental.fedwatch.get',{},'analysis');};
 SupervisorCore.prototype.requestRiskApproval=function(intent){if(!intent||typeof intent!=='object')return Promise.reject(new Error('TRADE_INTENT_REQUIRED'));return this.cp.request('risk','risk.gate.evaluate',{intent:intent},'execution');};
 SupervisorCore.prototype.collectContext=function(a){var self=this;return this.context.collect(a||{}).then(function(x){self.lastContext={at:new Date().toISOString(),symbol:x.symbol,timeframe:x.timeframe,degraded:x.degraded,warnings:x.warnings};return x;});};
