@@ -236,3 +236,26 @@ Analyse / contexte Supervisor
 ```
 
 Aucune API de marché externe ne doit être ajoutée directement dans Liquidity Engine.
+
+
+---
+
+## 🌐 OI multi-venue et liquidations
+
+**🟢 En simple : Liquidity ne contacte aucune plateforme. Il demande au Market Data Collector l’OI couvert de la paire et les statistiques du flux de liquidations déjà validé.**
+
+Nouvelles lectures :
+- `liquidity.open_interest` → OI CEX + DEX + total couvert + couverture ;
+- `liquidity.open_interest.history` → historique SQL du Collector ;
+- `liquidity.liquidations` → statistiques sur les événements validés ;
+- `liquidity.context` inclut l’agrégat OI pour le Supervisor.
+
+L’analyse temps réel peut réunir :
+1. carnet d’une venue sélectionnée ;
+2. profondeur / spread / slippage ;
+3. OI de cette venue ;
+4. **OI couvert multi-venue** ;
+5. flux de liquidations multi-venue ;
+6. zones historiques estimées.
+
+Cela permet au Supervisor de comparer la liquidité locale d’un marché avec le levier agrégé observé ailleurs sans confondre les sources.
