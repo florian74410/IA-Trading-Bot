@@ -9,6 +9,7 @@ function Collector(o){
  this.busy=Object.create(null);this.lastError='';this.lastFirewall=null;
 }
 function key(symbol,source,depth){return String(source||'AUTO').toUpperCase()+'|'+String(symbol||'').toUpperCase()+'|'+Math.max(5,Math.min(100,+depth||20));}
+function canonicalPair(s){s=String(s||'').toUpperCase().replace(/-SWAP$/,'').replace(/[^A-Z0-9]/g,'');var q=['USDT','USDC','USD'];for(var i=0;i<q.length;i++)if(s.length>q[i].length&&s.slice(-q[i].length)===q[i])return s.slice(0,-q[i].length)+'USD';return s;}
 function envelope(raw){
  var b=raw&&raw.orderBook||{},bid=b.bids&&b.bids[0],ask=b.asks&&b.asks[0],mid=bid&&ask?(+bid.price+ +ask.price)/2:null;
  return{provider:raw.source,source:raw.source,provenance:raw.provenance||('MARKET_DATA_COLLECTOR:'+raw.source),type:'LIQUIDITY_SNAPSHOT',symbol:raw.canonicalSymbol||raw.symbol,timestamp:+raw.observedAt||Date.now(),bid:bid&&+bid.price||null,ask:ask&&+ask.price||null,price:mid,data:{orderBook:raw.orderBook,openInterest:raw.openInterest,liquidations:raw.liquidations||[]}};
@@ -44,7 +45,7 @@ Collector.prototype.openInterestAggregate=function(symbol,sources,cb){
 };
 Collector.prototype.acceptLiquidation=function(event,cb){
  var self=this,e=event||{},ts=+(e.timestamp||e.time||Date.now());if(ts>0&&ts<1e12)ts*=1000;
- var x={provider:String(e.provider||e.source||'').toUpperCase(),source:String(e.provider||e.source||'').toUpperCase(),provenance:String(e.provenance||('MARKET_DATA_COLLECTOR:'+String(e.provider||e.source||'').toUpperCase())),symbol:String(e.symbol||'').toUpperCase(),side:String(e.side||'').toUpperCase(),price:+e.price,quantity:+(e.quantity!=null?e.quantity:e.size),quantityUnit:String(e.quantityUnit||'BASE').toUpperCase(),notionalUsd:e.notionalUsd!=null&&e.notionalUsd!==''&&isFinite(+e.notionalUsd)?+e.notionalUsd:null,timestamp:Math.round(ts),providerEventId:e.providerEventId?String(e.providerEventId).slice(0,160):null,instrumentId:e.instrumentId?String(e.instrumentId).slice(0,80):null,instrumentFamily:e.instrumentFamily?String(e.instrumentFamily).slice(0,80):null};
+ var x={provider:String(e.provider||e.source||'').toUpperCase(),source:String(e.provider||e.source||'').toUpperCase(),provenance:String(e.provenance||('MARKET_DATA_COLLECTOR:'+String(e.provider||e.source||'').toUpperCase())),symbol:canonicalPair(e.symbol),venueSymbol:String(e.symbol||'').toUpperCase(),side:String(e.side||'').toUpperCase(),price:+e.price,quantity:+(e.quantity!=null?e.quantity:e.size),quantityUnit:String(e.quantityUnit||'BASE').toUpperCase(),notionalUsd:e.notionalUsd!=null&&e.notionalUsd!==''&&isFinite(+e.notionalUsd)?+e.notionalUsd:null,timestamp:Math.round(ts),providerEventId:e.providerEventId?String(e.providerEventId).slice(0,160):null,instrumentId:e.instrumentId?String(e.instrumentId).slice(0,80):null,instrumentFamily:e.instrumentFamily?String(e.instrumentFamily).slice(0,80):null};
  if(x.notionalUsd==null&&x.quantityUnit==='BASE'&&isFinite(x.price)&&isFinite(x.quantity))x.notionalUsd=x.price*x.quantity;
  x.eventKey=crypto.createHash('sha256').update([x.provider,x.providerEventId||'',x.symbol,x.timestamp,x.side,x.price,x.quantity].join('|')).digest('hex');
  var msg={provider:x.provider,source:x.source,provenance:x.provenance,type:'LIQUIDATION',symbol:x.symbol,timestamp:x.timestamp,price:x.price,data:x};
@@ -55,16 +56,16 @@ Collector.prototype.acceptLiquidation=function(event,cb){
  });
 };
 Collector.prototype.recentLiquidations=function(o){
- o=o||{};var now=Date.now(),since=Math.max(0,+o.since||now-Math.max(60000,+o.windowMs||900000)),symbol=String(o.symbol||'').toUpperCase(),provider=String(o.provider||o.source||'').toUpperCase(),limit=Math.max(1,Math.min(5000,+o.limit||500));
+ o=o||{};var now=Date.now(),since=Math.max(0,+o.since||now-Math.max(60000,+o.windowMs||900000)),symbol=canonicalPair(o.symbol),provider=String(o.provider||o.source||'').toUpperCase(),limit=Math.max(1,Math.min(5000,+o.limit||500));
  var a=this.liquidationBuffer.filter(function(x){return x.timestamp>=since&&(!symbol||x.symbol===symbol)&&(!provider||provider==='AUTO'||x.provider===provider);});
  if(a.length<Math.min(50,limit)&&this.store){var db=this.store.liquidations({symbol:symbol,provider:provider,limit:limit,since:since});if(db.ok)a=db.items;}
  if(a.length>limit)a=a.slice(a.length-limit);return{ok:true,schema:'marketdata.liquidations/1.0',items:a,count:a.length,since:since,to:now};
 };
 Collector.prototype.openInterestHistory=function(o){return this.store&&this.store.openInterestHistory?this.store.openInterestHistory(o):{ok:false,error:'OPEN_INTEREST_HISTORY_DISABLED',items:[]};};
 Collector.prototype.liquidationStats=function(o){
- var r=this.recentLiquidations(o),longUsd=0,shortUsd=0,longCount=0,shortCount=0;
- r.items.forEach(function(x){var v=+x.notionalUsd||0;if(String(x.side).toUpperCase()==='LONG'){longUsd+=v;longCount++;}else if(String(x.side).toUpperCase()==='SHORT'){shortUsd+=v;shortCount++;}});
- var total=longUsd+shortUsd;return{ok:true,schema:'marketdata.liquidations.stats/1.0',symbol:o&&o.symbol||'',windowMs:o&&o.windowMs||900000,count:r.count,totalNotionalUsd:total,long:{count:longCount,notionalUsd:longUsd},short:{count:shortCount,notionalUsd:shortUsd},imbalance:total?(longUsd-shortUsd)/total:0,coverage:'CONNECTED_STREAMS_ONLY'};
+ var r=this.recentLiquidations(o),longUsd=0,shortUsd=0,longCount=0,shortCount=0,known=0,unknown=0,providers={};
+ r.items.forEach(function(x){var has=x.notionalUsd!=null&&x.notionalUsd!==''&&isFinite(+x.notionalUsd),v=has?+x.notionalUsd:0;providers[x.provider||x.source||'UNKNOWN']=1;if(has)known++;else unknown++;if(String(x.side).toUpperCase()==='LONG'){longUsd+=v;longCount++;}else if(String(x.side).toUpperCase()==='SHORT'){shortUsd+=v;shortCount++;}});
+ var covered=longUsd+shortUsd,complete=unknown===0;return{ok:true,schema:'marketdata.liquidations.stats/1.1',symbol:canonicalPair(o&&o.symbol||''),windowMs:o&&o.windowMs||900000,count:r.count,totalNotionalUsd:complete?covered:null,coveredNotionalUsd:covered,long:{count:longCount,coveredNotionalUsd:longUsd},short:{count:shortCount,coveredNotionalUsd:shortUsd},imbalance:covered?(longUsd-shortUsd)/covered:0,coverage:{label:'CONNECTED_STREAMS_ONLY',providers:Object.keys(providers),notionalKnownEvents:known,notionalUnknownEvents:unknown,notionalComplete:complete}};
 };
 Collector.prototype.history=function(o){return this.store?this.store.history(o):{ok:false,error:'MICROSTRUCTURE_STORE_DISABLED',items:[]};};
 Collector.prototype.storage=function(){return this.store?this.store.status():{ok:false,mode:'DISABLED'};};
