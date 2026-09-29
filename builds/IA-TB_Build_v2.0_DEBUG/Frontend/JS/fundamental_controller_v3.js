@@ -101,7 +101,7 @@ function renderCalendars(){
  if($('cmeExpirationStatus'))$('cmeExpirationStatus').textContent='Expiration Calendar · '+(cal.cmeExpirations&&cal.cmeExpirations.status||'--')+' · '+exp.length+' échéance(s)';
 }
 function loadCalendars(){
- return api('/api/fundamental/calendars').then(function(r){CALENDAR_DATA=r.data||{};renderCalendars();return r}).catch(function(e){var a=$('fedCalendarGrid'),b=$('cmeCalendarGrid');if(a)a.innerHTML='<div class="calendarLoading bad">'+esc(e.message)+'</div>';if(b)b.innerHTML='<div class="calendarLoading bad">'+esc(e.message)+'</div>';return null});
+ return api('/api/fundamental/calendars').then(function(r){var firstLoad=!CALENDAR_DATA;CALENDAR_DATA=r.data||{};if(firstLoad){var cal=CALENDAR_DATA.calendars||{},now=Date.now()-86400000,fed=((cal.fed&&cal.fed.events)||[]).filter(function(x){return new Date(x.date+'T23:59:59Z').getTime()>=now})[0],allCme=((cal.cme&&cal.cme.events)||[]).concat((cal.cmeExpirations&&cal.cmeExpirations.events)||[]).filter(function(x){return new Date(x.date+'T23:59:59Z').getTime()>=now}).sort(function(a,b){return String(a.date).localeCompare(String(b.date))})[0];if(fed){var fd=new Date(fed.date+'T12:00:00Z');CALENDAR_FED_MONTH=new Date(fd.getUTCFullYear(),fd.getUTCMonth(),1)}if(allCme){var cd=new Date(allCme.date+'T12:00:00Z');CALENDAR_CME_MONTH=new Date(cd.getUTCFullYear(),cd.getUTCMonth(),1)}}renderCalendars();return r}).catch(function(e){var a=$('fedCalendarGrid'),b=$('cmeCalendarGrid');if(a)a.innerHTML='<div class="calendarLoading bad">'+esc(e.message)+'</div>';if(b)b.innerHTML='<div class="calendarLoading bad">'+esc(e.message)+'</div>';return null});
 }
 function bindCalendars(){
  var panel=$('macroCalendarPanel');if(!panel)return;
