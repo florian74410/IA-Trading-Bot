@@ -34,9 +34,9 @@ function renderHealth(source,positions){
 }
 
 function positionRow(p,ccy){
- var walletId=p.wallet_id||p.walletId||'UNASSIGNED',pub=p.wallet_public_key||p.walletPublicKey||'',health=String(p.health||'UNKNOWN').toUpperCase();
+ var walletId=p.wallet_id||p.walletId||'UNASSIGNED',walletName=p.wallet_name||p.walletName||'Wallet',pub=p.wallet_public_key||p.walletPublicKey||'',health=String(p.health||'UNKNOWN').toUpperCase();
  return '<tr>'+
-  '<td class="walletCell"><b>'+esc(walletId)+'</b><small title="'+esc(pub)+'">'+esc(short(pub,12,8))+'</small></td>'+
+  '<td class="walletCell"><b>'+esc(walletName)+'</b><small>ID '+esc(walletId)+' · '+esc(short(pub,12,8))+'</small></td>'+
   '<td class="assetCell"><b>'+esc(assetOf(p.symbol))+'</b><small>'+esc(p.symbol||'--')+'</small></td>'+
   '<td>'+esc(p.exchange||'--')+'</td>'+
   '<td class="'+(String(p.side).toUpperCase()==='LONG'?'sideLong':'sideShort')+'">'+esc(p.side||'--')+'</td>'+
@@ -57,10 +57,10 @@ function renderPositions(pos,ccy){
 }
 
 function tradeRow(t,ccy){
- var wallet=t.wallet_id||t.walletId||'UNASSIGNED',pub=t.wallet_public_key||t.walletPublicKey||'';
+ var wallet=t.wallet_id||t.walletId||'UNASSIGNED',walletName=t.wallet_name||t.walletName||'Wallet',pub=t.wallet_public_key||t.walletPublicKey||'';
  return '<tr class="tradeRow" data-trade-id="'+esc(t.trade_id)+'">'+
   '<td>'+when(t.closed_at)+'</td>'+
-  '<td class="walletCell"><b>'+esc(wallet)+'</b><small title="'+esc(pub)+'">'+esc(short(pub,10,7))+'</small></td>'+
+  '<td class="walletCell"><b>'+esc(walletName)+'</b><small title="'+esc(pub)+'">ID '+esc(wallet)+' · '+esc(short(pub,10,7))+'</small></td>'+
   '<td class="assetCell"><b>'+esc(t.asset||assetOf(t.symbol))+'</b><small>'+esc(t.symbol||'--')+'</small></td>'+
   '<td>'+esc(t.exchange||'--')+'</td>'+
   '<td class="'+(String(t.side).toUpperCase()==='LONG'?'sideLong':'sideShort')+'">'+esc(t.side||'--')+'</td>'+
@@ -106,6 +106,7 @@ function openTrade(id){
  if(!id)return;api('/portfolio-api/api/trade?id='+encodeURIComponent(id)).then(function(o){var t=o.trade||{},ccy=(state.overview&&state.overview.baseCurrency)||'EUR',html='<div class="tradeDetailGrid">'+
   detailCell('Trade ID',t.trade_id,true,true)+
   detailCell('Statut',t.status||'CLOSED')+
+  detailCell('Wallet',t.wallet_name||'Wallet')+
   detailCell('Wallet ID',t.wallet_id||'UNASSIGNED')+
   detailCell('Public Key',t.wallet_public_key||'--',true,true)+
   detailCell('Asset',t.asset||assetOf(t.symbol))+
