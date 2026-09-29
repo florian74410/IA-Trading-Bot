@@ -64,17 +64,42 @@ function hexQty(v){try{return'0x'+BigInt(String(v==null?'0':v)).toString(16)}cat
 function waitReceipt(hash,tries){tries=tries||0;if(tries>90)return Promise.reject(new Error('TX_CONFIRMATION_TIMEOUT'));return window.ethereum.request({method:'eth_getTransactionReceipt',params:[hash]}).then(function(r){if(r&&r.blockNumber)return r;return new Promise(function(resolve){setTimeout(resolve,2000)}).then(function(){return waitReceipt(hash,tries+1)})})}
 function switchChain(network){var m=chainMeta[network];if(!m||!m.chainId)return Promise.reject(new Error('CHAIN_NOT_EVM'));return window.ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:'0x'+Number(m.chainId).toString(16)}]})}
 function sendTx(tx,from){var d=tx&&tx.details||tx||{},o={from:from,to:d.to,data:d.data||'0x',value:hexQty(d.value||0)};if(d.gas)o.gas=hexQty(d.gas);if(d.gasPrice)o.gasPrice=hexQty(d.gasPrice);if(d.maxFeePerGas)o.maxFeePerGas=hexQty(d.maxFeePerGas);if(d.maxPriorityFeePerGas)o.maxPriorityFeePerGas=hexQty(d.maxPriorityFeePerGas);return window.ethereum.request({method:'eth_sendTransaction',params:[o]})}
+function submitRecordAndTrack(p,hash,r){
+ return api('/api/swap-bridge/submitted',{method:'POST',body:{originTxHash:hash,quoteId:p.quoteId,provider:p.provider,sourceNetwork:p.sourceNetwork,destinationNetwork:p.destinationNetwork,sellSymbol:p.sellSymbol,buySymbol:p.buySymbol,sellAmount:p.sellAmount,buyAmount:p.buyAmount,iatbFee:p.fee&&p.fee.amount,estimatedTimeSeconds:p.estimatedTimeSeconds}}).then(function(){track(p,hash,r);return hash});
+}
+function approvalSuccess(p,hash){
+ if(!hash||!window.IATBNotify||!window.IATBNotify.smartContractSuccess)return;
+ window.IATBNotify.smartContractSuccess({operation:'Approval ERC-20',fromSymbol:p.sellSymbol,fromAmount:p.sellAmount,toSymbol:p.sellSymbol,toAmount:'Allowance',totalFeeLabel:'Gas réseau',gasFeeLabel:'Confirmé on-chain',iatbFeeLabel:'0 '+p.sellSymbol,network:chainMeta[p.sourceNetwork].name,provider:'0x AllowanceHolder',status:'Approval confirmée',tx:hash,title:'Approval Smart Contract confirmée'});
+}
+function internalSignDialog(p,r){
+ if(!window.IATBNotify){
+  var pw=window.prompt('Mot de passe du wallet IA-TB');if(!pw)return;
+  return executeInternal(p,r,pw);
+ }
+ var id='sbWalletPassword'+Date.now();
+ window.IATBNotify.large({modal:true,icon:'✦',title:'Signer le Smart Contract',subtitle:'Confirmation obligatoire avant toute diffusion',html:'<div class="iaScConfirm"><div class="iaScGrid"><div><small>OPÉRATION</small><b>Swap / Bridge</b></div><div><small>ENVOI</small><b>'+esc(p.sellAmount)+' '+esc(p.sellSymbol)+'</b></div><div><small>RÉCEPTION MIN.</small><b>'+esc(p.minBuyAmount)+' '+esc(p.buySymbol)+'</b></div><div><small>FRAIS IA-TB</small><b>'+esc(p.fee&&p.fee.amount||'--')+' '+esc(p.sellSymbol)+' · 1 %</b></div><div><small>PROVIDER</small><b>'+esc(p.provider)+'</b></div><div><small>RÉSEAU</small><b>'+esc(chainMeta[p.sourceNetwork].name)+' → '+esc(chainMeta[p.destinationNetwork].name)+'</b></div></div><label class="iaScPasswordLabel">Mot de passe du wallet IA-TB<input id="'+id+'" type="password" autocomplete="current-password" placeholder="Mot de passe"></label><div class="iaNtfSensitive">La clé privée reste chiffrée dans IA-TB et n’est jamais envoyée au navigateur.</div></div>',actions:[{label:'Annuler'},{label:'Signer et envoyer',kind:'primary',onClick:function(close){var input=document.getElementById(id),pw=input&&input.value||'';if(!pw){if(input)input.focus();return}close();executeInternal(p,r,pw)}}]});
+}
+function executeInternal(p,r,password){
+ state.busy=true;render();
+ api('/api/swap-bridge/execute',{method:'POST',body:{routeId:r.id,confirmed:true,password:password}}).then(function(o){password='';state.busy=false;render();if(o.approvalTxHash)approvalSuccess(p,o.approvalTxHash);return submitRecordAndTrack(p,o.originTxHash,r)}).catch(function(e){password='';state.busy=false;render();notifyError('Signature interne impossible',e)});
+}
+function externalSign(p,r){
+ if(!window.ethereum)throw new Error('Aucun signer disponible : le signer IA-TB interne est absent et aucune extension EIP-1193 n’est détectée.');
+ return switchChain(p.sourceNetwork).then(function(){return window.ethereum.request({method:'eth_requestAccounts'})}).then(function(a){
+  var from=String(a&&a[0]||'').toLowerCase();if(from!==String(p.sourceAddress||'').toLowerCase())throw new Error('SIGNER_ADDRESS_MISMATCH : le wallet navigateur ne correspond pas au wallet source IA-TB.');
+  var chain=Promise.resolve(),approvalHash='';
+  if(p.approval)chain=chain.then(function(){return sendTx(p.approval,from)}).then(function(h){approvalHash=h;return waitReceipt(h)}).then(function(){approvalSuccess(p,approvalHash)});
+  return chain.then(function(){return sendTx(p.transaction,from)}).then(function(hash){return submitRecordAndTrack(p,hash,r)});
+ });
+}
 function prepareAndSign(){
  var r=currentRoute();if(!r)return requestRoutes();
  state.busy=true;render();
  api('/api/swap-bridge/prepare',{method:'POST',body:{routeId:r.id}}).then(function(p){
   state.busy=false;render();
-  if(!window.ethereum)throw new Error('SIGNER_EIP1193_ABSENT : aucune extension wallet EVM disponible pour signer cette transaction.');
-  return switchChain(p.sourceNetwork).then(function(){return window.ethereum.request({method:'eth_requestAccounts'})}).then(function(a){var from=String(a&&a[0]||'').toLowerCase();if(from!==String(p.sourceAddress||'').toLowerCase())throw new Error('SIGNER_ADDRESS_MISMATCH : le wallet navigateur ne correspond pas au wallet source IA-TB.');
-   var chain=Promise.resolve();if(p.approval){chain=chain.then(function(){return sendTx(p.approval,from)}).then(function(h){if(window.IATBNotify)window.IATBNotify.large({modal:false,icon:'✦',title:'Approval ERC-20 envoyé',subtitle:'Signature Smart Contract',html:'<div class="iaTxHash"><b>TX :</b> <span>'+esc(h)+'</span></div>'});return waitReceipt(h)})}
-   return chain.then(function(){return sendTx(p.transaction,from)}).then(function(hash){return api('/api/swap-bridge/submitted',{method:'POST',body:{originTxHash:hash,quoteId:p.quoteId,provider:p.provider,sourceNetwork:p.sourceNetwork,destinationNetwork:p.destinationNetwork,sellSymbol:p.sellSymbol,buySymbol:p.buySymbol,sellAmount:p.sellAmount,buyAmount:p.buyAmount,iatbFee:p.fee&&p.fee.amount,estimatedTimeSeconds:p.estimatedTimeSeconds}}).then(function(){track(p,hash,r);return hash})});
-  });
- }).catch(function(e){state.busy=false;render();notifyError('Signature impossible',e)})
+  if(p.signer&&p.signer.internal)return internalSignDialog(p,r);
+  return externalSign(p,r);
+ }).catch(function(e){state.busy=false;render();notifyError('Signature impossible',e)});
 }
 function track(p,hash,r){
  if(window.IATBNotify)window.IATBNotify.large({modal:false,icon:'⌛',title:'Transaction envoyée',subtitle:'Suivi du bridge en cours',html:'<div class="iaTxHash"><b>TX :</b> <span>'+esc(hash)+'</span></div>'});
