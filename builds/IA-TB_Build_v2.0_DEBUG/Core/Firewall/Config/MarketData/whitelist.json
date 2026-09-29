@@ -12,7 +12,9 @@
     "COINGECKO",
     "DEFILLAMA",
     "BLOCKCHAIN",
-    "BINANCE_FUTURES"
+    "BINANCE_FUTURES",
+    "BYBIT",
+    "BYBIT_PUBLIC"
   ],
   "types": [
     "PRICE",
