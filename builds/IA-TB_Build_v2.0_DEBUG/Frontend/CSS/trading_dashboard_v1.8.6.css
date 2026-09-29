@@ -625,3 +625,12 @@ html.iatb-dashboard-v186-final .iatbCenterColumn #chartArea > .iatbChartHead{dis
   .iatbGridModule{grid-column:1!important;grid-row:auto!important;min-height:150px!important;padding-top:28px!important}
   .iatbModuleResize{display:none!important}
 }
+
+
+/* v2.0 DEBUG — universal JSON indicator reader */
+.indicatorDockBody{display:grid!important;grid-template-columns:1fr!important;gap:7px!important}
+.indicatorJsonPane{position:relative!important;height:132px!important;min-height:132px!important;border:1px solid #1e3c4d!important;border-radius:7px!important;background:#061019!important;overflow:hidden!important}
+.indicatorJsonPane canvas{position:absolute;inset:0;width:100%!important;height:100%!important}
+.indicatorReaderLatest{position:absolute;right:8px;top:7px;z-index:3;max-width:62%;padding:2px 6px;border:1px solid #1d4a61;border-radius:9px;background:rgba(5,18,27,.84);color:#8bdcff;font:8px/1.25 Menlo,Monaco,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.indicatorReaderEmpty b{color:#58cef7}
+@media(max-width:980px){.indicatorJsonPane{height:145px!important;min-height:145px!important}.indicatorReaderLatest{max-width:56%}}
