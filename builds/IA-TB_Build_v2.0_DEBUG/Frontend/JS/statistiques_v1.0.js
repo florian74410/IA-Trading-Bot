@@ -153,9 +153,10 @@ function cexSeriesRange(a,range){
  return a.filter(function(x){return x.timestamp>=cut});
 }
 function renderCefiVolume(){
- var range=state.cefi.volumeRange||'24H',series=cexSeriesRange(state.cefi.volumeHistory,range),host=q('#cefiVolumeChart');
+ var range=state.cefi.volumeRange||'24H',series=cexSeriesRange(state.cefi.volumeHistory,range),host=q('#cefiVolumeChart'),sub=q('#cefiVolumeSubtitle');
  state.cefi.volume=series.map(function(x){return+x.valueUsd});
- if(host)host.innerHTML=barChart(state.cefi.volume,'cefi');
+ if(host)host.innerHTML=seriesChart(series,range);
+ if(sub)sub.textContent='Volume CEX suivi · '+range+' · snapshots Market Data Collector'+(series.length?' · '+series.length+' points':'');
 }
 function renderDefiVolume(){
  var range=state.defi.volumeRange||'24H',useDaily=range==='7J'||range==='30J',src=useDaily?state.defi.volumeDaily:state.defi.volumeHistory,series=seriesRange(src,range),host=q('#defiVolumeChart'),sub=q('#defiVolumeSubtitle');
