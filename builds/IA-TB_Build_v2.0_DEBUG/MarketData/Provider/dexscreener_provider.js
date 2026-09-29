@@ -6,13 +6,13 @@ function aliases(base){var a=[base];if(base==='BTC')a.push('WBTC');if(base==='ET
 function quotes(q){q=String(q||'USD').toUpperCase();if(q==='USD')return['USDC','USDT','DAI','USD'];if(q==='USDC'||q==='USDT'||q==='DAI')return[q];return[q];}
 function normalizePair(x,baseSet,quoteSet){
  if(!x||!x.baseToken||!x.quoteToken)return null;var b=String(x.baseToken.symbol||'').toUpperCase(),q=String(x.quoteToken.symbol||'').toUpperCase();
- if(baseSet.indexOf(b)<0||quoteSet.indexOf(q)<0)return null;var l=num(x.liquidity&&x.liquidity.usd),v=num(x.volume&&x.volume.h24),p=num(x.priceUsd);
+ if(baseSet.indexOf(b)<0||quoteSet.indexOf(q)<0){if(baseSet.indexOf(q)>=0&&quoteSet.indexOf(b)>=0){var t=b;b=q;q=t;}else return null;}var l=num(x.liquidity&&x.liquidity.usd),v=num(x.volume&&x.volume.h24),p=num(x.priceUsd);
  if(l==null||l<0)return null;
  return{chainId:String(x.chainId||''),dexId:String(x.dexId||''),pairAddress:String(x.pairAddress||''),url:x.url||null,base:{symbol:b,address:x.baseToken.address||null,name:x.baseToken.name||null},quote:{symbol:q,address:x.quoteToken.address||null,name:x.quoteToken.name||null},priceUsd:p,liquidityUsd:l,volume24hUsd:v,txns24h:x.txns&&x.txns.h24||null,pairCreatedAt:+x.pairCreatedAt||null,labels:Array.isArray(x.labels)?x.labels:[]};
 }
 function P(o){o=o||{};this.base=String(o.base||process.env.IATB_DEXSCREENER_BASE||'https://api.dexscreener.com').replace(/\/$/,'');this.id='DEXSCREENER';}
 P.prototype.pairLiquidity=function(symbol,cb){
- var p=S.split(symbol),bs=aliases(p.base),qs=quotes(p.quote),queries=[];bs.forEach(function(b){qs.forEach(function(q){queries.push(b+'/'+q);});});
+ var p=S.split(symbol),bs=aliases(p.base),qs=quotes(p.quote),queries=[];bs.forEach(function(b){qs.forEach(function(q){queries.push(b+' '+q);});});
  var self=this,left=queries.length,all=[],errors=[];if(!left)return cb(new Error('DEXSCREENER_QUERY_EMPTY'));
  queries.forEach(function(q){request(self.base+'/latest/dex/search?q='+encodeURIComponent(q),{timeout:10000,maxBytes:4*1024*1024},function(e,o){if(e)errors.push(q+':'+e.message);else{var rows=o&&Array.isArray(o.pairs)?o.pairs:[];rows.forEach(function(x){var n=normalizePair(x,bs,qs);if(n)all.push(n);});}if(--left)return;
   var seen={},rows=[];all.forEach(function(x){var k=x.chainId+'|'+x.pairAddress;if(!x.pairAddress||seen[k])return;seen[k]=1;rows.push(x);});
