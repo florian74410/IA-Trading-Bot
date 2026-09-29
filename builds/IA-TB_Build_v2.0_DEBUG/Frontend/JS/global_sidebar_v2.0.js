@@ -165,7 +165,7 @@ function config(){
  if(p.indexOf('/fundamental')===0)return fundamentalConfig();
  if(p.indexOf('/settings')===0)return settingsConfig();
  if(p.indexOf('/strategy')===0)return strategyConfig();
- if(p==='/admin'||p==='/admin/')return adminConfig();
+ if(p==='/admin'||p==='/admin/')return null;
  return null;
 }
 function sourceNode(x){
