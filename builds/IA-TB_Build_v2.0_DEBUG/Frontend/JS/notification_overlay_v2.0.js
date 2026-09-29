@@ -96,24 +96,21 @@ function networkLogo(network){
 }
 function transferSuccess(o){
  o=o||{};
- var direction=String(o.direction||'sent').toLowerCase(),incoming=direction==='received',
+ var direction=String(o.direction||'OUT').toLowerCase(),incoming=direction==='received'||direction==='in'||direction==='incoming',
      network=String(o.network||'').toLowerCase(),symbol=String(o.symbol||'').toUpperCase(),
      netLogo=networkLogo(network),assetLogo=txLogo(symbol),arrow=incoming?'←':'→',
      tx=String(o.tx||o.txHash||'--'),
      html='<div class="iaTransferSuccess">'+
       '<div class="iaTransferLine">'+
        '<span class="iaTxDate">'+esc(txDate(o.timestamp))+' :</span>'+
-       '<span class="iaTransferNetwork">'+(netLogo?'<img src="'+esc(netLogo)+'" alt="">':'')+'<small>'+esc(network||'réseau')+'</small></span>'+
+       '<span class="iaTransferNet">'+(netLogo?'<img src="'+esc(netLogo)+'" alt="">':'')+'<small>'+esc(network||'réseau')+'</small></span>'+
        '<span class="iaTransferDash">−</span>'+
        '<span class="iaTransferAmount"><b>'+esc(o.amount||'--')+'</b>'+(assetLogo?'<img src="'+esc(assetLogo)+'" alt="">':'')+'<small>'+esc(symbol)+'</small></span>'+
-       '<span class="iaTransferDash">−</span>'+
-       '<span class="iaTransferAddr">'+esc(o.sourceAddress||'--')+'</span>'+
-       '<span class="iaTransferArrow '+(incoming?'incoming':'outgoing')+'">'+arrow+'</span>'+
-       '<span class="iaTransferAddr">'+esc(o.destinationAddress||'--')+'</span>'+
       '</div>'+
+      '<div class="iaTransferAddresses"><code>'+esc(o.sourceAddress||'--')+'</code><strong>'+arrow+'</strong><code>'+esc(o.destinationAddress||'--')+'</code></div>'+
       '<div class="iaTxHash"><b>TX :</b> <span>'+esc(tx)+'</span></div>'+
      '</div>';
- return show({size:'large',modal:false,icon:incoming?'↓':'↑',title:o.title||(incoming?'Réception crypto confirmée':'Transfert crypto confirmé'),subtitle:o.subtitle||('Réseau '+(network||'--')+' · confirmation on-chain'),html:html});
+ return show({size:'medium',modal:false,icon:incoming?'↓':'↑',title:o.title||(incoming?'Réception crypto confirmée':'Transfert crypto confirmé'),subtitle:o.subtitle||('Réseau '+(network||'--')+' · confirmation on-chain'),html:html});
 }
 function transactionSuccess(o){
  o=o||{};
