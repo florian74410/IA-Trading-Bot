@@ -1,61 +1,132 @@
-# Connecteurs CEX / DEX et sources de données
+# 🔌 Connecteurs CEX / DEX et providers — V2.0 DEBUG
 
-Cette page recense les règles communes appliquées aux connecteurs et distingue les exchanges des sources analytiques complémentaires.
+> **🟢 En simple : IA-TB distingue les plateformes de marché utilisées pour les chandeliers/trading des providers analytiques comme CoinGecko et DeFiLlama. Chaque source garde son nom et sa provenance.**
 
-## Contrat minimum d'un CEX / DEX
+---
 
-Chaque nouveau CEX ou DEX doit traiter, lorsque la plateforme le permet : marchés/paires, prix, OHLC/OHLCV, volumes propres à la plateforme, health check, intégration Market Data, Chart Viewer, paramètres privés dans `Settings > API` et test de connexion lorsque pertinent.
+## 📡 Sources Market Data Candle actives
 
-La provenance doit toujours rester identifiable. Deux marchés proches ne sont pas fusionnés silencieusement.
+**🟢 En simple : le registre actuel du Market Data Collector V2.0 sait demander des bougies à quatre sources.**
 
-## Types de providers
+| Source | Type | Données principales |
+|---|---|---|
+| 🐙 Kraken | CEX | OHLCV, volume natif |
+| 🟡 Binance | CEX | OHLCV, volume natif |
+| ⚫ OKX | CEX | OHLCV, volume natif |
+| 🔵 GMX | DEX / Perp | prix Oracle / candles, volume non fabriqué |
 
-IA-TB utilise des providers API et `SOCKET`. `SOCKET` désigne un flux WebSocket persistant ; HTTP peut rester utilisé pour l'historique ou les métadonnées.
+Le choix de source est explicite. Le Collector ne remplace pas silencieusement une plateforme indisponible par une autre.
 
-## Sources Exchange / trading
+---
 
-### Binance
+## 🐙 Kraken
 
-CEX historique avec Market Data, OHLCV, volumes, Chart Viewer et paramètres privés centralisés.
+**🟢 En simple : Kraken utilise encore un Add-On dédié sur 8011, puis Market Data normalise ses chandeliers.**
 
-### Coinbase
+Le provider Kraken appelle le service local Kraken Add-On. La réponse conserve la paire provider, la paire canonique, le timeframe et la disponibilité du volume.
 
-CEX historique avec Market Data, OHLCV, volumes, Chart Viewer et paramètres privés centralisés.
+---
 
-### OKX
+## 🟡 Binance
 
-CEX historique avec Market Data, OHLCV, volumes, Chart Viewer et paramètres privés centralisés.
+**🟢 En simple : Binance Market Data utilise l’API publique Spot pour les chandeliers.**
 
-### Kraken
+Le provider demande actuellement jusqu’à 500 klines et normalise :
+`timestamp, open, high, low, close, volume`.
 
-CEX et source explicite du Market Data Collector v1.7.9. Kraken fournit OHLCV et prix live et reste le provider de référence du registre actuel.
+L’accès public n’exige pas de clé privée pour ces données.
 
-### GMX
+---
 
-DEX et source explicite du Collector v1.7.9 pour OHLC et prix Oracle. Aucun volume GMX absent n'est fabriqué. Les paramètres privés restent dans `Settings > API` lorsqu'ils sont nécessaires.
+## ⚫ OKX
 
-### Hyperliquid
+**🟢 En simple : OKX fournit des chandeliers publics et IA-TB sait essayer une paire USDT lorsqu’une paire USD directe n’existe pas.**
 
-DEX / plateforme on-chain et premier provider Market Data `SOCKET` depuis la v1.7.8. Historique via `candleSnapshot`, temps réel via WebSocket `candle`, abonnements `trades` et `l2Book`, volumes natifs conservés et état de connexion exposé.
+Le provider conserve le `providerPair` réellement utilisé.
 
-## Sources complémentaires v1.7.9
+---
 
-### CoinGecko
+## 🔵 GMX
 
-Provider API complémentaire `COINGECKO`. Sa provenance est séparée des CEX/DEX et aucun volume d'exchange n'est inventé. La clé éventuelle est configurée dans `Settings > API` et transmise au Market Data uniquement en mémoire.
+**🟢 En simple : GMX fournit surtout le prix Oracle et les candles Perp ; IA-TB n’invente pas un volume qui n’est pas présent.**
 
-### Blockchain.com
+Le provider possède plusieurs endpoints de fallback GMX et renvoie :
+- `volumeAvailable: false`
+- `volumeSource: NONE`
+- `priceSource: GMX_ORACLE`
 
-Provider `BLOCKCHAIN`. L'implémentation actuelle utilise le flux public Blockchain.com Exchange avec OHLCV/volumes natifs et refus explicite des granularités non supportées. Un travail v1.7.9 reste prévu pour recentrer la source sur le rôle Bitcoin / on-chain retenu.
+---
 
-### DefiLlama
+# 📊 Providers analytiques
 
-Provider analytique `DEFILLAMA`, déclaré `candleCapable:false`. Il fournit notamment TVL, prix tokens, stablecoins, rendement, volumes DEX/options, open interest, fees et revenue, sans remplacer les chandeliers natifs des exchanges.
+## 🦎 CoinGecko
 
-## Source virtuelle ƒx
+**🟢 En simple : CoinGecko sert de catalogue d’actifs et de référence pour le marché token/global, pas de remplacement silencieux des bougies Binance/Kraken.**
 
-`ƒx Consensus` n'est ni un CEX ni un DEX. C'est une source virtuelle calculée dans le Market Data Collector à partir de plusieurs sources compatibles. Elle conserve la provenance des contributions et n'invente aucune donnée manquante.
+Utilisations :
+- Market Registry ;
+- recherche d’actifs ;
+- détails token ;
+- market cap ;
+- volumes globaux/échantillonnés ;
+- exchanges ;
+- prix de valorisation UI lorsque prévu.
 
-## Ajout d'un futur connecteur
+---
 
-Un nouveau CEX/DEX n'est considéré terminé que lorsque ses données, sa provenance, son intégration UI pertinente, ses diagnostics, ses tests et sa documentation ont été traités. Pour un provider `SOCKET`, documenter également le transport, les abonnements, la reconnexion, la fraîcheur et le repli historique.
+## 🦙 DeFiLlama
+
+**🟢 En simple : DeFiLlama est la source spécialisée DeFi.**
+
+Utilisations actuelles :
+- protocoles ;
+- chains ;
+- DEX overview ;
+- stablecoins ;
+- TVL et catégories.
+
+Il ne remplace pas les OHLCV d’un exchange.
+
+---
+
+## ⛓️ On-chain RPC
+
+**🟢 En simple : un provider RPC générique existe pour lire des informations blockchain EVM, mais il ne signe et n’envoie aucune transaction.**
+
+Méthodes de lecture prévues :
+- `eth_call`
+- `eth_getBalance`
+- `eth_getBlockByNumber`
+- `eth_blockNumber`
+- `eth_getCode`
+- `eth_getLogs`
+
+La signature reste dans les modules Banque/Trading concernés.
+
+---
+
+# ⚡ Execution Exchange
+
+**🟢 En simple : une plateforme peut être source Market Data sans que le Trading réel soit automatiquement activé.**
+
+Trading Engine possède des adapters déclarés pour :
+- Binance ;
+- OKX ;
+- Kraken ;
+- GMX.
+
+Le mode Live global du Trading Engine reste **OFF par défaut**, et toute mutation exige Risk Gate + Firewall.
+
+---
+
+## ⚠️ Providers historiques
+
+**🟢 En simple : Hyperliquid, Blockchain.com et la source ƒx ont existé dans les développements précédents, mais ne font pas partie du registre Candle canonique V2.0 actuellement chargé.**
+
+Ils ne sont donc plus présentés ici comme providers actifs principaux. S’ils reviennent, leur réintégration devra passer par :
+1. Market Data ;
+2. provenance ;
+3. Data Firewall ;
+4. Router ;
+5. tests ;
+6. documentation.
