@@ -309,6 +309,13 @@ function historyValues(h,family,path){
  rows.forEach(function(x){var root=family==='CEFI'?x.cefi:x.defi,cur=root,parts=String(path).split('.');for(var i=0;i<parts.length&&cur!=null;i++)cur=cur[parts[i]];cur=+cur;if(isFinite(cur))out.push(cur)});
  return out.slice(-24);
 }
+function trend(values){
+ values=(values||[]).filter(function(v){return isFinite(+v)}).map(Number);if(values.length<2||!values[0])return'--';
+ var p=(values[values.length-1]-values[0])/Math.abs(values[0])*100;return(p>=0?'+':'')+p.toFixed(1).replace('.',',')+' %';
+}
+function setKpi(id,value,trendValue,note){
+ var b=q('#'+id);if(!b)return;b.textContent=value;var card=b.parentNode,em=card&&card.querySelector('em'),sm=card&&card.querySelector('small');if(em)em.textContent=trendValue||'--';if(sm&&note)sm.textContent=note;
+}
 function applyFinancialSnapshot(s,cefiHistory,defiHistory){
  s=s||{};var c=s.cefi||{},d=s.defi||{},meta=s.meta||{};
  if(c&&Object.keys(c).length){
@@ -319,6 +326,11 @@ function applyFinancialSnapshot(s,cefiHistory,defiHistory){
   state.cefi.exchanges=ex;
   state.cefi.assets=assets.map(function(x){return[x.symbol||x.name,money(x.volume24hUsd),scaled(x.volume24hUsd,maxAsset)]});
   var cv=historyValues(cefiHistory,'CEFI','global.totalVolume24hUsd');if(cv.length)state.cefi.volume=cv;
+  setKpi('cefiVolume24',money(c.global&&c.global.totalVolume24hUsd),trend(cv),'CoinGecko · volume marché agrégé');
+  var spotHist=historyValues(cefiHistory,'CEFI','spotVolume24hUsd');setKpi('cefiSpot24',money(c.spotVolume24hUsd),trend(spotHist),'CoinGecko · exchanges spot suivis');
+  setKpi('cefiOi','--','--','Provider dérivés / OI requis');
+  setKpi('cefiLiq','--','--','Provider liquidations requis');
+  var donut=q('.cefiDonut b');if(donut)donut.textContent=money(c.spotVolume24hUsd);
   var fresh=meta.freshness&&meta.freshness.cefi,age=fresh&&fresh.observedAt?Math.max(0,Date.now()-fresh.observedAt):null;
   state.cefi.health=[
    ['Market cap',money(c.global&&c.global.marketCapUsd),'good'],
@@ -335,6 +347,12 @@ function applyFinancialSnapshot(s,cefiHistory,defiHistory){
   var chains=(d.chains||[]).slice(0,8),maxTvl=Math.max.apply(Math,chains.map(function(x){return+x.tvlUsd||0}).concat([1]));
   state.defi.networks=chains.map(function(x){return[x.name,money(x.tvlUsd),scaled(x.tvlUsd,maxTvl)]});
   var dv=historyValues(defiHistory,'DEFI','dexVolume24hUsd');if(dv.length)state.defi.volume=dv;
+  var tvlHist=historyValues(defiHistory,'DEFI','tvlUsd'),stableHist=historyValues(defiHistory,'DEFI','stablecoinMarketCapUsd');
+  setKpi('defiTvl',money(d.tvlUsd),trend(tvlHist),'DeFiLlama · TVL protocoles/chains');
+  setKpi('defiDexVolume',money(d.dexVolume24hUsd),trend(dv),'DeFiLlama · DEX 24h');
+  setKpi('defiStable',money(d.stablecoinMarketCapUsd),trend(stableHist),'DeFiLlama · stablecoins');
+  setKpi('defiBridgeVolume','--','--','Provider bridge volume non connecté');
+  var dd=q('.defiDonut b');if(dd)dd.textContent=money(d.tvlUsd);
   var stable=historyValues(defiHistory,'DEFI','stablecoinMarketCapUsd'),ins=[],outs=[];
   for(var i=1;i<stable.length;i++){var delta=stable[i]-stable[i-1];ins.push(delta>0?delta/1e9:0);outs.push(delta<0?-delta/1e9:0)}
   if(ins.length){state.defi.stableIn=ins.slice(-12);state.defi.stableOut=outs.slice(-12)}
