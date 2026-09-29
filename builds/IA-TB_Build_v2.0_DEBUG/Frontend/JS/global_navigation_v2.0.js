@@ -18,7 +18,7 @@ function ensureGlobalSidebar(){
   var l=document.createElement('link');l.rel='stylesheet';l.href='/assets/global_sidebar_v2.0.css?v=2000';l.setAttribute('data-iatb-global-side','1');document.head.appendChild(l);
  }
  if(!document.querySelector('script[data-iatb-global-side]')){
-  var s=document.createElement('script');s.src='/assets/global_sidebar_v2.0.js?v=2000';s.setAttribute('data-iatb-global-side','1');document.head.appendChild(s);
+  var s=document.createElement('script');s.src='/assets/global_sidebar_v2.0.js?v=2001';s.setAttribute('data-iatb-global-side','1');document.head.appendChild(s);
  }
 }
 function resolveAdminVisibility(){
