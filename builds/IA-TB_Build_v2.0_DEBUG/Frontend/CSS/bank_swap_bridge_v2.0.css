@@ -154,3 +154,93 @@
   .swapBridgeV2 .sbHeroBanner{height:88px;width:100%}
   .servicePlaceholder.swapMode>#closeService{top:91px!important;right:18px!important}
 }
+
+
+/* v2.1 — live Swap/Bridge engine states */
+.sbEngineState{
+  margin-top:8px;
+  display:flex;
+  align-items:center;
+  gap:9px;
+  padding:6px 8px;
+  border:1px solid #21485d;
+  border-radius:7px;
+  background:#06131e;
+  font-size:9px;
+}
+.sbEngineState b{font-size:9px}
+.sbEngineState span{color:#7e9eae}
+.sbEngineState.ok{border-color:#18755f}
+.sbEngineState.ok b{color:#3ee5ae}
+.sbEngineState.warn{border-color:#795b21}
+.sbEngineState.warn b{color:#ffd064}
+
+.sbAmountInput{
+  margin-left:auto;
+  width:112px;
+  min-width:0;
+  border:0;
+  outline:0;
+  background:transparent;
+  color:#f0fbff;
+  text-align:right;
+  font-size:22px;
+  font-weight:800;
+}
+.sbAmountInput:focus{color:#5bd8ff}
+
+.sbCheckList{
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+  padding:4px 1px;
+  color:#9fc0cf;
+  font-size:9px;
+  line-height:1.25;
+}
+.sbCheckList span:before{
+  content:"";
+  display:inline-block;
+  width:5px;
+  height:5px;
+  margin:0 6px 1px 0;
+  border-radius:50%;
+  background:#35e2a6;
+  box-shadow:0 0 6px rgba(53,226,166,.38);
+}
+.sbRouteError{
+  margin-top:8px;
+  padding:8px 9px;
+  border:1px solid rgba(255,89,104,.38);
+  border-radius:7px;
+  background:rgba(91,19,31,.22);
+  color:#ff9aa6;
+  font-size:9px;
+}
+.sbRouteRow .sbProvider{
+  min-width:0;
+}
+.sbRouteRow .sbProvider>b{
+  min-width:0;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.sbRouteRow .sbProvider>small{
+  max-width:180px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.sbTxCell{
+  font-family:Menlo,Monaco,monospace;
+  color:#67d8ff;
+}
+.sbPreview .sbLaunch:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+}
+@media(max-width:1250px){
+  .sbRouteRow .sbProvider>small{max-width:130px}
+  .sbAmountInput{width:100px;font-size:20px}
+}
