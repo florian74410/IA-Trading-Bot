@@ -455,3 +455,72 @@ html{scroll-padding-top:82px}
  .financeDonutWrap{justify-content:center}
  .financeLegend{max-width:220px}
 }
+
+
+/* DeFi advanced modules */
+.defiInsightGrid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(360px,.85fr);gap:10px;margin:10px 0}
+.topPoolsPanel,.executionCostPanel{min-height:276px}
+.topPoolsGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;padding:4px 11px 12px}
+.poolLeaderCard{position:relative;min-height:92px;padding:10px 11px;border:1px solid #164a63;border-radius:10px;background:linear-gradient(145deg,#071a27,#05121b);overflow:hidden}
+.poolLeaderCard:after{content:"";position:absolute;inset:auto -18px -28px auto;width:80px;height:80px;border-radius:50%;background:radial-gradient(circle,rgba(31,207,221,.12),transparent 68%)}
+.poolLeaderCard.empty{display:flex;flex-direction:column;justify-content:center;color:#789dad}
+.poolLeaderTop{display:flex;align-items:center;gap:9px;min-width:0}
+.poolLeaderTop>div{min-width:0}
+.poolThumb{position:relative;width:36px;height:36px;min-width:36px;border:1px solid #19769a;border-radius:10px;display:grid;place-items:center;background:linear-gradient(145deg,#0b3550,#062234);overflow:hidden;color:#6fe9ff;font-weight:900}
+.poolThumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#071925}
+.poolThumb i{font-style:normal;z-index:1;font-size:14px}
+.poolMetricTag{display:block;color:#52cfee;font-size:7px;font-weight:900;letter-spacing:.1em}
+.poolLeaderCard b{display:block;margin-top:2px;max-width:170px;color:#eefbff;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.poolLeaderCard small{display:block;margin-top:2px;color:#7397a8;font-size:7.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.poolLeaderCard strong{display:inline-block;margin-top:9px;color:#47e5bd;font-size:16px}
+.poolLeaderCard em{float:right;margin-top:10px;padding:3px 6px;border-radius:9px;background:#0a2b3d;color:#65c9e8;font-size:7px;font-style:normal;font-weight:900}
+
+.execAmountControl{display:flex;align-items:center;gap:7px;color:#7fa2b2;font-size:8px}
+.execAmountControl select{height:28px;border:1px solid #1a5873;border-radius:6px;background:#061925;color:#eaf8fd;padding:0 7px;font-size:8px}
+.executionCostBody{display:grid;grid-template-columns:145px minmax(0,1fr);gap:14px;padding:4px 12px 13px}
+.execVisual{display:flex;align-items:flex-end;justify-content:center;gap:13px;min-height:188px;padding:10px;border:1px solid #133d52;border-radius:10px;background:radial-gradient(circle at 50% 40%,rgba(20,117,145,.12),transparent 60%)}
+.execTotal{align-self:center;min-width:70px;text-align:right}
+.execTotal span{display:block;color:#6c92a5;font-size:7px;font-weight:800}
+.execTotal b{display:block;margin-top:5px;color:#eafaff;font-size:16px}
+.execTotal small{display:block;margin-top:5px;color:#6e93a4;font-size:7px;line-height:1.35}
+.execStack{width:42px;height:150px;border:1px solid #20556d;border-radius:10px;overflow:hidden;display:flex;flex-direction:column;background:#071621;box-shadow:0 0 16px rgba(26,204,218,.08)}
+.execStack i{display:block;width:100%;min-height:12px;border-bottom:1px solid rgba(3,14,22,.55)}
+.execStack i:last-child{border-bottom:0}
+.execGas{background:repeating-linear-gradient(45deg,#3f5865,#3f5865 5px,#2c414c 5px,#2c414c 10px)}
+.execFee{background:linear-gradient(180deg,#2e9ee8,#237ac8)}
+.execSlip{background:linear-gradient(180deg,#33deb5,#139e7f)}
+.execDetails{min-width:0}
+.execCostRow{display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:9px;align-items:center;min-height:48px;border-bottom:1px solid #113346}
+.execCostRow:last-of-type{border-bottom:0}
+.costMini{width:30px;height:30px;display:grid;place-items:center;border-radius:9px;background:#0a293b;border:1px solid #17536e;font-size:15px}
+.execCostRow.gas .costMini{color:#a5bcc7}.execCostRow.fee .costMini{color:#55bfff}.execCostRow.slip .costMini{color:#44e0b5}
+.execCostRow b{display:block;color:#eaf8fe;font-size:9.5px}.execCostRow small{display:block;margin-top:2px;color:#7296a7;font-size:7.5px;line-height:1.25}
+.execCostRow strong{color:#e9faff;font-size:11px;white-space:nowrap}
+.execPoolRef{margin-top:8px;padding:8px 9px;border:1px solid #143e52;border-radius:8px;background:#061721}
+.execPoolRef span{display:block;color:#668b9c;font-size:7px;text-transform:uppercase}.execPoolRef b{display:block;margin-top:3px;color:#dff8ff;font-size:9px}.execPoolRef small{display:block;margin-top:2px;color:#7196a7;font-size:7.5px}
+.modulePlaceholder{grid-column:1/-1;min-height:130px;display:grid;place-items:center;color:#789bab;font-size:9px}
+
+/* DeFi total volume time-series */
+.defiVolumeSvg text{fill:#6e91a1;font-size:8px}
+.defiVolumeArea{fill:url(#defiVolArea)}
+.defiVolumeLine{fill:none;stroke:#29d5c6;stroke-width:2.3;vector-effect:non-scaling-stroke;filter:drop-shadow(0 0 3px rgba(41,213,198,.28))}
+.defiVolumeLast{fill:#dffffa;stroke:#29d5c6;stroke-width:2;vector-effect:non-scaling-stroke}
+.defiGrid line{stroke:#153848}
+.defiVolumeAxis text{fill:#789dac;font-size:8px}
+
+@media(max-width:1380px){
+ .defiInsightGrid{grid-template-columns:minmax(0,1.05fr) minmax(330px,.95fr)}
+ .topPoolsGrid{gap:7px;padding-left:8px;padding-right:8px}
+ .poolLeaderCard{padding:8px;min-height:86px}
+ .executionCostBody{grid-template-columns:125px minmax(0,1fr);gap:9px;padding-left:9px;padding-right:9px}
+ .execVisual{padding:7px}
+}
+@media(max-width:1050px){
+ .defiInsightGrid{grid-template-columns:1fr}
+ .executionCostBody{grid-template-columns:160px minmax(0,1fr)}
+}
+@media(max-width:680px){
+ .topPoolsGrid{grid-template-columns:1fr}
+ .executionCostBody{grid-template-columns:1fr}
+ .execVisual{min-height:165px}
+}
