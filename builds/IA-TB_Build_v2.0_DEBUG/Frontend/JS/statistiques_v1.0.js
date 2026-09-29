@@ -37,7 +37,7 @@ var state={
   shares:[],volume:[],protocols:[],stableIn:[],stableOut:[],networks:[]
  }
 };
-state.cefi={shares:[],volume:[],exchanges:[],assets:[],health:[]};
+state.cefi={shares:[],volume:[],volumeHistory:[],volumeRange:'24H',exchanges:[],assets:[],health:[]};
 state.defi={shares:[],volume:[],volumeHistory:[],volumeDaily:[],volumeRange:'24H',protocols:[],protocolsRaw:[],stableIn:[],stableOut:[],networks:[],yieldPools:[],dexFeeProtocols:[],leaders:null};
 
 function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
@@ -91,9 +91,9 @@ function renderAdoption(){
 }
 
 function barChart(values,klass){
- values=(values||[]).filter(function(v){return isFinite(+v)}).map(Number);
- if(values.length<2)return '<div class="financeChartEmpty"><b>Historique en cours de constitution</b><span>Le graphique apparaîtra dès que plusieurs points temporels auront été enregistrés.</span></div>';
- var w=760,h=210,pad=22,max=Math.max.apply(Math,values.concat([1])),bw=(w-pad*2)/values.length*.64,out='',grid='';
+ values=(values||[]).filter(function(v){return v!=null&&v!==''&&isFinite(+v)&&+v>0}).map(Number);
+ if(!values.length)return '<div class="financeChartEmpty"><b>Données CEX indisponibles</b><span>Aucun point de volume valide n\'est disponible pour cette période. Les valeurs absentes ne sont plus converties en faux zéros.</span></div>';
+ var w=760,h=210,pad=22,max=Math.max.apply(Math,values.concat([1])),bw=Math.min(30,(w-pad*2)/values.length*.64),out='',grid='';
  for(var g=0;g<5;g++){var y=pad+g*((h-pad*2)/4);grid+='<line x1="'+pad+'" y1="'+y+'" x2="'+(w-pad)+'" y2="'+y+'"/>'}
  values.forEach(function(v,i){var step=(w-pad*2)/values.length,x=pad+i*step+step*.18,bh=(v/max)*(h-pad*2),y=h-pad-bh;out+='<rect x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+bh.toFixed(1)+'" rx="2"/>'});
  return '<svg viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="none"><g class="financeGrid">'+grid+'</g><g class="financeBars '+klass+'">'+out+'</g></svg>';
@@ -102,12 +102,15 @@ var FINANCE_COLORS=['#17b9e8','#2bd9aa','#7665f0','#d754d9','#42667b','#f0b74b']
 function formatPct(v){v=+v;return isFinite(v)?v.toFixed(1).replace('.',',')+'%':'--'}
 function compactShares(items){items=(items||[]).filter(function(x){return x&&isFinite(+x[1])&&+x[1]>0}).sort(function(a,b){return+b[1]-+a[1]});if(items.length<=6)return items;var top=items.slice(0,5),other=items.slice(5).reduce(function(z,x){return z+(+x[1]||0)},0);if(other>0)top.push(['Autres',other]);return top}
 function donutGradient(items){var at=0,stops=[];(items||[]).forEach(function(x,i){var v=Math.max(0,+x[1]||0),next=Math.min(100,at+v),co=FINANCE_COLORS[i%FINANCE_COLORS.length];stops.push(co+' '+at.toFixed(2)+'% '+next.toFixed(2)+'%');at=next});if(at<100)stops.push('#163447 '+at.toFixed(2)+'% 100%');return 'conic-gradient('+stops.join(',')+')'}
-function legendHtml(items){return (items||[]).map(function(x,i){return'<div class="financeLegendRow"><i class="legendDot" style="background:'+FINANCE_COLORS[i%FINANCE_COLORS.length]+'"></i><span title="'+esc(x[0])+'">'+esc(x[0])+'</span><b>'+esc(formatPct(x[1]))+'</b></div>'}).join('');}
-function syncDonut(selector,items){var n=q(selector);if(n)n.style.background=donutGradient(items)}
+function financeEmpty(label){return '<div class="financeDataEmpty"><b>'+esc(label)+'</b><span>En attente d\'une réponse valide du provider.</span></div>'}
+function legendHtml(items){items=items||[];if(!items.length)return financeEmpty('Répartition indisponible');return items.map(function(x,i){return'<div class="financeLegendRow"><i class="legendDot" style="background:'+FINANCE_COLORS[i%FINANCE_COLORS.length]+'"></i><span title="'+esc(x[0])+'">'+esc(x[0])+'</span><b>'+esc(formatPct(x[1]))+'</b></div>'}).join('');}
+function syncDonut(selector,items){var n=q(selector);if(!n)return;items=items||[];n.style.background=items.length?donutGradient(items):'#163447';n.classList.toggle('unavailable',!items.length)}
 function financeTable(rows){
+ rows=rows||[];if(!rows.length)return financeEmpty('Exchanges indisponibles');
  return rows.map(function(x){return'<div class="financeTableRow"><div><b>'+esc(x.name)+'</b><small>'+esc(x.status)+'</small></div><span>'+esc(x.volume)+'</span><span>'+esc(x.share)+'</span><span>'+esc(x.liquidity)+'</span></div>'}).join('');
 }
 function assetBars(rows,tone){
+ rows=rows||[];if(!rows.length)return financeEmpty('Volumes par actif indisponibles');
  return rows.map(function(x){return'<div class="assetBarRow"><div><b>'+esc(x[0])+'</b><span>'+esc(x[1])+'</span></div><div class="assetBar"><i class="'+tone+'" style="width:'+Math.max(4,Math.min(100,+x[2]||0))+'%"></i></div></div>'}).join('');
 }
 function healthGrid(rows){
@@ -121,7 +124,7 @@ function stableFlow(){
 }
 function historySeries(h,family,pathName){
  var rows=(h&&h.items)||[],out=[],parts=String(pathName||'').split('.');
- rows.forEach(function(x){var cur=family==='CEFI'?x.cefi:x.defi;for(var i=0;i<parts.length&&cur!=null;i++)cur=cur[parts[i]];cur=+cur;var ts=+x.timestamp||0;if(isFinite(cur)&&ts)out.push({timestamp:ts,valueUsd:cur});});
+ rows.forEach(function(x){var cur=family==='CEFI'?x.cefi:x.defi;for(var i=0;i<parts.length&&cur!=null;i++)cur=cur[parts[i]];if(cur==null||cur==='')return;cur=+cur;var ts=+x.timestamp||0;if(isFinite(cur)&&cur>0&&ts)out.push({timestamp:ts,valueUsd:cur});});
  return out;
 }
 function seriesRange(a,range){
@@ -139,6 +142,20 @@ function seriesChart(series,range){
  var line=pts.map(function(p,i){return(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1);}).join(' '),area=line+' L '+pts[pts.length-1][0].toFixed(1)+' '+(h-pb)+' L '+pts[0][0].toFixed(1)+' '+(h-pb)+' Z';
  var ticks=[0,Math.floor((series.length-1)/2),series.length-1];ticks.filter(function(v,i,a){return a.indexOf(v)===i;}).forEach(function(i){var x=pts[i][0],d=new Date(series[i].timestamp),lab=range==='1H'?d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}):(range==='24H'?d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}):d.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'}));labels+='<text x="'+x.toFixed(1)+'" y="'+(h-8)+'" text-anchor="'+(i===0?'start':i===series.length-1?'end':'middle')+'">'+esc(lab)+'</text>';});
  return '<svg class="defiVolumeSvg" viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="none"><defs><linearGradient id="defiVolArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2dd9ca" stop-opacity=".42"/><stop offset="100%" stop-color="#2dd9ca" stop-opacity=".02"/></linearGradient></defs><g class="financeGrid defiGrid">'+grid+'</g><path class="defiVolumeArea" d="'+area+'"/><path class="defiVolumeLine" d="'+line+'"/><circle class="defiVolumeLast" cx="'+pts[pts.length-1][0].toFixed(1)+'" cy="'+pts[pts.length-1][1].toFixed(1)+'" r="4"/><g class="defiVolumeAxis">'+labels+'</g></svg>';
+}
+function cexRangeConfig(){
+ var r=String(state.cefi.volumeRange||'24H').toUpperCase();
+ return ({'1H':{ms:3600000,limit:16},'24H':{ms:86400000,limit:120},'7J':{ms:604800000,limit:700},'30J':{ms:2592000000,limit:1600}})[r]||{ms:86400000,limit:120};
+}
+function cexSeriesRange(a,range){
+ a=(a||[]).filter(function(x){return x&&isFinite(+x.valueUsd)&&+x.valueUsd>0&&+x.timestamp>0}).sort(function(x,y){return x.timestamp-y.timestamp});
+ var ms=range==='1H'?3600000:range==='24H'?86400000:range==='7J'?604800000:2592000000,cut=Date.now()-ms;
+ return a.filter(function(x){return x.timestamp>=cut});
+}
+function renderCefiVolume(){
+ var range=state.cefi.volumeRange||'24H',series=cexSeriesRange(state.cefi.volumeHistory,range),host=q('#cefiVolumeChart');
+ state.cefi.volume=series.map(function(x){return+x.valueUsd});
+ if(host)host.innerHTML=barChart(state.cefi.volume,'cefi');
 }
 function renderDefiVolume(){
  var range=state.defi.volumeRange||'24H',useDaily=range==='7J'||range==='30J',src=useDaily?state.defi.volumeDaily:state.defi.volumeHistory,series=seriesRange(src,range),host=q('#defiVolumeChart'),sub=q('#defiVolumeSubtitle');
@@ -158,7 +175,7 @@ function renderExecutionCost(){
  h.innerHTML='<div class="execVisual"><div class="execTotal"><span>COÛT CONNU</span><b>≥ '+esc(money(known))+'</b><small>hors gas · ordre '+esc(money(amount))+'</small></div><div class="execStack" title="La partie Gas reste grisée tant qu’un RPC gas n’est pas connecté"><i class="execGas" style="height:'+gasFlex.toFixed(1)+'%"></i><i class="execFee" style="height:'+feeFlex.toFixed(1)+'%"></i><i class="execSlip" style="height:'+slipFlex.toFixed(1)+'%"></i></div></div><div class="execDetails"><div class="execCostRow gas"><span class="costMini">⛽</span><div><b>Gas Fees</b><small>RPC gas non connecté pour '+esc(pool.chain||'cette chaîne')+'</small></div><strong>N/D</strong></div><div class="execCostRow fee"><span class="costMini">◆</span><div><b>Frais DEX</b><small>'+(feePct==null?'Fee tier absent des métadonnées':esc(feePct.toFixed(3).replace('.',',')+' % · '+(pool.poolMeta||pool.project)))+'</small></div><strong>'+(feeUsd==null?'N/D':esc(money(feeUsd)))+'</strong></div><div class="execCostRow slip"><span class="costMini">⇵</span><div><b>Slippage estimé</b><small>Impact simplifié selon taille / TVL · '+esc(slipPct==null?'N/D':slipPct.toFixed(4).replace('.',',')+' %')+'</small></div><strong>'+(slipUsd==null?'N/D':esc(money(slipUsd)))+'</strong></div><div class="execPoolRef"><span>Pool de référence</span><b>'+esc(pool.symbol||pool.project||'Pool')+'</b><small>'+esc(pool.project||'')+' · '+esc(pool.chain||'')+' · TVL '+esc(money(pool.tvlUsd))+'</small></div></div>';
 }
 function renderFinance(){
- var h=q('#cefiVolumeChart');if(h)h.innerHTML=barChart(state.cefi.volume,'cefi');
+ renderCefiVolume();
  renderDefiVolume();
  var l=q('#cefiShareLegend');if(l)l.innerHTML=legendHtml(state.cefi.shares);syncDonut('.cefiDonut',state.cefi.shares);
  var dl=q('#defiShareLegend');if(dl)dl.innerHTML=legendHtml(state.defi.shares);syncDonut('.defiDonut',state.defi.shares);
@@ -207,6 +224,7 @@ function historyValues(h,family,pathName){
  rows.forEach(function(x){
   var cur=family==='CEFI'?x.cefi:x.defi;
   for(var i=0;i<parts.length&&cur!=null;i++)cur=cur[parts[i]];
+  if(cur==null||cur==='')return;
   cur=+cur;if(isFinite(cur))out.push(cur);
  });
  return out.slice(-24);
@@ -214,26 +232,33 @@ function historyValues(h,family,pathName){
 function applyFinancialSnapshot(s,cefiHistory,defiHistory){
  s=s||{};var c=s.cefi||{},d=s.defi||{},meta=s.meta||{};
  if(c&&Object.keys(c).length){
-  var exTotal=+c.spotVolume24hUsd||0;
-  var cefiShares=(c.exchangeShares||[]).map(function(x){return[x.name,+x.sharePct||0]}),cefiKnown=cefiShares.reduce(function(z,x){return z+(+x[1]||0)},0);if(cefiKnown<99.95)cefiShares.push(['Autres',Math.max(0,100-cefiKnown)]);state.cefi.shares=compactShares(cefiShares);
-  state.cefi.exchanges=(c.exchanges||[]).slice(0,8).map(function(x){
+  var exTotal=c.spotVolume24hUsd==null?null:+c.spotVolume24hUsd,
+      exAvailable=Array.isArray(c.exchanges)&&c.exchanges.length>0&&isFinite(exTotal)&&exTotal>0,
+      cefiShares=exAvailable?(c.exchangeShares||[]).map(function(x){return[x.name,+x.sharePct||0]}):[];
+  if(cefiShares.length){var cefiKnown=cefiShares.reduce(function(z,x){return z+(+x[1]||0)},0);if(cefiKnown<99.95)cefiShares.push(['Autres',Math.max(0,100-cefiKnown)]);}
+  state.cefi.shares=compactShares(cefiShares);
+  state.cefi.exchanges=exAvailable?(c.exchanges||[]).slice(0,8).map(function(x){
    return{name:x.name||x.id,volume:money(x.volume24hUsd),share:pctShare(x.volume24hUsd,exTotal).toFixed(1).replace('.',',')+'%',liquidity:(+x.trustScore||0)>=8?'Très élevée':(+x.trustScore||0)>=6?'Élevée':'Moyenne',status:'CoinGecko'};
-  });
-  var assets=(c.assets||[]).slice(0,8),maxAsset=Math.max.apply(Math,assets.map(function(x){return+x.volume24hUsd||0}).concat([1]));
+  }):[];
+  var assets=(c.assets||[]).filter(function(x){return x&&x.volume24hUsd!=null&&isFinite(+x.volume24hUsd)&&+x.volume24hUsd>0}).slice(0,8),
+      maxAsset=Math.max.apply(Math,assets.map(function(x){return+x.volume24hUsd||0}).concat([1]));
   state.cefi.assets=assets.map(function(x){return[x.symbol||x.name,money(x.volume24hUsd),scaled(x.volume24hUsd,maxAsset)]});
-  var cv=historyValues(cefiHistory,'CEFI','global.totalVolume24hUsd');
-  var spotHist=historyValues(cefiHistory,'CEFI','spotVolume24hUsd');
-  if(spotHist.length)state.cefi.volume=spotHist;
-  setKpi('cefiVolume24',money(c.cexVolume24hUsdSampled||c.spotVolume24hUsd),trend(spotHist),'CoinGecko · échantillon des exchanges CEX suivis');
+  var cv=historyValues(cefiHistory,'CEFI','global.totalVolume24hUsd'),
+      spotSeries=historySeries(cefiHistory,'CEFI','spotVolume24hUsd');
+  if(exAvailable){var ts=+s.timestamp||Date.now(),last=spotSeries[spotSeries.length-1];if(!last||last.timestamp!==ts)spotSeries.push({timestamp:ts,valueUsd:exTotal});}
+  state.cefi.volumeHistory=spotSeries;
+  var currentSeries=cexSeriesRange(spotSeries,state.cefi.volumeRange||'24H'),spotHist=currentSeries.map(function(x){return+x.valueUsd});
+  var partial=c.partial===true||!exAvailable||!assets.length,partialNote=(c.errors&&c.errors.length)?' · '+String(c.errors[0]).slice(0,54):'';
+  setKpi('cefiVolume24',exAvailable?money(exTotal):'N/D',exAvailable?trend(spotHist):'Indisponible',exAvailable?'CoinGecko · échantillon des exchanges CEX suivis':'CoinGecko · données exchanges indisponibles'+partialNote);
   setKpi('cefiSpot24',money(c.global&&c.global.totalVolume24hUsd),trend(cv),'CoinGecko · volume global du marché crypto');
-  setKpi('cefiOi','--','--','Provider dérivés / OI requis');
-  setKpi('cefiLiq','--','--','Provider liquidations requis');
-  var donut=q('.cefiDonut b');if(donut)donut.textContent=money(c.spotVolume24hUsd);
+  setKpi('cefiOi','N/D','Non connecté','Provider dérivés / OI global non connecté');
+  setKpi('cefiLiq','N/D','Non connecté','Provider liquidations globales non connecté');
+  var donut=q('.cefiDonut b');if(donut)donut.textContent=exAvailable?money(exTotal):'N/D';
   var fresh=meta.freshness&&meta.freshness.cefi,age=fresh&&fresh.observedAt?Math.max(0,Date.now()-fresh.observedAt):null;
   state.cefi.health=[
    ['Market cap',money(c.global&&c.global.marketCapUsd),'good'],
    ['Volume marché 24h',money(c.global&&c.global.totalVolume24hUsd),'good'],
-   ['Provider','CoinGecko','good'],
+   ['Provider',partial?'CoinGecko · partiel':'CoinGecko',partial?'warn':'good'],
    ['Fraîcheur',age==null?'--':Math.round(age/1000)+' s',age!=null&&fresh&&age<=fresh.ttlMs?'good':'warn']
   ];
  }
@@ -260,9 +285,10 @@ function applyFinancialSnapshot(s,cefiHistory,defiHistory){
  renderFinance();
 }
 function loadFinancialData(){
+ var cfg=cexRangeConfig();
  Promise.all([
   uiRead('marketdata.financial.snapshot',{force:false}),
-  uiRead('marketdata.financial.history',{family:'CEFI',limit:96}),
+  uiRead('marketdata.financial.history',{family:'CEFI',limit:cfg.limit,since:Date.now()-cfg.ms}),
   uiRead('marketdata.financial.history',{family:'DEFI',limit:96})
  ]).then(function(x){applyFinancialSnapshot(x[0],x[1],x[2])}).catch(function(e){
   if(window.console&&console.warn)console.warn('[STATISTICS] financial data unavailable:',e.message);
@@ -296,7 +322,7 @@ function renderAll(){
 }
 function bind(){
  qa('.rangeBtns button').forEach(function(b){b.onclick=function(){qa('.rangeBtns button').forEach(function(x){x.classList.remove('active')});b.classList.add('active')}});
- qa('.financeRanges button:not([data-defi-range])').forEach(function(b){b.onclick=function(){var p=b.parentNode;qa('button',p).forEach(function(x){x.classList.remove('active')});b.classList.add('active')}});
+ qa('.financeRanges button:not([data-defi-range])').forEach(function(b){b.onclick=function(){var p=b.parentNode;qa('button',p).forEach(function(x){x.classList.remove('active')});b.classList.add('active');state.cefi.volumeRange=String(b.textContent||'24H').trim().toUpperCase();loadFinancialData()}});
  qa('[data-defi-range]').forEach(function(b){b.onclick=function(){var p=b.parentNode;qa('[data-defi-range]',p).forEach(function(x){x.classList.remove('active')});b.classList.add('active');state.defi.volumeRange=b.getAttribute('data-defi-range')||'24H';renderDefiVolume()}});
  var ex=q('#execTradeSize');if(ex)ex.onchange=renderExecutionCost;
  window.addEventListener('hashchange',function(){showSection()});
