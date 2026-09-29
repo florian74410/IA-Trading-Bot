@@ -279,4 +279,4 @@ function liveProbe(){
 
 window.IATBStats={state:state,update:apply,render:renderAll,section:showSection};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){renderAll();bind();liveProbe();loadFinancialData();setInterval(loadFinancialData,60000)});else{renderAll();bind();liveProbe();loadFinancialData();setInterval(loadFinancialData,60000)}
-})();
+})()
