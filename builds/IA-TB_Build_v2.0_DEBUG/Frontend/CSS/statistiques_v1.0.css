@@ -425,3 +425,33 @@ button,input,select{font:inherit}
  .financeTableRow{grid-template-columns:minmax(100px,1fr) auto auto}
  .financeTableRow>span:last-child{display:none}
 }
+
+
+/* DeFi statistics reliability + responsive readability fixes */
+.financeSharePanel{overflow:hidden}
+.financeDonutWrap{align-items:center;justify-content:flex-start}
+.financeLegend{min-width:0;flex:1;max-width:190px;overflow:hidden}
+.financeLegendRow{grid-template-columns:9px minmax(0,1fr) 42px;gap:6px;min-height:22px}
+.financeLegendRow span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.financeLegendRow b{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.financeChartEmpty,.stableFlowEmpty{
+ height:100%;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+ text-align:center;padding:18px;color:#7fa5b6
+}
+.financeChartEmpty b,.stableFlowEmpty b{color:#d9f2fb;font-size:12px}
+.financeChartEmpty span,.stableFlowEmpty span{display:block;max-width:360px;margin-top:6px;font-size:9px;line-height:1.45}
+.stableFlowEmpty{min-height:145px}
+.marketKpi>em{max-width:92px;vertical-align:middle;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html{scroll-padding-top:82px}
+.statsSection{scroll-margin-top:82px}
+
+@media(max-width:1380px){
+ .financeDonutWrap{gap:12px;padding-left:10px;padding-right:10px}
+ .financeLegend{max-width:155px}
+ .financeLegendRow{grid-template-columns:8px minmax(0,1fr) 38px;font-size:8px}
+ .financeLegendRow b{font-size:8px}
+}
+@media(max-width:1180px){
+ .financeDonutWrap{justify-content:center}
+ .financeLegend{max-width:220px}
+}
