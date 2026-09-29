@@ -67,3 +67,191 @@ button,input,select{font:inherit}
 .statsSideNav .statsSideGroup>a{
   gap:13px!important;
 }
+
+
+/* v2.0 DEBUG — visual polish from 1280px Firefox review */
+.statsCardHead>div,
+.platformCardTop>div,
+.oracleCardTop>div,
+.exchangeNode>span:last-child{
+  min-width:0;
+}
+.statsCardHead h2,
+.statsCardHead p,
+.platformCard b,
+.oracleCard b,
+.exchangeNode b,
+.summaryCell b,
+.summaryCell span{
+  overflow-wrap:anywhere;
+}
+.statusPill,
+.ghostLink{
+  flex:0 0 auto;
+}
+.platformCard,
+.oracleCard{
+  overflow:hidden;
+}
+.platformCardTop,
+.oracleCardTop{
+  min-width:0;
+}
+.platformCard b,
+.oracleCard b{
+  display:block;
+  line-height:1.12;
+}
+.platformMeta strong{
+  line-height:1.15;
+}
+.oracleCardTop b{
+  white-space:normal!important;
+  min-height:22px;
+  display:flex;
+  align-items:center;
+}
+.oracleCardTop .miniState{
+  margin-top:2px;
+}
+.oracleCard .miniLatency{
+  margin-top:3px;
+}
+.exchangeNode b{
+  white-space:nowrap;
+  text-overflow:ellipsis;
+  overflow:hidden;
+}
+.exchangeNode{
+  max-width:150px;
+}
+.engineNode{
+  overflow:hidden;
+}
+.engineNode>b{
+  min-width:0;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+  overflow:hidden;
+}
+.statsCardHead.compact .ghostLink{
+  max-width:160px;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+  overflow:hidden;
+}
+
+/* Avoid Router / Market Data / Indicator collisions on 1280-ish layouts. */
+@media(min-width:1181px) and (max-width:1380px){
+  .engineStage{
+    height:278px!important;
+  }
+  .eRouter{left:18%!important;top:8%!important}
+  .eMarket{left:50%!important;top:0!important}
+  .eIndicator{right:14%!important;top:8%!important}
+  .eStrategy{right:0!important;top:31%!important}
+  .eTrading{right:0!important;top:58%!important}
+  .eRisk{right:8%!important;bottom:1%!important}
+  .ePortfolio{left:50%!important;bottom:0!important}
+  .eFundamental{left:16%!important;bottom:1%!important}
+  .eSupervisor{left:0!important;top:58%!important}
+  .eUi{left:0!important;top:31%!important}
+  .engineNode{
+    min-width:90px!important;
+    max-width:112px!important;
+    padding:5px 6px!important;
+    grid-template-columns:24px minmax(0,1fr)!important;
+  }
+  .engineNode>span{font-size:17px!important}
+  .engineNode>b{font-size:8.6px!important}
+  .engineNode>em{
+    font-size:7.2px!important;
+    padding:2px 5px!important;
+  }
+}
+
+/* Dense cards: preserve names without overflowing their modules. */
+@media(min-width:981px) and (max-width:1380px){
+  .platformCards{
+    padding:0 7px 9px!important;
+    gap:5px!important;
+  }
+  .oracleCards{
+    padding:0 7px 9px!important;
+    gap:5px!important;
+  }
+  .platformCard,
+  .oracleCard{
+    padding:6px!important;
+  }
+  .platformCard .brandIcon,
+  .oracleCard .brandIcon{
+    width:26px!important;
+    height:26px!important;
+    min-width:26px!important;
+    flex-basis:26px!important;
+    font-size:12px!important;
+  }
+  .platformCardTop,
+  .oracleCardTop{
+    gap:5px!important;
+  }
+  .platformCard b,
+  .oracleCard b{
+    font-size:8.6px!important;
+  }
+  .miniState,
+  .miniLatency,
+  .platformMeta span{
+    font-size:7.2px!important;
+  }
+  .platformMeta strong,
+  .oracleMeta strong{
+    font-size:8.4px!important;
+  }
+  .oracleCard{
+    grid-template-columns:minmax(0,1fr) 40px!important;
+  }
+  .uptimeRing{
+    width:38px!important;
+    height:38px!important;
+  }
+  .uptimeRing:after{
+    inset:5px!important;
+  }
+}
+
+/* Long oracle/bridge names use two tidy lines rather than clipping. */
+@media(min-width:981px){
+  .oracleCardTop>div{
+    min-width:0;
+  }
+  .oracleCardTop b{
+    max-width:100%;
+    min-height:20px;
+    line-height:1.05;
+  }
+}
+
+/* Small layout cleanup for the CEX map labels. */
+@media(min-width:1181px) and (max-width:1380px){
+  .exchangeNode{
+    min-width:98px!important;
+    max-width:118px!important;
+    padding:5px 6px!important;
+    gap:5px!important;
+  }
+  .exchangeNode .brandIcon{
+    width:27px!important;
+    height:27px!important;
+    flex-basis:27px!important;
+    font-size:13px!important;
+  }
+  .exchangeNode b{font-size:8.7px!important}
+  .exchangeNode small{font-size:7.4px!important}
+  .nodeCoinbase{left:8%!important}
+  .nodeBinance{left:39%!important}
+  .nodeOkx{right:7%!important}
+  .nodeKraken{left:7%!important}
+  .nodeGmx{right:5%!important}
+}
