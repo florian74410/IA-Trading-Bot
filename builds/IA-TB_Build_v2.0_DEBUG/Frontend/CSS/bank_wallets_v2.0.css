@@ -70,3 +70,32 @@
 .wvCreateMode button.active{border-color:#1aa8ff;background:linear-gradient(180deg,#0b77d5,#075aa8);color:#fff;box-shadow:0 0 12px rgba(18,158,255,.15)}
 .wvImportOnly[hidden]{display:none!important}
 .wvCreateGrid .wvImportOnly input{font-family:Menlo,Monaco,monospace;font-size:9px;letter-spacing:.02em}
+
+
+/* Secure direct crypto transfer */
+.wvTransferAddresses{display:grid;grid-template-columns:minmax(0,1fr) 22px minmax(0,1fr);align-items:center;gap:6px;margin:8px 0}
+.wvTransferAddresses>div{min-width:0;padding:6px 7px;border:1px solid #173e52;border-radius:7px;background:#06141e}
+.wvTransferAddresses small{display:block;color:#718fa0;font-size:7px;text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}
+.wvTransferAddresses code{display:block;color:#b9d8e7;font:8px/1.25 Menlo,Monaco,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wvTransferAddresses strong{display:grid;place-items:center;color:#32dcb0;font-size:17px}
+.wvTransferEstimate{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:7px 0}
+.wvTransferEstimate span{padding:6px 7px;border:1px solid #16435a;border-radius:6px;background:#071723;color:#7d9daf;font-size:8px}
+.wvTransferEstimate b{display:block;margin-top:2px;color:#e8f8ff;font-size:9px}
+.wvTransferChecks{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin:7px 0;padding:7px;border:1px solid #214356;border-radius:7px;background:#06131c}
+.wvTransferChecks span{font-size:7.5px;color:#86a4b3;line-height:1.3}
+.wvTransferChecks.ok{border-color:#1c6f59;background:rgba(13,79,61,.14)}
+.wvTransferChecks.ok span{color:#58e2b3}
+.wvTransferChecks.bad{border-color:#71333a;background:rgba(102,28,36,.14)}
+.wvTransferChecks.bad span{color:#ff9aa5}
+.wvTransferChecks.wait span{color:#64cfff}
+#wvSend:disabled{cursor:not-allowed!important;opacity:.42!important;filter:saturate(.35)}
+.wvTransferConfirm{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.wvTransferConfirm>div,.wvTransferConfirm>label{padding:9px;border:1px solid #18445a;border-radius:7px;background:#06141e;min-width:0}
+.wvTransferConfirm .wide{grid-column:1/-1}
+.wvTransferConfirm small{display:block;color:#7194a6;font-size:8px;margin-bottom:4px}
+.wvTransferConfirm b{color:#edfaff;font-size:11px}
+.wvTransferConfirm code{display:block;color:#bce1ef;font:9px/1.35 Menlo,Monaco,monospace;word-break:break-all}
+.wvTransferConfirm input{width:100%;margin-top:6px;padding:8px;border:1px solid #20546d;border-radius:6px;background:#031019;color:#fff}
+.wvHelpBubble{position:fixed;z-index:2147483600;width:260px;max-width:calc(100vw - 16px);padding:8px 10px;border:1px solid #27759a;border-radius:7px;background:rgba(4,20,31,.97);box-shadow:0 10px 28px rgba(0,0,0,.42),0 0 14px rgba(24,171,233,.13);color:#cde7f2;font-size:9px;line-height:1.4;pointer-events:none;animation:wvHelpIn .12s ease-out}
+@keyframes wvHelpIn{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
+@media(max-width:620px){.wvTransferAddresses,.wvTransferEstimate,.wvTransferChecks,.wvTransferConfirm{grid-template-columns:1fr}.wvTransferAddresses strong{transform:rotate(90deg)}.wvTransferConfirm .wide{grid-column:1}}
