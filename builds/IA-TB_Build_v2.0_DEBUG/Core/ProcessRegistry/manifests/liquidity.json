@@ -1,6 +1,6 @@
 {
   "id": "liquidity",
-  "label": "Liquidity Engine",
+  "label": "Liquidity Engine V2.0",
   "type": "ENGINE",
   "order": 60,
   "port": 8014,
@@ -12,5 +12,6 @@
   "log": ".runtime/logs/liquidity.log",
   "env": {
     "IATB_LIQUIDITY_PORT": "8014"
-  }
+  },
+  "version": "2.0.0"
 }
