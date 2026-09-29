@@ -50,10 +50,19 @@ function openCreateWallet(){
     return load();
    }).catch(function(err){payload.password='';payload.secret='';notify({size:'medium',title:isImport?'Import du Porte-Feuille impossible':'Création du Porte-Feuille impossible',subtitle:'Le formulaire reste ouvert pour correction.',icon:'✕',html:'<div class="wvResult error"><b>Le porte-feuille n’a pas été enregistré.</b><br>'+esc(walletErrorMessage(err.message))+'<br><span>L’échec a été enregistré dans les logs de sécurité.</span></div>'});}).then(function(){if(document.body.contains(form)){submit.disabled=false;submit.textContent=isImport?'Importer':'Créer';}});
   };
- }).catch(function(e){notify({size:'medium',title:'Création indisponible',icon:'✕',text:'Impossible de réserver un ID depuis la base : '+e.message})});
+ }).catch(function(e){notify({size:'medium',title:'Création indisponible',icon:'✕',text:'Impossible d’ouvrir le formulaire de création : '+e.message})});
 }
 
 function notify(o){if(window.IATBNotify)return window.IATBNotify.show(o);alert(o.text||o.title||'IA-TB')}function choosePrivate(w){var a=w.accounts.filter(function(x){return x.hasSecret});if(!a.length)return notify({size:'small',title:'Aucune clé privée',text:'Ce wallet ne contient aucun secret récupérable.'});var h='<div class="iaNtfSensitive">Choisissez la famille blockchain dont vous voulez récupérer le secret.</div>'+a.map(function(x){return '<button class="iaAccountReveal" data-account="'+esc(x.id)+'">'+esc(x.family)+' · '+esc((x.networks||[]).join(', '))+'</button>'}).join('');notify({size:'medium',title:'Récupération des clés · '+w.name,subtitle:'Chaque famille possède son propre secret.',html:h,icon:'🔐'});setTimeout(function(){Array.prototype.slice.call(document.querySelectorAll('.iaAccountReveal')).forEach(function(b){b.onclick=function(){revealPrivate(w,b.getAttribute('data-account'))}})},0)}function revealPrivate(w,accountId){fetch('/api/security/wallets/reveal',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:w.id,accountId:accountId,confirmed:true})}).then(function(r){return r.json().then(function(o){if(!r.ok)throw new Error(o.error||'REVEAL_FAILED');return o})}).then(function(o){notify({size:'medium',title:'Clé privée · '+w.name,subtitle:'Affichage temporaire · '+o.expiresIn+' secondes',icon:'🔐',html:'<div class="iaNtfSensitive">Ne copiez ce secret que si vous savez exactement où il sera stocké.</div><div class="iaSecretBox"><b>'+esc(o.family)+' · '+esc(o.recoveryFormat)+'</b><br>'+esc(o.recovery||o.privateKey)+'</div>'})}).catch(function(e){notify({size:'medium',title:'Clé indisponible',text:e.message,icon:'!'})})}function archiveWallet(w){fetch('/api/security/wallets/remove',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:w.id})}).then(function(r){return r.json().then(function(o){if(!r.ok)throw new Error(o.error||'REMOVE_FAILED');return o})}).then(function(){notify({size:'small',title:'Wallet retiré',text:'Le wallet a été masqué sans détruire ses données chiffrées.',icon:'✓'});state.selected=null;return load()}).catch(function(e){notify({size:'medium',title:'Retrait impossible',text:e.message,icon:'!'})})}function load(){fetch('/api/security/wallets',{cache:'no-store',headers:{Accept:'application/json'}}).then(function(r){return r.ok?r.json():{items:[]}}).then(function(o){state.wallets=normalize((o.items||[]).filter(function(w){return w.source!=='CONNECTOR'}));render()}).catch(function(){state.wallets=[];render()})}
-function activate(){setTimeout(load,30)}
-document.addEventListener('DOMContentLoaded',function(){var a=document.querySelector('.bankNav a[href="#wallets"]');if(a)a.addEventListener('click',activate);if(location.hash==='#wallets')activate()});
+function activate(){setTimeout(load,0)}
+window.IATBWallets={
+ mount:function(){load();},
+ reload:function(){load();},
+ openCreate:function(){openCreateWallet();}
+};
+document.addEventListener('DOMContentLoaded',function(){
+ var a=document.querySelector('.bankNav a[href="#wallets"]');
+ if(a)a.addEventListener('click',activate);
+ if(location.hash==='#wallets')activate();
+});
 })();
