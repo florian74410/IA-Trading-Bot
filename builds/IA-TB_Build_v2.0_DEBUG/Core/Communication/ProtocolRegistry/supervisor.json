@@ -198,6 +198,35 @@
             "prompt"
           ]
         }
+      },
+      {
+        "name": "supervisor.calendar",
+        "arguments": {
+          "allowed": [
+            "days",
+            "country",
+            "impact",
+            "limit"
+          ]
+        }
+      },
+      {
+        "name": "supervisor.calendar.fed",
+        "arguments": {
+          "allowed": []
+        }
+      },
+      {
+        "name": "supervisor.calendar.cme",
+        "arguments": {
+          "allowed": []
+        }
+      },
+      {
+        "name": "supervisor.fedwatch",
+        "arguments": {
+          "allowed": []
+        }
       }
     ],
     "dataTypes": [
