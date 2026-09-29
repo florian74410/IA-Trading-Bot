@@ -31,6 +31,10 @@ OnChainReader.prototype.status=function(){
  var self=this,rpcState={};Object.keys(NETWORKS).forEach(function(n){rpcState[n]=!!String(self.getRpc(n)||'').trim()});
  return{ok:true,engine:'ONCHAIN_READER_V1',mode:'READ_ONLY',networks:Object.keys(NETWORKS),rpc:rpcState,history:{localLedger:true,externalIndexer:false,coverage:'IA_TB_RECORDED_TRANSACTIONS',complete:false}};
 };
+OnChainReader.prototype.identity=function(sess,walletId){
+ var list=this.walletService.list(sess,false),wallet=list.filter(function(w){return String(w.id)===String(walletId||'')})[0];if(!wallet)throw new Error('WALLET_NOT_FOUND');
+ return{ok:true,mode:'READ_ONLY',walletId:wallet.id,walletName:wallet.name,kind:wallet.kind,accounts:(wallet.accounts||[]).map(function(a){return{accountId:a.id,family:a.family,address:a.address||'',publicKey:a.publicKey||'',networks:(a.networks||[]).slice()};})};
+};
 OnChainReader.prototype.resolve=function(sess,walletId,network){
  network=String(network||'').toLowerCase();if(!NETWORKS[network])throw new Error('NETWORK_NOT_SUPPORTED');
  var list=this.walletService.list(sess,false),wallet=list.filter(function(w){return String(w.id)===String(walletId||'')})[0];if(!wallet)throw new Error('WALLET_NOT_FOUND');
