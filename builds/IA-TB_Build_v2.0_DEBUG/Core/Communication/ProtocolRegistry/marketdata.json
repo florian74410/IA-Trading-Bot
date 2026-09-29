@@ -291,6 +291,13 @@
           ]
         },
         "description": "Force a microstructure provider refresh through the Data Firewall."
+      },
+      {
+        "name": "marketdata.liquidations.streams",
+        "arguments": {
+          "allowed": []
+        },
+        "description": "Status of the per-provider real-time liquidation worker threads owned by Market Data Collector."
       }
     ],
     "dataTypes": [
