@@ -1,44 +1,101 @@
-# Chart Viewer
+# 📈 Chart Viewer et graphique Trading IA
 
-Le Chart Viewer affiche les séries de marché fournies par le Market Data Engine en conservant leur source.
+> **🟢 En simple : IA-TB possède deux expériences graphiques distinctes : un Chart Viewer autonome basé sur le widget TradingView, et un graphique natif intégré à la page Trading IA qui consomme les données du Market Data Collector.**
 
-## Sélection
+---
 
-L'utilisateur choisit au minimum la plateforme / source, la paire et le timeframe.
+## 🖥️ Chart Viewer autonome
 
-## Sources natives
+**🟢 En simple : le Chart Viewer est la page pratique pour ouvrir rapidement un graphique TradingView sans mélanger cette fonction avec le cockpit Trading IA.**
 
-Les connecteurs intégrés ou historiques comprennent notamment Binance, GMX, Kraken, Coinbase, OKX et Hyperliquid. Le graphique doit utiliser les OHLC/OHLCV de la source sélectionnée et afficher clairement leur provenance.
+Route : `/chart-viewer`.
 
-Lorsque le connecteur fournit un volume natif, ce volume reste celui de la plateforme sélectionnée et n'est pas fusionné silencieusement avec celui d'un autre marché.
+La page embarque le widget TradingView Advanced Chart et conserve des préférences locales :
+- symbole ;
+- exchange ;
+- timeframe ;
+- thème.
 
-## Source virtuelle ƒx — v1.7.9
+Cette page est volontairement distincte du moteur graphique interne de Trading IA.
 
-Le sélecteur Exchange du graphique Trading IA propose désormais `ƒx`. Cette source ne représente pas un exchange : elle affiche les bougies consensus calculées à la demande par le Market Data Collector.
+---
 
-En mode `ƒx` :
+## 📊 Graphique Trading IA
 
-- OHLC = moyenne des bougies sources valides et temporellement alignées ;
-- volume = somme des volumes natifs comparables disponibles ;
-- la paire canonique doit correspondre strictement ;
-- la provenance des sources utilisées et exclues reste disponible côté Market Data ;
-- le navigateur passe par `GET /api/market/fx-klines` ;
-- le rafraîchissement est fixé à 15 secondes afin de rester léger.
+**🟢 En simple : le graphique de Trading IA fait partie de l’application IA-TB et utilise le marché de référence choisi dans la colonne Exchanges.**
 
-Le graphique n'invente jamais un volume pour une source qui n'en fournit pas.
+Les chandeliers passent par :
 
-## Prix consensus
+```mermaid
+flowchart LR
+  UI[Trading IA] --> G[/ui-data/market/candles]
+  G --> R[🔀 Router]
+  R --> F[🧱 Data Firewall]
+  F --> M[📡 Market Data]
+  M --> P[Kraken / Binance / OKX / GMX]
+```
 
-Le Collector expose également `GET /price/consensus`, qui conserve les prix individuels et leur provenance. L'affichage UI détaillé du prix consensus et des prix sources reste un objectif à intégrer/valider dans la v1.7.9.
+Le sélecteur de marché actuel expose comme sources réelles :
+- Binance ;
+- Kraken ;
+- OKX ;
+- GMX.
 
-## Cohérence avec les indicateurs
+---
 
-Lorsque l'utilisateur change de source, le contexte transmis aux moteurs consommateurs doit changer avec lui. Un graphique Coinbase ne doit pas calculer silencieusement ses indicateurs sur des chandeliers Binance.
+## 📐 Indicateurs
 
-## Performance
+**🟢 En simple : les indicateurs affichés ne doivent pas être recalculés avec une source différente du graphique sans le dire.**
 
-Le graphique doit apparaître rapidement sans précharger un historique massif. L'historique supplémentaire est récupéré selon les besoins. La source `ƒx` ne conserve pas d'historique consensus supplémentaire en mémoire.
+Le Chart/Trading UI peut lire l’Indicator Engine. Le contrat CP/1 du Chart Viewer prévoit notamment :
+- état du graphique ;
+- symbole ;
+- timeframe ;
+- ajout/suppression d’indicateur ;
+- fit/focus ;
+- niveaux ;
+- nettoyage de l’analyse.
 
-## Validation restante v1.7.9
+---
 
-Le mode `ƒx` doit encore être validé end-to-end avec les flux réels sur la machine cible et revérifié à mesure que Binance, Coinbase, OKX et d'autres connecteurs rejoignent le registre courant du Collector.
+## 🧭 Source et provenance
+
+**🟢 En simple : changer d’exchange signifie changer le marché observé. Un BTC/USDT Binance n’est pas silencieusement fusionné avec Kraken.**
+
+Le Market Data Collector conserve :
+- source ;
+- paire canonique ;
+- paire provider ;
+- timeframe ;
+- disponibilité du volume ;
+- source du prix ;
+- timestamp.
+
+GMX peut fournir des chandeliers prix Oracle avec volume absent ; le volume n’est pas fabriqué.
+
+---
+
+## ⚠️ Documentation historique ƒx / Hyperliquid
+
+**🟢 En simple : l’ancien Wiki décrivait la source virtuelle ƒx et Hyperliquid comme éléments centraux. Ce n’est plus le pipeline principal chargé par le Market Data Collector V2.0 actuel.**
+
+Le Wiki V2.0 retient comme sources Candle actives du registre :
+**Kraken, Binance, OKX et GMX**.
+
+Les anciennes expérimentations restent consultables dans l’historique Git mais ne doivent pas être présentées comme l’état runtime actuel.
+
+---
+
+## 🧩 Modules sous le graphique
+
+**🟢 En simple : la page Trading IA n’est pas seulement un graphique ; elle reçoit aussi des informations Portfolio, Strategy et services système.**
+
+Le dashboard actuel prévoit notamment :
+- positions ouvertes ;
+- volume attribuable au LLM lorsque les événements permettent de l’identifier ;
+- trading en direct ;
+- stratégie actuelle ;
+- indicateurs externes ;
+- état des services.
+
+Les modules sont séparés des chandeliers afin de ne pas mélanger données de marché et données applicatives.
