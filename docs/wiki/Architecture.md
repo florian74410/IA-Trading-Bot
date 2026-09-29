@@ -104,6 +104,8 @@ flowchart LR
 
 CoinGecko est la référence du **marché token / registre d’actifs**. DeFiLlama est la référence des familles **DeFi protocol, DEX market et stablecoin DeFi**. Cette séparation évite les doublons inutiles.
 
+Pour la microstructure et les dérivés, **il n’existe qu’un seul service Market Data** : ses modules internes collectent carnets/OI, et ses Worker Threads maintiennent les flux de liquidations. La première agrégation OI couvre Binance Futures + OKX + Hyperliquid. Les événements live sont normalisés puis contrôlés par le Data Firewall avant distribution.
+
 **Liquidity Engine ne possède plus d’accès Internet pour les Market Data.** Les carnets Binance Futures/Hyperliquid/Kraken et l’Open Interest sont collectés par Market Data, inspectés par le Data Firewall, puis envoyés à Liquidity via Router/CP1. L’historique de microstructure est conservé en SQLite 30–90 jours côté Collector ; Liquidity ne garde qu’un cache court pour ses calculs.
 
 ---
