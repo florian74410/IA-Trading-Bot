@@ -30,29 +30,11 @@ var state={
   defi:[42,52,53,60,58,64,67,66,72,74,77]
  },
  cefi:{
-  shares:[['Binance',34],['OKX',22],['Coinbase',18],['Kraken',14],['Autres',12]],
-  volume:[38,44,52,48,46,43,41,39,42,47,58,66,72,81,76,69,63,59,55,51,48,46,44,43],
-  exchanges:[
-   {name:'Binance',volume:'29,3 B$',share:'34%',liquidity:'Très élevée',status:'En ligne'},
-   {name:'OKX',volume:'19,0 B$',share:'22%',liquidity:'Très élevée',status:'En ligne'},
-   {name:'Coinbase',volume:'15,5 B$',share:'18%',liquidity:'Élevée',status:'En ligne'},
-   {name:'Kraken',volume:'12,1 B$',share:'14%',liquidity:'Élevée',status:'En ligne'}
-  ],
-  assets:[['BTC','31,8 B$',92],['ETH','22,4 B$',74],['USDT','18,7 B$',63],['SOL','8,1 B$',37],['BNB','5,3 B$',27]],
-  health:[['Liquidité globale','Très élevée','good'],['Spread moyen','0,08 %','good'],['Volatilité 24h','Moyenne','warn'],['Disponibilité API','99,97 %','good']]
+  shares:[],volume:[],exchanges:[],assets:[],
+  health:[['Données','Chargement…','warn']]
  },
  defi:{
-  shares:[['Lending',29],['DEX',24],['Liquid Staking',19],['Perps',13],['Autres',15]],
-  volume:[9,11,10,12,15,14,13,12,14,16,18,21,19,17,16,20,24,27,23,20,19,17,15,14],
-  protocols:[
-   {name:'Uniswap',volume:'3,8 B$',share:'30%',liquidity:'Élevée',status:'En ligne'},
-   {name:'Aave',volume:'2,4 B$',share:'19%',liquidity:'Élevée',status:'En ligne'},
-   {name:'Curve',volume:'1,9 B$',share:'15%',liquidity:'Élevée',status:'En ligne'},
-   {name:'GMX',volume:'1,4 B$',share:'11%',liquidity:'Moyenne',status:'En ligne'}
-  ],
-  stableIn:[6,8,11,7,10,14,9,13,16,12,18,15],
-  stableOut:[5,6,7,9,8,10,12,8,11,9,13,10],
-  networks:[['Ethereum','41,2 B$',100],['Arbitrum','12,8 B$',62],['Base','10,6 B$',52],['Solana','9,4 B$',47],['BNB Chain','7,1 B$',36]]
+  shares:[],volume:[],protocols:[],stableIn:[],stableOut:[],networks:[]
  }
 };
 state.cefi={shares:[],volume:[],exchanges:[],assets:[],health:[]};
@@ -196,9 +178,9 @@ function applyFinancialSnapshot(s,cefiHistory,defiHistory){
   state.cefi.assets=assets.map(function(x){return[x.symbol||x.name,money(x.volume24hUsd),scaled(x.volume24hUsd,maxAsset)]});
   var cv=historyValues(cefiHistory,'CEFI','global.totalVolume24hUsd');
   var spotHist=historyValues(cefiHistory,'CEFI','spotVolume24hUsd');
-  if(cv.length)state.cefi.volume=cv;
-  setKpi('cefiVolume24',money(c.global&&c.global.totalVolume24hUsd),trend(cv),'CoinGecko · volume marché agrégé');
-  setKpi('cefiSpot24',money(c.spotVolume24hUsd),trend(spotHist),'CoinGecko · exchanges spot suivis');
+  if(spotHist.length)state.cefi.volume=spotHist;
+  setKpi('cefiVolume24',money(c.global&&c.global.totalVolume24hUsd),trend(cv),'CoinGecko · volume marché crypto agrégé');
+  setKpi('cefiSpot24',money(c.spotVolume24hUsd),trend(spotHist),'CoinGecko · volume CEX spot suivi');
   setKpi('cefiOi','--','--','Provider dérivés / OI requis');
   setKpi('cefiLiq','--','--','Provider liquidations requis');
   var donut=q('.cefiDonut b');if(donut)donut.textContent=money(c.spotVolume24hUsd);
