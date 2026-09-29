@@ -45,7 +45,7 @@ L’état ci-dessous provient de l’analyse du build **`builds/IA-TB_Build_v2.0
 | Indicator sur séries financières | ✅ ACTIVE |
 | Liquidity accès financier via Router | ✅ ACTIVE |
 | Liquidity carnet/OI via Market Data + Firewall | ✅ ACTIVE |
-| OI couvert Binance Futures + OKX + Hyperliquid | ✅ IMPLÉMENTÉ · runtime live à valider |
+| OI couvert Binance Futures + OKX + Hyperliquid + GMX | ✅ IMPLÉMENTÉ · runtime live à valider |
 | Historique OI SQLite 30–90 jours | ✅ IMPLÉMENTÉ |
 | Flux liquidations Binance/OKX Worker Threads | 🟡 IMPLÉMENTÉ · connexion live à valider |
 | Historique Liquidity SQLite 30–90 jours | ✅ ACTIVE |
