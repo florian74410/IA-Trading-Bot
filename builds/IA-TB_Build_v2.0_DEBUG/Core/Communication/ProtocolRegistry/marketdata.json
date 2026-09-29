@@ -199,6 +199,43 @@
           ]
         },
         "description": "Force provider refresh through Data Firewall before cache/storage."
+      },
+      {
+        "name": "marketdata.derivatives.open_interest",
+        "arguments": {
+          "allowed": [
+            "symbol",
+            "sources"
+          ],
+          "required": [
+            "symbol"
+          ]
+        },
+        "description": "Aggregated covered perpetual Open Interest in USD across connected CEX/DEX venues, with explicit coverage."
+      },
+      {
+        "name": "marketdata.liquidations.recent",
+        "arguments": {
+          "allowed": [
+            "symbol",
+            "source",
+            "windowMs",
+            "limit",
+            "since"
+          ]
+        },
+        "description": "Recent firewall-validated liquidation events from connected streams."
+      },
+      {
+        "name": "marketdata.liquidations.stats",
+        "arguments": {
+          "allowed": [
+            "symbol",
+            "source",
+            "windowMs"
+          ]
+        },
+        "description": "Aggregated liquidation flow statistics for a time window."
       }
     ],
     "dataTypes": [
@@ -231,6 +268,21 @@
         "name": "market.liquidity.history",
         "direction": "PRODUCE",
         "schema": "marketdata.liquidity.history/1.0"
+      },
+      {
+        "name": "market.open_interest.aggregate",
+        "direction": "PRODUCE",
+        "schema": "marketdata.open_interest.aggregate/1.0"
+      },
+      {
+        "name": "market.liquidations",
+        "direction": "PRODUCE",
+        "schema": "marketdata.liquidations/1.0"
+      },
+      {
+        "name": "market.liquidations.stats",
+        "direction": "PRODUCE",
+        "schema": "marketdata.liquidations.stats/1.0"
       }
     ],
     "events": []
