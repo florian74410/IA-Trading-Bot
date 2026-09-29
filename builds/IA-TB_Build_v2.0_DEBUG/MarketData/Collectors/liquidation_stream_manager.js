@@ -2,7 +2,7 @@
 var wt=require('worker_threads'),path=require('path');
 
 function Manager(o){
- o=o||{};this.collector=o.collector;this.enabled=o.enabled!==false;this.providers=o.providers||{BINANCE_FUTURES:true,OKX:true};this.workers=Object.create(null);this.states=Object.create(null);this.accepted=0;this.rejected=0;this.startedAt=0;
+ o=o||{};this.collector=o.collector;this.enabled=o.enabled!==false;this.providers=o.providers||{BINANCE_FUTURES:true,OKX:true,BYBIT:true};this.workers=Object.create(null);this.states=Object.create(null);this.accepted=0;this.rejected=0;this.startedAt=0;
 }
 Manager.prototype._spawn=function(id,file){
  var self=this,w=new wt.Worker(path.resolve(__dirname,'../Workers',file),{env:process.env});self.workers[id]=w;self.states[id]={provider:id,state:'STARTING',events:0,lastEventAt:null,lastError:null};
@@ -14,6 +14,12 @@ Manager.prototype.start=function(){
  if(!this.enabled||this.startedAt)return this.status();this.startedAt=Date.now();
  if(this.providers.BINANCE_FUTURES!==false)this._spawn('BINANCE_FUTURES','binance_liquidations_worker.js');
  if(this.providers.OKX!==false)this._spawn('OKX','okx_liquidations_worker.js');
+ if(this.providers.BYBIT!==false)this._spawn('BYBIT','bybit_liquidations_worker.js');
+ return this.status();
+};
+Manager.prototype.watchSymbol=function(symbol){
+ var s=String(symbol||'').toUpperCase().replace(/[^A-Z0-9]/g,'');if(!s)return this.status();
+ var w=this.workers.BYBIT;if(w)try{w.postMessage({op:'subscribe',symbol:s});}catch(e){this.states.BYBIT=Object.assign({},this.states.BYBIT,{lastError:e.message});}
  return this.status();
 };
 Manager.prototype.stop=function(){
