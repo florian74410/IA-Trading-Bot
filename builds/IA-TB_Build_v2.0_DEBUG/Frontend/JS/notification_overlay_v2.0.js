@@ -42,7 +42,7 @@ function smartContractSuccess(o){
       '</div>'+
       '<div class="iaTxHash iaScHash"><b>TX :</b> <span>'+esc(tx)+'</span></div>'+
      '</div>';
- return show({size:'large',modal:false,icon:'✓',title:o.title||'Transaction Smart Contract réussie',subtitle:o.subtitle||'Signature et confirmation on-chain validées',html:html});
+ return show({size:'xlarge',modal:false,icon:'✓',title:o.title||'Transaction Smart Contract réussie',subtitle:o.subtitle||'Signature et confirmation on-chain validées',html:html});
 }
 function smartContractSignature(o){
  o=o||{};
@@ -99,4 +99,4 @@ function transactionSuccess(o){
      '</div>';
  return show({size:'medium',modal:false,icon:'✓',title:o.title||'Swap / Bridge réussi',subtitle:o.subtitle||'Transaction confirmée',html:html});
 }
-window.IATBNotify={show:show,small:function(o){o=o||{};o.size='small';return show(o)},medium:function(o){o=o||{};o.size='medium';return show(o)},large:function(o){o=o||{};o.size='large';return show(o)},transactionSuccess:transactionSuccess,smartContractSuccess:smartContractSuccess}})();
+window.IATBNotify={show:show,small:function(o){o=o||{};o.size='small';return show(o)},medium:function(o){o=o||{};o.size='medium';return show(o)},large:function(o){o=o||{};o.size='large';return show(o)},xlarge:function(o){o=o||{};o.size='xlarge';return show(o)},smartContractSignature:smartContractSignature,transactionSuccess:transactionSuccess,smartContractSuccess:smartContractSuccess}})();
