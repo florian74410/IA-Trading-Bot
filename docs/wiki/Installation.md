@@ -46,12 +46,15 @@ Ordre fonctionnel observé :
 1. préparation runtime ;
 2. dépendances Banque ;
 3. SQLite Fundamental ;
-4. Engines/services ;
-5. Firewall + workers ;
-6. Core ;
-7. Router ;
-8. UI Service ;
-9. ouverture du navigateur.
+4. Kraken Adapter + Indicator Engine ;
+5. **Firewall + workers Trading/Data** ;
+6. **Market Data Collector V2.1** ;
+7. **Liquidity Engine V2.0** puis les autres Engines ;
+8. Core ;
+9. Router ;
+10. UI Service puis ouverture du navigateur.
+
+**🟢 En simple : le Firewall Data est maintenant démarré et vérifié avant Market Data. Ainsi, le premier appel Internet du Collector ne peut pas remplir un cache ou une base avant que la couche de contrôle soit prête.**
 
 ---
 
