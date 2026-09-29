@@ -28,6 +28,8 @@ P.prototype.getLiquidityHistory=function(o,cb){o=o||{};this._call('marketdata.mi
 P.prototype.getLiquidityStorage=function(cb){this._call('marketdata.microstructure.storage',{},cb);};
 P.prototype.getOpenInterestAggregate=function(symbol,sources,cb){this._call('marketdata.derivatives.open_interest',{symbol:symbol,sources:Array.isArray(sources)?sources:[]},cb);};
 P.prototype.getOpenInterestHistory=function(o,cb){o=o||{};this._call('marketdata.derivatives.open_interest.history',{symbol:o.symbol||'',limit:o.limit||500,since:o.since||0},cb);};
+P.prototype.getDexLiquidity=function(symbol,force,cb){this._call('marketdata.dex.liquidity.snapshot',{symbol:symbol,force:force===true},cb);};
+P.prototype.getDexLiquidityHistory=function(o,cb){o=o||{};this._call('marketdata.dex.liquidity.history',{symbol:o.symbol||'',limit:o.limit||500,since:o.since||0},cb);};
 P.prototype.getLiquidationStats=function(o,cb){o=o||{};this._call('marketdata.liquidations.stats',{symbol:o.symbol||'',source:o.source||'',windowMs:o.windowMs||900000},cb);};
 P.prototype.getRecentLiquidations=function(o,cb){o=o||{};this._call('marketdata.liquidations.recent',{symbol:o.symbol||'',source:o.source||'',windowMs:o.windowMs||900000,limit:o.limit||500,since:o.since||0},cb);};
 module.exports=P;
