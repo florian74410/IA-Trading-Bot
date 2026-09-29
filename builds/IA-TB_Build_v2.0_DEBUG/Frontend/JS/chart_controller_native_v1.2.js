@@ -17,7 +17,7 @@
   o=o||{};this.container=o.container;this.root=o.root||document;this.focusButton=o.focusButton||null;this.restoreButton=o.restoreButton||null;this.focusClass=o.focusClass||'ia-chart-focus-mode';
   if(!this.container)throw new Error('Conteneur graphique manquant');
   this.series={};this.indicatorSeries={};this.priceLines={};this.liquidityZones=[];this.markers=[];this.rows=[];this.visibleCount=100;this.panOffset=0;this.priceScale=1;this.priceOffset=0;this.drag=null;this.crosshair=null;this.hoverIndex=-1;this._raf=0;this.context={symbol:'',timeframe:''};this.lastRenderStats={received:0,accepted:0,visible:0,rendered:0,width:0,height:0,at:0};
-  this.mount();this.bindFocusControls();this.bindIndicatorEngine();this.bindInteraction();this.hideLegacyCommunicationCard();
+  this.mount();this.bindFocusControls();this.bindIndicatorEngine();this.bindInteraction();this.hideLegacyCommunicationCard();global.IATBActiveChartController=this;
  }
  IATBChartController.prototype.hideLegacyCommunicationCard=function(){try{var d=this.root&&this.root.getElementById?this.root:document,n=d.getElementById('cpVersion');if(!n)return;var card=n.closest?n.closest('.settingsCard'):null;if(card)card.style.display='none'}catch(e){}};
  IATBChartController.prototype.mount=function(){
