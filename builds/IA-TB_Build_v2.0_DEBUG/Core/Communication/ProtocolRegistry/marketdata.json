@@ -94,6 +94,49 @@
             "args"
           ]
         }
+      },
+      {
+        "name": "marketdata.financial.snapshot",
+        "arguments": {
+          "allowed": [
+            "force"
+          ]
+        },
+        "description": "Current firewall-validated CeFi/DeFi financial snapshot."
+      },
+      {
+        "name": "marketdata.financial.history",
+        "arguments": {
+          "allowed": [
+            "family",
+            "limit",
+            "since"
+          ]
+        },
+        "description": "Persisted financial snapshot history."
+      },
+      {
+        "name": "marketdata.financial.ai_context",
+        "arguments": {
+          "allowed": [
+            "scope"
+          ]
+        },
+        "description": "Read-only compact financial context for Supervisor/LLM."
+      },
+      {
+        "name": "marketdata.financial.storage",
+        "arguments": {
+          "allowed": []
+        },
+        "description": "Financial cache/persistence status."
+      },
+      {
+        "name": "marketdata.financial.refresh",
+        "arguments": {
+          "allowed": []
+        },
+        "description": "Internal refresh of financial provider data."
       }
     ],
     "dataTypes": [
