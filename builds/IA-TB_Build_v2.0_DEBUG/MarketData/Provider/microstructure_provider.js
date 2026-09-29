@@ -7,6 +7,7 @@ function baseCoin(s){s=clean(s);var q=['USDT','USDC','USD','EUR','BTC','ETH'];fo
 function binanceSymbol(s){s=clean(s);if(/USDT$/.test(s))return s;if(/USD$/.test(s))return s.slice(0,-3)+'USDT';return s;}
 function krakenPair(s){s=clean(s);if(s.indexOf('BTC')===0)s='XBT'+s.slice(3);return s;}
 function okxInst(s){var b=baseCoin(s);return b+'-USDT-SWAP';}
+function usd30(v){var s=String(v==null?'':v).trim();if(!/^[-+]?\d+$/.test(s))return num(v);var neg=s[0]==='-';if(neg||s[0]==='+')s=s.slice(1);s=s.replace(/^0+(?=\d)/,'');while(s.length<=30)s='0'+s;var a=s.slice(0,-30)||'0',b=s.slice(-30,-24),n=Number(a+'.'+b);return neg?-n:n;}
 function level(x){
  if(Array.isArray(x)){var p=num(x[0]),q=num(x[1]),n=num(x[2]);return p>0&&q>=0?{price:p,size:q,count:n}:null;}
  if(x&&typeof x==='object'){var px=num(x.price!=null?x.price:x.px),sz=num(x.size!=null?x.size:x.sz),ct=num(x.count!=null?x.count:x.n);return px>0&&sz>=0?{price:px,size:sz,count:ct}:null;}
@@ -54,6 +55,11 @@ P.prototype.kraken=function(symbol,depth,cb){
   cb(null,snapshot('KRAKEN',symbol,kp,depth,book(x.bids,x.asks,depth),null,null,[]));
  });
 };
+P.prototype.gmxOpenInterest=function(symbol,cb){
+ if(!this.enabled('GMX'))return cb(new Error('MARKET_PROVIDER_DISABLED: GMX'));
+ var coin=baseCoin(symbol),urls=['https://arbitrum.gmxapi.io/v1/markets/tickers','https://avalanche.gmxapi.io/v1/markets/tickers'],left=urls.length,rows=[],errors=[];
+ urls.forEach(function(url,idx){request(url,{timeout:12000,maxBytes:8*1024*1024},function(e,o){if(e)errors.push(e.message);else{var a=Array.isArray(o)?o:(o&&Array.isArray(o.data)?o.data:(o&&Array.isArray(o.markets)?o.markets:[]));a.forEach(function(x){var label=String(x&&x.symbol||'').toUpperCase();if(label.indexOf(coin+'/USD')!==0)return;var l=usd30(x.longInterestUsd),s=usd30(x.shortInterestUsd);if(l==null&&s==null)return;rows.push({chain:idx===0?'ARBITRUM':'AVALANCHE',symbol:x.symbol,marketTokenAddress:x.marketTokenAddress||x.address||null,longUsd:l||0,shortUsd:s||0,openInterestUsd:(l||0)+(s||0),updatedAt:+x.updatedAt||null});});}if(--left)return;if(!rows.length)return cb(new Error('GMX_OPEN_INTEREST_UNAVAILABLE'+(errors.length?':'+errors.join('|'):'')));var total=rows.reduce(function(z,x){return z+x.openInterestUsd;},0),longUsd=rows.reduce(function(z,x){return z+x.longUsd;},0),shortUsd=rows.reduce(function(z,x){return z+x.shortUsd;},0);cb(null,{source:'GMX',provider:'GMX',provenance:'GMX_API:/v1/markets/tickers',symbol:symbol,canonicalSymbol:coin+'USD',openInterestNotionalUsd:total,openInterestBase:null,markPrice:null,observedAt:Date.now(),marketType:'PERPETUAL',venueType:'DEX',longOpenInterestUsd:longUsd,shortOpenInterestUsd:shortUsd,markets:rows,chains:['ARBITRUM','AVALANCHE']});});});
+};
 P.prototype.openInterest=function(symbol,source,cb){
  var self=this;source=String(source||'').toUpperCase(),coin=baseCoin(symbol);
  function row(src,canonical,notional,baseValue,mark,extra){return Object.assign({source:src,provider:src,provenance:'MARKET_DATA_COLLECTOR:'+src,symbol:symbol,canonicalSymbol:canonical||coin+'USD',openInterestNotionalUsd:notional==null?null:+notional,openInterestBase:baseValue==null?null:+baseValue,markPrice:mark==null?null:+mark,observedAt:Date.now()},extra||{});}
@@ -67,6 +73,7 @@ P.prototype.openInterest=function(symbol,source,cb){
   if(!self.enabled('HYPERLIQUID'))return cb(new Error('MARKET_PROVIDER_DISABLED: HYPERLIQUID'));
   return request('https://api.hyperliquid.xyz/info',{method:'POST',timeout:10000,headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'metaAndAssetCtxs'})},function(e,o){if(e)return cb(e);var oi=null,mark=null;if(Array.isArray(o)&&o[0]&&Array.isArray(o[0].universe)&&Array.isArray(o[1]))for(var i=0;i<o[0].universe.length;i++)if(String(o[0].universe[i].name||'').toUpperCase()===coin){oi=num(o[1][i]&&o[1][i].openInterest);mark=num(o[1][i]&&(o[1][i].markPx||o[1][i].midPx));break;}if(oi==null)return cb(new Error('HYPERLIQUID_OPEN_INTEREST_UNAVAILABLE'));cb(null,row('HYPERLIQUID',coin,mark==null?null:oi*mark,oi,mark,{instrument:coin,marketType:'PERPETUAL',venueType:'DEX'}));});
  }
+ if(source==='GMX')return self.gmxOpenInterest(symbol,cb);
  if(source==='OKX'){
   if(!self.enabled('OKX'))return cb(new Error('MARKET_PROVIDER_DISABLED: OKX'));
   var inst=okxInst(symbol);return request(self.okxBase+'/api/v5/public/open-interest?instType=SWAP&instId='+encodeURIComponent(inst),{timeout:10000},function(e,o){if(e)return cb(e);var d=o&&Array.isArray(o.data)&&o.data[0];if(!d)return cb(new Error('OKX_OPEN_INTEREST_UNAVAILABLE'));var n=num(d.oiUsd),v=num(d.oiCcy),mark=v&&n?n/v:null;cb(null,row('OKX',inst,n,v,mark,{instrument:inst,oiContracts:num(d.oi),marketType:'PERPETUAL',venueType:'CEX',observedAt:+d.ts||Date.now()}));});
@@ -74,7 +81,7 @@ P.prototype.openInterest=function(symbol,source,cb){
  cb(new Error('OPEN_INTEREST_PROVIDER_UNSUPPORTED: '+source));
 };
 P.prototype.aggregateOpenInterest=function(symbol,sources,cb){
- var self=this,list=Array.isArray(sources)&&sources.length?sources:['BINANCE_FUTURES','OKX','HYPERLIQUID'],left=list.length,rows=[],missing=[];
+ var self=this,list=Array.isArray(sources)&&sources.length?sources:['BINANCE_FUTURES','OKX','HYPERLIQUID','GMX'],left=list.length,rows=[],missing=[];
  if(!left)return cb(null,{ok:true,symbol:symbol,venues:[],coverage:{requested:[],received:[],missing:[]}});
  list.forEach(function(src){self.openInterest(symbol,src,function(e,o){if(e)missing.push({source:src,error:e.message});else if(o&&isFinite(+o.openInterestNotionalUsd))rows.push(o);else missing.push({source:src,error:'OI_NOTIONAL_UNAVAILABLE'});if(--left)return;cb(null,{ok:true,symbol:baseCoin(symbol)+'USD',venues:rows,coverage:{requested:list.slice(),received:rows.map(function(x){return x.source;}),missing:missing}});});});
 };
@@ -91,6 +98,7 @@ P.prototype.list=function(){var self=this;return[
  {id:'BINANCE_FUTURES',enabled:self.enabled('BINANCE_FUTURES'),capabilities:['ORDERBOOK','OPEN_INTEREST']},
  {id:'HYPERLIQUID',enabled:self.enabled('HYPERLIQUID'),capabilities:['ORDERBOOK','OPEN_INTEREST']},
  {id:'OKX',enabled:self.enabled('OKX'),capabilities:['ORDERBOOK','OPEN_INTEREST']},
+ {id:'GMX',enabled:self.enabled('GMX'),capabilities:['OPEN_INTEREST']},
  {id:'KRAKEN',enabled:self.enabled('KRAKEN'),capabilities:['ORDERBOOK']}
 ];};
 module.exports=P;
