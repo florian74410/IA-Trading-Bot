@@ -9,7 +9,7 @@ Store.prototype.freshness=function(){
  var s=this.current,now=Date.now();if(!s)return{fresh:false,cefi:{fresh:false,ageMs:null,expiresAt:null},defi:{fresh:false,ageMs:null,expiresAt:null}};
  var f=s.meta&&s.meta.freshness||{},out={};
  ['cefi','defi'].forEach(function(k){var x=f[k]||{},observed=+x.observedAt||0,expires=+x.expiresAt||0;out[k]={fresh:!!observed&&(!expires||now<=expires),ageMs:observed?Math.max(0,now-observed):null,expiresAt:expires||null,ttlMs:+x.ttlMs||null,provider:x.provider||null};});
- out.fresh=!!(out.cefi.fresh||out.defi.fresh);return out;
+ out.fresh=!!(s.cefi||s.defi)&&(!s.cefi||out.cefi.fresh)&&(!s.defi||out.defi.fresh);return out;
 };
 Store.prototype.isFresh=function(){var f=this.freshness();return f.fresh;};
 Store.prototype.set=function(snapshot){this.current=compact(snapshot);if(Date.now()-this.lastPersistAt>=this.persistIntervalMs)this.persist(this.current);return this.get();};
