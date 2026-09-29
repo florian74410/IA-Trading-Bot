@@ -20,9 +20,9 @@ function smartContractSuccess(o){
  var fromSymbol=String(o.fromSymbol||'').toUpperCase(),toSymbol=String(o.toSymbol||'').toUpperCase(),
      fromLogo=txLogo(fromSymbol),toLogo=txLogo(toSymbol),
      tx=String(o.tx||o.txHash||'--'),
-     totalFee=(o.totalFeeEUR===null||o.totalFeeEUR===undefined||o.totalFeeEUR==='')?'--':String(o.totalFeeEUR),
-     gas=(o.gasFeeEUR===null||o.gasFeeEUR===undefined||o.gasFeeEUR==='')?'--':String(o.gasFeeEUR),
-     iatb=(o.iatbFeeEUR===null||o.iatbFeeEUR===undefined||o.iatbFeeEUR==='')?'--':String(o.iatbFeeEUR),
+     totalFee=o.totalFeeLabel?String(o.totalFeeLabel):((o.totalFeeEUR===null||o.totalFeeEUR===undefined||o.totalFeeEUR==='')?'--':String(o.totalFeeEUR)+' €'),
+     gas=o.gasFeeLabel?String(o.gasFeeLabel):((o.gasFeeEUR===null||o.gasFeeEUR===undefined||o.gasFeeEUR==='')?'--':String(o.gasFeeEUR)+' €'),
+     iatb=o.iatbFeeLabel?String(o.iatbFeeLabel):((o.iatbFeeEUR===null||o.iatbFeeEUR===undefined||o.iatbFeeEUR==='')?'--':String(o.iatbFeeEUR)+' €'),
      html='<div class="iaScSuccess">'+
       '<div class="iaScBadge">✓ SMART CONTRACT CONFIRMÉ</div>'+
       '<div class="iaTxFlow iaScFlow">'+
@@ -30,14 +30,14 @@ function smartContractSuccess(o){
        '<span class="iaTxAsset">'+(fromLogo?'<img src="'+esc(fromLogo)+'" alt="">':'')+'<b>'+esc(o.fromAmount||'--')+'</b><small>'+esc(fromSymbol)+'</small></span>'+
        '<span class="iaTxArrow">→</span>'+
        '<span class="iaTxAsset">'+(toLogo?'<img src="'+esc(toLogo)+'" alt="">':'')+'<b>'+esc(o.toAmount||'--')+'</b><small>'+esc(toSymbol)+'</small></span>'+
-       '<span class="iaTxFee">− '+esc(totalFee)+' €</span>'+
+       '<span class="iaTxFee">− '+esc(totalFee)+'</span>'+
       '</div>'+
       '<div class="iaScGrid">'+
        '<div><small>TYPE</small><b>'+esc(o.operation||'Swap / Bridge')+'</b></div>'+
        '<div><small>RÉSEAU</small><b>'+esc(o.network||'--')+'</b></div>'+
        '<div><small>PROVIDER</small><b>'+esc(o.provider||'--')+'</b></div>'+
-       '<div><small>GAS</small><b>'+esc(gas)+' €</b></div>'+
-       '<div><small>FRAIS IA-TB</small><b>'+esc(iatb)+' € · 1 %</b></div>'+
+       '<div><small>GAS</small><b>'+esc(gas)+'</b></div>'+
+       '<div><small>FRAIS IA-TB</small><b>'+esc(iatb)+' · 1 %</b></div>'+
        '<div><small>STATUT</small><b class="iaScOk">'+esc(o.status||'Confirmée')+'</b></div>'+
       '</div>'+
       '<div class="iaTxHash iaScHash"><b>TX :</b> <span>'+esc(tx)+'</span></div>'+
