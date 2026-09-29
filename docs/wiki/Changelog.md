@@ -16,6 +16,11 @@
 - 14 services attendus au démarrage.
 
 ### 💧 Liquidity / Market Data V2.1
+- un seul service Market Data 8013 ; microstructure rangée en Provider/Collectors/Storage ;
+- OI couvert Binance Futures + OKX + Hyperliquid avec séparation CEX/DEX ;
+- historique OI SQLite 30–90 jours ;
+- Worker Threads de liquidations Binance Futures et OKX ;
+- statut des streams exposé par CP/1 ;
 - Liquidity Engine V2.0 devient **INTERNAL_ANALYSIS_ONLY** ;
 - suppression des appels Internet actifs depuis Liquidity ;
 - migration Binance Futures / Hyperliquid / Kraken L2 vers Market Data ;
