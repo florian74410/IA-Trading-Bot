@@ -11,7 +11,7 @@ var tasks=[
  settle('fundamental',c.request('fundamental','fundamental.analyze',{asset:symbol,horizon:timeframe,limit:Math.max(5,Math.min(100,+input.fundamentalLimit||30))},'analysis')),
  settle('fundamentalNews',c.request('fundamental','fundamental.news.search',{asset:asset,category:input.newsCategory||'',source:input.newsSource||'',minGrade:input.newsMinGrade||'',minReliability:input.newsMinReliability,minImportance:input.newsMinImportance,since:newsSince,sort:input.newsSort||'RELEVANCE_DESC',limit:newsLimit},'analysis')),
  settle('fundamentalSyntheses',c.request('fundamental','fundamental.synthesis.history',{scope:input.synthesisScope||'',limit:Math.max(1,Math.min(20,+input.synthesisLimit||5))},'analysis')),
- settle('liquidity',c.request('liquidity','liquidity.snapshot',{symbol:symbol,timeframe:timeframe,limit:Math.max(20,Math.min(500,+input.limit||200)),source:source},'analysis')),
+ settle('liquidity',c.request('liquidity','liquidity.context',{symbol:symbol,timeframe:timeframe,limit:Math.max(20,Math.min(500,+input.limit||200)),source:String(input.liquiditySource||'AUTO'),depth:Math.max(5,Math.min(100,+input.liquidityDepth||20)),liquidationWindowMs:Math.max(60000,Math.min(86400000,+input.liquidityWindowMs||900000))},'analysis')),
  settle('portfolio',c.request('portfolio','portfolio.snapshot',{force:false},'analysis')),
  settle('portfolioPositionHealth',c.request('portfolio','portfolio.position.health',{symbol:symbol},'analysis')),
  settle('portfolioTrades',c.request('portfolio','portfolio.trades',{limit:Math.max(1,Math.min(100,+input.portfolioTradeLimit||10))},'analysis')),
