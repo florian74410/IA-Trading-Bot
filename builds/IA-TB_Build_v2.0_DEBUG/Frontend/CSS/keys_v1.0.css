@@ -344,3 +344,131 @@
   transform:rotate(-3deg) translateY(-1px);
   filter:drop-shadow(0 0 10px rgba(255,196,52,.30));
 }
+
+
+/* v2.0 DEBUG — compact key list rows */
+.keyRow{
+  min-height:48px!important;
+  padding:5px 14px!important;
+  gap:9px!important;
+}
+.keyHead{
+  height:32px!important;
+  padding:0 14px!important;
+  gap:9px!important;
+  font-size:10px!important;
+}
+.walletName{
+  gap:8px!important;
+  font-size:11px!important;
+  min-width:0;
+}
+.walletName>span:last-child{
+  min-width:0;
+}
+.walletName>span:last-child>small{
+  font-size:7.5px!important;
+  margin-top:2px!important;
+}
+.walletLogo{
+  width:30px!important;
+  height:30px!important;
+  min-width:30px!important;
+  border-radius:7px!important;
+  padding:2px!important;
+  background:#02080d!important;
+  overflow:hidden;
+}
+.walletLogo .netSvg{
+  width:26px!important;
+  height:26px!important;
+  display:block!important;
+}
+.typeBadge{
+  padding:3px 7px!important;
+  font-size:9px!important;
+  border-radius:8px!important;
+  line-height:1.1!important;
+}
+.network{
+  min-width:0;
+}
+.network b{
+  display:block;
+  font-size:8.5px!important;
+  line-height:1.15!important;
+  font-weight:700!important;
+  color:#c9e0ec!important;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.network small{
+  margin-top:2px!important;
+  font-size:7px!important;
+  line-height:1.1!important;
+}
+.mono{
+  font-size:13px!important;
+  line-height:1.1!important;
+  min-width:0;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.copyAddress{
+  width:22px!important;
+  height:22px!important;
+  min-width:22px!important;
+  padding:0!important;
+  margin-left:4px!important;
+  display:inline-grid!important;
+  place-items:center!important;
+  border-radius:5px!important;
+  font-size:11px!important;
+  line-height:1!important;
+  vertical-align:middle!important;
+  border-color:#1f6588!important;
+  background:#061925!important;
+  color:#7ddfff!important;
+}
+.copyAddress:hover{
+  color:#fff!important;
+  border-color:#28bfff!important;
+  background:#0a2a3d!important;
+}
+.secretMask{
+  font-size:10px!important;
+  letter-spacing:.7px!important;
+}
+.rowActions{
+  gap:5px!important;
+  flex-wrap:nowrap!important;
+}
+.rowActions button{
+  min-height:24px!important;
+  padding:4px 7px!important;
+  border-radius:5px!important;
+  font-size:8.5px!important;
+  line-height:1!important;
+  white-space:nowrap!important;
+}
+.rowActions .show{
+  background:#0d86c9!important;
+}
+@media(max-width:1050px){
+  .keyRow{
+    min-height:46px!important;
+    padding:5px 10px!important;
+  }
+  .rowActions{
+    gap:4px!important;
+  }
+  .rowActions button{
+    font-size:8px!important;
+    padding:4px 6px!important;
+  }
+  .mono{
+    font-size:12px!important;
+  }
+}
