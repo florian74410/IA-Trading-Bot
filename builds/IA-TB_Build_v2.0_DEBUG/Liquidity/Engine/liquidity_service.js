@@ -13,7 +13,7 @@ var HOST='127.0.0.1',PORT=+(process.env.IATB_LIQUIDITY_PORT||8014),APP_ROOT=path
 function send(r,c,o){var b=Buffer.from(JSON.stringify(o));r.writeHead(c,{'Content-Type':'application/json; charset=utf-8','Content-Length':b.length,'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});r.end(b);}
 function sym(s){s=String(s||'').toUpperCase();return/^[A-Z0-9/_-]{3,24}$/.test(s)?s:null;}
 function tf(t){t=String(t||'1h').toLowerCase();return TF[t]?t:null;}
-function src(s){s=String(s||'AUTO').toUpperCase();return/^(AUTO|REFERENCE|KRAKEN|BINANCE|BINANCE_FUTURES|OKX|HYPERLIQUID)$/.test(s)?s:null;}
+function src(s){s=String(s||'AUTO').toUpperCase();return/^(AUTO|REFERENCE|KRAKEN|BINANCE|BINANCE_FUTURES|OKX|BYBIT|HYPERLIQUID)$/.test(s)?s:null;}
 function ratio(a,b){a=+a;b=+b;return isFinite(a)&&isFinite(b)&&b>0?a/b:null;}
 function rawKey(s,source,depth){return s+'|'+source+'|'+depth;}
 function analysisKey(s,source,depth,windowMs){return rawKey(s,source,depth)+'|'+windowMs;}
