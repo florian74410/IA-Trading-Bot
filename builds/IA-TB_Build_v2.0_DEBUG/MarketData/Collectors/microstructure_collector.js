@@ -4,6 +4,7 @@ var Cache=require('../Cache/market_cache'),crypto=require('crypto');
 function Collector(o){
  o=o||{};this.provider=o.provider;this.firewall=o.firewall;this.store=o.store;
  this.cache=new Cache({ttlMs:Math.max(5000,+o.cacheTtlMs||5000),maxEntries:Math.max(12,+o.maxEntries||64)});
+ this.oiCache=new Cache({ttlMs:Math.max(5000,+o.oiCacheTtlMs||10000),maxEntries:Math.max(8,+o.maxEntries||64)});
  this.liquidationBuffer=[];this.maxLiquidations=Math.max(100,+o.maxLiquidations||5000);
  this.busy=Object.create(null);this.lastError='';this.lastFirewall=null;
 }
@@ -26,7 +27,7 @@ Collector.prototype.snapshot=function(symbol,source,depth,force,cb){
  });
 };
 Collector.prototype.openInterestAggregate=function(symbol,sources,cb){
- var self=this;self.provider.aggregateOpenInterest(symbol,sources,function(e,o){
+ var self=this,src=Array.isArray(sources)&&sources.length?sources.slice().sort():[],k=String(symbol||'').toUpperCase()+'|'+src.join(','),hit=self.oiCache.get(k);if(hit)return cb(null,Object.assign({},hit,{cache:'HIT'}));self.provider.aggregateOpenInterest(symbol,sources,function(e,o){
   if(e)return cb(e);var rows=o&&o.venues||[],valid=[],rejected=[],left=rows.length;
   if(!left)return cb(null,o);
   rows.forEach(function(x){
@@ -36,7 +37,7 @@ Collector.prototype.openInterestAggregate=function(symbol,sources,cb){
     if(--left)return;
     var total=0,cex=0,dex=0;valid.forEach(function(v){var n=isFinite(+v.openInterestNotionalUsd)?+v.openInterestNotionalUsd:0;total+=n;if(String(v.venueType||'').toUpperCase()==='DEX')dex+=n;else cex+=n;});
     var out={ok:true,schema:'marketdata.open_interest.aggregate/1.0',symbol:o.symbol||symbol,scope:'CONNECTED_PERPETUAL_VENUES',coveredOpenInterestUsd:total,cexOpenInterestUsd:cex,dexOpenInterestUsd:dex,venueCount:valid.length,venues:valid.sort(function(a,b){return(+b.openInterestNotionalUsd||0)-(+a.openInterestNotionalUsd||0)}),coverage:{requested:o.coverage&&o.coverage.requested||[],received:valid.map(function(v){return v.source;}),missing:(o.coverage&&o.coverage.missing||[]).concat(rejected.map(function(v){return v.source;})),complete:false,label:'COVERED_NOT_GLOBAL'},observedAt:Date.now()};
-    if(self.store&&self.store.saveOpenInterest)self.store.saveOpenInterest(out);cb(null,out);
+    out.cache='MISS';self.oiCache.set(k,out);if(self.store&&self.store.saveOpenInterest)self.store.saveOpenInterest(out);cb(null,out);
    });
   });
  });
@@ -67,6 +68,6 @@ Collector.prototype.liquidationStats=function(o){
 };
 Collector.prototype.history=function(o){return this.store?this.store.history(o):{ok:false,error:'MICROSTRUCTURE_STORE_DISABLED',items:[]};};
 Collector.prototype.storage=function(){return this.store?this.store.status():{ok:false,mode:'DISABLED'};};
-Collector.prototype.clear=function(){this.cache.clear();this.liquidationBuffer=[];return this.status();};
-Collector.prototype.status=function(){return{ok:!this.lastError,cache:this.cache.stats(),providers:this.provider&&this.provider.list?this.provider.list():[],storage:this.storage(),liquidationBuffer:this.liquidationBuffer.length,lastError:this.lastError||null,lastFirewall:this.lastFirewall};};
+Collector.prototype.clear=function(){this.cache.clear();this.oiCache.clear();this.liquidationBuffer=[];return this.status();};
+Collector.prototype.status=function(){return{ok:!this.lastError,cache:this.cache.stats(),openInterestCache:this.oiCache.stats(),providers:this.provider&&this.provider.list?this.provider.list():[],storage:this.storage(),liquidationBuffer:this.liquidationBuffer.length,lastError:this.lastError||null,lastFirewall:this.lastFirewall};};
 module.exports=Collector;
