@@ -161,3 +161,96 @@ body{background:radial-gradient(circle at 70% -20%,rgba(31,75,153,.18),transpare
   .hero h1{font-size:18px!important}
   .hero p{font-size:10px!important}
 }
+
+
+/* Fundamental KPI cards v3.3 — unified icons, hover and compact labels */
+.cockpitMetric{
+  position:relative!important;
+  overflow:visible!important;
+}
+.cockpitMetric>i{
+  display:none!important;
+}
+.cockpitMetric .metricIcon{
+  width:24px!important;
+  height:24px!important;
+  display:grid!important;
+  place-items:center!important;
+  color:#4a91ff;
+  line-height:1!important;
+}
+.cockpitMetric .metricIcon svg{
+  width:24px!important;
+  height:24px!important;
+  display:block!important;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.8;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.cockpitMetric .metricIcon.aiIcon svg{
+  width:25px!important;
+  height:25px!important;
+}
+.cockpitMetric.sourceMetric .metricIcon{color:#70b7ff}
+.cockpitMetric.feedMetric .metricIcon{color:#ff8a21}
+.cockpitMetric.totalMetric .metricIcon,
+.cockpitMetric.newsMetric .metricIcon{color:#48cfff}
+.cockpitMetric.eventMetric .metricIcon{color:#ffd24d}
+.cockpitMetric.alertMetric .metricIcon{color:#ff535f}
+.cockpitMetric.aiMetric .metricIcon{color:#9d7cff}
+.cockpitMetric:hover,
+.cockpitMetric.aiMetric:hover,
+.cockpitMetric.sourceMetric:hover,
+.cockpitMetric.feedMetric:hover,
+.cockpitMetric.totalMetric:hover,
+.cockpitMetric.newsMetric:hover,
+.cockpitMetric.eventMetric:hover,
+.cockpitMetric.alertMetric:hover{
+  transform:translateY(-2px)!important;
+  border-color:#347eff!important;
+  box-shadow:0 0 24px rgba(42,104,255,.18)!important;
+}
+.cockpitMetric:focus-visible{
+  outline:none!important;
+  border-color:#5da0ff!important;
+  box-shadow:0 0 0 2px rgba(71,139,255,.22),0 0 24px rgba(42,104,255,.18)!important;
+}
+.cockpitMetric>b{
+  margin-top:5px!important;
+}
+.cockpitMetric>small{
+  display:block!important;
+  max-width:100%!important;
+  font-size:8.5px!important;
+  line-height:1.15!important;
+  white-space:nowrap!important;
+  overflow:visible!important;
+  text-overflow:clip!important;
+}
+.cockpitMetric.totalMetric>em{
+  display:block!important;
+  max-width:100%!important;
+  margin-top:3px!important;
+  font-size:7.5px!important;
+  line-height:1.15!important;
+  white-space:normal!important;
+  overflow:visible!important;
+  text-overflow:clip!important;
+}
+@media(max-width:1320px) and (min-width:1181px){
+  .cockpitMetric{
+    padding:11px 10px!important;
+  }
+  .cockpitMetric>b{
+    font-size:25px!important;
+  }
+  .cockpitMetric>small{
+    font-size:7.8px!important;
+    letter-spacing:.55px!important;
+  }
+  .cockpitMetric.totalMetric>em{
+    font-size:7px!important;
+  }
+}
