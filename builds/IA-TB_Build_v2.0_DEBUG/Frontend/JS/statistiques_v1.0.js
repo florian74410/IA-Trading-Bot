@@ -90,8 +90,34 @@ function renderEngines(){
  var ok=values.length&&values.every(function(v){return v>=0&&v<1000});
  var n=q('#engineGlobalState');if(n){n.textContent=ok?'● Tous les services opérationnels':'● Service dégradé';n.classList.toggle('good',ok)}
 }
+function summaryUniqueCount(rows,keyFn){
+ var seen={},n=0;(rows||[]).forEach(function(x){var k=String(keyFn(x)||'').trim().toLowerCase();if(!k||seen[k])return;seen[k]=1;n++;});return n;
+}
 function renderSummary(){
- var h=state.summary.map(function(x){return '<div class="summaryCell '+(x.good?'good':'')+'"><i>'+esc(x.icon)+'</i><div><b>'+esc(x.value)+'</b><span>'+esc(x.label)+'</span></div></div>'}).join('');
+ var exchanges=summaryUniqueCount(state.exchanges,function(x){return x.id||x.name});
+ var engines=Object.keys(state.engines||{}).filter(function(k){var v=state.engines[k];return v!=null&&isFinite(+v)&&+v>=0}).length;
+ var networks=summaryUniqueCount(state.defi&&state.defi.networks,function(x){return Array.isArray(x)?x[0]:(x&&x.name)});
+ var oracleRows=(state.oracles||[]).concat((state.oracleCatalog||[]).filter(function(x){return x.kind==='oracle'}));
+ var bridgeRows=(state.oracles||[]).filter(function(x){return String(x.kind||'').toLowerCase()==='bridge'||/bridge/i.test(String(x.name||''))}).concat((state.oracleCatalog||[]).filter(function(x){return x.kind==='bridge'}));
+ var oracles=summaryUniqueCount(oracleRows,function(x){return x.id||x.name});
+ var bridges=summaryUniqueCount(bridgeRows,function(x){return x.id||x.name});
+ var latencies=[];
+ (state.exchanges||[]).concat(state.oracles||[]).forEach(function(x){if(x&&x.latency!=null&&isFinite(+x.latency))latencies.push(+x.latency)});
+ Object.keys(state.engines||{}).forEach(function(k){var v=state.engines[k];if(v!=null&&isFinite(+v))latencies.push(+v)});
+ var avgLatency=latencies.length?Math.round(latencies.reduce(function(a,b){return a+b},0)/latencies.length):null;
+ var uptimes=(state.oracles||[]).map(function(x){return x&&x.uptime}).filter(function(v){return v!=null&&isFinite(+v)}).map(Number);
+ var avgUptime=uptimes.length?uptimes.reduce(function(a,b){return a+b},0)/uptimes.length:null;
+ var rows=[
+  {icon:'⇄',value:String(exchanges),label:'Exchanges suivis'},
+  {icon:'⚙',value:String(engines),label:'Engines actifs'},
+  {icon:'◎',value:String(networks),label:'Réseaux suivis'},
+  {icon:'⛓',value:String(oracles),label:'Oracles suivis'},
+  {icon:'↔',value:String(bridges),label:'Bridges suivis'},
+  {icon:'◔',value:avgLatency==null?'N/D':avgLatency+' ms',label:'Temps moyen API'},
+  {icon:'◷',value:avgUptime==null?'N/D':avgUptime.toFixed(2)+'%',label:'Uptime global',good:avgUptime!=null&&avgUptime>=99.9}
+ ];
+ state.summary=rows;
+ var h=rows.map(function(x){return '<div class="summaryCell '+(x.good?'good':'')+'"><i>'+esc(x.icon)+'</i><div><b>'+esc(x.value)+'</b><span>'+esc(x.label)+'</span></div></div>'}).join('');
  var host=q('#summaryGrid');if(host)host.innerHTML=h;
 }
 function linePath(values,w,h,pad){
@@ -311,6 +337,7 @@ function applyFinancialSnapshot(s,cefiHistory,defiHistory,oi,liq,dexLiquidity){
   if(ins.length){state.defi.stableIn=ins.slice(-12);state.defi.stableOut=outs.slice(-12)}
  }
  renderFinance();
+ renderSummary();
 }
 function loadFinancialData(){
  var cfg=cexRangeConfig();
