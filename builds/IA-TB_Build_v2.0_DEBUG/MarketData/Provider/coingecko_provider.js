@@ -48,6 +48,11 @@ P.prototype.coin=function(id,cb){
 P.prototype.global=function(cb){
  this._enqueue(this.base+'/global',{headers:this._headers(),timeout:15000},cb);
 };
+P.prototype.simplePrice=function(ids,vs,cb){
+ var list=Array.isArray(ids)?ids.join(','):String(ids||'bitcoin');
+ var url=this.base+'/simple/price?ids='+encodeURIComponent(list)+'&vs_currencies='+encodeURIComponent(vs||'usd');
+ this._enqueue(url,{headers:this._headers(),timeout:15000},cb);
+};
 P.prototype.exchanges=function(page,perPage,cb){
  var url=this.base+'/exchanges?per_page='+Math.max(1,Math.min(250,+perPage||50))+'&page='+Math.max(1,+page||1);
  this._enqueue(url,{headers:this._headers(),timeout:15000,maxBytes:8*1024*1024},cb);
