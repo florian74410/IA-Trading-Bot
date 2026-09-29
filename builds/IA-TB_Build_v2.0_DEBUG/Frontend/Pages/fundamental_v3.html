@@ -24,13 +24,13 @@
 
     <section id="cockpit" class="cockpit">
   <div class="cockpitMetrics">
-    <button class="cockpitMetric" data-expand-target="sourcesBody"><span>◉</span><b id="dashSources">--</b><small>SOURCES</small><i>＋</i></button>
-    <button class="cockpitMetric" data-expand-target="feedsBody"><span>⌘</span><b id="dashFeeds">--</b><small>FLUX ACTIFS</small><i>＋</i></button>
-    <button class="cockpitMetric totalMetric" data-expand-target="recentList"><span>▥</span><b id="dashTotal">--</b><small>NOMBRE TOTAL</small><em id="dashEmptyBodies">dont -- sans corps</em><i>＋</i></button>
-    <button class="cockpitMetric" data-expand-target="recentList"><span>▤</span><b id="dashNews">--</b><small>PUBLICATIONS 24H</small><i>＋</i></button>
-    <button class="cockpitMetric eventMetric" data-expand-target="recentList"><span>ϟ</span><b id="dashEvents">--</b><small>ÉVÉNEMENTS</small><i>＋</i></button>
-    <button class="cockpitMetric alertMetric" data-expand-target="fundamentalConsole"><span>△</span><b id="dashErrors">--</b><small>ALERTES</small><i>＋</i></button>
-    <button class="cockpitMetric aiMetric" data-expand-target="aiSummaryHeadline"><span>✦</span><b id="dashConfidence">--</b><small>CONFIANCE IA</small><i>＋</i></button>
+    <button class="cockpitMetric sourceMetric" data-expand-target="sourcesBody" aria-label="Ouvrir les sources"><span class="metricIcon" aria-hidden="true"><svg viewBox="0 0 32 32"><ellipse cx="16" cy="8" rx="9" ry="4"/><path d="M7 8v8c0 2.2 4 4 9 4s9-1.8 9-4V8"/><path d="M7 16v8c0 2.2 4 4 9 4s9-1.8 9-4v-8"/></svg></span><b id="dashSources">--</b><small>SOURCES</small></button>
+    <button class="cockpitMetric feedMetric" data-expand-target="feedsBody" aria-label="Ouvrir les flux actifs"><span class="metricIcon" aria-hidden="true"><svg viewBox="0 0 32 32"><circle cx="8" cy="24" r="3" fill="currentColor" stroke="none"/><path d="M6 14c6.6 0 12 5.4 12 12"/><path d="M6 6c11 0 20 9 20 20"/></svg></span><b id="dashFeeds">--</b><small>FLUX ACTIFS</small></button>
+    <button class="cockpitMetric totalMetric" data-expand-target="recentList" aria-label="Ouvrir toutes les publications"><span class="metricIcon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M6 5h15v22H6z"/><path d="M21 9h5v18h-5"/><path d="M9 10h9M9 14h9M9 18h9M9 22h6"/></svg></span><b id="dashTotal">--</b><small>NOMBRE TOTAL</small><em id="dashEmptyBodies">dont -- sans corps</em></button>
+    <button class="cockpitMetric newsMetric" data-expand-target="recentList" aria-label="Ouvrir les publications des dernières 24 heures"><span class="metricIcon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M6 5h15v22H6z"/><path d="M21 9h5v18h-5"/><path d="M9 10h9M9 14h9M9 18h9M9 22h6"/></svg></span><b id="dashNews">--</b><small>PUBLICATIONS 24H</small></button>
+    <button class="cockpitMetric eventMetric" data-expand-target="recentList" aria-label="Ouvrir les événements"><span class="metricIcon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M18 3 8 18h7l-1 11 10-16h-7z" fill="currentColor" stroke="none"/></svg></span><b id="dashEvents">--</b><small>ÉVÉNEMENTS</small></button>
+    <button class="cockpitMetric alertMetric" data-expand-target="fundamentalConsole" aria-label="Ouvrir les alertes"><span class="metricIcon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M16 4 29 27H3z"/><path d="M16 11v8M16 23v1"/></svg></span><b id="dashErrors">--</b><small>ALERTES</small></button>
+    <button class="cockpitMetric aiMetric" data-expand-target="aiSummaryHeadline" aria-label="Ouvrir la confiance IA"><span class="metricIcon aiIcon" aria-hidden="true"><svg viewBox="0 0 32 32"><rect x="8" y="8" width="16" height="16" rx="4"/><circle cx="13" cy="14" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="14" r="1.5" fill="currentColor" stroke="none"/><path d="M12 19c1.2 1.2 2.5 1.8 4 1.8s2.8-.6 4-1.8M16 3v5M16 24v5M3 16h5M24 16h5M6.5 6.5l3.5 3.5M22 22l3.5 3.5M25.5 6.5 22 10M10 22l-3.5 3.5"/></svg></span><b id="dashConfidence">--</b><small>CONFIANCE IA</small></button>
   </div>
   <div class="cockpitMain">
     <article class="marketPanel">
