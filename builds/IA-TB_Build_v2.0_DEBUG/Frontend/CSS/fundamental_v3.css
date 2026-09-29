@@ -281,3 +281,27 @@ body{background:radial-gradient(circle at 70% -20%,rgba(31,75,153,.18),transpare
 .dashEvent button.eventDetailBtn:hover{border-color:#46cfff;background:rgba(18,82,112,.75)}
 .dashEvent.errorEvent{border-color:rgba(255,86,99,.2);background:rgba(88,18,27,.15)}
 @media(max-width:720px){.eventDetailGrid{grid-template-columns:1fr}.eventDetailModal{padding:14px}}
+
+
+/* Earth radar visual enrichment */
+.earthRadarBackdrop{background:
+ radial-gradient(circle at 18% 12%,rgba(17,71,118,.28),transparent 34%),
+ radial-gradient(circle at 82% 86%,rgba(8,82,74,.18),transparent 30%),
+ rgba(0,4,12,.94)}
+.earthRadarModal{background:linear-gradient(180deg,#06111f 0%,#030914 100%);border-color:#2a68a1;box-shadow:0 28px 110px rgba(0,0,0,.78),0 0 45px rgba(25,119,177,.12)}
+.earthRadarModal>header{background:linear-gradient(90deg,#07182b,#08233a 58%,#071426)}
+.earthCanvasWrap{background:
+ radial-gradient(circle at 50% 42%,rgba(33,109,162,.16),transparent 48%),
+ linear-gradient(180deg,#020a15,#030914)}
+.earthMapDecor{position:absolute;left:14px;top:12px;z-index:4;pointer-events:none;display:flex;flex-direction:column;gap:3px;padding:7px 9px;border:1px solid rgba(52,120,164,.28);border-radius:8px;background:rgba(2,13,25,.46);backdrop-filter:blur(4px)}
+.earthMapDecor span{color:#91dfff;font-size:10px;font-weight:900;letter-spacing:.08em}
+.earthMapDecor small{color:#789db6;font-size:8px}
+.earthDomainLegend{position:absolute;right:14px;top:12px;z-index:4;pointer-events:none;display:flex;align-items:center;gap:6px;padding:6px 8px;border:1px solid rgba(49,112,153,.24);border-radius:8px;background:rgba(2,13,25,.46);color:#8daabe;font-size:8px;backdrop-filter:blur(4px)}
+.earthDomainLegend i{width:7px;height:7px;border-radius:50%;display:inline-block;margin-left:3px;box-shadow:0 0 7px currentColor}
+.earthDomainLegend .crypto{background:#55a8ff;color:#55a8ff}.earthDomainLegend .defi{background:#a777ff;color:#a777ff}.earthDomainLegend .macro{background:#56d6c2;color:#56d6c2}.earthDomainLegend .reg{background:#f2bd58;color:#f2bd58}.earthDomainLegend .security{background:#ff6878;color:#ff6878}
+.earthHint{z-index:4;padding:5px 8px;border-radius:7px;background:rgba(2,12,23,.58);border:1px solid rgba(44,102,142,.2);color:#7e9fbb}
+.earthEventDetail{background:linear-gradient(180deg,#071725,#06111f);box-shadow:inset 10px 0 28px rgba(6,34,56,.12)}
+.earthRadarTools{background:linear-gradient(90deg,rgba(7,23,40,.92),rgba(5,16,29,.92))}
+.globeStage{background:radial-gradient(circle at 50% 48%,rgba(22,85,132,.22),transparent 58%),linear-gradient(180deg,#04101e,#030a14)}
+.globeStage:after{content:"";position:absolute;inset:7px;border:1px solid rgba(61,127,175,.12);border-radius:8px;pointer-events:none}
+@media(max-width:900px){.earthDomainLegend{display:none}.earthMapDecor small{display:none}}
