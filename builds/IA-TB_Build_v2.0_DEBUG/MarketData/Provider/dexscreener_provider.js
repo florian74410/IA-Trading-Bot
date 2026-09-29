@@ -6,9 +6,9 @@ function aliases(base){var a=[base];if(base==='BTC')a.push('WBTC');if(base==='ET
 function quotes(q){q=String(q||'USD').toUpperCase();if(q==='USD')return['USDC','USDT','DAI','USD'];if(q==='USDC'||q==='USDT'||q==='DAI')return[q];return[q];}
 function normalizePair(x,baseSet,quoteSet){
  if(!x||!x.baseToken||!x.quoteToken)return null;var b=String(x.baseToken.symbol||'').toUpperCase(),q=String(x.quoteToken.symbol||'').toUpperCase();
- if(baseSet.indexOf(b)<0||quoteSet.indexOf(q)<0){if(baseSet.indexOf(q)>=0&&quoteSet.indexOf(b)>=0){var t=b;b=q;q=t;}else return null;}var l=num(x.liquidity&&x.liquidity.usd),v=num(x.volume&&x.volume.h24),p=num(x.priceUsd);
+ var reversed=false;if(baseSet.indexOf(b)<0||quoteSet.indexOf(q)<0){if(baseSet.indexOf(q)>=0&&quoteSet.indexOf(b)>=0){reversed=true;var t=b;b=q;q=t;}else return null;}var l=num(x.liquidity&&x.liquidity.usd),v=num(x.volume&&x.volume.h24),p=num(x.priceUsd);
  if(l==null||l<0)return null;
- return{chainId:String(x.chainId||''),dexId:String(x.dexId||''),pairAddress:String(x.pairAddress||''),url:x.url||null,base:{symbol:b,address:x.baseToken.address||null,name:x.baseToken.name||null},quote:{symbol:q,address:x.quoteToken.address||null,name:x.quoteToken.name||null},priceUsd:p,liquidityUsd:l,volume24hUsd:v,txns24h:x.txns&&x.txns.h24||null,pairCreatedAt:+x.pairCreatedAt||null,labels:Array.isArray(x.labels)?x.labels:[]};
+ return{chainId:String(x.chainId||''),dexId:String(x.dexId||''),pairAddress:String(x.pairAddress||''),url:x.url||null,base:{symbol:b,address:(reversed?x.quoteToken:x.baseToken).address||null,name:(reversed?x.quoteToken:x.baseToken).name||null},quote:{symbol:q,address:(reversed?x.baseToken:x.quoteToken).address||null,name:(reversed?x.baseToken:x.quoteToken).name||null},priceUsd:p,liquidityUsd:l,volume24hUsd:v,txns24h:x.txns&&x.txns.h24||null,pairCreatedAt:+x.pairCreatedAt||null,labels:Array.isArray(x.labels)?x.labels:[]};
 }
 function P(o){o=o||{};this.base=String(o.base||process.env.IATB_DEXSCREENER_BASE||'https://api.dexscreener.com').replace(/\/$/,'');this.id='DEXSCREENER';}
 P.prototype.pairLiquidity=function(symbol,cb){
