@@ -62,6 +62,15 @@
         }
       },
       {
+        "name": "liquidity.financial",
+        "arguments": {
+          "allowed": [
+            "scope"
+          ]
+        },
+        "description": "Read-only liquidity-oriented financial context derived from Market Data Collector via Router."
+      },
+      {
         "name": "liquidity.liquidations",
         "arguments": {
           "allowed": [
