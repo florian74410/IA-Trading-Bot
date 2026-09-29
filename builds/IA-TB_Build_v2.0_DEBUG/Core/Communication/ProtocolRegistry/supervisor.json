@@ -111,6 +111,35 @@
         }
       },
       {
+        "name": "supervisor.indicator.language",
+        "arguments": {
+          "allowed": []
+        }
+      },
+      {
+        "name": "supervisor.indicator.validate",
+        "arguments": {
+          "allowed": [
+            "source"
+          ],
+          "required": [
+            "source"
+          ]
+        }
+      },
+      {
+        "name": "supervisor.indicator.create",
+        "arguments": {
+          "allowed": [
+            "source",
+            "overwrite"
+          ],
+          "required": [
+            "source"
+          ]
+        }
+      },
+      {
         "name": "supervisor.indicator.definition",
         "arguments": {
           "allowed": [
