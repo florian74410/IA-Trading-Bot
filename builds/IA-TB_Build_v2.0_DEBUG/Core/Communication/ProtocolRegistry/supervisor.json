@@ -71,7 +71,10 @@
             "indicatorRequests",
             "indicatorCandles",
             "indicatorSource",
-            "indicatorForce"
+            "indicatorForce",
+            "liquiditySource",
+            "liquidityDepth",
+            "liquidityWindowMs"
           ],
           "required": [
             "symbol"
@@ -97,7 +100,10 @@
             "indicatorRequests",
             "indicatorCandles",
             "indicatorSource",
-            "indicatorForce"
+            "indicatorForce",
+            "liquiditySource",
+            "liquidityDepth",
+            "liquidityWindowMs"
           ],
           "required": [
             "symbol"
@@ -208,7 +214,7 @@
         "direction": "CONSUME"
       },
       {
-        "name": "liquidity.snapshot",
+        "name": "liquidity.context",
         "direction": "CONSUME"
       },
       {
