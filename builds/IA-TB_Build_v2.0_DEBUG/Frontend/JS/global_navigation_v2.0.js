@@ -16,7 +16,7 @@ function current(){var p=location.pathname;if(p.indexOf('/chart')===0)return'/ch
 function isBankPage(){return location.pathname.indexOf('/bank')===0}
 function ensureGlobalSidebar(){
  if(!document.querySelector('link[data-iatb-global-side]')){
-  var l=document.createElement('link');l.rel='stylesheet';l.href='/assets/global_sidebar_v2.0.css?v=2003';l.setAttribute('data-iatb-global-side','1');document.head.appendChild(l);
+  var l=document.createElement('link');l.rel='stylesheet';l.href='/assets/global_sidebar_v2.0.css?v=2004';l.setAttribute('data-iatb-global-side','1');document.head.appendChild(l);
  }
  if(location.pathname.indexOf('/fundamental')===0)document.body.classList.add('iatb-fundamental-page');else document.body.classList.remove('iatb-fundamental-page');
  if(isBankPage()){
