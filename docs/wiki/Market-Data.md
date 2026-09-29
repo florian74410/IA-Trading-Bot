@@ -175,3 +175,79 @@ Les consommateurs analytiques ne doivent pas recréer leurs propres providers In
 5. L’historique lourd reste côté Collector.
 6. Les Engines utilisent Router/CP1.
 7. Les API d’exécution Trading restent séparées du Market Data.
+
+
+---
+
+## 🧩 Un seul Market Data Collector
+
+**🟢 En simple : il n’existe pas de service “Market Data Liquidity”. Les carnets, dérivés et liquidations sont des familles internes du même Market Data Collector sur le port 8013.**
+
+Organisation canonique :
+
+```text
+MarketData/
+├── Provider/
+│   └── microstructure_provider.js
+├── Collectors/
+│   ├── microstructure_collector.js
+│   └── liquidation_stream_manager.js
+├── Workers/
+│   ├── binance_liquidations_worker.js
+│   └── okx_liquidations_worker.js
+├── Storage/
+│   └── microstructure_store.js
+└── market_data_service.js
+```
+
+Le namespace CP/1 canonique est `marketdata.microstructure.*`. Les anciennes commandes `marketdata.liquidity.*` restent temporairement comme alias de compatibilité.
+
+### 📈 Open Interest couvert
+
+**🟢 En simple : IA-TB additionne l’Open Interest réellement observé sur les venues connectées, mais ne l’appelle pas “OI mondial” tant que la couverture n’est pas complète.**
+
+Première couverture :
+- Binance Futures — CEX ;
+- OKX SWAP — CEX ;
+- Hyperliquid Perps — DEX.
+
+`marketdata.derivatives.open_interest` retourne :
+- `cexOpenInterestUsd` ;
+- `dexOpenInterestUsd` ;
+- `coveredOpenInterestUsd` ;
+- détail par venue ;
+- venues demandées / reçues / manquantes ;
+- label `COVERED_NOT_GLOBAL`.
+
+Les paires stables sont normalisées au niveau analyse : par exemple BTCUSD, BTCUSDT et BTC-USDT-SWAP peuvent contribuer au contexte **BTCUSD**, tout en conservant le symbole de venue.
+
+L’historique est persisté en SQLite 30–90 jours et exposé par `marketdata.derivatives.open_interest.history`. Une paire devient temporairement active lorsqu’elle est demandée ; son OI est ensuite rafraîchi pendant la fenêtre active afin de construire l’historique sans scanner tous les marchés.
+
+### ⚡ Flux de liquidations
+
+**🟢 En simple : les connexions WebSocket appartiennent à Market Data, chacune dans son Worker Thread. Les événements reçus passent ensuite le même Data Firewall que les autres données de marché.**
+
+Workers implémentés dans `debug` :
+- Binance Futures : flux public `forceOrder` ;
+- OKX : canal public `liquidation-orders`.
+
+Pipeline :
+
+```text
+WebSocket Provider
+ → Worker Thread Market Data
+ → normalisation
+ → Data Firewall
+ → buffer borné + SQLite
+ → CP/1
+ → Liquidity Engine / Supervisor
+```
+
+Commandes :
+- `marketdata.liquidations.recent`
+- `marketdata.liquidations.stats`
+- `marketdata.liquidations.streams`
+
+Pour OKX, la quantité est conservée en **CONTRACT** et le notionnel USD reste inconnu tant que la valeur de contrat n’a pas été enrichie. Les statistiques exposent donc la couverture du notionnel plutôt que de transformer une valeur inconnue en zéro.
+
+> ⚠️ Les workers et le transport WebSocket sont implémentés sur `debug`, mais leur connexion live doit encore être validée sur le runtime Node 16 du Mac cible avant de marquer la collecte temps réel comme validée en production.
