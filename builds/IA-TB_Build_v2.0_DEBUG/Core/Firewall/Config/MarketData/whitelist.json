@@ -14,7 +14,8 @@
     "BLOCKCHAIN",
     "BINANCE_FUTURES",
     "BYBIT",
-    "BYBIT_PUBLIC"
+    "BYBIT_PUBLIC",
+    "DEXSCREENER"
   ],
   "types": [
     "PRICE",
