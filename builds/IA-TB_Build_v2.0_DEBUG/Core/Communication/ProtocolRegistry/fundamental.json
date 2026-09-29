@@ -42,6 +42,12 @@
         }
       },
       {
+        "name": "fundamental.calendar.cme.expirations",
+        "arguments": {
+          "allowed": []
+        }
+      },
+      {
         "name": "fundamental.calendar.fed",
         "arguments": {
           "allowed": []
