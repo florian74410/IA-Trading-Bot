@@ -15,10 +15,10 @@ function iconSvg(name){
 function current(){var p=location.pathname;if(p.indexOf('/chart')===0)return'/chart-viewer';if(p.indexOf('/portfolio')===0)return'/portfolio';if(p.indexOf('/bank')===0)return'/bank';if(p.indexOf('/fundamental')===0)return'/fundamental';if(p.indexOf('/settings')===0)return'/settings';if(p.indexOf('/strategy')===0)return'/strategy';if(p.indexOf('/statistiques')===0)return'/statistiques';return'/ia-trading'}
 function ensureGlobalSidebar(){
  if(!document.querySelector('link[data-iatb-global-side]')){
-  var l=document.createElement('link');l.rel='stylesheet';l.href='/assets/global_sidebar_v2.0.css?v=2001';l.setAttribute('data-iatb-global-side','1');document.head.appendChild(l);
+  var l=document.createElement('link');l.rel='stylesheet';l.href='/assets/global_sidebar_v2.0.css?v=2002';l.setAttribute('data-iatb-global-side','1');document.head.appendChild(l);
  }
  if(!document.querySelector('script[data-iatb-global-side]')){
-  var s=document.createElement('script');s.src='/assets/global_sidebar_v2.0.js?v=2001';s.setAttribute('data-iatb-global-side','1');document.head.appendChild(s);
+  var s=document.createElement('script');s.src='/assets/global_sidebar_v2.0.js?v=2002';s.setAttribute('data-iatb-global-side','1');document.head.appendChild(s);
  }
 }
 function resolveAdminVisibility(){
