@@ -144,6 +144,61 @@
           "allowed": []
         },
         "description": "Internal refresh of financial provider data."
+      },
+      {
+        "name": "marketdata.liquidity.capabilities",
+        "arguments": {
+          "allowed": []
+        },
+        "description": "Liquidity microstructure providers, firewall and storage capabilities."
+      },
+      {
+        "name": "marketdata.liquidity.snapshot",
+        "arguments": {
+          "allowed": [
+            "symbol",
+            "source",
+            "depth",
+            "force"
+          ],
+          "required": [
+            "symbol"
+          ]
+        },
+        "description": "Firewall-validated raw order book/open-interest snapshot."
+      },
+      {
+        "name": "marketdata.liquidity.history",
+        "arguments": {
+          "allowed": [
+            "symbol",
+            "source",
+            "limit",
+            "since"
+          ]
+        },
+        "description": "SQLite liquidity microstructure history retained by Market Data."
+      },
+      {
+        "name": "marketdata.liquidity.storage",
+        "arguments": {
+          "allowed": []
+        },
+        "description": "Liquidity cache and SQLite retention status."
+      },
+      {
+        "name": "marketdata.liquidity.refresh",
+        "arguments": {
+          "allowed": [
+            "symbol",
+            "source",
+            "depth"
+          ],
+          "required": [
+            "symbol"
+          ]
+        },
+        "description": "Force provider refresh through Data Firewall before cache/storage."
       }
     ],
     "dataTypes": [
@@ -170,7 +225,12 @@
       {
         "name": "market.liquidity.raw",
         "direction": "PRODUCE",
-        "schema": "iatb.financial.data/1.0"
+        "schema": "marketdata.liquidity.raw/1.0"
+      },
+      {
+        "name": "market.liquidity.history",
+        "direction": "PRODUCE",
+        "schema": "marketdata.liquidity.history/1.0"
       }
     ],
     "events": []
