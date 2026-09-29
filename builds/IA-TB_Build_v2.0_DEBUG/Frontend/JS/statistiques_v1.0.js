@@ -230,12 +230,13 @@ function historyValues(h,family,pathName){
  });
  return out.slice(-24);
 }
-function applyFinancialSnapshot(s,cefiHistory,defiHistory){
+function applyFinancialSnapshot(s,cefiHistory,defiHistory,oi,liq){
  s=s||{};var c=s.cefi||{},d=s.defi||{},meta=s.meta||{};
  if(c&&Object.keys(c).length){
   var exTotal=c.spotVolume24hUsd==null?null:+c.spotVolume24hUsd,
       exAvailable=Array.isArray(c.exchanges)&&c.exchanges.length>0&&isFinite(exTotal)&&exTotal>0,
       cefiShares=exAvailable?(c.exchangeShares||[]).map(function(x){return[x.name,+x.sharePct||0]}):[];
+  if(exAvailable&&!cefiShares.length)cefiShares=(c.exchanges||[]).slice(0,10).map(function(x){return[x.name||x.id,pctShare(x.volume24hUsd,exTotal)]});
   if(cefiShares.length){var cefiKnown=cefiShares.reduce(function(z,x){return z+(+x[1]||0)},0);if(cefiKnown<99.95)cefiShares.push(['Autres',Math.max(0,100-cefiKnown)]);}
   state.cefi.shares=compactShares(cefiShares);
   state.cefi.exchanges=exAvailable?(c.exchanges||[]).slice(0,8).map(function(x){
@@ -252,8 +253,10 @@ function applyFinancialSnapshot(s,cefiHistory,defiHistory){
   var partial=c.partial===true||!exAvailable||!assets.length,partialNote=(c.errors&&c.errors.length)?' · '+String(c.errors[0]).slice(0,54):'';
   setKpi('cefiVolume24',exAvailable?money(exTotal):'N/D',exAvailable?trend(spotHist):'Indisponible',exAvailable?'CoinGecko · échantillon des exchanges CEX suivis':'CoinGecko · données exchanges indisponibles'+partialNote);
   setKpi('cefiSpot24',money(c.global&&c.global.totalVolume24hUsd),trend(cv),'CoinGecko · volume global du marché crypto');
-  setKpi('cefiOi','N/D','Non connecté','Provider dérivés / OI global non connecté');
-  setKpi('cefiLiq','N/D','Non connecté','Provider liquidations globales non connecté');
+  var oiUsd=oi&&isFinite(+oi.cexOpenInterestUsd)?+oi.cexOpenInterestUsd:null,oiVenues=oi&&oi.coverage&&oi.coverage.received||[];
+  setKpi('cefiOi',oiUsd!=null?money(oiUsd):'N/D',oiUsd!=null?String(oi.venueCount||oiVenues.length)+' venues':'Indisponible',oiUsd!=null?'OI BTC · CEX connectés · '+oiVenues.join(', '):'OI BTC · aucune venue dérivée disponible');
+  var liqUsd=liq&&liq.totalNotionalUsd!=null&&isFinite(+liq.totalNotionalUsd)?+liq.totalNotionalUsd:(liq&&isFinite(+liq.coveredNotionalUsd)?+liq.coveredNotionalUsd:null),liqProviders=liq&&liq.coverage&&liq.coverage.providers||[];
+  setKpi('cefiLiq',liqUsd!=null?money(liqUsd):'N/D',liq?String(+liq.count||0)+' événements':'Indisponible',liq?'Flux 24h · '+(liqProviders.length?liqProviders.join(', '):'en attente d’événements'):'Flux liquidations indisponible');
   var donut=q('.cefiDonut b');if(donut)donut.textContent=exAvailable?money(exTotal):'N/D';
   var fresh=meta.freshness&&meta.freshness.cefi,age=fresh&&fresh.observedAt?Math.max(0,Date.now()-fresh.observedAt):null;
   state.cefi.health=[
@@ -290,8 +293,10 @@ function loadFinancialData(){
  Promise.all([
   uiRead('marketdata.financial.snapshot',{force:false}),
   uiRead('marketdata.financial.history',{family:'CEFI',limit:cfg.limit,since:Date.now()-cfg.ms}),
-  uiRead('marketdata.financial.history',{family:'DEFI',limit:96})
- ]).then(function(x){applyFinancialSnapshot(x[0],x[1],x[2])}).catch(function(e){
+  uiRead('marketdata.financial.history',{family:'DEFI',limit:96}),
+  uiRead('marketdata.derivatives.open_interest',{symbol:'BTCUSD'}).catch(function(e){return{ok:false,error:e.message}}),
+  uiRead('marketdata.liquidations.stats',{windowMs:86400000}).catch(function(e){return{ok:false,error:e.message}})
+ ]).then(function(x){applyFinancialSnapshot(x[0],x[1],x[2],x[3],x[4])}).catch(function(e){
   if(window.console&&console.warn)console.warn('[STATISTICS] financial data unavailable:',e.message);
  });
 }
