@@ -1,165 +1,265 @@
-# 🏦 Banque IA-TB — wallets et services crypto
+# 🏦 Banque IA-TB — V2.0 DEBUG
 
-## Pour débuter
+> **🟢 En simple : la Banque gère les wallets et les clés de l’utilisateur séparément du moteur de trading. Un wallet IA-TB peut contenir des comptes EVM, Bitcoin et Solana ; les secrets restent chiffrés côté serveur et ne sont déchiffrés que pour une action explicite.**
 
-**La Banque IA-TB est une surcouche qui rassemble les wallets d’un utilisateur et simplifie leur utilisation dans une seule interface. L’utilisateur n’a pas besoin d’une extension de navigateur pour consulter et administrer les wallets créés par IA-TB. Chaque wallet reste rattaché à son propriétaire : il peut afficher sa clé publique et, après un avertissement de sécurité explicite, récupérer sa clé privée.**
+<p align="center">
+  <img src="../../assets/bank-wallet-architecture.svg" alt="Architecture Banque IA-TB" width="100%" />
+</p>
 
-<small>🔧 Build actif : V2.0 DEBUG. Les fonctions réellement branchées sont distinguées des services encore planifiés.</small>
+---
 
-<p align="center"><img src="../../assets/bank-wallet-architecture.svg" alt="Architecture Banque IA-TB et wallets utilisateur" width="100%"/></p>
+## 👤 Wallets rattachés au client
 
-## 1. Compte utilisateur et propriété des wallets
+**🟢 En simple : les wallets ne sont pas une liste globale partagée entre tous les utilisateurs. Ils sont rattachés à l’identité client résolue par Client Service.**
 
-Le modèle produit prévoit des utilisateurs inscrits **sur invitation**. Un compte donne accès aux services IA-TB autorisés et la Banque devient le point central pour les actifs crypto.
+Le Wallet Service V2 utilise actuellement un schéma **version 3**. Les anciennes entrées peuvent être migrées vers la clé de stockage liée au `clientId`.
 
-À la première utilisation, l’utilisateur peut créer un ou plusieurs wallets dans **Banque → Mes Portefeuilles**. Un wallet est associé à l’identité de session par un identifiant propriétaire `ownerId`. Les métadonnées du wallet sont enregistrées dans la base SQLite de l’application sous un espace propre au propriétaire.
+Un wallet public expose :
+- ID ;
+- nom ;
+- type/kind ;
+- réseaux ;
+- adresses ;
+- clés publiques ;
+- présence ou non d’un secret.
 
-> **État V2.0 DEBUG :** l’association wallet → utilisateur et le stockage SQLite sont branchés. Le build local actuel utilise encore le mode d’authentification locale/bypass ; le workflow complet d’invitation multi-utilisateur reste à raccorder à cette identité.
+La liste publique ne déchiffre pas la clé privée.
 
-## 2. Mes Portefeuilles
+---
 
-**Cette page rassemble uniquement les wallets du compte courant.** Elle sert de tableau de bord : création, consultation de l’adresse, clé publique, demande de clé privée, historique futur, transferts et retrait de l’interface.
+## 🌐 Wallet multi-chaînes
 
-### Création multi-réseaux
+**🟢 En simple : lorsqu’IA-TB crée un wallet multi-chain, il crée trois comptes cryptographiques : un compte EVM partagé par plusieurs réseaux, un compte Bitcoin et un compte Solana.**
 
-**Un Wallet IA-TB n’est plus limité à un réseau.** Une création produit une identité de portefeuille logique qui regroupe plusieurs comptes blockchain sous un même nom. L’utilisateur manipule donc `Wallet Principal`, `Wallet Trading`, etc., et choisit ensuite le réseau/compte nécessaire à l’action.
+Réseaux actuels :
 
-```text
-Wallet IA-TB
-├── Compte EVM (une même identité secp256k1)
-│   ├── Ethereum
-│   ├── Arbitrum
-│   ├── Polygon
-│   ├── BNB Chain
-│   └── Base
-├── Compte Bitcoin (secp256k1 / adresse BTC)
-└── Compte Solana (Ed25519 / adresse SOL)
+| Famille | Réseaux |
+|---|---|
+| EVM | Ethereum, Arbitrum, Polygon, BNB Chain, Base |
+| Bitcoin | Bitcoin |
+| Solana | Solana |
+
+Le même compte/adresse EVM est réutilisé sur les réseaux EVM compatibles.
+
+Bitcoin est généré en P2PKH avec récupération WIF compressée. Solana utilise une paire Ed25519 avec récupération Base58.
+
+---
+
+## 🔐 Chiffrement des secrets
+
+**🟢 En simple : la clé privée n’est pas stockée en clair avec les informations du wallet.**
+
+Le Wallet Service chiffre les secrets avec **AES-256-GCM** :
+- IV aléatoire ;
+- authentication tag ;
+- master key locale persistante ;
+- envelope chiffrée par compte.
+
+La master key est stockée dans la zone de données persistantes avec permissions de fichier restrictives lorsque le système les supporte.
+
+---
+
+## ➕ Création / import
+
+**🟢 En simple : créer ou importer un wallet demande une vérification utilisateur et une confirmation explicite.**
+
+La création exige :
+- nom ;
+- mot de passe valide ;
+- confirmation `notRobot=true` ;
+- ID attendu non périmé.
+
+L’import accepte :
+- clé privée EVM ;
+- WIF Bitcoin ;
+- clé/keypair Solana selon formats acceptés.
+
+> La case “humain” est une confirmation applicative, pas un CAPTCHA anti-bot robuste.
+
+---
+
+## 🔑 Mes Clés
+
+**🟢 En simple : la section Mes Clés permet de voir les métadonnées, copier les adresses, révéler temporairement un secret et exporter une liste sans exporter les secrets.**
+
+Fonctions actuelles :
+- Ajouter ;
+- Exporter ;
+- Paramètres ;
+- filtre Exchange / Hot / Cold ;
+- recherche et tri ;
+- révélation d’un secret ;
+- suppression d’un secret d’une famille.
+
+L’export annonce `secretsExcluded: true`.
+
+La révélation d’un secret renvoie une fenêtre d’utilisation UI de **30 secondes**. Le secret n’est pas inclus dans la liste générale.
+
+La barre **Ajouter / Exporter / Paramètres** est placée sous le tableau des clés, avant le tutoriel.
+
+---
+
+# 💸 Transferts
+
+## 🧭 Router de transfert
+
+**🟢 En simple : il n’existe pas un gros module qui essaie de comprendre tous les réseaux. Un Router choisit le module adapté au réseau.**
+
+```mermaid
+flowchart LR
+  UI[Envoyer] --> TR[Transfer Router]
+  TR --> E[EVM / ERC20]
+  TR --> B[Bitcoin]
+  TR --> S[Solana]
 ```
 
-Les réseaux EVM partagent la même identité EVM et donc la même adresse EVM. Bitcoin et Solana possèdent des comptes cryptographiques distincts, car leurs formats et mécanismes de clés ne sont pas interchangeables avec EVM.
+Le service `TRANSFER_V3_ROUTER` possède trois modules :
+- `ERC20`
+- `BITCOIN`
+- `SOLANA`
 
-Les secrets de **chaque famille blockchain** sont chiffrés séparément en **AES-256-GCM** avant stockage. Une clé maître locale est créée avec des permissions fichier restrictives. SQLite conserve le wallet logique, son `ownerId`, ses comptes, ses réseaux et les enveloppes chiffrées. La liste publique de l’API ne renvoie jamais les secrets.
+Le registre d’actifs impose les compatibilités réseau.
 
-<details><summary><b>➕ En savoir plus — dérivation EVM</b></summary>
+---
 
-`Bank/Core/evm_wallet.js` gère l’identité EVM avec secp256k1 et Keccak-256. `Bank/Core/multichain_wallet.js` orchestre les familles : EVM, Bitcoin et Solana. Le code reste sans dépendance npm afin de limiter mémoire, surface de dépendances et coût de déploiement sur le runtime Node.js du projet.
+## 🟦 EVM / ERC20
 
-</details>
+**🟢 En simple : Ethereum et les réseaux EVM peuvent envoyer la monnaie native ou un token ERC20 résolu.**
 
-### Retirer un wallet
+Réseaux : Ethereum, Arbitrum, Polygon, BNB Chain, Base.
 
-**Retirer n’est pas détruire.** Quand l’utilisateur retire un wallet, IA-TB le marque comme archivé et le masque de l’interface active. La paire de clés et les données chiffrées ne sont pas supprimées. Cette distinction évite de présenter une suppression d’interface comme une destruction blockchain : une adresse blockchain continue naturellement d’exister.
+Le module utilise `ethers` pour :
+- lire le solde ;
+- estimer les frais ;
+- signer ;
+- soumettre ;
+- attendre la confirmation prévue par le module.
 
-## 3. Affichage de la clé privée
+---
 
-Les clés publiques peuvent être consultées par famille blockchain. Pour un wallet multi-réseaux, l’utilisateur choisit d’abord **EVM**, **Bitcoin** ou **Solana** avant de récupérer le secret correspondant. La **clé privée / donnée de récupération** suit un parcours plus strict :
+## 🟠 Bitcoin
+
+**🟢 En simple : le réseau Bitcoin accepte actuellement uniquement BTC.**
+
+Le module :
+- utilise un endpoint Esplora compatible ;
+- récupère les UTXO ;
+- estime les frais ;
+- sélectionne les UTXO ;
+- construit une transaction ;
+- signe localement les wallets source P2PKH actuels ;
+- diffuse la transaction.
+
+Les destinations P2PKH/P2SH/SegWit compatibles sont reconnues pour la construction de sortie.
+
+**Limite actuelle :** le signer source est conçu pour les wallets P2PKH générés par IA-TB. Le statut après broadcast est `SUBMITTED`, pas une fausse confirmation.
+
+---
+
+## 🟣 Solana
+
+**🟢 En simple : le réseau Solana accepte actuellement uniquement SOL natif.**
+
+Le module :
+- récupère le blockhash ;
+- construit un transfert System Program ;
+- demande les frais réels avec `getFeeForMessage` ;
+- contrôle le solde ;
+- signe en Ed25519 ;
+- envoie avec `sendTransaction`.
+
+Les tokens SPL ne sont pas encore activés.
+
+Le statut après soumission est `SUBMITTED`.
+
+---
+
+## ✅ Allowlist
+
+**🟢 En simple : sélectionner un token dans CoinGecko ne signifie pas qu’il est automatiquement transférable sur n’importe quel réseau.**
+
+Règles :
+- Bitcoin → BTC uniquement ;
+- Solana → SOL uniquement ;
+- EVM → native + ERC20 lorsque le contrat réseau est résolu.
+
+Le backend applique la règle même si l’UI est contournée.
+
+---
+
+# 🔄 Swap & Bridge
+
+## 🌉 Fonctionnement
+
+**🟢 En simple : Swap/Bridge est aujourd’hui un module EVM distinct des transferts BTC/SOL. Il demande plusieurs routes à 0x Cross-Chain, vérifie les soldes/frais, puis signe côté Banque.**
+
+Réseaux actuels :
+- Ethereum ;
+- Arbitrum ;
+- Polygon ;
+- BNB Chain ;
+- Base.
+
+Provider : **0x Cross-Chain**.
+
+Le service :
+1. construit le contexte wallet/réseaux/tokens ;
+2. demande les quotes ;
+3. calcule/range les routes ;
+4. vérifie balance token et gas ;
+5. prépare allowance si nécessaire ;
+6. signe avec le secret du Wallet Service ;
+7. soumet l’origine ;
+8. attend une confirmation d’origine ;
+9. suit le statut cross-chain.
+
+Une commission IA-TB de **1 % / 100 bps** est actuellement intégrée au service et nécessite un fee recipient configuré.
+
+---
+
+## 👁️ OnChain Reader
+
+**🟢 En simple : la Banque possède aussi un lecteur blockchain READ_ONLY, mais sa couverture actuelle est principalement EVM.**
+
+Fonctions actuelles :
+- identité wallet ;
+- solde natif EVM ;
+- transaction count ;
+- latest block ;
+- transaction par hash ;
+- receipt ;
+- historique local IA-TB des transferts/swap.
+
+Limite : un RPC EVM standard ne donne pas efficacement tout l’historique d’une adresse ; un indexer externe serait nécessaire pour un historique complet.
+
+---
+
+## 🏦 Vaults, Pools, Loans
+
+**🟢 En simple : toutes les cartes affichées dans Banque ne représentent pas forcément un service financier déjà exécutable.**
+
+- Wallets / Keys : fonctions réelles intégrées ;
+- Transferts : EVM/BTC/SOL intégrés, confirmation BTC/SOL à compléter ;
+- Swap/Bridge : EVM intégré, configuration RPC/0x requise ;
+- Vault registry : infrastructure présente ;
+- Pools / Earn / Loans : plusieurs blocs restent **prévu / conception / placeholder**.
+
+Le Wiki doit continuer à distinguer l’interface préparée du service réellement exécutable.
+
+---
+
+## 🔐 Principe de sécurité
+
+**🟢 En simple : l’IA peut demander une action, mais elle ne doit jamais recevoir la clé privée du wallet.**
 
 ```text
-Utilisateur
-   ↓
-« Clé privée »
-   ↓
-Notification MOYENNE de sécurité
-   ↓
-Disclaimer + risque + confirmation explicite
-   ↓
-Choix de la famille (EVM / Bitcoin / Solana)
-   ↓
-API /api/security/wallets/reveal
-   ↓
-Déchiffrement temporaire de cette famille uniquement
-   ↓
-Affichage limité dans une box sensible
+Demande utilisateur / service
+   → Wallet Service
+   → contrôle mot de passe / confirmation
+   → déchiffrement local ciblé
+   → signature
+   → secret effacé de la variable
+   → soumission réseau
 ```
 
-Le serveur journalise l’événement de révélation et ajoute une notification de sécurité. La clé privée n’est pas incluse dans l’historique de notifications.
-
-## 4. Système de notifications
-
-IA-TB dispose désormais de trois formats visuels réutilisables :
-
-| Format | Usage | Capacité indicative |
-|---|---|---|
-| **Petit** | confirmation, succès, information courte | environ 4 lignes de 50 caractères |
-| **Moyen** | avertissement, disclaimer, action sensible | texte + image éventuelle + boutons |
-| **Grand** | procédure ou information riche | contenu long + image + plusieurs actions |
-
-Les notifications ont un rendu sombre/futuriste légèrement transparent. Elles peuvent recevoir du texte, une image et des boutons d’action. **La récupération d’une clé privée utilise le format Moyen.**
-
-## 5. Transferts
-
-La Banque doit proposer deux chemins :
-
-- **wallet interne → wallet interne** : transfert direct si les deux wallets utilisent un réseau compatible ;
-- **wallet interne → adresse externe** : transfert vers une adresse saisie/validée par l’utilisateur.
-
-> **État V2.0 DEBUG :** l’interface de transfert interne existe, mais l’exécution blockchain signée n’est pas encore raccordée. Le futur Signer/Wallet Service devra construire, vérifier, signer et diffuser la transaction sans exposer la clé privée au Supervisor.
-
-## 6. Swap et Bridge
-
-**Swap** échange rapidement un token contre un autre. **Bridge** transfère une valeur entre deux réseaux. La page Swap & Bridge choisit d’abord le **wallet logique** source et le wallet de réception. Le réseau source et le réseau destination sont ensuite sélectionnés parmi les comptes/réseaux réellement disponibles dans ces wallets. Un bridge peut ainsi effectuer `Wallet Principal / Ethereum → Wallet Principal / Arbitrum`, ou utiliser deux wallets IA-TB différents. Le moteur doit ensuite comparer plusieurs routes/providers avant signature.
-
-La règle d’architecture est :
-
-```text
-Wallet source
-  → Quote / Route
-  → Risk checks
-  → Wallet Service
-  → Signer interne
-  → Réseau blockchain
-  → Tracker
-  → Wallet destination
-```
-
-La clé privée ne doit jamais être transmise à un provider de Swap/Bridge.
-
-## 7. Services bancaires prévus
-
-La Banque est conçue pour concentrer progressivement des services comparables à ceux d’un établissement financier, adaptés aux crypto-actifs :
-
-- **Dépôt / prêt** — prévu ;
-- **Pools** — prévu/en cours de conception ;
-- **Vault Strategies** — infrastructure de Vault déjà amorcée, exécution on-chain complète à valider ;
-- comptabilité et historique consolidés ;
-- intégration future avec le Supervisor sous permissions strictes.
-
-## 8. Principe de sécurité
-
-**Le Supervisor demande une action ; il ne récupère pas la clé privée.** Les secrets restent dans le Wallet Service/Signer. Une révélation manuelle est une action utilisateur distincte, volontaire, confirmée et journalisée.
-
-La Banque simplifie l’expérience mais ne doit jamais masquer la différence entre :
-1. posséder une clé ;
-2. afficher une clé ;
-3. signer une transaction ;
-4. diffuser une transaction ;
-5. archiver un wallet dans l’interface.
-
-Ces étapes restent séparées afin que l’interface reste simple sans affaiblir le modèle de sécurité.
-
-
-## 9. Modèle de données multi-réseaux et montée en charge
-
-Le modèle sépare volontairement **l’identité utilisateur**, le **wallet logique**, les **comptes cryptographiques**, les **réseaux** et, à terme, les **actifs**. Cette séparation évite de dupliquer un wallet entier pour chaque blockchain et permet d’ajouter un réseau sans casser les wallets existants.
-
-```text
-User / ownerId
-  └── Wallet logique
-       ├── Account EVM ──► plusieurs réseaux EVM
-       ├── Account Bitcoin ──► Bitcoin
-       └── Account Solana ──► Solana
-            └── Actifs / soldes / transactions (indexation future)
-```
-
-Les anciens wallets mono-réseau restent lisibles comme `LEGACY_SINGLE_CHAIN` : ils ne sont pas transformés silencieusement et leurs clés ne sont pas remplacées. Les nouveaux wallets sont marqués `MULTICHAIN` avec `schemaVersion: 2`. Cette compatibilité est importante pour les migrations futures.
-
-### Règles de performance
-
-- les secrets ne sont pas déchiffrés pour afficher une liste de wallets ;
-- la liste publique ne transporte que métadonnées, adresses et clés publiques ;
-- un secret n’est déchiffré qu’à la demande explicite de récupération/signature ;
-- un seul compte EVM représente plusieurs réseaux EVM, ce qui évite les duplications inutiles ;
-- le registre de réseaux est centralisé afin que l’ajout futur d’une chaîne soit indépendant de l’UI ;
-- les historiques, soldes et tokens devront être indexés séparément des secrets pour permettre cache, pagination et synchronisation asynchrone.
-
-> **Limite actuelle V2.0 DEBUG :** la structure multi-réseaux, la génération locale et le stockage chiffré sont intégrés. L’indexation live des soldes/tokens, le Signer de transactions et les adapters RPC Bitcoin/Solana/EVM restent à raccorder avant toute utilisation avec des fonds réels.
+La révélation manuelle d’une clé est une fonction distincte de la signature d’une transaction.
