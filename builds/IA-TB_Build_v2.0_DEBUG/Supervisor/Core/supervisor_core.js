@@ -4,6 +4,10 @@ function SupervisorCore(root){this.root=root;this.startedAt=Date.now();this.sett
 SupervisorCore.prototype.reload=function(){this.llmConfig=this.settings.llm();this.llm=new LLMManager(this.llmConfig);this.extensions.reload();return this.status();};
 SupervisorCore.prototype.status=function(){return{schema:'supervisor.status/1.0',mode:'ORCHESTRATOR',execution:'INTENTION_ONLY',uptimeSec:Math.round((Date.now()-this.startedAt)/1000),llm:this.llm.status(),autonomousTrading:this.settings.autonomous(),extensions:this.extensions.snapshot(),reasoningCount:this.reasoningCount,lastReasoning:this.lastReasoning,lastContext:this.lastContext,settingsStorage:this.settings.status()};};
 SupervisorCore.prototype.listIndicators=function(){return this.cp.request('indicator','indicator.list_indicators',{},'analysis');};
+SupervisorCore.prototype.indicatorLanguage=function(){return this.cp.request('indicator','indicator.language.info',{},'analysis');};
+SupervisorCore.prototype.validateIndicator=function(source){return this.cp.request('indicator','indicator.language.validate',{source:String(source||'')},'analysis');};
+SupervisorCore.prototype.createIndicator=function(a){a=a||{};var source=String(a.source||'');if(!source.trim())return Promise.reject(new Error('INDICATOR_SOURCE_REQUIRED'));var self=this;return this.validateIndicator(source).then(function(v){if(v&&v.ok===false)throw new Error((v.errors||[]).join(' | ')||'INDICATOR_INVALID');return self.cp.request('indicator','indicator.language.create',{source:source,overwrite:a.overwrite===true},'analysis');});};
+
 SupervisorCore.prototype.indicatorDefinition=function(id){return this.cp.request('indicator','indicator.definition.get',{id:String(id||'')},'analysis');};
 SupervisorCore.prototype.computeIndicators=function(a){
  a=a||{};var requests=Array.isArray(a.requests)?a.requests.slice(0,32):[];
