@@ -1,87 +1,202 @@
-# Market Data
+# 📡 Market Data Collector V2.0
 
-Le Market Data Engine fournit aux autres modules les données de marché normalisées tout en conservant leur provenance. La v1.7.9 étend ce rôle avec des sources complémentaires, un Collector multi-source et une source virtuelle de consensus `ƒx`.
+> **🟢 En simple : Market Data est la porte d’entrée unique des données financières d’IA-TB. Il récupère les prix/bougies des marchés et les données CeFi/DeFi, garde la provenance, fait contrôler les données par le Firewall puis les distribue aux autres moteurs.**
 
-## Principes
+Le service actuel écoute sur **8013** et annonce la version **2.0.0**.
 
-- aucune source ne remplace silencieusement une autre ;
-- les symboles peuvent être normalisés, mais la provenance originale reste attachée aux données ;
-- aucun volume absent n'est fabriqué ;
-- les données complémentaires ne deviennent pas artificiellement des OHLCV d'exchange ;
-- le cache reste borné et séparé par provider / symbole / timeframe.
+---
 
-## Types de providers
+## 🧭 Qui fournit quoi ?
 
-IA-TB distingue les providers API et les providers `SOCKET`. Depuis la v1.7.8, `SOCKET` désigne un provider utilisant un flux WebSocket persistant pour les mises à jour temps réel ; une API HTTP peut rester utilisée pour l'historique ou les métadonnées.
+**🟢 En simple : les providers se complètent. CoinGecko n’est pas utilisé pour remplacer DeFiLlama, et DeFiLlama n’est pas utilisé pour inventer des chandeliers d’exchange.**
 
-Hyperliquid est le premier provider `SOCKET` intégré.
+| Provider | Rôle de référence V2.0 |
+|---|---|
+| 🐙 Kraken | OHLCV / volume natif |
+| 🟡 Binance | OHLCV / volume natif |
+| ⚫ OKX | OHLCV / volume natif |
+| 🔵 GMX | prix Oracle / chandeliers, volume absent laissé absent |
+| 🦎 CoinGecko | marché token, registre d’actifs, marché global, échantillon exchanges |
+| 🦙 DeFiLlama | TVL, protocoles, chaînes, DEX, stablecoins |
+| ⛓️ On-chain RPC | lecture générique EVM, jamais signature/envoi |
 
-## Sources v1.7.9
+Le registre Candle actuel choisit explicitement parmi **KRAKEN / GMX / BINANCE / OKX**.
 
-### CoinGecko — API
+---
 
-CoinGecko est une source complémentaire `COINGECKO`. Sa provenance reste explicite et séparée des données natives CEX/DEX. L'application ne transforme pas une donnée CoinGecko en volume d'exchange lorsqu'un tel volume n'existe pas.
+## 🦎 CoinGecko vs 🦙 DeFiLlama
 
-L'état du provider expose notamment la dernière réussite, la dernière erreur et l'état d'authentification. La clé API éventuelle est configurée dans `Settings > API`, stockée par le coffre existant et transmise au service Market Data uniquement en mémoire.
+**🟢 En simple : CoinGecko décrit surtout les tokens et le marché crypto global ; DeFiLlama décrit surtout l’activité DeFi. Cette séparation empêche de compter deux fois la même idée avec deux sources différentes.**
 
-### Blockchain.com — API
+Le Collector déclare aujourd’hui la propriété suivante :
+- `token_market → COINGECKO`
+- `defi_protocol → DEFILLAMA`
+- `dex_market → DEFILLAMA`
+- `stablecoin_defi → DEFILLAMA`
 
-Le provider `BLOCKCHAIN` utilise actuellement le flux public Blockchain.com Exchange, notamment le canal WebSocket `prices`. Les OHLCV et volumes reçus restent natifs, les timeframes non supportés sont refusés plutôt qu'approximés et la provenance `BLOCKCHAIN.COM` est conservée.
+CoinGecko alimente notamment :
+- market cap global ;
+- volume global/samples ;
+- dominance BTC ;
+- actifs principaux ;
+- exchanges et volumes échantillonnés ;
+- Market Registry.
 
-La v1.7.9 prévoit encore de recentrer cette source sur son rôle Bitcoin / on-chain afin d'éviter un doublon inutile avec les sources Exchange.
+DeFiLlama alimente notamment :
+- TVL protocoles ;
+- TVL chaînes ;
+- volumes DEX ;
+- capitalisation stablecoins ;
+- classements protocoles/catégories.
 
-### DefiLlama — API
+Les limitations sont conservées dans le snapshot au lieu d’être masquées.
 
-`DEFILLAMA` est une source analytique complémentaire et déclare `candleCapable:false`. Elle ne doit donc jamais remplacer silencieusement les chandeliers CEX/DEX.
+---
 
-Les familles de données intégrées couvrent : TVL protocoles et chaînes, prix tokens actuels/historiques/chart/variations, stablecoins, pools de rendement et historiques APY/TVL, volumes DEX et options, open interest, fees et revenue. La provenance est `DEFILLAMA_PUBLIC_API`.
+## 🧱 Validation par Data Firewall
 
-## Hyperliquid / SOCKET
+**🟢 En simple : une réponse API n’est pas automatiquement considérée comme fiable parce qu’elle vient d’un provider connu.**
 
-Le provider Hyperliquid charge l'historique OHLCV via `candleSnapshot`, maintient les chandeliers avec l'abonnement WebSocket `candle` et dispose également des abonnements `trades` et `l2Book`. Les volumes natifs Hyperliquid sont conservés avec leur provenance et le cache provider est borné.
+Avant stockage du snapshot financier, CoinGecko et DeFiLlama sont envoyés au Firewall via `/api/data/inspect`.
 
-## Market Data Collector
+Le Data Firewall vérifie notamment :
+- provider autorisé ;
+- type de donnée autorisé ;
+- provenance ;
+- timestamp / fraîcheur ;
+- schéma OHLC lorsque pertinent ;
+- prix positifs ;
+- bid/ask et spread ;
+- doublons ;
+- taille du payload.
 
-Le Collector v1.7.9 rend les sources de prix explicites. Kraken fournit OHLCV et prix live. GMX fournit OHLC et prix Oracle ; aucun volume GMX absent n'est fabriqué.
+Une forte variation de prix peut produire un warning sans supprimer arbitrairement un vrai mouvement de marché.
 
-### Prix consensus
+---
 
-`GET /price/consensus` calcule un prix consensus à partir des sources valides, Kraken et GMX étant les sources par défaut actuelles. Le résultat conserve les prix individuels, leur provenance, le nombre de sources et le spread entre sources.
+## 💾 Cache et historique
 
-Le calcul utilise la moyenne des sources valides. À partir de trois sources, un filtre d'outliers autour de la médiane permet d'écarter une valeur incohérente avant le consensus.
+**🟢 En simple : les données récentes restent en mémoire pour être rapides, tandis qu’un historique financier léger est conservé sur disque pour les graphiques et analyses.**
 
-## Source virtuelle ƒx / consensus OHLCV
+Réglages par défaut actuels :
+- refresh chandeliers : **15 s** ;
+- cache Market Data : **48 entrées** ;
+- TTL cache : **20 s** ;
+- refresh financier : **60 s** ;
+- TTL CeFi : **45 s** ;
+- TTL DeFi : **90 s** ;
+- persistance financière : environ **15 min** ;
+- rétention : environ **30 jours** ;
+- maximum historique : **1600 snapshots**.
 
-La source virtuelle `FX`, affichée `ƒx Consensus`, est calculée directement dans le Collector et n'ajoute aucun service réseau.
+Le Financial Store fonctionne en mode **HYBRID_MEMORY_JSONL** dans les données utilisateur hors dépôt Git.
 
-`GET /candles/consensus` produit les bougies synthétiques à la demande :
+---
 
-- Open, High, Low et Close = moyenne arithmétique des bougies sources valides et alignées ;
-- Volume = somme des volumes natifs comparables réellement disponibles ;
-- correspondance stricte de la paire canonique ;
-- alignement des timestamps par bucket de timeframe ;
-- conservation des sources prix, sources volume, volumes par source, sources exclues et motifs d'exclusion.
+## 📦 Snapshot financier V2
 
-Le proxy Core `GET /api/market/fx-klines` permet au navigateur de rester sur le canal local existant. Le rafraîchissement `ƒx` est léger, à 15 secondes, sans historique consensus supplémentaire conservé en mémoire.
+**🟢 En simple : Market Data fabrique un paquet cohérent qui réunit une partie CeFi et une partie DeFi, avec date, fraîcheur, qualité et provenance.**
 
-## Catalogue des commandes
+Schéma courant : `iatb.financial.snapshot/2.0`.
 
-Le catalogue central couvre GMX, Kraken/Reference, Hyperliquid, CoinGecko, Blockchain.com et DefiLlama, tout en signalant les connecteurs historiques Binance/Coinbase/OKX.
+```mermaid
+flowchart LR
+  CG[CoinGecko] --> C[CeFi / Token Market]
+  DL[DeFiLlama] --> D[DeFi]
+  C --> F[Data Firewall]
+  D --> F
+  F --> Q[Quality Check]
+  Q --> S[(Financial Store)]
+  S --> R[Router CP/1]
+```
 
-Les états de capacité sont :
+Le snapshot n’invente pas :
+- d’Open Interest si aucun provider dérivés n’est branché ;
+- de liquidations si aucun provider approprié n’est branché ;
+- de volume GMX absent ;
+- de volume bridge non connecté.
 
-- `IMPLEMENTED` : commande branchée dans le runtime courant ;
-- `LEGACY_IMPLEMENTED` : fonction disponible dans une intégration historique ;
-- `UPSTREAM_AVAILABLE` : possibilité connue côté fournisseur mais non branchée ici.
+---
 
-`GET /capabilities` expose le catalogue complet, `GET /capabilities?provider=...` le filtre par provider et `POST /command` exécute les commandes analytiques génériques actuellement branchées. Les opérations privées de compte, trading et retrait restent hors de ce catalogue Market Data.
+## 🤖 Consommateurs
 
-La référence technique détaillée des commandes v1.7.9 se trouve dans `Update/v1.7.9/MarketData/API_COMMANDS.md`.
+**🟢 En simple : une fois validées, les mêmes données peuvent être réutilisées par plusieurs moteurs sans rappeler CoinGecko ou DeFiLlama chacun de leur côté.**
 
-## Diagnostic et cache
+Le service déclare comme consommateurs :
+- Liquidity ;
+- Indicator ;
+- Strategy ;
+- Portfolio ;
+- Supervisor ;
+- Chat IA en lecture ;
+- Statistiques UI.
 
-Les endpoints `/providers`, `/health`, `/active`, `/refresh` et `/cache/clear` permettent de suivre l'état des providers et des contextes actifs. Les historiques importants restent chargés à la demande afin de limiter l'empreinte mémoire.
+Les accès IA sont **READ_ONLY**.
 
-## Validation restante v1.7.9
+---
 
-Les providers CoinGecko, Blockchain.com et DefiLlama ainsi que Kraken/GMX et `ƒx` doivent encore être validés end-to-end sur la machine cible. La documentation décrit l'état fonctionnel actuel sans transformer ces validations restantes en succès acquis.
+## 📐 Indicator + données financières
+
+**🟢 En simple : Indicator Engine peut maintenant calculer des métriques sur les séries financières persistées, pas seulement sur des chandeliers.**
+
+Les commandes dédiées permettent :
+- obtenir le contexte financier ;
+- extraire une série numérique ;
+- calculer variation, min/max, moyenne, SMA et EMA.
+
+---
+
+## 💧 Liquidity + données financières
+
+**🟢 En simple : Liquidity peut enrichir son analyse avec le contexte financier centralisé au lieu de créer son propre connecteur DeFi parallèle.**
+
+La commande `liquidity.financial` lit les données via Router/Market Data.
+
+---
+
+## 🧾 Principales commandes CP/1
+
+**🟢 En simple : le Router expose des commandes de lecture standard plutôt que de laisser les autres moteurs connaître l’implémentation interne du Collector.**
+
+- `marketdata.health`
+- `marketdata.audit`
+- `marketdata.candles`
+- `marketdata.providers`
+- `marketdata.registry.*`
+- `marketdata.financial.capabilities`
+- `marketdata.financial.snapshot`
+- `marketdata.financial.history`
+- `marketdata.financial.ai_context`
+- `marketdata.financial.storage`
+- `marketdata.financial.refresh`
+
+---
+
+## 📊 Page Statistiques
+
+**🟢 En simple : les graphiques CeFi/DeFi de Statistiques utilisent désormais les snapshots du Market Data Collector.**
+
+La page appelle `marketdata.financial.snapshot` et les historiques CeFi/DeFi via le canal UI READ_ONLY, avec un rafraîchissement d’environ 60 secondes.
+
+Attention : certaines petites cartes décoratives de disponibilité/latence restent encore des valeurs de présentation tant qu’aucune métrique runtime équivalente n’est fournie.
+
+---
+
+## ⚠️ Anciennes fonctions / documentation historique
+
+**🟢 En simple : l’ancien Wiki parlait beaucoup d’Hyperliquid et de la source virtuelle ƒx. Ce n’est pas le chemin principal du Market Data Collector V2.0 actuellement chargé.**
+
+Les anciens développements restent utiles dans l’historique Git, mais la documentation V2.0 considère comme pipeline canonique le registre actuel **Kraken / GMX / Binance / OKX + CoinGecko + DeFiLlama**.
+
+---
+
+## ✅ Règles obligatoires
+
+**🟢 En simple : ne jamais mélanger silencieusement des marchés différents et ne jamais fabriquer une donnée manquante.**
+
+- provenance conservée ;
+- paire et timeframe validés ;
+- volumes natifs seulement lorsqu’ils existent ;
+- CoinGecko et DeFiLlama ont des rôles complémentaires ;
+- données financières contrôlées avant stockage ;
+- cache borné pour rester adapté à la machine cible.
