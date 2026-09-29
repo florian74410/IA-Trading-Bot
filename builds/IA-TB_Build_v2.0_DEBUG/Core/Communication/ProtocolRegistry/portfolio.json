@@ -136,6 +136,34 @@
             "limit"
           ]
         }
+      },
+      {
+        "name": "portfolio.position.health",
+        "arguments": {
+          "allowed": [
+            "tradeId",
+            "walletId",
+            "symbol",
+            "exchange"
+          ]
+        }
+      },
+      {
+        "name": "portfolio.trades",
+        "arguments": {
+          "allowed": [
+            "limit"
+          ]
+        }
+      },
+      {
+        "name": "portfolio.trade.detail",
+        "arguments": {
+          "allowed": [
+            "tradeId",
+            "id"
+          ]
+        }
       }
     ],
     "dataTypes": [
@@ -158,6 +186,14 @@
       {
         "name": "canon.ai.usage",
         "direction": "CONSUME"
+      },
+      {
+        "name": "portfolio.position.health",
+        "direction": "PRODUCE"
+      },
+      {
+        "name": "portfolio.trade",
+        "direction": "PRODUCE"
       }
     ],
     "events": []
