@@ -32,6 +32,9 @@ var UI_READ_ACTIONS={
  'strategy.stats':1,
  'strategy.state':1,
  'portfolio.positions':1,
+ 'portfolio.position.health':1,
+ 'portfolio.trades':1,
+ 'portfolio.trade.detail':1,
  'portfolio.statistics':1,
  'portfolio.history':1,
  'portfolio.events':1,
@@ -48,7 +51,7 @@ function communicationUiRead(req,res){
   var target=String(b.target||'').toLowerCase(),action=String(b.action||'');
   if(!UI_READ_ACTIONS[action]||(['strategy','marketdata','portfolio'].indexOf(target)<0))return sendJson(res,403,{ok:false,error:'UI_WRITE_DENY',caller:{type:'UI',role:'READ_ONLY'}});
   var args=b.arguments&&typeof b.arguments==='object'&&!Array.isArray(b.arguments)?b.arguments:{};
-  if((target==='strategy'||target==='portfolio')&&Object.keys(args).length)return sendJson(res,403,{ok:false,error:'UI_ARGUMENTS_DENY',caller:{type:'UI',role:'READ_ONLY'}});
+  if(target==='strategy'&&Object.keys(args).length)return sendJson(res,403,{ok:false,error:'UI_ARGUMENTS_DENY',caller:{type:'UI',role:'READ_ONLY'}});if(target==='portfolio'){var pa={'portfolio.positions':{},'portfolio.statistics':{},'portfolio.position.health':{tradeId:1,walletId:1,symbol:1,exchange:1},'portfolio.trades':{limit:1},'portfolio.trade.detail':{tradeId:1,id:1},'portfolio.history':{range:1},'portfolio.events':{limit:1,since:1}}[action]||{},pks=Object.keys(args);for(var pi=0;pi<pks.length;pi++)if(!pa[pks[pi]])return sendJson(res,403,{ok:false,error:'UI_ARGUMENTS_DENY',caller:{type:'UI',role:'READ_ONLY'}});}
   var q=CP.makeRequest(target,action,args,'summary');q.caller={type:'UI',role:'READ_ONLY'};
   COMM.route(q,function(er,o){if(er)return sendJson(res,400,{ok:false,error:er.message,protocol:CP.PROTOCOL,caller:{type:'UI',role:'READ_ONLY'}});sendJson(res,200,o);});
  });
