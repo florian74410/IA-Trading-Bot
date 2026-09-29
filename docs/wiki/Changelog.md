@@ -15,8 +15,18 @@
 - Process Registry par manifests ;
 - 14 services attendus au démarrage.
 
+### 💧 Liquidity / Market Data V2.1
+- Liquidity Engine V2.0 devient **INTERNAL_ANALYSIS_ONLY** ;
+- suppression des appels Internet actifs depuis Liquidity ;
+- migration Binance Futures / Hyperliquid / Kraken L2 vers Market Data ;
+- validation Data Firewall avant cache/SQL ;
+- historique microstructure SQLite, rétention 30–90 jours ;
+- calculs depth ±10/25/50/100 bps, execution impact, Liquidity Score et OI/depth ;
+- ajout `liquidity.raw`, `liquidity.history` et `liquidity.context` ;
+- Supervisor consomme le contexte Liquidity compact via CP/1.
+
 ### 📡 Market Data
-- Market Data Collector V2.0 ;
+- Market Data Collector V2.1 ;
 - Candle registry : Kraken, Binance, OKX, GMX ;
 - CoinGecko = token market / Market Registry / CeFi ;
 - DeFiLlama = DeFi protocols / chains / DEX / stablecoins ;
