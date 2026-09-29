@@ -542,3 +542,28 @@ html{scroll-padding-top:82px}
  content:"";position:absolute;inset:0;border-radius:50%;
  border:1px dashed #2b586c;opacity:.75
 }
+
+
+/* Expandable DEX/CEX + Oracles/Bridges rows */
+.statsGridMid{align-items:start}
+.platformPanel,.oraclePanel{height:auto;transition:min-height .18s ease,box-shadow .18s ease}
+.platformCards,.oracleCards{align-items:stretch}
+.platformCards.expanded{grid-template-columns:repeat(5,minmax(0,1fr))}
+.oracleCards.expanded{grid-template-columns:repeat(4,minmax(0,1fr))}
+.platformCards.expanded .extendedCard,
+.oracleCards.expanded .extendedCard{animation:statsCardReveal .18s ease both}
+.platformCard.extendedCard,.oracleCard.extendedCard{border-color:#1a6385;background:linear-gradient(180deg,#08202f,#06151f)}
+.uptimeRing.unavailable{background:#153646}
+.uptimeRing.unavailable:after{background:#071926}
+.uptimeRing.unavailable span{color:#6f91a2}
+.ghostLink[aria-expanded="true"]{border-color:#24a4d3;background:#0a2b3f;color:#d9f7ff}
+@keyframes statsCardReveal{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
+
+@media(min-width:1181px){
+ .platformPanel:has(.platformCards.expanded),
+ .oraclePanel:has(.oracleCards.expanded){min-height:286px}
+}
+@media(max-width:1180px){
+ .platformCards.expanded{grid-template-columns:repeat(5,minmax(118px,1fr));overflow-x:auto}
+ .oracleCards.expanded{grid-template-columns:repeat(4,minmax(130px,1fr));overflow-x:auto}
+}
