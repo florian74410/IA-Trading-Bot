@@ -49,7 +49,6 @@ function markup(){
  '</nav>';
 }
 function mount(){
- if(location.pathname.indexOf('/admin')===0)return;
  if(document.getElementById('iatb-global-side'))return;
  var a=document.createElement('aside');a.id='iatb-global-side';a.innerHTML=markup();
  var spacer=document.getElementById('iatb-global-nav-spacer');
