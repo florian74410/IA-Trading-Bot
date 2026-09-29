@@ -201,7 +201,8 @@ function build(){
   var close=right.querySelector('.iatbSideHead button');if(close)close.onclick=function(){right.classList.toggle('iatbSideCollapsed')};bindExchangeSwitches(right);
   sync();loadStrategies();health();volume24h();loadTradingModules();
   setInterval(sync,1800);setInterval(loadStrategies,15000);setInterval(health,5000);setInterval(volume24h,30000);setInterval(loadTradingModules,3000);
-  setTimeout(function(){try{window.dispatchEvent(new Event('resize'))}catch(e){}},120);
+  setTimeout(function(){try{window.dispatchEvent(new Event('resize'));var h=byId('iaChartHost');if(h)h.dispatchEvent(new Event('ia-tb:chart-resize'))}catch(e){}},120);
+  setTimeout(function(){try{var h2=byId('iaChartHost');if(h2)h2.dispatchEvent(new Event('ia-tb:chart-resize'))}catch(e){}},420);
 }
 
 function loadStrategies(){
