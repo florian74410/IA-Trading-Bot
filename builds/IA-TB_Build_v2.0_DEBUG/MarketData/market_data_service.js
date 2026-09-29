@@ -28,7 +28,7 @@ function collectorAudit(){
  if(!settings.providers.DEFILLAMA.enabled)warnings.push('DEFILLAMA_DISABLED');
  if(fs.lastError)warnings.push('FINANCIAL_LAST_ERROR:'+fs.lastError);
  if(fs.quality&&fs.quality.ok===false)issues.push('FINANCIAL_QUALITY_REJECT');
- if(financialStore.get()&&!((fr.cefi&&fr.cefi.fresh)||(fr.defi&&fr.defi.fresh)))warnings.push('FINANCIAL_DATA_STALE');
+ if(financialStore.get()&&fr.fresh===false)warnings.push('FINANCIAL_DATA_STALE');
  if(registry.ready===false)issues.push('MARKET_REGISTRY_UNAVAILABLE');
  if(lastRegistryError)warnings.push('REGISTRY_LAST_ERROR:'+lastRegistryError);
  return{ok:issues.length===0,status:issues.length?'FAIL':warnings.length?'WARN':'PASS',schema:'marketdata.audit/2.0',collector:'MARKET_DATA',version:'2.0.0',checkedAt:Date.now(),issues:issues,warnings:warnings,providers:providers,cache:cache.stats(),registry:Object.assign(registry.status(),{lastError:lastRegistryError||null}),financial:{collector:fs,storage:st},routing:{firewallPort:financial.firewallPort,distribution:'ROUTER_CP1',consumerPath:'PROVIDERS -> MARKET_DATA -> FIREWALL -> ROUTER -> ENGINES'},ownership:financialCapabilities().ownership};
