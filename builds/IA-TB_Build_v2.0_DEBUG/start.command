@@ -311,6 +311,23 @@ status_wait "Indicator Engine" "127.0.0.1:$INDICATOR_PORT"
 IATB_INDICATOR_PORT="$INDICATOR_PORT" IATB_MARKET_DATA_PORT="$MARKET_DATA_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Indicators/Engine/indicator_service.js >> "$INDICATOR_LOG" 2>&1 &
 INDICATOR_PID=$!
 sleep "$STARTUP_SPACING"
+
+# Data Firewall must be online before any external Market Data is accepted.
+status_wait "Firewall" "127.0.0.1:$FIREWALL_PORT"
+IATB_FIREWALL_PORT="$FIREWALL_PORT" IATB_TRADING_FIREWALL_PORT="$FIREWALL_PORT" IATB_TRADING_ENGINE_PORT="$TRADING_ENGINE_PORT" IATB_MARKET_DATA_PORT="$MARKET_DATA_PORT" "$NODE_BIN" Core/Firewall/firewall_service.js >> "$FIREWALL_LOG" 2>&1 &
+FIREWALL_PID=$!
+fw_boot_ok=0
+for i in 1 2 3 4 5 6; do
+  body="$(http_get "http://127.0.0.1:$FIREWALL_PORT/health")"
+  echo "$body" | grep -q '"thread":1' && echo "$body" | grep -q '"thread":2' && { fw_boot_ok=1; break; }
+  sleep 1
+done
+if [ "$fw_boot_ok" -ne 1 ]; then
+  status_fail "Firewall" ":$FIREWALL_PORT"
+  cat "$FIREWALL_LOG" 2>/dev/null || true
+  cleanup; read -p "Appuie sur Entree pour fermer..."; exit 1
+fi
+sleep "$STARTUP_SPACING"
 status_wait "Market Data Collector" "127.0.0.1:$MARKET_DATA_PORT"
 
 KRAKEN_ADDON_PORT="$KRAKEN_PORT" IATB_MARKET_DATA_PORT="$MARKET_DATA_PORT" "$NODE_BIN" MarketData/market_data_service.js >> "$MARKET_DATA_LOG" 2>&1 &
@@ -339,11 +356,6 @@ status_wait "Trading Engine" "127.0.0.1:$TRADING_ENGINE_PORT"
 
 IATB_TRADING_ENGINE_PORT="$TRADING_ENGINE_PORT" ROUTER_PORT="$ROUTER_PORT" IATB_TRADING_LIVE="0" "$NODE_BIN" services/trading-engine/trading_service.js >> "$TRADING_LOG" 2>&1 &
 TRADING_ENGINE_PID=$!
-sleep "$STARTUP_SPACING"
-status_wait "Firewall" "127.0.0.1:$FIREWALL_PORT"
-
-IATB_FIREWALL_PORT="$FIREWALL_PORT" IATB_TRADING_FIREWALL_PORT="$FIREWALL_PORT" IATB_TRADING_ENGINE_PORT="$TRADING_ENGINE_PORT" IATB_MARKET_DATA_PORT="$MARKET_DATA_PORT" "$NODE_BIN" Core/Firewall/firewall_service.js >> "$FIREWALL_LOG" 2>&1 &
-FIREWALL_PID=$!
 sleep "$STARTUP_SPACING"
 status_wait "Strategy Engine" "127.0.0.1:$STRATEGY_PORT"
 
