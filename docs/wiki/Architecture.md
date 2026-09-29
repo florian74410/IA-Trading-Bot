@@ -1,103 +1,266 @@
-# Architecture
+# 🏗️ Architecture IA-TB V2.0 DEBUG
 
-IA-TB suit une architecture modulaire. Depuis la v1.8.12, les communications backend inter-modules sont normalisées autour du **Communication Router + CP/1**. Le but est d'ajouter des Engines, services et CEX/DEX sans créer de dépendances directes entre leurs implémentations internes.
+> **🟢 En simple : IA-TB fonctionne comme une équipe de spécialistes. Market Data collecte, Indicator calcule, Fundamental renseigne, Strategy propose, Risk contrôle, Trading exécute, Portfolio mémorise et Supervisor orchestre. Le Router sert de standard téléphonique central.**
 
-<p align="center">
-  <img src="../../assets/architecture-overview.png" alt="IA-TB — Architecture fonctionnelle" width="100%" />
-</p>
+Cette page décrit l’architecture actuellement observable dans **V2.0 DEBUG**.
 
-> Version SVG : [`assets/architecture-overview.svg`](../../assets/architecture-overview.svg)
+---
 
-## Vue logique actuelle
+## 🧩 Architecture des processus
 
-```text
-Clients / Supervisor / Strategy / Console Admin
-                    |
-                    v
-             Protocol Registry
-                    |
-                    v
-           Communication Router
-      _________|_____|_____|_________
-     |         |     |     |         |
- Indicator  Trading Risk Portfolio Market Data
-                         |            |
-                    Liquidity    Fundamental
+**🟢 En simple : chaque gros composant possède son propre service local et son propre port. Une panne d’un moteur ne doit pas obliger à fusionner tout le système dans un seul processus.**
 
-Trading Engine <-> Trading Firewall <-> Exchanges
+```mermaid
+flowchart TB
+  subgraph Interface
+    UI[🖥️ UI Service<br/>8000]
+    CORE[🧩 Core Server<br/>8001]
+  end
+
+  R[🔀 Communication Router<br/>8021]
+
+  subgraph Analyse
+    MD[📡 Market Data<br/>8013]
+    IND[📐 Indicator<br/>8012]
+    LIQ[💧 Liquidity<br/>8014]
+    FUND[🧭 Fundamental<br/>8015]
+    STRAT[🧠 Strategy v2<br/>8018]
+    RISK[🛡️ Risk<br/>8019]
+    SUP[🤖 Supervisor<br/>3000]
+  end
+
+  subgraph Execution
+    FW[🔥 Firewall<br/>8017]
+    TR[⚡ Trading<br/>8016]
+    EX[🏦 Exchanges / DEX]
+  end
+
+  PORT[📊 Portfolio<br/>8020]
+  K[🐙 Kraken Add-On<br/>8011]
+
+  UI --> CORE
+  UI -->|READ_ONLY| R
+  R <--> MD
+  R <--> IND
+  R <--> LIQ
+  R <--> FUND
+  R <--> STRAT
+  R <--> RISK
+  R <--> SUP
+  R <--> PORT
+  K --> MD
+  MD --> FW
+  FW --> R
+  RISK --> FW
+  FW --> TR
+  TR --> EX
+  TR --> R
+  R --> PORT
 ```
 
-Le Router est le hub de communication central. Les échanges métier entre composants actifs passent par lui afin de limiter le couplage, appliquer les contrôles CP/1 et rendre les flux observables.
+---
 
-Voir la spécification détaillée : [Router Protocol / CP/1](Router-Protocol-CP1.md).
+## 🔀 Router + CP/1
 
-## Composants CP/1 actifs — v1.8.12
+**🟢 En simple : les Engines ne doivent pas s’appeler directement entre eux. Ils envoient une requête normalisée au Router, qui vérifie où elle peut aller.**
 
-- **Indicator Engine**
-- **Trading Engine**
-- **Risk Engine**
-- **Portfolio Engine**
-- **Market Data** — adapter CP/1 normalisé
-- **Liquidity Engine** — adapter CP/1 normalisé
-- **Fundamental Engine** — adapter CP/1 normalisé, `INFORMATION_ONLY`
+Le protocole interne est **CP/1**. Les requêtes contiennent notamment :
+- un `request_id` ;
+- un `timestamp` ;
+- une `target` ;
+- une `action` ;
+- des `arguments` ;
+- un niveau de détail.
 
-## Exceptions d'architecture
+Le Router maintient un registre statique/dynamique, route les requêtes, publie des événements et applique des contrôles d’accès. L’authentification interne utilise un token CP et des signatures HMAC pour les chemins qui l’exigent.
 
-### Trading Firewall
+Voir [Router Protocol / CP/1](Router-Protocol-CP1.md).
 
-Le **Trading Firewall** est un `SECURITY_BRIDGE` volontaire entre le Trading Engine et les Exchanges. Il n'est pas une cible métier Router directe. Son rôle est de sécuriser le canal d'exécution : authentification CP, signatures, âge du message, whitelist, protection anti-doublon et règles de sécurité associées.
+---
 
-### Strategy Engine
+## 📡 Pipeline Market Data
 
-Statut v1.8.12 : **RESERVED**. Le contrat est préparé mais aucun service runtime autonome correspondant n'est présent dans le build. Il ne doit donc pas être présenté comme fonctionnel.
+**🟢 En simple : toutes les données de marché ou financières doivent entrer par Market Data. CoinGecko et DeFiLlama ne sont plus des services parallèles qui alimentent les Engines chacun de leur côté.**
 
-### Supervisor IA
+```mermaid
+flowchart LR
+  K[Kraken] --> MDC[📡 Market Data Collector]
+  B[Binance] --> MDC
+  O[OKX] --> MDC
+  G[GMX] --> MDC
+  CG[CoinGecko] --> MDC
+  DL[DeFiLlama] --> MDC
+  MDC --> DF[🧱 Data Firewall]
+  DF --> STORE[(Cache + historique financier)]
+  STORE --> R[🔀 Router CP/1]
+  R --> I[Indicator]
+  R --> L[Liquidity]
+  R --> S[Strategy]
+  R --> P[Portfolio]
+  R --> A[Supervisor]
+  R --> ST[Statistiques UI]
+```
 
-Statut v1.8.12 : **RESERVED**. Le contrat est préparé mais aucun service runtime CP/1 autonome correspondant n'est présent dans le build. Il ne doit donc pas être présenté comme fonctionnel.
+CoinGecko est la référence du **marché token / registre d’actifs**. DeFiLlama est la référence des familles **DeFi protocol, DEX market et stablecoin DeFi**. Cette séparation évite les doublons inutiles.
 
-## Contrat de communication
+---
 
-Une requête CP/1 normalisée transporte notamment : `protocol`, `request_id`, `timestamp`, `target`, `action`, `detail`, `arguments`.
+## ⚡ Pipeline d’exécution Trading
 
-Une réponse CP/1 normalisée transporte notamment : `protocol`, `request_id`, `engine`, `action`, `status`, `schema`, `generated_at`, `duration_ms`, `data_hash`, `data`, `warnings`.
+**🟢 En simple : un ordre ne va jamais directement de l’IA à Binance/OKX/Kraken/GMX. Il doit obtenir une autorisation Risk, passer le Firewall, puis seulement être exécuté par Trading Engine.**
 
-Les sources de vérité de la v1.8.12 sont :
+```mermaid
+sequenceDiagram
+  participant S as Strategy/Supervisor
+  participant R as Router
+  participant K as Risk Gate
+  participant F as Trading Firewall
+  participant T as Trading Engine
+  participant X as Exchange
+  participant P as Portfolio
 
-- `Core/Communication/router_protocol_spec_v1.8.12.json` — source machine-readable ;
-- `Docs/Architecture/ROUTER_PROTOCOL_SPEC_v1.8.12.md` — documentation humaine du build.
+  S->>R: intention
+  R->>K: risk.gate.evaluate
+  K-->>S: risk_approval_id
+  S->>R: trading.execute + approval
+  R->>F: requête CP/1
+  F->>K: risk.gate.verify
+  K-->>F: approval valide
+  F->>T: forward signé
+  T->>X: ordre technique
+  X-->>T: résultat
+  T->>R: portfolio.event.record
+  R->>P: événement normalisé
+```
 
-## Séparation des responsabilités
+Le Trading Engine refuse une mutation qui n’a pas été forwardée par le Firewall. Le Firewall consomme/vérifie l’autorisation Risk avant transmission.
 
-- **Supervisor** : orchestration et décision de haut niveau lorsqu'un runtime autonome sera intégré.
-- **Strategy Engine** : production de stratégies/signaux lorsqu'un runtime autonome sera intégré.
-- **Risk Engine** : mesure et représentation analytique du risque ; il ne décide pas directement l'exécution.
-- **Trading Engine** : préparation/adaptation et exécution technique des ordres autorisés.
-- **Trading Firewall** : contrôle de sécurité du canal d'exécution.
-- **Market Data** : acquisition et normalisation des données de marché.
-- **Liquidity Engine** : analyse de liquidité et informations temps réel associées.
-- **Fundamental Engine** : informations et contexte uniquement (`INFORMATION_ONLY`).
-- **Portfolio Engine** : positions, événements, historique, PnL et états Portfolio.
-- **Indicator Engine** : calcul des indicateurs techniques.
-- **Exchange connector** : communication avec l'API CEX/DEX concernée.
+---
 
-## Principes obligatoires
+## 🤖 Supervisor et Strategy
 
-### Aucun Engine-to-Engine direct
+**🟢 En simple : Strategy produit des intentions et le Supervisor rassemble le contexte et peut demander un raisonnement IA. Aucun des deux ne signe ni n’envoie directement un ordre.**
 
-Un Engine ne doit pas dépendre directement de l'implémentation interne d'un autre Engine. Les échanges passent par le Router et les contrats CP/1 déclarés.
+### Strategy Engine v2
+- service actif sur `8018` ;
+- catalogue de stratégies ;
+- évaluation d’un contexte ;
+- agrégation de résultats ;
+- génération de `strategy.signal` ;
+- mode `RUNNING` / `PAUSED` ;
+- `INTENTION_ONLY`.
 
-### Registre et whitelist
+### IA Supervisor
+- service actif sur `3000` ;
+- collecte Market Data / Indicators / Fundamental / Liquidity / Portfolio / Strategy / Risk via CP/1 ;
+- LLM configurable ;
+- création/calcul d’indicateurs via Indicator Engine ;
+- demande possible d’une autorisation au Risk Gate ;
+- `INTENTION_ONLY`.
 
-Les capacités exposées doivent être déclarées dans les registres correspondants. Une commande absente ou non autorisée ne doit pas être simulée comme réussie.
+Le fichier de réglages V2.0 garde l’autonomous trading global sur **OFF** et le mode d’ordre sur **PREPARE_ONLY** par défaut.
 
-### Sécurité CP/1
+---
 
-Le protocole normalisé conserve : localhost, token CP partagé, HMAC-SHA256, whitelist Registry et protection anti-replay Router. Aucun shell, chemin système ou URL arbitraire ne doit être exposé par le protocole.
+## 🛡️ Risk Engine et Risk Gate
 
-### Faible couplage et machine cible
+**🟢 En simple : Risk possède deux responsabilités distinctes : analyser le danger d’une situation et produire/vérifier une autorisation cryptographiquement contrôlée pour une intention d’ordre.**
 
-L'application doit rester légère pour la machine cible : cache maîtrisé, mémoire limitée, traitement à la demande et flux temps réel raisonnables plutôt qu'un chargement historique massif au démarrage.
+Le Risk Engine calcule notamment le risque position/portfolio/stratégie. Il récupère son contexte via le Router.
 
-## QA v1.8.12
+Le **Risk Gate** ajoute une frontière d’autorisation :
+- `risk.gate.evaluate` → examine une intention ;
+- si autorisée, produit un `risk_approval_id` à durée limitée ;
+- `risk.gate.verify` → vérifie l’ID et peut le consommer ;
+- Trading exige cet ID pour les opérations mutantes.
 
-La normalisation Router v1.8.12, le protocole CP/1, le Debug Framework v1.8.11 et les Common Tools CP/1 v1.8.9 sont annoncés **OK** dans le handoff technique. Le VERSION-GUARD est **OK 1.8.12** et 30 fichiers visuels ont été contrôlés sans modification.
+Risk ne remplace pas le Firewall et ne parle pas directement à l’exchange.
+
+---
+
+## 📊 Portfolio Engine
+
+**🟢 En simple : Portfolio est la mémoire financière de ce qui a réellement été exécuté et de l’état reconstruit du portefeuille.**
+
+Portfolio reçoit les événements normalisés du Trading Engine, les déduplique/persiste, reconstruit positions et statistiques, maintient des snapshots et peut resynchroniser l’historique de Trading.
+
+Le stockage est SQLite pour le moteur Portfolio. La page Portfolio ne reconstruit plus elle-même les trades : elle lit le service Portfolio via la passerelle UI/Router.
+
+---
+
+## 🏦 Banque
+
+**🟢 En simple : la Banque est séparée de la chaîne décisionnelle Trading. Elle gère les wallets, les clés et les opérations blockchain destinées à l’utilisateur.**
+
+Le Wallet Service génère actuellement :
+- un compte **EVM** utilisable sur Ethereum, Arbitrum, Polygon, BNB Chain et Base ;
+- un compte **Bitcoin** ;
+- un compte **Solana**.
+
+Les secrets sont chiffrés en **AES-256-GCM** et rattachés au client. Les transferts sont dispatchés vers trois modules : ERC20/EVM, Bitcoin et Solana.
+
+Voir [Banque IA-TB](Bank.md).
+
+---
+
+## 🖥️ Séparation UI / Core
+
+**🟢 En simple : le navigateur n’est pas considéré comme un Engine de confiance. Il passe par un service UI dédié et reçoit principalement des accès en lecture.**
+
+Le service UI sur `8000` :
+- sert les pages ;
+- contrôle les pages Admin ;
+- proxy les API Core autorisées ;
+- expose les lectures Router autorisées ;
+- envoie les chandeliers par `/ui-data/market/candles`.
+
+Le Core sur `8001` reste responsable des API applicatives, de la Banque, des paramètres, de l’authentification et de l’administration.
+
+---
+
+## 🧱 Ports de référence
+
+| Composant | Port |
+|---|---:|
+| UI | 8000 |
+| Core | 8001 |
+| Kraken Add-On | 8011 |
+| Indicator | 8012 |
+| Market Data | 8013 |
+| Liquidity | 8014 |
+| Fundamental | 8015 |
+| Trading | 8016 |
+| Firewall | 8017 |
+| Strategy | 8018 |
+| Risk | 8019 |
+| Portfolio | 8020 |
+| Router | 8021 |
+| Supervisor | 3000 |
+
+---
+
+## ⚠️ Incohérence documentaire/runtime détectée
+
+**🟢 En simple : une ancienne métadonnée indique encore le mauvais port pour Trading, mais le vrai service Trading tourne bien sur 8016.**
+
+Le fichier `Core/Communication/ProtocolRegistry/trading.json` indique actuellement `8017` dans son endpoint, alors que :
+- le Process Registry déclare Trading sur **8016** ;
+- `trading_service.js` écoute sur **8016** ;
+- **8017** appartient au Firewall.
+
+Le Wiki utilise donc **8016 comme source de vérité runtime**. La métadonnée du Protocol Registry devra être réalignée dans un chantier code séparé.
+
+---
+
+## ✅ Principes d’architecture
+
+**🟢 En simple : une fonction doit passer par la bonne couche, conserver la provenance de ses données et ne pas contourner les contrôles de sécurité.**
+
+1. Pas de dépendance Engine-to-Engine libre : utiliser Router/CP/1.
+2. Les Market Data conservent leur source.
+3. Une donnée absente n’est pas inventée.
+4. Les opérations Trading mutantes exigent Risk + Firewall.
+5. Le Supervisor et Strategy restent des producteurs d’intentions/analyses.
+6. Les clés blockchain restent dans la Banque/Wallet Service.
+7. L’UI obtient des droits limités, pas un accès backend arbitraire.
+8. Les données utilisateur persistantes restent hors du dépôt Git.
