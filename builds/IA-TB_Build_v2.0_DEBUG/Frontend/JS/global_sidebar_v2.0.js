@@ -37,7 +37,10 @@ function icon(name){
   restart:'<path d="M19 8a8 8 0 1 0 1 7"/><path d="M19 3v5h-5"/>',
   backtest:'<path d="M4 18h16M6 15l3-4 3 2 5-7"/><path d="M17 6h3v3"/>',
   import:'<path d="M12 4v11M8 8l4-4 4 4"/><path d="M5 20h14"/>',
-  help:'<circle cx="12" cy="12" r="9"/><path d="M9.6 9.2a2.6 2.6 0 1 1 4.4 1.9c-1.2 1-2 1.4-2 3M12 17.5h.01"/>'
+  help:'<circle cx="12" cy="12" r="9"/><path d="M9.6 9.2a2.6 2.6 0 1 1 4.4 1.9c-1.2 1-2 1.4-2 3M12 17.5h.01"/>',
+  server:'<rect x="4" y="4" width="16" height="6" rx="2"/><rect x="4" y="14" width="16" height="6" rx="2"/><path d="M8 7h.01M8 17h.01M12 7h5M12 17h5"/>',
+  cefi:'<path d="M3 9h18L12 4Z"/><path d="M5 11v7M9 11v7M15 11v7M19 11v7M3 20h18"/>',
+  defi:'<circle cx="12" cy="12" r="3"/><circle cx="5" cy="7" r="2"/><circle cx="19" cy="7" r="2"/><circle cx="5" cy="17" r="2"/><circle cx="19" cy="17" r="2"/><path d="m7 8 3 2M17 8l-3 2M7 16l3-2M17 16l-3-2"/>'
  }[name]||'<rect x="5" y="5" width="14" height="14" rx="3"/><path d="M8 9h8M8 13h8M8 17h5"/>';
  return '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+p+'</g></svg>';
 }
@@ -57,6 +60,14 @@ function bankConfig(){
   item('Swap et Bridges','swap',{href:'/bank#swap',active:'swap',arrow:true}),
   item('Statistiques','stats',{href:'/statistiques',active:'stats'}),
   item('Aide & Support','help',{href:'/admin'})
+ ]};
+}
+function statsConfig(){
+ var h=String(location.hash||'#server').toLowerCase(),active=h==='#cefi'?'cefi':h==='#defi'?'defi':'server';
+ return{key:'stats',title:'STATISTIQUES',icon:'stats',active:active,items:[
+  item('Serveur / Réseaux','server',{href:'/statistiques#server',active:'server'}),
+  item('CeFi','cefi',{href:'/statistiques#cefi',active:'cefi'}),
+  item('DeFi','defi',{href:'/statistiques#defi',active:'defi'})
  ]};
 }
 function fundamentalConfig(){return{key:'fundamental',title:'FONDAMENTAL',icon:'fundamental',sourceRoot:'.fundSidebar',items:[
@@ -149,7 +160,8 @@ function adminConfig(){return{key:'admin',title:'ADMIN',icon:'console',sourceRoo
 ]};}
 function config(){
  var p=location.pathname;
- if(p.indexOf('/bank')===0||p.indexOf('/statistiques')===0)return bankConfig();
+ if(p.indexOf('/statistiques')===0)return statsConfig();
+ if(p.indexOf('/bank')===0)return bankConfig();
  if(p.indexOf('/fundamental')===0)return fundamentalConfig();
  if(p.indexOf('/settings')===0)return settingsConfig();
  if(p.indexOf('/strategy')===0)return strategyConfig();
@@ -195,7 +207,7 @@ function mount(){
  document.body.classList.remove('iatb-no-bank-side');document.body.classList.add('iatb-global-side-ready','iatb-unified-sidebar');
  bind(a,cfg);sync(a,cfg);
  if(cfg.sourceRoot){var root=document.querySelector(cfg.sourceRoot);if(root&&window.MutationObserver){new MutationObserver(function(){sync(a,cfg);}).observe(root,{attributes:true,subtree:true,attributeFilter:['class']});}}
- window.addEventListener('hashchange',function(){if(cfg.key==='bank'){var next=bankConfig();a.innerHTML=markup(next);bind(a,next);sync(a,next);}});
+ window.addEventListener('hashchange',function(){if(cfg.key==='bank'||cfg.key==='stats'){var next=cfg.key==='stats'?statsConfig():bankConfig();a.innerHTML=markup(next);bind(a,next);sync(a,next);}});
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount);else mount();
 })();
