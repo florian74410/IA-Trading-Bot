@@ -1,11 +1,29 @@
-<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Paramètres · IA-TB</title><link rel="stylesheet" href="/assets/settings.css?v=2001"><link rel="stylesheet" href="/assets/companion_v1.0.css"><link rel="stylesheet" href="/assets/global_navigation_v2.0.css?v=2013"><script defer src="/assets/global_navigation_v2.0.js?v=2018"></script></head><body>
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Paramètres · IA-TB</title><link rel="stylesheet" href="/assets/settings.css?v=2002"><link rel="stylesheet" href="/assets/companion_v1.0.css"><link rel="stylesheet" href="/assets/global_navigation_v2.0.css?v=2013"><script defer src="/assets/global_navigation_v2.0.js?v=2018"></script></head><body>
 <header class="top settingsAppNav"><nav class="settingsMainNav" aria-label="Navigation principale"><a href="/ia-trading">Trading IA</a><a href="/chart-viewer">Chart Viewer</a><a href="/portfolio">Portfolio</a><a href="/fundamental">Fondamental</a><a class="active" href="/settings">Paramètres</a><a href="/strategy">Stratégies</a></nav><div id="engineStrip" class="engineStrip"></div><div class="clock" id="clock">--:--:--</div></header>
-<div class="shell"><aside class="side"><h1>⚙ Paramètres</h1><input id="search" class="search" placeholder="⌕  Rechercher un paramètre…">
-<nav id="nav"><button data-view="overview" class="active">⌂ <span>Vue d'ensemble</span></button><button data-view="ai">✦ <span>IA</span></button><div class="group"><b>♙ Compte</b><button data-view="profile">♙ Profil</button><button data-view="api">▣ API & Data</button><button data-view="credits">◈ Crédits / Tokens</button><button data-view="security">◇ Sécurité</button></div>
-<div class="group"><b>⚙ Engines</b><button data-view="fundamental">◉ Fundamental</button><button data-view="indicators">▣ Indicateurs</button><button data-view="strategy">⌁ Stratégie</button><button data-view="trading">↯ Trading</button><button data-view="risk">⊙ Risk Manager</button><button data-view="liquidity">⌘ Liquidité</button><button data-view="portfolio">⬡ Portfolio</button></div>
-<div class="group"><b>◉ Market Data</b><button data-view="collector">▤ Collecteur</button><button data-view="providers">⊙ Providers</button><button data-view="coingecko">▣ CoinGecko</button><button data-view="registry">▦ Registry</button></div>
-<button data-view="communication">✉ <span>Communication</span></button><div class="group"><b>▣ Interface</b><button data-view="mosaic">▤ Mosaïque</button><button data-view="chart">▧ Graphique</button><button data-view="notifications">◁ Notifications</button></div>
-<div class="group"><b>⚙ Système</b><button data-view="versions">⌘ Versions</button></div></nav></aside>
+<div class="shell"><aside class="side settingsSectionBar"><nav id="nav" aria-label="Sections des paramètres">
+<button data-view="overview" class="active">⌂ <span>Vue d'ensemble</span></button>
+<button data-view="ai">✦ <span>IA</span></button>
+<button data-view="profile">♙ <span>Profile</span></button>
+<button data-view="api">▣ <span>API & Data</span></button>
+<button data-view="credits">◈ <span>Crédits / Tokens</span></button>
+<button data-view="security">◇ <span>Sécurité</span></button>
+<button data-view="fundamental">◉ <span>Fundamental</span></button>
+<button data-view="indicators">▣ <span>Indicateurs</span></button>
+<button data-view="strategy">⌁ <span>Stratégie</span></button>
+<button data-view="trading">↯ <span>Trading</span></button>
+<button data-view="risk">⊙ <span>Risk Manager</span></button>
+<button data-view="liquidity">⌘ <span>Liquidité</span></button>
+<button data-view="portfolio">⬡ <span>Portfolio</span></button>
+<button data-view="collector">▤ <span>Collecteur</span></button>
+<button data-view="providers">⊙ <span>Providers</span></button>
+<button data-view="coingecko">▣ <span>CoinGecko</span></button>
+<button data-view="registry">▦ <span>Registry</span></button>
+<button data-view="communication">✉ <span>Communication</span></button>
+<button data-view="mosaic">▤ <span>Mosaïque</span></button>
+<button data-view="chart">▧ <span>Graphique</span></button>
+<button data-view="notifications">◁ <span>Notifications</span></button>
+<button data-view="versions">⌘ <span>Versions</span></button>
+</nav></aside>
 <main class="main"><div class="crumb" id="crumb">⌂ Paramètres › Market Data › Providers</div>
 <section id="view-collector" class="view hide"><div class="titleRow"><div><h2>▤ Market Data Collector</h2><p>Pilotez les collecteurs de marché connectés à IA-TB et visualisez exactement les données qu'ils savent fournir.</p></div><span id="collectorServiceState" class="profileBadge">SERVICE --</span></div>
 <div id="collectorSummary" class="collectorSummary"></div>
@@ -68,6 +86,35 @@
 <div class="creditLayout"><section class="panel creditChartPanel"><div class="creditRow"><h3>Consommation temporelle</h3><select id="creditPeriod"><option value="7">7 jours</option><option value="30" selected>30 jours</option><option value="90">90 jours</option></select></div><canvas id="creditChart" width="760" height="270" aria-label="Graphique de consommation OpenAI et Anthropic"></canvas><div class="creditLegend">● OpenAI &nbsp; ◇ Anthropic</div><p class="creditNote">Historique local enregistré à partir de cette version. Les anciennes mesures en mémoire ne peuvent pas être récupérées après redémarrage.</p></section>
 <section class="panel creditRates"><h3>Tarifs et conversion</h3><p>Renseignez les tarifs réels de vos modèles en USD par million de tokens. Un tarif inconnu n'est jamais remplacé par une valeur inventée.</p><label>Modèle OpenAI <input id="creditOpenModel" placeholder="Modèle facturé"></label><label>Entrée ($ / 1M) <input id="creditOpenIn" type="number" min="0" step=".001" placeholder="Non renseigné"></label><label>Sortie ($ / 1M) <input id="creditOpenOut" type="number" min="0" step=".001" placeholder="Non renseigné"></label><label>Modèle Anthropic <input id="creditAnthModel" placeholder="Modèle facturé"></label><label>Entrée ($ / 1M) <input id="creditAnthIn" type="number" min="0" step=".001" placeholder="Non renseigné"></label><label>Sortie ($ / 1M) <input id="creditAnthOut" type="number" min="0" step=".001" placeholder="Non renseigné"></label><label>Conversion indicative : 1 USD = <input id="creditFx" type="number" min=".01" max="2" step=".0001" placeholder="EUR à renseigner"></label><button id="creditSave" class="primary">▣ Enregistrer</button><span id="creditMsg"></span></section></div>
 <section class="panel creditFoot"><h3>Solde et crédits disponibles</h3><p><b>Solde officiel :</b> à consulter dans les consoles ci-dessus. IA-TB n'assimile jamais une estimation locale à un crédit réellement disponible. Les comptes gratuits ne nécessitent pas de suivi d'achat. L'achat de crédits reste réalisé sur le site sécurisé du fournisseur.</p><p>Les coûts affichés sont indicatifs, hors remises, cache, frais d'outils, taxes et éventuelles différences de facturation. Les prix saisis ne modifient pas les tarifs réels de votre compte.</p></section></section>
+<section id="view-profile" class="view hide">
+<div class="profileHero">
+  <div class="profileHeroGlow"></div>
+  <div class="profileAvatar">♙</div>
+  <div><small>COMPTE IA-TB</small><h2>Profile</h2><p>Informations personnelles et préférences principales du compte.</p></div>
+  <span id="profileRoleBadge" class="profileRoleBadge">USER</span>
+</div>
+<div class="profileSettingsGrid">
+ <section class="panel profileFormCard">
+  <div class="profileCardHead"><div><h3>Informations du Profile</h3><p>Ces informations identifient votre compte dans IA-TB.</p></div><span class="profileSecure">● DB CLIENT</span></div>
+  <div class="profileFields">
+   <label><span class="profileFieldIcon">👤</span><span><small>Prénom</small><input id="profileFirstName" autocomplete="given-name" placeholder="Prénom"></span></label>
+   <label><span class="profileFieldIcon">👤</span><span><small>Nom</small><input id="profileLastName" autocomplete="family-name" placeholder="Nom"></span></label>
+   <label><span class="profileFieldIcon">＠</span><span><small>Nom utilisateur</small><input id="profileUsername" autocomplete="username" placeholder="Nom utilisateur"></span></label>
+   <label><span class="profileFieldIcon">✉</span><span><small>Email</small><input id="profileEmail" type="email" autocomplete="email" placeholder="nom@exemple.com"></span></label>
+   <label><span class="profileFieldIcon">◎</span><span><small>Langue</small><select id="profileLanguage"><option value="fr">Français</option><option value="en">English</option><option value="es">Español</option><option value="de">Deutsch</option></select></span></label>
+  </div>
+  <div class="profileActions"><span id="profileMsg"></span><button id="saveProfile" class="primary">Enregistrer le Profile</button></div>
+ </section>
+ <aside class="profileIdentityCard">
+  <div class="profileIdentityArt"><span>IA-TB</span><i></i><i></i><i></i></div>
+  <div class="profileIdentityRows">
+   <div><small>Client ID</small><code id="profileClientId">--</code></div>
+   <div><small>Rôle</small><b id="profileRole">--</b></div>
+   <div><small>Stockage</small><b>Client DB chiffrée</b></div>
+  </div>
+ </aside>
+</div>
+</section>
 <section id="view-overview" class="view hide"><div class="titleRow"><div><h2>Vue d'ensemble</h2><p>État de la configuration IA-TB.</p></div></div><div id="overviewCards" class="overview"></div></section>
 <section id="view-generic" class="view hide"><div class="titleRow"><div><h2 id="genericTitle">Paramètres</h2><p id="genericText">Cette section réutilise les réglages existants d'IA-TB.</p></div></div><div id="legacyMount" class="panel simple"></div></section>
-</main></div><div id="help" class="help hide"><button id="helpClose">×</button><h3>ⓘ Aide</h3><p id="helpText"></p></div><script src="/assets/settings.js?v=2001"></script><script src="/assets/companion_v1.0.js"></script></body></html>
+</main></div><div id="help" class="help hide"><button id="helpClose">×</button><h3>ⓘ Aide</h3><p id="helpText"></p></div><script src="/assets/settings.js?v=2002"></script><script src="/assets/companion_v1.0.js"></script></body></html>
