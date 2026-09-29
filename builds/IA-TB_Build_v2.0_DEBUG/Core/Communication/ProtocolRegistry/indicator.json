@@ -108,6 +108,30 @@
         }
       },
       {
+        "name": "indicator.financial_context",
+        "arguments": {
+          "allowed": [
+            "scope"
+          ]
+        },
+        "description": "Read-only current CeFi/DeFi financial context from Market Data Collector via Router."
+      },
+      {
+        "name": "indicator.financial_series",
+        "arguments": {
+          "allowed": [
+            "family",
+            "metric",
+            "limit",
+            "since"
+          ],
+          "required": [
+            "metric"
+          ]
+        },
+        "description": "Read-only numeric financial time series extracted from persisted Market Data snapshots."
+      },
+      {
         "name": "indicator.definition.get",
         "arguments": {
           "allowed": [
