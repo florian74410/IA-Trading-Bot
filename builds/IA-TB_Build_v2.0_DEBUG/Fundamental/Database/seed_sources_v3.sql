@@ -52,7 +52,11 @@ INSERT OR IGNORE INTO sources(code,name,source_type,country,priority,grade,relia
 ('COINTELEGRAPH','Cointelegraph','MEDIA','INT','P2','B',80,94,'COINTELEGRAPH','https://cointelegraph.com/',1,'Media crypto specialise; recouper les informations sensibles avec une source primaire.','2026-08-28T08:00:00Z','2026-08-28T08:00:00Z'),
 ('NEWSBTC','NewsBTC','MEDIA','INT','P3','C',70,90,'NEWSBTC','https://www.newsbtc.com/',1,'Media crypto secondaire, utile pour couverture rapide; recoupement recommande.','2026-08-28T08:00:00Z','2026-08-28T08:00:00Z'),
 ('DECRYPT','Decrypt','MEDIA','INT','P2','B',80,91,'DECRYPT','https://decrypt.co/',1,'Media crypto/Web3 secondaire, utilise via WEB lorsque necessaire.','2026-08-28T08:00:00Z','2026-08-28T08:00:00Z'),
-('BEINCRYPTO','BeInCrypto','MEDIA','INT','P3','C',72,88,'BEINCRYPTO','https://fr.beincrypto.com/',1,'Media crypto secondaire; inclut analyses/opinions et doit etre recoupe.','2026-08-28T08:00:00Z','2026-08-28T08:00:00Z');
+('BEINCRYPTO','BeInCrypto','MEDIA','INT','P3','C',72,88,'BEINCRYPTO','https://fr.beincrypto.com/',1,'Media crypto secondaire; inclut analyses/opinions et doit etre recoupe.','2026-08-28T08:00:00Z','2026-08-28T08:00:00Z'),
+('NYFED','Federal Reserve Bank of New York','OFFICIAL','US','P1','A+',99,92,'NYFED','https://www.newyorkfed.org/markets/reference-rates',1,'Source officielle EFFR utilisee par le calculateur FedWatch IA-TB.','2026-09-29T00:00:00Z','2026-09-29T00:00:00Z'),
+('INVESTING_FED','Investing.com · Fed Rate Monitor','DATA_PROVIDER','INT','P2','B',82,94,'INVESTING_FED','https://www.investing.com/central-banks/fed-rate-monitor',1,'Validation tierce gratuite des probabilites de taux; ne remplace pas une source officielle CME.','2026-09-29T00:00:00Z','2026-09-29T00:00:00Z'),
+('MACROMICRO_FED','MacroMicro · FedWatch','DATA_PROVIDER','INT','P2','B',82,78,'MACROMICRO_FED','https://en.macromicro.me/series/484/probability-fed-rate',1,'Source tierce de validation secondaire des attentes de taux.','2026-09-29T00:00:00Z','2026-09-29T00:00:00Z'),
+('YAHOO_FEDFUNDS','Yahoo Finance · 30-Day Fed Funds Futures','DATA_PROVIDER','INT','P3','C',70,90,'YAHOO_FEDFUNDS','https://finance.yahoo.com/quote/ZQ=F/',1,'Reference retardee ZQ=F via endpoint public non officiel; utiliser uniquement en validation.','2026-09-29T00:00:00Z','2026-09-29T00:00:00Z');
 
 -- Competences. Un score de domaine n'est pas un score d'impact marche.
 INSERT OR IGNORE INTO source_domains(source_id,domain,competence) SELECT id,'MONETARY',100 FROM sources WHERE code='FED';
@@ -86,6 +90,10 @@ INSERT OR IGNORE INTO source_domains(source_id,domain,competence) SELECT id,'REG
 INSERT OR IGNORE INTO source_domains(source_id,domain,competence) SELECT id,'CRYPTO_NETWORK',85 FROM sources WHERE code IN ('COINTELEGRAPH','NEWSBTC','DECRYPT','BEINCRYPTO');
 INSERT OR IGNORE INTO source_domains(source_id,domain,competence) SELECT id,'ADOPTION',75 FROM sources WHERE code IN ('COINTELEGRAPH','NEWSBTC','DECRYPT','BEINCRYPTO');
 INSERT OR IGNORE INTO source_domains(source_id,domain,competence) SELECT id,'REGULATION',70 FROM sources WHERE code IN ('COINTELEGRAPH','DECRYPT','BEINCRYPTO');
+INSERT OR IGNORE INTO source_domains(source_id,domain,competence) SELECT id,'MONETARY',100 FROM sources WHERE code='NYFED';
+INSERT OR IGNORE INTO source_domains(source_id,domain,competence) SELECT id,'MACRO',95 FROM sources WHERE code='NYFED';
+INSERT OR IGNORE INTO source_domains(source_id,domain,competence) SELECT id,'MONETARY',85 FROM sources WHERE code IN ('INVESTING_FED','MACROMICRO_FED','YAHOO_FEDFUNDS');
+INSERT OR IGNORE INTO source_domains(source_id,domain,competence) SELECT id,'MARKET_RISK',80 FROM sources WHERE code IN ('INVESTING_FED','MACROMICRO_FED','YAHOO_FEDFUNDS');
 
 -- Feeds RSS officiels verifies pour la fondation v1.6.0.
 INSERT OR IGNORE INTO feeds(source_id,code,label,provider_type,endpoint,platform,account_identifier,enabled,poll_interval_sec,base_importance,content_role,content_class,status,created_at,updated_at)
