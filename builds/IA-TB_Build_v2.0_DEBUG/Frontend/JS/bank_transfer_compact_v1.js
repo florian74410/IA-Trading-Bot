@@ -85,7 +85,7 @@
  function syncFiatFromCrypto(){var a=+S.cryptoAmount,p=S.price&&(S.fiat==='EUR'?S.price.priceEUR:S.price.priceUSD);S.fiatAmount=a>0&&p?String(Math.round(a*p*100)/100):''}
  function syncCryptoFromFiat(){var a=+S.fiatAmount,p=S.price&&(S.fiat==='EUR'?S.price.priceEUR:S.price.priceUSD);S.cryptoAmount=a>0&&p?String(a/p):''}
  function previewPayload(){
-  var r=S.coinResolved;if(!r)return null;return{sourceWalletId:S.walletId,sourceNetwork:S.network,destinationNetwork:S.network,destinationAddress:S.destinationAddress,asset:r.isNative?'NATIVE':'ERC20',tokenAddress:r.tokenAddress||'',tokenSymbol:r.symbol||S.coin.symbol,coinId:r.id,amount:S.cryptoAmount};
+  var r=S.coinResolved;if(!r)return null;var known=detectInternalAddress(S.destinationAddress);return{sourceWalletId:S.walletId,sourceNetwork:S.network,destinationNetwork:S.network,destinationWalletId:known&&known.wallet?known.wallet.id:'',destinationAddress:S.destinationAddress,asset:r.isNative?'NATIVE':'ERC20',tokenAddress:r.tokenAddress||'',tokenSymbol:r.symbol||S.coin.symbol,coinId:r.id,amount:S.cryptoAmount};
  }
  function schedulePreview(){clearTimeout(S.timer);S.preview=null;S.error='';if(!S.destinationAddress||!S.coinResolved||!(+S.cryptoAmount>0)){render();return}S.timer=setTimeout(runPreview,450)}
  function runPreview(){
