@@ -1,0 +1,36 @@
+:root{--iatb-side-w:240px}
+#iatb-global-side{position:fixed;z-index:2147482000;left:0;top:calc(var(--iatb-nav-h,68px) + var(--iatb-nav-gap,6px));bottom:0;width:var(--iatb-side-w);overflow-y:auto;overflow-x:hidden;border:1px solid #103d55;border-left:0;border-bottom:0;background:linear-gradient(180deg,#061723,#03111b);color:#eef9ff;font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;box-shadow:10px 0 28px rgba(0,0,0,.16)}
+.iatb-side-title{height:74px;display:flex;align-items:center;gap:13px;padding:0 19px;border-bottom:1px solid #12384d}.iatb-side-title b{font-size:22px;letter-spacing:.01em}
+.iatb-side-nav{padding:8px}
+.iatb-side-link,.iatb-side-group-title{min-height:51px;display:flex;align-items:center;gap:13px;padding:0 14px;color:#e8f6fd;text-decoration:none;border-bottom:1px solid #103448;font-size:13px;font-weight:700;position:relative}
+.iatb-side-link:hover{background:#082539;color:#fff}.iatb-side-link>i,.iatb-side-group-title>i{margin-left:auto;font-style:normal;font-size:22px;line-height:1}
+.iatb-side-group{border-bottom:1px solid #103448}.iatb-side-group-title{border-bottom:0}.iatb-side-group .iatb-side-link{min-height:40px;border:0;padding-left:42px;font-size:12px}.iatb-side-group .iatb-side-link .iatb-side-icon{margin-left:-16px}
+.iatb-side-link.active{margin:7px 0;border:1px solid #1bcaff;border-radius:7px;background:linear-gradient(90deg,#0788d7,#13a8e9);box-shadow:0 0 14px rgba(0,183,255,.24);color:#fff}
+.iatb-side-label{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.iatb-side-icon{width:22px;height:22px;min-width:22px;flex:0 0 22px;display:grid;place-items:center;color:#1dccff}.iatb-side-icon svg{width:22px;height:22px;display:block}
+.iatb-side-icon.titleIcon{width:25px;height:25px;min-width:25px;flex-basis:25px}.iatb-side-icon.titleIcon svg{width:25px;height:25px}
+body.iatb-global-side-ready{padding-left:var(--iatb-side-w)!important;background:#040d17}
+body.iatb-global-side-ready .bankSide,
+body.iatb-global-side-ready .statsSide,
+body.iatb-global-side-ready .fundSidebar,
+body.iatb-global-side-ready .strategySide,
+body.iatb-global-side-ready .shell>.side{display:none!important}
+body.iatb-global-side-ready>.bankApp,
+body.iatb-global-side-ready>.statsApp{grid-template-columns:minmax(0,1fr)!important;max-width:none!important;width:100%!important;margin:0!important}
+body.iatb-global-side-ready>.bankApp>.bankMain,
+body.iatb-global-side-ready>.statsApp>.statsMain{min-width:0!important;width:100%!important}
+body.iatb-global-side-ready>.page{padding-left:0!important;width:100%!important;max-width:none!important}
+body.iatb-global-side-ready .strategyShell{grid-template-columns:minmax(0,1fr)!important}
+body.iatb-global-side-ready>.shell{grid-template-columns:minmax(0,1fr)!important;width:100%!important}
+body.iatb-global-side-ready>.shell>.main,
+body.iatb-global-side-ready>.shell>main{width:100%!important;min-width:0!important}
+body.iatb-global-side-ready .standalonePage,
+body.iatb-global-side-ready>.settingsPage,
+body.iatb-global-side-ready>.strategyPage{left:auto!important;right:auto!important;width:100%!important;max-width:none!important}
+body.iatb-global-side-ready>.app,
+body.iatb-global-side-ready>.portfolioApp,
+body.iatb-global-side-ready>main.page,
+body.iatb-global-side-ready>.keysApp{max-width:none!important;width:100%!important}
+@media(max-width:1380px){:root{--iatb-side-w:230px}.iatb-side-link,.iatb-side-group-title{font-size:12px;padding-left:12px;padding-right:12px}.iatb-side-group .iatb-side-link{font-size:11.5px;padding-left:39px}.iatb-side-title{padding-left:16px}}
+@media(max-width:1100px){:root{--iatb-side-w:205px}.iatb-side-link,.iatb-side-group-title{gap:10px;font-size:11px}.iatb-side-group .iatb-side-link{font-size:10.5px;padding-left:35px}.iatb-side-icon,.iatb-side-icon svg{width:21px;height:21px;min-width:21px}.iatb-side-title b{font-size:19px}}
+@media(max-width:820px){body.iatb-global-side-ready{padding-left:0!important}#iatb-global-side{position:relative;z-index:10;left:auto;top:auto;bottom:auto;width:100%;max-height:none;border-left:1px solid #103d55}.iatb-side-title{height:54px}.iatb-side-nav{display:grid;grid-template-columns:1fr 1fr;gap:5px}.iatb-side-group{display:contents}.iatb-side-group-title{grid-column:1/-1;border:1px solid #103448;border-radius:6px}.iatb-side-group .iatb-side-link{padding-left:14px}.iatb-side-group .iatb-side-link .iatb-side-icon{margin-left:0}.iatb-side-link{min-height:42px;border:1px solid #103448;border-radius:6px}}
