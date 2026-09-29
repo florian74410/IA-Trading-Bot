@@ -81,6 +81,40 @@ function smartContractSignature(o){
   ]
  });
 }
+function networkLogo(network){
+ network=String(network||'').toLowerCase();
+ var map={
+  ethereum:'https://cryptologos.cc/logos/ethereum-eth-logo.png?v=040',
+  arbitrum:'https://cryptologos.cc/logos/arbitrum-arb-logo.png?v=040',
+  polygon:'https://cryptologos.cc/logos/polygon-matic-logo.png?v=040',
+  bnb:'https://cryptologos.cc/logos/bnb-bnb-logo.png?v=040',
+  base:'https://cryptologos.cc/logos/base-logo.png?v=040',
+  bitcoin:'https://cryptologos.cc/logos/bitcoin-btc-logo.png?v=040',
+  solana:'https://cryptologos.cc/logos/solana-sol-logo.png?v=040'
+ };
+ return map[network]||'';
+}
+function transferSuccess(o){
+ o=o||{};
+ var direction=String(o.direction||'sent').toLowerCase(),incoming=direction==='received',
+     network=String(o.network||'').toLowerCase(),symbol=String(o.symbol||'').toUpperCase(),
+     netLogo=networkLogo(network),assetLogo=txLogo(symbol),arrow=incoming?'←':'→',
+     tx=String(o.tx||o.txHash||'--'),
+     html='<div class="iaTransferSuccess">'+
+      '<div class="iaTransferLine">'+
+       '<span class="iaTxDate">'+esc(txDate(o.timestamp))+' :</span>'+
+       '<span class="iaTransferNetwork">'+(netLogo?'<img src="'+esc(netLogo)+'" alt="">':'')+'<small>'+esc(network||'réseau')+'</small></span>'+
+       '<span class="iaTransferDash">−</span>'+
+       '<span class="iaTransferAmount"><b>'+esc(o.amount||'--')+'</b>'+(assetLogo?'<img src="'+esc(assetLogo)+'" alt="">':'')+'<small>'+esc(symbol)+'</small></span>'+
+       '<span class="iaTransferDash">−</span>'+
+       '<span class="iaTransferAddr">'+esc(o.sourceAddress||'--')+'</span>'+
+       '<span class="iaTransferArrow '+(incoming?'incoming':'outgoing')+'">'+arrow+'</span>'+
+       '<span class="iaTransferAddr">'+esc(o.destinationAddress||'--')+'</span>'+
+      '</div>'+
+      '<div class="iaTxHash"><b>TX :</b> <span>'+esc(tx)+'</span></div>'+
+     '</div>';
+ return show({size:'large',modal:false,icon:incoming?'↓':'↑',title:o.title||(incoming?'Réception crypto confirmée':'Transfert crypto confirmé'),subtitle:o.subtitle||('Réseau '+(network||'--')+' · confirmation on-chain'),html:html});
+}
 function transactionSuccess(o){
  o=o||{};
  var fromSymbol=String(o.fromSymbol||'').toUpperCase(),toSymbol=String(o.toSymbol||'').toUpperCase(),
@@ -99,4 +133,4 @@ function transactionSuccess(o){
      '</div>';
  return show({size:'medium',modal:false,icon:'✓',title:o.title||'Swap / Bridge réussi',subtitle:o.subtitle||'Transaction confirmée',html:html});
 }
-window.IATBNotify={show:show,small:function(o){o=o||{};o.size='small';return show(o)},medium:function(o){o=o||{};o.size='medium';return show(o)},large:function(o){o=o||{};o.size='large';return show(o)},xlarge:function(o){o=o||{};o.size='xlarge';return show(o)},smartContractSignature:smartContractSignature,transactionSuccess:transactionSuccess,smartContractSuccess:smartContractSuccess}})();
+window.IATBNotify={show:show,small:function(o){o=o||{};o.size='small';return show(o)},medium:function(o){o=o||{};o.size='medium';return show(o)},large:function(o){o=o||{};o.size='large';return show(o)},xlarge:function(o){o=o||{};o.size='xlarge';return show(o)},smartContractSignature:smartContractSignature,transactionSuccess:transactionSuccess,smartContractSuccess:smartContractSuccess,transferSuccess:transferSuccess}})();
