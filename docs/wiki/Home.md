@@ -1,71 +1,164 @@
-# IA-TB — Wiki
+# 🧠 IA-TB — Wiki V2.0 DEBUG
 
-Bienvenue dans la documentation officielle de **IA-TB / IA-Trading-Bot**.
+> **🟢 En simple : IA-TB est une application de trading crypto modulaire. Elle sépare la collecte des données, l’analyse technique, l’analyse fondamentale, les stratégies, le risque, l’exécution des ordres, le portefeuille et la Banque afin qu’un seul module ne puisse pas tout faire sans contrôle.**
 
-IA-TB est une application modulaire de trading crypto réunissant notamment des connecteurs CEX/DEX, un moteur Market Data, un Chart Viewer, des Engines spécialisés, une architecture de routage centralisée, une configuration centralisée des API et un système de mise à jour versionné.
+Le build documenté ici est **`builds/IA-TB_Build_v2.0_DEBUG`** de la branche **`debug`**. Cette documentation décrit le fonctionnement observé dans le code, les manifests du Process Registry et les contrats CP/1 actuels.
 
-## Vue d’ensemble de l’architecture
+---
 
-<p align="center">
-  <a href="Architecture.md">
-    <img src="../../assets/architecture-overview.png" alt="IA-TB — Schéma de communication entre modules" width="100%" />
-  </a>
-</p>
+## 🗺️ Vue générale
 
-<p align="center">
-  <sub>Schéma officiel IA-TB — <a href="Architecture.md">documentation d’architecture</a> · <a href="../../assets/architecture-overview.png">PNG</a> · <a href="../../assets/architecture-overview.svg">SVG</a></sub>
-</p>
+**🟢 En simple : l’interface parle au Core ou au Router. Le Router distribue ensuite les demandes aux bons moteurs. Les données financières passent par un Firewall de données et les ordres passent par le Risk Gate puis le Trading Firewall avant d’atteindre un exchange.**
 
-## Commencer
+```mermaid
+flowchart LR
+    U[👤 Utilisateur] --> UI[🖥️ UI Service :8000]
+    UI --> CORE[🧩 Core Server :8001]
+    UI -->|lecture contrôlée| R[🔀 Router CP/1 :8021]
 
-- [Installation et démarrage](Installation.md)
-- [Architecture](Architecture.md)
-- [Router Protocol / CP/1](Router-Protocol-CP1.md) — contrat de communication normalisé v1.8.12, composants actifs, bridges et RESERVED.
-- [Connecteurs CEX / DEX](Connectors-CEX-DEX.md)
-- [Settings / API](Settings-API.md)
+    R <--> MD[📡 Market Data :8013]
+    R <--> IND[📐 Indicator :8012]
+    R <--> LIQ[💧 Liquidity :8014]
+    R <--> FUND[🧭 Fundamental :8015]
+    R <--> STRAT[🧠 Strategy v2 :8018]
+    R <--> RISK[🛡️ Risk :8019]
+    R <--> PORT[📊 Portfolio :8020]
+    R <--> SUP[🤖 Supervisor :3000]
 
-## Intelligence fondamentale
+    MD --> DFW[🧱 Data Firewall :8017]
+    DFW --> R
 
-- [Fundamental Engine V3](Fundamental-Engine.md) — collecte et provenance des news, News Query Engine, événements, evidence, mémoire temporelle, synthèses et consommation par le Supervisor.
+    SUP -->|intention| RISK
+    RISK -->|risk_approval_id| FW[🔥 Trading Firewall :8017]
+    FW --> TR[⚡ Trading Engine :8016]
+    TR --> EX[🏦 Binance / OKX / Kraken / GMX]
+    TR -->|événement d'exécution| R
+    R --> PORT
+```
 
-## Banque et services crypto
+> Le **Firewall** utilise le même service sur le port `8017`, avec des workers séparés pour la protection Trading et Market Data.
 
-- [Banque IA-TB](Bank.md) — wallets par utilisateur, propriété des clés, création EVM, notifications de sécurité, transferts, Swap/Bridge et services bancaires prévus.
+---
 
-## Données, analyse et risque
+## 🚦 Services principaux
 
-- [Market Data](Market-Data.md)
-- [Chart Viewer](Chart-Viewer.md)
-- [Indicator Engine](Indicator-Engine.md)
-- [Liquidity Engine](Liquidity-Engine.md)
-- [Risk Engine](Risk-Engine.md) — calcul et représentation analytique du risque.
+**🟢 En simple : chaque moteur a un rôle précis et tourne comme un service séparé. Cela permet de le diagnostiquer, le redémarrer et le faire évoluer sans transformer toute l’application en un seul bloc.**
 
-## Sécurité de l'exécution
+| Service | Port | Rôle actuel |
+|---|---:|---|
+| 🖥️ UI Service | 8000 | pages web et passerelle UI |
+| 🧩 Core Server | 8001 | API applicative, Banque, Settings, sécurité, administration |
+| 🐙 Kraken Add-On | 8011 | connecteur Kraken historique |
+| 📐 Indicator Engine | 8012 | indicateurs techniques et langage IIL |
+| 📡 Market Data Collector V2.0 | 8013 | données marché + données financières CeFi/DeFi |
+| 💧 Liquidity Engine | 8014 | liquidité, zones, liquidations, contexte financier |
+| 🧭 Fundamental Engine V3 | 8015 | news, événements, synthèses, mémoire temporelle |
+| ⚡ Trading Engine | 8016 | exécution technique autorisée |
+| 🔥 Firewall | 8017 | protection Trading + Market Data |
+| 🧠 Strategy Engine v2 | 8018 | évaluation de stratégies, signaux, aucune exécution |
+| 🛡️ Risk Engine | 8019 | analyse risque + Risk Gate |
+| 📊 Portfolio Engine | 8020 | positions, événements, balances, PnL, historique |
+| 🔀 Communication Router | 8021 | routage CP/1 et registre runtime |
+| 🤖 IA Supervisor | 3000 | orchestration du contexte et raisonnement IA |
 
-- [Trading Firewall Module](Firewall-Module.md) — `SECURITY_BRIDGE` du canal d'exécution, modes Protection/Observation, whitelists, authentification, signatures, âge des messages et protection anti-doublon.
-- [Sécurité](Security.md) — secrets, moindre privilège, logs et règles du dépôt.
+---
 
-## Exploitation et maintenance
+## 📚 Lire le Wiki par fonction
 
-- [Administration — Manuel d'exploitation](Administration.md) — Console Générale Admin, Debug Framework, CP/1, logs, services, diagnostics, sécurité et procédures d'urgence.
-- [Update Manager](Update-Manager.md)
-- [Versionnage et releases](Versioning-and-Releases.md)
-- [Dépannage](Troubleshooting.md)
-- [Changelog fonctionnel](Changelog.md)
-- [Roadmap](Roadmap.md)
+### 🏗️ Architecture et communication
+- [🏗️ Architecture complète](Architecture.md)
+- [🔀 Router Protocol / CP/1](Router-Protocol-CP1.md)
+- [🖥️ Interface et pages de l’application](Application-UI.md)
 
-## État d'architecture v1.8.12
+### 📡 Données et analyse
+- [📡 Market Data Collector V2.0](Market-Data.md)
+- [📐 Indicator Engine](Indicator-Engine.md)
+- [💧 Liquidity Engine](Liquidity-Engine.md)
+- [🧭 Fundamental Engine V3](Fundamental-Engine.md)
+- [📈 Chart Viewer](Chart-Viewer.md)
 
-Actifs CP/1 : Indicator, Trading, Risk, Portfolio, Market Data, Liquidity et Fundamental (`INFORMATION_ONLY`). Trading Firewall est un `SECURITY_BRIDGE`. Strategy Engine et Supervisor IA restent `RESERVED` tant que leur runtime autonome n'est pas intégré et validé.
+### 🧠 Décision, risque et exécution
+- [🤖 IA Supervisor](Supervisor-IA.md)
+- [🧠 Strategy Engine v2](Strategy-Engine.md)
+- [🛡️ Risk Engine](Risk-Engine.md)
+- [🔥 Firewall](Firewall-Module.md)
+- [⚡ Trading Engine](Trading-Engine.md)
+- [📊 Portfolio Engine](Portfolio.md)
 
-## Règle documentaire
+### 🏦 Banque et sécurité
+- [🏦 Banque IA-TB](Bank.md)
+- [🔐 Sécurité](Security.md)
+- [🔑 Settings / API](Settings-API.md)
 
-Le Wiki décrit les fonctions réellement publiées ou explicitement planifiées. Toute release doit faire l'objet d'une analyse d'impact documentaire.
+### 🛠️ Exploitation
+- [🛠️ Administration](Administration.md)
+- [📦 Installation](Installation.md)
+- [⬆️ Update Manager](Update-Manager.md)
+- [🏷️ Versionnage et releases](Versioning-and-Releases.md)
+- [🩺 Dépannage](Troubleshooting.md)
+- [🗺️ Roadmap](Roadmap.md)
+- [🧾 Changelog fonctionnel](Changelog.md)
 
-La documentation doit distinguer clairement les composants `ACTIVE`, `SECURITY_BRIDGE`, `RESERVED` et les fonctions simplement prévues. Une spécification ou un registre ne suffit pas à déclarer un runtime fonctionnel.
+---
 
-Chaque ajout d'un CEX ou DEX doit documenter au minimum : marchés/paires, OHLC/OHLCV, volumes propres à la plateforme, intégration Market Data, Chart Viewer, paramètres requis dans `Settings > API`, authentification et limitations connues.
+## 🧭 Les pages de l’application
 
-La provenance des données doit toujours rester identifiable : une donnée Binance, Coinbase, OKX ou GMX ne doit jamais être mélangée silencieusement avec celle d'une autre plateforme.
+**🟢 En simple : toutes les fonctions importantes sont accessibles depuis une interface web locale, mais les pages n’accèdent pas librement aux moteurs internes. Le service UI applique des routes et des permissions précises.**
 
-Toute nouvelle composante serveur ou commande d'administration doit également mettre à jour le [Manuel d'exploitation Admin](Administration.md). Aucun secret ou credential ne doit être enregistré dans le Wiki.
+| Page | Fonction |
+|---|---|
+| Trading IA | graphique natif, marché de référence, modules temps réel |
+| Chart Viewer | vue graphique indépendante |
+| Portfolio | positions, trades, PnL, historique |
+| Banque | wallets, clés, transferts, Swap/Bridge, coffres |
+| Fondamental | news, événements, sources, synthèses IA |
+| Paramètres | IA, API, moteurs, providers, risque, notifications |
+| Stratégies | catalogue et état Strategy Engine v2, UI de consultation |
+| Statistiques | snapshots financiers CeFi / DeFi |
+| Admin | services, logs, Firewall, diagnostics, mises à jour |
+
+---
+
+## 🔐 Règles de sécurité à retenir
+
+**🟢 En simple : une IA, une stratégie ou une page web ne doit jamais pouvoir envoyer directement un ordre à un exchange en contournant les contrôles.**
+
+Le chemin d’exécution protégé est :
+
+```text
+Intention
+  → Risk Gate
+  → risk_approval_id
+  → Router / CP/1
+  → Trading Firewall
+  → Trading Engine
+  → Exchange
+  → événement Portfolio
+```
+
+Les données de marché financières utilisent un autre chemin :
+
+```text
+CoinGecko / DeFiLlama / Providers
+  → Market Data Collector
+  → Data Firewall
+  → stockage validé
+  → Router / CP/1
+  → Engines / UI en lecture
+```
+
+---
+
+## ⚠️ État DEBUG
+
+**🟢 En simple : le code possède déjà beaucoup de fonctions réelles, mais “présent dans le code” ne veut pas dire “validé avec de l’argent réel”.**
+
+- le Trading Engine démarre par défaut avec **LIVE désactivé** ;
+- le Supervisor est **INTENTION_ONLY** ;
+- Strategy Engine v2 est **INTENTION_ONLY** ;
+- Fundamental reste **INFORMATION_ONLY** ;
+- les transferts BTC/SOL sont soumis au réseau puis doivent encore être suivis jusqu’à confirmation ;
+- l’OnChain Reader actuel est surtout EVM ;
+- certaines cartes visuelles de Statistiques contiennent encore des valeurs de présentation lorsqu’aucune métrique runtime correspondante n’est disponible.
+
+Le Wiki doit conserver cette distinction entre **fonction intégrée**, **fonction partielle** et **fonction prévue**.
