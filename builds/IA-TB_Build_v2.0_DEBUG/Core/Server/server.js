@@ -155,6 +155,43 @@ function walletAssetPriceEUR(symbol,cb){
  },10000);
 }
 
+var CRYPTO_CATALOG_CACHE=Object.create(null),CRYPTO_DETAIL_CACHE=Object.create(null);
+var CG_PLATFORM={ethereum:'ethereum',arbitrum:'arbitrum-one',polygon:'polygon-pos',bnb:'binance-smart-chain',base:'base'};
+var CG_NATIVE={ethereum:'ethereum',arbitrum:'ethereum',polygon:'polygon-ecosystem-token',bnb:'binancecoin',base:'ethereum'};
+function cgGet(path,cb){
+ request('GET','https://api.coingecko.com/api/v3'+path,{'Accept':'application/json','User-Agent':'IA-TB/2.0'},null,cb,12000);
+}
+function cryptoCatalog(query,page,perPage,cb){
+ query=String(query||'').trim();page=Math.max(1,Math.min(250,+page||1));perPage=Math.max(10,Math.min(100,+perPage||50));
+ var key=(query?'q:'+query.toLowerCase():'p:'+page+':'+perPage),hit=CRYPTO_CATALOG_CACHE[key];
+ if(hit&&Date.now()-hit.at<60000)return cb(null,hit.data);
+ if(query){
+  return cgGet('/search?query='+encodeURIComponent(query),function(e,o){if(e)return cb(e);var coins=(o&&o.coins||[]).slice(0,perPage),ids=coins.map(function(x){return x.id}).join(',');
+   if(!ids)return cb(null,{items:[],page:1,hasMore:false,query:query});
+   cgGet('/simple/price?ids='+encodeURIComponent(ids)+'&vs_currencies=eur,usd',function(pe,prices){
+    if(pe)prices={};var items=coins.map(function(x){var pr=prices&&prices[x.id]||{};return{id:x.id,name:x.name,symbol:String(x.symbol||'').toUpperCase(),image:x.large||x.thumb||'',marketCapRank:x.market_cap_rank||null,priceEUR:pr.eur==null?null:+pr.eur,priceUSD:pr.usd==null?null:+pr.usd};});
+    var data={items:items,page:1,hasMore:false,query:query,source:'CoinGecko'};CRYPTO_CATALOG_CACHE[key]={at:Date.now(),data:data};cb(null,data);
+   });
+  });
+ }
+ cgGet('/coins/markets?vs_currency=eur&order=market_cap_desc&per_page='+perPage+'&page='+page+'&sparkline=false&price_change_percentage=24h',function(e,rows){if(e)return cb(e);rows=Array.isArray(rows)?rows:[];var ids=rows.map(function(x){return x.id}).join(',');
+  cgGet('/simple/price?ids='+encodeURIComponent(ids)+'&vs_currencies=usd',function(ue,usd){
+   if(ue)usd={};var items=rows.map(function(x){return{id:x.id,name:x.name,symbol:String(x.symbol||'').toUpperCase(),image:x.image||'',marketCapRank:x.market_cap_rank||null,priceEUR:x.current_price==null?null:+x.current_price,priceUSD:usd&&usd[x.id]&&usd[x.id].usd!=null?+usd[x.id].usd:null,change24h:x.price_change_percentage_24h==null?null:+x.price_change_percentage_24h};});
+   var data={items:items,page:page,hasMore:rows.length===perPage,query:'',source:'CoinGecko'};CRYPTO_CATALOG_CACHE[key]={at:Date.now(),data:data};cb(null,data);
+  });
+ });
+}
+function cryptoResolve(id,network,cb){
+ id=String(id||'').trim();network=String(network||'').toLowerCase();if(!id)return cb(new Error('CRYPTO_ID_REQUIRED'));if(!CG_PLATFORM[network])return cb(new Error('NETWORK_NOT_SUPPORTED'));
+ var key=id+'|'+network,hit=CRYPTO_DETAIL_CACHE[key];if(hit&&Date.now()-hit.at<300000)return cb(null,hit.data);
+ cgGet('/coins/'+encodeURIComponent(id)+'?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false&sparkline=false',function(e,o){if(e)return cb(e);
+  var nativeId=CG_NATIVE[network],isNative=id===nativeId,platform=CG_PLATFORM[network],address=o&&o.platforms&&o.platforms[platform]||'',md=o&&o.market_data||{},cp=md.current_price||{};
+  var data={id:id,name:o.name||id,symbol:String(o.symbol||'').toUpperCase(),image:o.image&&o.image.small||'',network:network,isNative:isNative,tokenAddress:isNative?'':String(address||''),transferable:isNative||/^0x[a-fA-F0-9]{40}$/.test(String(address||'')),priceEUR:cp.eur==null?null:+cp.eur,priceUSD:cp.usd==null?null:+cp.usd,source:'CoinGecko'};
+  CRYPTO_DETAIL_CACHE[key]={at:Date.now(),data:data};cb(null,data);
+ });
+}
+
+
 function fundamentalIntent(t){return /(fondamental|fundamental|source(?:s)?|news|actualit[eé]|\bfed\b|fomc|\bbce\b|\becb\b|\bsec\b|\bamf\b|macro|inflation|taux|dollar|\bdxy\b|adoption|r[eé]gulation|regulation|twitter|truth social|\btrump\b|reuters|bloomberg|hack|exploit|s[eé]curit[eé]|sentiment)/i.test(String(t||''));}
 function fundamentalJson(pathname,cb,timeout){var done=false,q=http.get({host:'127.0.0.1',port:FUNDAMENTAL_PORT,path:pathname,timeout:timeout||1800,headers:{Accept:'application/json'}},function(r){var a=[],n=0;r.on('data',function(c){n+=c.length;if(n<=384*1024)a.push(c);});r.on('end',function(){if(done)return;done=true;var txt=Buffer.concat(a).toString('utf8'),o;try{o=JSON.parse(txt);}catch(e){return cb(new Error('Fundamental JSON invalide'));}if((r.statusCode||500)>=400)return cb(new Error(o.error||('Fundamental HTTP '+r.statusCode)));cb(null,o);});});q.on('timeout',function(){q.destroy(new Error('Fundamental timeout'));});q.on('error',function(e){if(done)return;done=true;cb(e);});}
 
@@ -654,7 +691,9 @@ function route(req,res){var u=new URL(req.url,'http://'+HOST+':'+PORT),p=u.pathn
  if(req.method==='GET'&&p==='/api/gmx/wallet'){var gw=u.searchParams.get('address')||'';if(!validAddress(gw))return json(res,400,{error:'Adresse wallet invalide'});return gmxRequest('GET','/balances/wallet?address='+encodeURIComponent(gw),null,function(e,d){if(e)return json(res,502,{error:e.message});json(res,200,{balances:Array.isArray(d)?d:[],source:'GMX API Arbitrum'});});}
  if(req.method==='GET'&&p==='/api/market/symbols'){return refreshMarketCatalog(function(e,c){if(e)return json(res,502,{error:e.message});var q=String(u.searchParams.get('q')||'').toUpperCase().replace(/[^A-Z0-9]/g,''),rows=c.symbols.filter(function(x){return !q||x.symbol.indexOf(q)>=0||x.baseAsset.indexOf(q)>=0;}),lim=Math.max(1,Math.min(3000,+u.searchParams.get('limit')||3000));json(res,200,{source:'GMX',dynamic:true,updatedAt:c.at,total:rows.length,symbols:rows.slice(0,lim)});});}
  if(req.method==='GET'&&(p==='/api/klines'||p==='/api/market/klines')){var ks=normalizeGmxSymbol(u.searchParams.get('symbol')||'BTCUSD'),it=u.searchParams.get('interval')||'1m',lim=Math.min(1000,Math.max(20,+u.searchParams.get('limit')||100)),source=String(u.searchParams.get('source')||'GMX').toUpperCase();if(source!=='GMX'||!ks||!ints[it])return json(res,400,{error:'Parametres GMX invalides'});return gmxCandles(ks,it,lim,function(e,d){if(e){log('GMX','Klines Oracle erreur',ks+' '+e.message);return json(res,502,{error:e.message});}json(res,200,{source:'GMX',endpoint:d.endpoint,symbol:ks,interval:it,volumeAvailable:false,candles:d.candles});});}
- if(req.method==='GET'&&p==='/api/wallet-asset-price'){return walletAssetPriceEUR(u.searchParams.get('symbol'),function(e,o){if(e)return json(res,502,{ok:false,error:e.message});json(res,200,{ok:true,symbol:o.symbol,eur:o.eur,updatedAt:o.at,source:o.source})});}
+ if(req.method==='GET'&&p==='/api/crypto/catalog'){return cryptoCatalog(u.searchParams.get('query'),u.searchParams.get('page'),u.searchParams.get('perPage'),function(e,o){if(e)return json(res,502,{ok:false,error:e.message});json(res,200,{ok:true,items:o.items,page:o.page,hasMore:o.hasMore,query:o.query,source:o.source})});}
+  if(req.method==='GET'&&p==='/api/crypto/resolve'){return cryptoResolve(u.searchParams.get('id'),u.searchParams.get('network'),function(e,o){if(e)return json(res,400,{ok:false,error:e.message});json(res,200,Object.assign({ok:true},o))});}
+  if(req.method==='GET'&&p==='/api/wallet-asset-price'){return walletAssetPriceEUR(u.searchParams.get('symbol'),function(e,o){if(e)return json(res,502,{ok:false,error:e.message});json(res,200,{ok:true,symbol:o.symbol,eur:o.eur,updatedAt:o.at,source:o.source})});}
   if(req.method==='GET'&&p==='/api/wallet-prices')return gmxFindPairPrice('ETHUSD',function(e,d){if(e)return json(res,502,{error:e.message});json(res,200,{ethEUR:0,ethUSD:d.price,eurUSD:0,eurAvailable:false,source:'GMX Arbitrum'});});
  if(req.method==='GET'&&p==='/api/chart-viewer/status'){var cvs=secretStatus(),cvc=cfg();return json(res,200,{version:CURRENT_VERSION,openaiConfigured:!!cvs.openai,model:cvc.OPENAI_MODEL||'gpt-5.6',simpleCommandsLocal:true,tradingModule:'GMX_ONLY',viewer:'TRADINGVIEW_IFRAME'});}
  if(req.method==='POST'&&p==='/api/chart-viewer/chat')return body(req,function(e,b){if(e||!b||!String(b.message||'').trim())return json(res,400,{error:'Message invalide'});if(String(b.message).length>1400)return json(res,400,{error:'Message trop long'});chartViewerAI(b,sess,function(er,o){if(er){log('OPENAI','Chart Viewer erreur',er.message);return json(res,502,{error:er.message});}log('OPENAI','Chart Viewer réponse',String(b.message||'').slice(0,120));json(res,200,o);});});
