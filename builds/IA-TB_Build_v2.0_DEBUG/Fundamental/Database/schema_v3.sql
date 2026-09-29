@@ -125,6 +125,21 @@ CREATE INDEX IF NOT EXISTS idx_raw_hash ON raw_items(content_hash);
 CREATE INDEX IF NOT EXISTS idx_events_seen ON events(first_seen_at DESC,status);
 CREATE INDEX IF NOT EXISTS idx_event_sources_event ON event_sources(event_id,source_id,independent);
 
+-- FedWatch local snapshots. Stores the complete normalized calculation/validation packet
+-- so IA-TB can compare changes over time without re-querying third-party pages.
+CREATE TABLE IF NOT EXISTS fedwatch_snapshots(
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  fingerprint TEXT NOT NULL UNIQUE,
+  generated_at TEXT NOT NULL,
+  next_meeting_date TEXT,
+  effr REAL,
+  target_low REAL,
+  target_high REAL,
+  payload_json TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_fedwatch_generated ON fedwatch_snapshots(generated_at DESC);
+CREATE INDEX IF NOT EXISTS idx_fedwatch_meeting ON fedwatch_snapshots(next_meeting_date,generated_at DESC);
+
 -- v1.6.2: configuration des providers WEB + cache de traduction.
 CREATE TABLE IF NOT EXISTS provider_configs(
   feed_id INTEGER PRIMARY KEY REFERENCES feeds(id) ON DELETE CASCADE,
