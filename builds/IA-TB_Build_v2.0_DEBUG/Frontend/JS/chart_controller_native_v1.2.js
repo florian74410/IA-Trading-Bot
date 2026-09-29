@@ -68,10 +68,11 @@
  try{
   var d=this.root&&this.root.getElementById?this.root:document,dock=d.getElementById('indicatorDock')||d.getElementById('iatbIndicatorDock'),body=d.getElementById('indicatorDockBody')||d.getElementById('tdIndicatorDockBody'),state=d.getElementById('indicatorDockState');
   if(!dock||!body)return;
-  var valid=[];(Array.isArray(batch)?batch:[]).forEach(function(x){if(x&&x.ok&&x.result)valid.push(x.result)});
+  var valid=[],failed=[];(Array.isArray(batch)?batch:[]).forEach(function(x){if(x&&x.ok&&x.result)valid.push(x.result);else if(x)failed.push(x)});
   body.innerHTML='';dock.classList.add('active');
-  if(!valid.length){var empty=document.createElement('div');empty.className='indicatorReaderEmpty';empty.textContent='En attente d’un indicateur .indicator.json';body.appendChild(empty);if(state)state.textContent='Lecteur JSON · prêt';return;}
-  if(state){var outputCount=0;valid.forEach(function(r){Object.keys(r.values||{}).forEach(function(k){if(!(r.outputs&&r.outputs[k]&&r.outputs[k].chart===false))outputCount++})});state.textContent='Lecteur JSON · '+valid.length+' indicateur'+(valid.length>1?'s':'')+' · '+outputCount+' série'+(outputCount>1?'s':'');}
+  if(!valid.length&&!failed.length){var empty=document.createElement('div');empty.className='indicatorReaderEmpty';empty.textContent='En attente d’un indicateur .indicator.json';body.appendChild(empty);if(state)state.textContent='Lecteur JSON · prêt';return;}
+  if(state){var outputCount=0;valid.forEach(function(r){Object.keys(r.values||{}).forEach(function(k){if(!(r.outputs&&r.outputs[k]&&r.outputs[k].chart===false))outputCount++})});state.textContent='Lecteur JSON · '+valid.length+'/'+(valid.length+failed.length)+' chargé'+((valid.length+failed.length)>1?'s':'')+' · '+outputCount+' série'+(outputCount>1?'s':'');}
+  failed.forEach(function(x){var er=document.createElement('div');er.className='indicatorReaderError';var id=x.id||x.result&&x.result.id||'indicator';er.innerHTML='<b></b><span></span>';er.querySelector('b').textContent=id;er.querySelector('span').textContent=x.error||x.code||'Calcul impossible';body.appendChild(er);});
   var rows=this.visibleRows(),idx={};for(var i=0;i<rows.length;i++)idx[rows[i].time]=i;
   valid.forEach(function(r,ri){
    var paneMode=String(r.display&&r.display.pane||'separate'),renderMode=String(r.display&&r.display.render||'line');
