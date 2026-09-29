@@ -1,6 +1,6 @@
 <!doctype html>
 <html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>IA-TB · Fondamental</title><script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script><script src="https://unpkg.com/globe.gl@2.27.2/dist/globe.gl.min.js"></script><link rel="stylesheet" href="/assets/fundamental_v3.css?v=3302">
+<title>IA-TB · Fondamental</title><script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script><script src="https://unpkg.com/globe.gl@2.27.2/dist/globe.gl.min.js"></script><link rel="stylesheet" href="/assets/fundamental_v3.css?v=3303">
 <link rel="stylesheet" href="/assets/companion_v1.0.css"><link rel="stylesheet" href="/assets/global_navigation_v2.0.css?v=2013"><script defer src="/assets/global_navigation_v2.0.js?v=3020"></script></head>
 <body>
 <div class="page">
@@ -70,6 +70,34 @@
   </div>
   <div class="fedwatchFoot"><span id="fedwatchUpdated">Dernière mise à jour · --</span><small>Estimation IA-TB informative · ne pas confondre avec une publication officielle CME FedWatch.</small></div>
 </section>
+<section class="macroCalendarPanel" id="macroCalendarPanel">
+  <div class="macroCalendarHead">
+    <div><span class="eyebrow">MACRO & DERIVATIVES CALENDARS</span><h2>Calendriers FED & CME</h2><p>Réunions FOMC, publications macro CME et échéances futures/options dans un calendrier unifié pour le Supervisor.</p></div>
+    <div class="macroCalendarLegend"><span><i class="fed"></i>FED</span><span><i class="cme"></i>CME Macro</span><span><i class="expiry"></i>CME Expiration</span></div>
+  </div>
+  <div class="macroCalendarSplit">
+    <article class="calendarPane fedPane">
+      <header class="calendarPaneHead">
+        <div class="calendarBrand"><span class="calendarLogo">🇺🇸</span><div><b>Federal Reserve</b><small>FOMC · calendrier officiel</small></div></div>
+        <div class="calendarNav"><button type="button" data-cal-nav="fed:-1">‹</button><strong id="fedCalendarMonth">--</strong><button type="button" data-cal-nav="fed:1">›</button></div>
+      </header>
+      <div id="fedCalendarGrid" class="calendarMonthGrid"><div class="calendarLoading">Chargement…</div></div>
+      <div id="fedCalendarEvents" class="calendarEventList"></div>
+      <footer><span id="fedCalendarStatus">FED · --</span><small>Source : Federal Reserve Board</small></footer>
+    </article>
+    <article class="calendarPane cmePane">
+      <header class="calendarPaneHead">
+        <div class="calendarBrand"><span class="calendarLogo cmeLogo">CME</span><div><b>CME Group</b><small>Événements macro & expirations</small></div></div>
+        <div class="calendarNav"><button type="button" data-cal-nav="cme:-1">‹</button><strong id="cmeCalendarMonth">--</strong><button type="button" data-cal-nav="cme:1">›</button></div>
+      </header>
+      <div class="calendarFilters"><button type="button" class="active" data-cme-filter="ALL">Tout</button><button type="button" data-cme-filter="ECONOMIC">Macro</button><button type="button" data-cme-filter="EXPIRATION">Expirations</button></div>
+      <div id="cmeCalendarGrid" class="calendarMonthGrid"><div class="calendarLoading">Chargement…</div></div>
+      <div id="cmeCalendarEvents" class="calendarEventList"></div>
+      <footer><span id="cmeCalendarStatus">CME · --</span><small id="cmeExpirationStatus">Expiration Calendar · --</small></footer>
+    </article>
+  </div>
+  <div class="macroCalendarFoot"><span>🧠 Disponible au Supervisor via CP/1</span><small>Les échéances CME incluent Last Trade, Settlement, Delivery, Notice, Position et Holding lorsque la page publique les expose.</small></div>
+</section>
 <div class="newsControlBar"><div id="notice" class="notice">Chargement du Fundamental Engine…</div><div class="newsControlActions"><button id="collectNow" class="newsRefreshBtn" type="button">↻ Actualiser</button><button id="purgeNews" class="newsPurgeBtn" type="button" title="Supprime les publications et traductions puis recharge les flux">Purger</button></div></div>
 
     <details class="section publicationsSection" open><summary><span>Publications récentes</span><small>5 visibles · défilement interne pour la suite</small></summary><div class="sectionBody"><div id="recentList" class="newsList"><div class="empty">Aucune publication collectée pour le moment.</div></div></div></details>
@@ -124,5 +152,5 @@
   </div>
 </div>
 
-<script src="/assets/fundamental_globe_v3.js?v=2007"></script><script src="/assets/fundamental_controller_v3.js?v=2008"></script>
+<script src="/assets/fundamental_globe_v3.js?v=2007"></script><script src="/assets/fundamental_controller_v3.js?v=2009"></script>
 <script src="/assets/companion_v1.0.js"></script></body></html>
