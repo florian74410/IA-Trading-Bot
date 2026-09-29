@@ -14,9 +14,9 @@ L’état ci-dessous provient de l’analyse du build **`builds/IA-TB_Build_v2.0
 | 🧩 Core | ✅ ACTIVE | port 8001 |
 | 🔀 Router CP/1 | ✅ ACTIVE | port 8021 |
 | 🔥 Firewall | ✅ ACTIVE | Trading + Data workers |
-| 📡 Market Data V2 | ✅ ACTIVE | Candle + Registry + Financial |
+| 📡 Market Data V2.1 | ✅ ACTIVE | Candle + Registry + Financial + Liquidity ingress |
 | 📐 Indicator | ✅ ACTIVE | BuiltIn + Custom/IIL |
-| 💧 Liquidity | ✅ ACTIVE | CP/1 |
+| 💧 Liquidity V2.0 | ✅ ACTIVE | INTERNAL_ANALYSIS_ONLY · CP/1 · aucun provider Internet direct |
 | 🧭 Fundamental V3 | ✅ ACTIVE | INFORMATION_ONLY |
 | 🧠 Strategy v2 | ✅ ACTIVE | INTENTION_ONLY |
 | 🛡️ Risk | ✅ ACTIVE | analyse + Risk Gate |
@@ -44,6 +44,10 @@ L’état ci-dessous provient de l’analyse du build **`builds/IA-TB_Build_v2.0
 | Historique financier JSONL | ✅ ACTIVE |
 | Indicator sur séries financières | ✅ ACTIVE |
 | Liquidity accès financier via Router | ✅ ACTIVE |
+| Liquidity carnet/OI via Market Data + Firewall | ✅ ACTIVE |
+| Historique Liquidity SQLite 30–90 jours | ✅ ACTIVE |
+| Liquidity depth/slippage/score/OI-depth | ✅ ACTIVE |
+| Supervisor `liquidity.context` | ✅ ACTIVE |
 | Statistiques CeFi/DeFi via snapshot | ✅ ACTIVE |
 | Open Interest global complet | 🟡 PARTIAL / provider spécialisé manquant |
 | Liquidations globales complètes | 🟡 PARTIAL / provider spécialisé manquant |
