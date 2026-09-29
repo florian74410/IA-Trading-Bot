@@ -1,49 +1,144 @@
-# Installation et démarrage
+# 📦 Installation et démarrage — V2.0 DEBUG
 
-Cette page décrit le fonctionnement général de l'installation locale de IA-TB. Les packages publiés restent la référence pour les fichiers exacts d'une version.
+> **🟢 En simple : IA-TB embarque son propre Node.js 16.20.2 pour rester compatible avec le Mac Intel cible. `start.command` prépare le runtime, démarre les services dans un ordre contrôlé, vérifie leur santé puis ouvre l’interface sur le port 8000.**
 
-## Prérequis
+---
 
-- machine capable d'exécuter l'environnement livré avec IA-TB ;
-- navigateur web pour l'interface ;
-- accès réseau pour les providers et CEX/DEX utilisés ;
-- clés API uniquement pour les fonctions privées qui en ont besoin.
+## 💻 Cible locale
 
-La v1.7.8 conserve la compatibilité avec macOS High Sierra / Intel et Node.js 16.20.2.
+**🟢 En simple : le build reste conçu pour pouvoir fonctionner sur l’ancien MacBook Pro Intel utilisé pour le développement.**
 
-## Runtime Market Data v1.7.8+
+Runtime local :
+- Node.js **v16.20.2**
+- archive `node-v16.20.2-darwin-x64.tar.gz`
+- installation dans `.node/`
 
-Le provider Hyperliquid `SOCKET` utilise la dépendance `ws@8.18.0`, limitée au module `MarketData`. `install_runtime.command` vérifie et installe cette dépendance lorsque nécessaire ; aucune installation globale de `ws` n'est requise.
+`install_runtime.command` télécharge le runtime officiel Node si nécessaire et vérifie son SHA-256.
 
-## Démarrage
+---
 
-Depuis le dossier de l'application :
+## 📁 Runtime local
+
+**🟢 En simple : les fichiers temporaires de fonctionnement sont séparés du code.**
+
+Répertoires créés :
+- `.runtime/logs`
+- `.runtime/state`
+- `.runtime/database`
+- `.runtime/cache`
+- `.runtime/config`
+- `.runtime/pids`
+- `.runtime/updates`
+
+Les données utilisateur persistantes utilisent en parallèle `~/IA-TB-UserData-Server`.
+
+---
+
+## ▶️ Démarrage
 
 ```bash
 bash start.command
 ```
 
-L'application démarre ses services puis expose l'interface web locale selon la configuration de la version installée.
+**🟢 En simple : le script vérifie d’abord qu’aucune ancienne instance ne bloque les ports, prépare Node/SQLite/dépendances, démarre les services puis teste leur health.**
 
-## Arrêt
+Ordre fonctionnel observé :
+1. préparation runtime ;
+2. dépendances Banque ;
+3. SQLite Fundamental ;
+4. Engines/services ;
+5. Firewall + workers ;
+6. Core ;
+7. Router ;
+8. UI Service ;
+9. ouverture du navigateur.
 
-```bash
-bash stop.command
+---
+
+## 🚦 Services attendus
+
+**🟢 En simple : le startup console attend 14 services en ligne.**
+
+Ports :
+```text
+8000  UI
+8001  Core
+8011  Kraken
+8012  Indicator
+8013  Market Data
+8014  Liquidity
+8015  Fundamental
+8016  Trading
+8017  Firewall
+8018  Strategy
+8019  Risk
+8020  Portfolio
+8021  Router
+3000  Supervisor
 ```
 
-Toujours préférer l'arrêt propre aux interruptions brutales afin de laisser les services, caches et fichiers de journalisation se fermer correctement.
+Le script affiche **14 / 14 SERVICES ONLINE** lorsque tous les contrôles prévus passent.
 
-## Après installation
+---
 
-1. ouvrir l'interface ;
-2. vérifier la version affichée ;
-3. ouvrir `Settings > API` ;
-4. renseigner uniquement les connecteurs privés nécessaires ;
-5. tester les connexions lorsque le bouton est disponible ;
-6. vérifier Market Data et Chart Viewer avant d'activer une stratégie ou un ordre réel.
+## 🔥 Vérification Firewall
 
-Pour diagnostiquer le Market Data en v1.7.8+, les endpoints `/health` et `/providers` permettent de vérifier les providers disponibles et, pour les providers `SOCKET`, leur état de connexion et leur fraîcheur.
+**🟢 En simple : “le port répond” ne suffit pas pour le Firewall. Le démarrage attend aussi les deux workers de protection.**
 
-## Mise à jour
+Le health doit exposer :
+- thread Trading ;
+- thread Data.
 
-Les mises à jour passent par l'Update Manager. Voir [Update Manager](Update-Manager.md).
+Cela évite de considérer le Firewall opérationnel alors qu’un worker critique n’est pas lancé.
+
+---
+
+## ⚡ Trading au démarrage
+
+**🟢 En simple : démarrer IA-TB ne démarre pas automatiquement le trading réel.**
+
+Le script fixe :
+```text
+IATB_TRADING_LIVE=0
+```
+
+Le moteur reste donc en mode SAFE par défaut.
+
+---
+
+## 🌐 Interface
+
+**🟢 En simple : l’utilisateur ouvre le port 8000, pas directement les Engines.**
+
+Adresse :
+```text
+http://127.0.0.1:8000
+```
+
+Le Core est sur `8001`, le Router sur `8021`.
+
+---
+
+## 🌍 Accès en ligne
+
+**🟢 En simple : le tunnel externe n’est pas fusionné au runtime principal.**
+
+`start.command` peut proposer le script externe :
+`tools/Online_Access/start_online.command`.
+
+Cette séparation évite qu’un outil d’accès distant devienne une dépendance obligatoire de l’application locale.
+
+---
+
+## 🩺 Si un service ne démarre pas
+
+Voir [Dépannage](Troubleshooting.md).
+
+Vérifier en priorité :
+- droits d’exécution des `.command` ;
+- runtime Node ;
+- port déjà occupé ;
+- SQLite ;
+- logs du service ;
+- accès réseau ;
+- configuration provider/RPC.
