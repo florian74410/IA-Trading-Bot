@@ -1,92 +1,145 @@
-# Risk Engine
+# 🛡️ Risk Engine & Risk Gate — V2.0 DEBUG
 
-## Rôle
+> **🟢 En simple : Risk Engine mesure le danger d’une position ou d’une stratégie. En plus de cette analyse, le Risk Gate peut délivrer une autorisation temporaire appelée `risk_approval_id`. Sans cette autorisation, Trading ne peut pas exécuter une commande sensible.**
 
-Le **Risk Engine** est le moteur analytique chargé de représenter et quantifier le risque. Il fournit des analyses au reste de l'architecture mais **ne décide pas d'exécuter un ordre**.
+Le service écoute sur **8019** et communique via **CP/1**.
 
-Il ne doit donc pas émettre directement `APPROVE`, `MODIFY` ou `REJECT` vers un Exchange et ne doit jamais contourner le Router ou le Trading Firewall.
+---
 
-## Architecture
+## 🧮 Analyse du risque
 
-Le Risk Engine est un Engine autonome relié au Router par le protocole interne CP/1.
+**🟢 En simple : le moteur cherche à quantifier combien une position, une stratégie ou l’ensemble du portefeuille peut exposer l’utilisateur.**
 
-```text
-Market Data ----\
-Indicators ------> Router <-> Risk Engine
-Portfolio -------/              |
-                                v
-                             Router -> Supervisor
+Le Risk Engine peut demander via Router :
+- Market Data ;
+- Indicator Engine ;
+- Portfolio Engine.
+
+Il calcule ou agrège notamment :
+- capital à risque ;
+- exposition brute ;
+- levier ;
+- volatilité ;
+- drawdown ;
+- VaR historique ;
+- Expected Shortfall ;
+- seuils et alertes configurables.
+
+Les réglages Risk sont persistés dans le store SQLite des paramètres.
+
+---
+
+## 🔀 Aucun accès direct aux autres Engines
+
+**🟢 En simple : Risk n’appelle pas directement Market Data ou Portfolio sur leurs ports ; il utilise le Router comme les autres moteurs.**
+
+```mermaid
+flowchart LR
+  M[📡 Market Data] --> R[🔀 Router]
+  I[📐 Indicator] --> R
+  P[📊 Portfolio] --> R
+  R --> K[🛡️ Risk Engine]
 ```
 
-Toutes ses demandes de données passent par le Router :
+Si Indicator ou Portfolio est indisponible, certaines analyses peuvent être marquées **DEGRADED**. Les Market Data nécessaires restent obligatoires pour l’analyse concernée.
 
-- Market Data pour prix, OHLC/OHLCV, volatilité et données de marché ;
-- Indicator Engine pour les indicateurs nécessaires à une analyse ;
-- Portfolio pour positions, balances, exposition, equity et historique ;
-- Supervisor comme consommateur des analyses de risque.
+---
 
-## Analyses prises en charge
+## 🎟️ Risk Gate
 
-Le socle du moteur couvre :
+**🟢 En simple : une analyse de risque et une autorisation d’exécution sont deux choses différentes. Le Risk Gate transforme une intention précise en autorisation contrôlée lorsque les règles l’acceptent.**
 
-- taille et poids d'une position ;
-- exposition absolue et relative ;
+Commandes :
+- `risk.gate.evaluate`
+- `risk.gate.verify`
+
+`risk.gate.evaluate` reçoit une intention normalisée comprenant par exemple :
+- exchange ;
+- marché ;
+- symbole ;
+- action ;
+- side ;
+- quantité ;
+- prix ;
+- stop loss / take profit ;
 - levier ;
-- marge utilisée et marge disponible lorsque les données existent ;
+- reduce only ;
+- confiance ;
+- metadata.
+
+Si l’intention est acceptée, un `risk_approval_id` est créé avec une durée de vie limitée.
+
+`risk.gate.verify` vérifie que :
+- l’approval existe ;
+- il correspond à l’intention ;
+- il n’est pas expiré ;
+- il n’a pas déjà été consommé lorsque la consommation est demandée.
+
+---
+
+## 🔥 Relation avec le Firewall
+
+**🟢 En simple : Risk donne le “visa”, mais le Firewall contrôle encore le passeport, la signature, la paire, les doublons et le trajet.**
+
+```mermaid
+sequenceDiagram
+  participant C as Caller
+  participant R as Risk Gate
+  participant F as Trading Firewall
+  participant T as Trading Engine
+
+  C->>R: risk.gate.evaluate(intent)
+  R-->>C: risk_approval_id
+  C->>F: trading.execute + approval
+  F->>R: risk.gate.verify(... consume=true)
+  R-->>F: valide / refus
+  F->>T: forward signé si valide
+```
+
+Risk ne remplace donc pas le Firewall et ne communique jamais directement avec l’exchange.
+
+---
+
+## 📋 Commandes CP/1
+
+**🟢 En simple : les commandes sont séparées entre analyse, configuration et autorisation.**
+
+- `risk.list_capabilities`
+- `risk.position.analyze`
+- `risk.portfolio.analyze`
+- `risk.strategy.analyze`
+- `risk.snapshot`
+- `risk.settings.get`
+- `risk.settings.set`
+- `risk.gate.evaluate`
+- `risk.gate.verify`
+
+---
+
+## ⚙️ Réglages par défaut observés
+
+**🟢 En simple : les seuils sont configurables et ne doivent pas être interprétés comme des recommandations financières universelles.**
+
+Le moteur possède notamment des seuils pour :
+- capital risk ;
+- gross exposure ;
+- leverage ;
+- volatility ;
 - drawdown ;
-- volatilité ;
-- Value at Risk historique (VaR) ;
-- Expected Shortfall (ES) ;
-- préparation de scénarios de stress.
+- VaR.
 
-Chaque résultat doit conserver la provenance et l'horodatage des données utilisées afin que le Supervisor puisse connaître la fraîcheur de l'analyse.
+Ils servent au fonctionnement interne du moteur et peuvent évoluer via Settings.
 
-## Paramétrage
+---
 
-Le paramétrage du Risk Engine doit rester distinct des règles de blocage du Trading Firewall.
+## 🔐 Règle essentielle
 
-Les paramètres fonctionnels peuvent comprendre :
+**🟢 En simple : un `risk_approval_id` n’est pas un ordre.**
 
-- fenêtre historique utilisée pour volatilité/VaR/ES ;
-- niveau de confiance de la VaR ;
-- horizons d'analyse ;
-- seuils d'alerte d'exposition ;
-- seuils d'alerte de levier ;
-- seuils de drawdown ;
-- scénarios de stress activés ;
-- fréquence ou fraîcheur maximale des données acceptées.
-
-Un seuil Risk dépassé constitue une **information de risque** destinée au Supervisor. Le blocage technique d'une commande appartient au Trading Firewall selon ses propres règles.
-
-## Fonctionnement d'une analyse
-
-1. Le Risk Engine reçoit une demande via le Router.
-2. Il identifie les données nécessaires.
-3. Il demande ces données aux modules concernés exclusivement via le Router.
-4. Il vérifie leur disponibilité et leur fraîcheur.
-5. Il calcule les métriques de risque.
-6. Il produit un rapport structuré avec métriques, provenance, timestamp et éventuels avertissements.
-7. Le rapport revient au Supervisor via le Router.
-8. Le Supervisor conserve la responsabilité de la décision finale.
-
-## États dégradés
-
-Si une donnée indispensable est absente ou trop ancienne, le Risk Engine ne doit pas fabriquer une valeur. Le rapport doit indiquer explicitement que l'analyse est partielle ou indisponible et préciser la donnée manquante.
-
-## Séparation Risk Engine / Trading Firewall
-
-| Risk Engine | Trading Firewall |
-| --- | --- |
-| Analyse le risque | Sécurise le canal d'exécution |
-| Produit métriques et alertes | Autorise ou bloque selon des règles techniques |
-| Consomme Market Data / Indicators / Portfolio via Router | Contrôle les commandes du Trading Engine |
-| N'exécute aucun ordre | Se trouve avant l'Exchange |
-| Informe le Supervisor | Protège l'exécution |
-
-## Sécurité
-
-Le Risk Engine n'a pas besoin de manipuler directement les secrets API des Exchanges pour ses calculs. Les accès privés restent centralisés dans `Settings > API` et sont fournis uniquement aux composants qui en ont réellement besoin.
-
-## Validation
-
-Les calculs purs du prototype ont été testés sous Node.js 16.20.2. La validation end-to-end CP/1 sur la machine cible reste une étape distincte : elle concerne l'intégration runtime et ne change pas le fait que le module a été implémenté.
+Une exécution réelle nécessite encore :
+1. une requête Trading valide ;
+2. le passage par le Trading Firewall ;
+3. la vérification/consommation du Risk approval ;
+4. le forward interne signé ;
+5. l’acceptation du Trading Engine ;
+6. l’acceptation de l’exchange.
