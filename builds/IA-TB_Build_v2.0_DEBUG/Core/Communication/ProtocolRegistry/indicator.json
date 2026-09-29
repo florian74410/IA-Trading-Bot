@@ -75,6 +75,50 @@
         }
       },
       {
+        "name": "indicator.compute_batch_data",
+        "arguments": {
+          "allowed": [
+            "candles",
+            "requests",
+            "symbol",
+            "timeframe",
+            "source"
+          ],
+          "required": [
+            "candles",
+            "requests"
+          ]
+        }
+      },
+      {
+        "name": "indicator.compute_data",
+        "arguments": {
+          "allowed": [
+            "id",
+            "candles",
+            "params",
+            "symbol",
+            "timeframe",
+            "source"
+          ],
+          "required": [
+            "id",
+            "candles"
+          ]
+        }
+      },
+      {
+        "name": "indicator.definition.get",
+        "arguments": {
+          "allowed": [
+            "id"
+          ],
+          "required": [
+            "id"
+          ]
+        }
+      },
+      {
         "name": "indicator.compute",
         "arguments": {
           "allowed": [
