@@ -15,6 +15,35 @@ function txDate(ts){
  var d=new Date(ts||Date.now()),p=function(n){return(n<10?'0':'')+n;};
  return p(d.getDate())+'/'+p(d.getMonth()+1)+'/'+String(d.getFullYear()).slice(-2);
 }
+function smartContractSuccess(o){
+ o=o||{};
+ var fromSymbol=String(o.fromSymbol||'').toUpperCase(),toSymbol=String(o.toSymbol||'').toUpperCase(),
+     fromLogo=txLogo(fromSymbol),toLogo=txLogo(toSymbol),
+     tx=String(o.tx||o.txHash||'--'),
+     totalFee=(o.totalFeeEUR===null||o.totalFeeEUR===undefined||o.totalFeeEUR==='')?'--':String(o.totalFeeEUR),
+     gas=(o.gasFeeEUR===null||o.gasFeeEUR===undefined||o.gasFeeEUR==='')?'--':String(o.gasFeeEUR),
+     iatb=(o.iatbFeeEUR===null||o.iatbFeeEUR===undefined||o.iatbFeeEUR==='')?'--':String(o.iatbFeeEUR),
+     html='<div class="iaScSuccess">'+
+      '<div class="iaScBadge">✓ SMART CONTRACT CONFIRMÉ</div>'+
+      '<div class="iaTxFlow iaScFlow">'+
+       '<span class="iaTxDate">'+esc(txDate(o.timestamp))+' :</span>'+
+       '<span class="iaTxAsset">'+(fromLogo?'<img src="'+esc(fromLogo)+'" alt="">':'')+'<b>'+esc(o.fromAmount||'--')+'</b><small>'+esc(fromSymbol)+'</small></span>'+
+       '<span class="iaTxArrow">→</span>'+
+       '<span class="iaTxAsset">'+(toLogo?'<img src="'+esc(toLogo)+'" alt="">':'')+'<b>'+esc(o.toAmount||'--')+'</b><small>'+esc(toSymbol)+'</small></span>'+
+       '<span class="iaTxFee">− '+esc(totalFee)+' €</span>'+
+      '</div>'+
+      '<div class="iaScGrid">'+
+       '<div><small>TYPE</small><b>'+esc(o.operation||'Swap / Bridge')+'</b></div>'+
+       '<div><small>RÉSEAU</small><b>'+esc(o.network||'--')+'</b></div>'+
+       '<div><small>PROVIDER</small><b>'+esc(o.provider||'--')+'</b></div>'+
+       '<div><small>GAS</small><b>'+esc(gas)+' €</b></div>'+
+       '<div><small>FRAIS IA-TB</small><b>'+esc(iatb)+' € · 1 %</b></div>'+
+       '<div><small>STATUT</small><b class="iaScOk">'+esc(o.status||'Confirmée')+'</b></div>'+
+      '</div>'+
+      '<div class="iaTxHash iaScHash"><b>TX :</b> <span>'+esc(tx)+'</span></div>'+
+     '</div>';
+ return show({size:'large',modal:false,icon:'✓',title:o.title||'Transaction Smart Contract réussie',subtitle:o.subtitle||'Signature et confirmation on-chain validées',html:html});
+}
 function transactionSuccess(o){
  o=o||{};
  var fromSymbol=String(o.fromSymbol||'').toUpperCase(),toSymbol=String(o.toSymbol||'').toUpperCase(),
@@ -33,4 +62,4 @@ function transactionSuccess(o){
      '</div>';
  return show({size:'medium',modal:false,icon:'✓',title:o.title||'Swap / Bridge réussi',subtitle:o.subtitle||'Transaction confirmée',html:html});
 }
-window.IATBNotify={show:show,small:function(o){o=o||{};o.size='small';return show(o)},medium:function(o){o=o||{};o.size='medium';return show(o)},large:function(o){o=o||{};o.size='large';return show(o)},transactionSuccess:transactionSuccess}})();
+window.IATBNotify={show:show,small:function(o){o=o||{};o.size='small';return show(o)},medium:function(o){o=o||{};o.size='medium';return show(o)},large:function(o){o=o||{};o.size='large';return show(o)},transactionSuccess:transactionSuccess,smartContractSuccess:smartContractSuccess}})();
