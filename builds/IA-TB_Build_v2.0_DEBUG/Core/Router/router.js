@@ -42,7 +42,10 @@ var UI_READ_ACTIONS={
  'marketdata.registry.search':1,
  'marketdata.registry.list':1,
  'marketdata.registry.asset':1,
- 'marketdata.registry.query':1
+ 'marketdata.registry.query':1,
+ 'marketdata.financial.snapshot':1,
+ 'marketdata.financial.history':1,
+ 'marketdata.financial.storage':1
 };
 function communicationUiRead(req,res){
  readJsonBody(req,65536,function(e,b){
