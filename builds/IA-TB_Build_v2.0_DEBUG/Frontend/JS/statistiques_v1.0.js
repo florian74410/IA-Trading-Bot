@@ -39,6 +39,13 @@ var state={
 };
 state.cefi={shares:[],volume:[],volumeHistory:[],volumeRange:'24H',exchanges:[],assets:[],health:[]};
 state.defi={shares:[],volume:[],volumeHistory:[],volumeDaily:[],volumeRange:'24H',protocols:[],protocolsRaw:[],stableIn:[],stableOut:[],networks:[],yieldPools:[],dexFeeProtocols:[],swapLiquidity:null,leaders:null};
+state.ui={showAllExchanges:false,showAllOracles:false};
+state.oracleCatalog=[
+ {id:'redstone',name:'RedStone Oracle',icon:'R',brand:'',status:'Référencé',latency:null,uptime:null,kind:'oracle'},
+ {id:'api3',name:'API3 Oracle',icon:'3',brand:'',status:'Référencé',latency:null,uptime:null,kind:'oracle'},
+ {id:'wormhole',name:'Wormhole Bridge',icon:'W',brand:'',status:'Référencé',latency:null,uptime:null,kind:'bridge'},
+ {id:'layerzero',name:'LayerZero Bridge',icon:'L',brand:'',status:'Référencé',latency:null,uptime:null,kind:'bridge'}
+];
 
 function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 function q(s,r){return (r||document).querySelector(s)}
@@ -47,21 +54,35 @@ function setText(selector,value){var n=q(selector);if(n)n.textContent=value}
 function brandClass(b){return ['binance','coinbase','kraken','okx','gmx','chainlink','pyth','arbitrum'].indexOf(b)>=0?b:''}
 
 function renderPlatforms(){
- var h=state.exchanges.map(function(x){
+ var base=state.exchanges.slice(),seen={};
+ base.forEach(function(x){seen[String(x.id||x.name).toLowerCase()]=1});
+ var extra=[];
+ (state.defi.protocolsRaw||[]).forEach(function(x){
+  if(extra.length>=5)return;
+  var name=String(x.name||x.displayName||x.slug||'DEX'),id=String(x.slug||name).toLowerCase().replace(/[^a-z0-9]+/g,'-'),key=id||name.toLowerCase();
+  if(seen[key])return;seen[key]=1;
+  extra.push({id:'defi-'+id,name:name,icon:(name.charAt(0)||'D').toUpperCase(),brand:'',status:'DeFiLlama',latency:null,liquidity:'DEX',api:'Volume 24h '+money(x.volume24hUsd),extra:true});
+ });
+ var rows=state.ui.showAllExchanges?base.concat(extra):base.slice(0,5);
+ var h=rows.map(function(x){
   var warn=String(x.status).toLowerCase().indexOf('dégrad')>=0||String(x.status).toLowerCase().indexOf('degrad')>=0;
-  return '<div class="platformCard" data-platform="'+esc(x.id)+'"><div class="platformCardTop"><span class="brandIcon '+brandClass(x.brand)+'">'+esc(x.icon)+'</span><div><b>'+esc(x.name)+'</b><span class="miniState '+(warn?'warn':'')+'">● '+esc(x.status)+'</span></div></div><span class="miniLatency" data-platform-ms="'+esc(x.id)+'">'+esc(x.latency)+' ms</span><div class="platformMeta"><span>Liquidité</span><strong class="'+(x.liquidity==='Moyenne'?'warn':'')+'">'+esc(x.liquidity)+'</strong><strong>'+esc(x.api)+'</strong></div></div>';
+  var latency=x.latency==null?'N/D':esc(x.latency)+' ms';
+  return '<div class="platformCard'+(x.extra?' extendedCard':'')+'" data-platform="'+esc(x.id)+'"><div class="platformCardTop"><span class="brandIcon '+brandClass(x.brand)+'">'+esc(x.icon)+'</span><div><b>'+esc(x.name)+'</b><span class="miniState '+(warn?'warn':'')+'">● '+esc(x.status)+'</span></div></div><span class="miniLatency" data-platform-ms="'+esc(x.id)+'">'+latency+'</span><div class="platformMeta"><span>'+(x.extra?'Type':'Liquidité')+'</span><strong class="'+(x.liquidity==='Moyenne'?'warn':'')+'">'+esc(x.liquidity||'N/D')+'</strong><strong>'+esc(x.api||'N/D')+'</strong></div></div>';
  }).join('');
- var host=q('#platformCards');if(host)host.innerHTML=h;
+ var host=q('#platformCards');if(host){host.innerHTML=h;host.classList.toggle('expanded',!!state.ui.showAllExchanges)}
+ var b=q('#toggleAllExchanges');if(b){b.setAttribute('aria-expanded',state.ui.showAllExchanges?'true':'false');b.textContent=state.ui.showAllExchanges?'Réduire les DEX & CEX ↑':'Afficher tous les DEX & CEX ↓'}
  var connected=state.exchanges.filter(function(x){var s=String(x.status||'').toLowerCase();return s.indexOf('hors ligne')<0&&s.indexOf('offline')<0&&s.indexOf('déconnect')<0&&s.indexOf('deconnect')<0;}).length;
  setText('#cexConnectedState','● '+connected+'/'+state.exchanges.length+' connectés');
- state.exchanges.forEach(function(x){setText('[data-stat="'+x.id+'-latency"]',x.latency+' ms')});
+ state.exchanges.forEach(function(x){if(x.latency!=null)setText('[data-stat="'+x.id+'-latency"]',x.latency+' ms')});
 }
 function renderOracles(){
- var h=state.oracles.map(function(x){
-  var p=Math.max(0,Math.min(100,+x.uptime||0));
-  return '<div class="oracleCard" data-oracle="'+esc(x.id)+'"><div class="oracleCardTop"><span class="brandIcon '+brandClass(x.brand)+'">'+esc(x.icon)+'</span><div><b>'+esc(x.name)+'</b><span class="miniState">● '+esc(x.status)+'</span><span class="miniLatency">'+esc(x.latency)+' ms</span></div></div><div class="oracleMeta"><span>Uptime</span><strong>'+p.toFixed(2)+'%</strong></div><div class="uptimeRing" style="--p:'+p+'"><span>'+Math.round(p)+'%</span></div></div>';
+ var rows=state.ui.showAllOracles?state.oracles.concat(state.oracleCatalog):state.oracles.slice(0,4);
+ var h=rows.map(function(x){
+  var hasUptime=x.uptime!=null&&isFinite(+x.uptime),p=hasUptime?Math.max(0,Math.min(100,+x.uptime)):0,lat=x.latency==null?'N/D':esc(x.latency)+' ms';
+  return '<div class="oracleCard'+(!hasUptime?' extendedCard':'')+'" data-oracle="'+esc(x.id)+'"><div class="oracleCardTop"><span class="brandIcon '+brandClass(x.brand)+'">'+esc(x.icon)+'</span><div><b>'+esc(x.name)+'</b><span class="miniState">● '+esc(x.status)+'</span><span class="miniLatency">'+lat+'</span></div></div><div class="oracleMeta"><span>'+(hasUptime?'Uptime':'Type')+'</span><strong>'+(hasUptime?p.toFixed(2)+'%':esc(x.kind==='bridge'?'Bridge':'Oracle'))+'</strong></div><div class="uptimeRing'+(hasUptime?'':' unavailable')+'" style="--p:'+p+'"><span>'+(hasUptime?Math.round(p)+'%':'N/D')+'</span></div></div>';
  }).join('');
- var host=q('#oracleCards');if(host)host.innerHTML=h;
+ var host=q('#oracleCards');if(host){host.innerHTML=h;host.classList.toggle('expanded',!!state.ui.showAllOracles)}
+ var b=q('#toggleAllOracles');if(b){b.setAttribute('aria-expanded',state.ui.showAllOracles?'true':'false');b.textContent=state.ui.showAllOracles?'Réduire Oracles & Bridges ↑':'Afficher tous les Oracles & Bridges ↓'}
 }
 function renderEngines(){
  Object.keys(state.engines).forEach(function(k){setText('[data-engine-ms="'+k+'"]',state.engines[k]+' ms')});
@@ -334,6 +355,8 @@ function bind(){
  qa('.rangeBtns button').forEach(function(b){b.onclick=function(){qa('.rangeBtns button').forEach(function(x){x.classList.remove('active')});b.classList.add('active')}});
  qa('.financeRanges button:not([data-defi-range])').forEach(function(b){b.onclick=function(){var p=b.parentNode;qa('button',p).forEach(function(x){x.classList.remove('active')});b.classList.add('active');state.cefi.volumeRange=String(b.textContent||'24H').trim().toUpperCase();loadFinancialData()}});
  qa('[data-defi-range]').forEach(function(b){b.onclick=function(){var p=b.parentNode;qa('[data-defi-range]',p).forEach(function(x){x.classList.remove('active')});b.classList.add('active');state.defi.volumeRange=b.getAttribute('data-defi-range')||'24H';renderDefiVolume()}});
+ var allEx=q('#toggleAllExchanges');if(allEx)allEx.onclick=function(){state.ui.showAllExchanges=!state.ui.showAllExchanges;renderPlatforms()};
+ var allOr=q('#toggleAllOracles');if(allOr)allOr.onclick=function(){state.ui.showAllOracles=!state.ui.showAllOracles;renderOracles()};
  var ex=q('#execTradeSize');if(ex)ex.onchange=renderExecutionCost;
  window.addEventListener('hashchange',function(){showSection()});
 }
