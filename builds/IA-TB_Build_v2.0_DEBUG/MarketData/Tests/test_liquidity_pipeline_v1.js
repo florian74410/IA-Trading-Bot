@@ -72,5 +72,9 @@ var yw=fs.readFileSync(path.join(root,'MarketData','Workers','bybit_liquidations
 assert(/allLiquidation\./.test(yw)&&/stream\.bybit\.com/.test(yw),'Bybit liquidation stream missing');
 var bybit=fs.readFileSync(path.join(root,'MarketData','Provider','bybit_provider.js'),'utf8');
 assert(/\/v5\/market\/kline/.test(bybit),'Bybit candle provider missing');
+var dex=fs.readFileSync(path.join(root,'MarketData','Provider','dexscreener_provider.js'),'utf8');
+assert(/api\.dexscreener\.com/.test(dex)&&/POOL_LIQUIDITY_USD/.test(dex),'DEX Screener pool liquidity provider missing');
+var dxc=fs.readFileSync(path.join(root,'MarketData','Collectors','dex_liquidity_collector.js'),'utf8');
+assert(/MARKET_ANALYTICS/.test(dxc)&&/firewall\.inspect/.test(dxc),'DEX liquidity must pass Data Firewall');
 
-console.log('LIQUIDITY_PIPELINE_V3_OK');
+console.log('LIQUIDITY_PIPELINE_V4_OK');
