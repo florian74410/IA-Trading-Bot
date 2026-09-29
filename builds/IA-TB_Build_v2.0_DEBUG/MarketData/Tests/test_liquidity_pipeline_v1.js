@@ -1,0 +1,45 @@
+'use strict';
+var assert=require('assert'),fs=require('fs'),path=require('path');
+var Firewall=require('../../Core/Firewall/Protection/market_data_firewall');
+var Metrics=require('../../Liquidity/Engine/liquidity_metrics');
+
+var fw=new Firewall({
+ enabled:true,mode:'PROTECTION',
+ providerWhitelist:['BINANCE_FUTURES','HYPERLIQUID','KRAKEN'],
+ typeWhitelist:['LIQUIDITY_SNAPSHOT'],
+ rules:{duplicateProtection:false},
+ maxMessageAgeMs:30000,maxSpreadPct:10
+});
+function message(book,oi){
+ var bid=book.bids[0].price,ask=book.asks[0].price;
+ return{provider:'BINANCE_FUTURES',source:'BINANCE_FUTURES',provenance:'MARKET_DATA_COLLECTOR:BINANCE_FUTURES',type:'LIQUIDITY_SNAPSHOT',symbol:'BTCUSDT',timestamp:Date.now(),bid:bid,ask:ask,price:(bid+ask)/2,data:{orderBook:book,openInterest:oi,liquidations:[]}};
+}
+var book={bids:[{price:100,size:10},{price:99.5,size:20}],asks:[{price:100.1,size:12},{price:100.5,size:20}]};
+var valid=fw.inspect(message(book,{available:true,value:1000,markPrice:100.05}),{});
+assert.notStrictEqual(valid.decision,'REJECT','valid liquidity snapshot must pass firewall');
+
+var crossed={bids:[{price:101,size:10}],asks:[{price:100,size:10}]};
+var invalid=fw.inspect(message(crossed,{available:true,value:1000,markPrice:100}),{});
+assert.strictEqual(invalid.decision,'REJECT','crossed order book must be rejected');
+
+var m=Metrics.snapshot({source:'BINANCE_FUTURES',symbol:'BTCUSDT',depth:20,orderBook:book,openInterest:{available:true,value:1000,markPrice:100.05}});
+assert(m.orderBook.available===true,'order book metrics unavailable');
+assert(m.depthBands&&m.depthBands['100bps'],'depth bands missing');
+assert(m.executionImpact&&m.executionImpact.buy&&m.executionImpact.sell,'execution impact missing');
+assert(m.liquidityScore&&m.liquidityScore.available===true,'liquidity score missing');
+assert(isFinite(m.oiToDepth100bps),'OI/depth stress ratio missing');
+
+var root=path.resolve(__dirname,'../..');
+[
+ path.join(root,'Liquidity','Engine','liquidity_service.js'),
+ path.join(root,'Liquidity','Provider','market_data_provider.js'),
+ path.join(root,'Liquidity','Provider','realtime_liquidity_provider.js')
+].forEach(function(file){
+ var src=fs.readFileSync(file,'utf8');
+ assert(!/require\(['"]https['"]\)/.test(src),'Liquidity Engine must not require https: '+file);
+ assert(!/https:\/\//.test(src),'Liquidity Engine must not contain Internet provider URLs: '+file);
+});
+var collector=fs.readFileSync(path.join(root,'MarketData','Provider','liquidity_provider.js'),'utf8');
+assert(/fapi\.binance\.com/.test(collector)&&/api\.hyperliquid\.xyz/.test(collector)&&/api\.kraken\.com/.test(collector),'migrated liquidity providers missing from Market Data');
+
+console.log('LIQUIDITY_PIPELINE_V1_OK');
