@@ -298,6 +298,17 @@
           "allowed": []
         },
         "description": "Status of the per-provider real-time liquidation worker threads owned by Market Data Collector."
+      },
+      {
+        "name": "marketdata.derivatives.open_interest.history",
+        "arguments": {
+          "allowed": [
+            "symbol",
+            "limit",
+            "since"
+          ]
+        },
+        "description": "Persisted covered Open Interest history from the unified Market Data Collector."
       }
     ],
     "dataTypes": [
@@ -344,7 +355,7 @@
       {
         "name": "market.liquidations.stats",
         "direction": "PRODUCE",
-        "schema": "marketdata.liquidations.stats/1.0"
+        "schema": "marketdata.liquidations.stats/1.1"
       },
       {
         "name": "market.microstructure.raw",
@@ -355,6 +366,11 @@
         "name": "market.microstructure.history",
         "direction": "PRODUCE",
         "schema": "marketdata.microstructure.history/1.0"
+      },
+      {
+        "name": "market.open_interest.history",
+        "direction": "PRODUCE",
+        "schema": "marketdata.open_interest.history/1.0"
       }
     ],
     "events": []
