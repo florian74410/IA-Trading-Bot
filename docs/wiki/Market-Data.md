@@ -1,128 +1,157 @@
-# 📡 Market Data Collector V2.0
+# 📡 Market Data Collector V2.1
 
-> **🟢 En simple : Market Data est la porte d’entrée unique des données financières d’IA-TB. Il récupère les prix/bougies des marchés et les données CeFi/DeFi, garde la provenance, fait contrôler les données par le Firewall puis les distribue aux autres moteurs.**
+> **🟢 En simple : Market Data est la porte d’entrée unique des données de marché d’analyse. Il collecte les données externes, les fait contrôler par le Data Firewall avant cache/stockage, puis les distribue par Router/CP1. Les Engines consommateurs n’ont plus besoin de multiplier leurs propres connexions Internet.**
 
-Le service actuel écoute sur **8013** et annonce la version **2.0.0**.
+Le service écoute sur **8013** et annonce la version **2.1.0**.
 
 ---
 
-## 🧭 Qui fournit quoi ?
+## 🧭 Providers et responsabilités
 
-**🟢 En simple : les providers se complètent. CoinGecko n’est pas utilisé pour remplacer DeFiLlama, et DeFiLlama n’est pas utilisé pour inventer des chandeliers d’exchange.**
-
-| Provider | Rôle de référence V2.0 |
+| Provider | Rôle |
 |---|---|
-| 🐙 Kraken | OHLCV / volume natif |
-| 🟡 Binance | OHLCV / volume natif |
-| ⚫ OKX | OHLCV / volume natif |
-| 🔵 GMX | prix Oracle / chandeliers, volume absent laissé absent |
-| 🦎 CoinGecko | marché token, registre d’actifs, marché global, échantillon exchanges |
-| 🦙 DeFiLlama | TVL, protocoles, chaînes, DEX, stablecoins |
-| ⛓️ On-chain RPC | lecture générique EVM, jamais signature/envoi |
+| 🐙 Kraken | OHLCV + carnet L2 |
+| 🟡 Binance | OHLCV Spot |
+| 🟡 Binance Futures | carnet L2 + Open Interest |
+| ⚫ OKX | OHLCV |
+| 🔵 GMX | prix Oracle / candles |
+| 🟣 Hyperliquid | carnet L2 + Open Interest |
+| 🦎 CoinGecko | tokens, marché global, exchanges, Market Registry |
+| 🦙 DeFiLlama | TVL, DEX, stablecoins, yields, fees |
+| ⛓️ On-chain RPC | lecture EVM préparée |
 
-Le registre Candle actuel choisit explicitement parmi **KRAKEN / GMX / BINANCE / OKX**.
+Les providers Candle restent **Kraken / GMX / Binance / OKX**. Hyperliquid et Binance Futures sont utilisés par la famille **Liquidity Microstructure**.
+
+---
+
+## 🧱 Firewall-before-cache
+
+**🟢 En simple : la donnée externe est considérée comme non fiable jusqu’à validation. Le Firewall intervient avant qu’elle soit mise en cache ou enregistrée dans la base.**
+
+```mermaid
+flowchart LR
+  P[Provider externe] --> M[Market Data]
+  M --> F[Data Firewall :8017]
+  F -->|PASS / WARN| C[(Cache)]
+  F -->|PASS / WARN| DB[(Historique)]
+  F -->|REJECT| X[Rejet]
+  C --> R[Router CP/1]
+  DB --> R
+  R --> E[Engines / UI]
+```
+
+Ce modèle est utilisé pour :
+- chandeliers ;
+- snapshots financiers CoinGecko/DeFiLlama ;
+- Market Registry CoinGecko ;
+- microstructure de liquidité.
+
+Le Router n’a donc plus besoin de faire un détour HTTP par le Firewall pour `/market-data` : **Market Data garantit lui-même que ce qu’il distribue a été validé à l’ingestion.**
+
+---
+
+## 💧 Microstructure de liquidité
+
+**🟢 En simple : les providers temps réel autrefois présents dans Liquidity Engine sont maintenant hébergés ici.**
+
+Actions CP/1 :
+- `marketdata.liquidity.capabilities`
+- `marketdata.liquidity.snapshot`
+- `marketdata.liquidity.history`
+- `marketdata.liquidity.storage`
+- `marketdata.liquidity.refresh`
+
+Schéma brut :
+`marketdata.liquidity.raw/1.0`
+
+Un snapshot peut contenir :
+- carnet bids/asks ;
+- source/provider ;
+- symbole canonique ;
+- profondeur ;
+- Open Interest ;
+- mark price ;
+- liquidations si une source future les fournit ;
+- résultat Firewall ;
+- état partial/errors.
+
+---
+
+## 💾 Historique Liquidity SQLite
+
+**🟢 En simple : Market Data conserve un historique long terme pour éviter que Liquidity Engine garde des mois de données en RAM.**
+
+Base :
+`Shared Data/MarketData/liquidity_history.db`
+
+Rétention :
+- minimum : **30 jours** ;
+- maximum : **90 jours** ;
+- défaut : **90 jours**.
+
+La fréquence de persistance par source/symbole est de **60 secondes** par défaut.
 
 ---
 
 ## 🦎 CoinGecko vs 🦙 DeFiLlama
 
-**🟢 En simple : CoinGecko décrit surtout les tokens et le marché crypto global ; DeFiLlama décrit surtout l’activité DeFi. Cette séparation empêche de compter deux fois la même idée avec deux sources différentes.**
+**🟢 En simple : CoinGecko et DeFiLlama restent complémentaires et ne doivent pas se battre pour la même métrique.**
 
-Le Collector déclare aujourd’hui la propriété suivante :
 - `token_market → COINGECKO`
 - `defi_protocol → DEFILLAMA`
 - `dex_market → DEFILLAMA`
 - `stablecoin_defi → DEFILLAMA`
 
-CoinGecko alimente notamment :
-- market cap global ;
-- volume global/samples ;
-- dominance BTC ;
-- actifs principaux ;
-- exchanges et volumes échantillonnés ;
-- Market Registry.
+CoinGecko : market cap, volume global, assets, exchanges, registre.
 
-DeFiLlama alimente notamment :
-- TVL protocoles ;
-- TVL chaînes ;
-- volumes DEX ;
-- capitalisation stablecoins ;
-- classements protocoles/catégories.
-
-Les limitations sont conservées dans le snapshot au lieu d’être masquées.
+DeFiLlama : TVL, chains, DEX volume, stablecoins, pools/yields, fees.
 
 ---
 
-## 🧱 Validation par Data Firewall
+## 📦 Snapshot financier
 
-**🟢 En simple : une réponse API n’est pas automatiquement considérée comme fiable parce qu’elle vient d’un provider connu.**
+**🟢 En simple : CeFi et DeFi restent centralisés dans un snapshot commun validé.**
 
-Avant stockage du snapshot financier, CoinGecko et DeFiLlama sont envoyés au Firewall via `/api/data/inspect`.
+Schéma :
+`iatb.financial.snapshot/2.0`
 
-Le Data Firewall vérifie notamment :
-- provider autorisé ;
-- type de donnée autorisé ;
-- provenance ;
-- timestamp / fraîcheur ;
-- schéma OHLC lorsque pertinent ;
-- prix positifs ;
-- bid/ask et spread ;
-- doublons ;
-- taille du payload.
+Stockage financier actuel :
+**HYBRID_MEMORY_JSONL**.
 
-Une forte variation de prix peut produire un warning sans supprimer arbitrairement un vrai mouvement de marché.
+Le nouvel historique de microstructure Liquidity utilise pour sa part **SQLite**.
 
 ---
 
-## 💾 Cache et historique
+## 🧾 Actions principales CP/1
 
-**🟢 En simple : les données récentes restent en mémoire pour être rapides, tandis qu’un historique financier léger est conservé sur disque pour les graphiques et analyses.**
+### Marché
+- `marketdata.health`
+- `marketdata.audit`
+- `marketdata.candles`
+- `marketdata.providers`
 
-Réglages par défaut actuels :
-- refresh chandeliers : **15 s** ;
-- cache Market Data : **48 entrées** ;
-- TTL cache : **20 s** ;
-- refresh financier : **60 s** ;
-- TTL CeFi : **45 s** ;
-- TTL DeFi : **90 s** ;
-- persistance financière : environ **15 min** ;
-- rétention : environ **30 jours** ;
-- maximum historique : **1600 snapshots**.
+### Liquidité
+- `marketdata.liquidity.capabilities`
+- `marketdata.liquidity.snapshot`
+- `marketdata.liquidity.history`
+- `marketdata.liquidity.storage`
+- `marketdata.liquidity.refresh`
 
-Le Financial Store fonctionne en mode **HYBRID_MEMORY_JSONL** dans les données utilisateur hors dépôt Git.
+### Finance
+- `marketdata.financial.capabilities`
+- `marketdata.financial.snapshot`
+- `marketdata.financial.history`
+- `marketdata.financial.ai_context`
+- `marketdata.financial.storage`
 
----
-
-## 📦 Snapshot financier V2
-
-**🟢 En simple : Market Data fabrique un paquet cohérent qui réunit une partie CeFi et une partie DeFi, avec date, fraîcheur, qualité et provenance.**
-
-Schéma courant : `iatb.financial.snapshot/2.0`.
-
-```mermaid
-flowchart LR
-  CG[CoinGecko] --> C[CeFi / Token Market]
-  DL[DeFiLlama] --> D[DeFi]
-  C --> F[Data Firewall]
-  D --> F
-  F --> Q[Quality Check]
-  Q --> S[(Financial Store)]
-  S --> R[Router CP/1]
-```
-
-Le snapshot n’invente pas :
-- d’Open Interest si aucun provider dérivés n’est branché ;
-- de liquidations si aucun provider approprié n’est branché ;
-- de volume GMX absent ;
-- de volume bridge non connecté.
+### Registry
+- `marketdata.registry.*`
 
 ---
 
 ## 🤖 Consommateurs
 
-**🟢 En simple : une fois validées, les mêmes données peuvent être réutilisées par plusieurs moteurs sans rappeler CoinGecko ou DeFiLlama chacun de leur côté.**
-
-Le service déclare comme consommateurs :
+Les données validées peuvent être consommées par :
 - Liquidity ;
 - Indicator ;
 - Strategy ;
@@ -131,72 +160,18 @@ Le service déclare comme consommateurs :
 - Chat IA en lecture ;
 - Statistiques UI.
 
-Les accès IA sont **READ_ONLY**.
+Les consommateurs analytiques ne doivent pas recréer leurs propres providers Internet lorsque la donnée appartient à Market Data.
 
 ---
 
-## 📐 Indicator + données financières
+## ✅ Règles
 
-**🟢 En simple : Indicator Engine peut maintenant calculer des métriques sur les séries financières persistées, pas seulement sur des chandeliers.**
+**🟢 En simple : collecter une fois, vérifier une fois, distribuer proprement.**
 
-Les commandes dédiées permettent :
-- obtenir le contexte financier ;
-- extraire une série numérique ;
-- calculer variation, min/max, moyenne, SMA et EMA.
-
----
-
-## 💧 Liquidity + données financières
-
-**🟢 En simple : Liquidity peut enrichir son analyse avec le contexte financier centralisé au lieu de créer son propre connecteur DeFi parallèle.**
-
-La commande `liquidity.financial` lit les données via Router/Market Data.
-
----
-
-## 🧾 Principales commandes CP/1
-
-**🟢 En simple : le Router expose des commandes de lecture standard plutôt que de laisser les autres moteurs connaître l’implémentation interne du Collector.**
-
-- `marketdata.health`
-- `marketdata.audit`
-- `marketdata.candles`
-- `marketdata.providers`
-- `marketdata.registry.*`
-- `marketdata.financial.capabilities`
-- `marketdata.financial.snapshot`
-- `marketdata.financial.history`
-- `marketdata.financial.ai_context`
-- `marketdata.financial.storage`
-- `marketdata.financial.refresh`
-
----
-
-## 📊 Page Statistiques
-
-**🟢 En simple : les graphiques CeFi/DeFi de Statistiques utilisent désormais les snapshots du Market Data Collector.**
-
-La page appelle `marketdata.financial.snapshot` et les historiques CeFi/DeFi via le canal UI READ_ONLY, avec un rafraîchissement d’environ 60 secondes.
-
-Attention : certaines petites cartes décoratives de disponibilité/latence restent encore des valeurs de présentation tant qu’aucune métrique runtime équivalente n’est fournie.
-
----
-
-## ⚠️ Anciennes fonctions / documentation historique
-
-**🟢 En simple : l’ancien Wiki parlait beaucoup d’Hyperliquid et de la source virtuelle ƒx. Ce n’est pas le chemin principal du Market Data Collector V2.0 actuellement chargé.**
-
-Les anciens développements restent utiles dans l’historique Git, mais la documentation V2.0 considère comme pipeline canonique le registre actuel **Kraken / GMX / Binance / OKX + CoinGecko + DeFiLlama**.
-
----
-
-## ✅ Règles obligatoires
-
-**🟢 En simple : ne jamais mélanger silencieusement des marchés différents et ne jamais fabriquer une donnée manquante.**
-
-- provenance conservée ;
-- paire et timeframe validés ;
-- volumes natifs seulement lorsqu’ils existent ;
-- CoinGecko et DeFiLlama ont des rôles complémentaires ;
-- données financières contrôlées avant stockage ;
-- cache borné pour rester adapté à la machine cible.
+1. Le provider reste identifiable.
+2. La donnée externe passe le Data Firewall avant stockage.
+3. Une donnée manquante reste manquante.
+4. Les caches sont bornés.
+5. L’historique lourd reste côté Collector.
+6. Les Engines utilisent Router/CP1.
+7. Les API d’exécution Trading restent séparées du Market Data.
