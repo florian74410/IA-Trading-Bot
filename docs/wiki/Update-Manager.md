@@ -1,31 +1,54 @@
-# Update Manager
+# ⬆️ Update Manager
 
-L'Update Manager installe les mises à jour versionnées de IA-TB et protège l'application contre l'application d'un patch prévu pour une autre base.
+> **🟢 En simple : Update Manager empêche d’appliquer aveuglément un patch construit pour une autre version et protège les données utilisateur pendant la mise à jour.**
 
-## Compatibilité de version
+---
 
-Un package de mise à jour déclare notamment :
+## 🏷️ Compatibilité de version
 
+**🟢 En simple : un patch incrémental doit connaître exactement sa version de départ et sa version d’arrivée.**
+
+Un package déclare notamment :
 ```text
 package_type = UPDATE
 from_version = X
- to_version = Y
+to_version = Y
 ```
 
-`from_version` doit correspondre à la version installée lorsque le package est conçu comme patch incrémental.
+`from_version` doit correspondre à la version installée ciblée. Une incompatibilité bloque l’installation.
 
-Exemple : une application `1.7.3` doit recevoir un patch construit pour `from_version = 1.7.3`. Un patch ancien déclaré `1.6.1` doit être refusé plutôt que d'écraser une base différente.
+---
 
-## Manifest et intégrité
+## 🔎 Manifest et intégrité
 
-Le package doit identifier les fichiers attendus et permettre leur contrôle d'intégrité, par exemple via SHA-256 selon le format de release retenu.
+**🟢 En simple : le package doit permettre de vérifier que ses fichiers n’ont pas été remplacés ou corrompus.**
 
-## Données utilisateur
+Le manifest décrit les fichiers attendus et le workflow de release prévoit la vérification de hashes, notamment SHA-256 selon le format du package.
 
-Une mise à jour ne doit pas écraser les secrets, paramètres personnels, journaux ou données runtime qui ne font pas partie explicitement de la migration.
+---
 
-## Rollback
+## 👤 Données utilisateur
 
-Toute migration sensible doit prévoir un retour à l'état précédent ou une sauvegarde suffisante pour restaurer la version antérieure.
+**🟢 En simple : mettre à jour le code ne doit pas effacer wallets, secrets, paramètres, bases ou logs utilisateur.**
 
-Voir également [Versionnage et releases](Versioning-and-Releases.md) et `docs/RELEASE_PROTOCOL.md`.
+Les données persistantes sont séparées du code, notamment sous `~/IA-TB-UserData-Server`. Une migration explicite doit être utilisée lorsqu’un schéma change.
+
+---
+
+## ↩️ Rollback
+
+**🟢 En simple : une modification sensible doit prévoir comment revenir à l’état précédent.**
+
+Selon le type de mise à jour :
+- sauvegarde ;
+- copie avant migration ;
+- restauration de version ;
+- validation post-installation.
+
+---
+
+## 🛠️ Interface Admin
+
+**🟢 En simple : Update Manager est intégré à l’Admin afin que mise à jour, diagnostic et version soient visibles au même endroit.**
+
+Voir aussi [Versionnage et releases](Versioning-and-Releases.md).
