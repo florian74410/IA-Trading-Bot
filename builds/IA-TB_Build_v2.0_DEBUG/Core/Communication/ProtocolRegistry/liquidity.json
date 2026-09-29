@@ -140,6 +140,19 @@
         "arguments": {
           "allowed": []
         }
+      },
+      {
+        "name": "liquidity.open_interest",
+        "arguments": {
+          "allowed": [
+            "symbol",
+            "sources"
+          ],
+          "required": [
+            "symbol"
+          ]
+        },
+        "description": "Covered aggregate perpetual Open Interest from Market Data across connected venues."
       }
     ],
     "dataTypes": [
@@ -198,6 +211,11 @@
         "name": "liquidity.score",
         "direction": "PRODUCE",
         "schema": "iatb.liquidity.analysis/2.0"
+      },
+      {
+        "name": "liquidity.open_interest.aggregate",
+        "direction": "PRODUCE",
+        "schema": "marketdata.open_interest.aggregate/1.0"
       }
     ],
     "events": []
