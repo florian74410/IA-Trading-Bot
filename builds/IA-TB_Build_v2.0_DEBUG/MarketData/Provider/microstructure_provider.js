@@ -7,6 +7,7 @@ function baseCoin(s){s=clean(s);var q=['USDT','USDC','USD','EUR','BTC','ETH'];fo
 function binanceSymbol(s){s=clean(s);if(/USDT$/.test(s))return s;if(/USD$/.test(s))return s.slice(0,-3)+'USDT';return s;}
 function krakenPair(s){s=clean(s);if(s.indexOf('BTC')===0)s='XBT'+s.slice(3);return s;}
 function okxInst(s){var b=baseCoin(s);return b+'-USDT-SWAP';}
+function bybitSymbol(s){return baseCoin(s)+'USDT';}
 function usd30(v){var s=String(v==null?'':v).trim();if(!/^[-+]?\d+$/.test(s))return num(v);var neg=s[0]==='-';if(neg||s[0]==='+')s=s.slice(1);s=s.replace(/^0+(?=\d)/,'');while(s.length<=30)s='0'+s;var a=s.slice(0,-30)||'0',b=s.slice(-30,-24),n=Number(a+'.'+b);return neg?-n:n;}
 function level(x){
  if(Array.isArray(x)){var p=num(x[0]),q=num(x[1]),n=num(x[2]);return p>0&&q>=0?{price:p,size:q,count:n}:null;}
@@ -25,7 +26,7 @@ function snapshot(source,symbol,canonical,depth,b,oi,mark,errors){
  oi=num(oi);
  return{ok:true,schema:'marketdata.liquidity.raw/1.0',source:source,provider:source,provenance:'MARKET_DATA_COLLECTOR:'+source,symbol:symbol,canonicalSymbol:canonical||symbol,depth:+depth||20,observedAt:Date.now(),orderBook:b||{bids:[],asks:[]},openInterest:oi==null?{available:false,value:null,unit:'BASE',markPrice:mark,notional:null}:{available:true,value:oi,unit:'BASE',markPrice:mark,notional:mark==null?null:oi*mark},liquidations:[],partial:Array.isArray(errors)&&errors.length>0,errors:(errors||[]).slice(0,16)};
 }
-function P(o){o=o||{};this.settings=o.settings||{};this.okxBase=String(o.okxBase||process.env.IATB_OKX_PUBLIC_BASE||'https://www.okx.com').replace(/\/$/,'');this.name='MICROSTRUCTURE_PROVIDER_REGISTRY';}
+function P(o){o=o||{};this.settings=o.settings||{};this.okxBase=String(o.okxBase||process.env.IATB_OKX_PUBLIC_BASE||'https://www.okx.com').replace(/\/$/,'');this.bybitBase=String(o.bybitBase||process.env.IATB_BYBIT_PUBLIC_BASE||'https://api.bybit.com').replace(/\/$/,'');this.name='MICROSTRUCTURE_PROVIDER_REGISTRY';}
 P.prototype.enabled=function(source){
  source=String(source||'').toUpperCase();var id=source==='BINANCE_FUTURES'?'BINANCE':source,p=this.settings.providers&&this.settings.providers[id];return !p||p.enabled!==false;
 };
@@ -46,6 +47,12 @@ P.prototype.okx=function(symbol,depth,cb){
  var inst=okxInst(symbol),base=this.okxBase,left=2,b=null,oi=null,mark=null,errors=[],done=function(){if(--left)return;if(!b||!b.bids.length||!b.asks.length)return cb(new Error(errors.join('|')||'OKX_ORDERBOOK_UNAVAILABLE'));var x=snapshot('OKX',symbol,inst,depth,b,null,mark,errors);if(oi!=null)x.openInterest=oi;cb(null,x);};
  request(base+'/api/v5/market/books?instId='+encodeURIComponent(inst)+'&sz='+Math.max(5,Math.min(100,+depth||20)),{timeout:10000},function(e,o){if(e)errors.push('ORDERBOOK:'+e.message);else{var d=o&&Array.isArray(o.data)&&o.data[0];if(d)b=book(d.bids,d.asks,depth);else errors.push('ORDERBOOK:INVALID_RESPONSE');}done();});
  request(base+'/api/v5/public/open-interest?instType=SWAP&instId='+encodeURIComponent(inst),{timeout:10000},function(e,o){if(e)errors.push('OPEN_INTEREST:'+e.message);else{var d=o&&Array.isArray(o.data)&&o.data[0];if(d){var n=num(d.oiUsd),v=num(d.oiCcy),px=v&&n?n/v:null;oi={available:n!=null,unit:'USD',value:v,markPrice:px,notional:n,oiContracts:num(d.oi),observedAt:+d.ts||Date.now()};mark=px;}}done();});
+};
+P.prototype.bybit=function(symbol,depth,cb){
+ if(!this.enabled('BYBIT'))return cb(new Error('MARKET_PROVIDER_DISABLED: BYBIT'));
+ var ps=bybitSymbol(symbol),base=this.bybitBase,left=2,b=null,oi=null,mark=null,errors=[],done=function(){if(--left)return;if(!b||!b.bids.length||!b.asks.length)return cb(new Error(errors.join('|')||'BYBIT_ORDERBOOK_UNAVAILABLE'));var x=snapshot('BYBIT',symbol,ps,depth,b,null,mark,errors);if(oi!=null)x.openInterest=oi;cb(null,x);};
+ request(base+'/v5/market/orderbook?category=linear&symbol='+encodeURIComponent(ps)+'&limit='+Math.max(5,Math.min(100,+depth||20)),{timeout:10000},function(e,o){if(e)errors.push('ORDERBOOK:'+e.message);else if(!o||+o.retCode!==0)errors.push('ORDERBOOK:BYBIT_API_'+String(o&&o.retCode||'INVALID'));else{var d=o.result;if(d)b=book(d.b,d.a,depth);else errors.push('ORDERBOOK:INVALID_RESPONSE');}done();});
+ request(base+'/v5/market/tickers?category=linear&symbol='+encodeURIComponent(ps),{timeout:10000},function(e,o){if(e)errors.push('OPEN_INTEREST:'+e.message);else if(!o||+o.retCode!==0)errors.push('OPEN_INTEREST:BYBIT_API_'+String(o&&o.retCode||'INVALID'));else{var d=o.result&&Array.isArray(o.result.list)&&o.result.list[0];if(d){var n=num(d.openInterestValue),v=num(d.openInterest),px=num(d.markPrice);oi={available:n!=null||v!=null,unit:'BASE',value:v,markPrice:px,notional:n!=null?n:(v!=null&&px!=null?v*px:null),observedAt:Date.now()};mark=px;}}done();});
 };
 P.prototype.kraken=function(symbol,depth,cb){
  if(!this.enabled('KRAKEN'))return cb(new Error('MARKET_PROVIDER_DISABLED: KRAKEN'));
@@ -74,6 +81,10 @@ P.prototype.openInterest=function(symbol,source,cb){
   return request('https://api.hyperliquid.xyz/info',{method:'POST',timeout:10000,headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'metaAndAssetCtxs'})},function(e,o){if(e)return cb(e);var oi=null,mark=null;if(Array.isArray(o)&&o[0]&&Array.isArray(o[0].universe)&&Array.isArray(o[1]))for(var i=0;i<o[0].universe.length;i++)if(String(o[0].universe[i].name||'').toUpperCase()===coin){oi=num(o[1][i]&&o[1][i].openInterest);mark=num(o[1][i]&&(o[1][i].markPx||o[1][i].midPx));break;}if(oi==null)return cb(new Error('HYPERLIQUID_OPEN_INTEREST_UNAVAILABLE'));cb(null,row('HYPERLIQUID',coin,mark==null?null:oi*mark,oi,mark,{instrument:coin,marketType:'PERPETUAL',venueType:'DEX'}));});
  }
  if(source==='GMX')return self.gmxOpenInterest(symbol,cb);
+ if(source==='BYBIT'){
+  if(!self.enabled('BYBIT'))return cb(new Error('MARKET_PROVIDER_DISABLED: BYBIT'));
+  var ps=bybitSymbol(symbol);return request(self.bybitBase+'/v5/market/tickers?category=linear&symbol='+encodeURIComponent(ps),{timeout:10000},function(e,o){if(e)return cb(e);if(!o||+o.retCode!==0)return cb(new Error('BYBIT_OPEN_INTEREST_API_'+String(o&&o.retCode||'INVALID')));var d=o.result&&Array.isArray(o.result.list)&&o.result.list[0];if(!d)return cb(new Error('BYBIT_OPEN_INTEREST_UNAVAILABLE'));var n=num(d.openInterestValue),v=num(d.openInterest),mark=num(d.markPrice);if(n==null&&v!=null&&mark!=null)n=v*mark;cb(null,row('BYBIT',ps,n,v,mark,{instrument:ps,marketType:'PERPETUAL',venueType:'CEX'}));});
+ }
  if(source==='OKX'){
   if(!self.enabled('OKX'))return cb(new Error('MARKET_PROVIDER_DISABLED: OKX'));
   var inst=okxInst(symbol);return request(self.okxBase+'/api/v5/public/open-interest?instType=SWAP&instId='+encodeURIComponent(inst),{timeout:10000},function(e,o){if(e)return cb(e);var d=o&&Array.isArray(o.data)&&o.data[0];if(!d)return cb(new Error('OKX_OPEN_INTEREST_UNAVAILABLE'));var n=num(d.oiUsd),v=num(d.oiCcy),mark=v&&n?n/v:null;cb(null,row('OKX',inst,n,v,mark,{instrument:inst,oiContracts:num(d.oi),marketType:'PERPETUAL',venueType:'CEX',observedAt:+d.ts||Date.now()}));});
@@ -81,7 +92,7 @@ P.prototype.openInterest=function(symbol,source,cb){
  cb(new Error('OPEN_INTEREST_PROVIDER_UNSUPPORTED: '+source));
 };
 P.prototype.aggregateOpenInterest=function(symbol,sources,cb){
- var self=this,list=Array.isArray(sources)&&sources.length?sources:['BINANCE_FUTURES','OKX','HYPERLIQUID','GMX'],left=list.length,rows=[],missing=[];
+ var self=this,list=Array.isArray(sources)&&sources.length?sources:['BINANCE_FUTURES','OKX','BYBIT','HYPERLIQUID','GMX'],left=list.length,rows=[],missing=[];
  if(!left)return cb(null,{ok:true,symbol:symbol,venues:[],coverage:{requested:[],received:[],missing:[]}});
  list.forEach(function(src){self.openInterest(symbol,src,function(e,o){if(e)missing.push({source:src,error:e.message});else if(o&&isFinite(+o.openInterestNotionalUsd))rows.push(o);else missing.push({source:src,error:'OI_NOTIONAL_UNAVAILABLE'});if(--left)return;cb(null,{ok:true,symbol:baseCoin(symbol)+'USD',venues:rows,coverage:{requested:list.slice(),received:rows.map(function(x){return x.source;}),missing:missing}});});});
 };
@@ -90,14 +101,16 @@ P.prototype.getSnapshot=function(symbol,source,depth,cb){
  if(source==='BINANCE'||source==='BINANCE_FUTURES')return self.binance(symbol,depth,cb);
  if(source==='HYPERLIQUID')return self.hyperliquid(symbol,depth,cb);
  if(source==='OKX')return self.okx(symbol,depth,cb);
+ if(source==='BYBIT')return self.bybit(symbol,depth,cb);
  if(source==='KRAKEN'||source==='REFERENCE')return self.kraken(symbol,depth,cb);
  if(source!=='AUTO')return cb(new Error('LIQUIDITY_PROVIDER_UNKNOWN: '+source));
- self.hyperliquid(symbol,depth,function(e,o){if(!e)return cb(null,o);self.binance(symbol,depth,function(e2,o2){if(!e2)return cb(null,o2);self.kraken(symbol,depth,function(e3,o3){if(!e3)return cb(null,o3);cb(e2||e||e3||new Error('NO_LIQUIDITY_PROVIDER'));});});});
+ self.hyperliquid(symbol,depth,function(e,o){if(!e)return cb(null,o);self.binance(symbol,depth,function(e2,o2){if(!e2)return cb(null,o2);self.bybit(symbol,depth,function(e3,o3){if(!e3)return cb(null,o3);self.okx(symbol,depth,function(e4,o4){if(!e4)return cb(null,o4);self.kraken(symbol,depth,function(e5,o5){if(!e5)return cb(null,o5);cb(e2||e3||e4||e||e5||new Error('NO_LIQUIDITY_PROVIDER'));});});});});});
 };
 P.prototype.list=function(){var self=this;return[
  {id:'BINANCE_FUTURES',enabled:self.enabled('BINANCE_FUTURES'),capabilities:['ORDERBOOK','OPEN_INTEREST']},
  {id:'HYPERLIQUID',enabled:self.enabled('HYPERLIQUID'),capabilities:['ORDERBOOK','OPEN_INTEREST']},
  {id:'OKX',enabled:self.enabled('OKX'),capabilities:['ORDERBOOK','OPEN_INTEREST']},
+ {id:'BYBIT',enabled:self.enabled('BYBIT'),capabilities:['ORDERBOOK','OPEN_INTEREST']},
  {id:'GMX',enabled:self.enabled('GMX'),capabilities:['OPEN_INTEREST']},
  {id:'KRAKEN',enabled:self.enabled('KRAKEN'),capabilities:['ORDERBOOK']}
 ];};
