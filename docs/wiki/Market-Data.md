@@ -209,7 +209,8 @@ Le namespace CP/1 canonique est `marketdata.microstructure.*`. Les anciennes com
 Première couverture :
 - Binance Futures — CEX ;
 - OKX SWAP — CEX ;
-- Hyperliquid Perps — DEX.
+- Hyperliquid Perps — DEX;
+- GMX Arbitrum + Avalanche — DEX.
 
 `marketdata.derivatives.open_interest` retourne :
 - `cexOpenInterestUsd` ;
