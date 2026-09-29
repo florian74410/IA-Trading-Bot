@@ -145,7 +145,7 @@ function seriesChart(series,range){
 }
 function cexRangeConfig(){
  var r=String(state.cefi.volumeRange||'24H').toUpperCase();
- return ({'1H':{ms:3600000,limit:16},'24H':{ms:86400000,limit:120},'7J':{ms:604800000,limit:700},'30J':{ms:2592000000,limit:1600}})[r]||{ms:86400000,limit:120};
+ return ({'1H':{ms:3600000,limit:24},'24H':{ms:86400000,limit:320},'7J':{ms:604800000,limit:2100},'30J':{ms:2592000000,limit:9000}})[r]||{ms:86400000,limit:120};
 }
 function cexSeriesRange(a,range){
  a=(a||[]).filter(function(x){return x&&isFinite(+x.valueUsd)&&+x.valueUsd>0&&+x.timestamp>0}).sort(function(x,y){return x.timestamp-y.timestamp});
