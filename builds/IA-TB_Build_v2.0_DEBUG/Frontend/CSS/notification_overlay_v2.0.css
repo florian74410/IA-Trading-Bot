@@ -87,3 +87,32 @@
     padding-left:36px;
   }
 }
+
+
+/* v2.0 DEBUG — universal large Smart Contract success notification */
+.iaScSuccess{display:flex;flex-direction:column;gap:12px}
+.iaScBadge{
+ display:inline-flex;align-self:flex-start;align-items:center;gap:6px;
+ padding:5px 9px;border:1px solid rgba(42,225,164,.35);border-radius:999px;
+ background:rgba(20,100,76,.18);color:#46e5b0;font-size:9px;font-weight:900;letter-spacing:.05em
+}
+.iaScFlow{padding:12px 13px}
+.iaScGrid{
+ display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px
+}
+.iaScGrid>div{
+ min-width:0;padding:9px 10px;border:1px solid rgba(36,110,146,.30);border-radius:8px;background:#04131e
+}
+.iaScGrid small{
+ display:block;margin-bottom:4px;color:#6f96a9;font-size:7px;letter-spacing:.08em
+}
+.iaScGrid b{
+ display:block;color:#e9f8ff;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+}
+.iaScGrid .iaScOk{color:#45e6ac}
+.iaScHash{padding:10px 12px;font-size:10px}
+@media(max-width:700px){
+ .iaScGrid{grid-template-columns:1fr 1fr}
+ .iaScFlow{flex-wrap:wrap}
+ .iaScFlow .iaTxFee{width:100%;margin-left:0;padding-left:34px}
+}
