@@ -524,3 +524,21 @@ html{scroll-padding-top:82px}
  .executionCostBody{grid-template-columns:1fr}
  .execVisual{min-height:165px}
 }
+
+
+/* CEX data-state fixes: never leave an apparently functional module visually blank. */
+.financeDataEmpty{
+ min-height:126px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+ padding:16px;text-align:center;color:#789eaf
+}
+.financeDataEmpty b{color:#d8eef7;font-size:11px}
+.financeDataEmpty span{display:block;margin-top:5px;max-width:250px;font-size:8px;line-height:1.4}
+.financeLegend .financeDataEmpty{min-height:90px;padding:8px}
+.financeDonut.unavailable{
+ background:#163447!important;
+ box-shadow:none
+}
+.financeDonut.unavailable:before{
+ content:"";position:absolute;inset:0;border-radius:50%;
+ border:1px dashed #2b586c;opacity:.75
+}
