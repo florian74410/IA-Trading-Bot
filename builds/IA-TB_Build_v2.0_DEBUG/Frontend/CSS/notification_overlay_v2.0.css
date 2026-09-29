@@ -211,3 +211,29 @@
   .iaContractFlow{grid-template-columns:1fr auto;justify-content:stretch}
   .iaContractFlow i{grid-column:1/-1}
 }
+
+
+/* Universal Smart Contract signature confirmation */
+.iaScConfirm{display:flex;flex-direction:column;gap:12px}
+.iaScPasswordLabel{
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+  color:#8fb3c5;
+  font-size:9px;
+  font-weight:700;
+}
+.iaScPasswordLabel input{
+  width:100%;
+  border:1px solid #1b5875;
+  border-radius:7px;
+  background:#03131e;
+  color:#edfaff;
+  padding:9px 10px;
+  font:11px Menlo,Monaco,monospace;
+  outline:none;
+}
+.iaScPasswordLabel input:focus{
+  border-color:#25b9ff;
+  box-shadow:0 0 0 2px rgba(37,185,255,.08);
+}
