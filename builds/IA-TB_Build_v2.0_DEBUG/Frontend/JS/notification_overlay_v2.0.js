@@ -1,4 +1,4 @@
-(function(){'use strict';function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}function show(o){o=o||{};var size=['small','medium','large'].indexOf(o.size)>=0?o.size:'small',layer=document.createElement('div');layer.className='iaNtfLayer '+(o.modal!==false?'hasModal':'');var actions=(o.actions||[]).map(function(a,i){return '<button data-a="'+i+'" class="'+esc(a.kind||'')+'">'+esc(a.label||'OK')+'</button>'}).join('');layer.innerHTML='<section class="iaNtf '+size+'"><header class="iaNtfHead"><span class="iaNtfIcon">'+esc(o.icon||'✦')+'</span><div><b>'+esc(o.title||'IA-TB')+'</b><small>'+esc(o.subtitle||'Notification sécurisée')+'</small></div><button class="iaNtfClose">×</button></header><div class="iaNtfBody">'+(o.html||esc(o.text||''))+(o.image?'<img src="'+esc(o.image)+'" alt="">':'')+'</div>'+(actions?'<footer class="iaNtfActions">'+actions+'</footer>':'')+'</section>';document.body.appendChild(layer);function close(){if(layer.parentNode)layer.parentNode.removeChild(layer);if(o.onClose)o.onClose()}layer.querySelector('.iaNtfClose').onclick=close;[].slice.call(layer.querySelectorAll('[data-a]')).forEach(function(b){b.onclick=function(){var a=o.actions[+b.getAttribute('data-a')];if(a&&a.onClick)a.onClick(close);else close()}});return{close:close,element:layer}}function txLogo(symbol){
+(function(){'use strict';function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}function show(o){o=o||{};var size=['small','medium','large','xlarge'].indexOf(o.size)>=0?o.size:'small',layer=document.createElement('div');layer.className='iaNtfLayer '+(o.modal!==false?'hasModal':'');var actions=(o.actions||[]).map(function(a,i){return '<button data-a="'+i+'" class="'+esc(a.kind||'')+'">'+esc(a.label||'OK')+'</button>'}).join('');layer.innerHTML='<section class="iaNtf '+size+'"><header class="iaNtfHead"><span class="iaNtfIcon">'+esc(o.icon||'✦')+'</span><div><b>'+esc(o.title||'IA-TB')+'</b><small>'+esc(o.subtitle||'Notification sécurisée')+'</small></div><button class="iaNtfClose">×</button></header><div class="iaNtfBody">'+(o.html||esc(o.text||''))+(o.image?'<img src="'+esc(o.image)+'" alt="">':'')+'</div>'+(actions?'<footer class="iaNtfActions">'+actions+'</footer>':'')+'</section>';document.body.appendChild(layer);function close(){if(layer.parentNode)layer.parentNode.removeChild(layer);if(o.onClose)o.onClose()}layer.querySelector('.iaNtfClose').onclick=close;[].slice.call(layer.querySelectorAll('[data-a]')).forEach(function(b){b.onclick=function(){var a=o.actions[+b.getAttribute('data-a')];if(a&&a.onClick)a.onClick(close);else close()}});return{close:close,element:layer}}function txLogo(symbol){
  symbol=String(symbol||'').toUpperCase();
  var map={
   BTC:'https://cryptologos.cc/logos/bitcoin-btc-logo.png?v=040',
@@ -43,6 +43,43 @@ function smartContractSuccess(o){
       '<div class="iaTxHash iaScHash"><b>TX :</b> <span>'+esc(tx)+'</span></div>'+
      '</div>';
  return show({size:'large',modal:false,icon:'✓',title:o.title||'Transaction Smart Contract réussie',subtitle:o.subtitle||'Signature et confirmation on-chain validées',html:html});
+}
+function smartContractSignature(o){
+ o=o||{};
+ var tx=String(o.tx||o.txHash||'En attente de signature'),
+     fromSymbol=String(o.fromSymbol||'').toUpperCase(),
+     toSymbol=String(o.toSymbol||'').toUpperCase(),
+     feeIATB=(o.iatbFeePct==null?'1':String(o.iatbFeePct)),
+     rows=[
+      ['Réseau',o.network||'--'],
+      ['Smart contract',o.contract||'--'],
+      ['Action',o.action||'Signature de contrat'],
+      ['Provider / Route',o.provider||'--'],
+      ['Actif envoyé',(o.fromAmount||'--')+' '+fromSymbol],
+      ['Actif estimé reçu',(o.toAmount||'--')+' '+toSymbol],
+      ['Gas estimé',o.gasCost||'--'],
+      ['Frais provider',o.providerFee||'--'],
+      ['Frais IA-TB',feeIATB+' %'+(o.iatbFeeAmount?' · '+o.iatbFeeAmount:'')],
+      ['Coût total',o.totalCost||'--'],
+      ['TX',tx]
+     ],
+     html='<div class="iaContractSign">'+
+      '<div class="iaContractWarning"><b>Signature de smart contract</b><span>Vérifiez chaque donnée avant de signer. IA-TB ne doit jamais envoyer la transaction avant votre confirmation.</span></div>'+
+      '<div class="iaContractRows">'+rows.map(function(r){return '<div><span>'+esc(r[0])+'</span><b>'+esc(r[1])+'</b></div>'}).join('')+'</div>'+
+      '<div class="iaContractFlow"><span>'+esc(fromSymbol||'ACTIF')+'</span><strong>'+esc(o.fromAmount||'--')+'</strong><i>→</i><span>'+esc(toSymbol||'ACTIF')+'</span><strong>'+esc(o.toAmount||'--')+'</strong></div>'+
+     '</div>';
+ return show({
+  size:'xlarge',
+  modal:true,
+  icon:'✍',
+  title:o.title||'Signature Smart Contract',
+  subtitle:o.subtitle||'Confirmation obligatoire avant envoi on-chain',
+  html:html,
+  actions:[
+   {label:'Annuler',kind:'',onClick:function(close){close();if(o.onCancel)o.onCancel();}},
+   {label:o.confirmLabel||'Vérifier et signer',kind:'primary',onClick:function(close){if(o.onConfirm)o.onConfirm(close);}}
+  ]
+ });
 }
 function transactionSuccess(o){
  o=o||{};
