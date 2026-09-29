@@ -73,11 +73,11 @@ function approvalData(spender,amount){
 }
 function SwapBridgeService(opts){
  opts=opts||{};this.walletService=opts.walletService;this.getSecret=opts.getSecret||function(){return''};this.notify=opts.notify||function(){};this.log=opts.log||function(){};
- this.cache=Object.create(null);this.feeBps=100;this.feeRate=.01;this.quoteTtlMs=45000;
+ this.getFeeRecipient=opts.getFeeRecipient||function(){return''};this.getRpc=opts.getRpc||function(){return''};this.cache=Object.create(null);this.feeBps=100;this.feeRate=.01;this.quoteTtlMs=45000;
 }
 SwapBridgeService.prototype._apiKey=function(sess){return String(this.getSecret(sess,'ZEROX_API_KEY')||process.env.ZEROX_API_KEY||'').trim()};
-SwapBridgeService.prototype._feeRecipient=function(){return String(process.env.IATB_FEE_RECIPIENT||'').trim()};
-SwapBridgeService.prototype._rpc=function(network){var n=NETWORKS[network];return n?String(process.env[n.rpcEnv]||'').trim():''};
+SwapBridgeService.prototype._feeRecipient=function(){return String(this.getFeeRecipient()||process.env.IATB_FEE_RECIPIENT||'').trim()};
+SwapBridgeService.prototype._rpc=function(network){var n=NETWORKS[network];return n?String(this.getRpc(network)||process.env[n.rpcEnv]||'').trim():''};
 SwapBridgeService.prototype.status=function(sess){
  return{ok:true,engine:'SWAP_BRIDGE_V2',provider:'0x Cross-Chain',feeBps:this.feeBps,feePercent:1,apiConfigured:!!this._apiKey(sess),feeRecipientConfigured:validEvm(this._feeRecipient()),rpc:Object.keys(NETWORKS).reduce(function(o,k){o[k]=!!String(process.env[NETWORKS[k].rpcEnv]||'').trim();return o},{})};
 };
