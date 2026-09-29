@@ -16,7 +16,9 @@ var USDC={
 };
 var ERC20_ABI=[
  'function balanceOf(address owner) view returns (uint256)',
- 'function transfer(address to,uint256 amount) returns (bool)'
+ 'function transfer(address to,uint256 amount) returns (bool)',
+ 'function decimals() view returns (uint8)',
+ 'function symbol() view returns (string)'
 ];
 
 function TransferService(opts){
@@ -45,7 +47,7 @@ function isAddr(a){var E=ethersLib();try{return E.utils.isAddress(String(a||''))
 TransferService.prototype.status=function(){
  var signer=false;try{var E=ethersLib();signer=!!(E.Wallet&&E.providers&&E.providers.JsonRpcProvider)}catch(e){}
  var self=this,rpc={};Object.keys(NETWORKS).forEach(function(n){rpc[n]=!!String(self.getRpc(n)||'').trim()});
- return{ok:true,engine:'TRANSFER_V2',networks:Object.keys(NETWORKS),assets:['NATIVE','USDC'],internalSignerReady:signer,rpc:rpc};
+ return{ok:true,engine:'TRANSFER_V2',networks:Object.keys(NETWORKS),assets:['NATIVE','USDC','ERC20'],internalSignerReady:signer,rpc:rpc};
 };
 
 TransferService.prototype._ctx=function(sess,input){
@@ -64,50 +66,48 @@ TransferService.prototype._ctx=function(sess,input){
  if(String(sourceAccount.address).toLowerCase()===destinationAddress.toLowerCase())throw new Error('SOURCE_EQUALS_DESTINATION');
  var asset=String(input.asset||'NATIVE').toUpperCase(),meta=NETWORKS[sourceNetwork],token=null,decimals=18,symbol=meta.native;
  if(asset==='USDC'){token=USDC[sourceNetwork];if(!token)throw new Error('ASSET_NOT_SUPPORTED');decimals=token.decimals;symbol='USDC'}
+ else if(asset==='ERC20'){var ta=String(input.tokenAddress||'').trim();if(!isAddr(ta))throw new Error('TOKEN_ADDRESS_INVALID');token={address:ta,decimals:null};symbol=String(input.tokenSymbol||'TOKEN').toUpperCase().slice(0,24)}
  else if(asset!=='NATIVE'&&asset!==meta.native)throw new Error('ASSET_NOT_SUPPORTED');
- return{network:sourceNetwork,meta:meta,rpc:rpc,sourceWallet:source,destinationWallet:destination,sourceAccount:sourceAccount,destinationAccount:destinationAccount,destinationAddress:destinationAddress,asset:asset,token:token,decimals:decimals,symbol:symbol,amount:cleanAmount(input.amount)};
+ return{network:sourceNetwork,meta:meta,rpc:rpc,sourceWallet:source,destinationWallet:destination,sourceAccount:sourceAccount,destinationAccount:destinationAccount,destinationAddress:destinationAddress,asset:asset,token:token,decimals:decimals,symbol:symbol,coinId:String(input.coinId||''),amount:cleanAmount(input.amount)};
 };
 
 TransferService.prototype.preview=function(sess,input,cb){
- var self=this,ctx,E,provider,amount;
- try{ctx=this._ctx(sess,input);E=ethersLib();provider=new E.providers.JsonRpcProvider(ctx.rpc,ctx.meta.chainId);amount=E.utils.parseUnits(ctx.amount,ctx.decimals)}catch(e){return cb(e)}
+ var self=this,ctx,E,provider;
+ try{ctx=this._ctx(sess,input);E=ethersLib();provider=new E.providers.JsonRpcProvider(ctx.rpc,ctx.meta.chainId)}catch(e){return cb(e)}
  Promise.resolve().then(function(){
+  if(ctx.asset==='ERC20'){
+   var contract=new E.Contract(ctx.token.address,ERC20_ABI,provider);
+   return Promise.all([contract.decimals(),contract.symbol().catch(function(){return ctx.symbol})]).then(function(m){ctx.decimals=+m[0];ctx.symbol=String(m[1]||ctx.symbol).toUpperCase().slice(0,24);if(!isFinite(ctx.decimals)||ctx.decimals<0||ctx.decimals>36)throw new Error('TOKEN_DECIMALS_INVALID')});
+  }
+ }).then(function(){
+  ctx.amountRaw=E.utils.parseUnits(ctx.amount,ctx.decimals);
   return provider.getBalance(ctx.sourceAccount.address);
  }).then(function(nativeBalance){
   ctx.nativeBalance=nativeBalance;
-  if(ctx.asset==='USDC'){
+  if(ctx.token){
    var contract=new E.Contract(ctx.token.address,ERC20_ABI,provider);
    return contract.balanceOf(ctx.sourceAccount.address).then(function(tokenBalance){
     ctx.assetBalance=tokenBalance;
-    var data=contract.interface.encodeFunctionData('transfer',[ctx.destinationAddress,amount]);
+    var data=contract.interface.encodeFunctionData('transfer',[ctx.destinationAddress,ctx.amountRaw]);
     ctx.tx={from:ctx.sourceAccount.address,to:ctx.token.address,data:data,value:E.constants.Zero};
     return provider.estimateGas(ctx.tx);
    });
   }
   ctx.assetBalance=nativeBalance;
-  ctx.tx={from:ctx.sourceAccount.address,to:ctx.destinationAddress,value:amount,data:'0x'};
+  ctx.tx={from:ctx.sourceAccount.address,to:ctx.destinationAddress,value:ctx.amountRaw,data:'0x'};
   return provider.estimateGas(ctx.tx);
  }).then(function(gasLimit){
-  ctx.gasLimit=gasLimit;
-  return provider.getFeeData();
+  ctx.gasLimit=gasLimit;return provider.getFeeData();
  }).then(function(feeData){
   var gasPrice=feeData.maxFeePerGas||feeData.gasPrice;if(!gasPrice)throw new Error('GAS_PRICE_UNAVAILABLE');
-  ctx.gasPrice=gasPrice;
-  ctx.gasCost=ctx.gasLimit.mul(ctx.gasPrice);
-  var enoughAsset=ctx.assetBalance.gte(amount);
-  var enoughGas=ctx.asset==='NATIVE'?ctx.nativeBalance.gte(amount.add(ctx.gasCost)):ctx.nativeBalance.gte(ctx.gasCost);
-  var preId=id(),out={
-   ok:true,previewId:preId,expiresInMs:self.ttlMs,
-   network:ctx.network,networkName:ctx.meta.name,chainId:ctx.meta.chainId,
-   sourceWalletId:ctx.sourceWallet.id,sourceWalletName:ctx.sourceWallet.name,sourceAddress:ctx.sourceAccount.address,
-   destinationWalletId:ctx.destinationWallet&&ctx.destinationWallet.id||null,destinationWalletName:ctx.destinationWallet&&ctx.destinationWallet.name||null,destinationAddress:ctx.destinationAddress,
-   asset:ctx.asset,symbol:ctx.symbol,amount:ctx.amount,
-   assetBalance:decimal(ctx.assetBalance,ctx.decimals),nativeBalance:decimal(ctx.nativeBalance,18),
-   gasLimit:ctx.gasLimit.toString(),gasPrice:ctx.gasPrice.toString(),gasCostRaw:ctx.gasCost.toString(),gasCostNative:decimal(ctx.gasCost,18),
-   enoughAsset:enoughAsset,enoughGas:enoughGas,addressValid:true,networkMatch:true,canTransfer:enoughAsset&&enoughGas
-  };
-  self.cache[preId]={ts:Date.now(),ctx:ctx,amount:amount,out:out};
-  cb(null,out);
+  ctx.gasPrice=gasPrice;ctx.gasCost=ctx.gasLimit.mul(ctx.gasPrice);
+  var enoughAsset=ctx.assetBalance.gte(ctx.amountRaw),enoughGas=ctx.token?ctx.nativeBalance.gte(ctx.gasCost):ctx.nativeBalance.gte(ctx.amountRaw.add(ctx.gasCost));
+  var preId=id(),out={ok:true,previewId:preId,expiresInMs:self.ttlMs,network:ctx.network,networkName:ctx.meta.name,chainId:ctx.meta.chainId,
+   sourceWalletId:ctx.sourceWallet.id,sourceWalletName:ctx.sourceWallet.name,sourceAddress:ctx.sourceAccount.address,destinationWalletId:ctx.destinationWallet&&ctx.destinationWallet.id||null,destinationWalletName:ctx.destinationWallet&&ctx.destinationWallet.name||null,destinationAddress:ctx.destinationAddress,
+   asset:ctx.asset,symbol:ctx.symbol,coinId:ctx.coinId||'',tokenAddress:ctx.token&&ctx.token.address||'',decimals:ctx.decimals,amount:ctx.amount,assetBalance:decimal(ctx.assetBalance,ctx.decimals),nativeBalance:decimal(ctx.nativeBalance,18),
+   gasLimit:ctx.gasLimit.toString(),gasPrice:ctx.gasPrice.toString(),gasCostRaw:ctx.gasCost.toString(),gasCostNative:decimal(ctx.gasCost,18),nativeSymbol:ctx.meta.native,
+   enoughAsset:enoughAsset,enoughGas:enoughGas,addressValid:true,networkMatch:true,canTransfer:enoughAsset&&enoughGas};
+  self.cache[preId]={ts:Date.now(),ctx:ctx,out:out};cb(null,out);
  }).catch(cb);
 };
 
