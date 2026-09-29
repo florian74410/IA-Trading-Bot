@@ -122,7 +122,7 @@ TransferService.prototype.prepare=function(sess,input){
 
 TransferService.prototype.executeInternal=function(sess,input,cb){
  input=input||{};var x,password=String(input.password||''),E,provider,wallet,secret=null,self=this;
- if(input.confirmed!==true)return cb(new Error('SIGNATURE_CONFIRMATION_REQUIRED'));
+ if(input.confirmed!==true)return cb(new Error('SIGNATURE_CONFIRMATION_REQUIRED'));if(input.humanConfirmed!==true)return cb(new Error('HUMAN_CONFIRMATION_REQUIRED'));
  try{
   x=this.prepare(sess,input);
   var client=this.walletService.clientService.resolveSession(sess),auth=this.walletService.clientService.accountByClientId(client.clientId);
