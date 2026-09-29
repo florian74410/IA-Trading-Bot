@@ -354,4 +354,30 @@ body[data-fund-view="news"] .newsToolsBlock,body[data-fund-view="news"] .publica
 body[data-fund-view="ai"] .aiBlock,body[data-fund-view="ai"] .publicationsBlock{display:block}
 body[data-fund-view="sources"] .cockpitBlock,body[data-fund-view="sources"] .providersBlock,body[data-fund-view="sources"] .sourcesSection,body[data-fund-view="sources"] .feedsSection{display:block}body[data-fund-view="sources"] .cockpitMetrics,body[data-fund-view="sources"] .cockpitMain{display:none}body[data-fund-view="sources"] .cockpitLower{display:block;margin-top:0}body[data-fund-view="sources"] .cockpitLower .newsPreview,body[data-fund-view="sources"] .cockpitLower .domainPreview{display:none}body[data-fund-view="sources"] .sourcePreview{width:100%;min-height:0;margin-bottom:12px}
 body[data-fund-view="defi"] .domainSection{display:block}
-body[data-fund-view="diagnostic"] .cockpitBlock,body[data-fund-view="diagnostic"] .consoleBlock{display:block}body[data-fund-view="diagnostic"] .cockpitMetrics,body[data-fund-view="diagnostic"] .cockpitLower,body[data-fund-view="diagnostic"] .eventsPanel{display:none}body[data-fund-view="diagnostic"] .cockpitMain{display:block;margin-top:0}body[data-fund-view="diagnostic"] .marketPanel{width:100%;margin-bottom:12px}
+body[data-fund-view="console"] .consoleBlock{display:block}body[data-fund-view="console"] .fundamentalConsoleSection{margin-top:0}
+
+
+/* Source Manager / Fundamental globe proportions */
+.marketVisual{grid-template-columns:minmax(220px,280px) minmax(0,1fr);gap:18px;align-items:center}
+.globeStage{
+  width:min(100%,260px);
+  aspect-ratio:1 / 1;
+  height:auto;
+  min-height:0;
+  justify-self:center;
+  align-self:center;
+  border-radius:50%;
+  overflow:hidden;
+}
+.globeStage canvas{
+  position:absolute;
+  inset:0;
+  width:100%!important;
+  height:100%!important;
+}
+.globeFallback{border-radius:50%}
+.globeStage:after{inset:8px;border-radius:50%}
+@media(max-width:900px){
+  .marketVisual{grid-template-columns:1fr}
+  .globeStage{width:min(72vw,250px);margin:0 auto}
+}
