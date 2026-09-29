@@ -17,6 +17,12 @@ Manager.prototype.start=function(){
  if(this.providers.BYBIT!==false)this._spawn('BYBIT','bybit_liquidations_worker.js');
  return this.status();
 };
+Manager.prototype.configure=function(o){
+ o=o||{};if(typeof o.enabled==='boolean')this.enabled=o.enabled;if(o.providers)this.providers=Object.assign({},this.providers,o.providers);
+ var self=this,defs={BINANCE_FUTURES:'binance_liquidations_worker.js',OKX:'okx_liquidations_worker.js',BYBIT:'bybit_liquidations_worker.js'};
+ Object.keys(defs).forEach(function(id){var want=self.enabled&&self.providers[id]!==false,has=!!self.workers[id];if(want&&!has)self._spawn(id,defs[id]);else if(!want&&has){try{self.workers[id].postMessage({op:'stop'});}catch(e){}}});
+ return this.status();
+};
 Manager.prototype.watchSymbol=function(symbol){
  var s=String(symbol||'').toUpperCase().replace(/[^A-Z0-9]/g,'');if(!s)return this.status();
  var w=this.workers.BYBIT;if(w)try{w.postMessage({op:'subscribe',symbol:s});}catch(e){this.states.BYBIT=Object.assign({},this.states.BYBIT,{lastError:e.message});}
