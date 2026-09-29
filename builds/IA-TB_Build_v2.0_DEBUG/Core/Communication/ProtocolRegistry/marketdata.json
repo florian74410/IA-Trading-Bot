@@ -150,7 +150,7 @@
         "arguments": {
           "allowed": []
         },
-        "description": "Liquidity microstructure providers, firewall and storage capabilities."
+        "description": "Liquidity microstructure providers, firewall and storage capabilities. Compatibility alias; canonical namespace is marketdata.microstructure.*. Same Market Data Collector service."
       },
       {
         "name": "marketdata.liquidity.snapshot",
@@ -165,7 +165,7 @@
             "symbol"
           ]
         },
-        "description": "Firewall-validated raw order book/open-interest snapshot."
+        "description": "Firewall-validated raw order book/open-interest snapshot. Compatibility alias; canonical namespace is marketdata.microstructure.*. Same Market Data Collector service."
       },
       {
         "name": "marketdata.liquidity.history",
@@ -177,14 +177,14 @@
             "since"
           ]
         },
-        "description": "SQLite liquidity microstructure history retained by Market Data."
+        "description": "SQLite liquidity microstructure history retained by Market Data. Compatibility alias; canonical namespace is marketdata.microstructure.*. Same Market Data Collector service."
       },
       {
         "name": "marketdata.liquidity.storage",
         "arguments": {
           "allowed": []
         },
-        "description": "Liquidity cache and SQLite retention status."
+        "description": "Liquidity cache and SQLite retention status. Compatibility alias; canonical namespace is marketdata.microstructure.*. Same Market Data Collector service."
       },
       {
         "name": "marketdata.liquidity.refresh",
@@ -198,7 +198,7 @@
             "symbol"
           ]
         },
-        "description": "Force provider refresh through Data Firewall before cache/storage."
+        "description": "Force provider refresh through Data Firewall before cache/storage. Compatibility alias; canonical namespace is marketdata.microstructure.*. Same Market Data Collector service."
       },
       {
         "name": "marketdata.derivatives.open_interest",
@@ -236,6 +236,61 @@
           ]
         },
         "description": "Aggregated liquidation flow statistics for a time window."
+      },
+      {
+        "name": "marketdata.microstructure.capabilities",
+        "arguments": {
+          "allowed": []
+        },
+        "description": "Canonical Market Data microstructure capabilities; same Market Data Collector service."
+      },
+      {
+        "name": "marketdata.microstructure.snapshot",
+        "arguments": {
+          "allowed": [
+            "symbol",
+            "source",
+            "depth",
+            "force"
+          ],
+          "required": [
+            "symbol"
+          ]
+        },
+        "description": "Firewall-validated order book/open-interest snapshot from the Market Data Collector."
+      },
+      {
+        "name": "marketdata.microstructure.history",
+        "arguments": {
+          "allowed": [
+            "symbol",
+            "source",
+            "limit",
+            "since"
+          ]
+        },
+        "description": "SQLite microstructure history owned by Market Data."
+      },
+      {
+        "name": "marketdata.microstructure.storage",
+        "arguments": {
+          "allowed": []
+        },
+        "description": "Market Data microstructure cache and SQLite status."
+      },
+      {
+        "name": "marketdata.microstructure.refresh",
+        "arguments": {
+          "allowed": [
+            "symbol",
+            "source",
+            "depth"
+          ],
+          "required": [
+            "symbol"
+          ]
+        },
+        "description": "Force a microstructure provider refresh through the Data Firewall."
       }
     ],
     "dataTypes": [
@@ -283,6 +338,16 @@
         "name": "market.liquidations.stats",
         "direction": "PRODUCE",
         "schema": "marketdata.liquidations.stats/1.0"
+      },
+      {
+        "name": "market.microstructure.raw",
+        "direction": "PRODUCE",
+        "schema": "marketdata.liquidity.raw/1.0"
+      },
+      {
+        "name": "market.microstructure.history",
+        "direction": "PRODUCE",
+        "schema": "marketdata.microstructure.history/1.0"
       }
     ],
     "events": []
