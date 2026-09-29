@@ -56,6 +56,7 @@ assert(/api\.kraken\.com/.test(providerSrc),'Kraken microstructure provider miss
 assert(/\/api\/v5\/public\/open-interest/.test(providerSrc),'OKX open interest provider missing');
 assert(/aggregateOpenInterest/.test(providerSrc),'covered OI aggregator missing');
 assert(/arbitrum\.gmxapi\.io/.test(providerSrc)&&/avalanche\.gmxapi\.io/.test(providerSrc),'GMX DEX OI coverage missing');
+assert(/api\.bybit\.com/.test(providerSrc)&&/openInterestValue/.test(providerSrc),'Bybit microstructure/OI provider missing');
 
 var md=fs.readFileSync(path.join(root,'MarketData','market_data_service.js'),'utf8');
 assert(/MicrostructureProvider/.test(md)&&/LiquidationStreamManager/.test(md),'microstructure must be owned by Market Data service');
@@ -67,5 +68,9 @@ var bw=fs.readFileSync(path.join(root,'MarketData','Workers','binance_liquidatio
 var ow=fs.readFileSync(path.join(root,'MarketData','Workers','okx_liquidations_worker.js'),'utf8');
 assert(/!forceOrder@arr/.test(bw),'Binance liquidation stream missing');
 assert(/liquidation-orders/.test(ow),'OKX liquidation stream missing');
+var yw=fs.readFileSync(path.join(root,'MarketData','Workers','bybit_liquidations_worker.js'),'utf8');
+assert(/allLiquidation\./.test(yw)&&/stream\.bybit\.com/.test(yw),'Bybit liquidation stream missing');
+var bybit=fs.readFileSync(path.join(root,'MarketData','Provider','bybit_provider.js'),'utf8');
+assert(/\/v5\/market\/kline/.test(bybit),'Bybit candle provider missing');
 
-console.log('LIQUIDITY_PIPELINE_V2_OK');
+console.log('LIQUIDITY_PIPELINE_V3_OK');
