@@ -1,5 +1,6 @@
 'use strict';
 (function(global){
+ var helpTimer=null,helpNode=null;
  var S={wallets:[],walletId:'',network:'ethereum',coin:null,coinResolved:null,cryptoAmount:'',fiatAmount:'',fiat:'EUR',preview:null,busy:false,error:'',human:false,catalogPage:1,catalogQuery:'',catalogBusy:false,price:null,nativePrice:null,timer:null};
  var NETS=['ethereum','arbitrum','polygon','bnb','base'];
  var NATIVE={ethereum:'ethereum',arbitrum:'ethereum',polygon:'polygon-ecosystem-token',bnb:'binancecoin',base:'ethereum'};
@@ -26,14 +27,14 @@
  }
  function coinButton(){
   var c=S.coin||{symbol:'--',name:'Choisir une crypto',image:''};
-  return '<button type="button" id="btcCoinPick" class="btcCoinPick">'+(c.image?'<img src="'+esc(c.image)+'" alt="">':'<span class="btcCoinFallback">◈</span>')+'<span><b>'+esc(c.symbol||'--')+'</b><small>'+esc(c.name||'Choisir une crypto')+'</small></span><i>⌄</i></button>';
+  return '<button type="button" id="btcCoinPick" class="btcCoinPick" data-help="Cliquez pour ouvrir le catalogue CoinGecko. La crypto choisie est ensuite vérifiée sur le réseau du wallet.">'+(c.image?'<img src="'+esc(c.image)+'" alt="">':'<span class="btcCoinFallback">◈</span>')+'<span><b>'+esc(c.symbol||'--')+'</b><small>'+esc(c.name||'Choisir une crypto')+'</small></span><i>⌄</i></button>';
  }
  function networkBadge(){
-  return '<div class="btcNetworkRow"><span>Réseau</span><button type="button" id="btcNetworkBtn" class="btcNetworkBtn" title="Le réseau est déterminé par le wallet source et la crypto choisie. Cliquez pour changer si plusieurs réseaux sont compatibles."><img src="'+esc(NETLOGO[S.network]||'')+'" alt=""><b>'+esc(NETLABEL[S.network]||S.network)+'</b><i>✓</i></button><span id="btcNetCheck" class="btcNetCheck">'+(S.preview&&S.preview.networkMatch?'Compatible':'À vérifier')+'</span></div>';
+  return '<div class="btcNetworkRow"><span>Réseau</span><button type="button" id="btcNetworkBtn" class="btcNetworkBtn" data-help="Le réseau est déterminé par le wallet source et la crypto choisie. Cliquez pour changer si plusieurs réseaux sont compatibles."><img src="'+esc(NETLOGO[S.network]||'')+'" alt=""><b>'+esc(NETLABEL[S.network]||S.network)+'</b><i>✓</i></button><span id="btcNetCheck" class="btcNetCheck">'+(S.preview&&S.preview.networkMatch?'Compatible':'À vérifier')+'</span></div>';
  }
  function amountBox(){
   var sym=S.coin&&S.coin.symbol||'CRYPTO',fiat=S.fiat;
-  return '<div class="btcAmounts"><label><span>Montant crypto</span><div class="btcAmountInput"><input id="btcCryptoAmount" inputmode="decimal" placeholder="0.00" value="'+esc(S.cryptoAmount)+'"><b>'+esc(sym)+'</b></div></label><label><span>Valeur fiat</span><div class="btcAmountInput fiat"><input id="btcFiatAmount" inputmode="decimal" placeholder="0.00" value="'+esc(S.fiatAmount)+'"><button type="button" id="btcFiatToggle">'+fiat+'</button></div></label></div>';
+  return '<div class="btcAmounts"><label data-help="Saisissez le montant en crypto. La valeur fiat est recalculée automatiquement."><span>Montant crypto</span><div class="btcAmountInput"><input id="btcCryptoAmount" inputmode="decimal" placeholder="0.00" value="'+esc(S.cryptoAmount)+'"><b>'+esc(sym)+'</b></div></label><label data-help="Vous pouvez aussi saisir directement une valeur fiat. Cliquez sur EUR/USD pour changer de devise."><span>Valeur fiat</span><div class="btcAmountInput fiat"><input id="btcFiatAmount" inputmode="decimal" placeholder="0.00" value="'+esc(S.fiatAmount)+'"><button type="button" id="btcFiatToggle">'+fiat+'</button></div></label></div>';
  }
  function gasBox(){
   if(S.busy)return '<div class="btcGas wait">◷ Calcul du solde et des frais de gas…</div>';
@@ -52,13 +53,13 @@
   box.classList.add('btcTransferCompact');
   var ws=S.wallets.map(function(w){return'<option value="'+esc(w.id)+'" '+(String(w.id)===String(S.walletId)?'selected':'')+'>'+esc(w.name)+' · ID '+esc(w.id)+'</option>'}).join('');
   box.innerHTML='<h3><span class="wvModuleTitleIcon">'+iconSend()+'</span><span>Transférer</span></h3>'+
-   '<label class="btcField"><span>Wallet source</span><select id="btcWallet">'+ws+'</select></label>'+
-   '<label class="btcField"><span>Adresse de réception</span><input id="btcAddress" autocomplete="off" spellcheck="false" placeholder="0x..." value="'+esc(S.destinationAddress||'')+'"></label>'+
+   '<label class="btcField" data-help="Choisissez le wallet IA-TB qui sera débité."><span>Wallet source</span><select id="btcWallet">'+ws+'</select></label>'+
+   '<label class="btcField" data-help="Adresse publique du destinataire. IA-TB valide son format avant tout calcul de frais."><span>Adresse de réception</span><input id="btcAddress" autocomplete="off" spellcheck="false" placeholder="0x..." value="'+esc(S.destinationAddress||'')+'"></label>'+
    networkBadge()+
    '<div class="btcField"><span>Crypto</span>'+coinButton()+'</div>'+
    amountBox()+gasBox()+checks()+
-   '<label class="btcHuman"><input id="btcHuman" type="checkbox" '+(S.human?'checked':'')+'><span>Je ne suis pas un robot</span></label>'+
-   '<button class="wvPrimary btcSend" id="btcSend" '+(!(S.preview&&S.preview.canTransfer&&S.human)||S.busy?'disabled':'')+'>Transférer</button>'+
+   '<label class="btcHuman" data-help="Cette confirmation est obligatoire côté interface ET côté serveur avant la signature."><input id="btcHuman" type="checkbox" '+(S.human?'checked':'')+'><span>Je ne suis pas un robot</span></label>'+
+   '<button class="wvPrimary btcSend" id="btcSend" data-help="Le transfert reste bloqué tant que adresse, réseau, solde, gas et anti-robot ne sont pas validés." '+(!(S.preview&&S.preview.canTransfer&&S.human)||S.busy?'disabled':'')+'>Transférer</button>'+
    '<div id="btcPicker" class="btcPicker" hidden><div class="btcPickerHead"><input id="btcCoinSearch" placeholder="Rechercher une crypto…" autocomplete="off"><button id="btcPickerClose" type="button">×</button></div><div id="btcCoinList" class="btcCoinList"></div><button id="btcMore" class="btcMore" type="button">Afficher plus</button></div>';
   bind();
  }
@@ -113,6 +114,15 @@
   if(human)human.onchange=function(){S.human=this.checked;var b=document.getElementById('btcSend');if(b)b.disabled=!(S.preview&&S.preview.canTransfer&&S.human)||S.busy};
   if(send)send.onclick=confirmSend;
   if(net)net.onclick=function(){var w=selectedWallet(),nets=walletNetworks(w);if(nets.length<2)return;var i=nets.indexOf(S.network);S.network=nets[(i+1)%nets.length];S.coinResolved=null;S.preview=null;if(S.coin)chooseCoin(S.coin);else render()};
+  mountHelp();
+ }
+ function removeHelp(){if(helpNode&&helpNode.parentNode)helpNode.parentNode.removeChild(helpNode);helpNode=null}
+ function mountHelp(){
+  [].slice.call(document.querySelectorAll('#wvTransfer [data-help]')).forEach(function(el){
+   if(el.__compactHelp)return;el.__compactHelp=1;
+   el.addEventListener('mouseenter',function(){clearTimeout(helpTimer);helpTimer=setTimeout(function(){removeHelp();var r=el.getBoundingClientRect(),n=document.createElement('div');n.className='wvHelpBubble';n.textContent=el.getAttribute('data-help')||'';document.body.appendChild(n);var left=Math.max(8,Math.min(window.innerWidth-n.offsetWidth-8,r.left+r.width/2-n.offsetWidth/2)),top=Math.max(8,r.top-n.offsetHeight-8);n.style.left=left+'px';n.style.top=top+'px';helpNode=n},2000)});
+   el.addEventListener('mouseleave',function(){clearTimeout(helpTimer);removeHelp()});
+  });
  }
  function mount(){
   var host=document.getElementById('walletManager');if(!host)return;
