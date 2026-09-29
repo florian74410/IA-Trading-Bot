@@ -381,3 +381,14 @@ body[data-fund-view="console"] .consoleBlock{display:block}body[data-fund-view="
   .marketVisual{grid-template-columns:1fr}
   .globeStage{width:min(72vw,250px);margin:0 auto}
 }
+
+
+/* Dedicated Console Diagnostique view */
+.consolePage{width:100%;min-width:0}
+.consolePageHead{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin:0 0 10px;padding:13px 15px;border:1px solid #1d4e72;border-radius:10px;background:linear-gradient(90deg,#07192a,#06121e)}
+.consolePageHead h2{margin:2px 0 2px;color:#ecfaff;font-size:19px}
+.consolePageHead p{margin:0;color:#7698aa;font-size:9px}
+.consolePage .fundamentalConsoleSection{margin:0;width:100%}
+.consolePage .fundamentalConsole{min-height:420px;max-height:62vh}
+body[data-fund-view="console"] .consolePage{display:block}
+body[data-fund-view="console"] .consolePage .fundamentalConsoleSection{display:block}
