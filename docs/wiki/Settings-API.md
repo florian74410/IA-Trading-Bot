@@ -1,41 +1,151 @@
-# Settings / API
+# ⚙️ Paramètres / API — V2.0 DEBUG
 
-`Settings > API` est l'emplacement unique de configuration des informations d'authentification nécessaires aux connecteurs et providers.
+> **🟢 En simple : Paramètres est le centre de configuration d’IA-TB. Les réglages ordinaires vont dans SQLite ; les secrets API sensibles vont dans un coffre chiffré séparé.**
 
-## Règle obligatoire
+---
 
-Toute information privée requise doit être paramétrable ici : API Key, Secret, Passphrase, Token, identifiant / Key Name, clé privée, endpoint ou mode particulier lorsque nécessaire. Aucun secret ne doit être codé en dur dans l'application.
+## 🗃️ Réglages applicatifs
 
-## Données publiques et fonctions privées
+**🟢 En simple : les paramètres ne reposent plus sur une multitude de fichiers modifiés à la main.**
 
-Lorsqu'une plateforme autorise ses Market Data publiques sans authentification, IA-TB doit pouvoir les récupérer sans exiger de clé privée. Les identifiants privés ne sont utilisés que pour les fonctions qui les nécessitent.
+Le `SQLiteSettingsStore` stocke les réglages utilisateur dans :
+```text
+~/IA-TB-UserData-Server/User Data/<profil>/user_data.db
+```
 
-## CoinGecko — v1.7.9
+Schéma : `iatb-settings-v2`.
 
-CoinGecko peut recevoir une clé API depuis `Settings > API`. La clé est stockée dans le coffre RSA existant et n'est pas écrite en clair dans la configuration Market Data.
+Le store utilise :
+- SQLite CLI lorsque disponible ;
+- `better-sqlite3` comme backend de repli ;
+- WAL ;
+- timeout busy ;
+- migrations.
 
-Lorsqu'elle est nécessaire au provider, elle est transmise au service Market Data uniquement en mémoire via le canal interne authentifié. Le provider expose son état d'authentification sans exposer la valeur du secret.
+Les valeurs par défaut sont initialisées depuis `Config/Defaults/app_settings.json`.
 
-## OKX
+---
 
-Paramètres privés selon le mode utilisé : API Key, Secret Key, Passphrase et mode réel / démo lorsque applicable.
+## 🔐 Secrets API
 
-## Coinbase
+**🟢 En simple : une clé OpenAI, 0x ou un token X ne doit pas finir en clair dans le fichier de paramètres.**
 
-Paramètres privés selon le type de clé : identifiant / Key Name, clé privée et paramètres supplémentaires imposés par l'API retenue si nécessaire.
+Le Core possède un coffre RSA :
+- paire RSA 2048 ;
+- chiffrement RSA-OAEP SHA-256 pour les secrets ;
+- clé privée du coffre elle-même enveloppée avec AES-256-GCM ;
+- clé dérivée du mot de passe avec PBKDF2-SHA256 ;
+- fichier du coffre avec permissions restrictives lorsque possible.
 
-## Binance / GMX
+Secrets explicitement suivis par le statut actuel :
+- `OPENAI_API_KEY`
+- `ANTHROPIC_API_KEY`
+- `X_BEARER_TOKEN`
+- `ZEROX_API_KEY`
 
-Leurs paramètres restent centralisés dans cette même section selon les besoins de chaque connecteur.
+La présence d’un secret peut être affichée sans révéler sa valeur.
 
-## Providers publics complémentaires
+---
 
-Blockchain.com et DefiLlama utilisent dans l'intégration v1.7.9 des données publiques pour les fonctions actuellement branchées. Ils ne doivent pas demander artificiellement un secret lorsqu'une commande publique n'en a pas besoin.
+## 🤖 IA
 
-## Permissions
+**🟢 En simple : le choix du fournisseur LLM et du modèle est configurable indépendamment des moteurs de trading.**
 
-Le principe du moindre privilège s'applique. Une permission de retrait ne doit pas être exigée pour le fonctionnement normal de IA-TB, et les commandes privées de compte/trading/retrait restent séparées du catalogue Market Data.
+Réglage V2.0 par défaut :
+- provider LLM : MOCK ;
+- fallback : OFF ;
+- OpenAI disponible comme provider configuré ;
+- modèle OpenAI : `gpt-5.6`;
+- timeout : 45 s.
 
-## Test de connexion
+Le Supervisor recharge sa configuration LLM depuis les paramètres.
 
-Lorsqu'un connecteur possède des paramètres privés, l'interface doit permettre de distinguer clairement les états connecté, non configuré et erreur. Les diagnostics ne doivent jamais renvoyer le secret lui-même.
+---
+
+## 📡 Market Data
+
+**🟢 En simple : on choisit ici quels providers sont actifs et leurs paramètres, mais toutes les données continuent de passer par le Market Data Collector.**
+
+Providers configurables V2.0 :
+- Kraken ;
+- Binance ;
+- GMX ;
+- OKX ;
+- CoinGecko ;
+- DeFiLlama.
+
+Paramètres :
+- priorité ;
+- activation ;
+- paires ;
+- quote currency ;
+- refresh ;
+- cache ;
+- Market Registry ;
+- TTL financiers.
+
+---
+
+## 🛡️ Risk / Trading
+
+**🟢 En simple : les seuils Risk et le mode Trading sont des paramètres de sécurité, pas des préférences visuelles.**
+
+Risk possède ses seuils et poids persistés.
+
+Trading démarre avec Live désactivé par l’environnement de démarrage. Le passage en Live ne doit pas être confondu avec l’activation d’un simple bouton UI.
+
+---
+
+## 🏦 Banque
+
+**🟢 En simple : Banque utilise des configurations réseau/API distinctes des secrets de wallet.**
+
+Exemples :
+- RPC EVM ;
+- endpoint Bitcoin Esplora ;
+- RPC Solana ;
+- 0x API pour Swap/Bridge ;
+- fee recipient 0x.
+
+Les clés privées des wallets sont gérées par Wallet Service, pas par la section API générale.
+
+---
+
+## 🧭 Sections UI
+
+La page Paramètres expose actuellement :
+- Vue d’ensemble ;
+- IA ;
+- Profile ;
+- API & Data ;
+- Crédits/Tokens ;
+- Sécurité ;
+- Fundamental ;
+- Indicateurs ;
+- Stratégie ;
+- Trading ;
+- Risk Manager ;
+- Liquidité ;
+- Portfolio ;
+- Collecteur ;
+- Providers ;
+- CoinGecko ;
+- Registry ;
+- Communication ;
+- Mosaïque ;
+- Graphique ;
+- Notifications ;
+- Versions.
+
+---
+
+## 🔐 Règle obligatoire
+
+**🟢 En simple : GitHub ne doit contenir aucune vraie clé.**
+
+Ne jamais placer une clé API, un secret, une seed ou un mot de passe :
+- dans le code ;
+- dans le Wiki ;
+- dans les logs ;
+- dans un commit ;
+- dans un exemple de configuration versionné.
