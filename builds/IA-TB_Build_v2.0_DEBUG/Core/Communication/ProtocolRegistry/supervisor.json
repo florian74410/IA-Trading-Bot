@@ -67,7 +67,11 @@
             "limit",
             "fundamentalLimit",
             "correlationId",
-            "portfolioTradeLimit"
+            "portfolioTradeLimit",
+            "indicatorRequests",
+            "indicatorCandles",
+            "indicatorSource",
+            "indicatorForce"
           ],
           "required": [
             "symbol"
@@ -89,11 +93,48 @@
             "model",
             "temperature",
             "maxTokens",
-            "portfolioTradeLimit"
+            "portfolioTradeLimit",
+            "indicatorRequests",
+            "indicatorCandles",
+            "indicatorSource",
+            "indicatorForce"
           ],
           "required": [
             "symbol"
           ]
+        }
+      },
+      {
+        "name": "supervisor.indicators",
+        "arguments": {
+          "allowed": []
+        }
+      },
+      {
+        "name": "supervisor.indicator.definition",
+        "arguments": {
+          "allowed": [
+            "id"
+          ],
+          "required": [
+            "id"
+          ]
+        }
+      },
+      {
+        "name": "supervisor.indicators.compute",
+        "arguments": {
+          "allowed": [
+            "id",
+            "params",
+            "requests",
+            "symbol",
+            "timeframe",
+            "force",
+            "candles",
+            "source"
+          ],
+          "required": []
         }
       },
       {
@@ -159,6 +200,14 @@
       },
       {
         "name": "portfolio.trade",
+        "direction": "CONSUME"
+      },
+      {
+        "name": "indicator.definition",
+        "direction": "CONSUME"
+      },
+      {
+        "name": "indicator.compute",
         "direction": "CONSUME"
       }
     ],
