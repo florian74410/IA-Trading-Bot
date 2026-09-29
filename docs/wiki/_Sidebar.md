@@ -1,30 +1,44 @@
-### IA-TB
+### 🧠 IA-TB V2.0 DEBUG
 
-- [Accueil](Home.md)
-- [Installation](Installation.md)
-- [Architecture](Architecture.md)
+- [🏠 Accueil](Home.md)
+- [🚦 État fonctionnel V2.0](Etat-V2.0-DEBUG.md)
+- [📦 Installation](Installation.md)
+- [🏗️ Architecture](Architecture.md)
+- [🖥️ Interface & pages](Application-UI.md)
 
-### Intelligence & analyse
+### 🔀 Communication & sécurité
 
-- [Fundamental Engine V3](Fundamental-Engine.md) — news, événements, synthèses et sélection Supervisor
+- [🔀 Router / CP1](Router-Protocol-CP1.md)
+- [🔥 Firewall](Firewall-Module.md)
+- [🔐 Sécurité](Security.md)
 
-### Trading & données
+### 📡 Données & analyse
 
-- [Connecteurs CEX / DEX](Connectors-CEX-DEX.md)
-- [Market Data](Market-Data.md)
-- [Chart Viewer](Chart-Viewer.md)
-- [Indicator Engine](Indicator-Engine.md)
-- [Liquidity Engine](Liquidity-Engine.md)
+- [🔌 Connecteurs CEX / DEX](Connectors-CEX-DEX.md)
+- [📡 Market Data V2](Market-Data.md)
+- [📐 Indicator Engine](Indicator-Engine.md)
+- [💧 Liquidity Engine](Liquidity-Engine.md)
+- [🧭 Fundamental Engine V3](Fundamental-Engine.md)
+- [📈 Chart Viewer](Chart-Viewer.md)
 
-### Configuration
+### 🧠 Décision & exécution
 
-- [Settings / API](Settings-API.md)
-- [Sécurité](Security.md)
+- [🤖 IA Supervisor](Supervisor-IA.md)
+- [🧠 Strategy Engine v2](Strategy-Engine.md)
+- [🛡️ Risk Engine](Risk-Engine.md)
+- [⚡ Trading Engine](Trading-Engine.md)
+- [📊 Portfolio Engine](Portfolio.md)
 
-### Maintenance
+### 🏦 Banque
 
-- [Update Manager](Update-Manager.md)
-- [Versions / Releases](Versioning-and-Releases.md)
-- [Changelog](Changelog.md)
-- [Dépannage](Troubleshooting.md)
-- [Roadmap](Roadmap.md)
+- [🏦 Banque IA-TB](Bank.md)
+- [⚙️ Settings / API](Settings-API.md)
+
+### 🛠️ Exploitation
+
+- [🛠️ Administration](Administration.md)
+- [⬆️ Update Manager](Update-Manager.md)
+- [🏷️ Versions / Releases](Versioning-and-Releases.md)
+- [🧾 Changelog](Changelog.md)
+- [🩺 Dépannage](Troubleshooting.md)
+- [🗺️ Roadmap](Roadmap.md)
