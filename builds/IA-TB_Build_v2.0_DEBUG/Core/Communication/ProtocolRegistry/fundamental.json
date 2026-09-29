@@ -30,6 +30,35 @@
         }
       },
       {
+        "name": "fundamental.fedwatch.get",
+        "arguments": {
+          "allowed": []
+        }
+      },
+      {
+        "name": "fundamental.calendar.cme",
+        "arguments": {
+          "allowed": []
+        }
+      },
+      {
+        "name": "fundamental.calendar.fed",
+        "arguments": {
+          "allowed": []
+        }
+      },
+      {
+        "name": "fundamental.calendar.upcoming",
+        "arguments": {
+          "allowed": [
+            "days",
+            "country",
+            "impact",
+            "limit"
+          ]
+        }
+      },
+      {
         "name": "fundamental.news.search",
         "arguments": {
           "allowed": [
@@ -483,6 +512,10 @@
       },
       {
         "name": "fundamental.timeline",
+        "direction": "PRODUCE"
+      },
+      {
+        "name": "fundamental.calendar",
         "direction": "PRODUCE"
       }
     ],
