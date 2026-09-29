@@ -78,7 +78,7 @@ var DEFAULT_MODULES=['gmx','strategy','wallet','system'];
 var MOSAIC_IDS=['chat','chart','modules'];
 function defaultMosaicLayout(){return{chat:{col:1,row:1,w:4,h:14,visible:true,order:0},chart:{col:5,row:1,w:8,h:10,visible:true,order:1},modules:{col:5,row:11,w:8,h:5,visible:true,order:2}};}
 function sanitizeMosaicLayout(x){var d=defaultMosaicLayout(),o={},src=x&&typeof x==='object'&&!Array.isArray(x)?x:{};MOSAIC_IDS.forEach(function(id){var a=src[id]&&typeof src[id]==='object'?src[id]:d[id],n=function(v,lo,hi,def){v=Math.round(+v);return isFinite(v)&&v>=lo&&v<=hi?v:def;};o[id]={col:n(a.col,1,12,d[id].col),row:n(a.row,1,100,d[id].row),w:n(a.w,1,12,d[id].w),h:n(a.h,1,40,d[id].h),visible:a.visible!==false,order:n(a.order,-100,100,d[id].order)};});return o;}
-var TOKEN_USAGE=[],FUNDAMENTAL_AI_CACHE={key:'',at:0,data:null,model:'',usage:null,basis:null},FUNDAMENTAL_AI_RUNNING=false,FUNDAMENTAL_AI_LAST_CALL=0,FUNDAMENTAL_TRANSLATION_INFLIGHT=Object.create(null);
+var TOKEN_USAGE=[],FUNDAMENTAL_AI_CACHE={key:'',at:0,data:null,model:'',usage:null,basis:null},FUNDAMENTAL_AI_RUNNING=false,FUNDAMENTAL_AI_LAST_CALL=0,FUNDAMENTAL_TRANSLATION_INFLIGHT=Object.create(null),FUNDAMENTAL_AUTO_TRANSLATION_RUNNING=false,FUNDAMENTAL_AUTO_TRANSLATION_TIMER=null;
 
 if(!fs.existsSync(LOG))fs.writeFileSync(LOG,'','utf8');
 if(!fs.existsSync(STRAT_DIR))fs.mkdirSync(STRAT_DIR,{recursive:true});
@@ -207,6 +207,44 @@ function myMemorySegment(text,sourceLang,targetLang,contactEmail,cb){text=String
 function myMemoryText(text,sourceLang,targetLang,contactEmail,cb){var chunks=utf8Chunks(text,450),out=[],i=0;if(!chunks.length)return cb(null,'');function next(){if(i>=chunks.length)return cb(null,out.join(' ').replace(/\s+/g,' ').trim());myMemorySegment(chunks[i++],sourceLang,targetLang,contactEmail,function(e,t){if(e)return cb(e);out.push(t);setTimeout(next,90);});}next();}
 function callFundamentalTranslation(item,lang,contactEmail,cb){var sourceLang=normalizeTranslationSourceLanguage(item),title=String(item.title||'').trim(),summary=String(item.summary||'').trim();if(sourceLang===lang)return cb(null,{translated_title:title,translated_summary:summary,source_language:sourceLang});myMemoryText(title,sourceLang,lang,contactEmail,function(te,tt){if(te)return cb(te);myMemoryText(summary,sourceLang,lang,contactEmail,function(se,ts){if(se)return cb(se);if(!String(tt||'').trim())return cb(new Error('TRANSLATION_OUTPUT_INVALID: translated_title vide'));cb(null,{translated_title:String(tt||'').trim(),translated_summary:String(ts||'').trim(),source_language:sourceLang});});});}
 function translateFundamentalItem(itemId,sess,cb){itemId=Math.round(+itemId||0);if(itemId<1)return cb(new Error('RAW_ITEM_ID_INVALID'));var lang=translationLanguage(),cacheKey=itemId+'|'+lang,usr=readUser(),contactEmail=validTranslationContactEmail((usr&&usr.email)||(sess&&sess.email)||'');function finish(e,o){var wait=FUNDAMENTAL_TRANSLATION_INFLIGHT[cacheKey]||[];delete FUNDAMENTAL_TRANSLATION_INFLIGHT[cacheKey];for(var i=0;i<wait.length;i++)try{wait[i](e,o);}catch(x){}}if(FUNDAMENTAL_TRANSLATION_INFLIGHT[cacheKey]){FUNDAMENTAL_TRANSLATION_INFLIGHT[cacheKey].push(cb);return;}FUNDAMENTAL_TRANSLATION_INFLIGHT[cacheKey]=[cb];fundamentalJson('/api/translations?itemId='+itemId+'&lang='+encodeURIComponent(lang),function(ce,co){if(!ce&&co&&co.translation){log('FUNDAMENTAL','Traduction cache HIT',cacheKey);return finish(null,{ok:true,cached:true,language:lang,languageName:SUPPORTED_LANGUAGES[lang],translation:co.translation});}fundamentalJson('/api/raw-items/'+itemId,function(e,o){if(e)return finish(e);var item=o&&o.item;if(!item)return finish(new Error('RAW_ITEM_NOT_FOUND'));callFundamentalTranslation(item,lang,contactEmail,function(te,tr){if(te){var er=new Error('TRANSLATION_FAILED: '+String(te.message||te));er.statusCode=te&&String(te.message||'').indexOf('TRANSLATION_MYMEMORY_LIMIT')===0?429:502;return finish(er);}var payload={raw_item_id:itemId,target_lang:lang,translated_title:tr.translated_title,translated_summary:tr.translated_summary,provider:'MYMEMORY'};fundamentalRequestJson('POST','/api/translations',payload,function(se,so){if(se)return finish(se);log('FUNDAMENTAL','Traduction MyMemory sauvegardee',String(itemId)+' '+String(tr.source_language||'en')+' -> '+lang+' contact='+(contactEmail?'SET':'NONE'));finish(null,{ok:true,cached:false,language:lang,languageName:SUPPORTED_LANGUAGES[lang],translation:so.translation});},5000);});},2500);},1600);}
+function runAutoTranslationBatch(){
+ if(FUNDAMENTAL_AUTO_TRANSLATION_RUNNING)return;
+ FUNDAMENTAL_AUTO_TRANSLATION_RUNNING=true;
+ var lang;
+ try{lang=translationLanguage();}catch(e){FUNDAMENTAL_AUTO_TRANSLATION_RUNNING=false;log('FUNDAMENTAL','Auto traduction ignoree','settings '+String(e.message||e));return;}
+ var translated=0,failed=0,skip=Object.create(null),stoppedByQuota=false;
+ function finish(reason){FUNDAMENTAL_AUTO_TRANSLATION_RUNNING=false;log('FUNDAMENTAL','Auto traduction terminee','lang='+lang+' translated='+translated+' failed='+failed+(stoppedByQuota?' quota=LIMIT':'')+(reason?' reason='+reason:''));}
+ function load(){
+  fundamentalJson('/api/translations/pending?lang='+encodeURIComponent(lang)+'&limit=200',function(e,o){
+   if(e)return finish('pending '+String(e.message||e));
+   var items=o&&Array.isArray(o.items)?o.items.filter(function(x){return x&&x.id&&!skip[String(x.id)];}):[];
+   if(!items.length)return finish('complete');
+   var i=0,progress=0;
+   function next(){
+    if(i>=items.length){if(progress===0)return finish('no_progress');return setTimeout(load,500);}
+    var id=+items[i++].id||0;if(!id)return next();
+    translateFundamentalItem(id,null,function(te,to){
+     if(te){
+      var msg=String(te.message||te);
+      failed++;skip[String(id)]=1;
+      if((te.statusCode===429)||msg.indexOf('TRANSLATION_MYMEMORY_LIMIT')>=0){stoppedByQuota=true;return finish('api_limit');}
+     }else if(to&&to.cached!==true){translated++;progress++;}
+     setTimeout(next,180);
+    });
+   }
+   next();
+  },5000);
+ }
+ log('FUNDAMENTAL','Auto traduction demarree','lang='+lang);
+ load();
+}
+function startAutoTranslationScheduler(){
+ if(FUNDAMENTAL_AUTO_TRANSLATION_TIMER)return;
+ setTimeout(runAutoTranslationBatch,30000);
+ FUNDAMENTAL_AUTO_TRANSLATION_TIMER=setInterval(runAutoTranslationBatch,3600000);
+ if(FUNDAMENTAL_AUTO_TRANSLATION_TIMER.unref)FUNDAMENTAL_AUTO_TRANSLATION_TIMER.unref();
+}
+
 function fundamentalAiContext(cb){
  var since=new Date(Date.now()-86400000).toISOString();
  fundamentalJson('/api/summary',function(se,so){
@@ -706,5 +744,5 @@ function route(req,res){var u=new URL(req.url,'http://'+HOST+':'+PORT),p=u.pathn
  json(res,404,{error:'Not found'});
 }
 SERVER=http.createServer(route);
-SERVER.listen(PORT,HOST,function(){log('SYSTEM','Crypto Chart Viewer IA Trader v'+CURRENT_VERSION+' superviseur demarre','http://'+HOST+':'+PORT);console.log('\nCrypto Chart Viewer IA Trader v'+CURRENT_VERSION);console.log('Controle interne : http://'+HOST+':'+PORT);});
+SERVER.listen(PORT,HOST,function(){log('SYSTEM','Crypto Chart Viewer IA Trader v'+CURRENT_VERSION+' superviseur demarre','http://'+HOST+':'+PORT);console.log('\nCrypto Chart Viewer IA Trader v'+CURRENT_VERSION);console.log('Controle interne : http://'+HOST+':'+PORT);startAutoTranslationScheduler();});
 if(PUBLIC_PORT!==PORT){PUBLIC_SERVER=http.createServer(route);PUBLIC_SERVER.on('error',function(e){log('SYSTEM','Port interface locale indisponible',PUBLIC_PORT+' '+e.message);console.error('Crypto Chart Viewer IA Trader : localhost:'+PUBLIC_PORT+' indisponible ('+e.message+'). Utilise http://'+HOST+':'+PORT);PUBLIC_SERVER=null;});PUBLIC_SERVER.listen(PUBLIC_PORT,HOST,function(){log('SYSTEM','Interface locale v'+CURRENT_VERSION,'http://'+HOST+':'+PUBLIC_PORT);console.log('Interface : http://'+HOST+':'+PUBLIC_PORT);console.log('Chart Viewer : http://'+HOST+':'+PUBLIC_PORT+'/chart-viewer\n');});}else console.log('Interface : http://'+HOST+':'+PORT+'\n');
