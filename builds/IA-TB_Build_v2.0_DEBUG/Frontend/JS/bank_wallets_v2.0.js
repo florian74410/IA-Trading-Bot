@@ -40,39 +40,53 @@ function render(){
 function bind(){
  var w=state.wallets.filter(function(x){return x.id===state.selected})[0]||null;
  var create=document.getElementById('wvCreate');if(create)create.onclick=openCreateWallet;
- Array.prototype.slice.call(document.querySelectorAll('.wvCard')).forEach(function(b){b.onclick=function(){state.selected=b.getAttribute('data-wv');state.transfer.destWallet='';state.transfer.preflight=null;state.transfer.error='';render();var d=document.querySelector('.wvDetail');if(d&&d.scrollIntoView)setTimeout(function(){d.scrollIntoView({behavior:'smooth',block:'start'})},20)}});
+ Array.prototype.slice.call(document.querySelectorAll('.wvCard')).forEach(function(b){b.onclick=function(){state.selected=b.getAttribute('data-wv');state.transfer.sourceWallet=state.selected;state.transfer.preview=null;state.transfer.error='';ensureTransferSource();loadTransferPrice();render();var d=document.querySelector('.wvDetail');if(d&&d.scrollIntoView)setTimeout(function(){d.scrollIntoView({behavior:'smooth',block:'start'})},20)}});
  var search=$('.wvSearch');if(search)search.oninput=function(){var q=this.value.toLowerCase();Array.prototype.slice.call(document.querySelectorAll('.wvCard')).forEach(function(c){c.style.display=c.textContent.toLowerCase().indexOf(q)>=0?'':'none'})};
  var focus=$('.wvTransferFocus');if(focus)focus.onclick=function(){var x=document.getElementById('wvTransfer');if(x)x.scrollIntoView({behavior:'smooth',block:'center'})};
  var pub=$('.wvPublicKey');if(pub&&w)pub.onclick=function(){var h=w.accounts.map(function(a){return '<div class="iaSecretBox"><b>'+esc(a.family)+'</b><br>'+esc(a.publicKey||a.address)+'</div>'}).join('');notify({size:'medium',title:'Clés publiques · '+w.name,subtitle:'Une identité IA-TB, plusieurs familles blockchain.',html:h,icon:'⌘'})};
  var priv=$('.wvPrivateKey');if(priv&&w)priv.onclick=function(){notify({size:'medium',title:'Afficher la clé privée ?',subtitle:'Action sensible · confirmation requise',icon:'🔐',html:'<div class="iaNtfSensitive"><b>Attention.</b> Toute personne possédant cette clé peut contrôler les actifs de ce wallet. IA-TB ne vous demandera jamais de la transmettre. Vérifiez que personne ne voit votre écran avant de continuer.</div>',actions:[{label:'Annuler'},{label:'Je comprends · Afficher',kind:'danger',onClick:function(close){close();choosePrivate(w)}}]})};
  var archive=$('.wvArchive');if(archive&&w)archive.onclick=function(){notify({size:'medium',title:'Retirer ce wallet de la Banque ?',subtitle:'Le wallet ne sera pas détruit.',icon:'×',text:'Il disparaîtra de votre interface active, mais ses données chiffrées resteront conservées afin de respecter le principe de récupération.',actions:[{label:'Annuler'},{label:'Retirer',kind:'danger',onClick:function(close){close();archiveWallet(w)}}]})};
- var sn=document.getElementById('wvSourceNetwork'),dn=document.getElementById('wvDestNetwork'),dst=document.getElementById('wvDest'),asset=document.getElementById('wvAsset'),amount=document.getElementById('wvAmount');
- function transferChanged(){state.transfer.sourceNetwork=sn&&sn.value||'ethereum';state.transfer.destNetwork=dn&&dn.value||state.transfer.sourceNetwork;state.transfer.destWallet=dst&&dst.value||'';state.transfer.symbol=asset&&asset.value||nativeSymbol(state.transfer.sourceNetwork);state.transfer.amount=amount&&amount.value.trim()||'';state.transfer.preflight=null;state.transfer.error='';if(asset&&[nativeSymbol(state.transfer.sourceNetwork),'USDC'].indexOf(asset.value)<0){state.transfer.symbol=nativeSymbol(state.transfer.sourceNetwork)}scheduleTransferPreflight();}
- if(sn)sn.onchange=function(){state.transfer.sourceNetwork=this.value;state.transfer.symbol=nativeSymbol(this.value);if(dn&&dn.value===state.transfer.destNetwork){}transferChanged();render()};
- if(dn)dn.onchange=function(){state.transfer.destNetwork=this.value;transferChanged();render()};
- if(dst)dst.onchange=function(){state.transfer.destWallet=this.value;transferChanged();render()};
- if(asset)asset.onchange=function(){state.transfer.symbol=this.value;transferChanged()};
- if(amount){amount.oninput=function(){state.transfer.amount=this.value.trim();scheduleTransferPreflight()};amount.onblur=transferChanged}
- var send=document.getElementById('wvSend');if(send)send.onclick=function(){if(state.transfer.preflight&&state.transfer.preflight.ready)confirmTransfer();};
- mountHelpBubbles();
+ var src=document.getElementById('wvSourceCompact'),dest=document.getElementById('wvDestAddress'),amount=document.getElementById('wvAmountCompact'),human=document.getElementById('wvTransferHuman');
+ if(src)src.onchange=function(){var z=String(this.value||'').split('|');state.transfer.sourceWallet=z[0]||'';state.transfer.network=z[1]||'ethereum';state.transfer.asset='NATIVE';state.transfer.preview=null;state.transfer.error='';state.transfer.priceEUR=null;loadTransferPrice();render()};
+ if(dest){dest.oninput=function(){state.transfer.destinationAddress=this.value.trim();state.transfer.preview=null;state.transfer.error='';refreshTransferDynamic();scheduleTransferPreview()};dest.onblur=function(){scheduleTransferPreview(true)}}
+ $$('.wvCryptoList [data-asset]').forEach(function(btn){btn.onclick=function(){state.transfer.asset=btn.getAttribute('data-asset')||'NATIVE';state.transfer.preview=null;state.transfer.error='';state.transfer.priceEUR=null;loadTransferPrice();render()}});
+ if(amount)amount.oninput=function(){state.transfer.amount=this.value.trim();state.transfer.preview=null;state.transfer.error='';refreshTransferDynamic();scheduleTransferPreview()};
+ if(human)human.onchange=function(){state.transfer.human=!!this.checked;refreshTransferDynamic()};
+ var send=document.getElementById('wvSend');if(send)send.onclick=function(){if(state.transfer.preview&&state.transfer.preview.canTransfer&&state.transfer.human)confirmTransfer()}; mountHelpBubbles();
 }
 
 var transferTimer=null,helpTimer=null,helpNode=null;
-function scheduleTransferPreflight(){clearTimeout(transferTimer);var t=state.transfer;if(!state.selected||!t.destWallet||!t.amount||Number(t.amount)<=0){t.preflight=null;t.error='';var btn=document.getElementById('wvSend');if(btn)btn.disabled=true;return}transferTimer=setTimeout(runTransferPreflight,450)}
-function runTransferPreflight(){
- var t=state.transfer;if(t.sourceNetwork!==t.destNetwork){t.preflight=null;t.error='Réseaux différents : transfert direct interdit. Utilisez Swap & Bridge.';render();return}
- if(['ethereum','arbitrum','polygon','bnb','base'].indexOf(t.sourceNetwork)<0){t.preflight=null;t.error='Le signer direct de ce réseau n’est pas encore disponible.';render();return}
- t.busy=true;t.error='';render();
- fetch('/api/transfers/preflight',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sourceWalletId:state.selected,destWalletId:t.destWallet,network:t.sourceNetwork,destinationNetwork:t.destNetwork,symbol:t.symbol,amount:t.amount})}).then(function(r){return r.json().then(function(o){if(!r.ok)throw new Error(o.error||'TRANSFER_PREFLIGHT_FAILED');return o})}).then(function(o){t.busy=false;t.preflight=o;t.error=o.ready?'':(!o.checks.assetEnough?'Solde de l’actif insuffisant.':!o.checks.gasEnough?'Solde natif insuffisant pour le gas.':'Préflight incomplet.');render()}).catch(function(e){t.busy=false;t.preflight=null;t.error=e.message;render()});
+function transferSymbol(){return state.transfer.asset==='USDC'?'USDC':nativeSymbol(state.transfer.network)}
+function refreshTransferDynamic(){
+ var t=state.transfer,suf=document.getElementById('wvAmountSuffix'),send=document.getElementById('wvSend'),status=document.querySelector('.wvTransferCompactStatus'),detect=document.querySelector('.wvNetworkDetect');
+ if(suf)suf.textContent=amountPreviewText();
+ if(send){send.disabled=!(t.preview&&t.preview.canTransfer&&t.human&&!t.busy);send.textContent='Transférer '+(t.amount||'')+' '+transferSymbol()}
+ if(status)status.outerHTML=compactTransferStatus();
+ if(detect)detect.outerHTML=recipientStatus();
+ mountHelpBubbles();
+}
+function loadTransferPrice(){
+ var sym=transferSymbol(),t=state.transfer;t.priceSymbol=sym;
+ fetch('/api/wallet-asset-price?symbol='+encodeURIComponent(sym),{cache:'no-store'}).then(function(r){return r.json().then(function(o){if(!r.ok)throw new Error(o.error||'PRICE_UNAVAILABLE');return o})}).then(function(o){if(t.priceSymbol!==sym)return;t.priceEUR=+o.eur||null;refreshTransferDynamic()}).catch(function(){if(t.priceSymbol===sym){t.priceEUR=null;refreshTransferDynamic()}});
+}
+function scheduleTransferPreview(immediate){
+ clearTimeout(transferTimer);var t=state.transfer;
+ if(!t.sourceWallet||!validEvmAddress(t.destinationAddress)||!t.amount||Number(t.amount)<=0){t.preview=null;t.busy=false;refreshTransferDynamic();return}
+ transferTimer=setTimeout(runTransferPreview,immediate?0:650);
+}
+function transferErrorMessage(code){var m={DESTINATION_ADDRESS_INVALID:'Adresse de réception invalide.',SOURCE_ADDRESS_INVALID:'Adresse source invalide.',SOURCE_EQUALS_DESTINATION:'L’adresse de départ et d’arrivée sont identiques.',NETWORK_MISMATCH:'Le réseau de départ et d’arrivée doit être identique.',RPC_NOT_CONFIGURED:'RPC réseau non configuré.',INSUFFICIENT_ASSET_BALANCE:'Solde crypto insuffisant.',INSUFFICIENT_GAS_BALANCE:'Solde natif insuffisant pour le gas.',AMOUNT_INVALID:'Montant invalide.',TRANSFER_PREVIEW_EXPIRED:'La vérification a expiré. Relancez le transfert.',HUMAN_CONFIRMATION_REQUIRED:'Confirmez que vous n’êtes pas un robot.',WALLET_PASSWORD_INVALID:'Mot de passe du wallet incorrect.'};return m[code]||code||'Transfert indisponible.'}
+function runTransferPreview(){
+ var t=state.transfer;t.busy=true;t.error='';refreshTransferDynamic();
+ fetch('/api/transfers/preview',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sourceWalletId:t.sourceWallet,sourceNetwork:t.network,destinationNetwork:t.network,destinationAddress:t.destinationAddress,asset:t.asset,amount:t.amount})}).then(function(r){return r.json().then(function(o){if(!r.ok)throw new Error(o.error||'TRANSFER_PREVIEW_FAILED');return o})}).then(function(o){t.busy=false;t.preview=o;t.error=o.canTransfer?'':(!o.enoughAsset?'Solde crypto insuffisant.':!o.enoughGas?'Solde natif insuffisant pour le gas.':'Transfert bloqué.');refreshTransferDynamic()}).catch(function(e){t.busy=false;t.preview=null;t.error=transferErrorMessage(e.message);refreshTransferDynamic()});
 }
 function confirmTransfer(){
- var t=state.transfer,p=t.preflight;if(!p||!p.ready)return;
- var id='wvTransferPassword'+Date.now(),html='<div class="wvTransferConfirm"><div><small>RÉSEAU</small><b>'+esc(p.network)+'</b></div><div><small>MONTANT</small><b>'+esc(p.amount)+' '+esc(p.symbol)+'</b></div><div><small>GAS ESTIMÉ</small><b>'+esc(p.gas.costNative)+' '+esc(p.gas.symbol)+'</b></div><div class="wide"><small>DE</small><code>'+esc(p.sourceAddress)+'</code></div><div class="wide"><small>VERS</small><code>'+esc(p.destinationAddress)+'</code></div><label class="wide">Mot de passe du wallet<input id="'+id+'" type="password" autocomplete="current-password" placeholder="Mot de passe du compte actif"></label></div>';
- notify({size:'large',title:'Confirmer le transfert crypto',subtitle:'Signature et diffusion on-chain après confirmation',icon:'⇄',html:html,actions:[{label:'Annuler'},{label:'Signer et transférer',kind:'primary',onClick:function(close){var x=document.getElementById(id),pw=x&&x.value||'';if(!pw){if(x)x.focus();return}close();executeTransfer(p,pw)}}]});
+ var t=state.transfer,p=t.preview;if(!p||!p.canTransfer||!t.human)return;
+ var id='wvTransferPassword'+Date.now(),html='<div class="wvTransferConfirm"><div><small>RÉSEAU</small><b>'+esc(p.networkName||networkName(p.network))+'</b></div><div><small>MONTANT</small><b>'+esc(p.amount)+' '+esc(p.symbol)+'</b></div><div><small>GAS ESTIMÉ</small><b>'+esc(p.gasCostNative)+' '+esc(nativeSymbol(p.network))+'</b></div><div class="wide"><small>DE</small><code>'+esc(p.sourceAddress)+'</code></div><div class="wide"><small>VERS</small><code>'+esc(p.destinationAddress)+'</code></div><label class="wide">Mot de passe du wallet<input id="'+id+'" type="password" autocomplete="current-password" placeholder="Mot de passe du compte actif"></label></div>';
+ notify({size:'large',title:'Confirmer le transfert crypto',subtitle:'Adresse, réseau, solde et gas vérifiés · signature requise',icon:'⇄',html:html,actions:[{label:'Annuler'},{label:'Signer et transférer',kind:'primary',onClick:function(close){var x=document.getElementById(id),pw=x&&x.value||'';if(!pw){if(x)x.focus();return}close();executeTransfer(p,pw)}}]});
 }
 function executeTransfer(p,password){
- var t=state.transfer;t.busy=true;render();
- fetch('/api/transfers/execute',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sourceWalletId:state.selected,destWalletId:t.destWallet,network:t.sourceNetwork,destinationNetwork:t.destNetwork,symbol:t.symbol,amount:t.amount,password:password,confirmed:true})}).then(function(r){return r.json().then(function(o){if(!r.ok)throw new Error(o.error||'TRANSFER_FAILED');return o})}).then(function(o){password='';t.busy=false;t.preflight=null;t.amount='';t.error='';if(window.IATBNotify&&window.IATBNotify.transferSuccess)window.IATBNotify.transferSuccess({direction:'OUT',timestamp:o.timestamp,network:o.network,symbol:o.symbol,amount:o.amount,sourceAddress:o.sourceAddress,destinationAddress:o.destinationAddress,tx:o.txHash});return load()}).catch(function(e){password='';t.busy=false;t.error=e.message;render();notify({size:'medium',title:'Transfert refusé',subtitle:'Aucun transfert non confirmé n’est présenté comme réussi.',icon:'✕',text:e.message})});
+ var t=state.transfer;t.busy=true;refreshTransferDynamic();
+ fetch('/api/transfers/execute',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({previewId:p.previewId,password:password,confirmed:true,humanConfirmed:t.human})}).then(function(r){return r.json().then(function(o){if(!r.ok)throw new Error(o.error||'TRANSFER_FAILED');return o})}).then(function(o){password='';t.busy=false;t.preview=null;t.amount='';t.destinationAddress='';t.human=false;t.error='';if(window.IATBNotify&&window.IATBNotify.transferSuccess)window.IATBNotify.transferSuccess({direction:'OUT',timestamp:o.timestamp,network:o.network,symbol:o.symbol,amount:o.amount,sourceAddress:o.sourceAddress,destinationAddress:o.destinationAddress,tx:o.txHash});render();return load()}).catch(function(e){password='';t.busy=false;t.error=transferErrorMessage(e.message);refreshTransferDynamic();notify({size:'medium',title:'Transfert refusé',subtitle:'Aucune transaction non confirmée n’est présentée comme réussie.',icon:'✕',text:t.error})});
 }
 function mountHelpBubbles(){
  [].slice.call(document.querySelectorAll('[data-help]')).forEach(function(el){
