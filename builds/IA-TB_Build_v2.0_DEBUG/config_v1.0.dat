@@ -1,7 +1,7 @@
-# Crypto Chart Viewer IA Trader v1.0 - GMX ONLY
+# IA-Trading-Bot v2.0 DEBUG - Core compatibility settings
 # Aucun secret API n'est stocke ici. La cle OpenAI reste chiffree dans secrets_v2.dat.
 OPENAI_MODEL=gpt-5.6
-TRADING_MODE=GMX_ONLY
+TRADING_MODE=MULTI_EXCHANGE
 
 # Profil MacBook Pro 2011 / 4 Go
 CHART_CANDLES=100
@@ -23,8 +23,8 @@ GMX_DEFAULT_COLLATERAL=USDC
 GMX_MAX_LEVERAGE=50
 GMX_CHAT_MODE=PREPARE_ONLY
 
-# Source de marche unique
-MARKET_SOURCE=GMX
-MARKET_CATALOG=GMX_PAIRS
+# Market Data Collector is the single internal owner of market providers
+MARKET_SOURCE=MARKETDATA
+MARKET_CATALOG=PROVIDER_REGISTRY
 MARKET_CATALOG_CACHE_SECONDS=60
 # Candles Oracle GMX: 1m,5m,15m,1h,4h,1d. Pas de volume par bougie.
