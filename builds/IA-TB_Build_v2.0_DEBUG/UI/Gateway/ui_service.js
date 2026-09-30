@@ -8,7 +8,7 @@
      Router -> Firewall Data Thread -> Market Data Collector.
    - ADMIN Firewall editor uses an explicit ADMIN-only bridge to port 8017.
 */
-var http=require('http'),fs=require('fs'),path=require('path'),URL=require('url').URL,Permissions=require('../Permissions/ui_permissions');
+var http=require('http'),fs=require('fs'),path=require('path'),URL=require('url').URL,Permissions=require('../Permissions/ui_permissions'),BUILD=require('../../Core/Shared/build_info');
 var ROOT=path.resolve(__dirname,'../..'),HOST='127.0.0.1';
 var PORT=+(process.env.IATB_UI_PORT||8000),CORE_PORT=+(process.env.CORE_PUBLIC_PORT||8001),ROUTER_PORT=+(process.env.ROUTER_PORT||8021),FIREWALL_PORT=+(process.env.IATB_FIREWALL_PORT||process.env.IATB_TRADING_FIREWALL_PORT||8017);
 var AUTH_MODE=String(process.env.IATB_AUTH_MODE||'disabled').toLowerCase(),BYPASS_ROLE=Permissions.normalizeRole(process.env.IATB_UI_BYPASS_ROLE||'ADMIN');
@@ -33,7 +33,7 @@ function authorizePage(req,res,required,cb){if(AUTH_MODE==='disabled'){var r=BYP
 function allowCore(req,res,p){var c=Permissions.classify(req.method,p),role=currentRole();if(AUTH_MODE==='disabled'&&!Permissions.allowed(role,c)){json(res,403,{ok:false,error:'ACCESS_DENIED',role:role,required:c.permission});return false;}return c;}
 function routerReadPath(p){return p.indexOf('/communication/')===0||p.indexOf('/router-api/')===0||p.indexOf('/market-data')===0||p==='/firewall-events'||p.indexOf('/indicator-api')===0||p.indexOf('/fundamental-api')===0||p.indexOf('/liquidity-data')===0||p.indexOf('/portfolio-api')===0||p.indexOf('/kraken-api')===0;}
 var server=http.createServer(function(req,res){var u=new URL(req.url,'http://'+HOST+':'+PORT),p=u.pathname;
- if(req.method==='GET'&&p==='/ui-health')return json(res,200,{ok:true,name:'IA-TB UI Service',version:'2.0.0',pid:process.pid,host:HOST,port:PORT,corePort:CORE_PORT,routerPort:ROUTER_PORT,firewallPort:FIREWALL_PORT,authMode:AUTH_MODE,bypassRole:AUTH_MODE==='disabled'?BYPASS_ROLE:null,separation:'UI_PROCESS_ISOLATED'});
+ if(req.method==='GET'&&p==='/ui-health')return json(res,200,{ok:true,name:'IA-TB UI Service',version:BUILD.version,pid:process.pid,host:HOST,port:PORT,corePort:CORE_PORT,routerPort:ROUTER_PORT,firewallPort:FIREWALL_PORT,authMode:AUTH_MODE,bypassRole:AUTH_MODE==='disabled'?BYPASS_ROLE:null,separation:'UI_PROCESS_ISOLATED'});
  if(req.method==='GET'&&p==='/ui-api/project-tree')return authorizePage(req,res,'ADMIN',function(){json(res,200,{ok:true,root:path.basename(ROOT),tree:projectTree(ROOT,'',0)});});
  if(req.method==='GET'&&p==='/ui-api/project-file')return authorizePage(req,res,'ADMIN',function(){projectFilePreview(res,u.searchParams.get('path')||'');});
  if(req.method==='GET'&&p==='/ui-api/session')return json(res,200,{ok:true,authenticated:AUTH_MODE!=='disabled',authMode:AUTH_MODE,role:currentRole(),permissions:{read:true,userWrite:true,adminWrite:isAdminRole(currentRole()),superAdmin:currentRole()==='SUPERADMIN'},policy:'SERVER_SIDE'});
@@ -47,5 +47,5 @@ var server=http.createServer(function(req,res){var u=new URL(req.url,'http://'+H
  json(res,404,{ok:false,error:'UI_ROUTE_NOT_FOUND'});
 });
 server.on('error',function(e){console.error('IA-TB UI Service bind error:',e&&e.message||e);process.exit(17);});
-server.listen(PORT,HOST,function(){console.log('IA-TB UI Service v2.0 : http://'+HOST+':'+PORT);console.log('Core API interne : http://'+HOST+':'+CORE_PORT);console.log('Router interne   : http://'+HOST+':'+ROUTER_PORT);console.log('Firewall interne : http://'+HOST+':'+FIREWALL_PORT);});
+server.listen(PORT,HOST,function(){console.log('IA-TB UI Service v'+BUILD.version+' : http://'+HOST+':'+PORT);console.log('Core API interne : http://'+HOST+':'+CORE_PORT);console.log('Router interne   : http://'+HOST+':'+ROUTER_PORT);console.log('Firewall interne : http://'+HOST+':'+FIREWALL_PORT);});
 function stop(){server.close(function(){process.exit(0);});setTimeout(function(){process.exit(0);},1200);}process.on('SIGINT',stop);process.on('SIGTERM',stop);
