@@ -20,7 +20,7 @@ function ensureGlobalSidebar(){
  if(location.pathname.indexOf('/fundamental')===0)document.body.classList.add('iatb-fundamental-page');else document.body.classList.remove('iatb-fundamental-page');
  document.body.classList.remove('iatb-no-bank-side');
  if(!document.querySelector('script[data-iatb-global-side]')){
-  var s=document.createElement('script');s.src='/assets/global_sidebar_v2.0.js?v=3003';s.setAttribute('data-iatb-global-side','1');document.head.appendChild(s);
+  var s=document.createElement('script');s.src='/assets/global_sidebar_v2.0.js?v=3004';s.setAttribute('data-iatb-global-side','1');document.head.appendChild(s);
  }
 }
 function resolveAdminVisibility(){
