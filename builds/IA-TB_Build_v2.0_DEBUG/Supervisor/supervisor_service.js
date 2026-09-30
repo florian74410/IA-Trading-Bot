@@ -1,8 +1,8 @@
 'use strict';
 var http=require('http'),fs=require('fs'),path=require('path');
-var Adapter=require('../Core/Communication/component_cp1_adapter'),PATHS=require('../Core/Shared/paths'),SupervisorCore=require('./Core/supervisor_core');
+var Adapter=require('../Core/Communication/component_cp1_adapter'),PATHS=require('../Core/Shared/paths'),SupervisorCore=require('./Core/supervisor_core'),BUILD=require('../Core/Shared/build_info');
 PATHS.ensureAppRuntimeDirs();
-var ROOT=PATHS.ROOT,HOST='127.0.0.1',PORT=+(process.env.IATB_SUPERVISOR_PORT||3000),ROUTER_PORT=+(process.env.ROUTER_PORT||8021),VERSION='0.1.0';
+var ROOT=PATHS.ROOT,HOST='127.0.0.1',PORT=+(process.env.IATB_SUPERVISOR_PORT||3000),ROUTER_PORT=+(process.env.ROUTER_PORT||8021),VERSION=BUILD.version;
 var LOG=path.join(ROOT,'.runtime','logs','supervisor.log'),core=new SupervisorCore(ROOT);
 var ACTIONS=['supervisor.health','supervisor.capabilities','supervisor.status','supervisor.calendar','supervisor.calendar.fed','supervisor.calendar.cme','supervisor.calendar.cme.expirations','supervisor.fedwatch','supervisor.reload','supervisor.extensions','supervisor.llm.health','supervisor.context','supervisor.analyze','supervisor.indicators','supervisor.indicator.language','supervisor.indicator.validate','supervisor.indicator.create','supervisor.indicator.definition','supervisor.indicators.compute','supervisor.risk.evaluate','supervisor.reason'];
 var EVENTS=['supervisor.reasoning.completed','supervisor.extension.loaded'];
