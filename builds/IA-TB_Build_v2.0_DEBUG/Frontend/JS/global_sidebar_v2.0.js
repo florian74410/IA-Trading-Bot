@@ -77,7 +77,7 @@ function fundamentalConfig(){return{key:'fundamental',title:'FONDAMENTAL',icon:'
  ]),
  group('Sources & Collecte','source',[
   item('Sources & Providers','source',{selector:'.fundSidebar button[data-view="sources"]'}),
-  item('Source Manager','settings',{selector:'.fundSidebar button[data-view="sources"]'})
+  item('Source Manager','settings',{selector:'.fundSidebar button[data-view="source-manager"]'})
  ]),
  group('Outils & Diagnostic','diagnostic',[
   item('Fundamental Console','console',{selector:'.fundSidebar button[data-view="console"]'})
