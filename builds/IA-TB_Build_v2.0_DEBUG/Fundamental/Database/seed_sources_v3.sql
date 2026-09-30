@@ -168,3 +168,13 @@ INSERT OR IGNORE INTO provider_configs(feed_id,config_json,updated_at)
 SELECT id,'{"mode":"RECENT_SEARCH","query":"from:SECGov -is:retweet","max_results":10,"language":"en"}','2026-08-28T08:00:00Z' FROM feeds WHERE code='SEC_X';
 INSERT OR IGNORE INTO provider_configs(feed_id,config_json,updated_at)
 SELECT id,'{"mode":"RECENT_SEARCH","query":"from:realDonaldTrump -is:retweet","max_results":10,"language":"en"}','2026-08-28T08:00:00Z' FROM feeds WHERE code='TRUMP_X';
+
+
+-- v2.0 DEBUG: every registered source gets at least one collectable public feed.
+-- Generic WEB feeds are conservative PAGE_SNAPSHOT monitors; specialized adapters can replace them later.
+INSERT OR IGNORE INTO feeds(source_id,code,label,provider_type,endpoint,platform,account_identifier,enabled,poll_interval_sec,base_importance,content_role,content_class,status,created_at,updated_at)
+SELECT id,code||'_PUBLIC_WEB',name||' · Public Web','WEB',homepage_url,NULL,NULL,1,900,55,'ORIGINAL','INFORMATION','IDLE','2026-09-30T00:00:00Z','2026-09-30T00:00:00Z'
+FROM sources s WHERE s.enabled=1 AND COALESCE(s.homepage_url,'')<>'' AND NOT EXISTS(SELECT 1 FROM feeds f WHERE f.source_id=s.id);
+INSERT OR IGNORE INTO provider_configs(feed_id,config_json,updated_at)
+SELECT f.id,'{"mode":"PAGE_SNAPSHOT","language":"en","detail_fetch_count":1,"max_items":8}','2026-09-30T00:00:00Z'
+FROM feeds f WHERE f.code LIKE '%_PUBLIC_WEB' AND NOT EXISTS(SELECT 1 FROM provider_configs pc WHERE pc.feed_id=f.id);
