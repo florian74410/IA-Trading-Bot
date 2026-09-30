@@ -2,7 +2,7 @@
   "id": "strategy",
   "label": "Strategy Engine v2",
   "type": "ENGINE",
-  "order": 100,
+  "order": 120,
   "port": 8018,
   "healthPath": "/health",
   "marker": "IA-TB Strategy Engine v2",
