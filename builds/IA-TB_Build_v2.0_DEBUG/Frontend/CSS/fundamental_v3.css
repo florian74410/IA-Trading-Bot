@@ -410,3 +410,12 @@ body[data-fund-view="console"] .cockpitMetrics,body[data-fund-view="console"] .c
 .aiHistoryFacts{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px}.aiHistoryFacts .tone.bullish{color:#76d6a0}.aiHistoryFacts .tone.bearish{color:#ff8b95}.aiHistoryFacts .tone.neutral{color:#aab8c2}.aiHistoryFacts .tone.mixed{color:#e8c970}.aiHistoryFacts .tone.uncertain{color:#9aa9b5}
 .aiHistoryThemes{display:flex;flex-wrap:wrap;gap:4px}.aiHistoryTheme{color:#b6d7ea;margin:0}.aiHistoryCard details{margin-top:9px;border-top:1px solid #203746;padding-top:8px}.aiHistoryCard summary{cursor:pointer;color:#90cce9;font-size:11px}.aiHistoryDetail{margin-top:8px}.aiHistoryDetail b{font-size:11px}.aiHistoryDetail ul{margin:5px 0 0 18px;padding:0;color:#aebfcb}
 @media(max-width:800px){.aiHistoryHead{align-items:stretch;flex-direction:column}.aiHistoryControls{align-items:stretch}}
+
+/* Source Manager layout repair */
+body[data-fund-view="source-manager"] .content{padding-top:10px}
+body[data-fund-view="source-manager"] .providersBlock{margin-top:0}
+body[data-fund-view="source-manager"] .providersBlock,
+body[data-fund-view="source-manager"] .sourcesSection,
+body[data-fund-view="source-manager"] .feedsSection{width:100%;max-width:none}
+body[data-fund-view="source-manager"] .sourcesSection,
+body[data-fund-view="source-manager"] .feedsSection{margin-top:10px}
