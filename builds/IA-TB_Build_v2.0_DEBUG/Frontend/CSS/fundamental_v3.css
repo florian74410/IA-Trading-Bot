@@ -397,8 +397,8 @@ body[data-fund-view="console"] .consolePage .fundamentalConsoleSection{display:b
 .sideCategory{border-bottom:1px solid rgba(30,123,160,.28)}.fundSidebar .sideCategoryToggle{display:flex;align-items:center;justify-content:space-between;width:100%;font-weight:700}.sideCategoryToggle b{transition:transform .16s ease}.sideCategory.open .sideCategoryToggle b{transform:rotate(90deg)}.sideCategoryItems{display:none;padding:0 8px 7px 14px}.sideCategory.open .sideCategoryItems{display:block}.fundSidebar .sideCategoryItems button{width:100%;padding-left:20px;font-size:12px}
 body[data-fund-view="news"] .fedwatchPanel,body[data-fund-view="news"] .macroCalendarPanel,body[data-fund-view="news"] .newsToolsBlock,body[data-fund-view="news"] .publicationsBlock{display:block}
 body[data-fund-view="overview"] .fedwatchPanel,body[data-fund-view="overview"] .macroCalendarPanel{display:none!important}
-body[data-fund-view="console"] .cockpitBlock,body[data-fund-view="console"] .consoleBlock{display:block}
-body[data-fund-view="console"] .cockpitMetrics,body[data-fund-view="console"] .cockpitLower,body[data-fund-view="console"] .eventsPanel{display:none}body[data-fund-view="console"] .cockpitMain{display:block;margin-top:0}body[data-fund-view="console"] .marketPanel{width:100%;margin-bottom:12px}
+body[data-fund-view="console"] .consoleBlock{display:block}
+
 
 /* Analyse IA · historique des synthèses persistées */
 .aiHistorySection{border:1px solid #233c4e;border-radius:10px;background:#09151f;padding:14px;margin-top:12px}
@@ -419,3 +419,6 @@ body[data-fund-view="source-manager"] .sourcesSection,
 body[data-fund-view="source-manager"] .feedsSection{width:100%;max-width:none}
 body[data-fund-view="source-manager"] .sourcesSection,
 body[data-fund-view="source-manager"] .feedsSection{margin-top:10px}
+
+body[data-fund-view="console"] .consolePage{margin-top:0}
+body[data-fund-view="console"] .consolePageHead{margin-top:0}
