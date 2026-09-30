@@ -351,7 +351,7 @@ body{background:radial-gradient(circle at 70% -20%,rgba(31,75,153,.18),transpare
 body[data-fund-view]:not([data-fund-view="overview"]) .hero{display:none}body[data-fund-view] .viewBlock{display:none}
 body[data-fund-view="overview"] .cockpitBlock,body[data-fund-view="overview"] .overviewOnly,body[data-fund-view="overview"] .aiBlock,body[data-fund-view="overview"] .newsToolsBlock,body[data-fund-view="overview"] .publicationsBlock,body[data-fund-view="overview"] .methodologySection{display:block}body[data-fund-view="overview"] .cockpitLower .sourcePreview{display:none}body[data-fund-view="overview"] .cockpitLower{grid-template-columns:1fr .62fr}
 body[data-fund-view="news"] .newsToolsBlock,body[data-fund-view="news"] .publicationsBlock{display:block}
-body[data-fund-view="ai"] .aiBlock,body[data-fund-view="ai"] .publicationsBlock{display:block}
+body[data-fund-view="ai"] .aiBlock,body[data-fund-view="ai"] .aiHistoryBlock{display:block}
 body[data-fund-view="sources"] .cockpitBlock{display:block}body[data-fund-view="sources"] .cockpitMetrics,body[data-fund-view="sources"] .cockpitMain{display:none}body[data-fund-view="sources"] .cockpitLower{display:block;margin-top:0}body[data-fund-view="sources"] .cockpitLower .newsPreview,body[data-fund-view="sources"] .cockpitLower .domainPreview{display:none}body[data-fund-view="sources"] .sourcePreview{display:block;width:100%;min-height:0;margin-bottom:12px}
 body[data-fund-view="source-manager"] .providersBlock,body[data-fund-view="source-manager"] .sourcesSection,body[data-fund-view="source-manager"] .feedsSection{display:block}
 body[data-fund-view="console"] .consoleBlock{display:block}body[data-fund-view="console"] .fundamentalConsoleSection{margin-top:0}
@@ -399,3 +399,14 @@ body[data-fund-view="news"] .fedwatchPanel,body[data-fund-view="news"] .macroCal
 body[data-fund-view="overview"] .fedwatchPanel,body[data-fund-view="overview"] .macroCalendarPanel{display:none!important}
 body[data-fund-view="console"] .cockpitBlock,body[data-fund-view="console"] .consoleBlock{display:block}
 body[data-fund-view="console"] .cockpitMetrics,body[data-fund-view="console"] .cockpitLower,body[data-fund-view="console"] .eventsPanel{display:none}body[data-fund-view="console"] .cockpitMain{display:block;margin-top:0}body[data-fund-view="console"] .marketPanel{width:100%;margin-bottom:12px}
+
+/* Analyse IA · historique des synthèses persistées */
+.aiHistorySection{border:1px solid #233c4e;border-radius:10px;background:#09151f;padding:14px;margin-top:12px}
+.aiHistoryHead{display:flex;justify-content:space-between;gap:16px;align-items:flex-end;margin-bottom:10px}.aiHistoryHead h2{margin:3px 0 4px;font-size:18px}.aiHistoryHead p{margin:0;color:#8fa8ba}
+.aiHistoryControls{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap}.aiHistoryControls label{display:flex;flex-direction:column;gap:4px;font-size:11px;color:#91a9b9}.aiHistoryControls select,.aiHistoryControls button{height:32px;border:1px solid #304858;background:#0e1b25;color:#dce7ef;border-radius:6px;padding:0 9px}
+.aiHistoryMeta{font-size:11px;color:#7fa2b7;margin:8px 0 10px}.aiHistoryList{display:grid;gap:10px}
+.aiHistoryCard{border:1px solid #263e50;background:#0b1822;border-radius:9px;padding:12px}.aiHistoryCardTop{display:flex;justify-content:space-between;gap:12px;align-items:center}.aiHistoryCardTop time{font-size:11px;color:#7f9bad}.aiHistoryCard h3{margin:8px 0 6px;color:#67c7ff;font-size:14px}.aiHistoryCard p{margin:0 0 9px;line-height:1.45;color:#c5d6e2}
+.aiDomainTag,.aiScopeTag,.aiHistoryTheme,.aiHistoryFacts span{display:inline-flex;align-items:center;border:1px solid #315066;background:#0e202c;border-radius:999px;padding:3px 7px;font-size:10px;margin-right:5px}.aiDomainTag{color:#77d9ff}.aiScopeTag{color:#9bb0be}
+.aiHistoryFacts{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px}.aiHistoryFacts .tone.bullish{color:#76d6a0}.aiHistoryFacts .tone.bearish{color:#ff8b95}.aiHistoryFacts .tone.neutral{color:#aab8c2}.aiHistoryFacts .tone.mixed{color:#e8c970}.aiHistoryFacts .tone.uncertain{color:#9aa9b5}
+.aiHistoryThemes{display:flex;flex-wrap:wrap;gap:4px}.aiHistoryTheme{color:#b6d7ea;margin:0}.aiHistoryCard details{margin-top:9px;border-top:1px solid #203746;padding-top:8px}.aiHistoryCard summary{cursor:pointer;color:#90cce9;font-size:11px}.aiHistoryDetail{margin-top:8px}.aiHistoryDetail b{font-size:11px}.aiHistoryDetail ul{margin:5px 0 0 18px;padding:0;color:#aebfcb}
+@media(max-width:800px){.aiHistoryHead{align-items:stretch;flex-direction:column}.aiHistoryControls{align-items:stretch}}
