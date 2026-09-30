@@ -340,9 +340,83 @@
           ]
         },
         "description": "Persisted DEX pair liquidity history from Market Data SQLite."
+      },
+      {
+        "name": "marketdata.ticker",
+        "arguments": {
+          "allowed": [
+            "symbol",
+            "exchange",
+            "source"
+          ],
+          "required": [
+            "symbol"
+          ]
+        },
+        "description": "Generic ticker routed through the Market Data provider catalogue and Data Firewall."
+      },
+      {
+        "name": "marketdata.refresh",
+        "arguments": {
+          "allowed": [
+            "symbol",
+            "timeframe",
+            "limit",
+            "exchange",
+            "source"
+          ],
+          "required": [
+            "symbol",
+            "timeframe"
+          ]
+        },
+        "description": "Force a candle refresh for any registered CEX/DEX provider."
+      },
+      {
+        "name": "marketdata.active",
+        "arguments": {
+          "allowed": []
+        },
+        "description": "List active candle contexts currently maintained by Market Data."
+      },
+      {
+        "name": "marketdata.cache.clear",
+        "arguments": {
+          "allowed": []
+        },
+        "description": "Clear Market Data in-memory caches."
+      },
+      {
+        "name": "marketdata.settings.get",
+        "arguments": {
+          "allowed": []
+        },
+        "description": "Read sanitized Market Data provider settings."
+      },
+      {
+        "name": "marketdata.settings.set",
+        "arguments": {
+          "allowed": [
+            "settings"
+          ],
+          "allowUnknown": true
+        },
+        "description": "Update Market Data provider settings. Provider IDs come from the provider catalogue."
+      },
+      {
+        "name": "marketdata.registry.refresh",
+        "arguments": {
+          "allowed": []
+        },
+        "description": "Force the CoinGecko-backed market registry refresh."
       }
     ],
     "dataTypes": [
+      {
+        "name": "market.ticker",
+        "direction": "PRODUCE",
+        "schema": "market.ticker/1.0"
+      },
       {
         "name": "market.candles",
         "direction": "PRODUCE",
