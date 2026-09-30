@@ -12,5 +12,6 @@
   "log": ".runtime/logs/kraken.log",
   "env": {
     "KRAKEN_ADDON_PORT": "8011"
-  }
+  },
+  "versionSource": "RUNTIME_HEALTH"
 }
