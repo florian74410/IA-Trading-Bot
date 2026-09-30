@@ -1,8 +1,7 @@
 'use strict';
 /*
- IA-Trading-Bot - Risk Engine service base v0.1
- Target integration: builds/v1.7.9/Risk/Engine/risk_service.js
-
+ IA-Trading-Bot - Risk Engine v2.0
+ 
  Architectural rules:
  - Risk Engine is analytical only.
  - Every inter-engine exchange uses CP/1 through the Router.
@@ -11,6 +10,7 @@
 */
 var http=require('http'),path=require('path'),URL=require('url').URL;
 var CP=require('../../Core/Communication/communication_protocol_v1');
+var CPClient=require('../../Core/Communication/cp1_client');
 var Risk=require('./risk_engine');
 var RiskGate=require('./risk_gate').RiskGate;
 var SettingsStore=require('../../Core/Settings/sqlite_settings_store');
@@ -21,6 +21,7 @@ var PORT=+(process.env.IATB_RISK_ENGINE_PORT||8019);
 var ROUTER_PORT=+(process.env.ROUTER_PORT||8021);
 var MAX_BODY=1024*1024;
 var SETTINGS_DB=new SettingsStore(APP_ROOT);
+var CP_CLIENT=new CPClient({root:APP_ROOT,routerPort:ROUTER_PORT,timeout:12000,maxBytes:4*1024*1024});
 var RISK_GATE=new RiskGate({secret:CP.ensureSecret(APP_ROOT),getSettings:riskSettings,ttlMs:30000});
 var DEFAULT_SETTINGS={enabled:true,defaultTimeframe:'1h',marketSamples:500,thresholds:{capitalRiskWarningPct:3,grossExposureWarningPct:100,leverageWarning:5,volatilityWarningPct:100,drawdownWarningPct:20,var95WarningPct:5},scoreWeights:{capitalAtRisk:8,grossExposure:0.20,leverage:5,volatility:0.20,drawdown:0.50}};
 function riskSettings(){var x=SETTINGS_DB.get('risk','settings',null)||{};var o=JSON.parse(JSON.stringify(DEFAULT_SETTINGS));Object.keys(x).forEach(function(k){if(k==='thresholds'||k==='scoreWeights')Object.assign(o[k],x[k]||{});else o[k]=x[k];});return o;}
@@ -64,50 +65,14 @@ function body(req,cb){
   });
   req.on('error',fail);
 }
-function routerRequest(message,cb){
-  var token;
-  try{token=CP.ensureSecret(APP_ROOT);}catch(e){return cb(e);}
-  var b=Buffer.from(JSON.stringify(message)),done=false;
-  var q=http.request({
-    host:'127.0.0.1',
-    port:ROUTER_PORT,
-    path:'/communication/v1/request',
-    method:'POST',
-    timeout:12000,
-    headers:{
-      'Content-Type':'application/json',
-      'Accept':'application/json',
-      'Content-Length':b.length,
-      'X-IATB-CP-Token':token
-    }
-  },function(r){
-    var a=[];
-    r.on('data',function(c){a.push(c);});
-    r.on('end',function(){
-      if(done)return;done=true;
-      var o;
-      try{o=JSON.parse(Buffer.concat(a).toString('utf8')||'{}');}
-      catch(e){return cb(new Error('CP_ROUTER_JSON_INVALID'));}
-      if((r.statusCode||500)>=400||o.status==='ERROR'||o.ok===false)
-        return cb(new Error(o.error||(o.data&&o.data.error)||('CP_ROUTER_HTTP_'+r.statusCode)));
-      cb(null,o.data!=null?o.data:o);
-    });
-  });
-  q.on('timeout',function(){q.destroy(new Error('CP_ROUTER_TIMEOUT'));});
-  q.on('error',function(e){if(done)return;done=true;cb(e);});
-  q.end(b);
-}
+function routerRequest(message,cb){CP_CLIENT.requestMessage(message,cb);}
 function requestMarket(symbol,timeframe,cb){
-  var q=CP.makeRequest('market_data','market_data.get',{
-    provider:'REFERENCE',
+  CP_CLIENT.request('marketdata','marketdata.candles',{
     symbol:symbol,
     timeframe:timeframe,
     limit:riskSettings().marketSamples,
-    force:false,
-    data:['candles','ohlcv','volume'],
-    format:'raw'
-  },'analysis');
-  routerRequest(q,cb);
+    force:false
+  },'analysis',cb);
 }
 function requestIndicators(symbol,timeframe,cb){
   var q=CP.makeRequest('indicator','indicator.analyze',{
@@ -115,11 +80,6 @@ function requestIndicators(symbol,timeframe,cb){
   },'analysis');
   routerRequest(q,cb);
 }
-/*
- Portfolio CP contract is intentionally isolated here because Portfolio is not
- present in the current v1.7.9 debug tree. Before GitHub integration, align
- this action with the real Portfolio module's CP/1 capability.
-*/
 function requestPortfolio(cb){
   var q=CP.makeRequest('portfolio','portfolio.snapshot',{},'analysis');
   routerRequest(q,cb);
@@ -207,40 +167,23 @@ function handleCP(req,res){
       }));
       var degraded=(d.warnings||[]).some(function(w){return /_UNAVAILABLE:/.test(w);});
       json(res,200,CP.makeResponse(m,degraded?'DEGRADED':'OK',d,{
-        engine:'risk',action:m.action,schema:d.schema||'risk.analysis/0.1',
+        engine:'risk',action:m.action,schema:d.schema||'risk.analysis/1.0',
         duration_ms:Date.now()-started,warnings:d.warnings||[]
       }));
     });
   });
 }
 function registerWithRouter(cb){
-  var token;try{token=CP.ensureSecret(APP_ROOT);}catch(e){if(cb)cb(false);return;}
-  var d={
-    id:'risk',
-    label:'Risk Engine',
-    host:'127.0.0.1',
-    port:PORT,
-    cpPath:'/cp/v1',
-    healthPath:'/health',
-    version:'0.1-local',
-    schemaVersion:'risk.analysis/0.1',
-    capabilities:CAPABILITIES,
-    events:EVENTS
-  };
-  var b=Buffer.from(JSON.stringify(d)),done=false;
-  var q=http.request({
-    host:'127.0.0.1',port:ROUTER_PORT,path:'/communication/v1/register',method:'POST',timeout:1800,
-    headers:{'Content-Type':'application/json','Content-Length':b.length,'X-IATB-CP-Token':token}
-  },function(r){r.resume();r.on('end',function(){if(done)return;done=true;if(cb)cb((r.statusCode||500)<300);});});
-  q.on('timeout',function(){q.destroy(new Error('timeout'));});
-  q.on('error',function(){if(done)return;done=true;if(cb)cb(false);});
-  q.end(b);
+  CP_CLIENT.register({
+    id:'risk',label:'Risk Engine',host:'127.0.0.1',port:PORT,cpPath:'/cp/v1',healthPath:'/health',
+    version:'2.0.0',schemaVersion:'risk.analysis/1.0',capabilities:CAPABILITIES,events:EVENTS
+  },function(e){if(cb)cb(!e);});
 }
 
 var srv=http.createServer(function(req,res){
   var u=new URL(req.url,'http://'+HOST+':'+PORT);
   if(req.method==='GET'&&u.pathname==='/health')return json(res,200,{
-    ok:true,service:'IA-TB Risk Engine',engine:'risk',version:'0.1-local',
+    ok:true,service:'IA-TB Risk Engine',engine:'risk',version:'2.0.0',
     protocol:'CP/1',analyticalOnly:true,pid:process.pid,host:HOST,port:PORT,
     routerPort:ROUTER_PORT,capabilities:CAPABILITIES,events:EVENTS,settings:riskSettings(),settingsStorage:SETTINGS_DB.status()
   });
@@ -254,7 +197,7 @@ var srv=http.createServer(function(req,res){
 });
 srv.on('error',function(e){console.error('Risk Engine bind error:',e&&e.message||e);process.exit(19);});
 srv.listen(PORT,HOST,function(){
-  console.log('IA-TB Risk Engine base v0.1 http://'+HOST+':'+PORT+' CP/1');
+  console.log('IA-TB Risk Engine v2.0.0 http://'+HOST+':'+PORT+' CP/1');
   var tries=0,retry=null;
   function attempt(){tries++;registerWithRouter(function(ok){if(ok&&retry){clearInterval(retry);retry=null;}});}
   setTimeout(attempt,900);
