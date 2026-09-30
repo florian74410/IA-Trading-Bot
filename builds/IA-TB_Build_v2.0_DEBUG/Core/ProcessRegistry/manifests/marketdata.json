@@ -1,6 +1,6 @@
 {
   "id": "marketdata",
-  "label": "Market Data Collector V2.1",
+  "label": "Market Data Collector V2.2",
   "type": "SERVICE",
   "order": 50,
   "port": 8013,
@@ -11,7 +11,10 @@
   "script": "MarketData/market_data_service.js",
   "log": ".runtime/logs/market_data.log",
   "env": {
-    "IATB_MARKET_DATA_PORT": "8013"
+    "IATB_MARKET_DATA_PORT": "8013",
+    "KRAKEN_ADDON_PORT": "8011",
+    "IATB_FIREWALL_PORT": "8017",
+    "ROUTER_PORT": "8021"
   },
-  "version": "2.1.0"
+  "version": "2.2.0"
 }
