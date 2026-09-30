@@ -70,20 +70,17 @@ function statsConfig(){
  ]};
 }
 function fundamentalConfig(){return{key:'fundamental',title:'FONDAMENTAL',icon:'fundamental',sourceRoot:'.fundSidebar',items:[
- item("Vue d'ensemble",'home',{sourceList:'.fundSidebar button',sourceIndex:0}),
+ item("Vue d'ensemble",'home',{selector:'.fundSidebar button[data-view="overview"]'}),
  group('Analyse & Actualités','fundamental',[
-  item('News & Événements','news',{sourceList:'.fundSidebar button',sourceIndex:1}),
-  item('Analyse IA','ai',{sourceList:'.fundSidebar button',sourceIndex:4})
+  item('News & Événements','news',{selector:'.fundSidebar button[data-view="news"]'}),
+  item('Analyse IA','ai',{selector:'.fundSidebar button[data-view="ai"]'})
  ]),
  group('Sources & Collecte','source',[
-  item('Sources & Providers','source',{sourceList:'.fundSidebar button',sourceIndex:2}),
-  item('Source Manager','settings',{sourceList:'.fundSidebar button',sourceIndex:5}),
-  item('Collecte & Scheduler','collector',{sourceList:'.fundSidebar button',sourceIndex:6})
+  item('Sources & Providers','source',{selector:'.fundSidebar button[data-view="sources"]'}),
+  item('Source Manager','settings',{selector:'.fundSidebar button[data-view="sources"]'})
  ]),
  group('Outils & Diagnostic','diagnostic',[
-  item('Diagnostics','diagnostic',{sourceList:'.fundSidebar button',sourceIndex:7}),
-  item('Observability','chart',{sourceList:'.fundSidebar button',sourceIndex:8}),
-  item('Fundamental Console','console',{sourceList:'.fundSidebar button',sourceIndex:9})
+  item('Fundamental Console','console',{selector:'.fundSidebar button[data-view="console"]'})
  ])
 ]};}
 function settingsConfig(){return{key:'settings',title:'PARAMÈTRES',icon:'settings',sourceRoot:'.settingsSectionBar',items:[
