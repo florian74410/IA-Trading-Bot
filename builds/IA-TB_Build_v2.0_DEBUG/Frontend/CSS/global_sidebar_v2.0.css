@@ -586,3 +586,17 @@ body.iatb-unified-sidebar .adminSidebar{display:none!important}
  body.iatb-unified-sidebar .adminShell{height:auto!important;min-height:calc(100vh - var(--iatb-nav-h,68px) - var(--iatb-nav-gap,6px))!important}
  body.iatb-unified-sidebar .adminMain{height:auto!important;min-height:0!important}
 }
+
+/* Settings sidebar accordion groups */
+body.iatb-unified-sidebar #iatb-global-side .iatb-side-group-items{display:block}
+body.iatb-unified-sidebar #iatb-global-side[data-page="settings"] .iatb-collapsible-group>.iatb-side-group-title{cursor:pointer!important}
+body.iatb-unified-sidebar #iatb-global-side[data-page="settings"] .iatb-collapsible-group>.iatb-side-group-title:hover{background:#082539!important;color:#fff!important}
+body.iatb-unified-sidebar #iatb-global-side[data-page="settings"] .iatb-collapsible-group>.iatb-side-group-title>i{transition:transform .18s ease!important;transform:rotate(90deg)}
+body.iatb-unified-sidebar #iatb-global-side[data-page="settings"] .iatb-collapsible-group.collapsed>.iatb-side-group-title>i{transform:rotate(0deg)}
+body.iatb-unified-sidebar #iatb-global-side[data-page="settings"] .iatb-collapsible-group.collapsed>.iatb-side-group-items{display:none!important}
+body.iatb-unified-sidebar #iatb-global-side[data-page="settings"] .iatb-collapsible-group>.iatb-side-group-items{overflow:hidden}
+@media(max-width:820px){
+ body.iatb-unified-sidebar #iatb-global-side[data-page="settings"] .iatb-collapsible-group{display:block!important;grid-column:1/-1!important}
+ body.iatb-unified-sidebar #iatb-global-side[data-page="settings"] .iatb-collapsible-group>.iatb-side-group-items{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+ body.iatb-unified-sidebar #iatb-global-side[data-page="settings"] .iatb-collapsible-group.collapsed>.iatb-side-group-items{display:none!important}
+}
