@@ -6,7 +6,7 @@
    - Indicator Engine : 127.0.0.1:8012
    Le coeur trading reste isole du moteur d'indicateurs.
 */
-var http=require('http'),fs=require('fs'),path=require('path'),URL=require('url').URL,CommRouter=require('../Communication/communication_router_v1'),CP=require('../Communication/communication_protocol_v1');
+var http=require('http'),fs=require('fs'),path=require('path'),URL=require('url').URL,CommRouter=require('../Communication/communication_router_v1'),CP=require('../Communication/communication_protocol_v1'),BUILD=require('../Shared/build_info');
 var HOST='127.0.0.1';
 var PORT=+(process.env.ROUTER_PORT||8021);
 var CORE_HOST='127.0.0.1',CORE_PORT=+(process.env.CORE_PUBLIC_PORT||8001);
@@ -92,7 +92,7 @@ function exchangeKlines(req,u,res){
 function probe(port,pathname,cb){var done=false,req=http.get({host:'127.0.0.1',port:port,path:pathname,timeout:1000},function(r){r.resume();r.on('end',function(){if(done)return;done=true;cb(null,r.statusCode);});});req.on('timeout',function(){req.destroy();});req.on('error',function(e){if(done)return;done=true;cb(e);});}
 function routerHealth(res){
  var specs=[['core',CORE_PORT,'/api/health'],['kraken',KRAKEN_PORT,'/health'],['indicators',INDICATOR_PORT,'/health'],['marketData',MARKET_DATA_PORT,'/health'],['liquidity',LIQUIDITY_PORT,'/health'],['fundamental',FUNDAMENTAL_PORT,'/health'],['trading',TRADING_ENGINE_PORT,'/health'],['strategy',STRATEGY_PORT,'/health'],['portfolio',PORTFOLIO_PORT,'/health']],out={},left=specs.length,finished=false;
- function finish(){if(finished)return;finished=true;sendJson(res,200,{ok:true,router:true,version:'2.0.0',communicationProtocol:'CP/1',pid:process.pid,host:HOST,port:PORT,core:out.core||{ok:false,port:CORE_PORT,status:0,error:'pending'},kraken:out.kraken||{ok:false,port:KRAKEN_PORT,status:0,error:'pending'},indicators:out.indicators||{ok:false,port:INDICATOR_PORT,status:0,error:'pending'},marketData:out.marketData||{ok:false,port:MARKET_DATA_PORT,status:0,error:'pending'},liquidity:out.liquidity||{ok:false,port:LIQUIDITY_PORT,status:0,error:'pending'},fundamental:out.fundamental||{ok:false,port:FUNDAMENTAL_PORT,status:0,error:'pending'},trading:out.trading||{ok:false,port:TRADING_ENGINE_PORT,status:0,error:'pending'},strategy:out.strategy||{ok:false,port:STRATEGY_PORT,status:0,error:'pending'},portfolio:out.portfolio||{ok:false,port:PORTFOLIO_PORT,status:0,error:'pending'},dependencies:out});}
+ function finish(){if(finished)return;finished=true;sendJson(res,200,{ok:true,router:true,version:BUILD.version,communicationProtocol:'CP/1',pid:process.pid,host:HOST,port:PORT,core:out.core||{ok:false,port:CORE_PORT,status:0,error:'pending'},kraken:out.kraken||{ok:false,port:KRAKEN_PORT,status:0,error:'pending'},indicators:out.indicators||{ok:false,port:INDICATOR_PORT,status:0,error:'pending'},marketData:out.marketData||{ok:false,port:MARKET_DATA_PORT,status:0,error:'pending'},liquidity:out.liquidity||{ok:false,port:LIQUIDITY_PORT,status:0,error:'pending'},fundamental:out.fundamental||{ok:false,port:FUNDAMENTAL_PORT,status:0,error:'pending'},trading:out.trading||{ok:false,port:TRADING_ENGINE_PORT,status:0,error:'pending'},strategy:out.strategy||{ok:false,port:STRATEGY_PORT,status:0,error:'pending'},portfolio:out.portfolio||{ok:false,port:PORTFOLIO_PORT,status:0,error:'pending'},dependencies:out});}
  specs.forEach(function(sp){probe(sp[1],sp[2],function(e,code){out[sp[0]]={ok:!e&&code===200,port:sp[1],status:code||0,error:e?e.message:''};if(--left===0)finish();});});
  setTimeout(finish,850);
 }
@@ -124,7 +124,7 @@ var server=http.createServer(function(req,res){var u=new URL(req.url,'http://'+H
  if(p==='/portfolio-api'||p.indexOf('/portfolio-api/')===0){var psub=p.slice('/portfolio-api'.length)||'/';return proxy(req,res,PORTFOLIO_HOST,PORTFOLIO_PORT,psub+u.search,{label:'Portfolio Engine'});}
  return proxy(req,res,CORE_HOST,CORE_PORT,u.pathname+u.search,{label:'TradingBot Core',injectHtml:true});
 });
-server.on('error',function(e){console.error('TradingBot Router bind error:',e&&e.message||e);process.exit(13);});server.listen(PORT,HOST,function(){console.log('IA-TB Communication Router v2.0.0 : http://'+HOST+':'+PORT);
+server.on('error',function(e){console.error('TradingBot Router bind error:',e&&e.message||e);process.exit(13);});server.listen(PORT,HOST,function(){console.log('IA-TB Communication Router v'+BUILD.version+' : http://'+HOST+':'+PORT);
 console.log('Communication Protocol: CP/1 (canal Supervisor authentifie)');console.log('Core interne      : http://'+CORE_HOST+':'+CORE_PORT);console.log('Kraken interne    : http://'+KRAKEN_HOST+':'+KRAKEN_PORT);console.log('Indicator Engine  : http://'+INDICATOR_HOST+':'+INDICATOR_PORT);console.log('Market Data       : http://'+MARKET_DATA_HOST+':'+MARKET_DATA_PORT);console.log('Liquidity Engine  : http://'+LIQUIDITY_HOST+':'+LIQUIDITY_PORT);
 console.log('Fundamental Engine: http://'+FUNDAMENTAL_HOST+':'+FUNDAMENTAL_PORT);console.log('Trading Engine    : http://'+TRADING_ENGINE_HOST+':'+TRADING_ENGINE_PORT);console.log('Strategy Engine   : http://'+STRATEGY_HOST+':'+STRATEGY_PORT);console.log('Portfolio Engine  : http://'+PORTFOLIO_HOST+':'+PORTFOLIO_PORT);});
 function stop(){server.close(function(){process.exit(0);});setTimeout(function(){process.exit(0);},1200);}
