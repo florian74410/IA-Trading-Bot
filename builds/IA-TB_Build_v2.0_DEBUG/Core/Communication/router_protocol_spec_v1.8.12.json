@@ -74,5 +74,8 @@
       "strategy",
       "supervisor"
     ]
-  }
+  },
+  "status": "DEPRECATED",
+  "replacedBy": "Core/Communication/router_protocol_spec_v2.0.json",
+  "note": "Historical v1.8.12 snapshot retained until grand cleanup; not authoritative for the v2 runtime."
 }
