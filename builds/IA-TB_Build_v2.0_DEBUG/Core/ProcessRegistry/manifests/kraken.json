@@ -2,7 +2,7 @@
   "id": "kraken",
   "label": "Kraken Add-On",
   "type": "ADDON",
-  "order": 30,
+  "order": 40,
   "port": 8011,
   "healthPath": "/health",
   "marker": "Kraken Add-On",
