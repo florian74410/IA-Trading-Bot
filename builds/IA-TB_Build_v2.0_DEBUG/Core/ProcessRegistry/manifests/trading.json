@@ -15,10 +15,17 @@
     "IATB_TRADING_LIVE": "0",
     "ROUTER_PORT": "8021"
   },
-  "version": "1.8.7",
   "dependencies": [
     "router",
     "firewall",
     "risk"
-  ]
+  ],
+  "versionSource": "RUNTIME_HEALTH",
+  "communication": {
+    "protocol": "CP/1",
+    "logicalTarget": "trading",
+    "routeVia": "firewall",
+    "routePort": 8017,
+    "runtimePort": 8016
+  }
 }
