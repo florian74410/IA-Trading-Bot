@@ -77,7 +77,6 @@ function fundamentalConfig(){return{key:'fundamental',title:'FONDAMENTAL',icon:'
  ]),
  group('Sources & Collecte','source',[
   item('Sources & Providers','source',{sourceList:'.fundSidebar button',sourceIndex:2}),
-  item('Domaines & DeFi','liquidity',{sourceList:'.fundSidebar button',sourceIndex:3}),
   item('Source Manager','settings',{sourceList:'.fundSidebar button',sourceIndex:5}),
   item('Collecte & Scheduler','collector',{sourceList:'.fundSidebar button',sourceIndex:6})
  ]),
