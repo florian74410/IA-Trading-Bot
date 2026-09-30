@@ -47,7 +47,7 @@ function icon(name){
 function item(label,ico,opts){opts=opts||{};return{label:label,icon:ico||'data',href:opts.href||'',selector:opts.selector||'',sourceList:opts.sourceList||'',sourceIndex:opts.sourceIndex,active:opts.active||'',arrow:opts.arrow===true,danger:opts.danger===true};}
 function group(label,ico,items){return{label:label,icon:ico||'data',items:items||[]};}
 function bankConfig(){
- var h=location.hash,p=location.pathname,active=p.indexOf('/statistiques')===0?'stats':h==='#wallets'?'wallets':h==='#accounting'?'accounting':h==='#keys'?'keys':h.indexOf('#vault')===0?'vault':h==='#loans'?'loans':h==='#swap'?'swap':'home';
+ var h=location.hash,p=location.pathname,active=p.indexOf('/statistiques')===0?'stats':h==='#wallets'?'wallets':h==='#accounting'?'accounting':h==='#keys'?'keys':h.indexOf('#vault')===0?'vault':h==='#loans'?'loans':h==='#swap'?'swap':h==='#help'?'help':'home';
  return{key:'bank',title:'BANQUE',icon:'bank',active:active,items:[
   item('Accueil','home',{href:'/bank',active:'home'}),
   group('Comptes Personnelle','account',[
@@ -58,7 +58,7 @@ function bankConfig(){
   item('Coffres Forts','vault',{href:'/bank#vault-personal',active:'vault',arrow:true}),
   item('Prets','loan',{href:'/bank#loans',active:'loans',arrow:true}),
   item('Swap et Bridges','swap',{href:'/bank#swap',active:'swap',arrow:true}),
-  item('Aide & Support','help',{href:'/admin'})
+  item('Aide & Support','help',{href:'/bank#help',active:'help'})
  ]};
 }
 function statsConfig(){
