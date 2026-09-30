@@ -21,5 +21,5 @@
   "optionalDependencies": [
     "marketdata"
   ],
-  "version": "2.0.0"
+  "versionSource": "RUNTIME_HEALTH"
 }
