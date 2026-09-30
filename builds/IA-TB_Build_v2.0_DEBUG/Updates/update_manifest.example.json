@@ -1,11 +1,11 @@
 {
   "schema": 1,
-  "application": "Crypto Chart Viewer IA Trader",
+  "application": "IA-Trading-Bot",
   "package_type": "UPDATE",
-  "from_version": "1.0",
-  "to_version": "1.1",
+  "from_version": "2.0.0",
+  "to_version": "2.1.0",
   "payload_root": "payload",
-  "entrypoint": "server_v1.1.js",
-  "description": "Exemple de mise à jour",
+  "entrypoint": "Core/Server/server.js",
+  "description": "Exemple de mise à jour IA-TB v2",
   "files": []
 }
