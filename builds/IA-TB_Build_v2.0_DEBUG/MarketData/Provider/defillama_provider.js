@@ -8,4 +8,5 @@ P.prototype.dexOverview=function(cb){get(this.base+'/overview/dexs?excludeTotalD
 P.prototype.yieldPools=function(cb){var self=this;this._cached('yieldPools',600000,function(done){get(self.base+'/pools',{timeout:22000,maxBytes:24*1024*1024},done);},cb);};
 P.prototype.feesOverview=function(cb){var self=this;this._cached('feesOverview',300000,function(done){get(self.base+'/overview/fees?excludeTotalDataChart=true&excludeTotalDataChartBreakdown=true&dataType=dailyFees',{timeout:18000,maxBytes:16*1024*1024},done);},cb);};
 P.prototype.stablecoins=function(cb){get(this.stableBase+'/stablecoins?includePrices=true',{timeout:18000,maxBytes:16*1024*1024},cb);};
+P.prototype.stablecoinCharts=function(cb){var self=this;this._cached('stablecoinCharts',300000,function(done){get(self.stableBase+'/stablecoincharts/all',{timeout:18000,maxBytes:24*1024*1024},done);},cb);};
 module.exports=P;
