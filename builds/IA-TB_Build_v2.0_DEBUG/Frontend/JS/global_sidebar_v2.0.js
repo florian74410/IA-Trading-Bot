@@ -55,9 +55,9 @@ function bankConfig(){
    item('Ma Comptabilités','ledger',{href:'/bank#accounting',active:'accounting'}),
    item('Mes Clés','key',{href:'/bank#keys',active:'keys'})
   ]),
-  item('Coffres Forts','vault',{href:'/bank#vault-personal',active:'vault',arrow:true}),
-  item('Prets','loan',{href:'/bank#loans',active:'loans',arrow:true}),
-  item('Swap et Bridges','swap',{href:'/bank#swap',active:'swap',arrow:true}),
+  item('Coffres Forts','vault',{href:'/bank#vault-personal',active:'vault'}),
+  item('Prets','loan',{href:'/bank#loans',active:'loans'}),
+  item('Swap et Bridges','swap',{href:'/bank#swap',active:'swap'}),
   item('Aide & Support','help',{href:'/bank#help',active:'help'})
  ]};
 }
