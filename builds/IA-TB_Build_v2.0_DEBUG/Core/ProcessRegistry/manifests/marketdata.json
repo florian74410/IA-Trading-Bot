@@ -5,7 +5,7 @@
   "order": 50,
   "port": 8013,
   "healthPath": "/health",
-  "marker": "IA-TB Market Data Collector V2.1",
+  "marker": "IA-TB Market Data",
   "restartable": true,
   "defaultEnabled": true,
   "script": "MarketData/market_data_service.js",
@@ -16,5 +16,5 @@
     "IATB_FIREWALL_PORT": "8017",
     "ROUTER_PORT": "8021"
   },
-  "version": "2.2.0"
+  "versionSource": "RUNTIME_HEALTH"
 }
