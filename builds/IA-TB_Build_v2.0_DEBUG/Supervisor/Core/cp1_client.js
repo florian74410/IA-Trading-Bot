@@ -3,6 +3,6 @@
    Kept as a compatibility boundary for Supervisor/Core consumers.
 */
 var SharedClient=require('../../Core/Communication/cp1_client');
-function Client(root,routerPort){this.client=new SharedClient({root:root,routerPort:+routerPort||8021,timeout:12000,maxBytes:2*1024*1024});}
-Client.prototype.request=function(target,action,args,detail,timeoutMs){var self=this;return new Promise(function(resolve,reject){var old=self.client.timeout;if(+timeoutMs>0)self.client.timeout=Math.max(500,Math.min(60000,+timeoutMs));self.client.request(target,action,args||{},detail||'analysis',function(e,d){self.client.timeout=old;if(e)return reject(e);resolve(d);});});};
+function Client(root,routerPort){this.root=root;this.routerPort=+routerPort||8021;this.client=new SharedClient({root:root,routerPort:this.routerPort,timeout:12000,maxBytes:2*1024*1024});}
+Client.prototype.request=function(target,action,args,detail,timeoutMs){var self=this;return new Promise(function(resolve,reject){var client=+timeoutMs>0?new SharedClient({root:self.root,routerPort:self.routerPort,timeout:+timeoutMs,maxBytes:2*1024*1024}):self.client;client.request(target,action,args||{},detail||'analysis',function(e,d){if(e)return reject(e);resolve(d);});});};
 module.exports=Client;
