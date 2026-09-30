@@ -167,7 +167,12 @@ function renderItem(x,cfg){
  return '<'+tag+attrs+' class="iatb-side-link'+(active?' active':'')+(x.danger?' danger':'')+'" data-iatb-label="'+String(x.label).replace(/"/g,'&quot;')+'"><span class="iatb-side-icon">'+icon(x.icon)+'</span><span class="iatb-side-label">'+x.label+'</span>'+(x.arrow?'<i>›</i>':'')+'</'+tag+'>';
 }
 function renderGroup(g,cfg){
- return '<div class="iatb-side-group"><div class="iatb-side-group-title"><span class="iatb-side-icon">'+icon(g.icon)+'</span><span class="iatb-side-label">'+g.label+'</span><i>›</i></div>'+g.items.map(function(x){return renderItem(x,cfg);}).join('')+'</div>';
+ var collapsible=cfg&&cfg.key==='settings',label=String(g.label||'').replace(/"/g,'&quot;');
+ return '<div class="iatb-side-group'+(collapsible?' iatb-collapsible-group':'')+'" data-iatb-group="'+label+'">'+
+  (collapsible?'<button type="button" class="iatb-side-group-title" aria-expanded="true" data-iatb-group-toggle="'+label+'">':'<div class="iatb-side-group-title">')+
+  '<span class="iatb-side-icon">'+icon(g.icon)+'</span><span class="iatb-side-label">'+g.label+'</span><i>›</i>'+
+  (collapsible?'</button>':'</div>')+
+  '<div class="iatb-side-group-items">'+g.items.map(function(x){return renderItem(x,cfg);}).join('')+'</div></div>';
 }
 function markup(cfg){return '<div class="iatb-side-title"><span class="iatb-side-icon titleIcon">'+icon(cfg.icon)+'</span><b>'+cfg.title+'</b></div><nav class="iatb-side-nav" aria-label="Navigation latérale '+cfg.title+'">'+cfg.items.map(function(x){return x.items?renderGroup(x,cfg):renderItem(x,cfg);}).join('')+'</nav>';}
 function allItems(cfg){var a=[];cfg.items.forEach(function(x){if(x.items)a=a.concat(x.items);else a.push(x);});return a;}
@@ -183,6 +188,20 @@ function bind(a,cfg){
     var src=x&&sourceNode(x);if(src&&typeof src.click==='function'){src.click();sync(a,cfg);}
    };
  });
+ if(cfg.key==='settings'){
+  var toggles=[].slice.call(a.querySelectorAll('[data-iatb-group-toggle]'));
+  toggles.forEach(function(t){
+   var group=t.closest?t.closest('.iatb-side-group'):t.parentNode,label=t.getAttribute('data-iatb-group-toggle')||'',key='iatb.settings.group.'+label,collapsed=false;
+   try{collapsed=sessionStorage.getItem(key)==='0';}catch(e){}
+   function apply(open){group.classList.toggle('collapsed',!open);t.setAttribute('aria-expanded',open?'true':'false');}
+   apply(!collapsed);
+   t.onclick=function(){
+    var open=t.getAttribute('aria-expanded')!=='true';
+    apply(open);
+    try{sessionStorage.setItem(key,open?'1':'0');}catch(e){}
+   };
+  });
+ }
 }
 function sync(a,cfg){
  var items=allItems(cfg),links=[].slice.call(a.querySelectorAll('.iatb-side-link'));
