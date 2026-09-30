@@ -106,8 +106,8 @@ function initModuleGrid(deck){
   saveModuleGrid(deck);
  };
 }
-function exchangeRow(name,logo,sub,status,detail,planned){var enabled=!planned&&(['GMX','KRAKEN','BINANCE','OKX'].indexOf(name)>=0);return '<div class="iatbExchangeRow '+(enabled?'selectable':'planned')+'" data-td-ex="'+name+'" data-exchange-selectable="'+(enabled?'1':'0')+'" role="'+(enabled?'button':'group')+'" tabindex="'+(enabled?'0':'-1')+'"><span class="iatbExLogo '+logo+'">'+name.charAt(0)+'</span><span class="iatbExName"><strong>'+name+'</strong><span>'+sub+'</span></span><span class="iatbExStatus '+(planned?'planned':'')+'"><strong>'+status+'</strong><span>'+detail+'</span></span></div>'}
-function exchangePanel(){var s=el('aside','iatbExchangeColumn');s.id='iatbExchangeDashboard';s.innerHTML='<div class="iatbSideHead">EXCHANGES & MARCHÉS</div><div class="iatbMarketTabs"><button class="active">Favoris</button><button>Tous</button></div><div class="iatbExchangeList">'+exchangeRow('BINANCE','binance','Spot','PUBLIC','API',false)+exchangeRow('KRAKEN','kraken','Spot','PUBLIC','API',false)+exchangeRow('OKX','okx','Spot','PUBLIC','API',false)+exchangeRow('GMX','gmx','Perp · Arbitrum','PUBLIC','Oracle',false)+'</div><section class="iatbConsensus"><h3>MARCHÉ DE RÉFÉRENCE</h3><div class="iatbConsensusTop"><div class="iatbConsensusBox"><small id="tdConsensusPair">BTC/USD</small><strong id="tdConsensusPrice">--</strong><small>Indice de consensus</small><strong class="iatbConsensusScore" id="tdConsensusScore">—</strong><div class="iatbGauge"><i id="tdConsensusGauge" style="width:0%"></i></div></div><div class="iatbConsensusBox"><small>Source principale</small><strong id="tdConsensusSource">Market Data</strong><small>Écart max prix</small><strong id="tdConsensusSpread">—</strong></div></div></section></div>';return s}
+function exchangeRow(name,logo,sub,status,detail,planned){var enabled=!planned&&(['GMX','KRAKEN','BINANCE','OKX','BYBIT','HYPERLIQUID'].indexOf(name)>=0);return '<div class="iatbExchangeRow '+(enabled?'selectable':'planned')+'" data-td-ex="'+name+'" data-exchange-selectable="'+(enabled?'1':'0')+'" role="'+(enabled?'button':'group')+'" tabindex="'+(enabled?'0':'-1')+'"><span class="iatbExLogo '+logo+'">'+name.charAt(0)+'</span><span class="iatbExName"><strong>'+name+'</strong><span>'+sub+'</span></span><span class="iatbExStatus '+(planned?'planned':'')+'"><strong>'+status+'</strong><span>'+detail+'</span></span></div>'}
+function exchangePanel(){var s=el('aside','iatbExchangeColumn');s.id='iatbExchangeDashboard';s.innerHTML='<div class="iatbSideHead">EXCHANGES & MARCHÉS</div><div class="iatbMarketTabs"><button class="active">Favoris</button><button>Tous</button></div><div class="iatbExchangeList">'+exchangeRow('BINANCE','binance','Spot','PUBLIC','API',false)+exchangeRow('KRAKEN','kraken','Spot','PUBLIC','API',false)+exchangeRow('OKX','okx','Spot / Swap','PUBLIC','API',false)+exchangeRow('BYBIT','bybit','Linear Perp','PUBLIC','API',false)+exchangeRow('GMX','gmx','Perp · Arbitrum','PUBLIC','Oracle',false)+exchangeRow('HYPERLIQUID','hyperliquid','Perp DEX','PUBLIC','API',false)+'</div><section class="iatbConsensus"><h3>MARCHÉ DE RÉFÉRENCE</h3><div class="iatbConsensusTop"><div class="iatbConsensusBox"><small id="tdConsensusPair">BTC/USD</small><strong id="tdConsensusPrice">--</strong><small>Indice de consensus</small><strong class="iatbConsensusScore" id="tdConsensusScore">—</strong><div class="iatbGauge"><i id="tdConsensusGauge" style="width:0%"></i></div></div><div class="iatbConsensusBox"><small>Source principale</small><strong id="tdConsensusSource">Market Data</strong><small>Écart max prix</small><strong id="tdConsensusSpread">—</strong></div></div></section></div>';return s}
 function serviceStrip(){
   var n=el('footer','iatbServiceStrip');n.id='iatbServiceStrip';
   /* Runtime topology mirrors start.command. Firewall Trading/Data are internal
@@ -128,7 +128,7 @@ function syncExchangeSelection(){
   });
 }
 function requestExchangeSwitch(exchange){
-  exchange=String(exchange||'').toUpperCase();if(['GMX','KRAKEN','BINANCE','OKX'].indexOf(exchange)<0)return;
+  exchange=String(exchange||'').toUpperCase();if(['GMX','KRAKEN','BINANCE','OKX','BYBIT','HYPERLIQUID'].indexOf(exchange)<0)return;
   var sel=byId('exchangeSelect');if(!sel)return;
   if(String(sel.value).toUpperCase()===exchange){syncExchangeSelection();return}
   sel.value=exchange;
@@ -259,7 +259,7 @@ function loadTradingModules(){
   });
 }
 
-var providerHealth={GMX:false,KRAKEN:false,BINANCE:false,OKX:false};
+var providerHealth={GMX:false,KRAKEN:false,BINANCE:false,OKX:false,BYBIT:false,HYPERLIQUID:false};
 function setProviderHealth(exchange,ok,detail){
   exchange=String(exchange||'').toUpperCase();providerHealth[exchange]=!!ok;
   var row=document.querySelector('[data-td-ex="'+exchange+'"]'),st=row&&row.querySelector('.iatbExStatus');
@@ -273,7 +273,7 @@ function probeProvider(exchange,symbol){
   }).catch(function(e){setProviderHealth(exchange,false,compact(e&&e.message||'indisponible',24));return false});
 }
 function probeMarketProviders(){
-  return Promise.all([probeProvider('GMX','BTCUSD'),probeProvider('KRAKEN','BTCUSD'),probeProvider('BINANCE','BTCUSDT'),probeProvider('OKX','BTCUSDT')]).then(function(v){
+  return Promise.all([probeProvider('GMX','BTCUSD'),probeProvider('KRAKEN','BTCUSD'),probeProvider('BINANCE','BTCUSDT'),probeProvider('OKX','BTCUSDT'),probeProvider('BYBIT','BTCUSDT'),probeProvider('HYPERLIQUID','BTCUSD')]).then(function(v){
     var connected=0;for(var i=0;i<v.length;i++)if(v[i])connected++;
     var score=v.length?connected/v.length:0;setText('tdConsensusScore',connected?score.toFixed(2):'—');var gauge=byId('tdConsensusGauge');if(gauge)gauge.style.width=Math.round(score*100)+'%';
   });
