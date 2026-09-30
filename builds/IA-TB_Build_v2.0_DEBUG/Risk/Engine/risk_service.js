@@ -14,12 +14,14 @@ var CPClient=require('../../Core/Communication/cp1_client');
 var Risk=require('./risk_engine');
 var RiskGate=require('./risk_gate').RiskGate;
 var SettingsStore=require('../../Core/Settings/sqlite_settings_store');
+var BUILD=require('../../Core/Shared/build_info');
 
 var APP_ROOT=path.resolve(__dirname,'../..');
 var HOST='127.0.0.1';
 var PORT=+(process.env.IATB_RISK_ENGINE_PORT||8019);
 var ROUTER_PORT=+(process.env.ROUTER_PORT||8021);
 var MAX_BODY=1024*1024;
+var VERSION=BUILD.version;
 var SETTINGS_DB=new SettingsStore(APP_ROOT);
 var CP_CLIENT=new CPClient({root:APP_ROOT,routerPort:ROUTER_PORT,timeout:12000,maxBytes:4*1024*1024});
 var RISK_GATE=new RiskGate({secret:CP.ensureSecret(APP_ROOT),getSettings:riskSettings,ttlMs:30000});
@@ -176,14 +178,14 @@ function handleCP(req,res){
 function registerWithRouter(cb){
   CP_CLIENT.register({
     id:'risk',label:'Risk Engine',host:'127.0.0.1',port:PORT,cpPath:'/cp/v1',healthPath:'/health',
-    version:'2.0.0',schemaVersion:'risk.analysis/1.0',capabilities:CAPABILITIES,events:EVENTS
+    version:VERSION,schemaVersion:'risk.analysis/1.0',capabilities:CAPABILITIES,events:EVENTS
   },function(e){if(cb)cb(!e);});
 }
 
 var srv=http.createServer(function(req,res){
   var u=new URL(req.url,'http://'+HOST+':'+PORT);
   if(req.method==='GET'&&u.pathname==='/health')return json(res,200,{
-    ok:true,service:'IA-TB Risk Engine',engine:'risk',version:'2.0.0',
+    ok:true,service:'IA-TB Risk Engine',engine:'risk',version:VERSION,
     protocol:'CP/1',analyticalOnly:true,pid:process.pid,host:HOST,port:PORT,
     routerPort:ROUTER_PORT,capabilities:CAPABILITIES,events:EVENTS,settings:riskSettings(),settingsStorage:SETTINGS_DB.status()
   });
@@ -197,7 +199,7 @@ var srv=http.createServer(function(req,res){
 });
 srv.on('error',function(e){console.error('Risk Engine bind error:',e&&e.message||e);process.exit(19);});
 srv.listen(PORT,HOST,function(){
-  console.log('IA-TB Risk Engine v2.0.0 http://'+HOST+':'+PORT+' CP/1');
+  console.log('IA-TB Risk Engine v'+VERSION+' http://'+HOST+':'+PORT+' CP/1');
   var tries=0,retry=null;
   function attempt(){tries++;registerWithRouter(function(ok){if(ok&&retry){clearInterval(retry);retry=null;}});}
   setTimeout(attempt,900);
