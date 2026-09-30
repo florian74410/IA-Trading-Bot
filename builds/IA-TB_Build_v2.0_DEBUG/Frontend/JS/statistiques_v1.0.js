@@ -40,6 +40,7 @@ var state={
 state.cefi={shares:[],volume:[],volumeHistory:[],volumeRange:'24H',exchanges:[],assets:[],health:[]};
 state.defi={shares:[],volume:[],volumeHistory:[],volumeDaily:[],volumeRange:'24H',protocols:[],protocolsRaw:[],stableIn:[],stableOut:[],networks:[],yieldPools:[],dexFeeProtocols:[],swapLiquidity:null,leaders:null};
 state.ui={showAllExchanges:false,showAllOracles:false,financialBootstrap:true};
+state.adoptionRange='30J';
 state.oracleCatalog=[
  {id:'redstone',name:'RedStone Oracle',icon:'R',brand:'',status:'Référencé',latency:null,uptime:null,kind:'oracle'},
  {id:'api3',name:'API3 Oracle',icon:'3',brand:'',status:'Référencé',latency:null,uptime:null,kind:'oracle'},
@@ -128,13 +129,30 @@ function points(values,w,h,pad,klass){
  var max=Math.max.apply(Math,values.concat([1])),dx=(w-pad*2)/Math.max(1,values.length-1);
  return values.map(function(v,i){var x=pad+i*dx,y=h-pad-(v/max)*(h-pad*2);return'<circle class="'+klass+'" cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="2.7"/>'}).join('');
 }
+function adoptionDataset(){
+ var src=state.adoption||{},range=String(state.adoptionRange||'30J').toUpperCase();
+ if(src.byRange&&src.byRange[range])return src.byRange[range];
+ if(src.ranges&&src.ranges[range])return src.ranges[range];
+ if(range==='30J')return src;
+ if(range==='7J'){
+  var n=Math.min(3,(src.users||[]).length),from=Math.max(0,(src.users||[]).length-n);
+  return{labels:(src.labels||[]).slice(from),users:(src.users||[]).slice(from),volume:(src.volume||[]).slice(from),defi:(src.defi||[]).slice(from),partial:true};
+ }
+ return null;
+}
 function renderAdoption(){
- var a=state.adoption,w=760,h=150,pad=24,count=a.users.length,barW=Math.max(6,Math.min(24,(w-pad*2)/(count*1.8))),max=Math.max.apply(Math,a.users.concat([1])),bars='';
+ var range=String(state.adoptionRange||'30J').toUpperCase(),a=adoptionDataset(),host=q('#adoptionChart'),sub=q('#adoptionSubtitle');
+ if(sub)sub.textContent='Évolution des utilisateurs, volumes et part de marché · '+range;
+ if(!a||!Array.isArray(a.users)||a.users.length<2){
+  if(host)host.innerHTML='<div class="adoptionEmpty"><b>Historique '+esc(range)+' insuffisant</b><span>Cette période sera affichée dès qu’une série historique dédiée sera disponible. Les données 30J ne sont pas étirées artificiellement.</span></div>';
+  return;
+ }
+ var w=760,h=150,pad=24,count=a.users.length,barW=Math.max(6,Math.min(24,(w-pad*2)/(count*1.8))),max=Math.max.apply(Math,a.users.concat([1])),bars='';
  a.users.forEach(function(v,i){var x=pad+i*((w-pad*2)/(Math.max(1,count-1)))-barW/2,bh=(v/max)*(h-pad*2),y=h-pad-bh;bars+='<rect x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+barW.toFixed(1)+'" height="'+bh.toFixed(1)+'" rx="1"/>'});
  var grid='';for(var g=0;g<5;g++){var gy=pad+g*((h-pad*2)/4);grid+='<line x1="'+pad+'" y1="'+gy+'" x2="'+(w-pad)+'" y2="'+gy+'"/>'}
- var labels='';a.labels.forEach(function(l,i){var x=pad+i*((w-pad*2)/(Math.max(1,count-1)));labels+='<text x="'+x.toFixed(1)+'" y="'+(h-4)+'" text-anchor="middle">'+esc(l)+'</text>'});
- var svg='<svg viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="none"><g class="chartGrid">'+grid+'</g><g class="chartBars">'+bars+'</g><path class="chartLineVolume" d="'+linePath(a.volume,w,h,pad)+'"/><path class="chartLineDefi" d="'+linePath(a.defi,w,h,pad)+'"/><g>'+points(a.volume,w,h,pad,'chartPointVolume')+points(a.defi,w,h,pad,'chartPointDefi')+'</g><g class="chartAxis">'+labels+'</g></svg>';
- var host=q('#adoptionChart');if(host)host.innerHTML=svg;
+ var labels='',step=Math.max(1,Math.ceil((a.labels||[]).length/7));(a.labels||[]).forEach(function(l,i){if(i%step!==0&&i!==(a.labels||[]).length-1)return;var x=pad+i*((w-pad*2)/(Math.max(1,count-1)));labels+='<text x="'+x.toFixed(1)+'" y="'+(h-4)+'" text-anchor="middle">'+esc(l)+'</text>'});
+ var svg='<svg viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="none"><g class="chartGrid">'+grid+'</g><g class="chartBars">'+bars+'</g><path class="chartLineVolume" d="'+linePath(a.volume||[],w,h,pad)+'"/><path class="chartLineDefi" d="'+linePath(a.defi||[],w,h,pad)+'"/><g>'+points(a.volume||[],w,h,pad,'chartPointVolume')+points(a.defi||[],w,h,pad,'chartPointDefi')+'</g><g class="chartAxis">'+labels+'</g></svg>';
+ if(host)host.innerHTML=svg;
 }
 
 function barChart(values,klass){
@@ -386,7 +404,7 @@ function renderAll(){
  renderPlatforms();renderOracles();renderEngines();renderSummary();renderAdoption();renderFinance();showSection();
 }
 function bind(){
- qa('.rangeBtns button').forEach(function(b){b.onclick=function(){qa('.rangeBtns button').forEach(function(x){x.classList.remove('active')});b.classList.add('active')}});
+ qa('.rangeBtns button').forEach(function(b){b.onclick=function(){var p=b.parentNode;qa('.rangeBtns button',p).forEach(function(x){x.classList.remove('active')});b.classList.add('active');state.adoptionRange=String(b.getAttribute('data-range')||'30J').toUpperCase();renderAdoption()}});
  qa('.financeRanges button:not([data-defi-range])').forEach(function(b){b.onclick=function(){var p=b.parentNode;qa('button',p).forEach(function(x){x.classList.remove('active')});b.classList.add('active');state.cefi.volumeRange=String(b.textContent||'24H').trim().toUpperCase();loadFinancialData()}});
  qa('[data-defi-range]').forEach(function(b){b.onclick=function(){var p=b.parentNode;qa('[data-defi-range]',p).forEach(function(x){x.classList.remove('active')});b.classList.add('active');state.defi.volumeRange=b.getAttribute('data-defi-range')||'24H';renderDefiVolume()}});
  var allEx=q('#toggleAllExchanges');if(allEx)allEx.onclick=function(){state.ui.showAllExchanges=!state.ui.showAllExchanges;renderPlatforms()};
