@@ -1,5 +1,8 @@
 'use strict';
-var http=require('http'),CP=require('../../Core/Communication/communication_protocol_v1');
-function Client(root,routerPort){this.root=root;this.routerPort=+routerPort||8021;}
-Client.prototype.request=function(target,action,args,detail,timeoutMs){var self=this;return new Promise(function(resolve,reject){var token;try{token=CP.ensureSecret(self.root);}catch(e){return reject(e);}var msg=CP.makeRequest(target,action,args||{},detail||'analysis'),raw=Buffer.from(JSON.stringify(msg)),done=false,q=http.request({host:'127.0.0.1',port:self.routerPort,path:'/communication/v1/request',method:'POST',timeout:+timeoutMs||12000,headers:{'Content-Type':'application/json','Accept':'application/json','Content-Length':raw.length,'X-IATB-CP-Token':token}},function(r){var a=[],n=0;r.on('data',function(c){n+=c.length;if(n<=2*1024*1024)a.push(c);});r.on('end',function(){if(done)return;done=true;var o;try{o=JSON.parse(Buffer.concat(a).toString('utf8')||'{}');}catch(e){return reject(new Error('SUPERVISOR_CP_JSON_INVALID'));}if((r.statusCode||500)>=400||o.status==='ERROR'||o.ok===false)return reject(new Error(o.error||(o.data&&o.data.error)||('SUPERVISOR_CP_HTTP_'+r.statusCode)));resolve(o.data!=null?o.data:o);});});q.on('timeout',function(){q.destroy(new Error('SUPERVISOR_CP_TIMEOUT'));});q.on('error',function(e){if(done)return;done=true;reject(e);});q.end(raw);});};
+/* Supervisor Promise facade over the canonical IA-TB CP/1 client.
+   Kept as a compatibility boundary for Supervisor/Core consumers.
+*/
+var SharedClient=require('../../Core/Communication/cp1_client');
+function Client(root,routerPort){this.client=new SharedClient({root:root,routerPort:+routerPort||8021,timeout:12000,maxBytes:2*1024*1024});}
+Client.prototype.request=function(target,action,args,detail,timeoutMs){var self=this;return new Promise(function(resolve,reject){var old=self.client.timeout;if(+timeoutMs>0)self.client.timeout=Math.max(500,Math.min(60000,+timeoutMs));self.client.request(target,action,args||{},detail||'analysis',function(e,d){self.client.timeout=old;if(e)return reject(e);resolve(d);});});};
 module.exports=Client;
