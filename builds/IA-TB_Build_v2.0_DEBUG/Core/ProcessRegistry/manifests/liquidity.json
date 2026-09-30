@@ -2,7 +2,7 @@
   "id": "liquidity",
   "label": "Liquidity Engine V2.0",
   "type": "ENGINE",
-  "order": 60,
+  "order": 80,
   "port": 8014,
   "healthPath": "/health",
   "marker": "IA-TB Liquidity Engine",
