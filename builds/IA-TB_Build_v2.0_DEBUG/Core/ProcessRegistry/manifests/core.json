@@ -5,8 +5,8 @@
   "order": 10,
   "port": 8001,
   "healthPath": "/api/health",
-  "marker": "Crypto Chart Viewer IA Trader",
+  "marker": "IA-Trading-Bot",
   "restartable": false,
   "defaultEnabled": true,
-  "version": "2.0.0"
+  "versionSource": "RUNTIME_HEALTH"
 }
