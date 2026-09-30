@@ -39,7 +39,7 @@ var state={
 };
 state.cefi={shares:[],volume:[],volumeHistory:[],volumeRange:'24H',exchanges:[],assets:[],health:[]};
 state.defi={shares:[],volume:[],volumeHistory:[],volumeDaily:[],volumeRange:'24H',protocols:[],protocolsRaw:[],stableIn:[],stableOut:[],networks:[],yieldPools:[],dexFeeProtocols:[],swapLiquidity:null,leaders:null};
-state.ui={showAllExchanges:false,showAllOracles:false};
+state.ui={showAllExchanges:false,showAllOracles:false,financialBootstrap:true};
 state.oracleCatalog=[
  {id:'redstone',name:'RedStone Oracle',icon:'R',brand:'',status:'Référencé',latency:null,uptime:null,kind:'oracle'},
  {id:'api3',name:'API3 Oracle',icon:'3',brand:'',status:'Référencé',latency:null,uptime:null,kind:'oracle'},
@@ -325,16 +325,23 @@ function applyFinancialSnapshot(s,cefiHistory,defiHistory,oi,liq,dexLiquidity){
   state.defi.networks=chains.map(function(x){return[x.name,money(x.tvlUsd),scaled(x.tvlUsd,maxTvl)]});
   var dv=historyValues(defiHistory,'DEFI','dexVolume24hUsd');state.defi.volumeHistory=historySeries(defiHistory,'DEFI','dexVolume24hUsd');state.defi.volumeDaily=(d.dexVolumeHistory||[]).map(function(x){return{timestamp:+x.timestamp||0,valueUsd:+x.valueUsd||0};}).filter(function(x){return x.timestamp&&x.valueUsd>0;});state.defi.yieldPools=(d.yieldPools||[]).slice();state.defi.dexFeeProtocols=(d.dexFeeProtocols||[]).slice();
   var tvlHist=historyValues(defiHistory,'DEFI','tvlUsd');
-  var stableHist=historyValues(defiHistory,'DEFI','stablecoinMarketCapUsd');
+  var stableSeries=(d.stablecoinHistory||[]).filter(function(x){return x&&isFinite(+x.valueUsd)&&+x.valueUsd>0}).sort(function(a,b){return(+a.timestamp||0)-(+b.timestamp||0)});
+  var stableHist=stableSeries.length?stableSeries.slice(-30).map(function(x){return+x.valueUsd}):historyValues(defiHistory,'DEFI','stablecoinMarketCapUsd');
   if(dv.length)state.defi.volume=dv;
   setKpi('defiTvl',money(d.tvlUsd),trend(tvlHist),'DeFiLlama · TVL protocoles/chains');
   setKpi('defiDexVolume',money(d.dexVolume24hUsd),trend(dv),'DeFiLlama · DEX 24h');
-  setKpi('defiStable',money(d.stablecoinMarketCapUsd),trend(stableHist),'DeFiLlama · stablecoins');
+  setKpi('defiStable',money(d.stablecoinMarketCapUsd),trend(stableHist),'DeFiLlama · stablecoincharts/all');
   setKpi('defiBridgeVolume','N/D','Non suivi','Donnée non disponible · provider de volume bridge non connecté');
   var dd=q('.defiDonut b');if(dd)dd.textContent=money(d.tvlUsd);
-  var stable=stableHist,ins=[],outs=[];
-  for(var i=1;i<stable.length;i++){var delta=stable[i]-stable[i-1];ins.push(delta>0?delta/1e9:0);outs.push(delta<0?-delta/1e9:0)}
-  if(ins.length){state.defi.stableIn=ins.slice(-12);state.defi.stableOut=outs.slice(-12)}
+  var flows=(d.stablecoinFlowHistory||[]).filter(function(x){return x&&isFinite(+x.inflowUsd)&&isFinite(+x.outflowUsd)}).slice(-14),ins=[],outs=[];
+  if(flows.length){
+   flows.forEach(function(x){ins.push(Math.max(0,+x.inflowUsd||0)/1e9);outs.push(Math.max(0,+x.outflowUsd||0)/1e9)});
+  }else{
+   var stable=stableHist;
+   for(var i=1;i<stable.length;i++){var delta=stable[i]-stable[i-1];ins.push(delta>0?delta/1e9:0);outs.push(delta<0?-delta/1e9:0)}
+  }
+  state.defi.stableIn=ins.slice(-14);
+  state.defi.stableOut=outs.slice(-14);
  }
  renderFinance();
  renderSummary();
@@ -342,13 +349,13 @@ function applyFinancialSnapshot(s,cefiHistory,defiHistory,oi,liq,dexLiquidity){
 function loadFinancialData(){
  var cfg=cexRangeConfig();
  Promise.all([
-  uiRead('marketdata.financial.snapshot',{force:false}),
+  uiRead('marketdata.financial.snapshot',{force:state.ui.financialBootstrap===true}),
   uiRead('marketdata.financial.history',{family:'CEFI',limit:cfg.limit,since:Date.now()-cfg.ms}),
   uiRead('marketdata.financial.history',{family:'DEFI',limit:96}),
   uiRead('marketdata.derivatives.open_interest',{symbol:'BTCUSD'}).catch(function(e){return{ok:false,error:e.message}}),
   uiRead('marketdata.liquidations.stats',{windowMs:86400000}).catch(function(e){return{ok:false,error:e.message}}),
   uiRead('marketdata.dex.liquidity.snapshot',{symbol:'BTCUSD',force:false}).catch(function(e){return{ok:false,error:e.message}})
- ]).then(function(x){applyFinancialSnapshot(x[0],x[1],x[2],x[3],x[4],x[5])}).catch(function(e){
+ ]).then(function(x){state.ui.financialBootstrap=false;applyFinancialSnapshot(x[0],x[1],x[2],x[3],x[4],x[5])}).catch(function(e){state.ui.financialBootstrap=false;
   if(window.console&&console.warn)console.warn('[STATISTICS] financial data unavailable:',e.message);
  });
 }
