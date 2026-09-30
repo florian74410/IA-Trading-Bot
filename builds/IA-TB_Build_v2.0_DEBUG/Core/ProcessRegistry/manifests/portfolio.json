@@ -11,8 +11,15 @@
   "script": "Portfolio/Engine/portfolio_service.js",
   "log": ".runtime/logs/portfolio.log",
   "env": {
-    "IATB_PORTFOLIO_PORT": "8020"
+    "IATB_PORTFOLIO_PORT": "8020",
+    "ROUTER_PORT": "8021"
   },
-  "dependencies": [],
-  "optionalDependencies": ["router", "trading"]
+  "dependencies": [
+    "router",
+    "trading"
+  ],
+  "optionalDependencies": [
+    "marketdata"
+  ],
+  "version": "2.0.0"
 }
