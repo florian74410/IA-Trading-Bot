@@ -2,7 +2,7 @@
   "id": "trading",
   "label": "Trading Engine",
   "type": "ENGINE",
-  "order": 80,
+  "order": 100,
   "port": 8016,
   "healthPath": "/health",
   "marker": "IA-TB Trading Engine",
