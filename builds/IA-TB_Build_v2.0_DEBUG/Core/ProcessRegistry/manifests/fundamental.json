@@ -11,6 +11,7 @@
   "script": "Fundamental/Engine/fundamental_service.js",
   "log": ".runtime/logs/fundamental.log",
   "env": {
-    "IATB_FUNDAMENTAL_PORT": "8015"
+    "IATB_FUNDAMENTAL_PORT": "8015",
+    "ROUTER_PORT": "8021"
   }
 }
