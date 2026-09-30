@@ -1,11 +1,11 @@
 'use strict';
-/* IA-TB Trading Engine runtime v2.0.0
+/* IA-TB Trading Engine runtime
    Execution core with normalized events, cancel/close/history and Portfolio feed.
    Mutating CP requests are accepted only when forwarded by the Trading Firewall.
 */
 var http=require('http'),path=require('path'),crypto=require('crypto');
-var CP=require('../../Core/Communication/communication_protocol_v1'),CPClient=require('../../Core/Communication/cp1_client'),Trading=require('./trading-engine'),Registry=require('./registry'),Http=require('./http-transport'),Secrets=require('./secret-provider'),History=require('./history-store');
-var HOST='127.0.0.1',PORT=+(process.env.IATB_TRADING_ENGINE_PORT||8016),ROUTER_PORT=+(process.env.ROUTER_PORT||8021),VERSION='2.0.0';
+var CP=require('../../Core/Communication/communication_protocol_v1'),CPClient=require('../../Core/Communication/cp1_client'),Trading=require('./trading-engine'),Registry=require('./registry'),Http=require('./http-transport'),Secrets=require('./secret-provider'),History=require('./history-store'),BUILD=require('../../Core/Shared/build_info');
+var HOST='127.0.0.1',PORT=+(process.env.IATB_TRADING_ENGINE_PORT||8016),ROUTER_PORT=+(process.env.ROUTER_PORT||8021),VERSION=BUILD.version;
 var LIVE=String(process.env.IATB_TRADING_LIVE||'0')==='1',SERVICE_ENABLED=String(process.env.IATB_TRADING_ENGINE_ENABLED||'1')!=='0',ROOT=path.resolve(__dirname,'../..'),CP_CLIENT=new CPClient({root:path.resolve(__dirname,'../..'),routerPort:ROUTER_PORT,timeout:5000,maxBytes:1024*1024});
 var engine=Registry.registerDefaultExecutors(new Trading.TradingEngine({secretProvider:new Secrets.SecretProvider(),transport:Http.requestJson,liveExecutionEnabled:LIVE})),history=new History(ROOT),startedAt=Date.now(),lastExecution=null,requestCount=0;
 var ACTIONS={'trading.health':1,'trading.capabilities':1,'trading.execute':1,'trading.cancel':1,'trading.close_position':1,'trading.history':1};
