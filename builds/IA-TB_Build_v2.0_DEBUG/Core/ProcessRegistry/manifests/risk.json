@@ -21,5 +21,6 @@
     "marketdata",
     "indicators",
     "portfolio"
-  ]
+  ],
+  "versionSource": "RUNTIME_HEALTH"
 }
