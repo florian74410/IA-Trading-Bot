@@ -181,7 +181,13 @@ function bind(a,cfg){
  var items=allItems(cfg),buttons=[].slice.call(a.querySelectorAll('[data-iatb-proxy="1"]'));
  buttons.forEach(function(btn){
   var label=btn.getAttribute('data-iatb-label'),x=items.filter(function(it){return it.label===label&&!it.href;})[0];
-  btn.onclick=function(){var src=x&&sourceNode(x);if(src&&typeof src.click==='function'){src.click();sync(a,cfg);} };
+  btn.onclick=function(){
+    if(cfg.key==='fundamental'&&x&&x.selector){
+      var m=String(x.selector).match(/data-view=["']([^"']+)["']/);
+      if(m&&m[1]){window.dispatchEvent(new CustomEvent('iatb-fund-view',{detail:{view:m[1]}}));setTimeout(function(){sync(a,cfg)},0);return;}
+    }
+    var src=x&&sourceNode(x);if(src&&typeof src.click==='function'){src.click();sync(a,cfg);}
+   };
  });
 }
 function sync(a,cfg){
