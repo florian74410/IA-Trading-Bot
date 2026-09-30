@@ -2,7 +2,7 @@
   "id": "firewall",
   "label": "Firewall",
   "type": "FIREWALL",
-  "order": 40,
+  "order": 30,
   "port": 8017,
   "healthPath": "/health",
   "marker": "IA-TB Firewall Service",
