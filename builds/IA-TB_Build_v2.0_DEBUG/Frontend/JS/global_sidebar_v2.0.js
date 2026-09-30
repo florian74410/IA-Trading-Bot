@@ -167,7 +167,7 @@ function renderItem(x,cfg){
  return '<'+tag+attrs+' class="iatb-side-link'+(active?' active':'')+(x.danger?' danger':'')+'" data-iatb-label="'+String(x.label).replace(/"/g,'&quot;')+'"><span class="iatb-side-icon">'+icon(x.icon)+'</span><span class="iatb-side-label">'+x.label+'</span>'+(x.arrow?'<i>›</i>':'')+'</'+tag+'>';
 }
 function renderGroup(g,cfg){
- var collapsible=cfg&&cfg.key==='settings',label=String(g.label||'').replace(/"/g,'&quot;');
+ var collapsible=cfg&&(cfg.key==='settings'||cfg.key==='bank'),label=String(g.label||'').replace(/"/g,'&quot;');
  return '<div class="iatb-side-group'+(collapsible?' iatb-collapsible-group':'')+'" data-iatb-group="'+label+'">'+
   (collapsible?'<button type="button" class="iatb-side-group-title" aria-expanded="true" data-iatb-group-toggle="'+label+'">':'<div class="iatb-side-group-title">')+
   '<span class="iatb-side-icon">'+icon(g.icon)+'</span><span class="iatb-side-label">'+g.label+'</span><i>›</i>'+
@@ -188,10 +188,10 @@ function bind(a,cfg){
     var src=x&&sourceNode(x);if(src&&typeof src.click==='function'){src.click();sync(a,cfg);}
    };
  });
- if(cfg.key==='settings'){
+ if(cfg.key==='settings'||cfg.key==='bank'){
   var toggles=[].slice.call(a.querySelectorAll('[data-iatb-group-toggle]'));
   toggles.forEach(function(t){
-   var group=t.closest?t.closest('.iatb-side-group'):t.parentNode,label=t.getAttribute('data-iatb-group-toggle')||'',key='iatb.settings.group.'+label,collapsed=false;
+   var group=t.closest?t.closest('.iatb-side-group'):t.parentNode,label=t.getAttribute('data-iatb-group-toggle')||'',key='iatb.'+cfg.key+'.group.'+label,collapsed=false;
    try{collapsed=sessionStorage.getItem(key)==='0';}catch(e){}
    function apply(open){group.classList.toggle('collapsed',!open);t.setAttribute('aria-expanded',open?'true':'false');}
    apply(!collapsed);
