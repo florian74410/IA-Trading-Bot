@@ -349,11 +349,10 @@ body{background:radial-gradient(circle at 70% -20%,rgba(31,75,153,.18),transpare
 
 /* Fundamental V3 dedicated views — v2.0 DEBUG */
 body[data-fund-view]:not([data-fund-view="overview"]) .hero{display:none}body[data-fund-view] .viewBlock{display:none}
-body[data-fund-view="overview"] .cockpitBlock,body[data-fund-view="overview"] .overviewOnly,body[data-fund-view="overview"] .aiBlock,body[data-fund-view="overview"] .newsToolsBlock,body[data-fund-view="overview"] .publicationsBlock,body[data-fund-view="overview"] .domainSection,body[data-fund-view="overview"] .methodologySection{display:block}body[data-fund-view="overview"] .cockpitLower .sourcePreview{display:none}body[data-fund-view="overview"] .cockpitLower{grid-template-columns:1fr .62fr}
+body[data-fund-view="overview"] .cockpitBlock,body[data-fund-view="overview"] .overviewOnly,body[data-fund-view="overview"] .aiBlock,body[data-fund-view="overview"] .newsToolsBlock,body[data-fund-view="overview"] .publicationsBlock,body[data-fund-view="overview"] .methodologySection{display:block}body[data-fund-view="overview"] .cockpitLower .sourcePreview{display:none}body[data-fund-view="overview"] .cockpitLower{grid-template-columns:1fr .62fr}
 body[data-fund-view="news"] .newsToolsBlock,body[data-fund-view="news"] .publicationsBlock{display:block}
 body[data-fund-view="ai"] .aiBlock,body[data-fund-view="ai"] .publicationsBlock{display:block}
 body[data-fund-view="sources"] .cockpitBlock,body[data-fund-view="sources"] .providersBlock,body[data-fund-view="sources"] .sourcesSection,body[data-fund-view="sources"] .feedsSection{display:block}body[data-fund-view="sources"] .cockpitMetrics,body[data-fund-view="sources"] .cockpitMain{display:none}body[data-fund-view="sources"] .cockpitLower{display:block;margin-top:0}body[data-fund-view="sources"] .cockpitLower .newsPreview,body[data-fund-view="sources"] .cockpitLower .domainPreview{display:none}body[data-fund-view="sources"] .sourcePreview{width:100%;min-height:0;margin-bottom:12px}
-body[data-fund-view="defi"] .domainSection{display:block}
 body[data-fund-view="console"] .consoleBlock{display:block}body[data-fund-view="console"] .fundamentalConsoleSection{margin-top:0}
 
 
@@ -397,6 +396,5 @@ body[data-fund-view="console"] .consolePage .fundamentalConsoleSection{display:b
 .sideCategory{border-bottom:1px solid rgba(30,123,160,.28)}.fundSidebar .sideCategoryToggle{display:flex;align-items:center;justify-content:space-between;width:100%;font-weight:700}.sideCategoryToggle b{transition:transform .16s ease}.sideCategory.open .sideCategoryToggle b{transform:rotate(90deg)}.sideCategoryItems{display:none;padding:0 8px 7px 14px}.sideCategory.open .sideCategoryItems{display:block}.fundSidebar .sideCategoryItems button{width:100%;padding-left:20px;font-size:12px}
 body[data-fund-view="news"] .fedwatchPanel,body[data-fund-view="news"] .macroCalendarPanel,body[data-fund-view="news"] .newsToolsBlock,body[data-fund-view="news"] .publicationsBlock{display:block}
 body[data-fund-view="overview"] .fedwatchPanel,body[data-fund-view="overview"] .macroCalendarPanel{display:none!important}
-body[data-fund-view="defi"] .domainSection{display:block}
 body[data-fund-view="console"] .cockpitBlock,body[data-fund-view="console"] .consoleBlock{display:block}
 body[data-fund-view="console"] .cockpitMetrics,body[data-fund-view="console"] .cockpitLower,body[data-fund-view="console"] .eventsPanel{display:none}body[data-fund-view="console"] .cockpitMain{display:block;margin-top:0}body[data-fund-view="console"] .marketPanel{width:100%;margin-bottom:12px}
