@@ -1,7 +1,10 @@
 #!/bin/bash
 cd "$(dirname "$0")" || exit 1
 
-APP_NAME="Crypto Chart Viewer IA Trader"
+APP_NAME="IA-Trading-Bot"
+BUILD_VERSION="$(tr -d '[:space:]' < "$PWD/VERSION" 2>/dev/null)"
+[ -n "$BUILD_VERSION" ] || BUILD_VERSION="2.0.0"
+BUILD_STATUS="DEBUG"
 UI_PORT=8000
 CORE_PORT=8001
 KRAKEN_PORT=8011
@@ -74,7 +77,7 @@ startup_banner(){
   echo "╔══════════════════════════════════════════════════════════════╗"
   echo "║                                                              ║"
   echo "║                     IA TRADING BOT                           ║"
-  echo "║                      v2.0 DEBUG                              ║"
+  echo "║                    v${BUILD_VERSION} ${BUILD_STATUS}                         ║"
   echo "║                                                              ║"
   echo "║                  SYSTEM STARTUP CONSOLE                      ║"
   echo "║                                                              ║"
@@ -108,7 +111,7 @@ stop_known_on_port(){
     pid="$(json_pid "$body_ui")"; label="UI Service"
   elif echo "$body_router" | grep -q '"router"[[:space:]]*:[[:space:]]*true'; then
     pid="$(json_pid "$body_router")"; label="Router"
-  elif echo "$body_health" | grep -q 'Crypto Chart Viewer IA Trader'; then
+  elif echo "$body_health" | grep -q 'IA-Trading-Bot'; then
     pid="$(json_pid "$body_health")"; label="TradingBot"
   elif echo "$body_kraken" | grep -q 'Kraken Add-On'; then
     pid="$(json_pid "$body_kraken")"; label="Kraken Add-On"
@@ -219,7 +222,7 @@ RISK_LOG="$LOG_DIR/risk.log"
 PORTFOLIO_LOG="$LOG_DIR/portfolio.log"
 SUPERVISOR_LOG="$LOG_DIR/supervisor.log"
 
-# v1.6.0 Fundamental Engine: dependance SQLite native testee avec Node 16.20.2.
+# Fundamental Engine V3: SQLite native dependency tested with the local Node runtime.
 # Echec non bloquant: IA-TB reste disponible et le FE apparaitra OFFLINE dans ADMIN.
 FUNDAMENTAL_READY=0
 if [ -f "$PWD/Fundamental/install_sqlite.command" ]; then
@@ -298,320 +301,166 @@ mkdir -p Fundamental/Data
 section "[ 2/4 ]  STARTING SERVICES"
 
 echo "  Runtime     $($NODE_BIN -v)"
+echo "  Build       $APP_NAME v$BUILD_VERSION $BUILD_STATUS"
 echo "  Profile     ${IATB_USERDATA_USER:-default}"
 echo "  Mode        DEBUG"
 echo
 
-status_wait "Kraken Adapter" "127.0.0.1:$KRAKEN_PORT"
-KRAKEN_ADDON_PORT="$KRAKEN_PORT" "$NODE_BIN" AddOns/Kraken/kraken_service.js >> "$KRAKEN_LOG" 2>&1 &
-KRAKEN_PID=$!
-sleep "$STARTUP_SPACING"
-status_wait "Indicator Engine" "127.0.0.1:$INDICATOR_PORT"
-
-IATB_INDICATOR_PORT="$INDICATOR_PORT" IATB_MARKET_DATA_PORT="$MARKET_DATA_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Indicators/Engine/indicator_service.js >> "$INDICATOR_LOG" 2>&1 &
-INDICATOR_PID=$!
-sleep "$STARTUP_SPACING"
-
-# Data Firewall must be online before any external Market Data is accepted.
-status_wait "Firewall" "127.0.0.1:$FIREWALL_PORT"
-IATB_FIREWALL_PORT="$FIREWALL_PORT" IATB_TRADING_FIREWALL_PORT="$FIREWALL_PORT" IATB_TRADING_ENGINE_PORT="$TRADING_ENGINE_PORT" IATB_MARKET_DATA_PORT="$MARKET_DATA_PORT" "$NODE_BIN" Core/Firewall/firewall_service.js >> "$FIREWALL_LOG" 2>&1 &
-FIREWALL_PID=$!
-fw_boot_ok=0
-for i in 1 2 3 4 5 6; do
-  body="$(http_get "http://127.0.0.1:$FIREWALL_PORT/health")"
-  echo "$body" | grep -q '"thread":1' && echo "$body" | grep -q '"thread":2' && { fw_boot_ok=1; break; }
-  sleep 1
-done
-if [ "$fw_boot_ok" -ne 1 ]; then
-  status_fail "Firewall" ":$FIREWALL_PORT"
-  cat "$FIREWALL_LOG" 2>/dev/null || true
-  cleanup; read -p "Appuie sur Entree pour fermer..."; exit 1
-fi
-sleep "$STARTUP_SPACING"
-status_wait "Market Data Collector" "127.0.0.1:$MARKET_DATA_PORT"
-
-KRAKEN_ADDON_PORT="$KRAKEN_PORT" IATB_MARKET_DATA_PORT="$MARKET_DATA_PORT" "$NODE_BIN" MarketData/market_data_service.js >> "$MARKET_DATA_LOG" 2>&1 &
-MARKET_DATA_PID=$!
-sleep "$STARTUP_SPACING"
-status_wait "Liquidity Engine" "127.0.0.1:$LIQUIDITY_PORT"
-
-IATB_MARKET_DATA_PORT="$MARKET_DATA_PORT" IATB_LIQUIDITY_PORT="$LIQUIDITY_PORT" "$NODE_BIN" Liquidity/Engine/liquidity_service.js >> "$LIQUIDITY_LOG" 2>&1 &
-LIQUIDITY_PID=$!
-sleep "$STARTUP_SPACING"
-
-if [ "$FUNDAMENTAL_READY" -eq 1 ]; then
-  status_wait "Fundamental Engine" "127.0.0.1:$FUNDAMENTAL_PORT"
-  IATB_FUNDAMENTAL_PORT="$FUNDAMENTAL_PORT" "$NODE_BIN" Fundamental/Engine/fundamental_service.js >> "$FUNDAMENTAL_LOG" 2>&1 &
-  FUNDAMENTAL_PID=$!
-  sleep "$STARTUP_SPACING"
-else
-  status_skip "Fundamental Engine" "disabled"
-fi
-
-status_wait "Portfolio Engine" "127.0.0.1:$PORTFOLIO_PORT"
-IATB_PORTFOLIO_PORT="$PORTFOLIO_PORT" "$NODE_BIN" Portfolio/Engine/portfolio_service.js >> "$PORTFOLIO_LOG" 2>&1 &
-PORTFOLIO_PID=$!
-sleep "$STARTUP_SPACING"
-status_wait "Trading Engine" "127.0.0.1:$TRADING_ENGINE_PORT"
-
-IATB_TRADING_ENGINE_PORT="$TRADING_ENGINE_PORT" ROUTER_PORT="$ROUTER_PORT" IATB_TRADING_LIVE="0" "$NODE_BIN" services/trading-engine/trading_service.js >> "$TRADING_LOG" 2>&1 &
-TRADING_ENGINE_PID=$!
-sleep "$STARTUP_SPACING"
-status_wait "Strategy Engine" "127.0.0.1:$STRATEGY_PORT"
-
-IATB_STRATEGY_PORT="$STRATEGY_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Strategy/Engine/strategy_service.js >> "$STRATEGY_LOG" 2>&1 &
-STRATEGY_PID=$!
-sleep "$STARTUP_SPACING"
-status_wait "Risk Engine" "127.0.0.1:$RISK_ENGINE_PORT"
-
-IATB_RISK_ENGINE_PORT="$RISK_ENGINE_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Risk/Engine/risk_service.js >> "$RISK_LOG" 2>&1 &
-RISK_ENGINE_PID=$!
-
-sleep "$STARTUP_SPACING"
-status_wait "IA Supervisor" "127.0.0.1:$SUPERVISOR_PORT"
-IATB_SUPERVISOR_PORT="$SUPERVISOR_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Supervisor/supervisor_service.js >> "$SUPERVISOR_LOG" 2>&1 &
-SUPERVISOR_PID=$!
-
-section "[ 3/4 ]  HEALTH CHECK"
-
-# Attendre que le Firewall Service et ses deux threads de protection soient démarrés.
-fw_ok=0
-for i in 1 2 3 4 5 6 7 8; do
-  body="$(http_get "http://127.0.0.1:$FIREWALL_PORT/health")"
-  echo "$body" | grep -q 'IA-TB Firewall Service' && echo "$body" | grep -q '"thread":1' && echo "$body" | grep -q '"thread":2' && { fw_ok=1; break; }
-  sleep 1
-done
-if [ "$fw_ok" -ne 1 ]; then
-  status_fail "Firewall" ":$FIREWALL_PORT"
-  echo "         ↳ Firewall health-check failed"
-  cat "$FIREWALL_LOG" 2>/dev/null || true
-  cleanup; read -p "Appuie sur Entree pour fermer..."; exit 1
-else
-  status_ok "Firewall" ":$FIREWALL_PORT"
-  echo "         ├─ Thread 0  Router ............. OK"
-  echo "         ├─ Thread 1  Trading ............ OK"
-  echo "         └─ Thread 2  Data ............... OK"
-fi
-
-# L Indicator Engine doit etre sain avant activation de la nouvelle release.
-ind_ok=0
-for i in 1 2 3 4 5 6 7 8; do
-  body="$(http_get "http://127.0.0.1:$INDICATOR_PORT/health")"
-  echo "$body" | grep -q 'IA-TB Indicator Engine' && { ind_ok=1; break; }
-  sleep 1
-done
-if [ "$ind_ok" -ne 1 ]; then
-  status_fail "Indicator Engine" ":$INDICATOR_PORT"
-  echo "--- $INDICATOR_LOG ---"
-  cat "$INDICATOR_LOG" 2>/dev/null || true
-  cleanup
-  read -p "Appuie sur Entree pour fermer..."
-  exit 1
-else
-  status_ok "Indicator Engine" ":$INDICATOR_PORT"
-fi
-
-md_ok=0
-for i in 1 2 3 4 5 6 7 8; do
-  body="$(http_get "http://127.0.0.1:$MARKET_DATA_PORT/health")"
-  echo "$body" | grep -q 'IA-TB Market Data' && { md_ok=1; break; }
-  sleep 1
-done
-if [ "$md_ok" -ne 1 ]; then
-  status_fail "Market Data Collector" ":$MARKET_DATA_PORT"
-  echo "--- $MARKET_DATA_LOG ---"
-  cat "$MARKET_DATA_LOG" 2>/dev/null || true
-  cleanup
-  read -p "Appuie sur Entree pour fermer..."
-  exit 1
-else
-  status_ok "Market Data Collector" ":$MARKET_DATA_PORT"
-fi
-
-liq_ok=0
-for i in 1 2 3 4 5 6 7 8; do
-  body="$(http_get "http://127.0.0.1:$LIQUIDITY_PORT/health")"
-  echo "$body" | grep -q 'IA-TB Liquidity Engine' && { liq_ok=1; break; }
-  sleep 1
-done
-if [ "$liq_ok" -ne 1 ]; then
-  status_fail "Liquidity Engine" ":$LIQUIDITY_PORT"
-  echo "--- $LIQUIDITY_LOG ---"
-  cat "$LIQUIDITY_LOG" 2>/dev/null || true
-  cleanup
-  read -p "Appuie sur Entree pour fermer..."
-  exit 1
-else
-  status_ok "Liquidity Engine" ":$LIQUIDITY_PORT"
-fi
-
-portfolio_ok=0
-for i in 1 2 3 4 5 6 7 8; do
-  body="$(http_get "http://127.0.0.1:$PORTFOLIO_PORT/health")"
-  echo "$body" | grep -q 'IA-TB Portfolio Engine' && { portfolio_ok=1; break; }
-  sleep 1
-done
-if [ "$portfolio_ok" -ne 1 ]; then
-  status_fail "Portfolio Engine" ":$PORTFOLIO_PORT"
-  echo "--- $PORTFOLIO_LOG ---"
-  cat "$PORTFOLIO_LOG" 2>/dev/null || true
-  cleanup
-  read -p "Appuie sur Entree pour fermer..."
-  exit 1
-else
-  status_ok "Portfolio Engine" ":$PORTFOLIO_PORT"
-fi
-
-te_ok=0
-for i in 1 2 3 4 5 6 7 8; do
-  body="$(http_get "http://127.0.0.1:$TRADING_ENGINE_PORT/health")"
-  echo "$body" | grep -q 'IA-TB Trading Engine' && { te_ok=1; break; }
-  sleep 1
-done
-if [ "$te_ok" -ne 1 ]; then
-  status_fail "Trading Engine" ":$TRADING_ENGINE_PORT"
-  echo "--- $TRADING_LOG ---"
-  cat "$TRADING_LOG" 2>/dev/null || true
-  cleanup
-  read -p "Appuie sur Entree pour fermer..."
-  exit 1
-else
-  status_ok "Trading Engine" ":$TRADING_ENGINE_PORT"
-fi
-
-strategy_ok=0
-for i in 1 2 3 4 5 6 7 8; do
-  body="$(http_get "http://127.0.0.1:$STRATEGY_PORT/health")"
-  echo "$body" | grep -q 'IA-TB Strategy Engine v2' && { strategy_ok=1; break; }
-  sleep 1
-done
-if [ "$strategy_ok" -ne 1 ]; then
-  status_fail "Strategy Engine" ":$STRATEGY_PORT"
-  echo "--- $STRATEGY_LOG ---"
-  cat "$STRATEGY_LOG" 2>/dev/null || true
-  cleanup
-  read -p "Appuie sur Entree pour fermer..."
-  exit 1
-else
-  status_ok "Strategy Engine" ":$STRATEGY_PORT"
-fi
-
-risk_ok=0
-for i in 1 2 3 4 5 6 7 8; do
-  body="$(http_get "http://127.0.0.1:$RISK_ENGINE_PORT/health")"
-  echo "$body" | grep -q 'IA-TB Risk Engine' && { risk_ok=1; break; }
-  sleep 1
-done
-if [ "$risk_ok" -ne 1 ]; then
-  status_warn "Risk Engine" ":$RISK_ENGINE_PORT OFFLINE"
-  echo "         ↳ IA-TB continues in degraded mode"
-  cat "$RISK_LOG" 2>/dev/null || true
-else
-  status_ok "Risk Engine" ":$RISK_ENGINE_PORT"
-fi
-
-if [ "$FUNDAMENTAL_READY" -eq 1 ]; then
-  fe_ok=0
-  for i in 1 2 3 4 5 6 7 8; do
-    body="$(http_get "http://127.0.0.1:$FUNDAMENTAL_PORT/health")"
-    echo "$body" | grep -q 'IA-TB Fundamental Engine' && { fe_ok=1; break; }
+wait_service(){
+  local label="$1"
+  local port="$2"
+  local endpoint="$3"
+  local marker="$4"
+  local logfile="$5"
+  local tries="${6:-10}"
+  local i=1
+  local body=""
+  while [ "$i" -le "$tries" ]; do
+    body="$(http_get "http://127.0.0.1:${port}${endpoint}")"
+    echo "$body" | grep -q "$marker" && { status_ok "$label" ":${port}"; return 0; }
     sleep 1
+    i=$((i+1))
   done
-  if [ "$fe_ok" -ne 1 ]; then
-    status_warn "Fundamental Engine" ":$FUNDAMENTAL_PORT OFFLINE"
-    echo "         ↳ IA-TB continues in degraded mode"
-    cat "$FUNDAMENTAL_LOG" 2>/dev/null || true
-    FUNDAMENTAL_READY=0
-  else
-    status_ok "Fundamental Engine" ":$FUNDAMENTAL_PORT"
-  fi
-else
-  status_skip "Fundamental Engine" "disabled"
-fi
+  status_fail "$label" ":${port}"
+  [ -n "$logfile" ] && { echo "--- $logfile ---"; cat "$logfile" 2>/dev/null || true; }
+  return 1
+}
 
-supervisor_ok=0
-for i in 1 2 3 4 5 6 7 8; do
-  body="$(http_get "http://127.0.0.1:$SUPERVISOR_PORT/health")"
-  echo "$body" | grep -q 'IA-TB Supervisor' && { supervisor_ok=1; break; }
-  sleep 1
-done
-if [ "$supervisor_ok" -ne 1 ]; then
-  status_fail "IA Supervisor" ":$SUPERVISOR_PORT"
-  echo "--- $SUPERVISOR_LOG ---"
-  cat "$SUPERVISOR_LOG" 2>/dev/null || true
+require_service(){
+  wait_service "$@" && return 0
   cleanup
   read -p "Appuie sur Entree pour fermer..."
   exit 1
-else
-  status_ok "IA Supervisor" ":$SUPERVISOR_PORT"
-fi
+}
 
-status_wait "Core" "starting"
-IATB_DEBUG_MODE="1" IATB_PORT="$CORE_PORT" IATB_PUBLIC_PORT="$CORE_PORT" IATB_UI_SEPARATED="1" ROUTER_PORT="$ROUTER_PORT" IATB_PORTFOLIO_PORT="$PORTFOLIO_PORT" IATB_TRADING_ENGINE_PORT="$TRADING_ENGINE_PORT" IATB_FIREWALL_PORT="$FIREWALL_PORT" IATB_TRADING_FIREWALL_PORT="$FIREWALL_PORT" "$NODE_BIN" launcher.js >> "$LAUNCHER_LOG" 2>&1 &
+# 1. Core: configuration, settings, admin and internal API.
+status_wait "Core" "starting first"
+IATB_DEBUG_MODE="1" IATB_PORT="$CORE_PORT" IATB_PUBLIC_PORT="$CORE_PORT" IATB_UI_SEPARATED="1" ROUTER_PORT="$ROUTER_PORT" KRAKEN_ADDON_PORT="$KRAKEN_PORT" IATB_INDICATOR_PORT="$INDICATOR_PORT" IATB_MARKET_DATA_PORT="$MARKET_DATA_PORT" IATB_LIQUIDITY_PORT="$LIQUIDITY_PORT" IATB_FUNDAMENTAL_PORT="$FUNDAMENTAL_PORT" IATB_PORTFOLIO_PORT="$PORTFOLIO_PORT" IATB_TRADING_ENGINE_PORT="$TRADING_ENGINE_PORT" IATB_FIREWALL_PORT="$FIREWALL_PORT" IATB_TRADING_FIREWALL_PORT="$FIREWALL_PORT" IATB_STRATEGY_PORT="$STRATEGY_PORT" IATB_RISK_ENGINE_PORT="$RISK_ENGINE_PORT" "$NODE_BIN" launcher.js >> "$LAUNCHER_LOG" 2>&1 &
 APP_PID=$!
+require_service "Core" "$CORE_PORT" "/api/health" "IA-Trading-Bot" "$LAUNCHER_LOG" 12
 
-# Attendre le coeur sur 8001 (pas seulement le superviseur 3000)
-ok=0
-for i in 1 2 3 4 5 6 7 8 9 10; do
-  body="$(http_get "http://127.0.0.1:$CORE_PORT/api/health")"
-  echo "$body" | grep -q 'Crypto Chart Viewer IA Trader' && { ok=1; break; }
-  sleep 1
-done
-if [ "$ok" -ne 1 ]; then
-  status_fail "Core" ":$CORE_PORT"
-  cleanup
-  read -p "Appuie sur Entree pour fermer..."
-  exit 1
-else
-  status_ok "Core" ":$CORE_PORT"
-fi
-
+# 2. Router: all following CP/1 components register against it.
+status_wait "Router" "after Core"
 CORE_PUBLIC_PORT="$CORE_PORT" KRAKEN_ADDON_PORT="$KRAKEN_PORT" IATB_INDICATOR_PORT="$INDICATOR_PORT" IATB_MARKET_DATA_PORT="$MARKET_DATA_PORT" IATB_LIQUIDITY_PORT="$LIQUIDITY_PORT" IATB_FUNDAMENTAL_PORT="$FUNDAMENTAL_PORT" IATB_TRADING_ENGINE_PORT="$TRADING_ENGINE_PORT" IATB_FIREWALL_PORT="$FIREWALL_PORT" IATB_TRADING_FIREWALL_PORT="$FIREWALL_PORT" IATB_STRATEGY_PORT="$STRATEGY_PORT" IATB_RISK_ENGINE_PORT="$RISK_ENGINE_PORT" IATB_PORTFOLIO_PORT="$PORTFOLIO_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Core/Router/router.js >> "$ROUTER_LOG" 2>&1 &
 ROUTER_PID=$!
+require_service "Router" "$ROUTER_PORT" "/router-health" "\"router\"" "$ROUTER_LOG" 10
 
-# Valider le Router interne avant de démarrer le service UI public.
-ok=0
-for i in 1 2 3 4 5 6 7 8; do
-  body="$(http_get "http://127.0.0.1:$ROUTER_PORT/router-health")"
-  echo "$body" | grep -q '"router"[[:space:]]*:[[:space:]]*true' && { ok=1; break; }
+# 3. Security boundary before Market Data or Trading.
+status_wait "Firewall" "before data/trading"
+IATB_FIREWALL_PORT="$FIREWALL_PORT" IATB_TRADING_FIREWALL_PORT="$FIREWALL_PORT" IATB_TRADING_ENGINE_PORT="$TRADING_ENGINE_PORT" IATB_MARKET_DATA_PORT="$MARKET_DATA_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Core/Firewall/firewall_service.js >> "$FIREWALL_LOG" 2>&1 &
+FIREWALL_PID=$!
+require_service "Firewall" "$FIREWALL_PORT" "/health" "IA-TB Firewall Service" "$FIREWALL_LOG" 10
+fw_threads_ok=0
+for i in 1 2 3 4 5 6; do
+  body="$(http_get "http://127.0.0.1:$FIREWALL_PORT/health")"
+  echo "$body" | grep -q '"thread":1' && echo "$body" | grep -q '"thread":2' && { fw_threads_ok=1; break; }
   sleep 1
 done
-if [ "$ok" -ne 1 ]; then
-  status_fail "Router" ":$ROUTER_PORT"
-  echo "--- $ROUTER_LOG ---"
-  cat "$ROUTER_LOG" 2>/dev/null || true
+if [ "$fw_threads_ok" -ne 1 ]; then
+  status_fail "Firewall workers" "threads 1/2 unavailable"
+  cat "$FIREWALL_LOG" 2>/dev/null || true
   cleanup
   read -p "Appuie sur Entree pour fermer..."
   exit 1
 fi
+status_ok "Firewall workers" "Trading + Market Data"
 
-status_ok "Router" ":$ROUTER_PORT"
+# 4. Local Kraken bridge, then universal Market Data.
+status_wait "Kraken Adapter" "provider bridge"
+KRAKEN_ADDON_PORT="$KRAKEN_PORT" "$NODE_BIN" AddOns/Kraken/kraken_service.js >> "$KRAKEN_LOG" 2>&1 &
+KRAKEN_PID=$!
+require_service "Kraken Adapter" "$KRAKEN_PORT" "/health" "Kraken Add-On" "$KRAKEN_LOG" 10
 
-IATB_UI_PORT="$UI_PORT" CORE_PUBLIC_PORT="$CORE_PORT" ROUTER_PORT="$ROUTER_PORT" IATB_AUTH_MODE="disabled" IATB_UI_BYPASS_ROLE="SUPERADMIN" "$NODE_BIN" UI/Gateway/ui_service.js >> "$UI_LOG" 2>&1 &
+status_wait "Market Data Collector" "CEX/DEX registry"
+KRAKEN_ADDON_PORT="$KRAKEN_PORT" IATB_MARKET_DATA_PORT="$MARKET_DATA_PORT" IATB_FIREWALL_PORT="$FIREWALL_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" MarketData/market_data_service.js >> "$MARKET_DATA_LOG" 2>&1 &
+MARKET_DATA_PID=$!
+require_service "Market Data Collector" "$MARKET_DATA_PORT" "/health" "IA-TB Market Data" "$MARKET_DATA_LOG" 12
+
+# 5. Read/analysis engines consume Router + Market Data.
+status_wait "Indicator Engine" "after Market Data"
+IATB_INDICATOR_PORT="$INDICATOR_PORT" IATB_MARKET_DATA_PORT="$MARKET_DATA_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Indicators/Engine/indicator_service.js >> "$INDICATOR_LOG" 2>&1 &
+INDICATOR_PID=$!
+require_service "Indicator Engine" "$INDICATOR_PORT" "/health" "IA-TB Indicator Engine" "$INDICATOR_LOG" 10
+
+if [ "$FUNDAMENTAL_READY" -eq 1 ]; then
+  status_wait "Fundamental Engine" "after Router"
+  IATB_FUNDAMENTAL_PORT="$FUNDAMENTAL_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Fundamental/Engine/fundamental_service.js >> "$FUNDAMENTAL_LOG" 2>&1 &
+  FUNDAMENTAL_PID=$!
+  if ! wait_service "Fundamental Engine" "$FUNDAMENTAL_PORT" "/health" "IA-TB Fundamental Engine" "$FUNDAMENTAL_LOG" 12; then
+    status_warn "Fundamental Engine" "disabled after failed boot"
+    FUNDAMENTAL_READY=0
+    [ -n "$FUNDAMENTAL_PID" ] && kill "$FUNDAMENTAL_PID" >/dev/null 2>&1 || true
+    FUNDAMENTAL_PID=""
+  fi
+else
+  status_skip "Fundamental Engine" "SQLite unavailable"
+fi
+
+status_wait "Liquidity Engine" "after Market Data"
+IATB_MARKET_DATA_PORT="$MARKET_DATA_PORT" IATB_LIQUIDITY_PORT="$LIQUIDITY_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Liquidity/Engine/liquidity_service.js >> "$LIQUIDITY_LOG" 2>&1 &
+LIQUIDITY_PID=$!
+require_service "Liquidity Engine" "$LIQUIDITY_PORT" "/health" "IA-TB Liquidity Engine" "$LIQUIDITY_LOG" 10
+
+# 6. Risk is online before Trading accepts any mutating path.
+status_wait "Risk Engine" "before Trading"
+IATB_RISK_ENGINE_PORT="$RISK_ENGINE_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Risk/Engine/risk_service.js >> "$RISK_LOG" 2>&1 &
+RISK_ENGINE_PID=$!
+require_service "Risk Engine" "$RISK_ENGINE_PORT" "/health" "IA-TB Risk Engine" "$RISK_LOG" 10
+
+status_wait "Trading Engine" "after Firewall + Risk"
+IATB_TRADING_ENGINE_PORT="$TRADING_ENGINE_PORT" ROUTER_PORT="$ROUTER_PORT" IATB_TRADING_LIVE="0" "$NODE_BIN" services/trading-engine/trading_service.js >> "$TRADING_LOG" 2>&1 &
+TRADING_ENGINE_PID=$!
+require_service "Trading Engine" "$TRADING_ENGINE_PORT" "/health" "IA-TB Trading Engine" "$TRADING_LOG" 10
+
+# 7. Portfolio can now sync Trading history and marks through Router.
+status_wait "Portfolio Engine" "after Trading"
+IATB_PORTFOLIO_PORT="$PORTFOLIO_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Portfolio/Engine/portfolio_service.js >> "$PORTFOLIO_LOG" 2>&1 &
+PORTFOLIO_PID=$!
+require_service "Portfolio Engine" "$PORTFOLIO_PORT" "/health" "IA-TB Portfolio Engine" "$PORTFOLIO_LOG" 10
+
+# 8. Strategy sees all analysis/risk/portfolio dependencies.
+status_wait "Strategy Engine" "after Risk + Portfolio"
+IATB_STRATEGY_PORT="$STRATEGY_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Strategy/Engine/strategy_service.js >> "$STRATEGY_LOG" 2>&1 &
+STRATEGY_PID=$!
+require_service "Strategy Engine" "$STRATEGY_PORT" "/health" "IA-TB Strategy Engine v2" "$STRATEGY_LOG" 10
+
+# 9. Supervisor orchestrates only once the runtime topology is ready.
+status_wait "IA Supervisor" "last backend service"
+IATB_SUPERVISOR_PORT="$SUPERVISOR_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Supervisor/supervisor_service.js >> "$SUPERVISOR_LOG" 2>&1 &
+SUPERVISOR_PID=$!
+require_service "IA Supervisor" "$SUPERVISOR_PORT" "/health" "IA-TB Supervisor" "$SUPERVISOR_LOG" 10
+
+# 10. Public UI is always last.
+status_wait "UI Service" "public gateway"
+IATB_UI_PORT="$UI_PORT" CORE_PUBLIC_PORT="$CORE_PORT" ROUTER_PORT="$ROUTER_PORT" IATB_FIREWALL_PORT="$FIREWALL_PORT" IATB_AUTH_MODE="disabled" IATB_UI_BYPASS_ROLE="SUPERADMIN" "$NODE_BIN" UI/Gateway/ui_service.js >> "$UI_LOG" 2>&1 &
 UI_PID=$!
+require_service "UI Service" "$UI_PORT" "/ui-health" "IA-TB UI Service" "$UI_LOG" 10
 
-ui_ok=0
-for i in 1 2 3 4 5 6 7 8; do
-  body="$(http_get "http://127.0.0.1:$UI_PORT/ui-health")"
-  echo "$body" | grep -q 'IA-TB UI Service' && { ui_ok=1; break; }
-  sleep 1
-done
-if [ "$ui_ok" -ne 1 ]; then
-  status_fail "UI Service" ":$UI_PORT"
-  echo "--- $UI_LOG ---"
-  cat "$UI_LOG" 2>/dev/null || true
+section "[ 3/4 ]  COMMUNICATION VALIDATION"
+
+router_state="$(http_get "http://127.0.0.1:$ROUTER_PORT/router-health")"
+echo "$router_state" | grep -q '"router"' || {
+  status_fail "Router topology" "health unavailable"
   cleanup
   read -p "Appuie sur Entree pour fermer..."
   exit 1
-fi
+}
+status_ok "Router topology" "Core → Router → Engines"
 
-status_ok "UI Service" ":$UI_PORT"
+comm_state="$(http_get "http://127.0.0.1:$ROUTER_PORT/communication-health")"
+if echo "$comm_state" | grep -q '"ok"[[:space:]]*:[[:space:]]*true'; then
+  status_ok "CP/1 communication" "registry reachable"
+else
+  status_warn "CP/1 communication" "registry health incomplete"
+fi
 
 section "[ 4/4 ]  SYSTEM STATUS"
 
-printf "              ${C_GREEN}${C_BOLD}14 / 14 SERVICES ONLINE${C_RESET}\n"
+ONLINE_COUNT=13
+[ "$FUNDAMENTAL_READY" -eq 1 ] && ONLINE_COUNT=14
+printf "              ${C_GREEN}${C_BOLD}%s / 14 SERVICES ONLINE${C_RESET}\n" "$ONLINE_COUNT"
 echo
-printf "                 ${C_GREEN}${C_BOLD}IA-TB READY${C_RESET} · v2.0 DEBUG\n"
+printf "                 ${C_GREEN}${C_BOLD}IA-TB READY${C_RESET} · v%s %s\n" "$BUILD_VERSION" "$BUILD_STATUS"
 echo
 echo "  UI        http://127.0.0.1:$UI_PORT"
 echo "  Core      http://127.0.0.1:$CORE_PORT"
