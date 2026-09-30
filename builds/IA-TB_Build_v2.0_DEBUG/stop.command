@@ -93,7 +93,7 @@ stop_known_on_port(){
   if echo "$ui" | grep -q 'IA-TB UI Service'; then pid="$(json_pid "$ui")"; label="UI Service"
   elif echo "$r" | grep -q '"router"[[:space:]]*:[[:space:]]*true'; then pid="$(json_pid "$r")"; label="Router"
   elif echo "$k" | grep -q 'IA-TB Supervisor'; then pid="$(json_pid "$k")"; label="IA Supervisor"
-  elif echo "$a" | grep -q 'Crypto Chart Viewer IA Trader'; then pid="$(json_pid "$a")"; label="Core"
+  elif echo "$a" | grep -q 'IA-Trading-Bot'; then pid="$(json_pid "$a")"; label="Core"
   elif echo "$k" | grep -q 'Kraken Add-On'; then pid="$(json_pid "$k")"; label="Kraken Add-On"
   elif echo "$k" | grep -q 'IA-TB Indicator Engine'; then pid="$(json_pid "$k")"; label="Indicator Engine"
   elif echo "$k" | grep -q 'IA-TB Market Data'; then pid="$(json_pid "$k")"; label="Market Data"
