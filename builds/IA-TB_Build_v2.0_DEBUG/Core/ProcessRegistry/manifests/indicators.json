@@ -2,7 +2,7 @@
   "id": "indicators",
   "label": "Indicator Engine",
   "type": "ENGINE",
-  "order": 40,
+  "order": 60,
   "port": 8012,
   "healthPath": "/health",
   "marker": "IA-TB Indicator Engine",
