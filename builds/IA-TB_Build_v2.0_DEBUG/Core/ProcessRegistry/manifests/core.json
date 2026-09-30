@@ -7,5 +7,6 @@
   "healthPath": "/api/health",
   "marker": "Crypto Chart Viewer IA Trader",
   "restartable": false,
-  "defaultEnabled": true
+  "defaultEnabled": true,
+  "version": "2.0.0"
 }
