@@ -27,5 +27,6 @@
     "risk",
     "trading",
     "firewall"
-  ]
+  ],
+  "versionSource": "RUNTIME_HEALTH"
 }
