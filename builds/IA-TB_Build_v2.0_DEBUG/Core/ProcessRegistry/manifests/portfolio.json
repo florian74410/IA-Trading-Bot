@@ -2,7 +2,7 @@
   "id": "portfolio",
   "label": "Portfolio Engine",
   "type": "ENGINE",
-  "order": 115,
+  "order": 110,
   "port": 8020,
   "healthPath": "/health",
   "marker": "IA-TB Portfolio Engine",
