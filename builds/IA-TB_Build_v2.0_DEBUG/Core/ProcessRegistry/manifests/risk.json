@@ -2,7 +2,7 @@
   "id": "risk",
   "label": "Risk Manager Engine",
   "type": "ENGINE",
-  "order": 110,
+  "order": 90,
   "port": 8019,
   "healthPath": "/health",
   "marker": "IA-TB Risk Engine",
