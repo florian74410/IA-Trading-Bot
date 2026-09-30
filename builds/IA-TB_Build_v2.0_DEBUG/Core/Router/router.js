@@ -17,7 +17,9 @@ var LIQUIDITY_HOST='127.0.0.1',LIQUIDITY_PORT=+(process.env.IATB_LIQUIDITY_PORT|
 var FUNDAMENTAL_HOST='127.0.0.1',FUNDAMENTAL_PORT=+(process.env.IATB_FUNDAMENTAL_PORT||8015);
 var TRADING_ENGINE_HOST='127.0.0.1',TRADING_ENGINE_PORT=+(process.env.IATB_TRADING_ENGINE_PORT||8016),TRADING_FIREWALL_PORT=+(process.env.IATB_FIREWALL_PORT||process.env.IATB_TRADING_FIREWALL_PORT||8017);
 var STRATEGY_HOST='127.0.0.1',STRATEGY_PORT=+(process.env.IATB_STRATEGY_PORT||8018);
+var RISK_HOST='127.0.0.1',RISK_PORT=+(process.env.IATB_RISK_ENGINE_PORT||8019);
 var PORTFOLIO_HOST='127.0.0.1',PORTFOLIO_PORT=+(process.env.IATB_PORTFOLIO_PORT||8020);
+var SUPERVISOR_HOST='127.0.0.1',SUPERVISOR_PORT=+(process.env.IATB_SUPERVISOR_PORT||3000);
 var ROOT=__dirname,APP_ROOT=path.resolve(__dirname,'../..'),COMM=new CommRouter(APP_ROOT);
 var COMM_MAX_BODY=512*1024;
 
@@ -91,13 +93,14 @@ function exchangeKlines(req,u,res){
 }
 function probe(port,pathname,cb){var done=false,req=http.get({host:'127.0.0.1',port:port,path:pathname,timeout:1000},function(r){r.resume();r.on('end',function(){if(done)return;done=true;cb(null,r.statusCode);});});req.on('timeout',function(){req.destroy();});req.on('error',function(e){if(done)return;done=true;cb(e);});}
 function routerHealth(res){
- var specs=[['core',CORE_PORT,'/api/health'],['kraken',KRAKEN_PORT,'/health'],['indicators',INDICATOR_PORT,'/health'],['marketData',MARKET_DATA_PORT,'/health'],['liquidity',LIQUIDITY_PORT,'/health'],['fundamental',FUNDAMENTAL_PORT,'/health'],['trading',TRADING_ENGINE_PORT,'/health'],['strategy',STRATEGY_PORT,'/health'],['portfolio',PORTFOLIO_PORT,'/health']],out={},left=specs.length,finished=false;
- function finish(){if(finished)return;finished=true;sendJson(res,200,{ok:true,router:true,version:BUILD.version,communicationProtocol:'CP/1',pid:process.pid,host:HOST,port:PORT,core:out.core||{ok:false,port:CORE_PORT,status:0,error:'pending'},kraken:out.kraken||{ok:false,port:KRAKEN_PORT,status:0,error:'pending'},indicators:out.indicators||{ok:false,port:INDICATOR_PORT,status:0,error:'pending'},marketData:out.marketData||{ok:false,port:MARKET_DATA_PORT,status:0,error:'pending'},liquidity:out.liquidity||{ok:false,port:LIQUIDITY_PORT,status:0,error:'pending'},fundamental:out.fundamental||{ok:false,port:FUNDAMENTAL_PORT,status:0,error:'pending'},trading:out.trading||{ok:false,port:TRADING_ENGINE_PORT,status:0,error:'pending'},strategy:out.strategy||{ok:false,port:STRATEGY_PORT,status:0,error:'pending'},portfolio:out.portfolio||{ok:false,port:PORTFOLIO_PORT,status:0,error:'pending'},dependencies:out});}
+ var specs=[['core',CORE_PORT,'/api/health'],['router',PORT,'/router-health-internal'],['kraken',KRAKEN_PORT,'/health'],['firewall',FIREWALL_PORT,'/health'],['indicators',INDICATOR_PORT,'/health'],['marketData',MARKET_DATA_PORT,'/health'],['liquidity',LIQUIDITY_PORT,'/health'],['fundamental',FUNDAMENTAL_PORT,'/health'],['risk',RISK_PORT,'/health'],['trading',TRADING_ENGINE_PORT,'/health'],['portfolio',PORTFOLIO_PORT,'/health'],['strategy',STRATEGY_PORT,'/health'],['supervisor',SUPERVISOR_PORT,'/health']],out={},left=specs.length,finished=false;
+ function finish(){if(finished)return;finished=true;sendJson(res,200,{ok:true,router:true,version:BUILD.version,communicationProtocol:'CP/1',pid:process.pid,host:HOST,port:PORT,core:out.core||{ok:false,port:CORE_PORT,status:0,error:'pending'},kraken:out.kraken||{ok:false,port:KRAKEN_PORT,status:0,error:'pending'},indicators:out.indicators||{ok:false,port:INDICATOR_PORT,status:0,error:'pending'},marketData:out.marketData||{ok:false,port:MARKET_DATA_PORT,status:0,error:'pending'},liquidity:out.liquidity||{ok:false,port:LIQUIDITY_PORT,status:0,error:'pending'},fundamental:out.fundamental||{ok:false,port:FUNDAMENTAL_PORT,status:0,error:'pending'},trading:out.trading||{ok:false,port:TRADING_ENGINE_PORT,status:0,error:'pending'},strategy:out.strategy||{ok:false,port:STRATEGY_PORT,status:0,error:'pending'},risk:out.risk||{ok:false,port:RISK_PORT,status:0,error:'pending'},portfolio:out.portfolio||{ok:false,port:PORTFOLIO_PORT,status:0,error:'pending'},supervisor:out.supervisor||{ok:false,port:SUPERVISOR_PORT,status:0,error:'pending'},firewall:out.firewall||{ok:false,port:FIREWALL_PORT,status:0,error:'pending'},dependencies:out});}
  specs.forEach(function(sp){probe(sp[1],sp[2],function(e,code){out[sp[0]]={ok:!e&&code===200,port:sp[1],status:code||0,error:e?e.message:''};if(--left===0)finish();});});
  setTimeout(finish,850);
 }
 
 var server=http.createServer(function(req,res){var u=new URL(req.url,'http://'+HOST+':'+PORT),p=u.pathname;
+ if(p==='/router-health-internal')return sendJson(res,200,{ok:true,router:true,pid:process.pid,port:PORT,version:BUILD.version});
  if(p==='/router-health')return routerHealth(res);
  if(req.method==='GET'&&p==='/communication-health')return COMM.health(function(e,o){if(e)return sendJson(res,503,{ok:false,error:e.message});sendJson(res,200,o);});
  if(req.method==='POST'&&p==='/communication-test')return communicationTest(res);
