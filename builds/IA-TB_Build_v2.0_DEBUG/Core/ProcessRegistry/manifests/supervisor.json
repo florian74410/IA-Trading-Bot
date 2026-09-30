@@ -2,7 +2,7 @@
   "id": "supervisor",
   "label": "IA Supervisor",
   "type": "SERVICE",
-  "order": 120,
+  "order": 130,
   "port": 3000,
   "healthPath": "/health",
   "marker": "IA-TB Supervisor",
@@ -14,6 +14,18 @@
     "IATB_SUPERVISOR_PORT": "3000",
     "ROUTER_PORT": "8021"
   },
-  "dependencies": ["router"],
-  "optionalDependencies": ["marketdata","indicators","fundamental","liquidity","portfolio","strategy","risk","trading","firewall"]
+  "dependencies": [
+    "router"
+  ],
+  "optionalDependencies": [
+    "marketdata",
+    "indicators",
+    "fundamental",
+    "liquidity",
+    "portfolio",
+    "strategy",
+    "risk",
+    "trading",
+    "firewall"
+  ]
 }
