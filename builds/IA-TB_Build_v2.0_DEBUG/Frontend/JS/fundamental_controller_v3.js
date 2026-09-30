@@ -187,6 +187,7 @@ function removeLegacyDiagnosticObservabilityViews(){
 }
 
 function setFundView(v){v=v||'overview';document.body.setAttribute('data-fund-view',v);var bs=document.querySelectorAll('.fundSidebar button[data-view]');for(var z=0;z<bs.length;z++)bs[z].classList.toggle('active',bs[z].getAttribute('data-view')===v);if(v==='console')setTimeout(function(){revealTarget('fundamentalConsole')},30);refreshAll().catch(function(){});window.scrollTo(0,0)}
+window.addEventListener('iatb-fund-view',function(ev){var v=ev&&ev.detail&&ev.detail.view;if(v)setFundView(String(v));});
 function bindSidebarCategories(){var xs=document.querySelectorAll('.sideCategoryToggle');for(var i=0;i<xs.length;i++)xs[i].onclick=function(){var box=this.parentNode,open=!box.classList.contains('open');box.classList.toggle('open',open);this.setAttribute('aria-expanded',open?'true':'false')}}
 function bindCockpit(){var xs=document.querySelectorAll('[data-expand-target]');for(var i=0;i<xs.length;i++)xs[i].onclick=function(){revealTarget(this.getAttribute('data-expand-target'))};var bs=document.querySelectorAll('.fundSidebar button[data-view]');for(var j=0;j<bs.length;j++)bs[j].onclick=function(){setFundView(this.getAttribute('data-view'))};setFundView('overview');var ev=$('dashRecentEvents');if(ev)ev.onclick=function(e){var b=e.target;if(b&&b.getAttribute){var key=b.getAttribute('data-event-detail');if(key!==null)openEventDetail(key)}};setInterval(function(){loadCockpitEvents()},5000)}
 
