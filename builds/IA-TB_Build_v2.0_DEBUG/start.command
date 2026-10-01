@@ -112,7 +112,7 @@ stop_known_on_port(){
   elif echo "$body_router" | grep -q '"router"[[:space:]]*:[[:space:]]*true'; then
     pid="$(json_pid "$body_router")"; label="Router"
   elif echo "$body_health" | grep -q 'IA-Trading-Bot'; then
-    pid="$(json_pid "$body_health")"; label="TradingBot"
+    pid="$(json_pid "$body_health")"; label="IA-TB"
   elif echo "$body_kraken" | grep -q 'Kraken Add-On'; then
     pid="$(json_pid "$body_kraken")"; label="Kraken Add-On"
   elif echo "$body_kraken" | grep -q 'IA-TB Indicator Engine'; then
@@ -153,7 +153,7 @@ stop_known_on_port(){
   fi
   if port_busy "$port"; then
     say "ERREUR: le port $port est encore utilise."
-    say "Ferme l'ancienne fenetre Terminal/TradingBot qui utilise ce port puis relance start.command."
+    say "Ferme l'ancienne fenetre Terminal/IA-TB qui utilise ce port puis relance start.command."
     return 1
   fi
   return 0
