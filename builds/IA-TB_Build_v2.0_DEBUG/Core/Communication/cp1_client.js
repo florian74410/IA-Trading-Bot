@@ -39,6 +39,26 @@ Client.prototype._post=function(pathname,obj,opt,cb){
  q.on('error',function(e){if(done)return;done=true;cb(e);});
  q.end(raw);
 };
+function routerPathAllowed(pathname,method){
+ pathname=String(pathname||'').split('?')[0];
+ if(method==='GET')return pathname==='/communication-health'||pathname==='/router-health'||pathname==='/communication/v1/registry'||pathname.indexOf('/communication/v1/registry/')===0||pathname==='/communication/v1/capabilities'||pathname==='/communication/v1/runtime'||pathname==='/communication/v1/events';
+ if(method==='POST')return pathname==='/communication/v1/client/plan'||pathname==='/communication/v1/client/ack'||pathname==='/communication-test';
+ return false;
+}
+Client.prototype._get=function(pathname,opt,cb){
+ opt=opt||{};cb=typeof cb==='function'?cb:function(){};
+ if(!routerPathAllowed(pathname,'GET'))return cb(new Error('CP_ROUTER_PATH_FORBIDDEN'));
+ var token;try{token=this._token();}catch(e){return cb(e);}
+ var done=false,self=this,limit=Math.max(65536,Math.min(8*1024*1024,+opt.maxBytes||self.maxBytes));
+ var q=http.get({host:self.host,port:self.port,path:pathname,timeout:+opt.timeout||self.timeout,headers:{Accept:'application/json','X-IATB-CP-Token':token}},function(r){
+  var a=[],n=0;r.on('data',function(x){n+=x.length;if(n<=limit)a.push(x);});r.on('end',function(){if(done)return;done=true;if(n>limit)return cb(new Error('CP_ROUTER_RESPONSE_TOO_LARGE'));var out;try{out=JSON.parse(Buffer.concat(a).toString('utf8')||'{}');}catch(e){return cb(new Error('CP_ROUTER_JSON_INVALID'));}if((r.statusCode||500)>=400||out.ok===false){var er=new Error(out.error||('CP_ROUTER_HTTP_'+r.statusCode));er.statusCode=r.statusCode||500;er.response=out;return cb(er);}cb(null,out,r.statusCode||200);});
+ });q.on('timeout',function(){q.destroy(new Error('CP_ROUTER_TIMEOUT'));});q.on('error',function(e){if(done)return;done=true;cb(e);});
+};
+Client.prototype.routerGet=function(pathname,cb){this._get(pathname,{},cb);};
+Client.prototype.routerPost=function(pathname,obj,cb){if(!routerPathAllowed(pathname,'POST'))return cb(new Error('CP_ROUTER_PATH_FORBIDDEN'));this._post(pathname,obj||{},{timeout:this.timeout,maxBytes:this.maxBytes},cb);};
+Client.prototype.planClientAction=function(action,args,meta,cb){this.routerPost('/communication/v1/client/plan',{action:action,arguments:args||{},meta:meta||{}},cb);};
+Client.prototype.ackClientAction=function(ack,cb){this.routerPost('/communication/v1/client/ack',ack||{},cb);};
+
 Client.prototype.requestMessage=function(message,cb){
  this._post('/communication/v1/request',message,{},function(e,o){if(e)return cb(e);cb(null,o&&o.data!==undefined?o.data:o,o);});
 };
