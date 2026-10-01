@@ -137,7 +137,7 @@
             <div class="updateOverflow updateHistoryScroll"><table class="updateHistory"><thead><tr><th>Date</th><th>Version</th><th>Source</th><th>État</th><th>Sauvegarde</th></tr></thead><tbody id="updateHistoryBody"><tr><td colspan="5" class="muted">Chargement…</td></tr></tbody></table></div>
           </div>
           <div class="updateCard wide">
-            <h3>📦 Déposer un patch Crypto Chart Viewer IA Trader</h3>
+            <h3>📦 Déposer un patch IA-Trading-Bot</h3>
             <div class="settingHint">Dépose <b>une archive de mise à jour .zip</b>. L’archive est contrôlée avant installation : application, version source, version cible, chemins et SHA‑256.</div>
             <div id="updateDropZone" class="updateDropZone" tabindex="0" role="button" aria-label="Déposer ou sélectionner une archive de mise à jour .zip"><div class="updateDropIcon">⇩</div><strong>Glisse et dépose une archive .zip ici</strong><span>ou</span><button id="updateBrowse" class="btn secondary" type="button">Choisir l’archive</button><input id="updateFile" type="file" accept=".zip,application/zip" hidden><div id="updateDropName" class="tiny">Aucune archive sélectionnée.</div></div>
             <div id="updateSourceMsg" class="result"></div>
@@ -145,7 +145,7 @@
           </div>
           <div class="updateCard wide">
             <h3>🤖 AI Update Builder</h3>
-            <div class="settingHint">Le Chat peut construire un patch dans <code>Updates/AI-Generated/</code>, le faire vérifier par le même UpdateManager puis, selon les autorisations ci-dessous, l’installer et demander au launcher superviseur de redémarrer Crypto Chart Viewer IA Trader.</div>
+            <div class="settingHint">Le Chat peut construire un patch dans <code>Updates/AI-Generated/</code>, le faire vérifier par le même UpdateManager puis, selon les autorisations ci-dessous, l’installer et demander au launcher superviseur de redémarrer IA-Trading-Bot.</div>
             <div class="settingRow"><div><b>Autoriser la création</b><div class="settingHint">Le Chat peut générer et tester un patch, sans l’installer.</div></div><input id="aiUpdateAllowCreate" type="checkbox"></div>
             <div class="settingRow"><div><b>Autoriser l’installation</b><div class="settingHint">Permet au Chat d’installer un patch qu’il vient de générer et vérifier.</div></div><input id="aiUpdateAllowInstall" type="checkbox"></div>
             <div class="settingRow"><div><b>Autoriser le redémarrage automatique</b><div class="settingHint">Après redémarrage, un health-check valide la release ; en cas d’échec, rollback automatique.</div></div><input id="aiUpdateAllowRestart" type="checkbox"></div>
