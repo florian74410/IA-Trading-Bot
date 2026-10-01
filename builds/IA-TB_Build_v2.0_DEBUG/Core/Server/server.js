@@ -199,9 +199,7 @@ function cryptoResolve(id,network,cb){
 
 
 function fundamentalIntent(t){return /(fondamental|fundamental|source(?:s)?|news|actualit[eé]|\bfed\b|fomc|\bbce\b|\becb\b|\bsec\b|\bamf\b|macro|inflation|taux|dollar|\bdxy\b|adoption|r[eé]gulation|regulation|twitter|truth social|\btrump\b|reuters|bloomberg|hack|exploit|s[eé]curit[eé]|sentiment)/i.test(String(t||''));}
-function fundamentalJson(pathname,cb,timeout){var done=false,q=http.get({host:'127.0.0.1',port:FUNDAMENTAL_PORT,path:pathname,timeout:timeout||1800,headers:{Accept:'application/json'}},function(r){var a=[],n=0;r.on('data',function(c){n+=c.length;if(n<=384*1024)a.push(c);});r.on('end',function(){if(done)return;done=true;var txt=Buffer.concat(a).toString('utf8'),o;try{o=JSON.parse(txt);}catch(e){return cb(new Error('Fundamental JSON invalide'));}if((r.statusCode||500)>=400)return cb(new Error(o.error||('Fundamental HTTP '+r.statusCode)));cb(null,o);});});q.on('timeout',function(){q.destroy(new Error('Fundamental timeout'));});q.on('error',function(e){if(done)return;done=true;cb(e);});}
-
-function fundamentalRequestJson(method,pathname,data,cb,timeout){var payload=data==null?null:JSON.stringify(data),done=false,h={Accept:'application/json'};if(payload){h['Content-Type']='application/json';h['Content-Length']=Buffer.byteLength(payload);}var q=http.request({host:'127.0.0.1',port:FUNDAMENTAL_PORT,path:pathname,method:method||'GET',timeout:timeout||5000,headers:h},function(r){var a=[],n=0;r.on('data',function(c){n+=c.length;if(n<=512*1024)a.push(c);});r.on('end',function(){if(done)return;done=true;var txt=Buffer.concat(a).toString('utf8'),o;try{o=JSON.parse(txt);}catch(e){return cb(new Error('Fundamental JSON invalide'));}if((r.statusCode||500)>=400)return cb(new Error(o.error||('Fundamental HTTP '+r.statusCode)));cb(null,o);});});q.on('timeout',function(){q.destroy(new Error('Fundamental timeout'));});q.on('error',function(e){if(done)return;done=true;cb(e);});if(payload)q.write(payload);q.end();}
+function fundamentalCp(action,args,detail,cb){COMM_CLIENT.request('fundamental',action,args||{},detail||'summary',cb);}
 function translationLanguage(){var a=readAppSettings(activeAppSettingsFile()).data.general||{},l=String(a.language||'fr').toLowerCase();return SUPPORTED_LANGUAGES[l]?l:'fr';}
 function normalizeTranslationSourceLanguage(item){var l=String(item&&item.language||'').toLowerCase().replace(/_/g,'-'),base=l.split('-')[0],src=String(item&&item.source_code||'').toUpperCase();if(SUPPORTED_LANGUAGES[base])return base;if(src==='AMF'||src==='INSEE')return'fr';return'en';}
 function utf8Chunks(text,maxBytes){text=String(text||'').replace(/\s+/g,' ').trim();maxBytes=Math.max(80,Math.min(480,+maxBytes||450));if(!text)return[];var tokens=text.split(/(\s+)/),out=[],buf='';function push(){var x=buf.trim();if(x)out.push(x);buf='';}function addLong(token){var chars=Array.from(token),part='';for(var j=0;j<chars.length;j++){var ch=chars[j];if(part&&Buffer.byteLength(part+ch,'utf8')>maxBytes){out.push(part);part='';}part+=ch;}if(part)buf=part;}for(var i=0;i<tokens.length;i++){var tok=tokens[i];if(!tok)continue;if(Buffer.byteLength(tok,'utf8')>maxBytes){push();addLong(tok);continue;}if(buf&&Buffer.byteLength(buf+tok,'utf8')>maxBytes)push();buf+=tok;}push();return out;}
@@ -210,7 +208,27 @@ function validTranslationContactEmail(email){email=String(email||'').trim().toLo
 function myMemorySegment(text,sourceLang,targetLang,contactEmail,cb){text=String(text||'').trim();if(!text)return cb(null,'');if(sourceLang===targetLang)return cb(null,text);contactEmail=validTranslationContactEmail(contactEmail);var url='https://api.mymemory.translated.net/get?q='+encodeURIComponent(text)+'&langpair='+encodeURIComponent(sourceLang+'|'+targetLang)+'&mt=1'+(contactEmail?'&de='+encodeURIComponent(contactEmail):'');request('GET',url,{'Accept':'application/json','User-Agent':'Crypto-Chart-Viewer-IA-Trader/1.6.6'},null,function(e,o){if(e){var code=+(e&&e.statusCode||0);if(code===429)return cb(new Error('TRANSLATION_MYMEMORY_LIMIT: HTTP 429'));return cb(new Error('TRANSLATION_MYMEMORY_NETWORK: '+String(e.message||e)));}var status=+(o&&o.responseStatus||0),detail=String(o&&o.responseDetails||''),translated=decodeTranslationText(o&&o.responseData&&o.responseData.translatedText).trim();if(status===429)return cb(new Error('TRANSLATION_MYMEMORY_LIMIT: HTTP 429'+(detail?': '+detail:'')));if(status&&status!==200)return cb(new Error('TRANSLATION_MYMEMORY_STATUS_'+status+(detail?': '+detail:'')));if(!translated)return cb(new Error('TRANSLATION_MYMEMORY_EMPTY'));cb(null,translated);},15000);}
 function myMemoryText(text,sourceLang,targetLang,contactEmail,cb){var chunks=utf8Chunks(text,450),out=[],i=0;if(!chunks.length)return cb(null,'');function next(){if(i>=chunks.length)return cb(null,out.join(' ').replace(/\s+/g,' ').trim());myMemorySegment(chunks[i++],sourceLang,targetLang,contactEmail,function(e,t){if(e)return cb(e);out.push(t);setTimeout(next,90);});}next();}
 function callFundamentalTranslation(item,lang,contactEmail,cb){var sourceLang=normalizeTranslationSourceLanguage(item),title=String(item.title||'').trim(),summary=String(item.summary||'').trim();if(sourceLang===lang)return cb(null,{translated_title:title,translated_summary:summary,source_language:sourceLang});myMemoryText(title,sourceLang,lang,contactEmail,function(te,tt){if(te)return cb(te);myMemoryText(summary,sourceLang,lang,contactEmail,function(se,ts){if(se)return cb(se);if(!String(tt||'').trim())return cb(new Error('TRANSLATION_OUTPUT_INVALID: translated_title vide'));cb(null,{translated_title:String(tt||'').trim(),translated_summary:String(ts||'').trim(),source_language:sourceLang});});});}
-function translateFundamentalItem(itemId,sess,cb){itemId=Math.round(+itemId||0);if(itemId<1)return cb(new Error('RAW_ITEM_ID_INVALID'));var lang=translationLanguage(),cacheKey=itemId+'|'+lang,usr=readUser(),contactEmail=validTranslationContactEmail((usr&&usr.email)||(sess&&sess.email)||'');function finish(e,o){var wait=FUNDAMENTAL_TRANSLATION_INFLIGHT[cacheKey]||[];delete FUNDAMENTAL_TRANSLATION_INFLIGHT[cacheKey];for(var i=0;i<wait.length;i++)try{wait[i](e,o);}catch(x){}}if(FUNDAMENTAL_TRANSLATION_INFLIGHT[cacheKey]){FUNDAMENTAL_TRANSLATION_INFLIGHT[cacheKey].push(cb);return;}FUNDAMENTAL_TRANSLATION_INFLIGHT[cacheKey]=[cb];fundamentalJson('/api/translations?itemId='+itemId+'&lang='+encodeURIComponent(lang),function(ce,co){if(!ce&&co&&co.translation){log('FUNDAMENTAL','Traduction cache HIT',cacheKey);return finish(null,{ok:true,cached:true,language:lang,languageName:SUPPORTED_LANGUAGES[lang],translation:co.translation});}fundamentalJson('/api/raw-items/'+itemId,function(e,o){if(e)return finish(e);var item=o&&o.item;if(!item)return finish(new Error('RAW_ITEM_NOT_FOUND'));callFundamentalTranslation(item,lang,contactEmail,function(te,tr){if(te){var er=new Error('TRANSLATION_FAILED: '+String(te.message||te));er.statusCode=te&&String(te.message||'').indexOf('TRANSLATION_MYMEMORY_LIMIT')===0?429:502;return finish(er);}var payload={raw_item_id:itemId,target_lang:lang,translated_title:tr.translated_title,translated_summary:tr.translated_summary,provider:'MYMEMORY'};fundamentalRequestJson('POST','/api/translations',payload,function(se,so){if(se)return finish(se);log('FUNDAMENTAL','Traduction MyMemory sauvegardee',String(itemId)+' '+String(tr.source_language||'en')+' -> '+lang+' contact='+(contactEmail?'SET':'NONE'));finish(null,{ok:true,cached:false,language:lang,languageName:SUPPORTED_LANGUAGES[lang],translation:so.translation});},5000);});},2500);},1600);}
+function translateFundamentalItem(itemId,sess,cb){
+ itemId=Math.round(+itemId||0);if(itemId<1)return cb(new Error('RAW_ITEM_ID_INVALID'));
+ var lang=translationLanguage(),cacheKey=itemId+'|'+lang,usr=readUser(),contactEmail=validTranslationContactEmail((usr&&usr.email)||(sess&&sess.email)||'');
+ function finish(err,out){var wait=FUNDAMENTAL_TRANSLATION_INFLIGHT[cacheKey]||[];delete FUNDAMENTAL_TRANSLATION_INFLIGHT[cacheKey];for(var i=0;i<wait.length;i++)try{wait[i](err,out);}catch(x){}}
+ if(FUNDAMENTAL_TRANSLATION_INFLIGHT[cacheKey]){FUNDAMENTAL_TRANSLATION_INFLIGHT[cacheKey].push(cb);return;}
+ FUNDAMENTAL_TRANSLATION_INFLIGHT[cacheKey]=[cb];
+ fundamentalCp('fundamental.translation.get',{itemId:itemId,lang:lang},'summary',function(ce,co){
+  if(!ce&&co&&co.translation){log('FUNDAMENTAL','Traduction cache HIT',cacheKey);return finish(null,{ok:true,cached:true,language:lang,languageName:SUPPORTED_LANGUAGES[lang],translation:co.translation});}
+  fundamentalCp('fundamental.news.get',{id:itemId},'summary',function(ne,no){
+   if(ne)return finish(ne);var item=no&&no.item;if(!item)return finish(new Error('RAW_ITEM_NOT_FOUND'));
+   callFundamentalTranslation(item,lang,contactEmail,function(te,tr){
+    if(te){var er=new Error('TRANSLATION_FAILED: '+String(te.message||te));er.statusCode=te&&String(te.message||'').indexOf('TRANSLATION_MYMEMORY_LIMIT')===0?429:502;return finish(er);}
+    var payload={raw_item_id:itemId,target_lang:lang,translated_title:tr.translated_title,translated_summary:tr.translated_summary,provider:'MYMEMORY'};
+    fundamentalCp('fundamental.translation.save',payload,'summary',function(se,so){
+     if(se)return finish(se);log('FUNDAMENTAL','Traduction MyMemory sauvegardee',String(itemId)+' '+String(tr.source_language||'en')+' -> '+lang+' contact='+(contactEmail?'SET':'NONE'));
+     finish(null,{ok:true,cached:false,language:lang,languageName:SUPPORTED_LANGUAGES[lang],translation:so&&so.translation||null});
+    });
+   });
+  });
+ });
+}
 function runAutoTranslationBatch(){
  if(FUNDAMENTAL_AUTO_TRANSLATION_RUNNING)return;
  FUNDAMENTAL_AUTO_TRANSLATION_RUNNING=true;
@@ -219,7 +237,7 @@ function runAutoTranslationBatch(){
  var translated=0,failed=0,skip=Object.create(null),stoppedByQuota=false;
  function finish(reason){FUNDAMENTAL_AUTO_TRANSLATION_RUNNING=false;log('FUNDAMENTAL','Auto traduction terminee','lang='+lang+' translated='+translated+' failed='+failed+(stoppedByQuota?' quota=LIMIT':'')+(reason?' reason='+reason:''));}
  function load(){
-  fundamentalJson('/api/translations/pending?lang='+encodeURIComponent(lang)+'&limit=200',function(e,o){
+  fundamentalCp('fundamental.translation.pending',{lang:lang,limit:200},'summary',function(e,o){
    if(e)return finish('pending '+String(e.message||e));
    var items=o&&Array.isArray(o.items)?o.items.filter(function(x){return x&&x.id&&!skip[String(x.id)];}):[];
    if(!items.length)return finish('complete');
@@ -237,7 +255,7 @@ function runAutoTranslationBatch(){
     });
    }
    next();
-  },5000);
+  });
  }
  log('FUNDAMENTAL','Auto traduction demarree','lang='+lang);
  load();
@@ -251,18 +269,18 @@ function startAutoTranslationScheduler(){
 
 function fundamentalAiContext(cb){
  var since=new Date(Date.now()-86400000).toISOString();
- fundamentalJson('/api/summary',function(se,so){
+ fundamentalCp('fundamental.summary',{},'summary',function(se,so){
   if(se)return cb(se);
-  fundamentalJson('/api/raw-items?since='+encodeURIComponent(since)+'&limit=36',function(ie,io){
+  fundamentalCp('fundamental.news.search',{since:since,limit:36,sort:'DATE_DESC'},'summary',function(ie,io){
    if(ie)return cb(ie);
    var recent=io&&Array.isArray(io.items)?io.items:[];
    if(recent.length>=8)return cb(null,FundamentalAISummary.buildContext(so,io,translationLanguage(),'24H'));
-   fundamentalJson('/api/raw-items?limit=28',function(fe,fo){
+   fundamentalCp('fundamental.news.search',{limit:28,sort:'DATE_DESC'},'summary',function(fe,fo){
     if(fe)return cb(fe);
-    return cb(null,FundamentalAISummary.buildContext(so,fo,translationLanguage(),recent.length?'24H + RECENT_FALLBACK':'RECENT_FALLBACK'));
-   },2500);
-  },3000);
- },2200);
+    cb(null,FundamentalAISummary.buildContext(so,fo,translationLanguage(),recent.length?'24H + RECENT_FALLBACK':'RECENT_FALLBACK'));
+   });
+  });
+ });
 }
 function fundamentalAiPublicState(){
  var st=secretStatus(),x=FUNDAMENTAL_AI_CACHE.data;
@@ -290,14 +308,18 @@ function generateFundamentalAiSummary(sess,opts,cb){
    FUNDAMENTAL_AI_CACHE={key:keyHash,at:Date.now(),data:data,model:model,usage:data.usage,basis:basis};
    log('FUNDAMENTAL','Synthese IA OpenAI OK','items='+basis.itemsUsed+' bodies='+basis.itemsWithBody+' tone='+parsed.marketTone+' confidence='+parsed.confidence+' tokens='+tot);
    /* Persist every newly generated synthesis in Fundamental's shared database. It is application knowledge, never user-private data. */
-   fundamentalRequestJson('POST','/api/syntheses/import',{scope:'MARKET',query:{window:ctx.window,language:ctx.language},inputHash:keyHash,model:model,result:parsed,evidenceCount:basis.itemsUsed},function(pe,po){if(pe){log('FUNDAMENTAL','Synthese persistence ERROR',pe.message);data.persistence={shared:true,saved:false,error:pe.message};}else{data.persistence={shared:true,saved:true,id:po&&po.synthesis&&po.synthesis.id||null};}cb(null,{ok:true,cached:false,data:data});},5000);
+   fundamentalCp('fundamental.synthesis.import',{scope:'MARKET',query:{window:ctx.window,language:ctx.language},inputHash:keyHash,model:model,result:parsed,evidenceCount:basis.itemsUsed},'summary',function(pe,po){if(pe){log('FUNDAMENTAL','Synthese persistence ERROR',pe.message);data.persistence={shared:true,saved:false,error:pe.message};}else{data.persistence={shared:true,saved:true,id:po&&po.synthesis&&po.synthesis.id||null};}cb(null,{ok:true,cached:false,data:data});});
   },35000);
  });
 }
 
 
-function proxyFundamental(req,res,u,p){var sub=p.slice('/api/fundamental'.length)||'/',target=sub==='/health'?'/health':'/api'+sub;target+=u.search||'';var h={Accept:'application/json'};if(req.headers['content-type'])h['Content-Type']=req.headers['content-type'];if(req.headers['content-length'])h['Content-Length']=req.headers['content-length'];var q=http.request({host:'127.0.0.1',port:FUNDAMENTAL_PORT,path:target,method:req.method,headers:h,timeout:12000},function(r){var rh={'Content-Type':r.headers['content-type']||'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'};if(r.headers['content-length'])rh['Content-Length']=r.headers['content-length'];res.writeHead(r.statusCode||502,rh);r.pipe(res);});q.on('timeout',function(){q.destroy(new Error('Fundamental timeout'));});q.on('error',function(e){if(!res.headersSent)json(res,503,{ok:false,error:'Fundamental Engine indisponible',detail:e.message});else try{res.end();}catch(x){}});req.pipe(q);}
-
+function proxyFundamental(req,res,u,p){
+ var sub=p.slice('/api/fundamental'.length)||'/',target='/fundamental-api'+(sub==='/'?'':sub)+(u.search||''),h={Accept:'application/json'};
+ if(req.headers['content-type'])h['Content-Type']=req.headers['content-type'];if(req.headers['content-length'])h['Content-Length']=req.headers['content-length'];
+ var q=http.request({host:'127.0.0.1',port:+(process.env.ROUTER_PORT||8021),path:target,method:req.method,headers:h,timeout:12000},function(r){var rh={'Content-Type':r.headers['content-type']||'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'};if(r.headers['content-length'])rh['Content-Length']=r.headers['content-length'];res.writeHead(r.statusCode||502,rh);r.pipe(res);});
+ q.on('timeout',function(){q.destroy(new Error('Fundamental compatibility proxy timeout'));});q.on('error',function(er){if(!res.headersSent)json(res,503,{ok:false,error:'Fundamental Engine indisponible via Router',detail:er.message});else try{res.end();}catch(x){}});req.pipe(q);
+}
 function validAddress(a){return typeof a==='string'&&/^0x[0-9a-fA-F]{40}$/.test(a);}
 function gmxBaseList(){var c=cfg(),a=[];[c.GMX_API_PRIMARY,c.GMX_API_PEER].forEach(function(x){x=String(x||'').replace(/\/$/,'');if(/^https:\/\//.test(x)&&a.indexOf(x)<0)a.push(x);});return a;}
 function gmxRequest(method,ep,data,cb){var bases=gmxBaseList(),i=0,payload=data?JSON.stringify(data):null;function run(last){if(i>=bases.length)return cb(last||new Error('GMX API indisponible'));var base=bases[i++],h={'Accept':'application/json'};if(payload){h['Content-Type']='application/json';h['Content-Length']=Buffer.byteLength(payload);}request(method,base+ep,h,payload,function(e,o){if(e){log('GMX','API peer erreur',base+' '+e.message);return run(e);}cb(null,o);},14000);}run();}
