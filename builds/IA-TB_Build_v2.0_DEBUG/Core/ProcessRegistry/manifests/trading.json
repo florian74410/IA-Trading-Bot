@@ -27,5 +27,6 @@
     "routeVia": "firewall",
     "routePort": 8017,
     "runtimePort": 8016
-  }
+  },
+  "optionalDependencies": []
 }
