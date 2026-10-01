@@ -42,6 +42,19 @@
         }
       },
       {
+        "name": "marketdata.symbols",
+        "arguments": {
+          "allowed": [
+            "source",
+            "exchange",
+            "query",
+            "q",
+            "limit"
+          ]
+        },
+        "description": "Generic symbol catalogue resolved by the selected Market Data provider. Dynamic when supported by the provider, configured fallback otherwise."
+      },
+      {
         "name": "marketdata.providers",
         "arguments": {
           "allowed": []
