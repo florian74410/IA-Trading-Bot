@@ -225,6 +225,7 @@ SUPERVISOR_LOG="$LOG_DIR/supervisor.log"
 # Fundamental Engine V3: SQLite native dependency tested with the local Node runtime.
 # Echec non bloquant: IA-TB reste disponible et le FE apparaitra OFFLINE dans ADMIN.
 FUNDAMENTAL_READY=0
+KRAKEN_READY=0
 if [ -f "$PWD/Fundamental/install_sqlite.command" ]; then
   status_wait "SQLite / Fundamental" "checking"
   if /bin/bash "$PWD/Fundamental/install_sqlite.command"; then
@@ -366,10 +367,16 @@ fi
 status_ok "Firewall workers" "Trading + Market Data"
 
 # 4. Local Kraken bridge, then universal Market Data.
-status_wait "Kraken Adapter" "provider bridge"
+status_wait "Kraken Adapter" "optional provider bridge"
 KRAKEN_ADDON_PORT="$KRAKEN_PORT" "$NODE_BIN" AddOns/Kraken/kraken_service.js >> "$KRAKEN_LOG" 2>&1 &
 KRAKEN_PID=$!
-require_service "Kraken Adapter" "$KRAKEN_PORT" "/health" "Kraken Add-On" "$KRAKEN_LOG" 10
+if wait_service "Kraken Adapter" "$KRAKEN_PORT" "/health" "Kraken Add-On" "$KRAKEN_LOG" 6; then
+  KRAKEN_READY=1
+else
+  status_warn "Kraken Adapter" "offline · autres CEX/DEX restent disponibles"
+  [ -n "$KRAKEN_PID" ] && kill "$KRAKEN_PID" >/dev/null 2>&1 || true
+  KRAKEN_PID=""
+fi
 
 status_wait "Market Data Collector" "CEX/DEX registry"
 KRAKEN_ADDON_PORT="$KRAKEN_PORT" IATB_MARKET_DATA_PORT="$MARKET_DATA_PORT" IATB_FIREWALL_PORT="$FIREWALL_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" MarketData/market_data_service.js >> "$MARKET_DATA_LOG" 2>&1 &
@@ -456,8 +463,9 @@ fi
 
 section "[ 4/4 ]  SYSTEM STATUS"
 
-ONLINE_COUNT=13
-[ "$FUNDAMENTAL_READY" -eq 1 ] && ONLINE_COUNT=14
+ONLINE_COUNT=12
+[ "$KRAKEN_READY" -eq 1 ] && ONLINE_COUNT=$((ONLINE_COUNT+1))
+[ "$FUNDAMENTAL_READY" -eq 1 ] && ONLINE_COUNT=$((ONLINE_COUNT+1))
 printf "              ${C_GREEN}${C_BOLD}%s / 14 SERVICES ONLINE${C_RESET}\n" "$ONLINE_COUNT"
 echo
 printf "                 ${C_GREEN}${C_BOLD}IA-TB READY${C_RESET} · v%s %s\n" "$BUILD_VERSION" "$BUILD_STATUS"
