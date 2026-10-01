@@ -14,5 +14,9 @@
     "IATB_FUNDAMENTAL_PORT": "8015",
     "ROUTER_PORT": "8021"
   },
-  "versionSource": "RUNTIME_HEALTH"
+  "versionSource": "RUNTIME_HEALTH",
+  "dependencies": [
+    "router"
+  ],
+  "optionalDependencies": []
 }
