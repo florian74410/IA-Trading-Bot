@@ -142,5 +142,8 @@
       }
     ],
     "events": []
+  },
+  "registration": {
+    "dynamic": true
   }
 }
