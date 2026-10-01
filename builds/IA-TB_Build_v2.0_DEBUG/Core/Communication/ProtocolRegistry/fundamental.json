@@ -595,5 +595,8 @@
       }
     ]
   },
-  "description": "Canonical Fundamental Engine V3: collection, event normalization, evidence, temporal memory/event timelines with novelty scoring, on-demand AI synthesis and rich private observability. INFORMATION_ONLY. Business consumer: Supervisor; management/diagnostics: Admin via Router/CP1."
+  "description": "Canonical Fundamental Engine V3: collection, event normalization, evidence, temporal memory/event timelines with novelty scoring, on-demand AI synthesis and rich private observability. INFORMATION_ONLY. Business consumer: Supervisor; management/diagnostics: Admin via Router/CP1.",
+  "registration": {
+    "dynamic": true
+  }
 }
