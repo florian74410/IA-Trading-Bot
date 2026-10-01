@@ -138,5 +138,8 @@
     "processPort": 8016,
     "processHealthPath": "/health",
     "securityBoundary": true
+  },
+  "registration": {
+    "dynamic": false
   }
 }
