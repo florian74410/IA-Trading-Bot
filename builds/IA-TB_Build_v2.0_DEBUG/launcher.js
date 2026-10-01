@@ -3,7 +3,7 @@
    Processus maitre stable: lancement, redemarrage apres update, health-check et rollback automatique.
 */
 var fs=require('fs'),path=require('path'),child=require('child_process'),http=require('http'),PATHS=require('./Core/Shared/paths'),BUILD=require('./Core/Shared/build_info');
-var ROOT=__dirname,UPDATES=path.join(ROOT,'Updates'),POINTER=path.join(UPDATES,'current_release.dat'),PENDING=PATHS.RuntimeLauncher.pending,STATE=PATHS.RuntimeLauncher.state,CONTROL=PATHS.RuntimeLauncher.control,HISTORY=path.join(UPDATES,'update_history.dat'),PORT=+(process.env.IATB_PORT||3000),DEFAULT={schema:1,application:BUILD.application,version:BUILD.version,server:'Core/Server/server.js'};
+var ROOT=__dirname,UPDATES=path.join(ROOT,'Updates'),POINTER=path.join(UPDATES,'current_release.dat'),PENDING=PATHS.RuntimeLauncher.pending,STATE=PATHS.RuntimeLauncher.state,CONTROL=PATHS.RuntimeLauncher.control,HISTORY=path.join(UPDATES,'update_history.dat'),PORT=+(process.env.IATB_PORT||process.env.CORE_PUBLIC_PORT||8001),DEFAULT={schema:1,application:BUILD.application,version:BUILD.version,server:'Core/Server/server.js'};
 function ensureDir(p){if(!fs.existsSync(p))fs.mkdirSync(p,{recursive:true});}
 function safeRm(p){try{fs.rmSync(p,{recursive:true,force:true});}catch(e){}}
 function readJson(p,def){try{return JSON.parse(fs.readFileSync(p,'utf8'));}catch(e){return def;}}
