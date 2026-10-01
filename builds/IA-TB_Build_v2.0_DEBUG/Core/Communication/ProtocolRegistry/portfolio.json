@@ -18,6 +18,28 @@
         }
       },
       {
+        "name": "portfolio.settings.get",
+        "arguments": {
+          "allowed": []
+        },
+        "description": "Read Portfolio Engine runtime settings."
+      },
+      {
+        "name": "portfolio.settings.set",
+        "arguments": {
+          "allowed": [
+            "settings",
+            "snapshotRefreshSec",
+            "pnlRefreshSec",
+            "exchangeSyncSec",
+            "equityChangeTriggerPct",
+            "baseCurrency",
+            "snapshotRetention"
+          ]
+        },
+        "description": "Update Portfolio Engine runtime settings through CP/1."
+      },
+      {
         "name": "portfolio.event.record",
         "arguments": {
           "allowed": [
