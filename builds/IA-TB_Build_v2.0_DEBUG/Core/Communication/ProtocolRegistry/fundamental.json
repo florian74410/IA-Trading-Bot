@@ -485,6 +485,61 @@
             "provider_config"
           ]
         }
+      },
+      {
+        "name": "fundamental.synthesis.import",
+        "arguments": {
+          "allowed": [
+            "scope",
+            "eventId",
+            "event_id",
+            "query",
+            "inputHash",
+            "model",
+            "result",
+            "evidenceCount"
+          ]
+        },
+        "description": "Persist a validated synthesis through Fundamental Engine storage."
+      },
+      {
+        "name": "fundamental.translation.get",
+        "arguments": {
+          "allowed": [
+            "itemId",
+            "raw_item_id",
+            "id",
+            "lang",
+            "target_lang"
+          ]
+        },
+        "description": "Read a cached translation from Fundamental storage."
+      },
+      {
+        "name": "fundamental.translation.pending",
+        "arguments": {
+          "allowed": [
+            "lang",
+            "target_lang",
+            "limit"
+          ]
+        },
+        "description": "List untranslated Fundamental items for a target language."
+      },
+      {
+        "name": "fundamental.translation.save",
+        "arguments": {
+          "allowed": [
+            "raw_item_id",
+            "itemId",
+            "target_lang",
+            "lang",
+            "translated_title",
+            "translated_summary",
+            "provider"
+          ]
+        },
+        "description": "Persist a Fundamental item translation."
       }
     ],
     "dataTypes": [
