@@ -13,5 +13,7 @@
   "env": {
     "KRAKEN_ADDON_PORT": "8011"
   },
-  "versionSource": "RUNTIME_HEALTH"
+  "versionSource": "RUNTIME_HEALTH",
+  "dependencies": [],
+  "optionalDependencies": []
 }
