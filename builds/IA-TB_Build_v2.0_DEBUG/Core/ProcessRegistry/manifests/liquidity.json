@@ -19,5 +19,6 @@
     "router",
     "marketdata"
   ],
-  "versionSource": "RUNTIME_HEALTH"
+  "versionSource": "RUNTIME_HEALTH",
+  "optionalDependencies": []
 }
