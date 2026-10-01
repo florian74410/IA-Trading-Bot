@@ -1,5 +1,5 @@
 'use strict';
-/* IA-TB Component CP/1 Adapter v1.8.12
+/* IA-TB Component CP/1 Adapter v2.0
    Shared backend-only adapter used to normalize local Engines/Modules behind Router.
    - authenticates Router calls with CP token + HMAC signature
    - validates actions/arguments with the shared CP/1 contract
