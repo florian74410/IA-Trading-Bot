@@ -32,6 +32,6 @@ var adapter=new Adapter({root:ROOT,id:'strategy',label:'Strategy Engine v2',port
  }});
 var server=http.createServer(function(req,res){if(adapter.handle(req,res))return;if(req.method==='GET'&&String(req.url).split('?')[0]==='/health')return send(res,200,health());if(req.method==='GET'&&String(req.url).split('?')[0]==='/api/catalog')return send(res,200,{ok:true,catalog:registry.snapshot()});return send(res,404,{ok:false,error:'NOT_FOUND'});});
 server.on('error',function(e){log('FATAL',e.message);process.exit(12);});
-server.listen(PORT,HOST,function(){log('START','Strategy Engine v2 port='+PORT+' protocol=CP/1 execution=INTENTION_ONLY');adapter.register(function(ok,e){if(!ok)log('CP_REGISTER',e&&e.message||'failed');});});
-function stop(){log('STOP','signal received');server.close(function(){process.exit(0);});setTimeout(function(){process.exit(0);},1200);}
+server.listen(PORT,HOST,function(){log('START','Strategy Engine v2 port='+PORT+' protocol=CP/1 execution=INTENTION_ONLY');adapter.maintainRegistration({initialDelayMs:500,onResult:function(ok,e,o,state){if(!ok)log('CP_REGISTER',e&&e.message||'failed');else if(state.attempts===1)log('CP_REGISTER','OK');}});});
+function stop(){log('STOP','signal received');adapter.stopRegistration();server.close(function(){process.exit(0);});setTimeout(function(){process.exit(0);},1200);}
 process.on('SIGINT',stop);process.on('SIGTERM',stop);
