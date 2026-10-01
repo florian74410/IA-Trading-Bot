@@ -11,6 +11,5 @@
   "versionSource": "RUNTIME_HEALTH",
   "dependencies": [
     "core"
-  ],
-  "optionalDependencies": []
+  ]
 }
