@@ -22,5 +22,8 @@
     "core",
     "router"
   ],
-  "versionSource": "RUNTIME_HEALTH"
+  "versionSource": "RUNTIME_HEALTH",
+  "optionalDependencies": [
+    "supervisor"
+  ]
 }
