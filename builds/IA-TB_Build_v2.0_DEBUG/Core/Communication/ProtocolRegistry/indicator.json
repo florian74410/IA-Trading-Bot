@@ -269,5 +269,8 @@
         "name": "indicator.analysis.updated"
       }
     ]
+  },
+  "registration": {
+    "dynamic": true
   }
 }
