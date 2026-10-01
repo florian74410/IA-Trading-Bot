@@ -15,14 +15,14 @@
     "ROUTER_PORT": "8021"
   },
   "dependencies": [
-    "router"
+    "router",
+    "risk",
+    "portfolio"
   ],
   "optionalDependencies": [
     "marketdata",
     "indicators",
-    "fundamental",
-    "portfolio",
-    "risk"
+    "fundamental"
   ],
   "versionSource": "RUNTIME_HEALTH"
 }
