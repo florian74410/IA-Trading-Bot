@@ -16,5 +16,12 @@
     "IATB_FIREWALL_PORT": "8017",
     "ROUTER_PORT": "8021"
   },
-  "versionSource": "RUNTIME_HEALTH"
+  "versionSource": "RUNTIME_HEALTH",
+  "dependencies": [
+    "router",
+    "firewall"
+  ],
+  "optionalDependencies": [
+    "kraken"
+  ]
 }
