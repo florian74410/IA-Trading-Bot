@@ -1,9 +1,10 @@
 #!/bin/bash
 cd "$(dirname "$0")" || exit 1
 printf '%s\n' "============================================================"
-printf '%s\n' " IA-TB — MODE TEST SANS PARE-FEU"
-printf '%s\n' " Aucun Worker de protection Firewall ne sera initialisé."
-printf '%s\n' " Le coordinateur 8017 reste en pass-through pour conserver"
-printf '%s\n' " la même topologie Router / Trading / MarketData."
+printf '%s\n' " IA-TB — COMPATIBILITE"
+printf '%s\n' " start_no_firewall.command est obsolete depuis l'architecture v2."
+printf '%s\n' " Le Firewall fait partie du chemin canonique et ne peut plus etre"
+printf '%s\n' " contourne par un lanceur alternatif."
+printf '%s\n' " Demarrage de start.command avec la topologie v2 complete."
 printf '%s\n' "============================================================"
-IATB_FIREWALL_ENABLED=0 exec /bin/bash ./start.command
+exec /bin/bash ./start.command
