@@ -1,9 +1,9 @@
 'use strict';
 /* IA-TB Fundamental Engine V3 - SQLite storage layer.
-   Runtime source of truth: Fundamental/Data/fundamental.db
+   Runtime source of truth: Core/Shared/paths.PersistentData.fundamentalDb.
    No direct SQL is exposed to the browser or to the AI. */
-var fs=require('fs'),path=require('path'),crypto=require('crypto'),URL=require('url').URL,Bias=require('./bias_engine');
-var ROOT=path.resolve(__dirname,'..'),DATA=path.join(ROOT,'Data'),DB_PATH=path.join(DATA,'fundamental.db'),SCHEMA=path.join(ROOT,'Database','schema_v3.sql'),EVENT_MIGRATION=path.join(ROOT,'Database','migration_event_engine_v3.sql'),SYNTHESIS_MIGRATION=path.join(ROOT,'Database','migration_synthesis_v3.sql'),MEMORY_MIGRATION=path.join(ROOT,'Database','migration_memory_v3.sql'),SEED=path.join(ROOT,'Database','seed_sources_v3.sql'),Database;
+var fs=require('fs'),path=require('path'),crypto=require('crypto'),URL=require('url').URL,Bias=require('./bias_engine'),PATHS=require('../../Core/Shared/paths');
+var ROOT=path.resolve(__dirname,'..'),DATA=PATHS.PersistentData.fundamental,DB_PATH=PATHS.PersistentData.fundamentalDb,SCHEMA=path.join(ROOT,'Database','schema_v3.sql'),EVENT_MIGRATION=path.join(ROOT,'Database','migration_event_engine_v3.sql'),SYNTHESIS_MIGRATION=path.join(ROOT,'Database','migration_synthesis_v3.sql'),MEMORY_MIGRATION=path.join(ROOT,'Database','migration_memory_v3.sql'),SEED=path.join(ROOT,'Database','seed_sources_v3.sql'),Database;
 try{Database=require(path.join(ROOT,'node_modules','better-sqlite3'));}catch(e){e.message='SQLITE_MODULE_UNAVAILABLE: '+e.message;throw e;}
 function now(){return new Date().toISOString();}
 function ensureDir(){if(!fs.existsSync(DATA))fs.mkdirSync(DATA,{recursive:true});}
