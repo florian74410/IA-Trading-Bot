@@ -1,6 +1,10 @@
 #!/bin/bash
 cd "$(dirname "$0")" || exit 1
 
+BUILD_VERSION="$(tr -d '[:space:]' < "$PWD/VERSION" 2>/dev/null)"
+[ -n "$BUILD_VERSION" ] || BUILD_VERSION="2.0.0"
+BUILD_STATUS="DEBUG"
+
 # IA-TB Shutdown Console
 if [ -t 1 ]; then
   C_RESET='\033[0m'
@@ -55,7 +59,7 @@ shutdown_banner(){
   echo "╔══════════════════════════════════════════════════════════════╗"
   echo "║                                                              ║"
   echo "║                     IA TRADING BOT                           ║"
-  echo "║                      v1.12 DEBUG                             ║"
+  printf "║                    v%-8s %-5s                       ║\n" "$BUILD_VERSION" "$BUILD_STATUS"
   echo "║                                                              ║"
   echo "║                  SYSTEM SHUTDOWN CONSOLE                     ║"
   echo "║                                                              ║"
@@ -184,19 +188,19 @@ stop_service(){
 # Ordre inverse des couches de démarrage :
 # consommateurs / interfaces avant leurs dépendances.
 stop_service "UI Service"          "8000" || true
-stop_service "Router"              "8021" || true
 stop_service "IA Supervisor"       "3000" || true
-stop_service "Core"                "8001" || true
-stop_service "Risk Engine"         "8019" || true
 stop_service "Strategy Engine"     "8018" || true
-stop_service "Firewall"            "8017" || true
-stop_service "Trading Engine"      "8016" || true
 stop_service "Portfolio Engine"    "8020" || true
-stop_service "Fundamental Engine"  "8015" || true
+stop_service "Trading Engine"      "8016" || true
+stop_service "Risk Engine"         "8019" || true
 stop_service "Liquidity Engine"    "8014" || true
-stop_service "Market Data"         "8013" || true
+stop_service "Fundamental Engine"  "8015" || true
 stop_service "Indicator Engine"    "8012" || true
+stop_service "Market Data"         "8013" || true
 stop_service "Kraken Adapter"      "8011" || true
+stop_service "Firewall"            "8017" || true
+stop_service "Router"              "8021" || true
+stop_service "Core"                "8001" || true
 
 
 section "[ 2/3 ]  PORT VERIFICATION"
