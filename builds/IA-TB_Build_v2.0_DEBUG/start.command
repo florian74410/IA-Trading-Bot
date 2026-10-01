@@ -133,6 +133,8 @@ stop_known_on_port(){
     pid="$(json_pid "$body_kraken")"; label="Risk Manager Engine"
   elif echo "$body_kraken" | grep -q 'IA-TB Portfolio Engine'; then
     pid="$(json_pid "$body_kraken")"; label="Portfolio Engine"
+  elif echo "$body_kraken" | grep -q 'IA-TB Supervisor'; then
+    pid="$(json_pid "$body_kraken")"; label="IA Supervisor"
   fi
   if [ -n "$pid" ]; then
     say "Ancienne instance $label detectee sur le port $port -> arret PID $pid"
