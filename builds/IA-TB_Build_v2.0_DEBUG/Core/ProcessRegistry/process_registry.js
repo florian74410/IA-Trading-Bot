@@ -1,5 +1,5 @@
 'use strict';
-/* IA-TB Process Registry v1.0 — manifest-driven process inventory. */
+/* IA-TB Process Registry v2.0 — manifest-driven process inventory. */
 var fs=require('fs'),path=require('path'),SettingsStore=require('../Settings/sqlite_settings_store');
 function ProcessRegistry(root,opts){opts=opts||{};this.root=path.resolve(root);this.dir=path.join(__dirname,'manifests');this.settings=opts.settingsStore||new SettingsStore(this.root,opts.settings||{});this.manifests={};this.reload();}
 ProcessRegistry.prototype.reload=function(){var self=this,out={};var names=[];try{names=fs.readdirSync(this.dir).filter(function(n){return /\.json$/i.test(n);});}catch(e){}names.sort().forEach(function(n){try{var x=JSON.parse(fs.readFileSync(path.join(self.dir,n),'utf8'));if(!x||!x.id||!x.type)return;out[String(x.id).toLowerCase()]=x;}catch(e){}});this.manifests=out;return this.list();};
