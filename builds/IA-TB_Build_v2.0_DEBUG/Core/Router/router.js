@@ -1,10 +1,8 @@
 'use strict';
 /* IA-TB Unified Router + Communication Router v2.0.0
-   Router interne CP/1 : 127.0.0.1:8021 (UI séparée sur 8000)
-   - Core IA-TB v2 : 127.0.0.1:8001
-   - Add-On Kraken : 127.0.0.1:8011
-   - Indicator Engine : 127.0.0.1:8012
-   Le coeur trading reste isole du moteur d'indicateurs.
+   Router interne CP/1 : 127.0.0.1:8021 (UI séparée sur 8000).
+   Les moteurs sont décrits par le Protocol Registry; les ordres Trading
+   passent par la frontière Firewall avant le Trading Engine.
 */
 var http=require('http'),fs=require('fs'),path=require('path'),URL=require('url').URL,CommRouter=require('../Communication/communication_router_v1'),CP=require('../Communication/communication_protocol_v1'),BUILD=require('../Shared/build_info');
 var HOST='127.0.0.1';
@@ -15,12 +13,12 @@ var INDICATOR_HOST='127.0.0.1',INDICATOR_PORT=+(process.env.IATB_INDICATOR_PORT|
 var MARKET_DATA_HOST='127.0.0.1',MARKET_DATA_PORT=+(process.env.IATB_MARKET_DATA_PORT||8013),FIREWALL_PORT=+(process.env.IATB_FIREWALL_PORT||process.env.IATB_TRADING_FIREWALL_PORT||8017);
 var LIQUIDITY_HOST='127.0.0.1',LIQUIDITY_PORT=+(process.env.IATB_LIQUIDITY_PORT||8014);
 var FUNDAMENTAL_HOST='127.0.0.1',FUNDAMENTAL_PORT=+(process.env.IATB_FUNDAMENTAL_PORT||8015);
-var TRADING_ENGINE_HOST='127.0.0.1',TRADING_ENGINE_PORT=+(process.env.IATB_TRADING_ENGINE_PORT||8016),TRADING_FIREWALL_PORT=+(process.env.IATB_FIREWALL_PORT||process.env.IATB_TRADING_FIREWALL_PORT||8017);
+var TRADING_ENGINE_HOST='127.0.0.1',TRADING_ENGINE_PORT=+(process.env.IATB_TRADING_ENGINE_PORT||8016);
 var STRATEGY_HOST='127.0.0.1',STRATEGY_PORT=+(process.env.IATB_STRATEGY_PORT||8018);
 var RISK_HOST='127.0.0.1',RISK_PORT=+(process.env.IATB_RISK_ENGINE_PORT||8019);
 var PORTFOLIO_HOST='127.0.0.1',PORTFOLIO_PORT=+(process.env.IATB_PORTFOLIO_PORT||8020);
 var SUPERVISOR_HOST='127.0.0.1',SUPERVISOR_PORT=+(process.env.IATB_SUPERVISOR_PORT||3000);
-var ROOT=__dirname,APP_ROOT=path.resolve(__dirname,'../..'),COMM=new CommRouter(APP_ROOT);
+var APP_ROOT=path.resolve(__dirname,'../..'),COMM=new CommRouter(APP_ROOT);
 var COMM_MAX_BODY=512*1024;
 
 function sendJson(res,code,obj){var b=Buffer.from(JSON.stringify(obj,null,2));res.writeHead(code,{'Content-Type':'application/json; charset=utf-8','Content-Length':b.length,'Cache-Control':'no-store'});res.end(b);}
