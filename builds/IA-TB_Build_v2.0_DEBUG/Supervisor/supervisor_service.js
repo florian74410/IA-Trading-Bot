@@ -35,8 +35,6 @@ var adapter=new Adapter({root:ROOT,id:'supervisor',label:'IA Supervisor',port:PO
 }});
 var server=http.createServer(function(req,res){var p=String(req.url||'').split('?')[0];if(adapter.handle(req,res))return;if(req.method==='GET'&&p==='/health')return send(res,200,health());if(req.method==='GET'&&p==='/api/status')return send(res,200,{ok:true,status:core.status()});return send(res,404,{ok:false,error:'NOT_FOUND'});});
 server.on('error',function(e){log('FATAL',e.message);console.error('Supervisor bind error:',e.message);process.exit(30);});
-var registerTimer=null,registerTries=0;
-function register(){registerTries++;adapter.register(function(ok,e){if(ok){log('CP_REGISTER','OK try='+registerTries);if(registerTimer){clearInterval(registerTimer);registerTimer=null;}}else log('CP_REGISTER',String(e&&e.message||'failed')+' try='+registerTries);});}
-server.listen(PORT,HOST,function(){log('START','port='+PORT+' protocol=CP/1 execution=INTENTION_ONLY provider='+core.llm.status().provider);setTimeout(register,700);registerTimer=setInterval(function(){if(registerTries>=30){clearInterval(registerTimer);registerTimer=null;return;}register();},2000);setInterval(function(){adapter.register(function(){});},30000);});
-function stop(){log('STOP','signal received');if(registerTimer)clearInterval(registerTimer);server.close(function(){process.exit(0);});setTimeout(function(){process.exit(0);},1500);}
+server.listen(PORT,HOST,function(){log('START','port='+PORT+' protocol=CP/1 execution=INTENTION_ONLY provider='+core.llm.status().provider);adapter.maintainRegistration({initialDelayMs:700,onResult:function(ok,e,o,state){if(!ok)log('CP_REGISTER',String(e&&e.message||'failed')+' try='+state.attempts);else if(state.attempts===1)log('CP_REGISTER','OK');}});});
+function stop(){log('STOP','signal received');adapter.stopRegistration();server.close(function(){process.exit(0);});setTimeout(function(){process.exit(0);},1500);}
 process.on('SIGINT',stop);process.on('SIGTERM',stop);
