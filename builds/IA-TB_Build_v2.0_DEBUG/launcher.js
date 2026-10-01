@@ -1,5 +1,5 @@
 'use strict';
-/* IA-Trading-Bot v1.0 - Launcher Supervisor
+/* IA-Trading-Bot v2.0 - Launcher Supervisor
    Processus maitre stable: lancement, redemarrage apres update, health-check et rollback automatique.
 */
 var fs=require('fs'),path=require('path'),child=require('child_process'),http=require('http'),PATHS=require('./Core/Shared/paths'),BUILD=require('./Core/Shared/build_info');
