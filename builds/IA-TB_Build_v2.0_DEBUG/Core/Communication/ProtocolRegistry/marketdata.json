@@ -489,5 +489,8 @@
       }
     ],
     "events": []
+  },
+  "registration": {
+    "dynamic": true
   }
 }
