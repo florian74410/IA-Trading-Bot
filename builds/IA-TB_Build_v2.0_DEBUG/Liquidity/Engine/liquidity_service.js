@@ -95,6 +95,6 @@ var srv=http.createServer(function(req,res){
 });
 
 srv.on('error',function(e){console.error('Liquidity Engine bind error:',e&&e.message||e);process.exit(16)});
-srv.listen(PORT,HOST,function(){console.log('IA-TB Liquidity Engine v'+VERSION+' http://'+HOST+':'+PORT+' · INTERNAL ANALYSIS ONLY · CP/1 Market Data');cpAdapter.register(function(ok,e){if(!ok&&process.env.IATB_CP_REGISTER_LOG==='1')console.error('Liquidity CP register:',e&&e.message||'HTTP');});});
-function stop(){srv.close(function(){process.exit(0)});setTimeout(function(){process.exit(0)},1200)}
+srv.listen(PORT,HOST,function(){console.log('IA-TB Liquidity Engine v'+VERSION+' http://'+HOST+':'+PORT+' · INTERNAL ANALYSIS ONLY · CP/1 Market Data');cpAdapter.maintainRegistration({initialDelayMs:500});});
+function stop(){cpAdapter.stopRegistration();srv.close(function(){process.exit(0)});setTimeout(function(){process.exit(0)},1200)}
 process.on('SIGINT',stop);process.on('SIGTERM',stop);
