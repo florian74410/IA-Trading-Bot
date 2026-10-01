@@ -8,5 +8,9 @@
   "marker": "router",
   "restartable": false,
   "defaultEnabled": true,
-  "versionSource": "RUNTIME_HEALTH"
+  "versionSource": "RUNTIME_HEALTH",
+  "dependencies": [
+    "core"
+  ],
+  "optionalDependencies": []
 }
