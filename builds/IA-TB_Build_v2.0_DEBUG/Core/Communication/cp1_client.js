@@ -76,4 +76,12 @@ Client.prototype.register=function(desc,cb){
  cb=typeof cb==='function'?cb:function(){};
  this._post('/communication/v1/register',desc||{},{timeout:Math.min(this.timeout,3000),maxBytes:512*1024},function(e,o){cb(e,o);});
 };
+Client.prototype.maintainRegistration=function(desc,opt){
+ opt=opt||{};var self=this,stopped=false,timer=null,state={attempts:0,lastOkAt:0,lastError:null};
+ var retryMs=Math.max(500,Math.min(30000,+opt.retryMs||2000)),heartbeatMs=Math.max(5000,Math.min(300000,+opt.heartbeatMs||30000)),initialDelayMs=Math.max(0,Math.min(30000,+opt.initialDelayMs||500));
+ function schedule(ms){if(stopped)return;timer=setTimeout(run,ms);if(timer&&timer.unref)timer.unref();}
+ function run(){if(stopped)return;state.attempts++;self.register(desc,function(e,o){if(stopped)return;if(e){state.lastError=String(e.message||e);if(typeof opt.onResult==='function')opt.onResult(false,e,o,state);return schedule(retryMs);}state.lastOkAt=Date.now();state.lastError=null;if(typeof opt.onResult==='function')opt.onResult(true,null,o,state);schedule(heartbeatMs);});}
+ schedule(initialDelayMs);
+ return{stop:function(){stopped=true;if(timer)clearTimeout(timer);timer=null;},state:state,refresh:function(){if(stopped)return;if(timer)clearTimeout(timer);timer=null;schedule(0);}};
+};
 module.exports=Client;
