@@ -15,7 +15,7 @@
       "4h",
       "1d"
     ],
-    "volume": "Indisponible sur les bougies Oracle GMX; Crypto Chart Viewer IA Trader retourne null/N/A et ne l'invente pas.",
+    "volume": "Indisponible sur les bougies Oracle GMX; IA-Trading-Bot retourne null/N/A et ne l'invente pas.",
     "fallback": "Le canvas historique minimal reste disponible si le moteur natif IA-TB ne charge pas."
   },
   "command_families": {
@@ -267,7 +267,7 @@
     "rule": "Les stratégies existantes marquées BINANCE ne déclenchent aucun appel Binance. Elles sont compilées en mémoire vers GMX et leurs symboles USDT/USDC sont normalisés en USD, sans réécrire le fichier utilisateur.",
     "example": "LINKUSDT -> LINKUSD"
   },
-  "external_confirmations": "Trust Wallet peut imposer sa propre fenêtre d'autorisation/signature. Crypto Chart Viewer IA Trader ne contourne pas ces confirmations.",
+  "external_confirmations": "Trust Wallet peut imposer sa propre fenêtre d'autorisation/signature. IA-Trading-Bot ne contourne pas ces confirmations.",
   "strategy_visualization": "Analyse visuelle uniquement; strategy.visualize ne déclenche pas d'ordre.",
   "strategy_storage": {
     "official_folder": "Annexes/Strategies",
@@ -305,7 +305,7 @@
     "separation": "Module indépendant de Trading IA dans la même application/serveur local.",
     "simple_commands": "Paire, exchange, timeframe, thème, rechargement, plein écran et ouverture des réglages sont traités localement dans le navigateur sans appel OpenAI.",
     "complex_commands": "Analyse, stratégie, indicateurs, Pine Script et demandes non reconnues localement passent par /api/chart-viewer/chat et utilisent la clé OpenAI chiffrée existante.",
-    "iframe_limit": "Le DOM et l’échelle du widget TradingView gratuit sont isolés; Crypto Chart Viewer IA Trader ne prétend pas voir les bougies et ne peut pas injecter automatiquement des dessins/Pine Script dans le widget.",
+    "iframe_limit": "Le DOM et l’échelle du widget TradingView gratuit sont isolés; IA-Trading-Bot ne prétend pas voir les bougies et ne peut pas injecter automatiquement des dessins/Pine Script dans le widget.",
     "strategy_output": "Le Chat peut produire une carte stratégie et un Pine Script copiable, sans exécution d’ordre."
   },
   "market_registry": {
