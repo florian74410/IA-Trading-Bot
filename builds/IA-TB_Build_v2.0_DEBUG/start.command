@@ -393,7 +393,7 @@ require_service "Indicator Engine" "$INDICATOR_PORT" "/health" "IA-TB Indicator 
 
 if [ "$FUNDAMENTAL_READY" -eq 1 ]; then
   status_wait "Fundamental Engine" "after Router"
-  IATB_FUNDAMENTAL_PORT="$FUNDAMENTAL_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Fundamental/Engine/fundamental_service.js >> "$FUNDAMENTAL_LOG" 2>&1 &
+  IATB_FUNDAMENTAL_PORT="$FUNDAMENTAL_PORT" CORE_PUBLIC_PORT="$CORE_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Fundamental/Engine/fundamental_service.js >> "$FUNDAMENTAL_LOG" 2>&1 &
   FUNDAMENTAL_PID=$!
   if ! wait_service "Fundamental Engine" "$FUNDAMENTAL_PORT" "/health" "IA-TB Fundamental Engine" "$FUNDAMENTAL_LOG" 12; then
     status_warn "Fundamental Engine" "disabled after failed boot"
