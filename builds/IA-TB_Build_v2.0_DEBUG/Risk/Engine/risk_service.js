@@ -175,12 +175,10 @@ function handleCP(req,res){
     });
   });
 }
-function registerWithRouter(cb){
-  CP_CLIENT.register({
-    id:'risk',label:'Risk Engine',host:'127.0.0.1',port:PORT,cpPath:'/cp/v1',healthPath:'/health',
-    version:VERSION,schemaVersion:'risk.analysis/1.0',capabilities:CAPABILITIES,events:EVENTS
-  },function(e){if(cb)cb(!e);});
-}
+function registrationDescriptor(){return{
+  id:'risk',label:'Risk Engine',host:'127.0.0.1',port:PORT,cpPath:'/cp/v1',healthPath:'/health',
+  version:VERSION,schemaVersion:'risk.analysis/1.0',capabilities:CAPABILITIES,events:EVENTS
+};}
 
 var srv=http.createServer(function(req,res){
   var u=new URL(req.url,'http://'+HOST+':'+PORT);
@@ -198,13 +196,10 @@ var srv=http.createServer(function(req,res){
   return json(res,404,{ok:false,error:'NOT_FOUND'});
 });
 srv.on('error',function(e){console.error('Risk Engine bind error:',e&&e.message||e);process.exit(19);});
+var registrationHandle=null;
 srv.listen(PORT,HOST,function(){
   console.log('IA-TB Risk Engine v'+VERSION+' http://'+HOST+':'+PORT+' CP/1');
-  var tries=0,retry=null;
-  function attempt(){tries++;registerWithRouter(function(ok){if(ok&&retry){clearInterval(retry);retry=null;}});}
-  setTimeout(attempt,900);
-  retry=setInterval(function(){if(tries>=30){clearInterval(retry);retry=null;return;}attempt();},2000);
-  setInterval(function(){registerWithRouter();},30000);
+  registrationHandle=CP_CLIENT.maintainRegistration(registrationDescriptor(),{initialDelayMs:900});
 });
-function stop(){srv.close(function(){process.exit(0);});setTimeout(function(){process.exit(0);},1200);}
+function stop(){if(registrationHandle)registrationHandle.stop();srv.close(function(){process.exit(0);});setTimeout(function(){process.exit(0);},1200);}
 process.on('SIGINT',stop);process.on('SIGTERM',stop);
