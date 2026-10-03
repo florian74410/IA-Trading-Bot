@@ -152,6 +152,13 @@
         "description": "Financial cache/persistence status."
       },
       {
+        "name": "marketdata.financial.status",
+        "arguments": {
+          "allowed": []
+        },
+        "description": "Read Market Data financial collector runtime status."
+      },
+      {
         "name": "marketdata.financial.refresh",
         "arguments": {
           "allowed": []
