@@ -522,7 +522,6 @@ function scheduleAdminFullRestart(){
  if(!fs.existsSync(script))throw new Error('RESTART_HELPER_MISSING');
  var fd=fs.openSync(logFile,'a'),proc,env=Object.assign({},process.env,{
   ROUTER_PORT:String(+(process.env.ROUTER_PORT||8021)),IATB_PUBLIC_PORT:String(PUBLIC_PORT),
-  KRAKEN_ADDON_PORT:String(+(process.env.KRAKEN_ADDON_PORT||8011)),
   IATB_INDICATOR_PORT:String(+(process.env.IATB_INDICATOR_PORT||8012)),
   IATB_MARKET_DATA_PORT:String(+(process.env.IATB_MARKET_DATA_PORT||8013)),
   IATB_LIQUIDITY_PORT:String(+(process.env.IATB_LIQUIDITY_PORT||8014)),
