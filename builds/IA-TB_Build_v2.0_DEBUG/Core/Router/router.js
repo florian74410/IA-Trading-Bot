@@ -170,7 +170,6 @@ var server=http.createServer(function(req,res){var u=new URL(req.url,'http://'+H
  if(req.method==='POST'&&p==='/communication/v1/client/ack')return communicationAckClient(req,res);
  if(req.method==='GET'&&p==='/communication/v1/runtime')return communicationRuntime(req,res);
  if((req.method==='GET'||req.method==='HEAD')&&p==='/kraken'){res.writeHead(302,{'Location':'/trading?exchange=KRAKEN','Cache-Control':'no-store'});return res.end();}
- if(req.method==='GET'&&p==='/firewall-events')return proxy(req,res,'127.0.0.1',FIREWALL_PORT,'/api/events'+u.search,{label:'Firewall Event Feed'});
  if(p==='/market-data'||p.indexOf('/market-data/')===0){var msub=p.slice('/market-data'.length)||'/';return proxy(req,res,MARKET_DATA_HOST,MARKET_DATA_PORT,msub+u.search,{label:'Market Data · firewall validated at ingestion'});}
  return proxy(req,res,CORE_HOST,CORE_PORT,u.pathname+u.search,{label:'IA-TB Core'});
 });
