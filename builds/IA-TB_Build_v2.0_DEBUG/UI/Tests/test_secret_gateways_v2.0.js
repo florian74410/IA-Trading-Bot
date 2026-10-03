@@ -10,4 +10,7 @@ assert(sup.indexOf("'ai_gateway','ai_gateway.responses'")>=0,'Supervisor does no
 assert(fund.indexOf("'ai_gateway','ai_gateway.responses'")>=0,'Fundamental does not use AI Gateway');
 assert(fund.indexOf('api.openai.com')<0,'Fundamental must not call OpenAI directly');
 assert(sup.indexOf('api.openai.com')<0,'Supervisor Core must not call OpenAI directly');
+assert(core.indexOf("usageContext:'AI_UPDATE_BUILDER'")>=0,'AI Update Builder must use AI Gateway');
+assert(core.indexOf("'x_gateway','x_gateway.search'")>=0,'Core X test must use X Gateway');
+assert(core.indexOf("usageContext:'SETTINGS_TEST'")>=0,'Core OpenAI test must use AI Gateway');
 console.log('[SECRET-GATEWAYS] OK v2.0');
