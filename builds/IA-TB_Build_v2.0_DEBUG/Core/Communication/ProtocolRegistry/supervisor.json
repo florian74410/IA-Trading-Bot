@@ -200,6 +200,26 @@
         }
       },
       {
+        "name": "supervisor.structured",
+        "arguments": {
+          "allowed": [
+            "instructions",
+            "prompt",
+            "model",
+            "maxTokens",
+            "schema",
+            "name",
+            "reasoningEffort",
+            "verbosity"
+          ],
+          "required": [
+            "prompt",
+            "schema"
+          ]
+        },
+        "description": "Internal structured LLM request through Supervisor and the secure AI Gateway."
+      },
+      {
         "name": "supervisor.calendar",
         "arguments": {
           "allowed": [
