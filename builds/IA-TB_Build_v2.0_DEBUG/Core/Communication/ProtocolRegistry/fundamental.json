@@ -79,7 +79,8 @@
             "since",
             "until",
             "sort",
-            "limit"
+            "limit",
+            "lang"
           ]
         }
       },
@@ -540,6 +541,96 @@
           ]
         },
         "description": "Persist a Fundamental item translation."
+      },
+      {
+        "name": "fundamental.provider.test",
+        "arguments": {
+          "allowed": [
+            "feedId",
+            "id"
+          ],
+          "required": [
+            "feedId"
+          ]
+        },
+        "description": "Test a configured Fundamental provider/feed through the real collector path."
+      },
+      {
+        "name": "fundamental.feed.test_draft",
+        "arguments": {
+          "allowed": [
+            "feed"
+          ],
+          "required": [
+            "feed"
+          ]
+        },
+        "description": "Test a feed draft without persisting it."
+      },
+      {
+        "name": "fundamental.feed.create",
+        "arguments": {
+          "allowed": [
+            "feed"
+          ],
+          "required": [
+            "feed"
+          ]
+        },
+        "description": "Create and persist a Fundamental feed."
+      },
+      {
+        "name": "fundamental.feed.update",
+        "arguments": {
+          "allowed": [
+            "feedId",
+            "feed"
+          ],
+          "required": [
+            "feedId",
+            "feed"
+          ]
+        },
+        "description": "Update a persisted Fundamental feed."
+      },
+      {
+        "name": "fundamental.feed.toggle",
+        "arguments": {
+          "allowed": [
+            "feedId",
+            "enabled"
+          ],
+          "required": [
+            "feedId"
+          ]
+        },
+        "description": "Enable or disable a persisted Fundamental feed."
+      },
+      {
+        "name": "fundamental.feed.delete",
+        "arguments": {
+          "allowed": [
+            "feedId"
+          ],
+          "required": [
+            "feedId"
+          ]
+        },
+        "description": "Delete a Fundamental feed and its associated publications."
+      },
+      {
+        "name": "fundamental.news.purge",
+        "arguments": {
+          "allowed": []
+        },
+        "description": "Purge Fundamental publications and cached translations."
+      },
+      {
+        "name": "fundamental.fedwatch.refresh",
+        "arguments": {
+          "allowed": []
+        },
+        "description": "Force a FedWatch refresh."
       }
     ],
     "dataTypes": [
