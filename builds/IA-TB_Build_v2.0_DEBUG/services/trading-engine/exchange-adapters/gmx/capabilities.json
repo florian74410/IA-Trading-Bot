@@ -13,7 +13,10 @@
     "PREPARE_ORDER",
     "SUBMIT_SIGNED_ORDER",
     "ORDER_STATUS",
-    "PREPARE_CANCEL"
+    "PREPARE_CANCEL",
+    "READ_POSITIONS",
+    "READ_ORDERS",
+    "READ_BALANCES"
   ],
   "order_types": [
     "MARKET_INCREASE",
