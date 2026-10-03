@@ -57,5 +57,5 @@ var srv=http.createServer(function(req,res){var u=new URL(req.url,'http://'+HOST
  send(res,404,{ok:false,error:'NOT_FOUND'});
 });
 srv.on('error',function(e){console.error('IA-TB Firewall Service bind error:',e.message);process.exit(13);});
-srv.listen(PORT,HOST,function(){console.log('IA-TB Firewall Service v'+BUILD.version+' : http://'+HOST+':'+PORT+' | Coordinator | '+(FIREWALL_ENABLED?'Trading + Data protection':'BYPASS - no protection workers'));MONITOR_CP.maintainRegistration({initialDelayMs:500});});
-function stop(){try{MONITOR_CP.stopRegistration();}catch(e){}Object.keys(threads).forEach(function(k){try{if(threads[k].worker)threads[k].worker.terminate();}catch(e){}});srv.close(function(){process.exit(0);});setTimeout(function(){process.exit(0);},1200);}process.on('SIGINT',stop);process.on('SIGTERM',stop);
+srv.listen(PORT,HOST,function(){console.log('IA-TB Firewall Service v'+BUILD.version+' : http://'+HOST+':'+PORT+' | Coordinator | '+(FIREWALL_ENABLED?'Trading + Data protection':'BYPASS - no protection workers'));});
+function stop(){Object.keys(threads).forEach(function(k){try{if(threads[k].worker)threads[k].worker.terminate();}catch(e){}});srv.close(function(){process.exit(0);});setTimeout(function(){process.exit(0);},1200);}process.on('SIGINT',stop);process.on('SIGTERM',stop);
