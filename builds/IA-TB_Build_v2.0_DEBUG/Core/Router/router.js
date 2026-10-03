@@ -33,6 +33,15 @@ var UI_READ_ACTIONS={
  'indicator.definition.validate':1,
  'indicator.language.info':1,
  'indicator.language.validate':1,
+ 'fundamental.health':1,
+ 'fundamental.summary':1,
+ 'fundamental.sources.search':1,
+ 'fundamental.source.get':1,
+ 'fundamental.feeds.search':1,
+ 'fundamental.providers.status':1,
+ 'fundamental.synthesis.history':1,
+ 'fundamental.fedwatch.get':1,
+ 'fundamental.logs.recent':1,
  'strategy.health':1,
  'strategy.capabilities':1,
  'strategy.catalog':1,
@@ -61,9 +70,19 @@ function communicationUiRead(req,res){
   if(e)return sendJson(res,400,{ok:false,error:e.message});
   b=b&&typeof b==='object'?b:{};
   var target=String(b.target||'').toLowerCase(),action=String(b.action||'');
-  if(!UI_READ_ACTIONS[action]||(['strategy','marketdata','portfolio','liquidity','indicator'].indexOf(target)<0))return sendJson(res,403,{ok:false,error:'UI_WRITE_DENY',caller:{type:'UI',role:'READ_ONLY'}});
+  if(!UI_READ_ACTIONS[action]||(['strategy','marketdata','portfolio','liquidity','indicator','fundamental'].indexOf(target)<0))return sendJson(res,403,{ok:false,error:'UI_WRITE_DENY',caller:{type:'UI',role:'READ_ONLY'}});
   var args=b.arguments&&typeof b.arguments==='object'&&!Array.isArray(b.arguments)?b.arguments:{};
-  if(target==='strategy'&&Object.keys(args).length)return sendJson(res,403,{ok:false,error:'UI_ARGUMENTS_DENY',caller:{type:'UI',role:'READ_ONLY'}});if(target==='liquidity'){var la={'liquidity.zones':{symbol:1,timeframe:1,limit:1}}[action]||{},lks=Object.keys(args);for(var li=0;li<lks.length;li++)if(!la[lks[li]])return sendJson(res,403,{ok:false,error:'UI_ARGUMENTS_DENY',caller:{type:'UI',role:'READ_ONLY'}});}if(target==='portfolio'){var pa={'portfolio.positions':{},'portfolio.statistics':{},'portfolio.position.health':{tradeId:1,walletId:1,symbol:1,exchange:1},'portfolio.trades':{limit:1},'portfolio.trade.detail':{tradeId:1,id:1},'portfolio.history':{range:1},'portfolio.events':{limit:1,since:1}}[action]||{},pks=Object.keys(args);for(var pi=0;pi<pks.length;pi++)if(!pa[pks[pi]])return sendJson(res,403,{ok:false,error:'UI_ARGUMENTS_DENY',caller:{type:'UI',role:'READ_ONLY'}});}
+  if(target==='strategy'&&Object.keys(args).length)return sendJson(res,403,{ok:false,error:'UI_ARGUMENTS_DENY',caller:{type:'UI',role:'READ_ONLY'}});if(target==='fundamental'){var fa={
+ 'fundamental.health':{},
+ 'fundamental.summary':{},
+ 'fundamental.sources.search':{query:1,domain:1,enabled:1,limit:1},
+ 'fundamental.source.get':{code:1,source:1},
+ 'fundamental.feeds.search':{source:1,provider:1,enabled:1,limit:1},
+ 'fundamental.providers.status':{},
+ 'fundamental.synthesis.history':{eventId:1,event_id:1,scope:1,limit:1},
+ 'fundamental.fedwatch.get':{},
+ 'fundamental.logs.recent':{level:1,component:1,source:1,query:1,q:1,limit:1}
+}[action]||{},fks=Object.keys(args);for(var fi=0;fi<fks.length;fi++)if(!fa[fks[fi]])return sendJson(res,403,{ok:false,error:'UI_ARGUMENTS_DENY',caller:{type:'UI',role:'READ_ONLY'}});}if(target==='liquidity'){var la={'liquidity.zones':{symbol:1,timeframe:1,limit:1}}[action]||{},lks=Object.keys(args);for(var li=0;li<lks.length;li++)if(!la[lks[li]])return sendJson(res,403,{ok:false,error:'UI_ARGUMENTS_DENY',caller:{type:'UI',role:'READ_ONLY'}});}if(target==='portfolio'){var pa={'portfolio.positions':{},'portfolio.statistics':{},'portfolio.position.health':{tradeId:1,walletId:1,symbol:1,exchange:1},'portfolio.trades':{limit:1},'portfolio.trade.detail':{tradeId:1,id:1},'portfolio.history':{range:1},'portfolio.events':{limit:1,since:1}}[action]||{},pks=Object.keys(args);for(var pi=0;pi<pks.length;pi++)if(!pa[pks[pi]])return sendJson(res,403,{ok:false,error:'UI_ARGUMENTS_DENY',caller:{type:'UI',role:'READ_ONLY'}});}
   var q=CP.makeRequest(target,action,args,'summary');q.caller={type:'UI',role:'READ_ONLY'};
   COMM.route(q,function(er,o){if(er)return sendJson(res,400,{ok:false,error:er.message,protocol:CP.PROTOCOL,caller:{type:'UI',role:'READ_ONLY'}});sendJson(res,200,o);});
  });
