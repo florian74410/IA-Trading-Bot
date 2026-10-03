@@ -41,6 +41,8 @@ var UI_READ_ACTIONS={
  'fundamental.providers.status':1,
  'fundamental.synthesis.history':1,
  'fundamental.fedwatch.get':1,
+ 'fundamental.calendar.upcoming':1,
+ 'fundamental.diagnostic.feed':1,
  'fundamental.logs.recent':1,
  'strategy.health':1,
  'strategy.capabilities':1,
@@ -81,6 +83,8 @@ function communicationUiRead(req,res){
  'fundamental.providers.status':{},
  'fundamental.synthesis.history':{eventId:1,event_id:1,scope:1,limit:1},
  'fundamental.fedwatch.get':{},
+ 'fundamental.calendar.upcoming':{days:1,country:1,impact:1,limit:1},
+ 'fundamental.diagnostic.feed':{feedId:1,id:1},
  'fundamental.logs.recent':{level:1,component:1,source:1,query:1,q:1,limit:1}
 }[action]||{},fks=Object.keys(args);for(var fi=0;fi<fks.length;fi++)if(!fa[fks[fi]])return sendJson(res,403,{ok:false,error:'UI_ARGUMENTS_DENY',caller:{type:'UI',role:'READ_ONLY'}});}if(target==='liquidity'){var la={'liquidity.zones':{symbol:1,timeframe:1,limit:1}}[action]||{},lks=Object.keys(args);for(var li=0;li<lks.length;li++)if(!la[lks[li]])return sendJson(res,403,{ok:false,error:'UI_ARGUMENTS_DENY',caller:{type:'UI',role:'READ_ONLY'}});}if(target==='portfolio'){var pa={'portfolio.positions':{},'portfolio.statistics':{},'portfolio.position.health':{tradeId:1,walletId:1,symbol:1,exchange:1},'portfolio.trades':{limit:1},'portfolio.trade.detail':{tradeId:1,id:1},'portfolio.history':{range:1},'portfolio.events':{limit:1,since:1}}[action]||{},pks=Object.keys(args);for(var pi=0;pi<pks.length;pi++)if(!pa[pks[pi]])return sendJson(res,403,{ok:false,error:'UI_ARGUMENTS_DENY',caller:{type:'UI',role:'READ_ONLY'}});}
   var q=CP.makeRequest(target,action,args,'summary');q.caller={type:'UI',role:'READ_ONLY'};
