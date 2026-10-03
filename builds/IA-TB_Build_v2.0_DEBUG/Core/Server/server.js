@@ -164,7 +164,8 @@ function aiGatewayAdapter(){
  return new ComponentCP1Adapter({
   root:ROOT,id:'ai_gateway',label:'AI Secret Gateway',port:PORT,routerPort:+(process.env.ROUTER_PORT||8021),
   cpPath:'/api/internal/ai-gateway/cp/v1',healthPath:'/api/health',version:CURRENT_VERSION,schema:'ai_gateway.response/1.0',
-  actions:['ai_gateway.responses'],handlers:{
+  actions:['ai_gateway.context','ai_gateway.responses'],handlers:{
+   'ai_gateway.context':function(){var aps=readAppSettings(activeAppSettingsFile()),st=secretStatus(),cc=cfg();return{ok:true,configured:!!st.openai,model:String(aps.data.general.openaiModel||cc.OPENAI_MODEL||'gpt-5.6'),language:String(aps.data.general.language||'fr').toLowerCase()};},
    'ai_gateway.responses':function(a,m,done){
     a=a||{};var p=a.payload&&typeof a.payload==='object'&&!Array.isArray(a.payload)?a.payload:null;
     if(!p)return done(new Error('AI_GATEWAY_PAYLOAD_REQUIRED'));
