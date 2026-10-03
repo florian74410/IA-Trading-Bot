@@ -340,7 +340,7 @@ require_service "Router" "$ROUTER_PORT" "/router-health" "\"router\"" "$ROUTER_L
 
 # 3. Security boundary before Market Data or Trading.
 status_wait "Firewall" "before data/trading"
-IATB_FIREWALL_PORT="$FIREWALL_PORT" IATB_TRADING_ENGINE_PORT="$TRADING_ENGINE_PORT" IATB_MARKET_DATA_PORT="$MARKET_DATA_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Core/Firewall/firewall_service.js >> "$FIREWALL_LOG" 2>&1 &
+IATB_FIREWALL_PORT="$FIREWALL_PORT" IATB_TRADING_ENGINE_PORT="$TRADING_ENGINE_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Core/Firewall/firewall_service.js >> "$FIREWALL_LOG" 2>&1 &
 FIREWALL_PID=$!
 require_service "Firewall" "$FIREWALL_PORT" "/health" "IA-TB Firewall Service" "$FIREWALL_LOG" 10
 fw_threads_ok=0
@@ -372,7 +372,7 @@ require_service "Indicator Engine" "$INDICATOR_PORT" "/health" "IA-TB Indicator 
 
 if [ "$FUNDAMENTAL_READY" -eq 1 ]; then
   status_wait "Fundamental Engine" "after Router"
-  IATB_FUNDAMENTAL_PORT="$FUNDAMENTAL_PORT" CORE_PUBLIC_PORT="$CORE_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Fundamental/Engine/fundamental_service.js >> "$FUNDAMENTAL_LOG" 2>&1 &
+  IATB_FUNDAMENTAL_PORT="$FUNDAMENTAL_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Fundamental/Engine/fundamental_service.js >> "$FUNDAMENTAL_LOG" 2>&1 &
   FUNDAMENTAL_PID=$!
   if ! wait_service "Fundamental Engine" "$FUNDAMENTAL_PORT" "/health" "IA-TB Fundamental Engine" "$FUNDAMENTAL_LOG" 12; then
     status_warn "Fundamental Engine" "disabled after failed boot"
