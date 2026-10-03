@@ -1,0 +1,13 @@
+'use strict';
+var fs=require('fs'),path=require('path'),assert=require('assert');
+var ROOT=path.resolve(__dirname,'../..');
+var core=fs.readFileSync(path.join(ROOT,'Core/Server/server.js'),'utf8');
+var sup=fs.readFileSync(path.join(ROOT,'Supervisor/Core/supervisor_core.js'),'utf8');
+var fund=fs.readFileSync(path.join(ROOT,'Fundamental/Engine/fundamental_service.js'),'utf8');
+assert(core.indexOf("id:'ai_gateway'")>=0,'AI Gateway missing');
+assert(core.indexOf("id:'x_gateway'")>=0,'X Gateway missing');
+assert(sup.indexOf("'ai_gateway','ai_gateway.responses'")>=0,'Supervisor does not use AI Gateway');
+assert(fund.indexOf("'ai_gateway','ai_gateway.responses'")>=0,'Fundamental does not use AI Gateway');
+assert(fund.indexOf('api.openai.com')<0,'Fundamental must not call OpenAI directly');
+assert(sup.indexOf('api.openai.com')<0,'Supervisor Core must not call OpenAI directly');
+console.log('[SECRET-GATEWAYS] OK v2.0');
