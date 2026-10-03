@@ -30,6 +30,7 @@ var UI_READ_ACTIONS={
  'strategy.catalog':1,
  'strategy.stats':1,
  'strategy.state':1,
+ 'portfolio.overview':1,
  'portfolio.positions':1,
  'portfolio.position.health':1,
  'portfolio.trades':1,
