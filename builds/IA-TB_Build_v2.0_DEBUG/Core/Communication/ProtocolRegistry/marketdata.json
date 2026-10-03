@@ -1,7 +1,7 @@
 {
   "id": "marketdata",
-  "label": "Market Data Collector",
-  "type": "MODULE",
+  "label": "Market Data Collector V2.2",
+  "type": "SERVICE",
   "transport": "CP1",
   "endpoint": {
     "host": "127.0.0.1",
@@ -452,16 +452,6 @@
         "schema": "iatb.financial.data/1.0"
       },
       {
-        "name": "market.liquidity.raw",
-        "direction": "PRODUCE",
-        "schema": "marketdata.liquidity.raw/1.0"
-      },
-      {
-        "name": "market.liquidity.history",
-        "direction": "PRODUCE",
-        "schema": "marketdata.liquidity.history/1.0"
-      },
-      {
         "name": "market.open_interest.aggregate",
         "direction": "PRODUCE",
         "schema": "marketdata.open_interest.aggregate/1.0"
@@ -479,7 +469,7 @@
       {
         "name": "market.microstructure.raw",
         "direction": "PRODUCE",
-        "schema": "marketdata.liquidity.raw/1.0"
+        "schema": "marketdata.microstructure.raw/1.0"
       },
       {
         "name": "market.microstructure.history",
