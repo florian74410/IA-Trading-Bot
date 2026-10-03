@@ -3,6 +3,7 @@
 var $=function(id){return document.getElementById(id)},state={range:'7d',overview:null,tradeLimit:10,lastHistory:[]};
 
 function api(url,opt){opt=opt||{};return fetch(url,{method:opt.method||'GET',headers:{'Content-Type':'application/json'},body:opt.body?JSON.stringify(opt.body):undefined,cache:'no-store'}).then(function(r){return r.json().catch(function(){return{};}).then(function(o){if(!r.ok)throw new Error(o.error||('HTTP '+r.status));return o;});});}
+function uiRead(action,args){return fetch('/communication/v1/ui/read',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({target:'portfolio',action:action,arguments:args||{}}),cache:'no-store'}).then(function(r){return r.json().catch(function(){return{};}).then(function(o){if(!r.ok||o.error)throw new Error(o.error||('HTTP '+r.status));return o.data||{};});});}
 function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 function money(v,c){if(v==null||!isFinite(+v))return'--';return new Intl.NumberFormat('fr-FR',{style:'currency',currency:c||'EUR',maximumFractionDigits:2}).format(+v)}
 function num(v,d){if(v==null||!isFinite(+v))return'--';return(+v).toLocaleString('fr-FR',{maximumFractionDigits:d==null?2:d})}
@@ -91,19 +92,19 @@ function render(o){
 }
 
 function loadOverview(){
- return api('/portfolio-api/api/overview').then(function(o){$('engineBadge').textContent='Portfolio ONLINE';$('engineBadge').className='pill ok';render(o);return loadHistory();}).catch(function(e){$('engineBadge').textContent='Portfolio OFFLINE';$('engineBadge').className='pill bad';$('updatedAt').textContent=e.message;});
+ return uiRead('portfolio.overview').then(function(o){$('engineBadge').textContent='Portfolio ONLINE';$('engineBadge').className='pill ok';render(o);return loadHistory();}).catch(function(e){$('engineBadge').textContent='Portfolio OFFLINE';$('engineBadge').className='pill bad';$('updatedAt').textContent=e.message;});
 }
 function loadHistory(){
  var ccy=(state.overview&&state.overview.baseCurrency)||'EUR';
  return Promise.all([
-  api('/portfolio-api/api/history?range='+encodeURIComponent(state.range)),
-  api('/portfolio-api/api/trades?limit='+encodeURIComponent(state.tradeLimit))
+  uiRead('portfolio.history',{range:state.range}),
+  uiRead('portfolio.trades',{limit:state.tradeLimit})
  ]).then(function(rs){state.lastHistory=rs[0].history||[];drawLine(state.lastHistory);renderTrades(rs[1].trades||[],ccy);});
 }
 
 function detailCell(label,value,wide,code){return '<div class="'+(wide?'wide':'')+'"><small>'+esc(label)+'</small>'+(code?'<code>'+esc(value==null?'--':value)+'</code>':'<b>'+esc(value==null?'--':value)+'</b>')+'</div>'}
 function openTrade(id){
- if(!id)return;api('/portfolio-api/api/trade?id='+encodeURIComponent(id)).then(function(o){var t=o.trade||{},ccy=(state.overview&&state.overview.baseCurrency)||'EUR',html='<div class="tradeDetailGrid">'+
+ if(!id)return;uiRead('portfolio.trade.detail',{id:id}).then(function(o){var t=o.trade||{},ccy=(state.overview&&state.overview.baseCurrency)||'EUR',html='<div class="tradeDetailGrid">'+
   detailCell('Trade ID',t.trade_id,true,true)+
   detailCell('Statut',t.status||'CLOSED')+
   detailCell('Wallet',t.wallet_name||'Wallet')+
@@ -138,7 +139,6 @@ function closeTrade(){$('tradeDetailLayer').hidden=true}
 
 function services(){
  api('/router-health').then(function(r){var map={Core:r.core,MarketData:r.marketData,Trading:r.trading,Portfolio:r.portfolio};document.querySelectorAll('#services span').forEach(function(el){var t=el.textContent.trim().replace(/\s+/g,'');if(t==='Firewall')return;var x=map[t];el.className=x&&x.ok?'ok':'bad';});}).catch(function(){});
- api('/portfolio-api/health').then(function(){var s=document.querySelectorAll('#services span');if(s[3])s[3].className='ok';}).catch(function(){});
 }
 
 document.querySelectorAll('.ranges button').forEach(function(b){b.onclick=function(){document.querySelectorAll('.ranges button').forEach(function(x){x.classList.remove('active')});b.classList.add('active');state.range=b.getAttribute('data-range');$('rangeLabel').textContent=b.textContent;loadHistory();};});
