@@ -1,7 +1,7 @@
 'use strict';
 /* IA-TB Indicator Engine v2.0
    Local engine bound to 127.0.0.1. CP/1 endpoint is authenticated and intended
-   for Communication Router only. Legacy UI endpoints remain compatible.
+   for Communication Router only. Local UI compatibility endpoints remain available.
 */
 var http=require('http'),fs=require('fs'),path=require('path'),URL=require('url').URL;
 var regmod=require('./indicator_registry'),eng=require('./indicator_engine'),Analysis=require('./indicator_analysis_v1'),Settings=require('./indicator_settings'),CP=require('../../Core/Communication/communication_protocol_v1'),CPClient=require('../../Core/Communication/cp1_client'),FinancialClient=require('../../Core/Communication/financial_data_client_v1'),BUILD=require('../../Core/Shared/build_info');
