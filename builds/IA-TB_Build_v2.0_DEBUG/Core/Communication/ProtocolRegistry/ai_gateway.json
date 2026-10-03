@@ -12,6 +12,13 @@
   "table": {
     "commands": [
       {
+        "name": "ai_gateway.context",
+        "arguments": {
+          "allowed": []
+        },
+        "description": "Return non-secret AI/application context needed by domain engines: configured state, active model and language."
+      },
+      {
         "name": "ai_gateway.responses",
         "arguments": {
           "allowed": [
