@@ -1,0 +1,32 @@
+IA-TB — Indicator Engine / Chart Viewer / Market Data v1.7.2
+============================================================
+
+REGLE PRINCIPALE
+----------------
+Indicator Engine est la source unique de calcul pour les indicateurs sélectionnés.
+Chart Viewer affiche les séries produites par Indicator Engine ; il ne recalcule pas
+une seconde fois les indicateurs sélectionnés.
+
+MARKET DATA
+-----------
+Pas de nouveau module Freshness.
+Le service Market Data existant :
+- met à jour périodiquement les contextes OHLCV actifs ;
+- accepte un refresh forcé à la demande de l'Indicator Engine ;
+- conserve un cache court pour éviter plusieurs appels réseau identiques simultanés.
+
+Une demande explicite indicator.analyze force par défaut l'acquisition la plus récente.
+Le premier clic sur Fx Indicateurs force également une actualisation avant calcul.
+
+VOLUME
+------
+Le volume est utilisé uniquement lorsqu'il est réellement disponible chez le provider.
+Aucun volume GMX artificiel n'est fabriqué à partir d'un autre exchange.
+Un indicateur qui exige le volume doit annoncer son indisponibilité/dégradation si la
+source courante ne fournit pas de volume fiable.
+
+REGISTRE DYNAMIQUE
+------------------
+Les indicateurs sont découverts dans le registre Indicator Engine. L'UI Settings, le
+Chart Viewer, le Router, le Chat et plus tard le Supervisor se basent sur le même registre.
+L'ajout/suppression d'un indicateur ne nécessite donc pas une liste parallèle codée en dur.
