@@ -15,7 +15,7 @@ var FUNDAMENTAL_HOST='127.0.0.1',FUNDAMENTAL_PORT=+(process.env.IATB_FUNDAMENTAL
 var TRADING_ENGINE_HOST='127.0.0.1',TRADING_ENGINE_PORT=+(process.env.IATB_TRADING_ENGINE_PORT||8016);
 var STRATEGY_HOST='127.0.0.1',STRATEGY_PORT=+(process.env.IATB_STRATEGY_PORT||8018);
 var RISK_HOST='127.0.0.1',RISK_PORT=+(process.env.IATB_RISK_ENGINE_PORT||8019);
-var PORTFOLIO_HOST='127.0.0.1',PORTFOLIO_PORT=+(process.env.IATB_PORTFOLIO_PORT||8020);
+var PORTFOLIO_PORT=+(process.env.IATB_PORTFOLIO_PORT||8020);
 var SUPERVISOR_HOST='127.0.0.1',SUPERVISOR_PORT=+(process.env.IATB_SUPERVISOR_PORT||3000);
 var APP_ROOT=path.resolve(__dirname,'../..'),COMM=new CommRouter(APP_ROOT);
 var COMM_MAX_BODY=512*1024;
@@ -103,11 +103,10 @@ var server=http.createServer(function(req,res){var u=new URL(req.url,'http://'+H
  if(req.method==='GET'&&p==='/firewall-events')return proxy(req,res,'127.0.0.1',FIREWALL_PORT,'/api/events'+u.search,{label:'Firewall Event Feed'});
  if(p==='/market-data'||p.indexOf('/market-data/')===0){var msub=p.slice('/market-data'.length)||'/';return proxy(req,res,MARKET_DATA_HOST,MARKET_DATA_PORT,msub+u.search,{label:'Market Data · firewall validated at ingestion'});}
  if(p==='/fundamental-api'||p.indexOf('/fundamental-api/')===0){var fsub=p.slice('/fundamental-api'.length)||'/';return proxy(req,res,FUNDAMENTAL_HOST,FUNDAMENTAL_PORT,fsub+u.search,{label:'Fundamental Engine'});}
- if(p==='/portfolio-api'||p.indexOf('/portfolio-api/')===0){var psub=p.slice('/portfolio-api'.length)||'/';return proxy(req,res,PORTFOLIO_HOST,PORTFOLIO_PORT,psub+u.search,{label:'Portfolio Engine'});}
  return proxy(req,res,CORE_HOST,CORE_PORT,u.pathname+u.search,{label:'IA-TB Core'});
 });
 server.on('error',function(e){console.error('IA-TB Router bind error:',e&&e.message||e);process.exit(13);});server.listen(PORT,HOST,function(){console.log('IA-TB Communication Router v'+BUILD.version+' : http://'+HOST+':'+PORT);
 console.log('Communication Protocol: CP/1 (canal Supervisor authentifie)');console.log('Core interne      : http://'+CORE_HOST+':'+CORE_PORT);console.log('Indicator Engine  : http://'+INDICATOR_HOST+':'+INDICATOR_PORT);console.log('Market Data       : http://'+MARKET_DATA_HOST+':'+MARKET_DATA_PORT);console.log('Liquidity Engine  : http://'+LIQUIDITY_HOST+':'+LIQUIDITY_PORT);
-console.log('Fundamental Engine: http://'+FUNDAMENTAL_HOST+':'+FUNDAMENTAL_PORT);console.log('Trading Engine    : http://'+TRADING_ENGINE_HOST+':'+TRADING_ENGINE_PORT);console.log('Strategy Engine   : http://'+STRATEGY_HOST+':'+STRATEGY_PORT);console.log('Portfolio Engine  : http://'+PORTFOLIO_HOST+':'+PORTFOLIO_PORT);});
+console.log('Fundamental Engine: http://'+FUNDAMENTAL_HOST+':'+FUNDAMENTAL_PORT);console.log('Trading Engine    : http://'+TRADING_ENGINE_HOST+':'+TRADING_ENGINE_PORT);console.log('Strategy Engine   : http://'+STRATEGY_HOST+':'+STRATEGY_PORT);});
 function stop(){server.close(function(){process.exit(0);});setTimeout(function(){process.exit(0);},1200);}
 process.on('SIGINT',stop);process.on('SIGTERM',stop);
