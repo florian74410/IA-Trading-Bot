@@ -1,0 +1,29 @@
+IA-TB v1.8.6 — UI /ia-trading
+
+Interface codée, pas une image.
+
+Structure desktop
+-----------------
+- gauche : logo IA-TB + Chat IA Supervisor
+- haut : navbar fixe
+- centre haut : Chart Viewer
+- centre bas : mosaïque Volume 24H / Stratégies en cours / Synthèse IA
+- droite : Exchanges / Volume & Prices Consensus
+- bas : État des services fixe
+
+Compatibilité
+-------------
+La refonte conserve les IDs et contrôleurs existants afin de ne pas casser le Chart Viewer, le Chat, les Stratégies, les Settings ou l'Admin.
+La v1.8.6 est construite depuis la v1.8.5 consolidée contenant le Firewall multi-threading et Protocol Registry v2.
+
+Volume 24H
+----------
+Aucun volume n'est synthétisé. Quand l'endpoint de marché signale `volumeAvailable=false`, l'UI affiche N/D.
+
+
+HOTFIX PAGES SECONDAIRES — 2026-09-01
+-------------------------------------
+- Le dashboard /ia-trading est désormais masqué quand Settings, Stratégies ou Updates est ouvert.
+- Suppression des artefacts visuels Logo / BTC-USD / Exchanges visibles derrière les pages secondaires.
+- La navbar supérieure reste visible et commune.
+- Au retour vers Trading IA, le dashboard est restauré et un resize du Chart Viewer est déclenché.
