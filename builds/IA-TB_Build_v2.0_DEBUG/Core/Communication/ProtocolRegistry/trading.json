@@ -26,6 +26,51 @@
         }
       },
       {
+        "name": "trading.account.positions",
+        "arguments": {
+          "allowed": [
+            "exchange",
+            "address",
+            "account",
+            "chain"
+          ],
+          "required": [
+            "exchange"
+          ]
+        },
+        "description": "Read account positions through the selected exchange executor."
+      },
+      {
+        "name": "trading.account.orders",
+        "arguments": {
+          "allowed": [
+            "exchange",
+            "address",
+            "account",
+            "chain"
+          ],
+          "required": [
+            "exchange"
+          ]
+        },
+        "description": "Read account orders through the selected exchange executor."
+      },
+      {
+        "name": "trading.account.balances",
+        "arguments": {
+          "allowed": [
+            "exchange",
+            "address",
+            "account",
+            "chain"
+          ],
+          "required": [
+            "exchange"
+          ]
+        },
+        "description": "Read account balances through the selected exchange executor."
+      },
+      {
         "name": "trading.execute",
         "arguments": {
           "allowed": [
