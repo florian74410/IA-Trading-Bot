@@ -26,6 +26,7 @@ function communicationRegister(req,res){var token=String(req.headers['x-iatb-cp-
 
 var UI_READ_ACTIONS={
  'indicator.settings.get':1,
+ 'indicator.registry.status':1,
  'indicator.list_indicators':1,
  'indicator.compute_batch':1,
  'indicator.analyze':1,
