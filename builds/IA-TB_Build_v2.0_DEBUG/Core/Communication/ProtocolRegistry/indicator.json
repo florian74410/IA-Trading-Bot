@@ -12,6 +12,43 @@
   "table": {
     "commands": [
       {
+        "name": "indicator.custom.delete",
+        "arguments": {
+          "allowed": [
+            "id"
+          ],
+          "required": [
+            "id"
+          ]
+        },
+        "description": "Delete a Custom indicator definition. Built-ins remain protected."
+      },
+      {
+        "name": "indicator.registry.reload",
+        "arguments": {
+          "allowed": []
+        },
+        "description": "Reload Indicator Engine registry and reconcile settings."
+      },
+      {
+        "name": "indicator.settings.set",
+        "arguments": {
+          "allowed": [
+            "settings",
+            "refreshMs",
+            "enabled"
+          ]
+        },
+        "description": "Update Indicator Engine settings through CP/1."
+      },
+      {
+        "name": "indicator.settings.get",
+        "arguments": {
+          "allowed": []
+        },
+        "description": "Read Indicator Engine settings through CP/1."
+      },
+      {
         "name": "indicator.language.info",
         "arguments": {
           "allowed": []
