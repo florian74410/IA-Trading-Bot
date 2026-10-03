@@ -88,7 +88,7 @@ function communicationUiRead(req,res){
   if(e)return sendJson(res,400,{ok:false,error:e.message});
   b=b&&typeof b==='object'?b:{};
   var target=String(b.target||'').toLowerCase(),action=String(b.action||'');
-  if(!UI_READ_ACTIONS[action]||(['strategy','marketdata','portfolio','liquidity','indicator','fundamental','firewall','trading'].indexOf(target)<0))return sendJson(res,403,{ok:false,error:'UI_WRITE_DENY',caller:{type:'UI',role:'READ_ONLY'}});
+  if(!UI_READ_ACTIONS[action]||(['strategy','marketdata','portfolio','liquidity','indicator','fundamental','firewall','trading'].indexOf(target)<0))return sendJson(res,403,{ok:false,error:'UI_READ_DENY',caller:{type:'UI',role:'READ_ONLY'}});
   var args=b.arguments&&typeof b.arguments==='object'&&!Array.isArray(b.arguments)?b.arguments:{};
   if(target==='strategy'&&Object.keys(args).length)return sendJson(res,403,{ok:false,error:'UI_ARGUMENTS_DENY',caller:{type:'UI',role:'READ_ONLY'}});if(target==='firewall'){var fwa={'firewall.events':{audience:1,limit:1,since:1},'firewall.status':{}}[action]||{},fwks=Object.keys(args);for(var fwi=0;fwi<fwks.length;fwi++)if(!fwa[fwks[fwi]])return sendJson(res,403,{ok:false,error:'UI_ARGUMENTS_DENY',caller:{type:'UI',role:'READ_ONLY'}});}if(target==='fundamental'){var fa={
  'fundamental.ai_summary.state':{},
