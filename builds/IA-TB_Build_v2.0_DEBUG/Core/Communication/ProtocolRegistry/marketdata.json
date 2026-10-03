@@ -61,6 +61,17 @@
         }
       },
       {
+        "name": "marketdata.provider.test",
+        "arguments": {
+          "allowed": [
+            "provider",
+            "source",
+            "exchange"
+          ]
+        },
+        "description": "Run a bounded public connectivity/data probe against one Market Data provider."
+      },
+      {
         "name": "marketdata.financial.capabilities",
         "arguments": {
           "allowed": []
