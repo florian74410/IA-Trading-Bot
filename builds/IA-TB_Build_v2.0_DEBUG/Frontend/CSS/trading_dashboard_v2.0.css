@@ -151,7 +151,7 @@
   .iatbSvcTail{width:132px;flex:0 0 132px;padding:5px 8px;border-left:1px solid var(--ia-line);display:grid;grid-template-columns:1fr 1fr;gap:8px}.iatbSvcTail small{display:block;color:#617a8a;font-size:7px}.iatbSvcTail strong{display:block;margin-top:2px;color:#1fd681;font-size:8px}
 
   /* Keep legacy panels alive for controllers, but out of the layout. */
-  #dynamicBottomRight,#krakenPanel{display:none!important}
+  #dynamicBottomRight{display:none!important}
   .settingsPage,.strategyPage{top:var(--ia-top-h)!important;bottom:var(--ia-status-h)!important}
   .iatbExchangeColumn.iatbSideCollapsed{width:48px}.iatbExchangeColumn.iatbSideCollapsed .iatbExchangeScroll{display:none}
 }
