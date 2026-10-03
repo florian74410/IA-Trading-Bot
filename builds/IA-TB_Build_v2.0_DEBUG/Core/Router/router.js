@@ -25,6 +25,14 @@ function readJsonBody(req,limit,cb){var a=[],n=0,done=false;limit=limit||COMM_MA
 function communicationRegister(req,res){var token=String(req.headers['x-iatb-cp-token']||'');if(!COMM.verifyToken(token))return sendJson(res,403,{ok:false,error:'CP_AUTH_FAILED'});readJsonBody(req,131072,function(e,b){if(e)return sendJson(res,400,{ok:false,error:e.message});try{var x=COMM.register(b);sendJson(res,200,{ok:true,protocol:CP.PROTOCOL,engine:{id:x.id,label:x.label,port:x.port,capabilities:x.capabilities,events:x.events||[],lastSeen:x.lastSeen}});}catch(er){sendJson(res,400,{ok:false,error:er.message});}});}
 
 var UI_READ_ACTIONS={
+ 'indicator.settings.get':1,
+ 'indicator.list_indicators':1,
+ 'indicator.compute_batch':1,
+ 'indicator.analyze':1,
+ 'indicator.definition.get':1,
+ 'indicator.definition.validate':1,
+ 'indicator.language.info':1,
+ 'indicator.language.validate':1,
  'strategy.health':1,
  'strategy.capabilities':1,
  'strategy.catalog':1,
@@ -53,11 +61,30 @@ function communicationUiRead(req,res){
   if(e)return sendJson(res,400,{ok:false,error:e.message});
   b=b&&typeof b==='object'?b:{};
   var target=String(b.target||'').toLowerCase(),action=String(b.action||'');
-  if(!UI_READ_ACTIONS[action]||(['strategy','marketdata','portfolio','liquidity'].indexOf(target)<0))return sendJson(res,403,{ok:false,error:'UI_WRITE_DENY',caller:{type:'UI',role:'READ_ONLY'}});
+  if(!UI_READ_ACTIONS[action]||(['strategy','marketdata','portfolio','liquidity','indicator'].indexOf(target)<0))return sendJson(res,403,{ok:false,error:'UI_WRITE_DENY',caller:{type:'UI',role:'READ_ONLY'}});
   var args=b.arguments&&typeof b.arguments==='object'&&!Array.isArray(b.arguments)?b.arguments:{};
   if(target==='strategy'&&Object.keys(args).length)return sendJson(res,403,{ok:false,error:'UI_ARGUMENTS_DENY',caller:{type:'UI',role:'READ_ONLY'}});if(target==='liquidity'){var la={'liquidity.zones':{symbol:1,timeframe:1,limit:1}}[action]||{},lks=Object.keys(args);for(var li=0;li<lks.length;li++)if(!la[lks[li]])return sendJson(res,403,{ok:false,error:'UI_ARGUMENTS_DENY',caller:{type:'UI',role:'READ_ONLY'}});}if(target==='portfolio'){var pa={'portfolio.positions':{},'portfolio.statistics':{},'portfolio.position.health':{tradeId:1,walletId:1,symbol:1,exchange:1},'portfolio.trades':{limit:1},'portfolio.trade.detail':{tradeId:1,id:1},'portfolio.history':{range:1},'portfolio.events':{limit:1,since:1}}[action]||{},pks=Object.keys(args);for(var pi=0;pi<pks.length;pi++)if(!pa[pks[pi]])return sendJson(res,403,{ok:false,error:'UI_ARGUMENTS_DENY',caller:{type:'UI',role:'READ_ONLY'}});}
   var q=CP.makeRequest(target,action,args,'summary');q.caller={type:'UI',role:'READ_ONLY'};
   COMM.route(q,function(er,o){if(er)return sendJson(res,400,{ok:false,error:er.message,protocol:CP.PROTOCOL,caller:{type:'UI',role:'READ_ONLY'}});sendJson(res,200,o);});
+ });
+}
+
+var UI_WRITE_ACTIONS={
+ 'indicator.settings.set':1,
+ 'indicator.registry.reload':1,
+ 'indicator.definition.create':1,
+ 'indicator.language.create':1,
+ 'indicator.custom.delete':1
+};
+function communicationUiWrite(req,res){
+ readJsonBody(req,262144,function(e,b){
+  if(e)return sendJson(res,400,{ok:false,error:e.message});
+  b=b&&typeof b==='object'?b:{};
+  var target=String(b.target||'').toLowerCase(),action=String(b.action||'');
+  if(target!=='indicator'||!UI_WRITE_ACTIONS[action])return sendJson(res,403,{ok:false,error:'UI_WRITE_DENY',caller:{type:'UI',role:'WRITE'}});
+  var args=b.arguments&&typeof b.arguments==='object'&&!Array.isArray(b.arguments)?b.arguments:{};
+  var q=CP.makeRequest(target,action,args,'summary');q.caller={type:'UI',role:'WRITE'};
+  COMM.route(q,function(er,o){if(er)return sendJson(res,400,{ok:false,error:er.message,protocol:CP.PROTOCOL,caller:{type:'UI',role:'WRITE'}});sendJson(res,200,o);});
  });
 }
 
@@ -91,6 +118,7 @@ var server=http.createServer(function(req,res){var u=new URL(req.url,'http://'+H
  if(req.method==='POST'&&p==='/communication/v1/register')return communicationRegister(req,res);
  if(req.method==='POST'&&p==='/communication/v1/request')return communicationRequest(req,res);
  if(req.method==='POST'&&p==='/communication/v1/ui/read')return communicationUiRead(req,res);
+ if(req.method==='POST'&&p==='/communication/v1/ui/write')return communicationUiWrite(req,res);
  if(req.method==='POST'&&p==='/communication/v1/event')return communicationEvent(req,res);
  if(req.method==='GET'&&p==='/communication/v1/events')return communicationEvents(req,u,res);
  if(req.method==='GET'&&p==='/communication/v1/capabilities')return communicationCapabilities(req,res);
