@@ -159,61 +159,6 @@
         "description": "Internal refresh of financial provider data."
       },
       {
-        "name": "marketdata.liquidity.capabilities",
-        "arguments": {
-          "allowed": []
-        },
-        "description": "Liquidity microstructure providers, firewall and storage capabilities. Compatibility alias; canonical namespace is marketdata.microstructure.*. Same Market Data Collector service."
-      },
-      {
-        "name": "marketdata.liquidity.snapshot",
-        "arguments": {
-          "allowed": [
-            "symbol",
-            "source",
-            "depth",
-            "force"
-          ],
-          "required": [
-            "symbol"
-          ]
-        },
-        "description": "Firewall-validated raw order book/open-interest snapshot. Compatibility alias; canonical namespace is marketdata.microstructure.*. Same Market Data Collector service."
-      },
-      {
-        "name": "marketdata.liquidity.history",
-        "arguments": {
-          "allowed": [
-            "symbol",
-            "source",
-            "limit",
-            "since"
-          ]
-        },
-        "description": "SQLite liquidity microstructure history retained by Market Data. Compatibility alias; canonical namespace is marketdata.microstructure.*. Same Market Data Collector service."
-      },
-      {
-        "name": "marketdata.liquidity.storage",
-        "arguments": {
-          "allowed": []
-        },
-        "description": "Liquidity cache and SQLite retention status. Compatibility alias; canonical namespace is marketdata.microstructure.*. Same Market Data Collector service."
-      },
-      {
-        "name": "marketdata.liquidity.refresh",
-        "arguments": {
-          "allowed": [
-            "symbol",
-            "source",
-            "depth"
-          ],
-          "required": [
-            "symbol"
-          ]
-        },
-        "description": "Force provider refresh through Data Firewall before cache/storage. Compatibility alias; canonical namespace is marketdata.microstructure.*. Same Market Data Collector service."
-      },
-      {
         "name": "marketdata.derivatives.open_interest",
         "arguments": {
           "allowed": [
