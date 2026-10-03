@@ -1,0 +1,13 @@
+TradingBot Kraken Routed — Router revision v1.0.1
+Date : 2026-08-24
+
+Correctif :
+- Le coeur TradingBot v1.0 reste inchangé.
+- Ajout d'un preflight dans start.command : detection des anciennes instances sur 8000/8001/8011/3000.
+- Une ancienne instance reconnue TradingBot/Router/Kraken est arrêtée avant le nouveau démarrage.
+- Un programme inconnu utilisant un port n'est jamais tué automatiquement : le démarrage s'arrête avec un message clair.
+- Le navigateur n'ouvre plus 8000 avant validation explicite de /router-health.
+- Ajout d'erreurs explicites de bind dans router.js et kraken_service.js.
+- Ajout de pid dans /router-health et /health Kraken.
+- Ajout de stop.command pour fermer proprement les services reconnus.
+- Aucun changement dans server_v1.0.js, app_v1.0.html, chart_viewer_v1.0.html, launcher.js, UpdateManager ou protocole IA.
