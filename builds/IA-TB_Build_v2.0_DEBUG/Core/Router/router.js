@@ -10,7 +10,7 @@ var PORT=+(process.env.ROUTER_PORT||8021);
 var CORE_HOST='127.0.0.1',CORE_PORT=+(process.env.CORE_PUBLIC_PORT||8001);
 var INDICATOR_PORT=+(process.env.IATB_INDICATOR_PORT||8012);
 var MARKET_DATA_HOST='127.0.0.1',MARKET_DATA_PORT=+(process.env.IATB_MARKET_DATA_PORT||8013),FIREWALL_PORT=+(process.env.IATB_FIREWALL_PORT||8017);
-var LIQUIDITY_HOST='127.0.0.1',LIQUIDITY_PORT=+(process.env.IATB_LIQUIDITY_PORT||8014);
+var LIQUIDITY_PORT=+(process.env.IATB_LIQUIDITY_PORT||8014);
 var FUNDAMENTAL_PORT=+(process.env.IATB_FUNDAMENTAL_PORT||8015);
 var TRADING_ENGINE_HOST='127.0.0.1',TRADING_ENGINE_PORT=+(process.env.IATB_TRADING_ENGINE_PORT||8016);
 var STRATEGY_HOST='127.0.0.1',STRATEGY_PORT=+(process.env.IATB_STRATEGY_PORT||8018);
@@ -194,7 +194,7 @@ var server=http.createServer(function(req,res){var u=new URL(req.url,'http://'+H
  return proxy(req,res,CORE_HOST,CORE_PORT,u.pathname+u.search,{label:'IA-TB Core'});
 });
 server.on('error',function(e){console.error('IA-TB Router bind error:',e&&e.message||e);process.exit(13);});server.listen(PORT,HOST,function(){console.log('IA-TB Communication Router v'+BUILD.version+' : http://'+HOST+':'+PORT);
-console.log('Communication Protocol: CP/1 (canal Supervisor authentifie)');console.log('Core interne      : http://'+CORE_HOST+':'+CORE_PORT);console.log('Market Data       : http://'+MARKET_DATA_HOST+':'+MARKET_DATA_PORT);console.log('Liquidity Engine  : http://'+LIQUIDITY_HOST+':'+LIQUIDITY_PORT);
+console.log('Communication Protocol: CP/1 (canal Supervisor authentifie)');console.log('Core interne      : http://'+CORE_HOST+':'+CORE_PORT);console.log('Market Data       : http://'+MARKET_DATA_HOST+':'+MARKET_DATA_PORT);
 console.log('Trading Engine    : http://'+TRADING_ENGINE_HOST+':'+TRADING_ENGINE_PORT);console.log('Strategy Engine   : http://'+STRATEGY_HOST+':'+STRATEGY_PORT);});
 function stop(){server.close(function(){process.exit(0);});setTimeout(function(){process.exit(0);},1200);}
 process.on('SIGINT',stop);process.on('SIGTERM',stop);
