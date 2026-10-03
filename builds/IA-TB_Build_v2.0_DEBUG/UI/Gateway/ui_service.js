@@ -47,6 +47,7 @@ var server=http.createServer(function(req,res){var u=new URL(req.url,'http://'+H
  if(p.indexOf('/firewall-admin/')===0)return authorizePage(req,res,'ADMIN',function(){var sub=p.slice('/firewall-admin'.length)||'/';proxy(req,res,FIREWALL_PORT,sub+u.search,{service:'Firewall Admin',permission:'ADMIN_WRITE'});});
  // Stable browser contract for IA Trading View. Always Market Data Collector, never Core market endpoints.
  if(req.method==='GET'&&p==='/ui-data/market/candles'){var qp='/market-data/candles'+u.search;return proxy(req,res,ROUTER_PORT,qp,{service:'Market Data Collector via Router',permission:'READ'});}
+ if(p.indexOf('/api/internal/')===0)return json(res,403,{ok:false,error:'UI_INTERNAL_API_FORBIDDEN'});
  if(p.indexOf('/api/')===0){var cl=allowCore(req,res,p);if(!cl)return;return proxy(req,res,CORE_PORT,p+u.search,{service:'Core API',permission:cl.permission});}
  json(res,404,{ok:false,error:'UI_ROUTE_NOT_FOUND'});
 });
