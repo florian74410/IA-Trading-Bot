@@ -3,10 +3,18 @@
    The Chart Viewer never calculates indicators itself. It asks Indicator Engine
    for a normalized analysis/evidence snapshot and only renders the returned data.
 */
-var API='/indicator-api',MAX_SELECTED=8,STORE='iatb.indicators.selected.v2';
+var MAX_SELECTED=8,STORE='iatb.indicators.selected.v2';
 var st={items:[],itemMap:Object.create(null),enabled:Object.create(null),selected:[],busy:false,timer:null,panel:null,status:null,results:null,mode:'unknown',lastMarketKey:'',lastAnalysis:null,lastBatch:[],lastComputeAt:0,lastForcedAt:0};
 function $(id){return document.getElementById(id);}function el(tag,cls,txt){var x=document.createElement(tag);if(cls)x.className=cls;if(txt!=null)x.textContent=txt;return x;}
-function req(path,opt){opt=opt||{};var o={method:opt.method||'GET',headers:{'Accept':'application/json'}};if(opt.body!==undefined){o.headers['Content-Type']='application/json';o.body=JSON.stringify(opt.body);}return fetch(API+path,o).then(function(r){return r.json().catch(function(){return{}}).then(function(x){if(!r.ok||x.ok===false){var e=new Error(x.error||('HTTP '+r.status));e.code=x.code||'';throw e;}return x;});});}
+function cpUi(mode,action,args){return fetch('/communication/v1/ui/'+mode,{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({target:'indicator',action:action,arguments:args||{}}),cache:'no-store'}).then(function(r){return r.json().catch(function(){return{}}).then(function(o){if(!r.ok||o.error){var e=new Error(o.error||('HTTP '+r.status));e.code=o.code||'';throw e;}return o.data||{};});});}
+function req(path,opt){opt=opt||{};var body=opt.body||{};
+ if(path==='/api/settings')return cpUi('read','indicator.settings.get',{}); 
+ if(path==='/api/registry/reload')return cpUi('write','indicator.registry.reload',{});
+ if(path==='/api/definition/create')return cpUi('write','indicator.definition.create',body);
+ if(path==='/api/compute-market-batch')return cpUi('read','indicator.compute_batch',body).then(function(x){return{ok:true,batch:x};});
+ if(path.indexOf('/api/analyze?')===0){var u=new URL(path,'http://localhost');return cpUi('read','indicator.analyze',{symbol:u.searchParams.get('symbol')||'BTCUSD',timeframe:u.searchParams.get('timeframe')||'1h',force:u.searchParams.get('force')==='1'}).then(function(x){return{ok:true,analysis:x};});}
+ return Promise.reject(new Error('INDICATOR_UI_ROUTE_UNMAPPED'));
+}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function normalizePair(s){return String(s||'').toUpperCase().replace(/[^A-Z0-9]/g,'');}function viewerTf(v){return{'1':'1m','5':'5m','15':'15m','30':'30m','60':'1h','240':'4h','D':'1d','W':'1w'}[String(v||'')]||'';}
 function market(){var ex,sym,tf;if($('exchangeSelect')&&$('symbol')&&$('interval')){st.mode='trading';ex=String($('exchangeSelect').value||'GMX').toUpperCase();sym=normalizePair($('symbol').value);tf=String($('interval').value||'1h');}else if($('exchange')&&$('pair')&&$('timeframe')){st.mode='viewer';ex=String($('exchange').value||'').toUpperCase();sym=normalizePair($('pair').value);tf=viewerTf($('timeframe').value);}else return null;return{exchange:ex,symbol:sym,timeframe:tf,key:ex+'|'+sym+'|'+tf};}
