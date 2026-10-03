@@ -16,8 +16,9 @@
   },
   "versionSource": "RUNTIME_HEALTH",
   "dependencies": [
-    "router",
-    "marketdata"
+    "router"
   ],
-  "optionalDependencies": []
+  "optionalDependencies": [
+    "marketdata"
+  ]
 }
