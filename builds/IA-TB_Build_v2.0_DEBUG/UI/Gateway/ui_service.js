@@ -5,7 +5,7 @@
    - Proxies Core APIs and Router channels through explicit read/write boundaries.
    - Never imports Engines/Core implementation modules.
    - IA Trading View market candles always come from Market Data Collector via
-     Router -> Firewall Data Thread -> Market Data Collector.
+     Router; Market Data validates external ingress through the Data Firewall before distribution.
    - ADMIN Firewall editor uses an explicit ADMIN-only bridge to port 8017.
 */
 var http=require('http'),fs=require('fs'),path=require('path'),URL=require('url').URL,Permissions=require('../Permissions/ui_permissions'),BUILD=require('../../Core/Shared/build_info');
