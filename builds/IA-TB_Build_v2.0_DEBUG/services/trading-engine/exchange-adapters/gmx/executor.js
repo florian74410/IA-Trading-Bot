@@ -72,6 +72,30 @@ class GmxExecutor {
     };
   }
 
+  async positions(query, ctx) {
+    const chain=query.chain||"arbitrum", address=String(query.address||query.account||"").trim();
+    if(!/^0x[a-fA-F0-9]{40}$/.test(address))throw new Error("GMX_ACCOUNT_ADDRESS_INVALID");
+    const r=await ctx.transport({method:"GET",url:`${chainHost(chain)}/positions?address=${encodeURIComponent(address)}&includeRelatedOrders=true`});
+    if(!statusFromHttp(r.statusCode))throw new Error(asError(r.body,`HTTP ${r.statusCode}`));
+    return {ok:true,exchange:"GMX",chain,address,positions:Array.isArray(r.body)?r.body:[],source:"GMX_API"};
+  }
+
+  async orders(query, ctx) {
+    const chain=query.chain||"arbitrum", address=String(query.address||query.account||"").trim();
+    if(!/^0x[a-fA-F0-9]{40}$/.test(address))throw new Error("GMX_ACCOUNT_ADDRESS_INVALID");
+    const r=await ctx.transport({method:"GET",url:`${chainHost(chain)}/orders?address=${encodeURIComponent(address)}`});
+    if(!statusFromHttp(r.statusCode))throw new Error(asError(r.body,`HTTP ${r.statusCode}`));
+    return {ok:true,exchange:"GMX",chain,address,orders:Array.isArray(r.body)?r.body:[],source:"GMX_API"};
+  }
+
+  async balances(query, ctx) {
+    const chain=query.chain||"arbitrum", address=String(query.address||query.account||"").trim();
+    if(!/^0x[a-fA-F0-9]{40}$/.test(address))throw new Error("GMX_ACCOUNT_ADDRESS_INVALID");
+    const r=await ctx.transport({method:"GET",url:`${chainHost(chain)}/balances/wallet?address=${encodeURIComponent(address)}`});
+    if(!statusFromHttp(r.statusCode))throw new Error(asError(r.body,`HTTP ${r.statusCode}`));
+    return {ok:true,exchange:"GMX",chain,address,balances:Array.isArray(r.body)?r.body:[],source:"GMX_API"};
+  }
+
   async cancel(order, ctx) {
     ensureLive(ctx); const chain=order.chain||"arbitrum", base=chainHost(chain);
     if(!ctx.walletSigner||typeof ctx.walletSigner.signGmxPreparedOrder!=="function")return {ok:false,status:"SIGNATURE_REQUIRED",error:"GMX cancellation requires a wallet/EIP-712 signer",diagnostics:{chain,required:"walletSigner.signGmxPreparedOrder"}};
