@@ -187,11 +187,6 @@ var srv=http.createServer(function(req,res){
     protocol:'CP/1',analyticalOnly:true,pid:process.pid,host:HOST,port:PORT,
     routerPort:ROUTER_PORT,capabilities:CAPABILITIES,events:EVENTS,settings:riskSettings(),settingsStorage:SETTINGS_DB.status()
   });
-  if(req.method==='GET'&&u.pathname==='/api/settings')return json(res,200,{ok:true,settings:riskSettings(),storage:SETTINGS_DB.status()});
-  if(req.method==='POST'&&u.pathname==='/api/settings')return body(req,function(e,b){if(e)return json(res,400,{ok:false,error:e.message});try{json(res,200,{ok:true,settings:saveRiskSettings(b),storage:SETTINGS_DB.status()});}catch(x){json(res,500,{ok:false,error:x.message});}});
-  if(req.method==='GET'&&u.pathname==='/api/capabilities')return json(res,200,{
-    ok:true,protocol:'CP/1',analyticalOnly:true,capabilities:CAPABILITIES,events:EVENTS
-  });
   if(req.method==='POST'&&u.pathname==='/cp/v1')return handleCP(req,res);
   return json(res,404,{ok:false,error:'NOT_FOUND'});
 });
