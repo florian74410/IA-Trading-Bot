@@ -4,6 +4,7 @@ var ROOT=path.resolve(__dirname,'../..');
 var core=fs.readFileSync(path.join(ROOT,'Core/Server/server.js'),'utf8');
 var sup=fs.readFileSync(path.join(ROOT,'Supervisor/Core/supervisor_core.js'),'utf8');
 var fund=fs.readFileSync(path.join(ROOT,'Fundamental/Engine/fundamental_service.js'),'utf8');
+var ui=fs.readFileSync(path.join(ROOT,'UI/Gateway/ui_service.js'),'utf8');
 assert(core.indexOf("id:'ai_gateway'")>=0,'AI Gateway missing');
 assert(core.indexOf("id:'x_gateway'")>=0,'X Gateway missing');
 assert(sup.indexOf("'ai_gateway','ai_gateway.responses'")>=0,'Supervisor does not use AI Gateway');
@@ -13,4 +14,6 @@ assert(sup.indexOf('api.openai.com')<0,'Supervisor Core must not call OpenAI dir
 assert(core.indexOf("usageContext:'AI_UPDATE_BUILDER'")>=0,'AI Update Builder must use AI Gateway');
 assert(core.indexOf("'x_gateway','x_gateway.search'")>=0,'Core X test must use X Gateway');
 assert(core.indexOf("usageContext:'SETTINGS_TEST'")>=0,'Core OpenAI test must use AI Gateway');
+assert(ui.indexOf("p.indexOf('/api/internal/')===0")>=0,'UI Gateway must block internal Core APIs');
+assert(ui.indexOf('UI_INTERNAL_API_FORBIDDEN')>=0,'UI Gateway internal API denial code missing');
 console.log('[SECRET-GATEWAYS] OK v2.0');
