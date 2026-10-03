@@ -21,14 +21,12 @@ function waitRouter(want,deadline,cb){
 function routerEnvironment(){
  return Object.assign({},process.env,{
   CORE_PUBLIC_PORT:String(port('core',8001)),
-  KRAKEN_ADDON_PORT:String(port('kraken',8011)),
   IATB_INDICATOR_PORT:String(port('indicators',8012)),
   IATB_MARKET_DATA_PORT:String(port('marketdata',8013)),
   IATB_LIQUIDITY_PORT:String(port('liquidity',8014)),
   IATB_FUNDAMENTAL_PORT:String(port('fundamental',8015)),
   IATB_TRADING_ENGINE_PORT:String(port('trading',8016)),
   IATB_FIREWALL_PORT:String(port('firewall',8017)),
-  IATB_TRADING_FIREWALL_PORT:String(port('firewall',8017)),
   IATB_STRATEGY_PORT:String(port('strategy',8018)),
   IATB_RISK_ENGINE_PORT:String(port('risk',8019)),
   IATB_PORTFOLIO_PORT:String(port('portfolio',8020)),
