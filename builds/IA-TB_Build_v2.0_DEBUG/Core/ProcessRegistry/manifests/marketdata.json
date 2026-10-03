@@ -12,7 +12,6 @@
   "log": ".runtime/logs/market_data.log",
   "env": {
     "IATB_MARKET_DATA_PORT": "8013",
-    "KRAKEN_ADDON_PORT": "8011",
     "IATB_FIREWALL_PORT": "8017",
     "ROUTER_PORT": "8021"
   },
@@ -21,7 +20,5 @@
     "router",
     "firewall"
   ],
-  "optionalDependencies": [
-    "kraken"
-  ]
+  "optionalDependencies": []
 }
