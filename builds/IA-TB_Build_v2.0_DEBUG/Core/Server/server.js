@@ -207,7 +207,7 @@ function adminConsoleCatalog(cb){
     if(commands.length)targets.push({id:o.id,label:o.label||o.id,type:o.type||'MODULE',transport:o.transport||'CP1',commands:commands});
    });
    var live={};((health&&health.engines)||[]).forEach(function(x){live[x.id]={online:!!x.online,latencyMs:+x.latencyMs||0,port:x.port||0};});
-   targets.forEach(function(t){if(t.id==='router')t.runtime={online:!he,latencyMs:0,port:+(process.env.ROUTER_PORT||8021)};else if(t.id==='server')t.runtime={online:true,latencyMs:0,port:PORT};else if(t.id==='debug')t.runtime={online:true,latencyMs:0,port:PUBLIC_PORT};else t.runtime=live[t.id]||{online:false,latencyMs:0,port:0};});
+   targets.forEach(function(t){if(t.id==='router')t.runtime={online:!he,latencyMs:0,port:+(process.env.ROUTER_PORT||8021)};else if(t.id==='server')t.runtime={online:true,latencyMs:0,port:PORT};else if(t.id==='debug')t.runtime={online:true,latencyMs:0,port:0};else t.runtime=live[t.id]||{online:false,latencyMs:0,port:0};});
    cb(null,{ok:true,protocol:'CP/1',registryVersion:reg&&reg.version||'2.0',targets:targets,routerOnline:!he,routerHealth:he?{error:he.message}:health,console:CP1_CONSOLE_ENGINE.catalog()});
   });
  });
