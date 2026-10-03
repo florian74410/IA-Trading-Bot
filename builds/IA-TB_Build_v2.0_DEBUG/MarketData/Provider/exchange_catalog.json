@@ -13,7 +13,7 @@
         "ticker"
       ],
       "settingsKey": "KRAKEN",
-      "transport": "LOCAL_ADDON",
+      "transport": "REST",
       "defaultEnabled": true
     },
     {
