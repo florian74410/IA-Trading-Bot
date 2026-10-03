@@ -1,43 +1,38 @@
-
 # Trading Engine
 
-## Rôle
+## Role
 
-Le Trading Engine est la passerelle d'exécution entre l'architecture interne IA-TB et les APIs des exchanges.
+Le Trading Engine possede l'execution exchange d'IA-TB. Il ne produit pas de signal et ne decide pas seul d'ouvrir une position.
 
-Flux de référence :
+Flux de reference : Supervisor / Strategy -> Router -> Risk -> Firewall :8017 -> Trading Engine :8016 -> Exchange Adapter -> CEX / DEX.
 
-```text
-Supervisor -> Router <-> Risk Manager -> Trading Engine -> Exchange
-```
+## Surface runtime
 
-Il ne produit aucun signal et ne décide jamais d'ouvrir une position.
+GET /health et POST /cp/v1.
+Les anciennes routes HTTP /api/status, /api/capabilities et /api/last-execution ont ete supprimees.
 
-## Contrôle obligatoire
+## CP/1
 
-Toute commande `trading.execute` doit contenir un `risk_approval_id`.
-Sans autorisation Risk Manager, le Trading Engine refuse l'exécution.
+Actions principales :
+- trading.health
+- trading.capabilities
+- trading.account.positions
+- trading.account.orders
+- trading.account.balances
+- trading.execute
+- trading.cancel
+- trading.close_position
+- trading.history
 
-## Communication Protocol
+Les lectures de compte sont generiques par executor. GMX est le premier adapter a exposer positions, orders et balances via ce contrat commun.
 
-Le moteur échange avec le reste d'IA-TB via un adaptateur Communication Protocol.
-Les formats natifs Binance, OKX, Kraken et GMX ne sortent jamais de la couche Exchange Adapter.
+## Exchanges / adapters
 
-## Runtime supervisé depuis v1.7.7
+Le Trading Engine utilise un executor catalog. Un nouvel exchange doit etre ajoute via son adapter + manifeste de capabilities, pas par du code specifique dans Core ou Router.
 
-Le Trading Engine est lancé comme service local sur `127.0.0.1:8016`.
-Il expose `/health`, `/api/status`, `/api/capabilities`, `/api/last-execution` et `/cp/v1`.
+Adapters actifs : Binance, OKX, Kraken et GMX.
 
-Le service peut être redémarré depuis ADMIN. Son état de sécurité est visible sans activer l exécution réelle : `LIVE OFF` est la valeur par défaut.
+## Securite
 
-## Exchanges intégrés depuis v1.7.6
-
-- Binance : Spot + USDⓈ-M Futures
-- OKX : Spot / Margin / Swap / Futures
-- Kraken : Spot / Margin
-- GMX : ordre préparé + signature wallet + submission relayée
-
-## Sécurité
-
-Les secrets proviennent exclusivement du coffre `Settings > API`.
-Aucun secret ne doit être codé en dur ou stocké dans le dossier Trading Engine.
+Les operations Trading mutantes traversent le Firewall et les controles Risk.
+Les secrets restent dans les frontieres prevues et ne doivent pas etre codes en dur.
