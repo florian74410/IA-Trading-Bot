@@ -31,7 +31,6 @@ function currentRole(){return AUTH_MODE==='disabled'?BYPASS_ROLE:'SESSION';}
 function isAdminRole(role){role=Permissions.normalizeRole(role);return role==='ADMIN'||role==='SUPERADMIN';}
 function authorizePage(req,res,required,cb){if(AUTH_MODE==='disabled'){var r=BYPASS_ROLE;if(required==='ADMIN'&&!isAdminRole(r))return json(res,403,{ok:false,error:'ADMIN_REQUIRED'});return cb(r);}var h={Accept:'application/json'};if(req.headers.cookie)h.Cookie=req.headers.cookie;var q=http.get({host:'127.0.0.1',port:CORE_PORT,path:'/api/bootstrap',timeout:3000,headers:h},function(r){var a=[];r.on('data',function(c){a.push(c);});r.on('end',function(){var o={};try{o=JSON.parse(Buffer.concat(a).toString('utf8')||'{}');}catch(e){}if((r.statusCode||500)>=400||!o.authenticated)return json(res,401,{ok:false,error:'AUTH_REQUIRED'});var role=Permissions.normalizeRole(o.role||'USER');if(required==='ADMIN'&&!isAdminRole(role))return json(res,403,{ok:false,error:'ADMIN_REQUIRED'});cb(role);});});q.on('timeout',function(){q.destroy(new Error('AUTH_TIMEOUT'));});q.on('error',function(){json(res,503,{ok:false,error:'AUTH_SERVICE_UNAVAILABLE'});});}
 function allowCore(req,res,p){var c=Permissions.classify(req.method,p),role=currentRole();if(AUTH_MODE==='disabled'&&!Permissions.allowed(role,c)){json(res,403,{ok:false,error:'ACCESS_DENIED',role:role,required:c.permission});return false;}return c;}
-function routerProxyPath(p){return p.indexOf('/market-data')===0;}
 function proxyRouterBoundary(req,res,p,u){var read=req.method==='GET'||req.method==='HEAD';if(read)return proxy(req,res,ROUTER_PORT,p+u.search,{service:'Router',permission:'READ'});return authorizePage(req,res,'USER',function(){proxy(req,res,ROUTER_PORT,p+u.search,{service:'Router',permission:'WRITE'});});}
 var server=http.createServer(function(req,res){var u=new URL(req.url,'http://'+HOST+':'+PORT),p=u.pathname;
  if(req.method==='GET'&&p==='/ui-health')return json(res,200,{ok:true,name:'IA-TB UI Service',version:BUILD.version,pid:process.pid,host:HOST,port:PORT,corePort:CORE_PORT,routerPort:ROUTER_PORT,firewallPort:FIREWALL_PORT,authMode:AUTH_MODE,bypassRole:AUTH_MODE==='disabled'?BYPASS_ROLE:null,separation:'UI_PROCESS_ISOLATED'});
@@ -48,7 +47,6 @@ var server=http.createServer(function(req,res){var u=new URL(req.url,'http://'+H
  if(p.indexOf('/firewall-admin/')===0)return authorizePage(req,res,'ADMIN',function(){var sub=p.slice('/firewall-admin'.length)||'/';proxy(req,res,FIREWALL_PORT,sub+u.search,{service:'Firewall Admin',permission:'ADMIN_WRITE'});});
  // Stable browser contract for IA Trading View. Always Market Data Collector, never Core market endpoints.
  if(req.method==='GET'&&p==='/ui-data/market/candles'){var qp='/market-data/candles'+u.search;return proxy(req,res,ROUTER_PORT,qp,{service:'Market Data Collector via Router',permission:'READ'});}
- if(routerProxyPath(p))return proxyRouterBoundary(req,res,p,u);
  if(p.indexOf('/api/')===0){var cl=allowCore(req,res,p);if(!cl)return;return proxy(req,res,CORE_PORT,p+u.search,{service:'Core API',permission:cl.permission});}
  json(res,404,{ok:false,error:'UI_ROUTE_NOT_FOUND'});
 });
