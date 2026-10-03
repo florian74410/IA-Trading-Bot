@@ -385,6 +385,44 @@
           "allowed": []
         },
         "description": "Force the CoinGecko-backed market registry refresh."
+      },
+      {
+        "name": "marketdata.asset.price",
+        "arguments": {
+          "allowed": [
+            "symbol",
+            "currency"
+          ],
+          "required": [
+            "symbol"
+          ]
+        },
+        "description": "Read a CoinGecko-backed asset price through Market Data."
+      },
+      {
+        "name": "marketdata.catalog",
+        "arguments": {
+          "allowed": [
+            "query",
+            "page",
+            "perPage"
+          ]
+        },
+        "description": "Browse/search the CoinGecko asset catalog through Market Data."
+      },
+      {
+        "name": "marketdata.asset.resolve",
+        "arguments": {
+          "allowed": [
+            "id",
+            "network"
+          ],
+          "required": [
+            "id",
+            "network"
+          ]
+        },
+        "description": "Resolve asset metadata and network transferability through CoinGecko metadata."
       }
     ],
     "dataTypes": [
