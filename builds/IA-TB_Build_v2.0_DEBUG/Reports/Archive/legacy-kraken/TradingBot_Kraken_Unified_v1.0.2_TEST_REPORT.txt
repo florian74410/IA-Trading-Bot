@@ -1,0 +1,60 @@
+TradingBot Kraken Unified v1.0.2 — RAPPORT DE TEST
+=====================================================
+Date : 24 août 2026
+
+OBJECTIF
+--------
+Valider une interface Trading unique sur le port 8000 avec sélection GMX / Kraken,
+tout en conservant Kraken isolé dans un Add-On sur le port interne 8011.
+
+ARCHITECTURE
+------------
+Navigateur :8000 -> Router
+- GMX -> Core TradingBot :8001 -> API GMX existante
+- Kraken -> Add-On :8011 -> API publique Kraken
+
+RÉSULTATS STATIQUES
+--------------------
+PASS - router.js syntaxe Node valide.
+PASS - kraken_service.js syntaxe Node valide.
+PASS - JavaScript inline app_v1.0.html syntaxiquement valide.
+PASS - start.command et stop.command syntaxe Bash valide.
+PASS - Aucun fichier v1.1 présent dans l’application.
+PASS - server_v1.0.js, launcher.js et UpdateManager restent identiques à la branche routée fonctionnelle.
+
+INTERFACE UNIFIÉE
+------------------
+PASS - Sélecteur Exchange GMX / Kraken sur la même page Trading.
+PASS - /kraken redirige vers /trading?exchange=KRAKEN.
+PASS - Mode GMX : symboles BTC/USD, ETH/USD, SOL/USD.
+PASS - Mode Kraken : XBT/EUR, ETH/EUR, SOL/EUR + variantes USD.
+PASS - Badge de source actualisé selon l’exchange.
+PASS - Statut Kraken Public séparé du statut GMX.
+PASS - Kraken Private indiqué « Non configuré » dans cette étape.
+PASS - Chart Viewer / TradingView conserve son accès direct, sans proxy Kraken obligatoire.
+
+ROUTER / DONNÉES
+-----------------
+PASS - /router-health distingue Core et Kraken.
+PASS - Ticker Kraken normalisé vers {exchange, symbol, pair, price}.
+PASS - OHLC Kraken normalisé vers le même tableau [time,open,high,low,close,volume] attendu par le graphique.
+PASS - Timeframes 1m/5m/15m/1h/4h/1d traduits vers les intervalles Kraken.
+PASS - Ticker GMX continue d’être relayé sans modification.
+PASS - Données GMX existantes non remplacées par Kraken.
+
+ISOLATION DE PANNE
+------------------
+PASS - Arrêt volontaire du service Kraken : la page Trading GMX continue de répondre via le Router.
+PASS - Les routes Kraken renvoient HTTP 503 proprement lorsque l’Add-On est arrêté.
+PASS - Une panne Kraken ne fait pas tomber le Core TradingBot.
+
+LIMITES VOLONTAIRES
+-------------------
+- Aucun compte privé Kraken n’est utilisé dans ce build de validation.
+- Aucun ordre Kraken réel n’est envoyé.
+- La prochaine étape, seulement si ce build fonctionne sur le Mac cible, sera d’ajouter les réglages de clé et les données privées au même routage.
+- L’environnement de test disponible ici n’a pas de résolution DNS externe vers Kraken ; les réponses Kraken du test d’intégration ont donc été simulées au niveau du service 8011. La normalisation et le routage HTTP ont été exécutés réellement.
+
+VERDICT
+-------
+BUILD DE VALIDATION DU ROUTAGE : OK POUR TEST LOCAL.
