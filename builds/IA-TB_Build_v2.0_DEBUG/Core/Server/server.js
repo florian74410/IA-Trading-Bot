@@ -96,57 +96,6 @@ function marketSources(){var a=marketProviderDescriptors().filter(function(x){re
 function normalizeMarketSource(x){x=String(x||'').toUpperCase();var a=marketSources();return a.indexOf(x)>=0?x:(a.indexOf('KRAKEN')>=0?'KRAKEN':a[0]);}
 function currentMarketSource(){try{return normalizeMarketSource(readAppSettings(activeAppSettingsFile()).data.general.defaultMarketSource);}catch(e){return normalizeMarketSource('KRAKEN');}}
 function request(method,url,headers,data,cb,timeout){var u=new URL(url),opts=TLSCA.apply({hostname:u.hostname,port:u.port||443,path:u.pathname+u.search,method:method,headers:headers||{},timeout:timeout||12000}),r=https.request(opts,function(x){var a=[],n=0;x.on('data',function(c){n+=c.length;if(n<4194304)a.push(c);});x.on('end',function(){var t=Buffer.concat(a).toString('utf8'),o;try{o=JSON.parse(t);}catch(e){o={raw:t};}if(x.statusCode<200||x.statusCode>299){var msg=(o&&o.error&&o.error.message)||o.msg||('HTTP '+x.statusCode);var er=new Error(msg);er.payload=o;er.statusCode=x.statusCode;return cb(er);}cb(null,o,x.headers);});});r.on('timeout',function(){r.destroy(new Error('Timeout'));});r.on('error',cb);if(data)r.write(data);r.end();}
-var WALLET_PRICE_CACHE=Object.create(null);
-function walletAssetPriceEUR(symbol,cb){
- symbol=String(symbol||'').toUpperCase();var ids={ETH:'ethereum',BNB:'binancecoin',POL:'polygon-ecosystem-token',USDC:'usd-coin',BTC:'bitcoin',SOL:'solana'},id=ids[symbol];
- if(!id)return cb(new Error('PRICE_SYMBOL_UNSUPPORTED'));
- var hit=WALLET_PRICE_CACHE[symbol];if(hit&&Date.now()-hit.at<60000)return cb(null,hit);
- var url='https://api.coingecko.com/api/v3/simple/price?ids='+encodeURIComponent(id)+'&vs_currencies=eur';
- request('GET',url,{'Accept':'application/json','User-Agent':'IA-TB/2.0'},null,function(e,o){
-  if(e)return cb(e);var eur=o&&o[id]&&+o[id].eur;if(!isFinite(eur)||eur<=0)return cb(new Error('PRICE_EUR_UNAVAILABLE'));
-  var row={symbol:symbol,eur:eur,at:Date.now(),source:'CoinGecko Simple Price'};WALLET_PRICE_CACHE[symbol]=row;cb(null,row);
- },10000);
-}
-
-var CRYPTO_CATALOG_CACHE=Object.create(null),CRYPTO_DETAIL_CACHE=Object.create(null);
-var CG_PLATFORM={ethereum:'ethereum',arbitrum:'arbitrum-one',polygon:'polygon-pos',bnb:'binance-smart-chain',base:'base'};
-var CG_NATIVE={bitcoin:'bitcoin',ethereum:'ethereum',arbitrum:'ethereum',polygon:'polygon-ecosystem-token',bnb:'binancecoin',base:'ethereum',solana:'solana'};
-function cgGet(path,cb){
- request('GET','https://api.coingecko.com/api/v3'+path,{'Accept':'application/json','User-Agent':'IA-TB/2.0'},null,cb,12000);
-}
-function cryptoCatalog(query,page,perPage,cb){
- query=String(query||'').trim();page=Math.max(1,Math.min(250,+page||1));perPage=Math.max(10,Math.min(100,+perPage||50));
- var key=(query?'q:'+query.toLowerCase():'p:'+page+':'+perPage),hit=CRYPTO_CATALOG_CACHE[key];
- if(hit&&Date.now()-hit.at<60000)return cb(null,hit.data);
- if(query){
-  return cgGet('/search?query='+encodeURIComponent(query),function(e,o){if(e)return cb(e);var coins=(o&&o.coins||[]).slice(0,perPage),ids=coins.map(function(x){return x.id}).join(',');
-   if(!ids)return cb(null,{items:[],page:1,hasMore:false,query:query});
-   cgGet('/simple/price?ids='+encodeURIComponent(ids)+'&vs_currencies=eur,usd',function(pe,prices){
-    if(pe)prices={};var items=coins.map(function(x){var pr=prices&&prices[x.id]||{};return{id:x.id,name:x.name,symbol:String(x.symbol||'').toUpperCase(),image:x.large||x.thumb||'',marketCapRank:x.market_cap_rank||null,priceEUR:pr.eur==null?null:+pr.eur,priceUSD:pr.usd==null?null:+pr.usd};});
-    var data={items:items,page:1,hasMore:false,query:query,source:'CoinGecko'};CRYPTO_CATALOG_CACHE[key]={at:Date.now(),data:data};cb(null,data);
-   });
-  });
- }
- cgGet('/coins/markets?vs_currency=eur&order=market_cap_desc&per_page='+perPage+'&page='+page+'&sparkline=false&price_change_percentage=24h',function(e,rows){if(e)return cb(e);rows=Array.isArray(rows)?rows:[];var ids=rows.map(function(x){return x.id}).join(',');
-  cgGet('/simple/price?ids='+encodeURIComponent(ids)+'&vs_currencies=usd',function(ue,usd){
-   if(ue)usd={};var items=rows.map(function(x){return{id:x.id,name:x.name,symbol:String(x.symbol||'').toUpperCase(),image:x.image||'',marketCapRank:x.market_cap_rank||null,priceEUR:x.current_price==null?null:+x.current_price,priceUSD:usd&&usd[x.id]&&usd[x.id].usd!=null?+usd[x.id].usd:null,change24h:x.price_change_percentage_24h==null?null:+x.price_change_percentage_24h};});
-   var data={items:items,page:page,hasMore:rows.length===perPage,query:'',source:'CoinGecko'};CRYPTO_CATALOG_CACHE[key]={at:Date.now(),data:data};cb(null,data);
-  });
- });
-}
-function cryptoResolve(id,network,cb){
- id=String(id||'').trim();network=String(network||'').toLowerCase();if(!id)return cb(new Error('CRYPTO_ID_REQUIRED'));if(!CG_NATIVE[network])return cb(new Error('NETWORK_NOT_SUPPORTED'));
- var key=id+'|'+network,hit=CRYPTO_DETAIL_CACHE[key];if(hit&&Date.now()-hit.at<300000)return cb(null,hit.data);
- cgGet('/coins/'+encodeURIComponent(id)+'?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false&sparkline=false',function(e,o){if(e)return cb(e);
-  var nativeId=CG_NATIVE[network],isNative=id===nativeId,platform=CG_PLATFORM[network]||'',address=platform&&o&&o.platforms&&o.platforms[platform]||'',md=o&&o.market_data||{},cp=md.current_price||{},family=(network==='bitcoin'?'BITCOIN':network==='solana'?'SOLANA':'EVM');
-  var transferable=family==='EVM'?(isNative||/^0x[a-fA-F0-9]{40}$/.test(String(address||''))):isNative;
-  var assetType=family==='BITCOIN'?'BTC':family==='SOLANA'?'SOL':(isNative?'NATIVE':'ERC20'),decimals=family==='BITCOIN'?8:family==='SOLANA'?9:(isNative?18:null);
-  var data={id:id,name:o.name||id,symbol:String(o.symbol||'').toUpperCase(),image:o.image&&o.image.small||'',network:network,family:family,assetType:assetType,isNative:isNative,tokenAddress:family==='EVM'&&!isNative?String(address||''):'',transferable:transferable,decimals:decimals,priceEUR:cp.eur==null?null:+cp.eur,priceUSD:cp.usd==null?null:+cp.usd,source:'CoinGecko'};
-  CRYPTO_DETAIL_CACHE[key]={at:Date.now(),data:data};cb(null,data);
- });
-}
-
-
 function fundamentalIntent(t){return /(fondamental|fundamental|source(?:s)?|news|actualit[eé]|\bfed\b|fomc|\bbce\b|\becb\b|\bsec\b|\bamf\b|macro|inflation|taux|dollar|\bdxy\b|adoption|r[eé]gulation|regulation|twitter|truth social|\btrump\b|reuters|bloomberg|hack|exploit|s[eé]curit[eé]|sentiment)/i.test(String(t||''));}
 function validAddress(a){return typeof a==='string'&&/^0x[0-9a-fA-F]{40}$/.test(a);}
 function normalizeMarketSymbol(s){s=String(s||'').toUpperCase().replace(/[^A-Z0-9]/g,'');if(!/^[A-Z0-9]{5,24}$/.test(s))return'';var p=MarketSymbols.split(s),base=String(p.base||'').toUpperCase(),quote=String(p.quote||'').toUpperCase();return/^[A-Z0-9]{2,16}$/.test(base)&&/^(USD|USDT|USDC|EUR|GBP|BTC|ETH)$/.test(quote)?base+quote:'';}
@@ -564,9 +513,6 @@ function route(req,res){var u=new URL(req.url,'http://'+HOST+':'+PORT),p=u.pathn
   }
  });
  if(req.method==='POST'&&p==='/api/session/test-email'){return sendMailApple(sess.email,'IA-Trading-Bot v'+CURRENT_VERSION+' - Test email','Le systeme de recuperation par email fonctionne sur ce Mac.',function(e){if(e)return json(res,503,{error:e.message});json(res,200,{ok:true,message:'Email de test envoye a '+sess.email});});}
- if(req.method==='GET'&&p==='/api/crypto/catalog'){return cryptoCatalog(u.searchParams.get('query'),u.searchParams.get('page'),u.searchParams.get('perPage'),function(e,o){if(e)return json(res,502,{ok:false,error:e.message});json(res,200,{ok:true,items:o.items,page:o.page,hasMore:o.hasMore,query:o.query,source:o.source})});}
-  if(req.method==='GET'&&p==='/api/crypto/resolve'){return cryptoResolve(u.searchParams.get('id'),u.searchParams.get('network'),function(e,o){if(e)return json(res,400,{ok:false,error:e.message});json(res,200,Object.assign({ok:true},o))});}
-  if(req.method==='GET'&&p==='/api/wallet-asset-price'){return walletAssetPriceEUR(u.searchParams.get('symbol'),function(e,o){if(e)return json(res,502,{ok:false,error:e.message});json(res,200,{ok:true,symbol:o.symbol,eur:o.eur,updatedAt:o.at,source:o.source})});}
  if(req.method==='GET'&&p==='/api/chart-viewer/status'){var cvs=secretStatus(),cvc=cfg();return json(res,200,{version:CURRENT_VERSION,openaiConfigured:!!cvs.openai,model:cvc.OPENAI_MODEL||'gpt-5.6',simpleCommandsLocal:true,tradingModule:'MULTI_EXCHANGE',viewer:'TRADINGVIEW_IFRAME'});}
  if(req.method==='POST'&&p==='/api/chart-viewer/chat')return body(req,function(e,b){if(e||!b||!String(b.message||'').trim())return json(res,400,{error:'Message invalide'});if(String(b.message).length>1400)return json(res,400,{error:'Message trop long'});chartViewerAI(b,sess,function(er,o){if(er){log('OPENAI','Chart Viewer erreur',er.message);return json(res,502,{error:er.message});}log('OPENAI','Chart Viewer réponse',String(b.message||'').slice(0,120));json(res,200,o);});});
  if(req.method==='POST'&&p==='/api/router/client/ack')return body(req,function(e,b){if(e||!b)return json(res,400,{error:'ACK invalide'});communicationInternal('POST','/communication/v1/client/ack',b,function(ce,co){if(ce)return json(res,502,{error:ce.message});json(res,200,{ok:true,ack:co&&co.ack||co});});});
