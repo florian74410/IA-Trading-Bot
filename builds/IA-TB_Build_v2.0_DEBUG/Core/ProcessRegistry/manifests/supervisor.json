@@ -19,7 +19,7 @@
   ],
   "optionalDependencies": [
     "marketdata",
-    "indicators",
+    "indicator",
     "fundamental",
     "liquidity",
     "portfolio",
