@@ -1,5 +1,5 @@
 {
-  "id": "indicators",
+  "id": "indicator",
   "label": "Indicator Engine",
   "type": "ENGINE",
   "order": 60,
@@ -9,7 +9,7 @@
   "restartable": true,
   "defaultEnabled": true,
   "script": "Indicators/Engine/indicator_service.js",
-  "log": ".runtime/logs/indicators.log",
+  "log": ".runtime/logs/indicator.log",
   "env": {
     "IATB_INDICATOR_PORT": "8012",
     "IATB_MARKET_DATA_PORT": "8013",
