@@ -33,7 +33,7 @@ var adapter=new Adapter({root:ROOT,id:'supervisor',label:'IA Supervisor',port:PO
  'supervisor.analyze':function(a){return core.analyze(a||{});},
  'supervisor.reason':function(a){if(!a||!String(a.prompt||'').trim())throw new Error('SUPERVISOR_PROMPT_REQUIRED');return core.reason(a).then(function(x){log('REASON','provider='+x.response.provider+' latency='+x.response.latencyMs+'ms');return x;});}
 }});
-var server=http.createServer(function(req,res){var p=String(req.url||'').split('?')[0];if(adapter.handle(req,res))return;if(req.method==='GET'&&p==='/health')return send(res,200,health());if(req.method==='GET'&&p==='/api/status')return send(res,200,{ok:true,status:core.status()});return send(res,404,{ok:false,error:'NOT_FOUND'});});
+var server=http.createServer(function(req,res){var p=String(req.url||'').split('?')[0];if(adapter.handle(req,res))return;if(req.method==='GET'&&p==='/health')return send(res,200,health());return send(res,404,{ok:false,error:'NOT_FOUND'});});
 server.on('error',function(e){log('FATAL',e.message);console.error('Supervisor bind error:',e.message);process.exit(30);});
 server.listen(PORT,HOST,function(){log('START','port='+PORT+' protocol=CP/1 execution=INTENTION_ONLY provider='+core.llm.status().provider);adapter.maintainRegistration({initialDelayMs:700,onResult:function(ok,e,o,state){if(!ok)log('CP_REGISTER',String(e&&e.message||'failed')+' try='+state.attempts);else if(state.attempts===1)log('CP_REGISTER','OK');}});});
 function stop(){log('STOP','signal received');adapter.stopRegistration();server.close(function(){process.exit(0);});setTimeout(function(){process.exit(0);},1500);}
