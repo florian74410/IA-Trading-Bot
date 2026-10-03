@@ -93,19 +93,33 @@ function communicationUiRead(req,res){
 }
 
 var UI_WRITE_ACTIONS={
- 'indicator.settings.set':1,
- 'indicator.registry.reload':1,
- 'indicator.definition.create':1,
- 'indicator.language.create':1,
- 'indicator.custom.delete':1
+ indicator:{
+  'indicator.settings.set':{settings:1,refreshMs:1,enabled:1},
+  'indicator.registry.reload':{},
+  'indicator.definition.create':{definition:1,overwrite:1},
+  'indicator.language.create':{source:1,overwrite:1},
+  'indicator.custom.delete':{id:1}
+ },
+ fundamental:{
+  'fundamental.collect':{all:1,eventLimit:1},
+  'fundamental.provider.test':{feedId:1,id:1},
+  'fundamental.feed.test_draft':{feed:1},
+  'fundamental.feed.create':{feed:1},
+  'fundamental.feed.update':{feedId:1,feed:1},
+  'fundamental.feed.toggle':{feedId:1,enabled:1},
+  'fundamental.feed.delete':{feedId:1},
+  'fundamental.news.purge':{},
+  'fundamental.fedwatch.refresh':{}
+ }
 };
 function communicationUiWrite(req,res){
  readJsonBody(req,262144,function(e,b){
   if(e)return sendJson(res,400,{ok:false,error:e.message});
   b=b&&typeof b==='object'?b:{};
-  var target=String(b.target||'').toLowerCase(),action=String(b.action||'');
-  if(target!=='indicator'||!UI_WRITE_ACTIONS[action])return sendJson(res,403,{ok:false,error:'UI_WRITE_DENY',caller:{type:'UI',role:'WRITE'}});
-  var args=b.arguments&&typeof b.arguments==='object'&&!Array.isArray(b.arguments)?b.arguments:{};
+  var target=String(b.target||'').toLowerCase(),action=String(b.action||''),allowed=UI_WRITE_ACTIONS[target]&&UI_WRITE_ACTIONS[target][action];
+  if(!allowed)return sendJson(res,403,{ok:false,error:'UI_WRITE_DENY',caller:{type:'UI',role:'WRITE'}});
+  var args=b.arguments&&typeof b.arguments==='object'&&!Array.isArray(b.arguments)?b.arguments:{},keys=Object.keys(args);
+  for(var i=0;i<keys.length;i++)if(!allowed[keys[i]])return sendJson(res,403,{ok:false,error:'UI_ARGUMENTS_DENY',caller:{type:'UI',role:'WRITE'}});
   var q=CP.makeRequest(target,action,args,'summary');q.caller={type:'UI',role:'WRITE'};
   COMM.route(q,function(er,o){if(er)return sendJson(res,400,{ok:false,error:er.message,protocol:CP.PROTOCOL,caller:{type:'UI',role:'WRITE'}});sendJson(res,200,o);});
  });
