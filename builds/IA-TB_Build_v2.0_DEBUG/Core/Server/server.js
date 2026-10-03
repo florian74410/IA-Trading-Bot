@@ -528,11 +528,6 @@ function route(req,res){var u=new URL(req.url,'http://'+HOST+':'+PORT),p=u.pathn
  var publicRead=req.method==='GET'&&p==='/api/gmx/ticker';var sess=null;if(p.indexOf('/api/')===0&&!publicRead){sess=auth(req,res);if(!sess)return;}
  if((p==='/api/updates'||p.indexOf('/api/updates/')===0||p==='/api/ai-updates'||p.indexOf('/api/ai-updates/')===0)&&!adminSession(sess,res))return;
  if(p.indexOf('/api/admin/')===0&&!adminSession(sess,res))return;
- if(req.method==='POST'&&p==='/api/fundamental/translate')return body(req,function(e,b){if(e)return json(res,400,{error:'JSON invalide'});translateFundamentalItem(b&&b.itemId,sess,function(te,to){if(te)return json(res,te.statusCode||502,{ok:false,error:te.message});json(res,200,to);});});
- if(req.method==='GET'&&p==='/api/fundamental/ai-summary')return json(res,200,fundamentalAiPublicState());
- if(req.method==='POST'&&p==='/api/fundamental/ai-summary')return body(req,function(e,b){if(e)return json(res,400,{ok:false,error:'JSON_INVALID'});generateFundamentalAiSummary(sess,{force:!!(b&&b.force)},function(ae,ao){if(ae)return json(res,ae.statusCode||502,{ok:false,error:ae.message});json(res,200,ao);});});
- if(p==='/api/fundamental/syntheses/import')return json(res,403,{ok:false,error:'INTERNAL_SYNTHESIS_PERSISTENCE_ONLY'});
- if(p==='/api/fundamental'||p.indexOf('/api/fundamental/')===0)return proxyFundamental(req,res,u,p);
  if(req.method==='GET'&&p==='/api/bank/vaults')return json(res,200,{ok:true,vaults:BankVaultRegistry.publicList()});
  if(req.method==='GET'&&p==='/api/admin/bank/vaults')return json(res,200,{ok:true,networks:BankVaultRegistry.NETWORKS,vaults:BankVaultRegistry.list()});
  if(req.method==='POST'&&p==='/api/admin/bank/vaults')return body(req,function(e,b){if(e)return json(res,400,{ok:false,error:'JSON_INVALID'});try{var v=BankVaultRegistry.create(b);log('ADMIN','Bank Vault DRAFT créé',v.id+' '+v.network+' '+v.asset);json(res,201,{ok:true,vault:v});}catch(x){json(res,400,{ok:false,error:x.message});}});
