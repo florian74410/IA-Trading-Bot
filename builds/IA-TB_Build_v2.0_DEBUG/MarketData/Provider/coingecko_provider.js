@@ -37,6 +37,10 @@ P.prototype._run=function(task){
   try{task.cb(e,o);}finally{self._drain();}
  });
 };
+P.prototype.search=function(query,cb){
+ var url=this.base+'/search?query='+encodeURIComponent(String(query||'').trim());
+ this._enqueue(url,{headers:this._headers(),timeout:15000,maxBytes:8*1024*1024},cb);
+};
 P.prototype.marketPage=function(page,perPage,vs,cb){
  var url=this.base+'/coins/markets?vs_currency='+encodeURIComponent(vs||'usd')+'&order=market_cap_desc&per_page='+Math.max(1,Math.min(250,+perPage||250))+'&page='+Math.max(1,+page||1)+'&sparkline=false&price_change_percentage=1h,24h,7d';
  this._enqueue(url,{headers:this._headers(),timeout:15000},cb);
