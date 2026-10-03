@@ -19,7 +19,7 @@
   ],
   "optionalDependencies": [
     "marketdata",
-    "indicators",
+    "indicator",
     "portfolio"
   ],
   "versionSource": "RUNTIME_HEALTH"
