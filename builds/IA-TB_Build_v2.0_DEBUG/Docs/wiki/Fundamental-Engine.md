@@ -1,45 +1,38 @@
 # Fundamental Engine
 
-## Rôle
+## Role
 
-Le Fundamental Engine transforme des informations fondamentales hétérogènes en un résultat normalisé utilisable par le Router.
+Le Fundamental Engine possede le domaine fondamental d'IA-TB : collecte, normalisation, evenements, sources/providers, FedWatch, calendriers, diagnostics, traductions et syntheses IA.
 
-Flux officiel :
+Flux principal : Providers externes -> Fundamental Engine :8015 -> Router CP/1 :8021.
 
-```text
-Fundamental Engine <-> Router
-```
+Le moteur ne passe jamais d'ordre.
 
-Le moteur ne passe jamais d'ordre et ne communique jamais directement avec un CEX/DEX pour exécuter un trade.
+## Runtime v2
 
-## Catégories prévues
+Surface locale volontairement minimale : GET /health et POST /cp/v1.
+Les anciennes API HTTP applicatives ont ete supprimees au profit de CP/1.
 
-- News / événements
-- Macroéconomie
-- Données on-chain
-- Tokenomics
-- Écosystème / protocole
+## IA et secrets
 
-## Sortie normalisée
+Fundamental possede la logique metier de synthese et de traduction.
+OpenAI : Fundamental -> AI Gateway CP/1 -> Core Vault -> OpenAI.
+La cle OpenAI ne quitte jamais le Core.
+X : Fundamental -> X Gateway CP/1 -> Core Vault -> X API.
 
-Chaque analyse produit :
+## Capacites principales
 
-- `score` de -1 à +1
-- `confidence` de 0 à 1
-- `bias`
-- liste des signaux sources
-- diagnostics
-- contexte `exchange`, `symbol`, `asset`, `timeframe`
+- health / summary ;
+- sources et feeds ;
+- news / evenements ;
+- FedWatch et historique ;
+- calendriers ;
+- diagnostics / observabilite ;
+- collecte et gestion des feeds ;
+- synthese IA ;
+- traduction ;
+- persistance SQLite.
 
-## État v1.7.5
+## Frontiere metier
 
-La v1.7.5 pose la fondation architecturale :
-
-- moteur indépendant ;
-- contrat Router normalisé ;
-- registre de providers ;
-- agrégation pondérée ;
-- health check ;
-- tests déterministes.
-
-Les providers réseau réels (news, macro, on-chain, tokenomics) seront intégrés progressivement après validation de cette base.
+Fundamental produit contexte et analyse. Decisions/executions restent du ressort de Strategy, Risk, Firewall et Trading Engine.
