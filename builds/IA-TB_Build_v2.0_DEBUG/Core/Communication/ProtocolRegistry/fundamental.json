@@ -640,6 +640,36 @@
           "allowed": []
         },
         "description": "Force a FedWatch refresh."
+      },
+      {
+        "name": "fundamental.ai_summary.state",
+        "arguments": {
+          "allowed": []
+        },
+        "description": "Read the current Fundamental AI summary state/cache."
+      },
+      {
+        "name": "fundamental.ai_summary.generate",
+        "arguments": {
+          "allowed": [
+            "force"
+          ]
+        },
+        "description": "Generate or refresh the Fundamental AI market summary."
+      },
+      {
+        "name": "fundamental.translate",
+        "arguments": {
+          "allowed": [
+            "itemId",
+            "id",
+            "lang"
+          ],
+          "required": [
+            "itemId"
+          ]
+        },
+        "description": "Translate one Fundamental raw item using the Fundamental-owned translation service."
       }
     ],
     "dataTypes": [
