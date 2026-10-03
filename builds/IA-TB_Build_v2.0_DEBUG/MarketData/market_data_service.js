@@ -86,39 +86,8 @@ var cpAdapter=new CPAdapter({root:APP_ROOT,id:'marketdata',label:'Market Data Co
  'marketdata.registry.query':function(a){return{ok:true,result:registry.query(a.action||'search',a.arguments||a.args||{})};}
 }});
 var srv=http.createServer(function(req,res){if(cpAdapter.handle(req,res))return;var u=new URL(req.url,'http://'+HOST+':'+PORT),p=u.pathname;
- if(req.method==='GET'&&p==='/audit')return send(res,200,collectorAudit());
- if(req.method==='GET'&&p==='/financial/capabilities')return send(res,200,financialCapabilities());
- if(req.method==='GET'&&p==='/financial/snapshot')return financial.snapshot(u.searchParams.get('force')==='1',function(e,o){if(e)return send(res,503,{ok:false,error:e.message});send(res,200,o);});
- if(req.method==='GET'&&p==='/financial/history'){try{return send(res,200,financial.history({family:u.searchParams.get('family')||'ALL',limit:u.searchParams.get('limit')||96,since:u.searchParams.get('since')||0}))}catch(e){return send(res,400,{ok:false,error:e.message})}}
- if(req.method==='GET'&&p==='/financial/storage')return send(res,200,{ok:true,storage:financialStore.status(),collector:financial.status()});
- if(req.method==='GET'&&p==='/financial/status')return send(res,200,financial.status());
- if(req.method==='POST'&&p==='/financial/refresh')return financial.refresh(function(e,o){if(e)return send(res,503,{ok:false,error:e.message});send(res,200,o);});
-
- if(req.method==='GET'&&p==='/microstructure/capabilities')return send(res,200,{ok:true,schema:'marketdata.microstructure.capabilities/1.0',providers:microstructureProvider.list(),firewallRequired:true,storage:microstructure.storage(),service:'MARKET_DATA'});
- if(req.method==='GET'&&p==='/microstructure/snapshot'){var mss=u.searchParams.get('symbol')||'BTCUSD';try{liquidationStreams.watchSymbol(mss);}catch(e){}return microstructure.snapshot(mss,u.searchParams.get('source')||'AUTO',Math.max(5,Math.min(100,+u.searchParams.get('depth')||20)),u.searchParams.get('force')==='1',function(e,o){if(e)return send(res,502,{ok:false,error:e.message});send(res,200,o);});}
- if(req.method==='GET'&&p==='/microstructure/history')return send(res,200,microstructure.history({symbol:u.searchParams.get('symbol')||'',source:u.searchParams.get('source')||'',limit:u.searchParams.get('limit')||240,since:u.searchParams.get('since')||0}));
- if(req.method==='GET'&&p==='/microstructure/storage')return send(res,200,{ok:true,collector:microstructure.status(),storage:microstructure.storage(),service:'MARKET_DATA'});
- if(req.method==='GET'&&p==='/derivatives/open-interest')return aggregateOpenInterest(u.searchParams.get('symbol')||'BTCUSD',(u.searchParams.get('sources')||'').split(',').filter(Boolean),function(e,o){if(e)return send(res,502,{ok:false,error:e.message});send(res,200,o);});
- if(req.method==='GET'&&p==='/derivatives/open-interest/history')return send(res,200,microstructure.openInterestHistory({symbol:u.searchParams.get('symbol')||'',limit:u.searchParams.get('limit')||500,since:u.searchParams.get('since')||0}));
- if(req.method==='GET'&&p==='/dex/liquidity/capabilities')return send(res,200,{ok:true,schema:'marketdata.dex.liquidity.capabilities/1.0',provider:'DEXSCREENER',service:'MARKET_DATA',metric:'POOL_LIQUIDITY_USD',executionDepth:false,enabled:settings.providers.DEXSCREENER.enabled});
- if(req.method==='GET'&&p==='/dex/liquidity/snapshot'){if(!settings.providers.DEXSCREENER.enabled)return send(res,503,{ok:false,error:'DEXSCREENER_DISABLED'});return dexLiquidity.get(u.searchParams.get('symbol')||'BTCUSD',u.searchParams.get('force')==='1',function(e,o){if(e)return send(res,502,{ok:false,error:e.message});send(res,200,o);});}
- if(req.method==='GET'&&p==='/dex/liquidity/history')return send(res,200,dexLiquidity.history({symbol:u.searchParams.get('symbol')||'',limit:u.searchParams.get('limit')||500,since:u.searchParams.get('since')||0}));
- if(req.method==='GET'&&p==='/liquidations/recent')return send(res,200,microstructure.recentLiquidations({symbol:u.searchParams.get('symbol')||'',source:u.searchParams.get('source')||'',windowMs:u.searchParams.get('windowMs')||900000,limit:u.searchParams.get('limit')||500,since:u.searchParams.get('since')||0}));
- if(req.method==='GET'&&p==='/liquidations/stats')return send(res,200,microstructure.liquidationStats({symbol:u.searchParams.get('symbol')||'',source:u.searchParams.get('source')||'',windowMs:u.searchParams.get('windowMs')||900000}));
- if(req.method==='GET'&&p==='/liquidations/streams')return send(res,200,liquidationStreams.status());
  if(req.method==='GET'&&p==='/health')return send(res,200,marketHealth());
  if(req.method==='GET'&&p==='/candles')return candles(u.searchParams.get('symbol')||'BTCUSD',u.searchParams.get('interval')||'1h',u.searchParams.get('limit')||300,u.searchParams.get('force')==='1',u.searchParams.get('exchange')||u.searchParams.get('source')||settings.defaultSource,function(e,o){if(e)return send(res,502,{ok:false,error:e.message});send(res,200,o);});
- if(req.method==='GET'&&p==='/ticker')return ticker(u.searchParams.get('symbol')||'BTCUSD',u.searchParams.get('exchange')||u.searchParams.get('source')||settings.defaultSource,function(e,o){if(e)return send(res,502,{ok:false,error:e.message});send(res,200,o);});
- if(req.method==='GET'&&p==='/providers')return send(res,200,{ok:true,providers:marketHealth().providers});
- if(req.method==='GET'&&p==='/settings')return send(res,200,{ok:true,settings:settings});
- if(req.method==='POST'&&p==='/settings'){var aa=[],nn=0;req.on('data',function(x){nn+=x.length;if(nn<=262144)aa.push(x);});req.on('end',function(){if(nn>262144)return send(res,413,{ok:false,error:'SETTINGS_PAYLOAD_TOO_LARGE'});var o;try{o=JSON.parse(Buffer.concat(aa).toString('utf8')||'{}');}catch(e){return send(res,400,{ok:false,error:'SETTINGS_JSON_INVALID'});}try{return send(res,200,{ok:true,settings:applySettings(o.settings||o)});}catch(e){return send(res,400,{ok:false,error:e.message});}});return;}
- if(req.method==='GET'&&p==='/registry/status')return send(res,200,{ok:true,registry:registry.status(),busy:registryBusy,lastError:lastRegistryError});
- if(req.method==='GET'&&p==='/registry/list')return send(res,200,{ok:true,items:registry.list(u.searchParams.get('offset')||0,u.searchParams.get('limit')||100,u.searchParams.get('q')||'')});
- if(req.method==='GET'&&p==='/registry/search')return send(res,200,{ok:true,items:registry.search(u.searchParams.get('q')||'',u.searchParams.get('limit')||20)});
- if(req.method==='GET'&&p==='/registry/asset')return assetGet(u.searchParams.get('id')||u.searchParams.get('symbol')||u.searchParams.get('q')||'',u.searchParams.get('detail')==='1',function(e,o){if(e)return send(res,e.message==='ASSET_NOT_FOUND'?404:502,{ok:false,error:e.message});send(res,200,{ok:true,asset:o});});
- if(req.method==='POST'&&p==='/registry/refresh')return refreshRegistry(function(e,o){if(e)return send(res,502,{ok:false,error:e.message});send(res,200,o);});
- if(req.method==='GET'&&p==='/active')return send(res,200,{ok:true,refreshIntervalMs:REFRESH_MS,contexts:Object.keys(active).map(function(k){return active[k];})});
- if(req.method==='POST'&&p==='/cache/clear'){cache.clear();microstructure.clear();return send(res,200,{ok:true,cache:cache.stats(),liquidity:microstructure.status()});}
  send(res,404,{ok:false,error:'NOT_FOUND'});
 });
 srv.on('error',function(e){console.error('Market Data bind error:',e&&e.message||e);process.exit(15);});srv.listen(PORT,HOST,function(){liquidationStreams.start();console.log('IA-TB Market Data Collector build v'+BUILD.version+' · component '+COMPONENT_VERSION+' http://'+HOST+':'+PORT+' · Firewall-before-cache · microstructure SQL='+microstructureStore.retentionDays+'d · liquidation workers=ON');cpAdapter.maintainRegistration({initialDelayMs:500});});
