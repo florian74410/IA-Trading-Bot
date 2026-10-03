@@ -1,27 +1,24 @@
 
 'use strict';
 /* IA-Trading-Bot v2.0 DEBUG
-   Cible: MacBook Pro 2011 / macOS 10.13 / Node.js 16.20.2 / 4 Go RAM.
-   Zero dependance npm. Serveur local uniquement. Port superviseur 3000 + API Core interne 8001; interface graphique servie par UI Service 8000.
+   Runtime local Node.js 16 compatible, sans dépendance npm obligatoire.
 
-   v2.0:
-   - Coffre RSA-OAEP pour secrets API; cle privee RSA protegee par mot de passe (AES-256-GCM + PBKDF2).
-   - Parametres API OpenAI chiffres; connexion exchange GMX/Trust Wallet.
-   - Chat IA avec liste de commandes autorisees/interdites.
-   - Recuperation mot de passe par email via Apple Mail; pour respecter le chiffrement lie au mot de passe,
-     une recuperation reinitialise le coffre API et exige de ressaisir les secrets.
-   - GMX/Trust Wallet conserve depuis v1.4.
+   Responsabilités Core:
+   - authentification locale, profils clients, coffre de secrets et settings persistants;
+   - Bank/Wallet services locaux, administration, mises à jour et notifications;
+   - AI/X Secret Gateways: les Engines utilisent les API externes sans recevoir les secrets;
+   - endpoints UI strictement transversaux qui ne relèvent pas d'un Engine dédié.
 
-   v1.0:
-   - Heritage v2.7: Chat IA central, strategies Annexes/Strategies, graphique TradingView Lightweight Charts et catalogue GMX dynamique.
-   - UpdateManager sans dependance npm: drag & drop dans Parametres > Mise a jour, archive locale ou URL .zip (nom libre), manifeste, versions et SHA-256.
-   - UI Update v2.9 autonome: historique, verification avant installation et messages d erreur visibles.
-   - Installation differentielle avec Staging, Backups, historique et rollback.
-   - launcher.js + Updates/current_release.dat permettent d activer la release suivante au redemarrage.
-   - Secrets, compte, logs, profils et strategies utilisateur sont proteges contre les mises a jour Core.
+   Architecture inter-services:
+   - Router CP/1 = bus canonique de contrôle et de lecture inter-Engine;
+   - Supervisor = orchestration et raisonnement IA structuré;
+   - Market Data = ingress multi-CEX/DEX et données financières;
+   - Fundamental / Indicator / Liquidity / Portfolio / Strategy / Risk = propriétaires de leurs domaines;
+   - Trading Engine = exécution multi-exchange via adapters;
+   - Firewall = frontière Trading + validation Data, avec monitoring CP/1 séparé.
 
-   Historique legacy: l ancien module Trading IA était GMX-only. La v2 utilise Market Data comme source multi-exchange canonique.
-   La signature des trades reste dans GMX / Trust Wallet. */
+   Les anciens chemins GMX-only, proxies HTTP Engine-to-Engine et bridges Kraken 8011 ne font plus partie du runtime canonique.
+ */
 var http=require('http'),https=require('https'),fs=require('fs'),path=require('path'),crypto=require('crypto'),qs=require('querystring'),child=require('child_process'),URL=require('url').URL,PATHS=require('../Shared/paths'),BUILD=require('../Shared/build_info'),ProviderCatalog=require('../../MarketData/Provider/provider_catalog'),MarketSymbols=require('../../MarketData/Normalizer/symbols'),TLSCA=require('../Network/tls_ca_v1.0'),AIResponse=require('../Services/openai_response_v1.0'),UpdateManager=require('../Updates/update_manager_v1.0'),AIUpdateBuilder=require('../Updates/ai_update_builder_v1.0'),MosaicStore=require('../Mosaics/mosaic_store_v1.0'),CP=require('../Communication/communication_protocol_v1'),CPClient=require('../Communication/cp1_client'),ComponentCP1Adapter=require('../Communication/component_cp1_adapter'),IndicatorRegistry=require('../../Indicators/Engine/indicator_registry'),AdminBackend=require('../Admin/admin_backend'),AdminPermissions=require('../Admin/admin_permissions'),AdminConsole=require('../Admin/admin_console'),CP1ConsoleEngine=require('../Admin/CP1/engine'),BankVaultRegistry=require('../../Bank/Core/vault_registry'),WalletService=require('../../Bank/Core/wallet_service_v2'),SwapBridgeService=require('../../Bank/Core/swap_bridge_service_v2'),TransferService=require('../../Bank/Core/transfer_service_v2'),OnChainReader=require('../../Bank/Core/onchain_reader_v1'),ClientCrypto=require('../Clients/client_crypto'),ClientRepository=require('../Clients/client_repository'),ClientService=require('../Clients/client_service');
 var SQLiteSettingsStore=require('../Settings/sqlite_settings_store'),SETTINGS_DB=new SQLiteSettingsStore(PATHS.ROOT),CLIENT_CRYPTO=new ClientCrypto(PATHS.PersistentData.clientMasterKey),CLIENT_REPOSITORY=new ClientRepository({dbPath:PATHS.PersistentData.clientDb,migrationsDir:path.join(PATHS.ROOT,'Core','Clients','migrations')}),CLIENT_SERVICE=new ClientService(CLIENT_REPOSITORY,CLIENT_CRYPTO,SETTINGS_DB),WALLET_SERVICE=new WalletService(PATHS.ROOT,SETTINGS_DB,CLIENT_SERVICE,{keyFile:PATHS.PersistentData.walletMasterKey}),SWAP_BRIDGE_SERVICE=null,TRANSFER_SERVICE=null,ONCHAIN_READER=null;
 var ROOT=PATHS.ROOT,COMM_CLIENT=new CPClient({root:PATHS.ROOT,routerPort:+(process.env.ROUTER_PORT||8021),timeout:5000,maxBytes:2*1024*1024}),SUPERVISOR_CLIENT=new CPClient({root:PATHS.ROOT,routerPort:+(process.env.ROUTER_PORT||8021),timeout:60000,maxBytes:4*1024*1024}),HTML=PATHS.Frontend.app,CHART_HTML=PATHS.Frontend.chartViewer,PORTFOLIO_HTML=PATHS.Frontend.portfolio,FUNDAMENTAL_HTML=PATHS.Frontend.fundamental,ADMIN_HTML=PATHS.Frontend.admin,CFG=PATHS.Data.config,LOG=PATHS.Data.logs,USER=PATHS.Data.user,VAULT=PATHS.Data.vault,AISET=PATHS.Data.aiSettings,ANNEX_DIR=PATHS.Annexes,STRAT_DIR=PATHS.Strategies,RELEASE_POINTER=PATHS.ReleasePointer,LAUNCHER_CONTROL=PATHS.LauncherControl;
