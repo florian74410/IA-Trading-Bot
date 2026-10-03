@@ -1,0 +1,9 @@
+IA-TB v1.8.6 — Scroll bottom boundary fix
+
+- La status bar reste fixe et devient plus compacte sur l'affichage 1280x800.
+- Le workspace principal s'arrête physiquement au-dessus de la status bar.
+- La colonne centrale conserve son scroll indépendant.
+- Un spacer de fin de scroll est ajouté après les modules mosaïque.
+- Au scroll maximum, Volume 24H / Stratégies / Synthèse IA restent entièrement visibles au-dessus de la status bar.
+- Les colonnes Chat IA et Exchanges restent elles aussi bornées au-dessus de la status bar.
+- Aucun changement des moteurs, contrôleurs ou protocoles.
