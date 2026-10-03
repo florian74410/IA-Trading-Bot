@@ -16,6 +16,7 @@
  };
  function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
  function api(url,opt){opt=opt||{};var o={method:opt.method||'GET',headers:{Accept:'application/json'}};if(opt.body!==undefined){o.headers['Content-Type']='application/json';o.body=JSON.stringify(opt.body)}return fetch(url,o).then(function(r){return r.json().catch(function(){return{}}).then(function(x){if(!r.ok||x.ok===false)throw new Error(x.error||('HTTP '+r.status));return x})})}
+ function marketRead(action,args){return fetch('/communication/v1/ui/read',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({target:'marketdata',action:action,arguments:args||{}}),cache:'no-store'}).then(function(r){return r.json().then(function(o){if(!r.ok||o.error)throw new Error(o.error||('HTTP '+r.status));return o.data||{}})})}
  function walletNetworks(w){return (w&&w.networks||[]).filter(function(n){return NETS.indexOf(n)>=0})}
  function selectedWallet(){return S.wallets.filter(function(w){return String(w.id)===String(S.walletId)})[0]||null}
  function sourceAddress(){var w=selectedWallet(),a=(w&&w.accounts||[]).filter(function(x){return (x.networks||[]).indexOf(S.network)>=0})[0];return a&&a.address||''}
@@ -74,8 +75,8 @@
  function loadCatalog(reset){
   if(S.catalogBusy)return;S.catalogBusy=true;if(reset)S.catalogPage=1;
   var list=document.getElementById('btcCoinList');if(reset&&list)list.innerHTML='<div class="btcLoading">Chargement CoinGecko…</div>';
-  var q=S.catalogQuery,url='/api/crypto/catalog?perPage=50&page='+S.catalogPage+(q?'&query='+encodeURIComponent(q):'');
-  api(url).then(function(o){list=document.getElementById('btcCoinList');if(!list)return;if(reset)list.innerHTML='';(o.items||[]).forEach(function(c){var b=document.createElement('button');b.type='button';b.className='btcCoinRow';b.innerHTML=(c.image?'<img src="'+esc(c.image)+'" alt="">':'<span class="btcCoinFallback">◈</span>')+'<span><b>'+esc(c.name)+'</b><small>'+esc(c.symbol)+' · '+(c.priceEUR==null?'--':Number(c.priceEUR).toLocaleString(undefined,{maximumFractionDigits:8}))+' €</small></span>';b.onclick=function(){chooseCoin(c)};list.appendChild(b)});var more=document.getElementById('btcMore');if(more)more.style.display=o.hasMore&&!q?'block':'none';S.catalogPage++;}).catch(function(e){if(list)list.innerHTML='<div class="btcLoading bad">'+esc(e.message)+'</div>'}).then(function(){S.catalogBusy=false});
+  var q=S.catalogQuery;
+  marketRead('marketdata.catalog',{query:q,page:S.catalogPage,perPage:50}).then(function(o){list=document.getElementById('btcCoinList');if(!list)return;if(reset)list.innerHTML='';(o.items||[]).forEach(function(c){var b=document.createElement('button');b.type='button';b.className='btcCoinRow';b.innerHTML=(c.image?'<img src="'+esc(c.image)+'" alt="">':'<span class="btcCoinFallback">◈</span>')+'<span><b>'+esc(c.name)+'</b><small>'+esc(c.symbol)+' · '+(c.priceEUR==null?'--':Number(c.priceEUR).toLocaleString(undefined,{maximumFractionDigits:8}))+' €</small></span>';b.onclick=function(){chooseCoin(c)};list.appendChild(b)});var more=document.getElementById('btcMore');if(more)more.style.display=o.hasMore&&!q?'block':'none';S.catalogPage++;}).catch(function(e){if(list)list.innerHTML='<div class="btcLoading bad">'+esc(e.message)+'</div>'}).then(function(){S.catalogBusy=false});
  }
 
  function resolveOnNetworks(c){
@@ -83,14 +84,14 @@
   var preferred=c&&c.id==='bitcoin'?'bitcoin':c&&c.id==='solana'?'solana':S.network,order=[];
   [preferred,S.network].concat(nets).forEach(function(n){if(nets.indexOf(n)>=0&&order.indexOf(n)<0)order.push(n)});
   var i=0;
-  function next(last){if(i>=order.length)return Promise.reject(last||new Error('Cette crypto n’est pas disponible sur les réseaux autorisés du wallet.'));var n=order[i++];return api('/api/crypto/resolve?id='+encodeURIComponent(c.id)+'&network='+encodeURIComponent(n)).then(function(o){if(!o.transferable)throw new Error('ASSET_NOT_ON_NETWORK');S.network=n;return o}).catch(next)}
+  function next(last){if(i>=order.length)return Promise.reject(last||new Error('Cette crypto n’est pas disponible sur les réseaux autorisés du wallet.'));var n=order[i++];return marketRead('marketdata.asset.resolve',{id:c.id,network:n}).then(function(o){if(!o.transferable)throw new Error('ASSET_NOT_ON_NETWORK');S.network=n;return o}).catch(next)}
   return next();
  }
  function chooseCoin(c){
   S.coin=c;S.preview=null;S.error='';var p=document.getElementById('btcPicker');if(p)p.hidden=true;
   resolveOnNetworks(c).then(function(o){S.coinResolved=o;S.price={priceEUR:o.priceEUR,priceUSD:o.priceUSD};syncFiatFromCrypto();return loadNativePrice()}).then(function(){render();schedulePreview()}).catch(function(e){S.coinResolved=null;S.error='Crypto indisponible sur les réseaux autorisés de ce wallet.';render()});
  }
- function loadNativePrice(){return api('/api/crypto/resolve?id='+encodeURIComponent(NATIVE[S.network])+'&network='+encodeURIComponent(S.network)).then(function(o){S.nativePrice=o}).catch(function(){S.nativePrice=null})}
+ function loadNativePrice(){return marketRead('marketdata.asset.resolve',{id:NATIVE[S.network],network:S.network}).then(function(o){S.nativePrice=o}).catch(function(){S.nativePrice=null})}
  function syncFiatFromCrypto(){var a=+S.cryptoAmount,p=S.price&&(S.fiat==='EUR'?S.price.priceEUR:S.price.priceUSD);S.fiatAmount=a>0&&p?String(Math.round(a*p*100)/100):''}
  function syncCryptoFromFiat(){var a=+S.fiatAmount,p=S.price&&(S.fiat==='EUR'?S.price.priceEUR:S.price.priceUSD);S.cryptoAmount=a>0&&p?String(a/p):''}
 
