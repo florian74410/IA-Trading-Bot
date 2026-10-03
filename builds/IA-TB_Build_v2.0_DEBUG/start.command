@@ -328,7 +328,7 @@ require_service(){
 
 # 1. Core: configuration, settings, admin and internal API.
 status_wait "Core" "starting first"
-IATB_DEBUG_MODE="1" IATB_PORT="$CORE_PORT" IATB_PUBLIC_PORT="$CORE_PORT" IATB_UI_SEPARATED="1" ROUTER_PORT="$ROUTER_PORT" IATB_FIREWALL_PORT="$FIREWALL_PORT" "$NODE_BIN" launcher.js >> "$LAUNCHER_LOG" 2>&1 &
+IATB_DEBUG_MODE="1" IATB_PORT="$CORE_PORT" IATB_PUBLIC_PORT="$CORE_PORT" ROUTER_PORT="$ROUTER_PORT" IATB_FIREWALL_PORT="$FIREWALL_PORT" "$NODE_BIN" launcher.js >> "$LAUNCHER_LOG" 2>&1 &
 APP_PID=$!
 require_service "Core" "$CORE_PORT" "/api/health" "IA-Trading-Bot" "$LAUNCHER_LOG" 12
 
