@@ -12,7 +12,6 @@
   "log": ".runtime/logs/indicator.log",
   "env": {
     "IATB_INDICATOR_PORT": "8012",
-    "IATB_MARKET_DATA_PORT": "8013",
     "ROUTER_PORT": "8021"
   },
   "versionSource": "RUNTIME_HEALTH",
