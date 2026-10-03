@@ -15,10 +15,10 @@
     "ROUTER_PORT": "8021"
   },
   "dependencies": [
-    "router",
-    "trading"
+    "router"
   ],
   "optionalDependencies": [
+    "trading",
     "marketdata"
   ],
   "versionSource": "RUNTIME_HEALTH"
