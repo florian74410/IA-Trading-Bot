@@ -15,11 +15,11 @@
     "ROUTER_PORT": "8021"
   },
   "dependencies": [
-    "router",
-    "risk",
-    "portfolio"
+    "router"
   ],
   "optionalDependencies": [
+    "risk",
+    "portfolio",
     "marketdata",
     "indicator",
     "fundamental"
