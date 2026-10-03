@@ -21,7 +21,7 @@
   ],
   "optionalDependencies": [
     "marketdata",
-    "indicators",
+    "indicator",
     "fundamental"
   ],
   "versionSource": "RUNTIME_HEALTH"
