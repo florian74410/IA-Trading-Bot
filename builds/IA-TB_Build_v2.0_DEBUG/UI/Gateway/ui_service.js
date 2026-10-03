@@ -37,6 +37,7 @@ var server=http.createServer(function(req,res){var u=new URL(req.url,'http://'+H
  if(req.method==='GET'&&p==='/ui-api/project-file')return authorizePage(req,res,'ADMIN',function(){projectFilePreview(res,u.searchParams.get('path')||'');});
  if(req.method==='GET'&&p==='/ui-api/session')return json(res,200,{ok:true,authenticated:AUTH_MODE!=='disabled',authMode:AUTH_MODE,role:currentRole(),permissions:{read:true,userWrite:true,adminWrite:isAdminRole(currentRole()),superAdmin:currentRole()==='SUPERADMIN'},policy:'SERVER_SIDE'});
  if(req.method==='GET'&&p==='/communication-health')return proxy(req,res,ROUTER_PORT,p+u.search,{service:'Communication Router',permission:'READ'});
+ if(req.method==='GET'&&p==='/router-health')return authorizePage(req,res,'USER',function(){proxy(req,res,ROUTER_PORT,p+u.search,{service:'Router Health',permission:'READ'});});
  if(req.method==='POST'&&p==='/communication-test')return authorizePage(req,res,'USER',function(){proxy(req,res,ROUTER_PORT,p+u.search,{service:'Communication Router',permission:'READ'});});
  if(req.method==='POST'&&p==='/communication/v1/ui/read')return authorizePage(req,res,'USER',function(){proxy(req,res,ROUTER_PORT,p+u.search,{service:'Communication Router UI Read',permission:'READ'});});
  if(req.method==='POST'&&p==='/communication/v1/ui/write')return authorizePage(req,res,'USER',function(){proxy(req,res,ROUTER_PORT,p+u.search,{service:'Communication Router UI Write',permission:'WRITE'});});
