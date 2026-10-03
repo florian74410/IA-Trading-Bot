@@ -1,50 +1,52 @@
-TRADINGBOT — COMMUNICATION ROUTER v1
-====================================
+IA-TB — COMMUNICATION ROUTER — Runtime v2.0
+=============================================
+
+Endpoints
+---------
+Router interne CP/1 : 127.0.0.1:8021
+UI Gateway          : 127.0.0.1:8000
+Core                : 127.0.0.1:8001
+
 Role
 ----
-Le Router existant sur 127.0.0.1:8000 devient egalement le Communication Router.
-Aucun nouveau processus ni port n'est ajoute pour cette fonction en v1.7.
+Le Router est le bus interne d'IA-TB. Il connait les composants via Protocol Registry et Runtime Registry, controle les contrats CP/1 et route les messages.
 
 Responsabilites
 ---------------
-- annuaire/registry des Engines ;
-- decouverte des capacites et events declares ;
-- health check, version, schema et latence ;
-- authentification des appels internes ;
-- controle d'acces et whitelist ;
-- validation des schemas de commande ;
-- routage transparent vers le bon Engine ;
-- verification du hash de reponse ;
-- audit ;
-- buffer borne des events spontanes.
+- registre des composants et capabilities ;
+- routage CP/1 ;
+- validation cible/action/arguments ;
+- authentification machine-to-machine ;
+- health et diagnostic ;
+- audit et evenements ;
+- canal UI read/write strictement allowliste.
 
-Le Router NE DOIT PAS
+Le Router ne doit pas
 ---------------------
 - calculer un indicateur ;
-- interpreter une analyse ;
-- modifier un score ;
-- resumer la reponse d'un Engine ;
-- prendre une decision de trading.
+- interpreter une analyse metier ;
+- fabriquer un score ;
+- decider d'un trade ;
+- resumer arbitrairement la reponse d'un Engine.
 
-Endpoints de diagnostic locaux
-------------------------------
+Frontieres particulieres
+------------------------
+Trading : Router -> Firewall :8017 -> Trading Engine :8016.
+Les operations mutantes doivent franchir la frontiere Firewall.
+
+Market Data : controle / metadata / settings via CP/1.
+Les candles volumineuses gardent un data-plane HTTP explicite :
+UI -> /ui-data/market/candles -> Router -> Market Data /candles.
+
+Firewall monitoring : target firewall -> /cp/read/v1.
+Le canal Trading /cp/v1 reste separe.
+
+Endpoints UI autorises
+----------------------
+GET  /router-health
 GET  /communication-health
 POST /communication-test
-Ces deux endpoints n'exposent pas la cle interne et ne permettent pas d'envoyer une action arbitraire.
+POST /communication/v1/ui/read
+POST /communication/v1/ui/write
 
-Endpoints internes proteges CP/1
---------------------------------
-POST /communication/v1/register
-POST /communication/v1/request
-POST /communication/v1/event
-GET  /communication/v1/events
-Ils exigent X-IATB-CP-Token.
-
-Registry v1
------------
-La v1.7 autorise uniquement Indicator Engine dans le registry CP. La liste blanche sera etendue moteur par moteur lors des futures normalisations (Fundamental en v1.8, etc.).
-Un Engine ne peut s'enregistrer qu'en 127.0.0.1 et uniquement avec les capacites/events autorises par le build.
-
-Scalabilite future
-------------------
-Le Supervisor connait le Router, pas les ports des Engines. Le Router pourra donc plus tard pointer vers des Engines deployes sur d'autres processus/VPS sans changer le contrat logique utilise par le Supervisor.
+Les endpoints internes /communication/v1/request, register, event, etc. ne sont pas exposes generiquement au navigateur.
