@@ -31,6 +31,13 @@
         "description": "Reload Indicator Engine registry and reconcile settings."
       },
       {
+        "name": "indicator.registry.status",
+        "arguments": {
+          "allowed": []
+        },
+        "description": "Read Indicator Registry counts, quarantine state and current items."
+      },
+      {
         "name": "indicator.settings.set",
         "arguments": {
           "allowed": [
