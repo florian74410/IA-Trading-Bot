@@ -42,6 +42,7 @@ var server=http.createServer(function(req,res){var u=new URL(req.url,'http://'+H
  if(req.method==='GET'&&p==='/communication-health')return proxy(req,res,ROUTER_PORT,p+u.search,{service:'Communication Router',permission:'READ'});
  if(req.method==='POST'&&p==='/communication-test')return authorizePage(req,res,'USER',function(){proxy(req,res,ROUTER_PORT,p+u.search,{service:'Communication Router',permission:'READ'});});
  if(req.method==='POST'&&p==='/communication/v1/ui/read')return authorizePage(req,res,'USER',function(){proxy(req,res,ROUTER_PORT,p+u.search,{service:'Communication Router UI Read',permission:'READ'});});
+ if(req.method==='POST'&&p==='/communication/v1/ui/write')return authorizePage(req,res,'USER',function(){proxy(req,res,ROUTER_PORT,p+u.search,{service:'Communication Router UI Write',permission:'WRITE'});});
  if(p.indexOf('/communication/')===0)return json(res,403,{ok:false,error:'UI_COMMUNICATION_ENDPOINT_FORBIDDEN'});
  if((req.method==='GET'||req.method==='HEAD')&&PAGE_MAP[p])return authorizePage(req,res,(p==='/admin'||p==='/admin/'||p==='/admin/vaults'||p==='/admin/vaults/')?'ADMIN':'USER',function(){if(p==='/admin'||p==='/admin/')return serveAdminPage(res);serveFile(res,PAGE_MAP[p]);});
  if((req.method==='GET'||req.method==='HEAD')&&p.indexOf('/assets/')===0){var a=findAsset(p.slice('/assets/'.length));return a?serveFile(res,a):json(res,404,{ok:false,error:'UI_ASSET_NOT_FOUND'});}
