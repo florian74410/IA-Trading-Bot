@@ -3,6 +3,7 @@
 var $=function(s,r){return (r||document).querySelector(s)}, $$=function(s,r){return [].slice.call((r||document).querySelectorAll(s))};
 var state={wallets:[],selected:null,transfer:{sourceWallet:'',network:'ethereum',destinationAddress:'',asset:'NATIVE',amount:'',human:false,preview:null,busy:false,error:'',priceEUR:null,priceSymbol:''}};
 function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function marketRead(action,args){return fetch('/communication/v1/ui/read',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({target:'marketdata',action:action,arguments:args||{}}),cache:'no-store'}).then(function(r){return r.json().then(function(o){if(!r.ok||o.error)throw new Error(o.error||('HTTP '+r.status));return o.data||{}})})}
 function net(w){return (w.networks&&w.networks.length?w.networks.join(' · '):(w.network||w.chain||'Réseau non défini'))} function symbol(n){n=String(n).toLowerCase();return n.indexOf('bitcoin')>=0?'₿':n.indexOf('solana')>=0?'≋':n.indexOf('bnb')>=0?'◆':n.indexOf('polygon')>=0?'⬡':'Ξ'}
 function klass(n){n=String(n).toLowerCase();return n.indexOf('bnb')>=0?'bnb':n.indexOf('polygon')>=0?'poly':''}
 function demoLine(){return '<svg viewBox="0 0 120 45" preserveAspectRatio="none"><polyline points="0,36 8,31 15,33 23,22 30,28 38,19 45,24 54,16 62,20 70,11 78,17 86,8 94,13 103,6 112,10 120,4"/></svg>'}
@@ -67,7 +68,7 @@ function refreshTransferDynamic(){
 }
 function loadTransferPrice(){
  var sym=transferSymbol(),t=state.transfer;t.priceSymbol=sym;
- fetch('/api/wallet-asset-price?symbol='+encodeURIComponent(sym),{cache:'no-store'}).then(function(r){return r.json().then(function(o){if(!r.ok)throw new Error(o.error||'PRICE_UNAVAILABLE');return o})}).then(function(o){if(t.priceSymbol!==sym)return;t.priceEUR=+o.eur||null;refreshTransferDynamic()}).catch(function(){if(t.priceSymbol===sym){t.priceEUR=null;refreshTransferDynamic()}});
+ marketRead('marketdata.asset.price',{symbol:sym,currency:'eur'}).then(function(o){if(t.priceSymbol!==sym)return;t.priceEUR=+o.value||null;refreshTransferDynamic()}).catch(function(){if(t.priceSymbol===sym){t.priceEUR=null;refreshTransferDynamic()}});
 }
 function scheduleTransferPreview(immediate){
  clearTimeout(transferTimer);var t=state.transfer;
