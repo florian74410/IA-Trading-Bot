@@ -76,7 +76,11 @@ var cpAdapter=new CPAdapter({root:APP_ROOT,id:'marketdata',label:'Market Data Co
  'marketdata.active':function(){return{ok:true,refreshIntervalMs:REFRESH_MS,contexts:Object.keys(active).map(function(k){return active[k];})};},
  'marketdata.cache.clear':function(){cache.clear();microstructure.clear();return{ok:true,cache:cache.stats(),microstructure:microstructure.status()};},
  'marketdata.providers':function(){return{ok:true,providers:provider.list().concat([{id:'COINGECKO',enabled:settings.providers.COINGECKO.enabled},{id:'DEFILLAMA',enabled:settings.providers.DEFILLAMA.enabled}])};},
- 'marketdata.provider.test':function(a,m,done){provider.test(a.provider||a.source||a.exchange||settings.defaultSource,done);},
+ 'marketdata.provider.test':function(a,m,done){var id=String(a.provider||a.source||a.exchange||settings.defaultSource).toUpperCase(),started=Date.now();
+  if(id==='COINGECKO')return coingecko.simplePrice(['bitcoin'],'usd',function(e,o){if(e)return done(e);done(null,{ok:true,provider:id,probe:'simple_price',latencyMs:Date.now()-started,price:o&&o.bitcoin&&o.bitcoin.usd||null});});
+  if(id==='DEFILLAMA')return defillama.chains(function(e,o){if(e)return done(e);done(null,{ok:true,provider:id,probe:'chains',latencyMs:Date.now()-started,rows:Array.isArray(o)?o.length:0});});
+  provider.test(id,done);
+ },
  'marketdata.settings.get':function(){return{ok:true,settings:settings,settingsFile:Settings.file};},
  'marketdata.settings.set':function(a){return{ok:true,settings:applySettings(a.settings||a)};},
  'marketdata.registry.status':function(){return{ok:true,registry:registry.status(),busy:registryBusy,lastError:lastRegistryError};},
