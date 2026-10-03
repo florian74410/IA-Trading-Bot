@@ -15,9 +15,10 @@
     "ROUTER_PORT": "8021"
   },
   "dependencies": [
-    "router",
-    "marketdata"
+    "router"
   ],
   "versionSource": "RUNTIME_HEALTH",
-  "optionalDependencies": []
+  "optionalDependencies": [
+    "marketdata"
+  ]
 }
