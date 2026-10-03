@@ -74,19 +74,6 @@ function proxyError(res,label,err){if(res.headersSent){try{res.end();}catch(e){}
 function copyHeaders(src){var h={};Object.keys(src||{}).forEach(function(k){if(k.toLowerCase()==='host'||k.toLowerCase()==='connection')return;h[k]=src[k];});return h;}
 function responseHeaders(h){var out={};Object.keys(h||{}).forEach(function(k){var l=k.toLowerCase();if(l==='connection'||l==='transfer-encoding'||l==='content-length')return;out[k]=h[k];});return out;}
 function proxy(req,res,targetHost,targetPort,targetPath,opts){opts=opts||{};var headers=copyHeaders(req.headers);headers.host=targetHost+':'+targetPort;var p=http.request({host:targetHost,port:targetPort,path:targetPath,method:req.method,headers:headers,timeout:15000},function(pr){var rh=responseHeaders(pr.headers);res.writeHead(pr.statusCode||200,rh);pr.pipe(res);});p.on('timeout',function(){p.destroy(new Error('timeout'));});p.on('error',function(e){proxyError(res,opts.label||'Service',e);});req.pipe(p);}
-function exchangeTicker(req,u,res){
- var ex=String(u.searchParams.get('exchange')||u.searchParams.get('source')||'').toUpperCase(),sym=String(u.searchParams.get('symbol')||'BTCUSD').toUpperCase();
- var q='/ticker?symbol='+encodeURIComponent(sym)+(ex?'&exchange='+encodeURIComponent(ex):'');
- return proxy(req,res,MARKET_DATA_HOST,MARKET_DATA_PORT,q,{label:'Market Data ticker'});
-}
-function exchangeKlines(req,u,res){
- var ex=String(u.searchParams.get('exchange')||u.searchParams.get('source')||'').toUpperCase(),
-     sym=String(u.searchParams.get('symbol')||'BTCUSD').toUpperCase(),
-     tf=String(u.searchParams.get('interval')||'1h'),
-     limit=Math.max(20,Math.min(500,+u.searchParams.get('limit')||100)),
-     q='/candles?symbol='+encodeURIComponent(sym)+'&interval='+encodeURIComponent(tf)+'&limit='+limit+(ex?'&exchange='+encodeURIComponent(ex):'');
- return proxy(req,res,MARKET_DATA_HOST,MARKET_DATA_PORT,q,{label:'Market Data candles'});
-}
 function probe(port,pathname,cb){var done=false,req=http.get({host:'127.0.0.1',port:port,path:pathname,timeout:1000},function(r){r.resume();r.on('end',function(){if(done)return;done=true;cb(null,r.statusCode);});});req.on('timeout',function(){req.destroy();});req.on('error',function(e){if(done)return;done=true;cb(e);});}
 function routerHealth(res){
  var specs=[['core',CORE_PORT,'/api/health'],['router',PORT,'/router-health-internal'],['kraken',KRAKEN_PORT,'/health'],['firewall',FIREWALL_PORT,'/health'],['indicators',INDICATOR_PORT,'/health'],['marketData',MARKET_DATA_PORT,'/health'],['liquidity',LIQUIDITY_PORT,'/health'],['fundamental',FUNDAMENTAL_PORT,'/health'],['risk',RISK_PORT,'/health'],['trading',TRADING_ENGINE_PORT,'/health'],['portfolio',PORTFOLIO_PORT,'/health'],['strategy',STRATEGY_PORT,'/health'],['supervisor',SUPERVISOR_PORT,'/health']],out={},left=specs.length,finished=false;
@@ -112,8 +99,6 @@ var server=http.createServer(function(req,res){var u=new URL(req.url,'http://'+H
  if(req.method==='POST'&&p==='/communication/v1/client/ack')return communicationAckClient(req,res);
  if(req.method==='GET'&&p==='/communication/v1/runtime')return communicationRuntime(req,res);
  if((req.method==='GET'||req.method==='HEAD')&&p==='/kraken'){res.writeHead(302,{'Location':'/trading?exchange=KRAKEN','Cache-Control':'no-store'});return res.end();}
- if(req.method==='GET'&&p==='/router-api/exchange/ticker')return exchangeTicker(req,u,res);
- if(req.method==='GET'&&p==='/router-api/exchange/klines')return exchangeKlines(req,u,res);
  if(p.indexOf('/kraken-api/')===0){var sub=p.slice('/kraken-api'.length)||'/';return proxy(req,res,KRAKEN_HOST,KRAKEN_PORT,sub+u.search,{label:'Kraken Add-On'});}
  if(p==='/indicator-api'||p.indexOf('/indicator-api/')===0){var isub=p.slice('/indicator-api'.length)||'/';return proxy(req,res,INDICATOR_HOST,INDICATOR_PORT,isub+u.search,{label:'Indicator Engine'});}
  if(req.method==='GET'&&p==='/firewall-events')return proxy(req,res,'127.0.0.1',FIREWALL_PORT,'/api/events'+u.search,{label:'Firewall Event Feed'});
