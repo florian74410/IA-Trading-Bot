@@ -7,7 +7,6 @@ BUILD_VERSION="$(tr -d '[:space:]' < "$PWD/VERSION" 2>/dev/null)"
 BUILD_STATUS="DEBUG"
 UI_PORT=8000
 CORE_PORT=8001
-KRAKEN_PORT=8011
 INDICATOR_PORT=8012
 MARKET_DATA_PORT=8013
 LIQUIDITY_PORT=8014
@@ -103,7 +102,7 @@ stop_known_on_port(){
   port="$1"
   body_health="$(http_get "http://127.0.0.1:${port}/api/health")"
   body_router="$(http_get "http://127.0.0.1:${port}/router-health")"
-  body_kraken="$(http_get "http://127.0.0.1:${port}/health")"
+  body_service="$(http_get "http://127.0.0.1:${port}/health")"
   body_ui="$(http_get "http://127.0.0.1:${port}/ui-health")"
   pid=""
   label=""
@@ -113,28 +112,26 @@ stop_known_on_port(){
     pid="$(json_pid "$body_router")"; label="Router"
   elif echo "$body_health" | grep -q 'IA-Trading-Bot'; then
     pid="$(json_pid "$body_health")"; label="IA-TB"
-  elif echo "$body_kraken" | grep -q 'Kraken Add-On'; then
-    pid="$(json_pid "$body_kraken")"; label="Kraken Add-On"
-  elif echo "$body_kraken" | grep -q 'IA-TB Indicator Engine'; then
-    pid="$(json_pid "$body_kraken")"; label="Indicator Engine"
-  elif echo "$body_kraken" | grep -q 'IA-TB Market Data'; then
-    pid="$(json_pid "$body_kraken")"; label="Market Data"
-  elif echo "$body_kraken" | grep -q 'IA-TB Liquidity Engine'; then
-    pid="$(json_pid "$body_kraken")"; label="Liquidity Engine"
-  elif echo "$body_kraken" | grep -q 'IA-TB Fundamental Engine'; then
-    pid="$(json_pid "$body_kraken")"; label="Fundamental Engine"
-  elif echo "$body_kraken" | grep -q 'IA-TB Trading Engine'; then
-    pid="$(json_pid "$body_kraken")"; label="Trading Engine"
-  elif echo "$body_kraken" | grep -q 'IA-TB Firewall Service'; then
-    pid="$(json_pid "$body_kraken")"; label="Firewall Service"
-  elif echo "$body_kraken" | grep -q 'IA-TB Strategy Engine v2'; then
-    pid="$(json_pid "$body_kraken")"; label="Strategy Engine v2"
-  elif echo "$body_kraken" | grep -q 'IA-TB Risk Engine'; then
-    pid="$(json_pid "$body_kraken")"; label="Risk Manager Engine"
-  elif echo "$body_kraken" | grep -q 'IA-TB Portfolio Engine'; then
-    pid="$(json_pid "$body_kraken")"; label="Portfolio Engine"
-  elif echo "$body_kraken" | grep -q 'IA-TB Supervisor'; then
-    pid="$(json_pid "$body_kraken")"; label="IA Supervisor"
+  elif echo "$body_service" | grep -q 'IA-TB Indicator Engine'; then
+    pid="$(json_pid "$body_service")"; label="Indicator Engine"
+  elif echo "$body_service" | grep -q 'IA-TB Market Data'; then
+    pid="$(json_pid "$body_service")"; label="Market Data"
+  elif echo "$body_service" | grep -q 'IA-TB Liquidity Engine'; then
+    pid="$(json_pid "$body_service")"; label="Liquidity Engine"
+  elif echo "$body_service" | grep -q 'IA-TB Fundamental Engine'; then
+    pid="$(json_pid "$body_service")"; label="Fundamental Engine"
+  elif echo "$body_service" | grep -q 'IA-TB Trading Engine'; then
+    pid="$(json_pid "$body_service")"; label="Trading Engine"
+  elif echo "$body_service" | grep -q 'IA-TB Firewall Service'; then
+    pid="$(json_pid "$body_service")"; label="Firewall Service"
+  elif echo "$body_service" | grep -q 'IA-TB Strategy Engine v2'; then
+    pid="$(json_pid "$body_service")"; label="Strategy Engine v2"
+  elif echo "$body_service" | grep -q 'IA-TB Risk Engine'; then
+    pid="$(json_pid "$body_service")"; label="Risk Manager Engine"
+  elif echo "$body_service" | grep -q 'IA-TB Portfolio Engine'; then
+    pid="$(json_pid "$body_service")"; label="Portfolio Engine"
+  elif echo "$body_service" | grep -q 'IA-TB Supervisor'; then
+    pid="$(json_pid "$body_service")"; label="IA Supervisor"
   fi
   if [ -n "$pid" ]; then
     say "Ancienne instance $label detectee sur le port $port -> arret PID $pid"
@@ -168,7 +165,6 @@ status_wait "Previous instances" "cleanup"
 stop_known_on_port "$UI_PORT" || { read -p "Appuie sur Entree pour fermer..."; exit 1; }
 stop_known_on_port "$ROUTER_PORT" || { read -p "Appuie sur Entree pour fermer..."; exit 1; }
 stop_known_on_port "$CORE_PORT" || { read -p "Appuie sur Entree pour fermer..."; exit 1; }
-stop_known_on_port "$KRAKEN_PORT" || { read -p "Appuie sur Entree pour fermer..."; exit 1; }
 stop_known_on_port "$INDICATOR_PORT" || { read -p "Appuie sur Entree pour fermer..."; exit 1; }
 stop_known_on_port "$MARKET_DATA_PORT" || { read -p "Appuie sur Entree pour fermer..."; exit 1; }
 stop_known_on_port "$LIQUIDITY_PORT" || { read -p "Appuie sur Entree pour fermer..."; exit 1; }
@@ -212,7 +208,6 @@ mkdir -p "$LOG_DIR"
 ROUTER_LOG="$LOG_DIR/router.log"
 UI_LOG="$LOG_DIR/ui.log"
 LAUNCHER_LOG="$LOG_DIR/launcher.log"
-KRAKEN_LOG="$LOG_DIR/kraken.log"
 INDICATOR_LOG="$LOG_DIR/indicators.log"
 MARKET_DATA_LOG="$LOG_DIR/market_data.log"
 LIQUIDITY_LOG="$LOG_DIR/liquidity.log"
@@ -227,7 +222,6 @@ SUPERVISOR_LOG="$LOG_DIR/supervisor.log"
 # Fundamental Engine V3: SQLite native dependency tested with the local Node runtime.
 # Echec non bloquant: IA-TB reste disponible et le FE apparaitra OFFLINE dans ADMIN.
 FUNDAMENTAL_READY=0
-KRAKEN_READY=0
 if [ -f "$PWD/Fundamental/install_sqlite.command" ]; then
   status_wait "SQLite / Fundamental" "checking"
   if /bin/bash "$PWD/Fundamental/install_sqlite.command"; then
@@ -239,7 +233,6 @@ if [ -f "$PWD/Fundamental/install_sqlite.command" ]; then
   fi
 fi
 
-KRAKEN_PID=""
 INDICATOR_PID=""
 MARKET_DATA_PID=""
 LIQUIDITY_PID=""
@@ -256,7 +249,6 @@ APP_PID=""
 cleanup() {
   [ -n "$UI_PID" ] && kill "$UI_PID" >/dev/null 2>&1 || true
   [ -n "$ROUTER_PID" ] && kill "$ROUTER_PID" >/dev/null 2>&1 || true
-  [ -n "$KRAKEN_PID" ] && kill "$KRAKEN_PID" >/dev/null 2>&1 || true
   [ -n "$INDICATOR_PID" ] && kill "$INDICATOR_PID" >/dev/null 2>&1 || true
   [ -n "$MARKET_DATA_PID" ] && kill "$MARKET_DATA_PID" >/dev/null 2>&1 || true
   [ -n "$LIQUIDITY_PID" ] && kill "$LIQUIDITY_PID" >/dev/null 2>&1 || true
@@ -271,7 +263,6 @@ cleanup() {
   sleep 1
   stop_known_on_port "$UI_PORT" >/dev/null 2>&1 || true
   stop_known_on_port "$ROUTER_PORT" >/dev/null 2>&1 || true
-  stop_known_on_port "$KRAKEN_PORT" >/dev/null 2>&1 || true
   stop_known_on_port "$INDICATOR_PORT" >/dev/null 2>&1 || true
   stop_known_on_port "$MARKET_DATA_PORT" >/dev/null 2>&1 || true
   stop_known_on_port "$LIQUIDITY_PORT" >/dev/null 2>&1 || true
@@ -288,7 +279,6 @@ trap cleanup EXIT INT TERM
 : > "$ROUTER_LOG"
 : > "$UI_LOG"
 : > "$LAUNCHER_LOG"
-: > "$KRAKEN_LOG"
 : > "$INDICATOR_LOG"
 : > "$MARKET_DATA_LOG"
 : > "$LIQUIDITY_LOG"
@@ -338,13 +328,13 @@ require_service(){
 
 # 1. Core: configuration, settings, admin and internal API.
 status_wait "Core" "starting first"
-IATB_DEBUG_MODE="1" IATB_PORT="$CORE_PORT" IATB_PUBLIC_PORT="$CORE_PORT" IATB_UI_SEPARATED="1" ROUTER_PORT="$ROUTER_PORT" KRAKEN_ADDON_PORT="$KRAKEN_PORT" IATB_INDICATOR_PORT="$INDICATOR_PORT" IATB_MARKET_DATA_PORT="$MARKET_DATA_PORT" IATB_LIQUIDITY_PORT="$LIQUIDITY_PORT" IATB_FUNDAMENTAL_PORT="$FUNDAMENTAL_PORT" IATB_PORTFOLIO_PORT="$PORTFOLIO_PORT" IATB_TRADING_ENGINE_PORT="$TRADING_ENGINE_PORT" IATB_FIREWALL_PORT="$FIREWALL_PORT" IATB_STRATEGY_PORT="$STRATEGY_PORT" IATB_RISK_ENGINE_PORT="$RISK_ENGINE_PORT" "$NODE_BIN" launcher.js >> "$LAUNCHER_LOG" 2>&1 &
+IATB_DEBUG_MODE="1" IATB_PORT="$CORE_PORT" IATB_PUBLIC_PORT="$CORE_PORT" IATB_UI_SEPARATED="1" ROUTER_PORT="$ROUTER_PORT" IATB_INDICATOR_PORT="$INDICATOR_PORT" IATB_MARKET_DATA_PORT="$MARKET_DATA_PORT" IATB_LIQUIDITY_PORT="$LIQUIDITY_PORT" IATB_FUNDAMENTAL_PORT="$FUNDAMENTAL_PORT" IATB_PORTFOLIO_PORT="$PORTFOLIO_PORT" IATB_TRADING_ENGINE_PORT="$TRADING_ENGINE_PORT" IATB_FIREWALL_PORT="$FIREWALL_PORT" IATB_STRATEGY_PORT="$STRATEGY_PORT" IATB_RISK_ENGINE_PORT="$RISK_ENGINE_PORT" "$NODE_BIN" launcher.js >> "$LAUNCHER_LOG" 2>&1 &
 APP_PID=$!
 require_service "Core" "$CORE_PORT" "/api/health" "IA-Trading-Bot" "$LAUNCHER_LOG" 12
 
 # 2. Router: all following CP/1 components register against it.
 status_wait "Router" "after Core"
-CORE_PUBLIC_PORT="$CORE_PORT" KRAKEN_ADDON_PORT="$KRAKEN_PORT" IATB_INDICATOR_PORT="$INDICATOR_PORT" IATB_MARKET_DATA_PORT="$MARKET_DATA_PORT" IATB_LIQUIDITY_PORT="$LIQUIDITY_PORT" IATB_FUNDAMENTAL_PORT="$FUNDAMENTAL_PORT" IATB_TRADING_ENGINE_PORT="$TRADING_ENGINE_PORT" IATB_FIREWALL_PORT="$FIREWALL_PORT" IATB_STRATEGY_PORT="$STRATEGY_PORT" IATB_RISK_ENGINE_PORT="$RISK_ENGINE_PORT" IATB_PORTFOLIO_PORT="$PORTFOLIO_PORT" IATB_SUPERVISOR_PORT="$SUPERVISOR_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Core/Router/router.js >> "$ROUTER_LOG" 2>&1 &
+CORE_PUBLIC_PORT="$CORE_PORT" IATB_INDICATOR_PORT="$INDICATOR_PORT" IATB_MARKET_DATA_PORT="$MARKET_DATA_PORT" IATB_LIQUIDITY_PORT="$LIQUIDITY_PORT" IATB_FUNDAMENTAL_PORT="$FUNDAMENTAL_PORT" IATB_TRADING_ENGINE_PORT="$TRADING_ENGINE_PORT" IATB_FIREWALL_PORT="$FIREWALL_PORT" IATB_STRATEGY_PORT="$STRATEGY_PORT" IATB_RISK_ENGINE_PORT="$RISK_ENGINE_PORT" IATB_PORTFOLIO_PORT="$PORTFOLIO_PORT" IATB_SUPERVISOR_PORT="$SUPERVISOR_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Core/Router/router.js >> "$ROUTER_LOG" 2>&1 &
 ROUTER_PID=$!
 require_service "Router" "$ROUTER_PORT" "/router-health" "\"router\"" "$ROUTER_LOG" 10
 
@@ -368,20 +358,9 @@ if [ "$fw_threads_ok" -ne 1 ]; then
 fi
 status_ok "Firewall workers" "Trading + Market Data"
 
-# 4. Local Kraken bridge, then universal Market Data.
-status_wait "Kraken Adapter" "optional provider bridge"
-KRAKEN_ADDON_PORT="$KRAKEN_PORT" "$NODE_BIN" AddOns/Kraken/kraken_service.js >> "$KRAKEN_LOG" 2>&1 &
-KRAKEN_PID=$!
-if wait_service "Kraken Adapter" "$KRAKEN_PORT" "/health" "Kraken Add-On" "$KRAKEN_LOG" 6; then
-  KRAKEN_READY=1
-else
-  status_warn "Kraken Adapter" "offline · autres CEX/DEX restent disponibles"
-  [ -n "$KRAKEN_PID" ] && kill "$KRAKEN_PID" >/dev/null 2>&1 || true
-  KRAKEN_PID=""
-fi
-
+# 4. Universal Market Data Collector (native CEX/DEX providers).
 status_wait "Market Data Collector" "CEX/DEX registry"
-KRAKEN_ADDON_PORT="$KRAKEN_PORT" IATB_MARKET_DATA_PORT="$MARKET_DATA_PORT" IATB_FIREWALL_PORT="$FIREWALL_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" MarketData/market_data_service.js >> "$MARKET_DATA_LOG" 2>&1 &
+IATB_MARKET_DATA_PORT="$MARKET_DATA_PORT" IATB_FIREWALL_PORT="$FIREWALL_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" MarketData/market_data_service.js >> "$MARKET_DATA_LOG" 2>&1 &
 MARKET_DATA_PID=$!
 require_service "Market Data Collector" "$MARKET_DATA_PORT" "/health" "IA-TB Market Data" "$MARKET_DATA_LOG" 12
 
@@ -466,9 +445,8 @@ fi
 section "[ 4/4 ]  SYSTEM STATUS"
 
 ONLINE_COUNT=12
-[ "$KRAKEN_READY" -eq 1 ] && ONLINE_COUNT=$((ONLINE_COUNT+1))
 [ "$FUNDAMENTAL_READY" -eq 1 ] && ONLINE_COUNT=$((ONLINE_COUNT+1))
-printf "              ${C_GREEN}${C_BOLD}%s / 14 SERVICES ONLINE${C_RESET}\n" "$ONLINE_COUNT"
+printf "              ${C_GREEN}${C_BOLD}%s / 13 SERVICES ONLINE${C_RESET}\n" "$ONLINE_COUNT"
 echo
 printf "                 ${C_GREEN}${C_BOLD}IA-TB READY${C_RESET} · v%s %s\n" "$BUILD_VERSION" "$BUILD_STATUS"
 echo
