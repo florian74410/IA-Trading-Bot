@@ -7,7 +7,7 @@ var path=require('path'),T=require('../Normalizer/timeframes'),S=require('../Nor
 function spacingMeta(candles,tf){var ds=[];for(var i=1;i<(candles||[]).length;i++){var a=+candles[i-1][0],b=+candles[i][0];if(a>0&&b>a)ds.push(b-a);}ds.sort(function(a,b){return a-b});var observed=ds.length?ds[Math.floor(ds.length/2)]:0,expected=T.minutes(tf)*60000,ok=!observed||Math.abs(observed-expected)<=Math.max(1000,expected*.20);return{requestedTimeframe:T.normalize(tf),expectedSpacingMs:expected,observedSpacingMs:observed,timeframeValidated:ok};}
 function attachMeta(o,tf){var m=spacingMeta(o.candles||[],tf);Object.keys(m).forEach(function(k){o[k]=m[k];});return o;}
 function safeModule(desc){var p=path.resolve(__dirname,desc.module);if(p.indexOf(path.resolve(__dirname)+path.sep)!==0)throw new Error('MARKET_PROVIDER_MODULE_FORBIDDEN: '+desc.id);return require(p);}
-function providerOptions(id,o){var k=String(id||'').toLowerCase(),x=Object.assign({},o[k]||{});if(id==='KRAKEN')x.port=+o.krakenPort||8011;return x;}
+function providerOptions(id,o){var k=String(id||'').toLowerCase();return Object.assign({},o[k]||{});}
 function P(o){
  o=o||{};this.settings=o.settings||{};this.providers={};this.descriptors={};this.errors={};this.name='MARKET_PROVIDER_REGISTRY';
  var self=this;Catalog.load().forEach(function(d){self.descriptors[d.id]=d;try{var C=safeModule(d);self.providers[d.id]=new C(providerOptions(d.id,o));}catch(e){self.errors[d.id]=e.message;}});
@@ -22,6 +22,12 @@ P.prototype.getTicker=function(symbol,source,cb){var id;try{id=this.normalize(so
  if(typeof p.getCandles==='function')return p.getCandles(symbol,'1m',function(e,o){if(e)return cb(e);var a=o&&o.candles||[],x=a[a.length-1],px=x&&+x[4];if(!isFinite(px)||px<=0)return cb(new Error(id+'_TICKER_EMPTY'));cb(null,{ok:true,exchange:id,providerId:id,symbol:o.canonicalSymbol||symbol,price:px,observedAt:x[0]||Date.now(),priceSource:o.priceSource||o.provider||id});});
  if(typeof p.pairLiquidity==='function')return p.pairLiquidity(symbol,function(e,o){if(e)return cb(e);var px=+(o&&o.weightedPriceUsd||o&&o.bestPool&&o.bestPool.priceUsd);if(!isFinite(px)||px<=0)return cb(new Error(id+'_TICKER_EMPTY'));cb(null,{ok:true,exchange:id,providerId:id,symbol:o.canonicalSymbol||symbol,price:px,observedAt:o.observedAt||Date.now(),priceSource:id+'_WEIGHTED_POOL',liquidityUsd:o.liquidityUsd||null});});
  cb(new Error('MARKET_PROVIDER_TICKER_UNIMPLEMENTED: '+id));
+};
+P.prototype.test=function(source,cb){var id;try{id=this.normalize(source);}catch(e){return cb(e);}var d=this.descriptor(id)||{},caps=d.capabilities||[],started=Date.now(),self=this;
+ function ok(extra){cb(null,Object.assign({ok:true,provider:id,latencyMs:Date.now()-started,capabilities:caps.slice()},extra||{}));}
+ if(caps.indexOf('candles')>=0)return self.getCandles('BTCUSD','1m',id,function(e,o){if(e)return cb(e);ok({probe:'candles',symbol:o&&o.canonicalSymbol||'BTCUSD',rows:o&&o.candles&&o.candles.length||0});});
+ if(caps.indexOf('ticker')>=0)return self.getTicker('BTCUSD',id,function(e,o){if(e)return cb(e);ok({probe:'ticker',symbol:o&&o.symbol||'BTCUSD',price:o&&o.price||null});});
+ self.listSymbols(id,function(e,o){if(e)return cb(e);ok({probe:'symbols',symbols:o&&o.symbols&&o.symbols.length||0});});
 };
 P.prototype.list=function(){var self=this;return Object.keys(this.descriptors).sort().map(function(id){var d=self.descriptors[id],s=self.settings&&self.settings.providers&&self.settings.providers[id]||{};return{id:id,label:d.label,type:d.type,transport:d.transport,capabilities:d.capabilities.slice(),custom:!!d.custom,settingsKey:d.settingsKey||id,enabled:self.enabled(id),loaded:!!self.providers[id],priority:+s.priority||null,defaultPairs:String(s.defaultPairs||''),pairFilter:String(s.pairFilter||'ALL'),quoteCurrency:String(s.quoteCurrency||''),error:self.errors[id]||null};});};
 module.exports=P;
