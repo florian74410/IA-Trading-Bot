@@ -280,8 +280,8 @@ function probeMarketProviders(){
 }
 function health(){
   var start=Date.now();
-  fetch('/api/health',{credentials:'same-origin'}).then(function(r){if(!r.ok)throw new Error();return r.json()}).then(function(){markDot('Core','ok');markDot('Router','ok');setText('tdLatency',(Date.now()-start)+' ms')}).catch(function(){markDot('Core','bad')});
-  fetch('/api/status',{credentials:'same-origin'}).then(function(r){if(!r.ok)throw new Error();return r.json()}).then(function(){markDot('Market Data','ok');markDot('Trading Engine','ok');markDot('Firewall','ok');setText('tdUptime','en ligne')}).catch(function(){});
+  fetch('/api/health',{credentials:'same-origin',cache:'no-store'}).then(function(r){if(!r.ok)throw new Error();return r.json()}).then(function(){markDot('Core','ok');setText('tdLatency',(Date.now()-start)+' ms')}).catch(function(){markDot('Core','bad')});
+  fetch('/router-health',{credentials:'same-origin',cache:'no-store'}).then(function(r){if(!r.ok)throw new Error();return r.json()}).then(function(h){var d=h.dependencies||{};[['Market Data','marketData'],['Trading Engine','trading'],['Firewall','firewall'],['Indicators','indicators'],['Liquidity','liquidity'],['Fundamental','fundamental'],['Risk Engine','risk'],['Strategy Engine','strategy'],['Portfolio Engine','portfolio'],['IA Supervisor','supervisor']].forEach(function(x){markDot(x[0],d[x[1]]&&d[x[1]].ok?'ok':'bad')});markDot('Router',h.ok?'ok':'bad');setText('tdUptime',h.ok?'en ligne':'dégradé')}).catch(function(){markDot('Router','bad');setText('tdUptime','dégradé')});
   probeMarketProviders();
 }
 
