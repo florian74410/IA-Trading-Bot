@@ -366,7 +366,7 @@ require_service "Market Data Collector" "$MARKET_DATA_PORT" "/health" "IA-TB Mar
 
 # 5. Read/analysis engines consume Router + Market Data.
 status_wait "Indicator Engine" "after Market Data"
-IATB_INDICATOR_PORT="$INDICATOR_PORT" IATB_MARKET_DATA_PORT="$MARKET_DATA_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Indicators/Engine/indicator_service.js >> "$INDICATOR_LOG" 2>&1 &
+IATB_INDICATOR_PORT="$INDICATOR_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Indicators/Engine/indicator_service.js >> "$INDICATOR_LOG" 2>&1 &
 INDICATOR_PID=$!
 require_service "Indicator Engine" "$INDICATOR_PORT" "/health" "IA-TB Indicator Engine" "$INDICATOR_LOG" 10
 
@@ -385,7 +385,7 @@ else
 fi
 
 status_wait "Liquidity Engine" "after Market Data"
-IATB_MARKET_DATA_PORT="$MARKET_DATA_PORT" IATB_LIQUIDITY_PORT="$LIQUIDITY_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Liquidity/Engine/liquidity_service.js >> "$LIQUIDITY_LOG" 2>&1 &
+IATB_LIQUIDITY_PORT="$LIQUIDITY_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Liquidity/Engine/liquidity_service.js >> "$LIQUIDITY_LOG" 2>&1 &
 LIQUIDITY_PID=$!
 require_service "Liquidity Engine" "$LIQUIDITY_PORT" "/health" "IA-TB Liquidity Engine" "$LIQUIDITY_LOG" 10
 
