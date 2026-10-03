@@ -22,7 +22,7 @@
 
    Historique legacy: l ancien module Trading IA était GMX-only. La v2 utilise Market Data comme source multi-exchange canonique.
    La signature des trades reste dans GMX / Trust Wallet. */
-var http=require('http'),https=require('https'),fs=require('fs'),path=require('path'),crypto=require('crypto'),qs=require('querystring'),child=require('child_process'),URL=require('url').URL,PATHS=require('../Shared/paths'),BUILD=require('../Shared/build_info'),ProviderCatalog=require('../../MarketData/Provider/provider_catalog'),MarketSymbols=require('../../MarketData/Normalizer/symbols'),TLSCA=require('../Network/tls_ca_v1.0'),AIResponse=require('../Services/openai_response_v1.0'),FundamentalAISummary=require('../Services/fundamental_ai_synthesis_v3'),UpdateManager=require('../Updates/update_manager_v1.0'),AIUpdateBuilder=require('../Updates/ai_update_builder_v1.0'),MosaicStore=require('../Mosaics/mosaic_store_v1.0'),CP=require('../Communication/communication_protocol_v1'),CPClient=require('../Communication/cp1_client'),ComponentCP1Adapter=require('../Communication/component_cp1_adapter'),IndicatorRegistry=require('../../Indicators/Engine/indicator_registry'),AdminBackend=require('../Admin/admin_backend'),AdminPermissions=require('../Admin/admin_permissions'),AdminConsole=require('../Admin/admin_console'),CP1ConsoleEngine=require('../Admin/CP1/engine'),BankVaultRegistry=require('../../Bank/Core/vault_registry'),WalletService=require('../../Bank/Core/wallet_service_v2'),SwapBridgeService=require('../../Bank/Core/swap_bridge_service_v2'),TransferService=require('../../Bank/Core/transfer_service_v2'),OnChainReader=require('../../Bank/Core/onchain_reader_v1'),ClientCrypto=require('../Clients/client_crypto'),ClientRepository=require('../Clients/client_repository'),ClientService=require('../Clients/client_service');
+var http=require('http'),https=require('https'),fs=require('fs'),path=require('path'),crypto=require('crypto'),qs=require('querystring'),child=require('child_process'),URL=require('url').URL,PATHS=require('../Shared/paths'),BUILD=require('../Shared/build_info'),ProviderCatalog=require('../../MarketData/Provider/provider_catalog'),MarketSymbols=require('../../MarketData/Normalizer/symbols'),TLSCA=require('../Network/tls_ca_v1.0'),AIResponse=require('../Services/openai_response_v1.0'),UpdateManager=require('../Updates/update_manager_v1.0'),AIUpdateBuilder=require('../Updates/ai_update_builder_v1.0'),MosaicStore=require('../Mosaics/mosaic_store_v1.0'),CP=require('../Communication/communication_protocol_v1'),CPClient=require('../Communication/cp1_client'),ComponentCP1Adapter=require('../Communication/component_cp1_adapter'),IndicatorRegistry=require('../../Indicators/Engine/indicator_registry'),AdminBackend=require('../Admin/admin_backend'),AdminPermissions=require('../Admin/admin_permissions'),AdminConsole=require('../Admin/admin_console'),CP1ConsoleEngine=require('../Admin/CP1/engine'),BankVaultRegistry=require('../../Bank/Core/vault_registry'),WalletService=require('../../Bank/Core/wallet_service_v2'),SwapBridgeService=require('../../Bank/Core/swap_bridge_service_v2'),TransferService=require('../../Bank/Core/transfer_service_v2'),OnChainReader=require('../../Bank/Core/onchain_reader_v1'),ClientCrypto=require('../Clients/client_crypto'),ClientRepository=require('../Clients/client_repository'),ClientService=require('../Clients/client_service');
 var SQLiteSettingsStore=require('../Settings/sqlite_settings_store'),SETTINGS_DB=new SQLiteSettingsStore(PATHS.ROOT),CLIENT_CRYPTO=new ClientCrypto(PATHS.PersistentData.clientMasterKey),CLIENT_REPOSITORY=new ClientRepository({dbPath:PATHS.PersistentData.clientDb,migrationsDir:path.join(PATHS.ROOT,'Core','Clients','migrations')}),CLIENT_SERVICE=new ClientService(CLIENT_REPOSITORY,CLIENT_CRYPTO,SETTINGS_DB),WALLET_SERVICE=new WalletService(PATHS.ROOT,SETTINGS_DB,CLIENT_SERVICE,{keyFile:PATHS.PersistentData.walletMasterKey}),SWAP_BRIDGE_SERVICE=null,TRANSFER_SERVICE=null,ONCHAIN_READER=null;
 var ROOT=PATHS.ROOT,COMM_CLIENT=new CPClient({root:PATHS.ROOT,routerPort:+(process.env.ROUTER_PORT||8021),timeout:5000,maxBytes:2*1024*1024}),HTML=PATHS.Frontend.app,CHART_HTML=PATHS.Frontend.chartViewer,PORTFOLIO_HTML=PATHS.Frontend.portfolio,FUNDAMENTAL_HTML=PATHS.Frontend.fundamental,ADMIN_HTML=PATHS.Frontend.admin,CFG=PATHS.Data.config,LOG=PATHS.Data.logs,USER=PATHS.Data.user,VAULT=PATHS.Data.vault,AISET=PATHS.Data.aiSettings,ANNEX_DIR=PATHS.Annexes,STRAT_DIR=PATHS.Strategies,RELEASE_POINTER=PATHS.ReleasePointer,LAUNCHER_CONTROL=PATHS.LauncherControl;
 function currentReleaseVersion(){var env=String(process.env.IATB_RELEASE_VERSION||'');if(/^v?\d+\.\d+(?:\.\d+)?$/.test(env))return env.replace(/^v/,'');try{var x=JSON.parse(fs.readFileSync(RELEASE_POINTER,'utf8'));if(x&&x.application===BUILD.application&&/^v?\d+\.\d+(?:\.\d+)?$/.test(String(x.version||'')))return String(x.version).replace(/^v/,'');}catch(e){}return BUILD.version;}
@@ -78,7 +78,7 @@ var DEFAULT_MODULES=['gmx','strategy','wallet','system'];
 var MOSAIC_IDS=['chat','chart','modules'];
 function defaultMosaicLayout(){return{chat:{col:1,row:1,w:4,h:14,visible:true,order:0},chart:{col:5,row:1,w:8,h:10,visible:true,order:1},modules:{col:5,row:11,w:8,h:5,visible:true,order:2}};}
 function sanitizeMosaicLayout(x){var d=defaultMosaicLayout(),o={},src=x&&typeof x==='object'&&!Array.isArray(x)?x:{};MOSAIC_IDS.forEach(function(id){var a=src[id]&&typeof src[id]==='object'?src[id]:d[id],n=function(v,lo,hi,def){v=Math.round(+v);return isFinite(v)&&v>=lo&&v<=hi?v:def;};o[id]={col:n(a.col,1,12,d[id].col),row:n(a.row,1,100,d[id].row),w:n(a.w,1,12,d[id].w),h:n(a.h,1,40,d[id].h),visible:a.visible!==false,order:n(a.order,-100,100,d[id].order)};});return o;}
-var TOKEN_USAGE=[],FUNDAMENTAL_AI_CACHE={key:'',at:0,data:null,model:'',usage:null,basis:null},FUNDAMENTAL_AI_RUNNING=false,FUNDAMENTAL_AI_LAST_CALL=0,FUNDAMENTAL_TRANSLATION_INFLIGHT=Object.create(null),FUNDAMENTAL_AUTO_TRANSLATION_RUNNING=false,FUNDAMENTAL_AUTO_TRANSLATION_TIMER=null;
+var TOKEN_USAGE=[];
 
 if(!fs.existsSync(LOG))fs.writeFileSync(LOG,'','utf8');
 if(!fs.existsSync(STRAT_DIR))fs.mkdirSync(STRAT_DIR,{recursive:true});
@@ -241,127 +241,6 @@ function cryptoResolve(id,network,cb){
 
 
 function fundamentalIntent(t){return /(fondamental|fundamental|source(?:s)?|news|actualit[eé]|\bfed\b|fomc|\bbce\b|\becb\b|\bsec\b|\bamf\b|macro|inflation|taux|dollar|\bdxy\b|adoption|r[eé]gulation|regulation|twitter|truth social|\btrump\b|reuters|bloomberg|hack|exploit|s[eé]curit[eé]|sentiment)/i.test(String(t||''));}
-function fundamentalCp(action,args,detail,cb){COMM_CLIENT.request('fundamental',action,args||{},detail||'summary',cb);}
-function translationLanguage(){var a=readAppSettings(activeAppSettingsFile()).data.general||{},l=String(a.language||'fr').toLowerCase();return SUPPORTED_LANGUAGES[l]?l:'fr';}
-function normalizeTranslationSourceLanguage(item){var l=String(item&&item.language||'').toLowerCase().replace(/_/g,'-'),base=l.split('-')[0],src=String(item&&item.source_code||'').toUpperCase();if(SUPPORTED_LANGUAGES[base])return base;if(src==='AMF'||src==='INSEE')return'fr';return'en';}
-function utf8Chunks(text,maxBytes){text=String(text||'').replace(/\s+/g,' ').trim();maxBytes=Math.max(80,Math.min(480,+maxBytes||450));if(!text)return[];var tokens=text.split(/(\s+)/),out=[],buf='';function push(){var x=buf.trim();if(x)out.push(x);buf='';}function addLong(token){var chars=Array.from(token),part='';for(var j=0;j<chars.length;j++){var ch=chars[j];if(part&&Buffer.byteLength(part+ch,'utf8')>maxBytes){out.push(part);part='';}part+=ch;}if(part)buf=part;}for(var i=0;i<tokens.length;i++){var tok=tokens[i];if(!tok)continue;if(Buffer.byteLength(tok,'utf8')>maxBytes){push();addLong(tok);continue;}if(buf&&Buffer.byteLength(buf+tok,'utf8')>maxBytes)push();buf+=tok;}push();return out;}
-function decodeTranslationText(s){return String(s||'').replace(/&#x([0-9a-f]+);/gi,function(_,h){return String.fromCodePoint(parseInt(h,16));}).replace(/&#([0-9]+);/g,function(_,n){return String.fromCodePoint(parseInt(n,10));}).replace(/&quot;/gi,'"').replace(/&#39;|&apos;/gi,"'").replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&amp;/gi,'&');}
-function validTranslationContactEmail(email){email=String(email||'').trim().toLowerCase();return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)&&email.length<=254?email:'';}
-function myMemorySegment(text,sourceLang,targetLang,contactEmail,cb){text=String(text||'').trim();if(!text)return cb(null,'');if(sourceLang===targetLang)return cb(null,text);contactEmail=validTranslationContactEmail(contactEmail);var url='https://api.mymemory.translated.net/get?q='+encodeURIComponent(text)+'&langpair='+encodeURIComponent(sourceLang+'|'+targetLang)+'&mt=1'+(contactEmail?'&de='+encodeURIComponent(contactEmail):'');request('GET',url,{'Accept':'application/json','User-Agent':'Crypto-Chart-Viewer-IA-Trader/1.6.6'},null,function(e,o){if(e){var code=+(e&&e.statusCode||0);if(code===429)return cb(new Error('TRANSLATION_MYMEMORY_LIMIT: HTTP 429'));return cb(new Error('TRANSLATION_MYMEMORY_NETWORK: '+String(e.message||e)));}var status=+(o&&o.responseStatus||0),detail=String(o&&o.responseDetails||''),translated=decodeTranslationText(o&&o.responseData&&o.responseData.translatedText).trim();if(status===429)return cb(new Error('TRANSLATION_MYMEMORY_LIMIT: HTTP 429'+(detail?': '+detail:'')));if(status&&status!==200)return cb(new Error('TRANSLATION_MYMEMORY_STATUS_'+status+(detail?': '+detail:'')));if(!translated)return cb(new Error('TRANSLATION_MYMEMORY_EMPTY'));cb(null,translated);},15000);}
-function myMemoryText(text,sourceLang,targetLang,contactEmail,cb){var chunks=utf8Chunks(text,450),out=[],i=0;if(!chunks.length)return cb(null,'');function next(){if(i>=chunks.length)return cb(null,out.join(' ').replace(/\s+/g,' ').trim());myMemorySegment(chunks[i++],sourceLang,targetLang,contactEmail,function(e,t){if(e)return cb(e);out.push(t);setTimeout(next,90);});}next();}
-function callFundamentalTranslation(item,lang,contactEmail,cb){var sourceLang=normalizeTranslationSourceLanguage(item),title=String(item.title||'').trim(),summary=String(item.summary||'').trim();if(sourceLang===lang)return cb(null,{translated_title:title,translated_summary:summary,source_language:sourceLang});myMemoryText(title,sourceLang,lang,contactEmail,function(te,tt){if(te)return cb(te);myMemoryText(summary,sourceLang,lang,contactEmail,function(se,ts){if(se)return cb(se);if(!String(tt||'').trim())return cb(new Error('TRANSLATION_OUTPUT_INVALID: translated_title vide'));cb(null,{translated_title:String(tt||'').trim(),translated_summary:String(ts||'').trim(),source_language:sourceLang});});});}
-function translateFundamentalItem(itemId,sess,cb){
- itemId=Math.round(+itemId||0);if(itemId<1)return cb(new Error('RAW_ITEM_ID_INVALID'));
- var lang=translationLanguage(),cacheKey=itemId+'|'+lang,usr=readUser(),contactEmail=validTranslationContactEmail((usr&&usr.email)||(sess&&sess.email)||'');
- function finish(err,out){var wait=FUNDAMENTAL_TRANSLATION_INFLIGHT[cacheKey]||[];delete FUNDAMENTAL_TRANSLATION_INFLIGHT[cacheKey];for(var i=0;i<wait.length;i++)try{wait[i](err,out);}catch(x){}}
- if(FUNDAMENTAL_TRANSLATION_INFLIGHT[cacheKey]){FUNDAMENTAL_TRANSLATION_INFLIGHT[cacheKey].push(cb);return;}
- FUNDAMENTAL_TRANSLATION_INFLIGHT[cacheKey]=[cb];
- fundamentalCp('fundamental.translation.get',{itemId:itemId,lang:lang},'summary',function(ce,co){
-  if(!ce&&co&&co.translation){log('FUNDAMENTAL','Traduction cache HIT',cacheKey);return finish(null,{ok:true,cached:true,language:lang,languageName:SUPPORTED_LANGUAGES[lang],translation:co.translation});}
-  fundamentalCp('fundamental.news.get',{id:itemId},'summary',function(ne,no){
-   if(ne)return finish(ne);var item=no&&no.item;if(!item)return finish(new Error('RAW_ITEM_NOT_FOUND'));
-   callFundamentalTranslation(item,lang,contactEmail,function(te,tr){
-    if(te){var er=new Error('TRANSLATION_FAILED: '+String(te.message||te));er.statusCode=te&&String(te.message||'').indexOf('TRANSLATION_MYMEMORY_LIMIT')===0?429:502;return finish(er);}
-    var payload={raw_item_id:itemId,target_lang:lang,translated_title:tr.translated_title,translated_summary:tr.translated_summary,provider:'MYMEMORY'};
-    fundamentalCp('fundamental.translation.save',payload,'summary',function(se,so){
-     if(se)return finish(se);log('FUNDAMENTAL','Traduction MyMemory sauvegardee',String(itemId)+' '+String(tr.source_language||'en')+' -> '+lang+' contact='+(contactEmail?'SET':'NONE'));
-     finish(null,{ok:true,cached:false,language:lang,languageName:SUPPORTED_LANGUAGES[lang],translation:so&&so.translation||null});
-    });
-   });
-  });
- });
-}
-function runAutoTranslationBatch(){
- if(FUNDAMENTAL_AUTO_TRANSLATION_RUNNING)return;
- FUNDAMENTAL_AUTO_TRANSLATION_RUNNING=true;
- var lang;
- try{lang=translationLanguage();}catch(e){FUNDAMENTAL_AUTO_TRANSLATION_RUNNING=false;log('FUNDAMENTAL','Auto traduction ignoree','settings '+String(e.message||e));return;}
- var translated=0,failed=0,skip=Object.create(null),stoppedByQuota=false;
- function finish(reason){FUNDAMENTAL_AUTO_TRANSLATION_RUNNING=false;log('FUNDAMENTAL','Auto traduction terminee','lang='+lang+' translated='+translated+' failed='+failed+(stoppedByQuota?' quota=LIMIT':'')+(reason?' reason='+reason:''));}
- function load(){
-  fundamentalCp('fundamental.translation.pending',{lang:lang,limit:200},'summary',function(e,o){
-   if(e)return finish('pending '+String(e.message||e));
-   var items=o&&Array.isArray(o.items)?o.items.filter(function(x){return x&&x.id&&!skip[String(x.id)];}):[];
-   if(!items.length)return finish('complete');
-   var i=0,progress=0;
-   function next(){
-    if(i>=items.length){if(progress===0)return finish('no_progress');return setTimeout(load,500);}
-    var id=+items[i++].id||0;if(!id)return next();
-    translateFundamentalItem(id,null,function(te,to){
-     if(te){
-      var msg=String(te.message||te);
-      failed++;skip[String(id)]=1;
-      if((te.statusCode===429)||msg.indexOf('TRANSLATION_MYMEMORY_LIMIT')>=0){stoppedByQuota=true;return finish('api_limit');}
-     }else if(to&&to.cached!==true){translated++;progress++;}
-     setTimeout(next,180);
-    });
-   }
-   next();
-  });
- }
- log('FUNDAMENTAL','Auto traduction demarree','lang='+lang);
- load();
-}
-function startAutoTranslationScheduler(){
- if(FUNDAMENTAL_AUTO_TRANSLATION_TIMER)return;
- setTimeout(runAutoTranslationBatch,30000);
- FUNDAMENTAL_AUTO_TRANSLATION_TIMER=setInterval(runAutoTranslationBatch,3600000);
- if(FUNDAMENTAL_AUTO_TRANSLATION_TIMER.unref)FUNDAMENTAL_AUTO_TRANSLATION_TIMER.unref();
-}
-
-function fundamentalAiContext(cb){
- var since=new Date(Date.now()-86400000).toISOString();
- fundamentalCp('fundamental.summary',{},'summary',function(se,so){
-  if(se)return cb(se);
-  fundamentalCp('fundamental.news.search',{since:since,limit:36,sort:'DATE_DESC'},'summary',function(ie,io){
-   if(ie)return cb(ie);
-   var recent=io&&Array.isArray(io.items)?io.items:[];
-   if(recent.length>=8)return cb(null,FundamentalAISummary.buildContext(so,io,translationLanguage(),'24H'));
-   fundamentalCp('fundamental.news.search',{limit:28,sort:'DATE_DESC'},'summary',function(fe,fo){
-    if(fe)return cb(fe);
-    cb(null,FundamentalAISummary.buildContext(so,fo,translationLanguage(),recent.length?'24H + RECENT_FALLBACK':'RECENT_FALLBACK'));
-   });
-  });
- });
-}
-function fundamentalAiPublicState(){
- var st=secretStatus(),x=FUNDAMENTAL_AI_CACHE.data;
- return{ok:true,configured:!!st.openai,running:!!FUNDAMENTAL_AI_RUNNING,cached:!!x,generatedAt:x&&x.generatedAt||null,model:x&&x.model||cfg().OPENAI_MODEL||'gpt-5.6',language:x&&x.language||null,summary:x&&x.synthesis||null,basis:x&&x.basis||null,usage:x&&x.usage||null};
-}
-function generateFundamentalAiSummary(sess,opts,cb){
- opts=opts||{};var key=getSecret(sess,'OPENAI_API_KEY');if(!key){var ke=new Error('OPENAI_API_KEY_MISSING');ke.statusCode=400;return cb(ke);}
- if(FUNDAMENTAL_AI_RUNNING){var re=new Error('FUNDAMENTAL_AI_SUMMARY_RUNNING');re.statusCode=409;return cb(re);}
- FUNDAMENTAL_AI_RUNNING=true;
- fundamentalAiContext(function(ce,ctx){
-  if(ce){FUNDAMENTAL_AI_RUNNING=false;return cb(ce);}
-  if(!ctx.items||!ctx.items.length){FUNDAMENTAL_AI_RUNNING=false;var ne=new Error('FUNDAMENTAL_AI_NO_PUBLICATIONS');ne.statusCode=409;return cb(ne);}
-  var c=cfg(),model=c.OPENAI_MODEL||'gpt-5.6',keyHash=FundamentalAISummary.cacheKey(ctx,model),same=FUNDAMENTAL_AI_CACHE.data&&FUNDAMENTAL_AI_CACHE.key===keyHash,age=Date.now()-(FUNDAMENTAL_AI_CACHE.at||0),force=opts.force===true&&Date.now()-FUNDAMENTAL_AI_LAST_CALL>15000;
-  if(same&&age<15*60*1000&&!force){FUNDAMENTAL_AI_RUNNING=false;return cb(null,{ok:true,cached:true,data:FUNDAMENTAL_AI_CACHE.data});}
-  FUNDAMENTAL_AI_LAST_CALL=Date.now();
-  var schema=FundamentalAISummary.schema(),input=FundamentalAISummary.input(ctx),payloadObj={model:model,instructions:FundamentalAISummary.instructions(ctx.language),input:input,max_output_tokens:1500,reasoning:{effort:'low'},text:{verbosity:'low',format:{type:'json_schema',name:'iatb_fundamental_ai_summary_v3',strict:true,schema:schema}},store:false},payload=JSON.stringify(payloadObj),headers={'Authorization':'Bearer '+key,'Content-Type':'application/json','Content-Length':Buffer.byteLength(payload)};
-  request('POST','https://api.openai.com/v1/responses',headers,payload,function(e,o){
-   FUNDAMENTAL_AI_RUNNING=false;
-   if(e){log('FUNDAMENTAL','Synthese IA OpenAI ERROR',String(e.statusCode||'NETWORK')+' '+String(e.message||'').slice(0,220));e.statusCode=e.statusCode||502;return cb(e);}
-   var inf=AIResponse.inspectResponse(o);if(!inf.ok){var ie=new Error('OPENAI_SUMMARY_'+String(inf.reason||'INVALID'));ie.statusCode=502;return cb(ie);}
-   var parsed;try{parsed=FundamentalAISummary.sanitize(AIResponse.parseJsonText(inf.text));}catch(px){var pe=new Error('OPENAI_SUMMARY_JSON_INVALID: '+px.message);pe.statusCode=502;return cb(pe);}
-   var usage=o&&o.usage||{},inp=+usage.input_tokens||estimateTokens(input),out=+usage.output_tokens||estimateTokens(inf.text),tot=+usage.total_tokens||inp+out;recordTokenUsage({provider:'openai',model:typeof model==='string'?model:'unknown',input:inp,output:out,total:tot,estimated:!usage.total_tokens});
-   var basis={window:ctx.window,itemsUsed:ctx.items.length,itemsWithBody:ctx.items.filter(function(x){return!!x.body;}).length,raw24h:ctx.database.raw24h,rawTotal:ctx.database.rawItems,rawEmpty:ctx.database.rawEmpty};
-   var data={generatedAt:new Date().toISOString(),model:model,language:ctx.language,synthesis:parsed,basis:basis,usage:{inputTokens:inp,outputTokens:out,totalTokens:tot}};
-   FUNDAMENTAL_AI_CACHE={key:keyHash,at:Date.now(),data:data,model:model,usage:data.usage,basis:basis};
-   log('FUNDAMENTAL','Synthese IA OpenAI OK','items='+basis.itemsUsed+' bodies='+basis.itemsWithBody+' tone='+parsed.marketTone+' confidence='+parsed.confidence+' tokens='+tot);
-   /* Persist every newly generated synthesis in Fundamental's shared database. It is application knowledge, never user-private data. */
-   fundamentalCp('fundamental.synthesis.import',{scope:'MARKET',query:{window:ctx.window,language:ctx.language},inputHash:keyHash,model:model,result:parsed,evidenceCount:basis.itemsUsed},'summary',function(pe,po){if(pe){log('FUNDAMENTAL','Synthese persistence ERROR',pe.message);data.persistence={shared:true,saved:false,error:pe.message};}else{data.persistence={shared:true,saved:true,id:po&&po.synthesis&&po.synthesis.id||null};}cb(null,{ok:true,cached:false,data:data});});
-  },35000);
- });
-}
-
-
-function proxyFundamental(req,res,u,p){
- var sub=p.slice('/api/fundamental'.length)||'/',target='/fundamental-api'+(sub==='/'?'':sub)+(u.search||''),h={Accept:'application/json'};
- if(req.headers['content-type'])h['Content-Type']=req.headers['content-type'];if(req.headers['content-length'])h['Content-Length']=req.headers['content-length'];
- var q=http.request({host:'127.0.0.1',port:+(process.env.ROUTER_PORT||8021),path:target,method:req.method,headers:h,timeout:12000},function(r){var rh={'Content-Type':r.headers['content-type']||'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'};if(r.headers['content-length'])rh['Content-Length']=r.headers['content-length'];res.writeHead(r.statusCode||502,rh);r.pipe(res);});
- q.on('timeout',function(){q.destroy(new Error('Fundamental compatibility proxy timeout'));});q.on('error',function(er){if(!res.headersSent)json(res,503,{ok:false,error:'Fundamental Engine indisponible via Router',detail:er.message});else try{res.end();}catch(x){}});req.pipe(q);
-}
 function validAddress(a){return typeof a==='string'&&/^0x[0-9a-fA-F]{40}$/.test(a);}
 function gmxBaseList(){var c=cfg(),a=[];[c.GMX_API_PRIMARY,c.GMX_API_PEER].forEach(function(x){x=String(x||'').replace(/\/$/,'');if(/^https:\/\//.test(x)&&a.indexOf(x)<0)a.push(x);});return a;}
 function gmxRequest(method,ep,data,cb){var bases=gmxBaseList(),i=0,payload=data?JSON.stringify(data):null;function run(last){if(i>=bases.length)return cb(last||new Error('GMX API indisponible'));var base=bases[i++],h={'Accept':'application/json'};if(payload){h['Content-Type']='application/json';h['Content-Length']=Buffer.byteLength(payload);}request(method,base+ep,h,payload,function(e,o){if(e){log('GMX','API peer erreur',base+' '+e.message);return run(e);}cb(null,o);},14000);}run();}
@@ -810,5 +689,5 @@ function route(req,res){var u=new URL(req.url,'http://'+HOST+':'+PORT),p=u.pathn
  json(res,404,{error:'Not found'});
 }
 SERVER=http.createServer(route);
-SERVER.listen(PORT,HOST,function(){log('SYSTEM','IA-Trading-Bot v'+CURRENT_VERSION+' superviseur demarre','http://'+HOST+':'+PORT);console.log('\nIA-Trading-Bot v'+CURRENT_VERSION);console.log('Controle interne : http://'+HOST+':'+PORT);startAutoTranslationScheduler();});
+SERVER.listen(PORT,HOST,function(){log('SYSTEM','IA-Trading-Bot v'+CURRENT_VERSION+' superviseur demarre','http://'+HOST+':'+PORT);console.log('\nIA-Trading-Bot v'+CURRENT_VERSION);console.log('Controle interne : http://'+HOST+':'+PORT);});
 if(PUBLIC_PORT!==PORT){PUBLIC_SERVER=http.createServer(route);PUBLIC_SERVER.on('error',function(e){log('SYSTEM','Port interface locale indisponible',PUBLIC_PORT+' '+e.message);console.error('IA-Trading-Bot : localhost:'+PUBLIC_PORT+' indisponible ('+e.message+'). Utilise http://'+HOST+':'+PORT);PUBLIC_SERVER=null;});PUBLIC_SERVER.listen(PUBLIC_PORT,HOST,function(){log('SYSTEM','Interface locale v'+CURRENT_VERSION,'http://'+HOST+':'+PUBLIC_PORT);console.log('Interface : http://'+HOST+':'+PUBLIC_PORT);console.log('Chart Viewer : http://'+HOST+':'+PUBLIC_PORT+'/chart-viewer\n');});}else console.log('Interface : http://'+HOST+':'+PORT+'\n');
