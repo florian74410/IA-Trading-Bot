@@ -33,6 +33,7 @@ var UI_READ_ACTIONS={
  'indicator.definition.validate':1,
  'indicator.language.info':1,
  'indicator.language.validate':1,
+ 'fundamental.ai_summary.state':1,
  'fundamental.health':1,
  'fundamental.summary':1,
  'fundamental.sources.search':1,
@@ -75,6 +76,7 @@ function communicationUiRead(req,res){
   if(!UI_READ_ACTIONS[action]||(['strategy','marketdata','portfolio','liquidity','indicator','fundamental'].indexOf(target)<0))return sendJson(res,403,{ok:false,error:'UI_WRITE_DENY',caller:{type:'UI',role:'READ_ONLY'}});
   var args=b.arguments&&typeof b.arguments==='object'&&!Array.isArray(b.arguments)?b.arguments:{};
   if(target==='strategy'&&Object.keys(args).length)return sendJson(res,403,{ok:false,error:'UI_ARGUMENTS_DENY',caller:{type:'UI',role:'READ_ONLY'}});if(target==='fundamental'){var fa={
+ 'fundamental.ai_summary.state':{},
  'fundamental.health':{},
  'fundamental.summary':{},
  'fundamental.sources.search':{query:1,domain:1,enabled:1,limit:1},
@@ -109,7 +111,9 @@ var UI_WRITE_ACTIONS={
   'fundamental.feed.toggle':{feedId:1,enabled:1},
   'fundamental.feed.delete':{feedId:1},
   'fundamental.news.purge':{},
-  'fundamental.fedwatch.refresh':{}
+  'fundamental.fedwatch.refresh':{},
+  'fundamental.ai_summary.generate':{force:1},
+  'fundamental.translate':{itemId:1,id:1,lang:1}
  }
 };
 function communicationUiWrite(req,res){
