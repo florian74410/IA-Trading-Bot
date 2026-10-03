@@ -278,17 +278,6 @@
         }
       },
       {
-        "name": "fundamental.analyze",
-        "arguments": {
-          "allowed": [
-            "asset",
-            "horizon",
-            "status",
-            "limit"
-          ]
-        }
-      },
-      {
         "name": "fundamental.get_events",
         "arguments": {
           "allowed": [
