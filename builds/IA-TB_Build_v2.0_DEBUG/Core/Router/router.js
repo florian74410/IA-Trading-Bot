@@ -61,6 +61,9 @@ var UI_READ_ACTIONS={
  'portfolio.events':1,
  'liquidity.zones':1,
  'marketdata.health':1,
+ 'marketdata.asset.price':1,
+ 'marketdata.catalog':1,
+ 'marketdata.asset.resolve':1,
  'marketdata.symbols':1,
  'marketdata.ticker':1,
  'marketdata.provider.test':1,
@@ -100,6 +103,9 @@ function communicationUiRead(req,res){
  'fundamental.logs.recent':{level:1,component:1,source:1,query:1,q:1,limit:1}
 }[action]||{},fks=Object.keys(args);for(var fi=0;fi<fks.length;fi++)if(!fa[fks[fi]])return sendJson(res,403,{ok:false,error:'UI_ARGUMENTS_DENY',caller:{type:'UI',role:'READ_ONLY'}});}if(target==='liquidity'){var la={'liquidity.zones':{symbol:1,timeframe:1,limit:1}}[action]||{},lks=Object.keys(args);for(var li=0;li<lks.length;li++)if(!la[lks[li]])return sendJson(res,403,{ok:false,error:'UI_ARGUMENTS_DENY',caller:{type:'UI',role:'READ_ONLY'}});}if(target==='marketdata'){var ma={
  'marketdata.health':{},
+ 'marketdata.asset.price':{symbol:1,currency:1},
+ 'marketdata.catalog':{query:1,page:1,perPage:1},
+ 'marketdata.asset.resolve':{id:1,network:1},
  'marketdata.symbols':{source:1,exchange:1,query:1,q:1,limit:1},
  'marketdata.ticker':{symbol:1,source:1,exchange:1},
  'marketdata.provider.test':{provider:1,source:1,exchange:1},
