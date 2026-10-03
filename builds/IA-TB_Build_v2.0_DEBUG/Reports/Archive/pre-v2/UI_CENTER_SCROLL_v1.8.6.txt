@@ -1,0 +1,20 @@
+IA-TB v1.8.6 — /ia-trading center-only scroll hotfix
+
+Objectif
+--------
+Seule la colonne centrale de /ia-trading défile verticalement.
+
+Comportement
+------------
+- Navbar supérieure : fixe.
+- Colonne gauche Logo + Chat IA Supervisor : fixe.
+- Colonne droite Exchanges + Volume & Prices Consensus : fixe.
+- Barre État des services : fixe.
+- Colonne centrale : scroll vertical indépendant.
+- Ordre du centre : Chart Viewer, puis Modules mosaïque.
+- Les listes de messages et d'exchanges conservent leur scroll interne.
+
+Cible Macro 1280x800
+--------------------
+Le Chart Viewer conserve une hauteur de 500 px et les modules 206 px.
+Le surplus est accessible uniquement via le scroll du centre.
