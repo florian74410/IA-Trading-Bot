@@ -36,6 +36,15 @@
         }
       },
       {
+        "name": "fundamental.fedwatch.history",
+        "arguments": {
+          "allowed": [
+            "limit"
+          ]
+        },
+        "description": "Read persisted FedWatch snapshot history."
+      },
+      {
         "name": "fundamental.calendar.cme",
         "arguments": {
           "allowed": []
