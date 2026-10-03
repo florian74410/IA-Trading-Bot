@@ -18,6 +18,13 @@
         }
       },
       {
+        "name": "portfolio.overview",
+        "arguments": {
+          "allowed": []
+        },
+        "description": "Aggregated read-only Portfolio UI overview through CP/1."
+      },
+      {
         "name": "portfolio.settings.get",
         "arguments": {
           "allowed": []
