@@ -1,27 +1,32 @@
 'use strict';
-var http=require('http'),https=require('https'),URL=require('url').URL;
+var http=require('http'),https=require('https'),URL=require('url').URL,Telemetry=require('../Orchestrator/api_telemetry');
+var REQ_SEQ=0;
+function providerFromHost(host){host=String(host||'').toLowerCase();if(host.indexOf('coingecko')>=0)return'COINGECKO';if(host.indexOf('llama.fi')>=0||host.indexOf('defillama')>=0)return'DEFILLAMA';if(host.indexOf('binance')>=0)return'BINANCE';if(host.indexOf('okx')>=0)return'OKX';if(host.indexOf('kraken')>=0)return'KRAKEN';if(host.indexOf('bybit')>=0)return'BYBIT';if(host.indexOf('hyperliquid')>=0)return'HYPERLIQUID';if(host.indexOf('gmx')>=0)return'GMX';if(host.indexOf('dexscreener')>=0)return'DEXSCREENER';return host?host.toUpperCase():'UNKNOWN';}
+function reqId(){REQ_SEQ=(REQ_SEQ+1)%1000000000;return process.pid+'-'+Date.now()+'-'+REQ_SEQ;}
 function err(code,status,contentType){var e=new Error(code);if(status)e.statusCode=status;if(contentType)e.contentType=contentType;return e;}
-function request(url,opts,cb){opts=opts||{};var redirects=+opts._redirects||0,u=new URL(url),lib=u.protocol==='https:'?https:http,done=false;
+function request(url,opts,cb){opts=opts||{};var redirects=+opts._redirects||0,u=new URL(url),lib=u.protocol==='https:'?https:http,done=false,started=Date.now(),rid=reqId(),provider=String(opts.telemetryProvider||providerFromHost(u.hostname)).toUpperCase(),dataset=String(opts.telemetryDataset||'').toUpperCase();
+ Telemetry.emit({requestId:rid,timestamp:started,provider:provider,host:u.hostname,method:opts.method||'GET',path:u.pathname,dataset:dataset,phase:'HTTP_START',cost:opts.telemetryCost==null?1:+opts.telemetryCost,meta:{redirectDepth:redirects}});
  var headers=Object.assign({'Accept':'application/json','Accept-Encoding':'identity','User-Agent':'IA-TB-MarketData/2.0'},opts.headers||{});
+ function finishTelemetry(ok,status,responseBytes,errorCode){Telemetry.emit({requestId:rid,timestamp:started,completedAt:Date.now(),provider:provider,host:u.hostname,method:opts.method||'GET',path:u.pathname,dataset:dataset,phase:'HTTP_END',statusCode:status||null,ok:!!ok,latencyMs:Date.now()-started,responseBytes:responseBytes==null?null:responseBytes,cost:opts.telemetryCost==null?1:+opts.telemetryCost,errorCode:errorCode||'',meta:{redirectDepth:redirects}});}
  var req=lib.request({method:opts.method||'GET',hostname:u.hostname,port:u.port||undefined,path:u.pathname+u.search,headers:headers,timeout:opts.timeout||12000},function(res){
   var status=+res.statusCode||0,location=res.headers&&res.headers.location;
   if(status>=300&&status<400&&location){
-   res.resume();done=true;if(redirects>=3)return cb(err('PROVIDER_TOO_MANY_REDIRECTS',status));
-   var next;try{next=new URL(location,u).toString();}catch(x){return cb(err('PROVIDER_REDIRECT_INVALID',status));}
-   var no=Object.assign({},opts,{_redirects:redirects+1});return request(next,no,cb);
+   res.resume();done=true;if(redirects>=3){finishTelemetry(false,status,0,'PROVIDER_TOO_MANY_REDIRECTS');return cb(err('PROVIDER_TOO_MANY_REDIRECTS',status));}
+   var next;try{next=new URL(location,u).toString();}catch(x){finishTelemetry(false,status,0,'PROVIDER_REDIRECT_INVALID');return cb(err('PROVIDER_REDIRECT_INVALID',status));}
+   finishTelemetry(true,status,0,'REDIRECT');var no=Object.assign({},opts,{_redirects:redirects+1});return request(next,no,cb);
   }
   var a=[],n=0,max=opts.maxBytes||8*1024*1024;
   res.on('data',function(c){n+=c.length;if(n<=max)a.push(c);});
-  res.on('end',function(){if(done)return;done=true;if(n>max)return cb(err('PROVIDER_RESPONSE_TOO_LARGE',status));
+  res.on('end',function(){if(done)return;done=true;if(n>max){finishTelemetry(false,status,n,'PROVIDER_RESPONSE_TOO_LARGE');return cb(err('PROVIDER_RESPONSE_TOO_LARGE',status));}
    var txt=Buffer.concat(a).toString('utf8'),o=null,ct=String(res.headers&&res.headers['content-type']||'').toLowerCase(),jsonError=null;
    try{o=JSON.parse(txt||'{}');}catch(x){jsonError=x;}
-   if(status>=400){var msg=o&&(o.error||o.message);var e=err(msg?String(msg):('PROVIDER_HTTP_'+status),status,ct);return cb(e);}
-   if(jsonError){return cb(err(/^application\/json\b/.test(ct)||/\+json\b/.test(ct)?'PROVIDER_JSON_INVALID':'PROVIDER_NON_JSON_RESPONSE',status,ct));}
-   cb(null,o,res);
+   if(status>=400){var msg=o&&(o.error||o.message);var e=err(msg?String(msg):('PROVIDER_HTTP_'+status),status,ct);finishTelemetry(false,status,n,e.message);return cb(e);}
+   if(jsonError){var je=err(/^application\/json\b/.test(ct)||/\+json\b/.test(ct)?'PROVIDER_JSON_INVALID':'PROVIDER_NON_JSON_RESPONSE',status,ct);finishTelemetry(false,status,n,je.message);return cb(je);}
+   finishTelemetry(true,status,n,'');cb(null,o,res);
   });
  });
  req.on('timeout',function(){req.destroy(err('PROVIDER_TIMEOUT'));});
- req.on('error',function(e){if(done)return;done=true;cb(e);});
+ req.on('error',function(e){if(done)return;done=true;finishTelemetry(false,e&&e.statusCode||null,0,e&&e.message||'PROVIDER_REQUEST_ERROR');cb(e);});
  if(opts.body)req.write(opts.body);req.end();
 }
 module.exports=request;
