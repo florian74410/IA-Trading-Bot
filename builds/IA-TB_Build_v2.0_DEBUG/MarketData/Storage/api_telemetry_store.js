@@ -37,6 +37,23 @@ Store.prototype.prune=function(force){
  if(!this.ready)return;if(!force&&Date.now()-this.lastPruneAt<3600000)return;
  try{var cut=Date.now()-this.retentionDays*86400000;this.run('DELETE FROM api_calls WHERE timestamp < '+Math.round(cut)+';');this.lastPruneAt=Date.now();this.lastError='';}catch(e){this.lastError=e.message;}
 };
+Store.prototype.history=function(o){
+ o=o||{};if(!this.ready)return{ok:false,error:'API_TELEMETRY_SQL_UNAVAILABLE',items:[]};
+ var provider=String(o.provider||'').toUpperCase(),dataset=String(o.dataset||'').toUpperCase(),phase=String(o.phase||'HTTP_END').toUpperCase(),since=Math.max(0,+o.since||0),limit=Math.max(1,Math.min(10000,+o.limit||500)),where=[];
+ if(provider)where.push('provider='+q(provider));if(dataset)where.push('dataset='+q(dataset));if(phase)where.push('phase='+q(phase));if(since)where.push('timestamp>='+Math.round(since));
+ try{var raw=this.run('SELECT request_id,timestamp,completed_at,provider,host,method,path,dataset,phase,status_code,ok,latency_ms,response_bytes,cost,priority,freshness,criticality,cache_opportunity,dedup_opportunity,budget_short_allow,budget_long_allow,error_code FROM api_calls'+(where.length?' WHERE '+where.join(' AND '):'')+' ORDER BY timestamp DESC LIMIT '+limit+';',true).trim(),items=[];
+  if(raw)raw.split(/\r?\n/).filter(Boolean).forEach(function(line){var a=line.split('\t');items.push({requestId:a[0],timestamp:+a[1]||null,completedAt:+a[2]||null,provider:a[3],host:a[4],method:a[5],path:a[6],dataset:a[7],phase:a[8],statusCode:a[9]?+a[9]:null,ok:a[10]===''?null:a[10]==='1',latencyMs:a[11]?+a[11]:null,responseBytes:a[12]?+a[12]:null,cost:a[13]?+a[13]:null,priority:a[14],freshness:a[15],criticality:a[16],cacheOpportunity:a[17]===''?null:a[17]==='1',dedupOpportunity:a[18]===''?null:a[18]==='1',budgetShortAllow:a[19]===''?null:a[19]==='1',budgetLongAllow:a[20]===''?null:a[20]==='1',errorCode:a[21]});});
+  return{ok:true,schema:'marketdata.api.telemetry.history/1.0',items:items,count:items.length,retentionDays:this.retentionDays};
+ }catch(e){this.lastError=e.message;return{ok:false,error:e.message,items:[]};}
+};
+Store.prototype.summary=function(o){
+ o=o||{};if(!this.ready)return{ok:false,error:'API_TELEMETRY_SQL_UNAVAILABLE',providers:[]};
+ var since=Math.max(0,+o.since||Date.now()-86400000),where="phase='HTTP_END' AND timestamp>="+Math.round(since);
+ try{var raw=this.run("SELECT provider,COUNT(*),SUM(CASE WHEN ok=1 THEN 1 ELSE 0 END),SUM(CASE WHEN ok=0 THEN 1 ELSE 0 END),ROUND(AVG(latency_ms),1),SUM(COALESCE(response_bytes,0)),SUM(COALESCE(cost,0)) FROM api_calls WHERE "+where+" GROUP BY provider ORDER BY COUNT(*) DESC;",true).trim(),rows=[];
+  if(raw)raw.split(/\r?\n/).filter(Boolean).forEach(function(line){var a=line.split('\t');rows.push({provider:a[0],calls:+a[1]||0,success:+a[2]||0,errors:+a[3]||0,avgLatencyMs:+a[4]||0,responseBytes:+a[5]||0,cost:+a[6]||0});});
+  return{ok:true,schema:'marketdata.api.telemetry.summary/1.0',since:since,providers:rows};
+ }catch(e){this.lastError=e.message;return{ok:false,error:e.message,providers:[]};}
+};
 Store.prototype.status=function(){
  var count=0,oldest=null,newest=null,providers=0;if(this.ready)try{
   var r=this.run('SELECT COUNT(*),MIN(timestamp),MAX(timestamp) FROM api_calls;',true).trim().split('\t');count=+r[0]||0;oldest=+r[1]||null;newest=+r[2]||null;providers=+(this.run("SELECT COUNT(DISTINCT provider) FROM api_calls WHERE provider<>'';",true).trim())||0;
