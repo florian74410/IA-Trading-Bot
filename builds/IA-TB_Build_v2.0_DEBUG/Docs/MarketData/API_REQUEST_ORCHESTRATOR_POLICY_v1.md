@@ -162,3 +162,33 @@ The store provides internal `history()` and `summary()` query methods. No public
 ### Security note
 Full URLs and query strings are not stored in raw telemetry. This prevents future API keys, addresses, or sensitive request parameters from being written accidentally to the telemetry database.
 
+
+
+## Stream telemetry
+
+The transport observability layer now covers both request/response APIs and long-lived streams:
+
+DATA TRANSPORT OBSERVABILITY
+- REST Telemetry
+- Stream Telemetry
+  - connections
+  - subscriptions
+  - messages
+  - disconnects
+  - reconnects
+  - heartbeat
+  - errors
+  - rate-limit-related failures when surfaced by the provider
+
+Stream telemetry is persisted in the same SQLite database, `api_telemetry.db`, using a separate `stream_events` table.
+
+The v1 design intentionally stores periodic health snapshots and lifecycle transitions rather than one SQL row per market message. This prevents observability from becoming a new source of load.
+
+Current first stream integrations:
+- BINANCE_FUTURES liquidation stream
+- OKX liquidation stream
+- BYBIT liquidation stream
+
+Each worker periodically reports cumulative message count, connection count, reconnect count, subscriptions, last message time, last heartbeat time and latest error state.
+
+No stream Budget/Policy enforcement is enabled yet. Stream-specific provider limits will be configured later, after provider retention decisions are finalized.
