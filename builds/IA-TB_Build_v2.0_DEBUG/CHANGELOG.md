@@ -1,3 +1,15 @@
+# IA-TB v2.0 DEBUG — API Request Orchestrator + Data Source Policy v1 (Shadow)
+
+- Validated R&D architecture D + E + H + G-lite.
+- Added provider-agnostic API Request Orchestrator modules: Broker, Double Budget, Priority metadata, in-flight registry and shadow observation.
+- Added Data Source Policy v1 with freshness, priority, criticality, retention and distribution metadata.
+- Added CoinGecko policy and first live SHADOW integration without changing or blocking legacy provider calls.
+- Added CoinGecko short/long budget telemetry with monthly reserve.
+- Added duplicate in-flight and cache-opportunity telemetry.
+- Added migration DEVMAP: SHADOW -> NATIVE; Proxy remains optional.
+- Added contract test for Shadow Mode behavior.
+- No Engine contract, Analytics Model Runtime logic or trading authority changed.
+
 # IA-TB v2.0 DEBUG — DeFiLlama Public Data Surface Preparation
 
 - Expanded the DeFiLlama Market Data provider to represent all 29 documented public/free non-Yield endpoints.
