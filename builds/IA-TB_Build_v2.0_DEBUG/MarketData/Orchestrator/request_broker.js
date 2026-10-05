@@ -7,12 +7,12 @@ Broker.prototype.before=function(req,policy){
  this.stats.observed++;
  if(inflight)this.stats.dedupOpportunities++;
  if(cacheFresh)this.stats.cacheOpportunities++;
- if(!inflight)this.inflight[k]={startedAt:now,consumers:1};else this.inflight[k].consumers++;
+ if(!inflight)this.inflight[k]={startedAt:now,active:1,observedRequests:1};else{this.inflight[k].active++;this.inflight[k].observedRequests++;}
  return{key:k,inflightDuplicate:inflight,wouldCacheHit:cacheFresh,cacheAgeMs:last?now-last:null,cacheTtlMs:ttl};
 };
 Broker.prototype.after=function(key,ok){
  if(ok)this.lastSuccess[key]=Date.now();
- delete this.inflight[key];
+ var x=this.inflight[key];if(!x)return;x.active=Math.max(0,(+x.active||1)-1);if(x.active===0)delete this.inflight[key];
 };
 Broker.prototype.status=function(){return{mode:this.mode,stats:Object.assign({},this.stats),inflight:Object.keys(this.inflight).length,cacheKeys:Object.keys(this.lastSuccess).length};};
 
