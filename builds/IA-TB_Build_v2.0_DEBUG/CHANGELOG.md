@@ -1,3 +1,13 @@
+# IA-TB v2.0 DEBUG — DeFiLlama Public Data Surface Preparation
+
+- Expanded the DeFiLlama Market Data provider to represent all 29 documented public/free non-Yield endpoints.
+- Added public access surfaces for TVL/history, token prices, stablecoin detail/history, DEX volume, options volume, open interest, fees, revenue and holders revenue.
+- Parameterized chain/protocol/token/history endpoints are available on demand for future IA-TB modules without forcing periodic collection.
+- Yield remains explicitly outside this workstream and existing compatibility code is left untouched.
+- Premium/pro-api endpoints are explicitly excluded: no API key dependency introduced.
+- No Analytics Model Runtime calculation, scoring, state derivation or trading logic added.
+- Added a contract test locking the 29-endpoint free/public surface and the Yield/Premium exclusions.
+
 # IA-TB v1.11.7 — Fundamental Event Engine Integration
 
 - Integrated Le Geek Fundamental Event/Scoring patch originally targeting v1.11.1 onto current v1.11.6 base.
