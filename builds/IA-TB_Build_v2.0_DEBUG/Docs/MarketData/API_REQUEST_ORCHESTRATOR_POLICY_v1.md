@@ -63,7 +63,7 @@ Shadow mode must never block, delay, reorder, deduplicate, cache-substitute or o
 ### STEP 1 — SHADOW (current)
 Current Market Data behavior remains authoritative.
 Policy/Orchestrator observes real request intent and exposes telemetry.
-Initial live shadow integration: CoinGecko.
+Shadow scope: the Market Data Collector as a whole. Raw REST telemetry is captured at the shared HTTP layer for every provider using `Provider/http_json.js`. CoinGecko is only the first provider with a detailed logical Policy/Budget profile; other providers can be classified later without losing their raw historical telemetry.
 No engine contract is changed.
 
 ### STEP 2 — NATIVE (required later)
@@ -123,3 +123,42 @@ These numbers are policy configuration for CoinGecko only. Other providers must 
 - no analytics calculations
 - no model states/scores
 - no trading authority
+
+
+## SQL telemetry
+
+Raw and logical API telemetry is persisted in:
+
+`Shared Data/MarketData/api_telemetry.db`
+
+Table: `api_calls`
+
+The schema is designed for later use by diagnostics, the Supervisor, dashboards, or analytical foundations without requiring UI exposure now.
+
+Captured raw REST fields include:
+- request id
+- timestamp / completion time
+- provider / host
+- HTTP method
+- endpoint path (query string intentionally not persisted)
+- status / success
+- latency
+- response bytes
+- request cost hint
+- error code
+
+When a logical Data Source Policy exists, the same store also receives:
+- dataset
+- priority
+- freshness
+- criticality
+- cache opportunity
+- deduplication opportunity
+- short-budget decision
+- long-budget decision
+
+The store provides internal `history()` and `summary()` query methods. No public HTTP/UI endpoint is required in Shadow v1.
+
+### Security note
+Full URLs and query strings are not stored in raw telemetry. This prevents future API keys, addresses, or sensitive request parameters from being written accidentally to the telemetry database.
+
