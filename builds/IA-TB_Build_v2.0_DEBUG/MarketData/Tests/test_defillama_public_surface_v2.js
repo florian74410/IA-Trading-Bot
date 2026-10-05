@@ -1,0 +1,18 @@
+'use strict';
+var assert=require('assert');
+var DeFiLlama=require('../Provider/defillama_provider');
+var p=new DeFiLlama({});
+var c=p.publicEndpointCatalog();
+var groups=['tvl','prices','stablecoins','dex','options','derivatives','feesRevenue'];
+var methods=[];
+groups.forEach(function(g){assert(Array.isArray(c[g]),'catalog group '+g);methods=methods.concat(c[g]);});
+assert.equal(methods.length,29,'29 non-Yield public/free endpoints must be represented');
+methods.forEach(function(m){assert.equal(typeof p[m],'function','missing public method '+m);});
+assert.equal(c.auth,'NONE');
+assert.equal(c.premium,false);
+assert.equal(c.excluded.yield,true);
+assert.equal(c.excluded.premium,true);
+assert.equal(p.base,'https://api.llama.fi');
+assert.equal(p.stableBase,'https://api.llama.fi');
+assert.equal(String(p.base).indexOf('pro-api.llama.fi'),-1);
+console.log('PASS DeFiLlama public/free provider surface: '+methods.length+' endpoints, Yield/Premium excluded');
