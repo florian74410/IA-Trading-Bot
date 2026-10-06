@@ -89,6 +89,11 @@ It only records what Native mode would have seen.
 [x] transport-level budget observation
 [x] Phase 1 profiles preserved
 [x] Phase 2 contract test created
-[ ] GitHub Actions checkpoint result
+[x] GitHub Actions checkpoint PASS — run 37464421103
 [ ] normal-workload telemetry observation
 [ ] Native safety margin / reserve policy
+
+
+## Test checkpoint
+
+GitHub Actions run `37464421103` on Node `16.20.2` passed the complete non-runtime MarketData contract/debug suite, including `test_phase2_weighted_budget_v1.js`.
