@@ -20,9 +20,9 @@ async function step(label,target,action,args,opt){
   console.log('[WORKLOAD OK] '+label+' '+ms+'ms '+JSON.stringify(summary(out)));
   return out;
  }catch(e){
-  var ms2=Date.now()-t,row={label:label,ok:false,latencyMs:ms2,target:target,action:action,error:String(e&&e.message||e),soft:!!opt.soft};
+  var ms2=Date.now()-t,row={label:label,ok:false,latencyMs:ms2,target:target,action:action,error:String(e&&e.message||e),response:e&&e.response||null,soft:!!opt.soft};
   results.push(row);if(opt.soft)softFailures++;else hardFailures++;
-  console.log((opt.soft?'[WORKLOAD WARN] ':'[WORKLOAD FAIL] ')+label+' '+ms2+'ms '+row.error);
+  console.log((opt.soft?'[WORKLOAD WARN] ':'[WORKLOAD FAIL] ')+label+' '+ms2+'ms '+row.error+(row.response?' '+JSON.stringify(row.response):''));
   if(!opt.soft)throw e;
   return null;
  }
