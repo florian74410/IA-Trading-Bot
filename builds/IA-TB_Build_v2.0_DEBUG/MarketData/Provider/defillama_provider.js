@@ -7,9 +7,9 @@ function validDataType(v,allowed,fallback){v=String(v||fallback);return allowed.
 function P(o){
  o=o||{};
  this.base=String(o.base||'https://api.llama.fi').replace(/\/$/,'');
- /* stableBase is kept injectable for backward compatibility, but the official
-    free API now exposes stablecoin routes on api.llama.fi too. */
- this.stableBase=String(o.stableBase||this.base).replace(/\/$/,'');
+ this.coinsBase=String(o.coinsBase||'https://coins.llama.fi').replace(/\/$/,'');
+ this.stableBase=String(o.stableBase||'https://stablecoins.llama.fi').replace(/\/$/,'');
+ this.yieldsBase=String(o.yieldsBase||'https://yields.llama.fi').replace(/\/$/,'');
  this.id='DEFILLAMA';
  this._cache={};
 }
@@ -43,13 +43,13 @@ P.prototype.chains=function(cb){this._get(this.base,'/v2/chains',{timeout:15000,
 
 /* Coins & prices. These are on-demand methods; the collector should not bulk
    request arbitrary token histories without an explicit consumer scope. */
-P.prototype.pricesCurrent=function(coins,cb){this._get(this.base,'/prices/current/'+enc(coins),{timeout:15000,maxBytes:8*1024*1024},cb);};
-P.prototype.pricesHistorical=function(timestamp,coins,cb){this._get(this.base,'/prices/historical/'+enc(timestamp)+'/'+enc(coins),{timeout:15000,maxBytes:8*1024*1024},cb);};
-P.prototype.batchHistorical=function(coinsByTimestamp,cb){this._get(this.base,'/batchHistorical',{query:{coins:coinsByTimestamp},timeout:18000,maxBytes:16*1024*1024},cb);};
-P.prototype.priceChart=function(coins,opt,cb){if(typeof opt==='function'){cb=opt;opt={};}this._get(this.base,'/chart/'+enc(coins),{query:opt||{},timeout:18000,maxBytes:24*1024*1024},cb);};
-P.prototype.percentage=function(coins,opt,cb){if(typeof opt==='function'){cb=opt;opt={};}this._get(this.base,'/percentage/'+enc(coins),{query:opt||{},timeout:15000,maxBytes:8*1024*1024},cb);};
-P.prototype.pricesFirst=function(coins,cb){this._get(this.base,'/prices/first/'+enc(coins),{timeout:15000,maxBytes:8*1024*1024},cb);};
-P.prototype.block=function(chain,timestamp,cb){this._get(this.base,'/block/'+enc(chain)+'/'+enc(timestamp),{timeout:15000,maxBytes:1024*1024},cb);};
+P.prototype.pricesCurrent=function(coins,cb){this._get(this.coinsBase,'/prices/current/'+enc(coins),{timeout:15000,maxBytes:8*1024*1024},cb);};
+P.prototype.pricesHistorical=function(timestamp,coins,cb){this._get(this.coinsBase,'/prices/historical/'+enc(timestamp)+'/'+enc(coins),{timeout:15000,maxBytes:8*1024*1024},cb);};
+P.prototype.batchHistorical=function(coinsByTimestamp,cb){this._get(this.coinsBase,'/batchHistorical',{query:{coins:coinsByTimestamp},timeout:18000,maxBytes:16*1024*1024},cb);};
+P.prototype.priceChart=function(coins,opt,cb){if(typeof opt==='function'){cb=opt;opt={};}this._get(this.coinsBase,'/chart/'+enc(coins),{query:opt||{},timeout:18000,maxBytes:24*1024*1024},cb);};
+P.prototype.percentage=function(coins,opt,cb){if(typeof opt==='function'){cb=opt;opt={};}this._get(this.coinsBase,'/percentage/'+enc(coins),{query:opt||{},timeout:15000,maxBytes:8*1024*1024},cb);};
+P.prototype.pricesFirst=function(coins,cb){this._get(this.coinsBase,'/prices/first/'+enc(coins),{timeout:15000,maxBytes:8*1024*1024},cb);};
+P.prototype.block=function(chain,timestamp,cb){this._get(this.coinsBase,'/block/'+enc(chain)+'/'+enc(timestamp),{timeout:15000,maxBytes:1024*1024},cb);};
 
 /* Stablecoins */
 P.prototype.stablecoins=function(includePrices,cb){if(typeof includePrices==='function'){cb=includePrices;includePrices=true;}this._get(this.stableBase,'/stablecoins',{query:{includePrices:includePrices!==false},timeout:18000,maxBytes:24*1024*1024},cb);};
@@ -81,6 +81,6 @@ P.prototype.feesSummary=function(protocol,dataType,cb){if(typeof dataType==='fun
 
 /* Existing Yield methods retained untouched for backward compatibility only.
    Yield is explicitly outside the current IA-TB workstream. */
-P.prototype.yieldPools=function(cb){var self=this;this._cached('yieldPools',600000,function(done){get(self.base+'/pools',{timeout:22000,maxBytes:24*1024*1024},done);},cb);};
+P.prototype.yieldPools=function(cb){var self=this;this._cached('yieldPools',600000,function(done){get(self.yieldsBase+'/pools',{timeout:22000,maxBytes:24*1024*1024},done);},cb);};
 
 module.exports=P;
