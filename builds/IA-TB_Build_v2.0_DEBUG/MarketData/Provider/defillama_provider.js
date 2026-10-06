@@ -61,6 +61,7 @@ P.prototype.stablecoinPrices=function(cb){this._get(this.stableBase,'/stablecoin
 
 /* DEX volumes */
 P.prototype.dexOverview=function(cb){this._get(this.base,'/overview/dexs',{query:this._overviewQuery({dataType:'dailyVolume'}),timeout:18000,maxBytes:24*1024*1024},cb);};
+P.prototype.dexOverviewLite=function(cb){this._get(this.base,'/overview/dexs',{query:{dataType:'dailyVolume',excludeTotalDataChart:true,excludeTotalDataChartBreakdown:true},timeout:15000,maxBytes:8*1024*1024},cb);};
 P.prototype.dexOverviewByChain=function(chain,cb){this._get(this.base,'/overview/dexs/'+enc(chain),{query:this._overviewQuery({dataType:'dailyVolume'}),timeout:18000,maxBytes:24*1024*1024},cb);};
 P.prototype.dexSummary=function(protocol,cb){this._get(this.base,'/summary/dexs/'+enc(protocol),{query:this._overviewQuery({dataType:'dailyVolume'}),timeout:18000,maxBytes:24*1024*1024},cb);};
 
