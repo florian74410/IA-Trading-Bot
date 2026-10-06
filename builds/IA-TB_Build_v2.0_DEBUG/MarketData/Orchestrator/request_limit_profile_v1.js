@@ -48,12 +48,19 @@ function budgetProfiles(){
 }
 function feedback(profile,status,headers,body,errorCode){
  headers=lowerHeaders(headers);profile=profile||{};body=body||{};
- var provider=String(profile.provider||'').toUpperCase(),rateLimited=status===429,reason=rateLimited?'HTTP_429':'',providerCooldownMs=0,retry=retryAfterMs(headers);
- if(provider==='OKX'&&String(body.code||'')==='50011'){rateLimited=true;reason='OKX_50011';}
+ var provider=String(profile.provider||'').toUpperCase(),retry=retryAfterMs(headers),rateLimited=status===429,reason='',category='UNKNOWN',providerCooldownMs=0,msg=String(body.retMsg||body.ret_msg||body.message||body.msg||'');
+ if(status===451){category='GEO_RESTRICTED';reason='HTTP_451_LEGAL_REGION';}
+ else if(status===401){category='AUTH_ERROR';reason='HTTP_401';}
+ else if(status===429){category='RATE_LIMIT';reason='HTTP_429';}
+ else if(status===403){category='ACCESS_DENIED';reason='HTTP_403_ACCESS_OR_REGION';}
+ else if(status>=500){category='PROVIDER_ERROR';reason='HTTP_'+status;}
+ if(provider==='OKX'&&String(body.code||'')==='50011'){rateLimited=true;category='RATE_LIMIT';reason='OKX_50011';}
  if(provider==='BYBIT'){
-  if(+body.retCode===10006){rateLimited=true;reason='BYBIT_10006';}
-  if(status===403){rateLimited=true;reason='BYBIT_HTTP_403';providerCooldownMs=600000;}
+  if(+body.retCode===10006){rateLimited=true;category='RATE_LIMIT';reason='BYBIT_10006';providerCooldownMs=retry||600000;}
+  else if(status===403&&(/TOO\s*FREQUENT|RATE.?LIMIT/i.test(msg)||retry>0)){rateLimited=true;category='RATE_LIMIT';reason='BYBIT_HTTP_403_RATE_LIMIT';providerCooldownMs=retry||600000;}
+  else if(status===403){rateLimited=false;category='ACCESS_DENIED';reason='BYBIT_HTTP_403_ACCESS_OR_REGION';providerCooldownMs=0;}
  }
- return{provider:provider,scopes:profile.scopes||[],headers:headers,statusCode:status||null,rateLimited:rateLimited,retryAfterMs:retry,providerCooldownMs:providerCooldownMs,reason:reason||String(errorCode||'')};
+ if(rateLimited&&retry>0&&!providerCooldownMs)providerCooldownMs=retry;
+ return{provider:provider,scopes:profile.scopes||[],headers:headers,statusCode:status||null,rateLimited:rateLimited,retryAfterMs:retry,providerCooldownMs:providerCooldownMs,category:category,reason:reason||String(errorCode||'')};
 }
 module.exports={resolve:resolve,budgetProfiles:budgetProfiles,feedback:feedback};
