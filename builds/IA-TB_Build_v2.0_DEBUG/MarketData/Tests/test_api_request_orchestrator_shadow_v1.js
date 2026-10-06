@@ -28,6 +28,8 @@ function finish(){
  assert.ok(s.broker.stats.dedupOpportunities>=1,'shadow mode should detect overlapping duplicate opportunity');
  assert.equal(s.budget.providers.COINGECKO.longLimit,10000);
  assert.equal(s.budget.providers.COINGECKO.reserve,2000);
+ assert.equal(s.budget.providers.COINGECKO.shortUsed,0,'logical Shadow requests must not consume transport quota');
+ assert.equal(s.budget.providers.COINGECKO.longUsed,0,'logical Shadow requests must not consume transport quota');
  assert.equal(s.shadow,true);
  console.log('PASS API Request Orchestrator v1 Shadow Mode');
 }
