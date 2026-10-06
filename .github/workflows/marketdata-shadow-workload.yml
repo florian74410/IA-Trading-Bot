@@ -2,6 +2,13 @@ name: MarketData Shadow Workload
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - feature/data-policy-orchestrator-v1
+    paths:
+      - ".github/workflows/marketdata-shadow-workload.yml"
+      - "builds/IA-TB_Build_v2.0_DEBUG/MarketData/Tests/runtime_workload_shadow_v1.js"
+      - "builds/IA-TB_Build_v2.0_DEBUG/MarketData/Tests/analyze_shadow_workload_telemetry_v1.js"
 
 jobs:
   shadow-workload:
