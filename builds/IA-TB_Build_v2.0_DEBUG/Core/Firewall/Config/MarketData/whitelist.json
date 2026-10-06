@@ -15,7 +15,9 @@
     "BINANCE_FUTURES",
     "BYBIT",
     "BYBIT_PUBLIC",
-    "DEXSCREENER"
+    "DEXSCREENER",
+    "KRAKEN_PUBLIC",
+    "HYPERLIQUID_PUBLIC"
   ],
   "types": [
     "PRICE",
