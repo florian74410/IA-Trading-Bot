@@ -9,6 +9,11 @@ on:
       - ".github/workflows/marketdata-shadow-workload.yml"
       - "builds/IA-TB_Build_v2.0_DEBUG/MarketData/Tests/runtime_workload_shadow_v1.js"
       - "builds/IA-TB_Build_v2.0_DEBUG/MarketData/Tests/analyze_shadow_workload_telemetry_v1.js"
+      - "builds/IA-TB_Build_v2.0_DEBUG/MarketData/Financial/**"
+      - "builds/IA-TB_Build_v2.0_DEBUG/MarketData/Orchestrator/**"
+      - "builds/IA-TB_Build_v2.0_DEBUG/MarketData/Provider/**"
+      - "builds/IA-TB_Build_v2.0_DEBUG/MarketData/Workers/**"
+      - "builds/IA-TB_Build_v2.0_DEBUG/MarketData/market_data_service.js"
 
 jobs:
   shadow-workload:
