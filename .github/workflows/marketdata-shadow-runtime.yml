@@ -1,16 +1,6 @@
 name: MarketData Shadow Runtime
 
 on:
-  push:
-    branches:
-      - feature/data-policy-orchestrator-v1
-    paths:
-      - ".github/workflows/marketdata-shadow-runtime.yml"
-      - "builds/IA-TB_Build_v2.0_DEBUG/MarketData/**"
-      - "builds/IA-TB_Build_v2.0_DEBUG/Core/Router/**"
-      - "builds/IA-TB_Build_v2.0_DEBUG/Core/Firewall/**"
-      - "builds/IA-TB_Build_v2.0_DEBUG/Indicators/**"
-      - "builds/IA-TB_Build_v2.0_DEBUG/Liquidity/**"
   workflow_dispatch:
 
 jobs:
