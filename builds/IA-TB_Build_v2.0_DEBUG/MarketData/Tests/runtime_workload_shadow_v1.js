@@ -90,7 +90,8 @@ async function parallel(label,calls){
  await step('Liquidation stats','marketdata','marketdata.liquidations.stats',{symbol:'BTCUSD',windowMs:900000},{soft:true});
  await step('Liquidation stream status','marketdata','marketdata.liquidations.streams',{}, {soft:true});
 
- await sleep(1500);
+ console.log('[WORKLOAD] background observation window 32s: active refresh + stream telemetry');
+ await sleep(32000);
  var endedAt=Date.now(),report={schema:'iatb.marketdata.workload/1.0',startedAt:startedAt,endedAt:endedAt,durationMs:endedAt-startedAt,steps:results.length,success:results.filter(function(x){return x.ok;}).length,softFailures:softFailures,hardFailures:hardFailures,results:results};
  fs.writeFileSync(path.join(OUT,'workload_report.json'),JSON.stringify(report,null,2));
  console.log('=== WORKLOAD COMPLETE ===');
