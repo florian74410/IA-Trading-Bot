@@ -1,3 +1,14 @@
+# IA-TB v2.0 DEBUG — Data Provider Phase 2 Weighted Budget Shadow
+
+- Added generic weighted budget scopes to Request Budget.
+- Added independent Binance Spot and USD-M Futures request-weight scopes.
+- Added Hyperliquid aggregate REST request-weight scope.
+- Added request-cost resolver for the Binance/Hyperliquid endpoints currently used by IA-TB.
+- Moved weighted quota observation to the real HTTP transport boundary so actual outbound consumption is measured.
+- Added Phase 2 provider Policy classifications for Binance and Hyperliquid.
+- Preserved all Phase 1 profiles and Shadow invariants.
+- GitHub Actions checkpoint run 37464421103 passed on Node 16.20.2, including the Phase 2 weighted-budget contract and historical MarketData tests.
+
 # IA-TB v2.0 DEBUG — Data Provider Phase 1 Shadow
 
 - Added Phase 1 Policy/Budget profiles for CoinGecko, DeFiLlama Free, GMX and DexScreener.
