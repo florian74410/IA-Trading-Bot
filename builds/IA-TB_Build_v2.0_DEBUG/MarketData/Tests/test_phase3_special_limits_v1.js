@@ -34,10 +34,16 @@ var endpoint=bd2.scopes.filter(function(x){return x.scope==='BYBIT_KLINE';})[0];
 assert.equal(endpoint.limit,10);assert.equal(endpoint.source,'OBSERVED_HEADER');assert.equal(endpoint.observedRemaining,9);
 
 var fb=Limits.feedback(b,403,{},null,'PROVIDER_HTTP_403');
-assert.equal(fb.rateLimited,true);assert.equal(fb.providerCooldownMs,600000);
+assert.equal(fb.rateLimited,false);assert.equal(fb.providerCooldownMs,0);assert.equal(fb.category,'ACCESS_DENIED');assert.equal(fb.reason,'BYBIT_HTTP_403_ACCESS_OR_REGION');
 budget.feedback('BYBIT',fb);
 var bd3=budget.observe({provider:'BYBIT',dataset:b.dataset,cost:1,scopes:b.scopes});
-assert.equal(bd3.providerCooldown.active,true);assert.equal(bd3.wouldAllow,false,'Bybit cooldown must be simulated in Shadow');
+assert.equal(bd3.providerCooldown.active,false);assert.equal(bd3.wouldAllow,true,'generic Bybit 403 must not create a fake rate-limit cooldown');
+
+var rateFb=Limits.feedback(b,200,{}, {retCode:10006,retMsg:'Too many visits'},'');
+assert.equal(rateFb.rateLimited,true);assert.equal(rateFb.category,'RATE_LIMIT');assert.equal(rateFb.providerCooldownMs,600000);
+budget.feedback('BYBIT',rateFb);
+var bd4=budget.observe({provider:'BYBIT',dataset:b.dataset,cost:1,scopes:b.scopes});
+assert.equal(bd4.providerCooldown.active,true);assert.equal(bd4.wouldAllow,false,'explicit Bybit rate-limit signal must simulate cooldown');
 
 var policy=ApplyPhase3(new Policy());
 assert.equal(policy.resolve('KRAKEN','ORDERBOOK').criticality,'CRITICAL');
