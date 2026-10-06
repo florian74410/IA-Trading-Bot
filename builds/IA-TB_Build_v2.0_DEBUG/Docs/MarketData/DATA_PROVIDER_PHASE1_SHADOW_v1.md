@@ -73,7 +73,7 @@ This distinction matters for providers such as DexScreener where one logical req
 [x] static syntax validation
 [x] execute MarketData contract/debug test checkpoint on Node 16.20.2 via GitHub Actions (run 37398229172: PASS)
 [ ] observe normal workload telemetry
-[ ] Phase 2 weighted-budget design (Binance / Hyperliquid)
+[x] Phase 2 weighted-budget design/integration (Binance / Hyperliquid)
 
 
 ## Test checkpoint
