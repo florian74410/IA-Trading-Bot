@@ -1,3 +1,15 @@
+# IA-TB v2.0 DEBUG — Data Provider Phase 1 Shadow
+
+- Added Phase 1 Policy/Budget profiles for CoinGecko, DeFiLlama Free, GMX and DexScreener.
+- Added explicit UNKNOWN budget semantics: unknown limits are never replaced with invented hard caps.
+- CoinGecko keeps short-term + monthly shadow budget with reserve.
+- DexScreener uses documented 300 req/min shadow budget for current search/pair-liquidity route family.
+- DeFiLlama Free and GMX remain optimization/telemetry-only until verified limits exist.
+- Added logical shadow wrapping for DeFiLlama, DexScreener and GMX registry calls.
+- Added quota-hint telemetry for Retry-After and known rate-limit headers.
+- Preserved Shadow invariant: no provider call is blocked, delayed, deduplicated or cache-substituted yet.
+- Added Phase 1 contract test and documentation.
+
 # IA-TB v2.0 DEBUG — API Request Orchestrator + Data Source Policy v1 (Shadow)
 
 - Validated R&D architecture D + E + H + G-lite.
