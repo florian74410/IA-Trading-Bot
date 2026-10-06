@@ -1,4 +1,4 @@
-name: MarketData Phase 1 Tests
+name: MarketData Shadow Contract Tests
 
 on:
   push:
@@ -30,6 +30,12 @@ jobs:
 
       - name: Phase 2 Weighted Budget
         run: node builds/IA-TB_Build_v2.0_DEBUG/MarketData/Tests/test_phase2_weighted_budget_v1.js
+
+      - name: Phase 3 Special Limits
+        run: node builds/IA-TB_Build_v2.0_DEBUG/MarketData/Tests/test_phase3_special_limits_v1.js
+
+      - name: Transport Budget Bridge
+        run: node builds/IA-TB_Build_v2.0_DEBUG/MarketData/Tests/test_transport_budget_bridge_v1.js
 
       - name: DeFiLlama Public Surface
         run: node builds/IA-TB_Build_v2.0_DEBUG/MarketData/Tests/test_defillama_public_surface_v2.js
