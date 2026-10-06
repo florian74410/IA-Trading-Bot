@@ -8,7 +8,7 @@
    IATB_FIREWALL_ENABLED=0 keeps only the coordinator in transparent bypass mode.
    No protection Worker is initialized in that mode.
 */
-var http=require('http'),fs=require('fs'),path=require('path'),crypto=require('crypto'),Worker=require('worker_threads').Worker,CP=require('../Communication/communication_protocol_v1'),CPAdapter=require('../Communication/component_cp1_adapter'),PATHS=require('../Shared/paths');
+var http=require('http'),fs=require('fs'),path=require('path'),crypto=require('crypto'),Worker=require('worker_threads').Worker,CP=require('../Communication/communication_protocol_v1'),CPAdapter=require('../Communication/component_cp1_adapter'),PATHS=require('../Shared/paths'),BUILD=require('../Shared/build_info');
 PATHS.ensureAppRuntimeDirs();
 var RiskApprovalClient=require('./risk_approval_client');
 var ROOT=PATHS.ROOT,HOST='127.0.0.1',PORT=+(process.env.IATB_FIREWALL_PORT||8017),TRADING_PORT=+(process.env.IATB_TRADING_ENGINE_PORT||8016),LOG=PATHS.RuntimeLogs.firewall,startedAt=Date.now(),seq=0,pending={},threads={};
