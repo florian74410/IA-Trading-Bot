@@ -1,0 +1,128 @@
+name: MarketData Shadow Workload
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/data-policy-orchestrator-v1
+    paths:
+      - ".github/workflows/marketdata-shadow-workload.yml"
+      - "builds/IA-TB_Build_v2.0_DEBUG/MarketData/Tests/runtime_workload_shadow_v1.js"
+      - "builds/IA-TB_Build_v2.0_DEBUG/MarketData/Tests/analyze_shadow_workload_telemetry_v1.js"
+      - "builds/IA-TB_Build_v2.0_DEBUG/MarketData/Orchestrator/**"
+      - "builds/IA-TB_Build_v2.0_DEBUG/MarketData/Provider/**"
+
+jobs:
+  shadow-workload:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      ROUTER_PORT: 8021
+      IATB_FIREWALL_PORT: 8017
+      IATB_MARKET_DATA_PORT: 8013
+      IATB_INDICATOR_PORT: 8012
+      IATB_LIQUIDITY_PORT: 8014
+      IATB_CP_REGISTER_LOG: 1
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node 16.20.2
+        uses: actions/setup-node@v4
+        with:
+          node-version: 16.20.2
+
+      - name: Install SQLite CLI
+        run: sudo apt-get update -qq && sudo apt-get install -y sqlite3
+
+      - name: Prepare workload paths
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd builds/IA-TB_Build_v2.0_DEBUG
+          mkdir -p .runtime/workload
+          echo "IATB_WORKLOAD_DIR=$PWD/.runtime/workload" >> "$GITHUB_ENV"
+          echo "IATB_API_TELEMETRY_DB=$PWD/.runtime/workload/api_telemetry.db" >> "$GITHUB_ENV"
+
+      - name: Start Shadow runtime services
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd builds/IA-TB_Build_v2.0_DEBUG
+          mkdir -p .runtime/workload/logs
+
+          node Core/Router/router.js > .runtime/workload/logs/router.log 2>&1 & echo $! > .runtime/workload/router.pid
+          node Core/Firewall/firewall_service.js > .runtime/workload/logs/firewall.log 2>&1 & echo $! > .runtime/workload/firewall.pid
+
+          wait_http () {
+            local url="$1"
+            for i in $(seq 1 60); do
+              if curl -fsS "$url" >/dev/null 2>&1; then return 0; fi
+              sleep 0.5
+            done
+            echo "Service unavailable: $url"
+            return 1
+          }
+
+          wait_http http://127.0.0.1:8021/router-health
+          wait_http http://127.0.0.1:8017/health
+
+          node MarketData/market_data_service.js > .runtime/workload/logs/marketdata.log 2>&1 & echo $! > .runtime/workload/marketdata.pid
+          wait_http http://127.0.0.1:8013/health
+
+          node Indicators/Engine/indicator_service.js > .runtime/workload/logs/indicator.log 2>&1 & echo $! > .runtime/workload/indicator.pid
+          node Liquidity/Engine/liquidity_service.js > .runtime/workload/logs/liquidity.log 2>&1 & echo $! > .runtime/workload/liquidity.pid
+          wait_http http://127.0.0.1:8012/health
+          wait_http http://127.0.0.1:8014/health
+
+          sleep 6
+
+      - name: Verify Shadow mode
+        run: node builds/IA-TB_Build_v2.0_DEBUG/MarketData/Tests/test_shadow_runtime_orchestrator_v1.js
+
+      - name: Run representative workload
+        run: node builds/IA-TB_Build_v2.0_DEBUG/MarketData/Tests/runtime_workload_shadow_v1.js
+
+      - name: Analyze telemetry
+        run: node builds/IA-TB_Build_v2.0_DEBUG/MarketData/Tests/analyze_shadow_workload_telemetry_v1.js
+
+      - name: Workload files
+        if: always()
+        shell: bash
+        run: |
+          cd builds/IA-TB_Build_v2.0_DEBUG
+          echo "=== workload report ==="
+          cat .runtime/workload/workload_report.json 2>/dev/null || true
+          echo "=== telemetry summary ==="
+          cat .runtime/workload/telemetry_summary.json 2>/dev/null || true
+
+      - name: Runtime logs on failure
+        if: failure()
+        shell: bash
+        run: |
+          cd builds/IA-TB_Build_v2.0_DEBUG
+          for f in .runtime/workload/logs/*.log; do
+            echo "===== $f ====="
+            tail -n 220 "$f" || true
+          done
+
+      - name: Upload workload telemetry
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: marketdata-shadow-workload-telemetry
+          path: |
+            builds/IA-TB_Build_v2.0_DEBUG/.runtime/workload/api_telemetry.db
+            builds/IA-TB_Build_v2.0_DEBUG/.runtime/workload/workload_report.json
+            builds/IA-TB_Build_v2.0_DEBUG/.runtime/workload/telemetry_summary.json
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Stop runtime services
+        if: always()
+        shell: bash
+        run: |
+          cd builds/IA-TB_Build_v2.0_DEBUG
+          for f in .runtime/workload/*.pid; do
+            [ -f "$f" ] && kill "$(cat "$f")" >/dev/null 2>&1 || true
+          done
