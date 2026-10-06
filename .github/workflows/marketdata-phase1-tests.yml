@@ -1,0 +1,47 @@
+name: MarketData Phase 1 Tests
+
+on:
+  push:
+    branches:
+      - feature/data-policy-orchestrator-v1
+  workflow_dispatch:
+
+jobs:
+  marketdata-contract-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node 16.20.2
+        uses: actions/setup-node@v4
+        with:
+          node-version: 16.20.2
+
+      - name: Runtime version
+        run: node --version
+
+      - name: API Request Orchestrator Shadow v1
+        run: node builds/IA-TB_Build_v2.0_DEBUG/MarketData/Tests/test_api_request_orchestrator_shadow_v1.js
+
+      - name: Phase 1 Provider Profiles
+        run: node builds/IA-TB_Build_v2.0_DEBUG/MarketData/Tests/test_phase1_provider_profiles_v1.js
+
+      - name: DeFiLlama Public Surface
+        run: node builds/IA-TB_Build_v2.0_DEBUG/MarketData/Tests/test_defillama_public_surface_v2.js
+
+      - name: Market Data Collector Lock
+        run: node builds/IA-TB_Build_v2.0_DEBUG/MarketData/Tests/test_market_data_collector_v2_lock.js
+
+      - name: Financial Data Contract
+        run: node builds/IA-TB_Build_v2.0_DEBUG/MarketData/Tests/test_financial_data_contract_v2.js
+
+      - name: CEX Provider Contract
+        run: node builds/IA-TB_Build_v2.0_DEBUG/MarketData/Tests/test_cex_providers_v2.js
+
+      - name: Liquidity Pipeline Contract
+        run: node builds/IA-TB_Build_v2.0_DEBUG/MarketData/Tests/test_liquidity_pipeline_v1.js
+
+      - name: Market Data V2 Debug
+        run: node builds/IA-TB_Build_v2.0_DEBUG/MarketData/Tests/market_data_v2_debug.js
