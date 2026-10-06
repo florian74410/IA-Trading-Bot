@@ -28,8 +28,8 @@ module.exports=function(policy){
  ]);
  return policy;
 };
-module.exports.budgetProfiles=function(){
- var x=ApplyPhase1.budgetProfiles(),w=Weighted.budgetProfiles();
+module.exports.budgetProfiles=function(opt){
+ var x=ApplyPhase1.budgetProfiles(opt),w=Weighted.budgetProfiles();
  Object.keys(w).forEach(function(k){x[k]=w[k];});
  return x;
 };
