@@ -1,6 +1,6 @@
 'use strict';
 var get=require('./http_json'),S=require('../Normalizer/symbols'),T=require('../Normalizer/timeframes');
-var MAP={'1m':'1m','5m':'5','15m':'15m','30m':'30m','1h':'1H','4h':'4H','1d':'1D','1w':'1W'};
+var MAP={'1m':'1m','5m':'5m','15m':'15m','30m':'30m','1h':'1H','4h':'4H','1d':'1D','1w':'1W'};
 function P(o){o=o||{};this.base=String(o.base||'https://www.okx.com').replace(/\/$/,'');this.id='OKX';}
 P.prototype.getCandles=function(symbol,tf,cb){
  var nt=T.normalize(tf),parts=S.split(symbol),baseAsset=String(parts&&parts.base||''),quoteAsset=String(parts&&parts.quote||''),bar=MAP[nt]||'1H',self=this;
