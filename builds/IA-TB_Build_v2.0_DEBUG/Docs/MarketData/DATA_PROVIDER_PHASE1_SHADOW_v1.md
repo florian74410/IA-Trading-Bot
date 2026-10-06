@@ -71,6 +71,11 @@ This distinction matters for providers such as DexScreener where one logical req
 [x] quota hint telemetry
 [x] Shadow integration
 [x] static syntax validation
-[ ] execute runtime test suite on IA-TB Node runtime
+[x] execute MarketData contract/debug test checkpoint on Node 16.20.2 via GitHub Actions (run 37398229172: PASS)
 [ ] observe normal workload telemetry
 [ ] Phase 2 weighted-budget design (Binance / Hyperliquid)
+
+
+## Test checkpoint
+
+GitHub Actions run `37398229172` executed the non-runtime MarketData suite on Node `16.20.2` and completed successfully. The full IA-TB runtime/service test remains intentionally deferred until Phases 1-3 are integrated, because it requires the complete Router/services/live runtime environment.
