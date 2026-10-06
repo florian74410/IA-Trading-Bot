@@ -1,0 +1,93 @@
+name: MarketData Shadow Runtime
+
+on:
+  push:
+    branches:
+      - feature/data-policy-orchestrator-v1
+    paths:
+      - ".github/workflows/marketdata-shadow-runtime.yml"
+      - "builds/IA-TB_Build_v2.0_DEBUG/MarketData/**"
+      - "builds/IA-TB_Build_v2.0_DEBUG/Core/Router/**"
+      - "builds/IA-TB_Build_v2.0_DEBUG/Core/Firewall/**"
+      - "builds/IA-TB_Build_v2.0_DEBUG/Indicators/**"
+      - "builds/IA-TB_Build_v2.0_DEBUG/Liquidity/**"
+  workflow_dispatch:
+
+jobs:
+  runtime-shadow:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node 16.20.2
+        uses: actions/setup-node@v4
+        with:
+          node-version: 16.20.2
+
+      - name: Install SQLite CLI
+        run: sudo apt-get update -qq && sudo apt-get install -y sqlite3
+
+      - name: Start Shadow runtime services
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd builds/IA-TB_Build_v2.0_DEBUG
+          mkdir -p .runtime/ci
+          export ROUTER_PORT=8021
+          export IATB_FIREWALL_PORT=8017
+          export IATB_MARKET_DATA_PORT=8013
+          export IATB_INDICATOR_PORT=8012
+          export IATB_LIQUIDITY_PORT=8014
+
+          node Core/Router/router.js > .runtime/ci/router.log 2>&1 & echo $! > .runtime/ci/router.pid
+          node Core/Firewall/firewall_service.js > .runtime/ci/firewall.log 2>&1 & echo $! > .runtime/ci/firewall.pid
+
+          wait_http () {
+            local url="$1"
+            for i in $(seq 1 40); do
+              if curl -fsS "$url" >/dev/null 2>&1; then return 0; fi
+              sleep 0.5
+            done
+            echo "Service unavailable: $url"
+            return 1
+          }
+
+          wait_http http://127.0.0.1:8021/router-health
+          wait_http http://127.0.0.1:8017/health
+
+          ROUTER_PORT=8021 IATB_FIREWALL_PORT=8017 IATB_MARKET_DATA_PORT=8013 node MarketData/market_data_service.js > .runtime/ci/marketdata.log 2>&1 & echo $! > .runtime/ci/marketdata.pid
+          wait_http http://127.0.0.1:8013/health
+
+          ROUTER_PORT=8021 IATB_INDICATOR_PORT=8012 node Indicators/Engine/indicator_service.js > .runtime/ci/indicator.log 2>&1 & echo $! > .runtime/ci/indicator.pid
+          ROUTER_PORT=8021 IATB_LIQUIDITY_PORT=8014 node Liquidity/Engine/liquidity_service.js > .runtime/ci/liquidity.log 2>&1 & echo $! > .runtime/ci/liquidity.pid
+          wait_http http://127.0.0.1:8012/health
+          wait_http http://127.0.0.1:8014/health
+
+          sleep 4
+
+      - name: Verify Shadow mode and profiles
+        run: node builds/IA-TB_Build_v2.0_DEBUG/MarketData/Tests/test_shadow_runtime_orchestrator_v1.js
+
+      - name: Full MarketData runtime test
+        run: node builds/IA-TB_Build_v2.0_DEBUG/MarketData/Tests/test_market_data_runtime_v2.js
+
+      - name: Market + Liquidity Router runtime
+        run: node builds/IA-TB_Build_v2.0_DEBUG/MarketData/Tests/test_market_liquidity_layer_v2.js
+
+      - name: Runtime logs on failure
+        if: failure()
+        shell: bash
+        run: |
+          cd builds/IA-TB_Build_v2.0_DEBUG
+          for f in .runtime/ci/*.log; do echo "===== $f ====="; tail -n 160 "$f" || true; done
+
+      - name: Stop runtime services
+        if: always()
+        shell: bash
+        run: |
+          cd builds/IA-TB_Build_v2.0_DEBUG
+          for f in .runtime/ci/*.pid; do
+            [ -f "$f" ] && kill "$(cat "$f")" >/dev/null 2>&1 || true
+          done
