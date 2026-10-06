@@ -28,6 +28,19 @@ Orchestrator.prototype.observeEnd=function(event,err){
  this.events.push(e);if(this.events.length>this.maxEvents)this.events.shift();
  Telemetry.emit({requestId:event.broker.key+'|'+event.at,timestamp:event.at,completedAt:e.at,provider:event.provider,dataset:event.dataset,phase:'ORCHESTRATOR_END',ok:!err,latencyMs:e.at-event.at,errorCode:e.error||'',priority:event.policy&&event.policy.priority||'',freshness:event.policy&&event.policy.freshness||'',criticality:event.policy&&event.policy.criticality||'',cacheOpportunity:event.broker&&event.broker.wouldCacheHit,dedupOpportunity:event.broker&&event.broker.inflightDuplicate,budgetShortAllow:event.budget&&event.budget.short&&event.budget.short.wouldAllow,budgetLongAllow:event.budget&&event.budget.long&&event.budget.long.wouldAllow,meta:{mode:this.mode}});
 };
-Orchestrator.prototype.status=function(){return{ok:true,version:'1.0',mode:this.mode,shadow:this.mode==='SHADOW',policy:this.policy.snapshot(),broker:this.broker.status(),budget:this.budget.status(),recentEvents:this.events.slice(-25)};};
+Orchestrator.prototype.observeTransport=function(req){
+ req=req||{};
+ var policy=this.policy.resolve(req.provider,req.dataset);
+ var budget=this.budget.observe({provider:req.provider,dataset:req.dataset,priority:policy.priority,cost:req.cost||1,scope:req.scope||null,scopes:req.scopes||null});
+ var event={at:Date.now(),mode:this.mode,phase:'TRANSPORT',provider:String(req.provider||'').toUpperCase(),dataset:String(req.dataset||'').toUpperCase(),scopes:req.scopes||null,cost:req.cost||1,policy:policy,budget:budget};
+ this.events.push(event);if(this.events.length>this.maxEvents)this.events.shift();
+ return event;
+};
+Orchestrator.prototype.feedbackTransport=function(provider,feedback){
+ var e=this.budget.feedback(provider,feedback||{});
+ this.events.push(e);if(this.events.length>this.maxEvents)this.events.shift();
+ return e;
+};
+Orchestrator.prototype.status=function(){return{ok:true,version:'1.2',mode:this.mode,shadow:this.mode==='SHADOW',policy:this.policy.snapshot(),broker:this.broker.status(),budget:this.budget.status(),recentEvents:this.events.slice(-25)};};
 
 module.exports=Orchestrator;
