@@ -1,6 +1,6 @@
 # API Request Orchestrator + Data Source Policy v1
 
-Status: R&D validated / development started / SHADOW MODE
+Status: PHASES 1-3 IMPLEMENTED / CONTRACT + RUNTIME VALIDATED / SHADOW MODE
 Branch: feature/data-policy-orchestrator-v1
 
 ## Architecture validated
@@ -107,8 +107,15 @@ These numbers are policy configuration for CoinGecko only. Other providers must 
 [x] Development: Priority metadata
 [x] Development: In-flight duplicate observation
 [x] Integration: CoinGecko Shadow Mode
-[ ] Validate Shadow telemetry under normal IA-TB workload
-[ ] Extend Shadow coverage provider-by-provider with verified policies/limits
+[x] Phase 1 provider budgets: CoinGecko / DeFiLlama / GMX / DexScreener
+[x] Phase 2 weighted budgets: Binance / Hyperliquid
+[x] Phase 3 special limits: Kraken / OKX / Bybit
+[x] REST transport quota feedback / dynamic headers
+[x] Stream transport telemetry
+[x] Contract suite validated on Node 16.20.2
+[x] Runtime Shadow validated with Router + Firewall + MarketData + Indicator + Liquidity
+[ ] Validate Shadow telemetry under representative sustained IA-TB workload
+[x] Extend Shadow coverage provider-by-provider with verified/observed policies and limits
 [ ] Define storage/retention policy per dataset
 [ ] Define Router/CP distribution contracts for new datasets
 [ ] Native-mode implementation
