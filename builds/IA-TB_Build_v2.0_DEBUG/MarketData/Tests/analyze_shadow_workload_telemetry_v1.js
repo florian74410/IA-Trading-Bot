@@ -40,6 +40,12 @@ function table(title,headers,data){
  var stream=store.streamSummary({since:since});
  table('Stream telemetry',['Provider','Samples','Messages','Reconnects','Subscriptions','Error samples'],(stream.providers||[]).map(function(x){return[x.provider,x.samples,x.messages,x.reconnects,x.subscriptions,x.errorSamples];}));
 
+ var metaRows=rows("SELECT provider,meta_json FROM api_calls WHERE phase='HTTP_END' AND timestamp>="+Math.round(since)+" AND meta_json<>'';");
+ var peakMap={};
+ metaRows.forEach(function(row){try{var provider=row[0],m=JSON.parse(row[1]||'{}');(m.scopeBudgets||[]).forEach(function(x){var scope=x.scope||'UNKNOWN',k=provider+'|'+scope,used=num(x.used),limit=x.limit==null?null:num(x.limit),cur=peakMap[k]||{provider:provider,scope:scope,kind:x.kind||'',source:x.source||'',peakUsed:0,limit:limit};if(used>cur.peakUsed)cur.peakUsed=used;if(limit!=null)cur.limit=limit;peakMap[k]=cur;});}catch(e){}});
+ var budgetPeaks=Object.keys(peakMap).sort().map(function(k){var x=peakMap[k];x.utilizationPct=x.limit?Math.round(x.peakUsed/x.limit*1000)/10:null;return x;});
+ table('Shadow budget peaks',['Provider','Scope','Kind','Peak used','Limit','Utilization %','Source'],budgetPeaks.map(function(x){return[x.provider,x.scope,x.kind,x.peakUsed,x.limit==null?'?':x.limit,x.utilizationPct==null?'?':x.utilizationPct,x.source];}));
+
  var health=await getHealth(),budget=health&&health.apiRequestOrchestrator&&health.apiRequestOrchestrator.budget&&health.apiRequestOrchestrator.budget.providers||{};
  var budgetRows=[];
  Object.keys(budget).sort().forEach(function(id){
@@ -56,6 +62,7 @@ function table(title,headers,data){
   since:since,generatedAt:Date.now(),workload:{durationMs:workload.durationMs||null,steps:workload.steps||0,success:workload.success||0,softFailures:workload.softFailures||0},
   http:{totalCalls:providerSummary.reduce(function(z,x){return z+x.calls;},0),totalErrors:providerSummary.reduce(function(z,x){return z+x.errors;},0),totalCost:providerSummary.reduce(function(z,x){return z+x.cost;},0),providers:providerSummary},
   broker:{observed:observed,cacheOpportunities:num(t[1]),dedupOpportunities:num(t[2]),avoidableUnion:avoidable,avoidablePct:observed?Math.round(avoidable/observed*1000)/10:0},
+  budgetPeaks:budgetPeaks,
   caches:{marketData:cache,microstructure:micro.cache||null,openInterest:micro.openInterestCache||null,dexLiquidity:dex.cache||null},
   streams:stream.providers||[],
   regionalNotes:statusRows.filter(function(x){return x[0]==='BINANCE'&&String(x[1])==='451';}).length?['BINANCE_HTTP_451_US_CI_REGION_BLOCK']:[],
