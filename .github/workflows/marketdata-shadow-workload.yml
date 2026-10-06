@@ -46,6 +46,7 @@ jobs:
           mkdir -p .runtime/workload
           echo "IATB_WORKLOAD_DIR=$PWD/.runtime/workload" >> "$GITHUB_ENV"
           echo "IATB_API_TELEMETRY_DB=$PWD/.runtime/workload/api_telemetry.db" >> "$GITHUB_ENV"
+          date +%s%3N > .runtime/workload/workload_start_ms.txt
 
       - name: Start Shadow runtime services
         shell: bash
