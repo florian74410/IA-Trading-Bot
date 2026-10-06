@@ -2,7 +2,7 @@
 /* IA-TB Market Data provider registry.
    Manifest-driven: Router/Core never hard-code exchange implementations.
 */
-var path=require('path'),T=require('../Normalizer/timeframes'),S=require('../Normalizer/symbols'),Catalog=require('./provider_catalog');
+var path=require('path'),T=require('../Normalizer/timeframes'),S=require('../Normalizer/symbols'),Catalog=require('./provider_catalog'),ShadowProxy=require('../Orchestrator/shadow_provider_proxy');
 
 function spacingMeta(candles,tf){var ds=[];for(var i=1;i<(candles||[]).length;i++){var a=+candles[i-1][0],b=+candles[i][0];if(a>0&&b>a)ds.push(b-a);}ds.sort(function(a,b){return a-b});var observed=ds.length?ds[Math.floor(ds.length/2)]:0,expected=T.minutes(tf)*60000,ok=!observed||Math.abs(observed-expected)<=Math.max(1000,expected*.20);return{requestedTimeframe:T.normalize(tf),expectedSpacingMs:expected,observedSpacingMs:observed,timeframeValidated:ok};}
 function attachMeta(o,tf){var m=spacingMeta(o.candles||[],tf);Object.keys(m).forEach(function(k){o[k]=m[k];});return o;}
@@ -12,6 +12,7 @@ function P(o){
  o=o||{};this.settings=o.settings||{};this.providers={};this.descriptors={};this.errors={};this.name='MARKET_PROVIDER_REGISTRY';
  var self=this;Catalog.load().forEach(function(d){self.descriptors[d.id]=d;try{var C=safeModule(d);self.providers[d.id]=new C(providerOptions(d.id,o));}catch(e){self.errors[d.id]=e.message;}});
 }
+P.prototype.attachShadow=function(orchestrator,maps){var self=this;maps=maps||{};Object.keys(maps).forEach(function(id){id=String(id||'').toUpperCase();if(self.providers[id])self.providers[id]=ShadowProxy(self.providers[id],{provider:id,orchestrator:orchestrator,methods:maps[id]});});return this;};
 P.prototype.enabled=function(id){id=String(id||'').toUpperCase();var d=this.descriptors[id],p=this.settings.providers&&this.settings.providers[id];if(!d)return false;if(p&&p.enabled===false)return false;return d.defaultEnabled!==false;};
 P.prototype.descriptor=function(id){return this.descriptors[String(id||'').toUpperCase()]||null;};
 P.prototype.normalize=function(id,capability){id=String(id||this.settings.defaultSource||'KRAKEN').toUpperCase();var d=this.descriptor(id);if(!d)throw new Error('MARKET_PROVIDER_UNKNOWN: '+id);if(capability&&d.capabilities.indexOf(String(capability).toLowerCase())<0)throw new Error('MARKET_PROVIDER_CAPABILITY_MISSING: '+id+' '+capability);return id;};
