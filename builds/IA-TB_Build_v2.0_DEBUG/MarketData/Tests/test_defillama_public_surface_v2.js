@@ -1,5 +1,5 @@
 'use strict';
-var assert=require('assert');
+var assert=require('assert'),fs=require('fs'),path=require('path');
 var DeFiLlama=require('../Provider/defillama_provider');
 var p=new DeFiLlama({});
 var c=p.publicEndpointCatalog();
@@ -13,6 +13,10 @@ assert.equal(c.premium,false);
 assert.equal(c.excluded.yield,true);
 assert.equal(c.excluded.premium,true);
 assert.equal(p.base,'https://api.llama.fi');
-assert.equal(p.stableBase,'https://api.llama.fi');
+assert.equal(p.coinsBase,'https://coins.llama.fi');
+assert.equal(p.stableBase,'https://stablecoins.llama.fi');
+assert.equal(p.yieldsBase,'https://yields.llama.fi');
 assert.equal(String(p.base).indexOf('pro-api.llama.fi'),-1);
+var financialSource=fs.readFileSync(path.resolve(__dirname,'../Financial/financial_collector.js'),'utf8');
+assert.equal(financialSource.indexOf('self.defillama.yieldPools('),-1,'active Financial collector must not fetch Yield pools');
 console.log('PASS DeFiLlama public/free provider surface: '+methods.length+' endpoints, Yield/Premium excluded');
