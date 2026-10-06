@@ -109,7 +109,7 @@ Budget.prototype.feedback=function(provider,feedback){
  },this);
  if(feedback.providerCooldownMs>0){p.cooldownUntil=Math.max(p.cooldownUntil,now+feedback.providerCooldownMs);p.cooldownReason=String(feedback.reason||'RATE_LIMIT');}
  else if(feedback.retryAfterMs>0&&feedback.rateLimited){p.cooldownUntil=Math.max(p.cooldownUntil,now+feedback.retryAfterMs);p.cooldownReason=String(feedback.reason||'RETRY_AFTER');}
- var event={at:now,mode:this.mode,phase:'FEEDBACK',provider:upper(provider),statusCode:feedback.statusCode||null,rateLimited:!!feedback.rateLimited,retryAfterMs:feedback.retryAfterMs||null,providerCooldownUntil:p.cooldownUntil||null,reason:feedback.reason||'',updatedScopes:updated};
+ var event={at:now,mode:this.mode,phase:'FEEDBACK',provider:upper(provider),statusCode:feedback.statusCode||null,category:feedback.category||'UNKNOWN',rateLimited:!!feedback.rateLimited,retryAfterMs:feedback.retryAfterMs||null,providerCooldownUntil:p.cooldownUntil||null,reason:feedback.reason||'',updatedScopes:updated};
  this.events.push(event);if(this.events.length>this.maxEvents)this.events.shift();return event;
 };
 Budget.prototype.status=function(){
