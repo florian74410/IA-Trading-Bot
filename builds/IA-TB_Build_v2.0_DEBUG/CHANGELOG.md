@@ -1,3 +1,19 @@
+# IA-TB v2.0 DEBUG — Shadow Workload Optimization
+
+- Added boot-inclusive representative MarketData workload telemetry.
+- Financial refresh now acknowledges asynchronously over CP/1 instead of holding callers during provider collection.
+- Added fast Financial lanes and deferred compact enrichment for heavy CoinGecko/DeFiLlama datasets.
+- Added lightweight DeFiLlama DEX overview for the critical Financial path.
+- Added Cache First reuse of fresh Financial CoinGecko USD prices for marketdata.asset.price.
+- Separated Bybit access/region HTTP 403 from actual rate-limit signals; explicit 10006 still maps to RATE_LIMIT.
+- Classified Binance HTTP 451 as GEO_RESTRICTED rather than quota exhaustion.
+- Added explicit Binance stream ping/pong heartbeat and broader Bybit pong recognition.
+- Added scoped budget peak reporting to workload telemetry.
+- Final Shadow workload run 37488995763: PASS, 27/30 success, 3 regional soft failures, 0 hard failures.
+- Final contract run 37488995915: PASS on Node 16.20.2.
+- Final workload Financial refresh acknowledgement ~70 ms; first Financial snapshot ~22 ms; BTC USD cache-first reads 9 ms / 41 ms.
+- Native enforcement remains disabled.
+
 # IA-TB v2.0 DEBUG — Data Provider Phase 3 + Shadow Runtime Validation
 
 - Added generic SAFE_PACE, ENDPOINT_WINDOW, DYNAMIC_WINDOW, MULTI_SCOPE and COOLDOWN semantics to Request Budget.
