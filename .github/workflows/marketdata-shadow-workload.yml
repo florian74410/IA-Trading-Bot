@@ -11,6 +11,7 @@ on:
       - "builds/IA-TB_Build_v2.0_DEBUG/MarketData/Tests/analyze_shadow_workload_telemetry_v1.js"
       - "builds/IA-TB_Build_v2.0_DEBUG/MarketData/Orchestrator/**"
       - "builds/IA-TB_Build_v2.0_DEBUG/MarketData/Provider/**"
+      - "builds/IA-TB_Build_v2.0_DEBUG/Core/Firewall/**"
 
 jobs:
   shadow-workload:
