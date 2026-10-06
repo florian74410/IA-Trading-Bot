@@ -15,7 +15,7 @@ function Orchestrator(o){
 }
 Orchestrator.prototype.configureProvider=function(provider,cfg){return this.budget.configure(provider,cfg||{});};
 Orchestrator.prototype.observeStart=function(req){
- req=req||{};var policy=this.policy.resolve(req.provider,req.dataset),broker=this.broker.before(req,policy),budget=this.budget.observe({provider:req.provider,dataset:req.dataset,priority:policy.priority,cost:req.cost||1});
+ req=req||{};var policy=this.policy.resolve(req.provider,req.dataset),broker=this.broker.before(req,policy),budget={accounting:'TRANSPORT_ONLY',short:{known:false,wouldAllow:null},long:{known:false,wouldAllow:null},weighted:null,scopes:[]};
  var event={at:Date.now(),mode:this.mode,phase:'START',provider:String(req.provider||'').toUpperCase(),dataset:String(req.dataset||'').toUpperCase(),signature:String(req.signature||''),policy:policy,broker:broker,budget:budget};
  this.events.push(event);if(this.events.length>this.maxEvents)this.events.shift();
  Telemetry.emit({requestId:event.broker.key+'|'+event.at,timestamp:event.at,provider:event.provider,dataset:event.dataset,phase:'ORCHESTRATOR_START',cost:req.cost||1,priority:policy.priority,freshness:policy.freshness,criticality:policy.criticality,cacheOpportunity:broker.wouldCacheHit,dedupOpportunity:broker.inflightDuplicate,budgetShortAllow:budget.short&&budget.short.wouldAllow,budgetLongAllow:budget.long&&budget.long.wouldAllow,meta:{mode:this.mode,signature:event.signature,cacheTtlMs:policy.cacheTtlMs,requestMode:policy.mode,retention:policy.retention,distribution:policy.distribution}});
