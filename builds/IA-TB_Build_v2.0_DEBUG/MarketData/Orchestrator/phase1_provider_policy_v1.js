@@ -68,9 +68,12 @@ module.exports=function(policy){
  return policy;
 };
 
-module.exports.budgetProfiles=function(){
+module.exports.budgetProfiles=function(opt){
+ opt=opt||{};var cgDemo=opt.coingeckoDemo!==undefined?opt.coingeckoDemo===true:true;
  return{
-  COINGECKO:{limitModel:'SHORT_AND_MONTHLY',shortWindowMs:60000,shortLimit:100,longWindowMs:2592000000,longLimit:10000,reserve:2000,costDefault:1},
+  COINGECKO:cgDemo?
+   {limitModel:'SHORT_AND_MONTHLY',shortWindowMs:60000,shortLimit:100,longWindowMs:2592000000,longLimit:10000,reserve:2000,costDefault:1}:
+   {limitModel:'UNKNOWN',shortWindowMs:60000,shortLimit:null,longWindowMs:2592000000,longLimit:null,reserve:0,costDefault:1},
   DEFILLAMA:{limitModel:'UNKNOWN',shortWindowMs:60000,shortLimit:null,longWindowMs:2592000000,longLimit:null,reserve:0,costDefault:1},
   GMX:{limitModel:'UNKNOWN',shortWindowMs:60000,shortLimit:null,longWindowMs:2592000000,longLimit:null,reserve:0,costDefault:1},
   DEXSCREENER:{limitModel:'RPM',shortWindowMs:60000,shortLimit:300,longWindowMs:2592000000,longLimit:null,reserve:0,costDefault:1}
