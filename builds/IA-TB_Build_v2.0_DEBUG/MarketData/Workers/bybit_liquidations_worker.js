@@ -15,7 +15,7 @@ function normalize(o){
 function connect(){
  if(stopped)return;status('CONNECTING');ws=new WS(URL,{timeout:30000,maxBytes:4*1024*1024});
  ws.on('open',function(){connections++;retries=0;lastError='';var current=Object.keys(symbols);symbols=Object.create(null);subscribe(current);clearInterval(pingTimer);pingTimer=setInterval(function(){try{if(ws&&ws.open)ws.sendJson({op:'ping'});}catch(e){}},20000);clearInterval(statusTimer);statusTimer=setInterval(function(){status();},30000);status('ONLINE');});
- ws.on('message',function(txt){var o;try{o=JSON.parse(txt);}catch(e){return;}if(o&&o.op==='pong'){lastHeartbeatAt=Date.now();return;}if(o&&o.success===false){lastError='BYBIT_WS:'+String(o.ret_msg||o.retMsg||'ERROR');return status('DEGRADED');}normalize(o).forEach(function(x){events++;lastEventAt=Date.now();parent.postMessage({type:'liquidation',event:x});});});
+ ws.on('message',function(txt){var o;try{o=JSON.parse(txt);}catch(e){return;}if(o&&(o.op==='pong'||String(o.ret_msg||o.retMsg||'').toLowerCase()==='pong'||(o.op==='ping'&&o.success===true))){lastHeartbeatAt=Date.now();return;}if(o&&o.success===false){lastError='BYBIT_WS:'+String(o.ret_msg||o.retMsg||'ERROR');return status('DEGRADED');}normalize(o).forEach(function(x){events++;lastEventAt=Date.now();parent.postMessage({type:'liquidation',event:x});});});
  ws.on('error',function(e){lastError=String(e&&e.message||e);status('DEGRADED');});
  ws.on('close',function(){clearInterval(pingTimer);clearInterval(statusTimer);if(stopped)return;retries++;lastError=lastError||'WEBSOCKET_CLOSED';status('RECONNECTING');clearTimeout(timer);timer=setTimeout(connect,Math.min(30000,1000*Math.pow(2,Math.min(5,retries))));});
 }
