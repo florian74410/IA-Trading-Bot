@@ -39,7 +39,7 @@ c.requestRefresh(function(e,o){
 var deadline=Date.now()+1500;
 (function verify(){
  var st=c.status();
- if((st.busy||!st.lastRefreshJob)&&Date.now()<deadline)return setTimeout(verify,40);
+ if((st.busy||!st.refreshJob||!st.refreshJob.last)&&Date.now()<deadline)return setTimeout(verify,40);
  try{
   assert(snap&&snap.cefi&&snap.defi,'async refresh must eventually produce snapshot');
   assert.equal(heavyCalls,0,'heavy DeFi enrichment must stay off the critical path');
@@ -48,7 +48,7 @@ var deadline=Date.now()+1500;
   assert.equal(snap.defi.stablecoinMarketCapUsd,200);
   assert(snap.defi.limitations.indexOf('HEAVY_DEFI_ENRICHMENT_DEFERRED')>=0);
   assert.equal(st.busy,false);
-  assert(st.lastRefreshJob&&st.lastRefreshJob.ok===true,'refresh job status must eventually complete');
+  assert(st.refreshJob&&st.refreshJob.last&&st.refreshJob.last.ok===true,'refresh job status must eventually complete');
   console.log('PASS Financial async refresh + DeFi fast lane');
  }catch(e){console.error(e&&e.stack||e);process.exitCode=1;}
 })();
