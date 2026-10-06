@@ -67,6 +67,13 @@ jobs:
 
           sleep 4
 
+      - name: Router communication registry
+        run: |
+          echo "=== communication-health ==="
+          curl -fsS http://127.0.0.1:8021/communication-health | python3 -m json.tool || true
+          echo "=== router-health ==="
+          curl -fsS http://127.0.0.1:8021/router-health | python3 -m json.tool || true
+
       - name: Verify Shadow mode and profiles
         run: node builds/IA-TB_Build_v2.0_DEBUG/MarketData/Tests/test_shadow_runtime_orchestrator_v1.js
 
