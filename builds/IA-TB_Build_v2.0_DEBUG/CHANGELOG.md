@@ -1,3 +1,20 @@
+# IA-TB v2.0 DEBUG — Data Provider Phase 3 + Shadow Runtime Validation
+
+- Added generic SAFE_PACE, ENDPOINT_WINDOW, DYNAMIC_WINDOW, MULTI_SCOPE and COOLDOWN semantics to Request Budget.
+- Added Kraken public MarketData safe-pace profiles without inventing unsupported hard ceilings.
+- Added OKX per-endpoint windows for candles/books; Open Interest remains observation-only until a reliable numerical limit is available.
+- Added Bybit global IP budget plus endpoint-specific dynamic budgets learned from X-Bapi-Limit response headers.
+- Added provider feedback handling for HTTP 429, Retry-After, OKX 50011, Bybit 10006 and Bybit rate-limit HTTP 403.
+- Restored and contract-locked the HTTP Transport -> Orchestrator -> Request Budget bridge.
+- Preserved all Phase 1 and Phase 2 profiles and Shadow invariants.
+- Fixed Firewall runtime startup defect: BUILD.version referenced without build_info import.
+- Hardened OKX USD -> USDT candle fallback discovered during live runtime testing.
+- Updated runtime contract for Liquidity's current MARKET_DATA_VIA_ROUTER_CP1 provenance.
+- Contract suite PASS: GitHub Actions run 37470187624 on Node 16.20.2.
+- Full Shadow Runtime PASS: GitHub Actions run 37470187770 with Router + Firewall + MarketData + Indicator + Liquidity.
+- GitHub US runner receives Binance HTTP 451; runtime suite records the regional restriction and validates live CEX OHLCV invariants through OKX fallback instead.
+- Native request enforcement remains disabled.
+
 # IA-TB v2.0 DEBUG — Data Provider Phase 2 Weighted Budget Shadow
 
 - Added generic weighted budget scopes to Request Budget.
