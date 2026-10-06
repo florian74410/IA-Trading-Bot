@@ -5,8 +5,8 @@ var ROOT=path.resolve(__dirname,'../..'),routerPort=+(process.env.ROUTER_PORT||8
 var client=new CPClient({root:ROOT,routerPort:routerPort,timeout:20000,maxBytes:6*1024*1024});
 var OUT=process.env.IATB_WORKLOAD_DIR||path.join(ROOT,'.runtime','workload');
 fs.mkdirSync(OUT,{recursive:true});
-var startedAt=Date.now(),results=[],hardFailures=0,softFailures=0;
-fs.writeFileSync(path.join(OUT,'workload_start_ms.txt'),String(startedAt));
+var startFile=path.join(OUT,'workload_start_ms.txt'),startedAt=fs.existsSync(startFile)?+fs.readFileSync(startFile,'utf8').trim():Date.now(),results=[],hardFailures=0,softFailures=0;
+if(!fs.existsSync(startFile))fs.writeFileSync(startFile,String(startedAt));
 
 function sleep(ms){return new Promise(function(r){setTimeout(r,ms);});}
 function req(target,action,args){
