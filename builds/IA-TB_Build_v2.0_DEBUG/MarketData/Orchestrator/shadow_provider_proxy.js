@@ -1,8 +1,34 @@
 'use strict';
 
-function signature(args){
- return(args||[]).filter(function(x){return typeof x!=='function';}).map(function(x){try{return typeof x==='object'?JSON.stringify(x):String(x);}catch(e){return'[object]';}}).join('|').slice(0,1000);
+var crypto=require('crypto');
+
+function canonical(v,seen){
+ if(v===null)return null;
+ var t=typeof v;
+ if(t==='undefined')return{__type:'undefined'};
+ if(t==='number'||t==='string'||t==='boolean')return v;
+ if(t==='bigint')return{__type:'bigint',value:String(v)};
+ if(t==='function')return{__type:'function'};
+ if(Buffer.isBuffer(v))return{__type:'buffer',value:v.toString('base64')};
+ if(v instanceof Date)return{__type:'date',value:v.toISOString()};
+ seen=seen||[];
+ if(seen.indexOf(v)>=0)return{__type:'circular'};
+ seen.push(v);
+ var out;
+ if(Array.isArray(v))out=v.map(function(x){return canonical(x,seen);});
+ else{
+  out={};
+  Object.keys(v).sort().forEach(function(k){out[k]=canonical(v[k],seen);});
+ }
+ seen.pop();return out;
 }
+function signature(args){
+ var filtered=(args||[]).filter(function(x){return typeof x!=='function';});
+ var raw;
+ try{raw=JSON.stringify(canonical(filtered,[]));}catch(e){raw=String(filtered);}
+ return crypto.createHash('sha256').update(raw,'utf8').digest('hex');
+}
+module.exports.signature=signature;
 module.exports=function wrap(provider,opt){
  opt=opt||{};if(!provider||!opt.orchestrator)return provider;
  var id=String(opt.provider||provider.id||'UNKNOWN').toUpperCase(),map=opt.methods||{},orchestrator=opt.orchestrator;
