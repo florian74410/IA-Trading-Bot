@@ -32,7 +32,7 @@ function resolve(u,opts,provider){
 }
 function budgetProfiles(){
  return{
-  KRAKEN:{limitModel:'SAFE_PACE',shortLimit:null,longLimit:null,costDefault:1,limitScopes:{}},
+  KRAKEN:{limitModel:'SAFE_PACE',enforcementPolicy:'OBSERVE_ONLY_NON_BLOCKING',shortLimit:null,longLimit:null,costDefault:1,limitScopes:{}},
   OKX:{limitModel:'ENDPOINT_WINDOW',shortLimit:null,longLimit:null,costDefault:1,limitScopes:{
    OKX_CANDLES:{kind:'ENDPOINT_WINDOW',windowMs:2000,limit:40,unit:'REQUEST',source:'DOCUMENTED'},
    OKX_BOOKS:{kind:'ENDPOINT_WINDOW',windowMs:2000,limit:40,unit:'REQUEST',source:'DOCUMENTED'},
