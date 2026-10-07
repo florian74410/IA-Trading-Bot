@@ -17,7 +17,7 @@ Collector.prototype._runCefiEnrichment=function(){
   if(err){e.busy=false;e.lastError=err.message;return;}
   e.data=(rows||[]).map(function(x){return{id:x.id,name:x.name,rank:+x.trust_score_rank||null,trustScore:+x.trust_score||null,volumeBtc:+x.trade_volume_24h_btc||0,url:x.url||''};}).slice(0,250);
   e.at=Date.now();e.busy=false;e.lastError='';
-  if(!self.busy)self.refresh(function(){});
+  if(!self.busy)self.refresh({scope:'CEFI'},function(){});
  });
 };
 Collector.prototype._cefi=function(cb){
@@ -81,18 +81,51 @@ Collector.prototype._defi=function(cb){
  if(typeof self.defillama.dexOverviewLite==='function')self.defillama.dexOverviewLite(function(e,o){if(e)err.push(e.message);else dex=o;done()});else self.defillama.dexOverview(function(e,o){if(e)err.push(e.message);else dex=o;done()});
  self.defillama.stablecoins(false,function(e,o){if(e)err.push(e.message);else stables=o;done()});
 };
-Collector.prototype.refresh=function(cb){var self=this;cb=cb||function(){};if(this.busy){this.waiters.push(cb);return;}this.busy=true;var pending=2,cefi=null,defi=null,errors=[];function complete(e,o){self.busy=false;var q=self.waiters.splice(0);cb(e,o);q.forEach(function(fn){try{fn(e,o)}catch(x){}});}function done(){if(--pending)return;function finish(){if(!cefi&&!defi){self.lastError=errors.join('; ')||'FINANCIAL_REFRESH_EMPTY';return complete(new Error(self.lastError))}var now=Date.now(),snap={schema:'iatb.financial.snapshot/2.0',timestamp:now,expiresAt:now+Math.min(self.cefiTtlMs,self.defiTtlMs),cefi:cefi,defi:defi,meta:{collector:'MARKET_DATA',collectorVersion:'2.0',firewall:'VALIDATED_BEFORE_STORE',distribution:'ROUTER_CP1',providers:{coingecko:!!cefi,defillama:!!defi},ownership:Policy.describe(),freshness:{cefi:{observedAt:cefi&&cefi.observedAt||null,expiresAt:cefi?now+self.cefiTtlMs:null,ttlMs:self.cefiTtlMs,provider:'COINGECKO'},defi:{observedAt:defi&&defi.observedAt||null,expiresAt:defi?now+self.defiTtlMs:null,ttlMs:self.defiTtlMs,provider:'DEFILLAMA'}},errors:errors.slice()}};var quality=Quality.inspect(snap,{now:now});snap.meta.quality=quality;if(!quality.ok){self.lastError='FINANCIAL_QUALITY_REJECT:'+quality.errors.map(function(x){return x.code}).join(',');return complete(new Error(self.lastError))}self.lastRefreshAt=now;self.lastError=errors.join('; ');self.store.set(snap);complete(null,snap)}var gates=0;function gateDone(){if(--gates===0)finish()}if(cefi){gates++;self._gate('COINGECKO',cefi,function(e,o){if(e){errors.push('COINGECKO_FIREWALL:'+e.message);cefi=null}gateDone()})}if(defi){gates++;self._gate('DEFILLAMA',defi,function(e,o){if(e){errors.push('DEFILLAMA_FIREWALL:'+e.message);defi=null}gateDone()})}if(!gates)finish();}
- this._cefi(function(e,o){if(e)errors.push('COINGECKO:'+e.message);else cefi=o;done()});
- this._defi(function(e,o){if(e)errors.push('DEFILLAMA:'+e.message);else defi=o;done()});
+Collector.prototype.refresh=function(opt,cb){
+ if(typeof opt==='function'){cb=opt;opt={};}opt=opt||{};cb=cb||function(){};
+ var self=this;if(this.busy){this.waiters.push(cb);return;}
+ var scope=String(opt.scope||'ALL').toUpperCase(),wantCefi=scope==='ALL'||scope==='CEFI',wantDefi=scope==='ALL'||scope==='DEFI',prev=this.store&&this.store.get&&this.store.get()||null;
+ this.busy=true;var pending=(wantCefi?1:0)+(wantDefi?1:0),cefi=wantCefi?null:(prev&&prev.cefi||null),defi=wantDefi?null:(prev&&prev.defi||null),errors=[];
+ if(!pending){this.busy=false;return cb(null,prev);}
+ function complete(e,o){self.busy=false;var q=self.waiters.splice(0);cb(e,o);q.forEach(function(fn){try{fn(e,o)}catch(x){}});}
+ function done(){
+  if(--pending)return;
+  function finish(){
+   if(!cefi&&!defi){self.lastError=errors.join('; ')||'FINANCIAL_REFRESH_EMPTY';return complete(new Error(self.lastError));}
+   var now=Date.now(),prevFresh=prev&&prev.meta&&prev.meta.freshness||{},cefiFresh,defiFresh;
+   if(wantCefi&&cefi)cefiFresh={observedAt:cefi.observedAt||now,expiresAt:(cefi.observedAt||now)+self.cefiTtlMs,ttlMs:self.cefiTtlMs,provider:'COINGECKO'};
+   else cefiFresh=prevFresh.cefi||{observedAt:cefi&&cefi.observedAt||null,expiresAt:null,ttlMs:self.cefiTtlMs,provider:'COINGECKO'};
+   if(wantDefi&&defi)defiFresh={observedAt:defi.observedAt||now,expiresAt:(defi.observedAt||now)+self.defiTtlMs,ttlMs:self.defiTtlMs,provider:'DEFILLAMA'};
+   else defiFresh=prevFresh.defi||{observedAt:defi&&defi.observedAt||null,expiresAt:null,ttlMs:self.defiTtlMs,provider:'DEFILLAMA'};
+   var expiries=[];if(cefi&&cefiFresh.expiresAt)expiries.push(+cefiFresh.expiresAt);if(defi&&defiFresh.expiresAt)expiries.push(+defiFresh.expiresAt);
+   var snap={schema:'iatb.financial.snapshot/2.1',timestamp:now,expiresAt:expiries.length?Math.min.apply(Math,expiries):now+Math.min(self.cefiTtlMs,self.defiTtlMs),cefi:cefi,defi:defi,meta:{collector:'MARKET_DATA',collectorVersion:'2.1',firewall:'VALIDATED_BEFORE_STORE',distribution:'ROUTER_CP1',refreshScope:scope,providers:{coingecko:!!cefi,defillama:!!defi},ownership:Policy.describe(),freshness:{cefi:cefiFresh,defi:defiFresh},errors:errors.slice()}};
+   var quality=Quality.inspect(snap,{now:now});snap.meta.quality=quality;
+   if(!quality.ok){self.lastError='FINANCIAL_QUALITY_REJECT:'+quality.errors.map(function(x){return x.code}).join(',');return complete(new Error(self.lastError));}
+   self.lastRefreshAt=now;self.lastError=errors.join('; ');self.store.set(snap);complete(null,snap);
+  }
+  var gates=0;function gateDone(){if(--gates===0)finish();}
+  if(wantCefi&&cefi){gates++;self._gate('COINGECKO',cefi,function(e){if(e){errors.push('COINGECKO_FIREWALL:'+e.message);cefi=prev&&prev.cefi||null;}gateDone();});}
+  if(wantDefi&&defi){gates++;self._gate('DEFILLAMA',defi,function(e){if(e){errors.push('DEFILLAMA_FIREWALL:'+e.message);defi=prev&&prev.defi||null;}gateDone();});}
+  if(!gates)finish();
+ }
+ if(wantCefi)self._cefi(function(e,o){if(e){errors.push('COINGECKO:'+e.message);cefi=prev&&prev.cefi||null;}else cefi=o;done();});
+ if(wantDefi)self._defi(function(e,o){if(e){errors.push('DEFILLAMA:'+e.message);defi=prev&&prev.defi||null;}else defi=o;done();});
+};
+Collector.prototype.refreshStale=function(cb){
+ cb=cb||function(){};var f=this.store&&this.store.freshness?this.store.freshness():{cefi:{fresh:false},defi:{fresh:false}},cefiEnabled=this.providerEnabled.COINGECKO,defiEnabled=this.providerEnabled.DEFILLAMA;
+ var staleCefi=cefiEnabled&&!(f.cefi&&f.cefi.fresh),staleDefi=defiEnabled&&!(f.defi&&f.defi.fresh);
+ if(!staleCefi&&!staleDefi)return cb(null,{ok:true,skipped:true,reason:'FAMILIES_FRESH',freshness:f});
+ if(staleCefi&&staleDefi)return this.refresh({scope:'ALL'},cb);
+ return this.refresh({scope:staleCefi?'CEFI':'DEFI'},cb);
 };
 Collector.prototype.requestRefresh=function(cb){
  cb=cb||function(){};var self=this;
  if(this.busy)return cb(null,{ok:true,accepted:true,busy:true,joined:true,refreshId:this.activeRefreshId||null,statusAction:'marketdata.financial.status'});
  var id='financial-'+Date.now()+'-'+(++this.refreshSeq);this.activeRefreshId=id;this.refreshStartedAt=Date.now();
- this.refresh(function(e,o){self.lastRefreshJob={refreshId:id,startedAt:self.refreshStartedAt||null,completedAt:Date.now(),ok:!e,error:e?e.message:null,snapshotTimestamp:o&&o.timestamp||null};self.activeRefreshId=null;self.refreshStartedAt=0;});
+ this.refresh({scope:'ALL'},function(e,o){self.lastRefreshJob={refreshId:id,startedAt:self.refreshStartedAt||null,completedAt:Date.now(),ok:!e,error:e?e.message:null,snapshotTimestamp:o&&o.timestamp||null};self.activeRefreshId=null;self.refreshStartedAt=0;});
  cb(null,{ok:true,accepted:true,busy:true,joined:false,refreshId:id,statusAction:'marketdata.financial.status'});
 };
-Collector.prototype.snapshot=function(force,cb){var h=this.store.get();if(!force&&h&&this.store.isFresh())return cb(null,h);this.refresh(cb)};
+Collector.prototype.snapshot=function(force,cb){var h=this.store.get();if(!force&&h&&this.store.isFresh())return cb(null,h);if(force)return this.refresh({scope:'ALL'},cb);this.refreshStale(cb);};
 Collector.prototype.history=function(opt){opt=opt||{};var rows=this.store.list(opt.limit||96,opt.since||0),family=String(opt.family||'ALL').toUpperCase();if(family==='CEFI')rows=rows.map(function(x){return{timestamp:x.timestamp,cefi:x.cefi,meta:x.meta}});if(family==='DEFI')rows=rows.map(function(x){return{timestamp:x.timestamp,defi:x.defi,meta:x.meta}});return{ok:true,schema:'iatb.financial.history/1.0',family:family,items:rows,count:rows.length,storage:this.store.status()}};
 Collector.prototype.aiContext=function(scope){var s=this.store.get();if(!s)return{ok:false,error:'FINANCIAL_SNAPSHOT_UNAVAILABLE'};scope=String(scope||'ALL').toUpperCase();var out={ok:true,schema:'iatb.financial.ai-context/1.0',timestamp:s.timestamp,expiresAt:s.expiresAt,readOnly:true,scope:scope};if(scope==='ALL'||scope==='CEFI')out.cefi=s.cefi;if(scope==='ALL'||scope==='DEFI')out.defi=s.defi;out.meta={provenance:s.meta,storage:this.store.status()};return out};
 Collector.prototype.status=function(){var cur=this.store.get(),quality=cur&&cur.meta&&cur.meta.quality||null,e=this.defiEnrichment;return{ok:true,version:'2.1',busy:this.busy,lastRefreshAt:this.lastRefreshAt,lastError:this.lastError||null,refreshJob:{activeRefreshId:this.activeRefreshId||null,startedAt:this.refreshStartedAt||null,last:this.lastRefreshJob},cefiEnrichment:{ready:!!this.cefiEnrichment.data,busy:!!this.cefiEnrichment.busy,lastAt:this.cefiEnrichment.at||null,ttlMs:this.cefiEnrichmentTtlMs,delayMs:this.cefiEnrichmentDelayMs,lastError:this.cefiEnrichment.lastError||null},defiEnrichment:{ready:!!e.data,busy:!!e.busy,lastAt:e.at||null,ttlMs:this.defiEnrichmentTtlMs,delayMs:this.defiEnrichmentDelayMs,lastError:e.lastError||null},quality:quality,ttl:{cefiMs:this.cefiTtlMs,defiMs:this.defiTtlMs},providers:{coingecko:this.providerEnabled.COINGECKO,defillama:this.providerEnabled.DEFILLAMA},ownership:Policy.describe(),store:this.store.status()}};
