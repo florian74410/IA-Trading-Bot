@@ -195,6 +195,16 @@ Le packaging v1.8 est maintenant reproductible : la version est produite depuis 
 ---
 
 
+## Market Data / Shadow Decision Engine
+
+- [x] Ajouter un Shadow Decision Engine v1 relié à Policy, Passport, Broker et Budget.
+- [x] Produire des décisions observationnelles : `ALLOW`, `DEDUP_CANDIDATE`, `DELAY`, `ALLOW_WITH_ADVISORY`, `FALLBACK_CANDIDATE`.
+- [x] Garantir `executable:false`, `blocking:false` et `decisionEnforcement:false` en v1.
+- [x] Conserver les quotas UNKNOWN en recommandation non bloquante.
+- [x] Ajouter un contrat CI observation-only.
+- [ ] Mesurer les décisions Shadow sur un workload représentatif avant toute activation Native.
+- [ ] Ajouter ensuite les alternates ordonnés provider/dataset sans scoring automatique.
+
 ## Market Data / Data Trust Boundary
 
 - [x] Auditer le chemin réel Provider -> Firewall -> Cache/Store.
