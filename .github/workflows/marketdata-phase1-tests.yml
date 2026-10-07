@@ -43,6 +43,9 @@ jobs:
       - name: Transport Budget Bridge
         run: node builds/IA-TB_Build_v2.0_DEBUG/MarketData/Tests/test_transport_budget_bridge_v1.js
 
+      - name: Shadow Decision Engine
+        run: node builds/IA-TB_Build_v2.0_DEBUG/MarketData/Tests/test_shadow_decision_engine_v1.js
+
       - name: DeFiLlama Public Surface
         run: node builds/IA-TB_Build_v2.0_DEBUG/MarketData/Tests/test_defillama_public_surface_v2.js
 
