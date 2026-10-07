@@ -79,10 +79,20 @@ Store.prototype.summary=function(o){
   return{ok:true,schema:'marketdata.api.telemetry.summary/1.0',since:since,providers:rows};
  }catch(e){this.lastError=e.message;return{ok:false,error:e.message,providers:[]};}
 };
+Store.prototype.purgeManual=function(o){
+ o=o||{};if(String(o.confirm||'')!=='PURGE')return{ok:false,error:'PURGE_CONFIRMATION_REQUIRED'};
+ if(!this.ready)return{ok:false,error:'API_TELEMETRY_SQL_UNAVAILABLE'};
+ var target=String(o.target||'ALL').toUpperCase(),before=+o.before||0,where=before?' WHERE timestamp < '+Math.round(before):'',parts=[];
+ if(target==='ALL'||target==='API')parts.push('DELETE FROM api_calls'+where+';');
+ if(target==='ALL'||target==='STREAM')parts.push('DELETE FROM stream_events'+where+';');
+ if(!parts.length)return{ok:false,error:'PURGE_TARGET_INVALID'};
+ try{var beforeStatus=this.status();this.run(parts.join(' '));var afterStatus=this.status();this.lastError='';return{ok:true,target:target,before:before||null,removedApi:Math.max(0,(beforeStatus.events||0)-(afterStatus.events||0)),removedStreams:Math.max(0,(beforeStatus.streamEvents||0)-(afterStatus.streamEvents||0)),remainingApi:afterStatus.events||0,remainingStreams:afterStatus.streamEvents||0};}
+ catch(e){this.lastError=e.message;return{ok:false,error:e.message};}
+};
 Store.prototype.status=function(){
  var count=0,oldest=null,newest=null,providers=0,streamEvents=0,streamProviders=0;if(this.ready)try{
   var r=this.run('SELECT COUNT(*),MIN(timestamp),MAX(timestamp) FROM api_calls;',true).trim().split('\t');count=+r[0]||0;oldest=+r[1]||null;newest=+r[2]||null;providers=+(this.run("SELECT COUNT(DISTINCT provider) FROM api_calls WHERE provider<>'';",true).trim())||0;streamEvents=+(this.run('SELECT COUNT(*) FROM stream_events;',true).trim())||0;streamProviders=+(this.run("SELECT COUNT(DISTINCT provider) FROM stream_events WHERE provider<>'';",true).trim())||0;
  }catch(e){this.lastError=e.message;}
- return{ok:this.ready,mode:'SQLITE',file:this.file,retentionDays:this.retentionDays,events:count,providers:providers,streamEvents:streamEvents,streamProviders:streamProviders,oldestTimestamp:oldest,newestTimestamp:newest,lastError:this.lastError||null};
+ var size=0;try{size=fs.existsSync(this.file)?fs.statSync(this.file).size:0;}catch(e){}return{ok:this.ready,mode:'SQLITE',file:this.file,sizeBytes:size,retentionDays:this.retentionDays,events:count,providers:providers,streamEvents:streamEvents,streamProviders:streamProviders,oldestTimestamp:oldest,newestTimestamp:newest,lastError:this.lastError||null};
 };
 module.exports=Store;
