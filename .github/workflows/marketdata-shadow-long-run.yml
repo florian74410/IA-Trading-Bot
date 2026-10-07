@@ -11,6 +11,11 @@ on:
         options:
           - "60"
           - "120"
+  push:
+    branches:
+      - feature/data-policy-orchestrator-v1
+    paths:
+      - ".github/workflows/marketdata-shadow-long-run.yml"
 
 jobs:
   long-shadow:
