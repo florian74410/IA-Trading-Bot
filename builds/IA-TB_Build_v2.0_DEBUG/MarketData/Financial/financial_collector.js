@@ -57,7 +57,7 @@ Collector.prototype._runDefiEnrichment=function(){
   var feeRows=(fees&&fees.protocols||[]).map(function(x){return{name:x.name||x.displayName||'',slug:x.slug||'',category:x.category||'',logo:x.logo||'',fees24hUsd:num(x.total24h),fees7dUsd:num(x.total7d),change1dPct:num(x.change_1d)}}).filter(function(x){return x.fees24hUsd!=null;}).sort(function(a,b){return b.fees24hUsd-a.fees24hUsd});
   e.data={protocols:ps.slice(0,30),categories:groupCategory(protocols||[]).slice(0,12),stablecoinHistory:stablecoinHistory,stablecoinFlowHistory:stablecoinFlowHistory,dexVolumeHistory:dexVolumeHistory,dexFeeProtocols:feeRows.filter(function(x){return /DEX/i.test(String(x.category||''));}).slice(0,30)};
   e.at=Date.now();e.busy=false;e.lastError=errs.join('; ');
-  if(!self.busy)self.refresh(function(){});
+  if(!self.busy)self.refresh({scope:'DEFI'},function(){});
  }
  self.defillama.protocols(function(x,o){if(x)errs.push('PROTOCOLS:'+x.message);else protocols=o;done()});
  self.defillama.stablecoinCharts(function(x,o){if(x)errs.push('STABLECOIN_CHART:'+x.message);else stableCharts=o;done()});
