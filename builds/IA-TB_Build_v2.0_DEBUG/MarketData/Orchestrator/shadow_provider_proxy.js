@@ -28,8 +28,7 @@ function signature(args){
  try{raw=JSON.stringify(canonical(filtered,[]));}catch(e){raw=String(filtered);}
  return crypto.createHash('sha256').update(raw,'utf8').digest('hex');
 }
-module.exports.signature=signature;
-module.exports=function wrap(provider,opt){
+function wrap(provider,opt){
  opt=opt||{};if(!provider||!opt.orchestrator)return provider;
  var id=String(opt.provider||provider.id||'UNKNOWN').toUpperCase(),map=opt.methods||{},orchestrator=opt.orchestrator;
  return new Proxy(provider,{
@@ -74,4 +73,6 @@ module.exports=function wrap(provider,opt){
    };
   }
  });
-};
+}
+wrap.signature=signature;
+module.exports=wrap;
