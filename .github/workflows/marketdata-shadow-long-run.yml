@@ -28,6 +28,10 @@ jobs:
       IATB_INDICATOR_PORT: 8012
       IATB_LIQUIDITY_PORT: 8014
       IATB_CP_REGISTER_LOG: 1
+      IATB_ORCH_CACHE_NATIVE_LITE: 1
+      IATB_ORCH_DEDUP_NATIVE_LITE: 1
+      IATB_ORCH_CACHE_MAX_ENTRIES: 128
+      IATB_ORCH_CACHE_MAX_BYTES: 67108864
       IATB_LONG_RUN_MINUTES: ${{ inputs.minutes }}
       COINGECKO_API_KEY: ${{ secrets.COINGECKO_API_KEY }}
     steps:
@@ -109,7 +113,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: marketdata-shadow-long-${{ inputs.minutes }}m
+          name: marketdata-shadow-long-native-lite-${{ inputs.minutes }}m
           path: |
             builds/IA-TB_Build_v2.0_DEBUG/.runtime/long-shadow/api_telemetry.db
             builds/IA-TB_Build_v2.0_DEBUG/.runtime/long-shadow/long_run_report.json
