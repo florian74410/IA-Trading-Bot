@@ -16,7 +16,7 @@ var after429=b.observe({provider:'UNKNOWN_TEST',dataset:'ANY',cost:1});
 assert.equal(after429.providerCooldown.active,true);
 assert.equal(after429.blockingEligible,false);
 assert.equal(after429.enforceable,false);
-assert.equal(after429.wouldAllow,true);
+assert.equal(after429.wouldAllow,false,'429 cooldown should remain visible as an advisory signal');
 
 b.configure('KNOWN_TEST',{limitModel:'RPM',shortWindowMs:60000,shortLimit:1,costDefault:1});
 var known1=b.observe({provider:'KNOWN_TEST',dataset:'ANY',cost:1});
