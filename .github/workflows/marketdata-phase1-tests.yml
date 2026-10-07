@@ -49,6 +49,9 @@ jobs:
       - name: Financial Async Fast Lane
         run: node builds/IA-TB_Build_v2.0_DEBUG/MarketData/Tests/test_financial_async_fastlane_v1.js
 
+      - name: Financial Family Scheduler
+        run: node builds/IA-TB_Build_v2.0_DEBUG/MarketData/Tests/test_financial_family_scheduler_v1.js
+
       - name: CEX Provider Contract
         run: node builds/IA-TB_Build_v2.0_DEBUG/MarketData/Tests/test_cex_providers_v2.js
 
