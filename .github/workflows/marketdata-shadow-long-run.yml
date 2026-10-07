@@ -1,0 +1,129 @@
+name: MarketData Shadow Long Run
+
+on:
+  workflow_dispatch:
+    inputs:
+      minutes:
+        description: "Observation duration"
+        required: true
+        default: "60"
+        type: choice
+        options:
+          - "60"
+          - "120"
+
+jobs:
+  long-shadow:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    env:
+      ROUTER_PORT: 8021
+      IATB_FIREWALL_PORT: 8017
+      IATB_MARKET_DATA_PORT: 8013
+      IATB_INDICATOR_PORT: 8012
+      IATB_LIQUIDITY_PORT: 8014
+      IATB_CP_REGISTER_LOG: 1
+      IATB_LONG_RUN_MINUTES: ${{ inputs.minutes }}
+      COINGECKO_API_KEY: ${{ secrets.COINGECKO_API_KEY }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node 16.20.2
+        uses: actions/setup-node@v4
+        with:
+          node-version: 16.20.2
+
+      - name: Install SQLite CLI
+        run: sudo apt-get update -qq && sudo apt-get install -y sqlite3
+
+      - name: Prepare long-run paths
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd builds/IA-TB_Build_v2.0_DEBUG
+          mkdir -p .runtime/long-shadow/logs
+          echo "IATB_LONG_RUN_DIR=$PWD/.runtime/long-shadow" >> "$GITHUB_ENV"
+          echo "IATB_API_TELEMETRY_DB=$PWD/.runtime/long-shadow/api_telemetry.db" >> "$GITHUB_ENV"
+          date +%s%3N > .runtime/long-shadow/workload_start_ms.txt
+
+      - name: Start Shadow runtime services
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd builds/IA-TB_Build_v2.0_DEBUG
+
+          node Core/Router/router.js > .runtime/long-shadow/logs/router.log 2>&1 & echo $! > .runtime/long-shadow/router.pid
+          node Core/Firewall/firewall_service.js > .runtime/long-shadow/logs/firewall.log 2>&1 & echo $! > .runtime/long-shadow/firewall.pid
+
+          wait_http () {
+            local url="$1"
+            for i in $(seq 1 60); do
+              if curl -fsS "$url" >/dev/null 2>&1; then return 0; fi
+              sleep 0.5
+            done
+            echo "Service unavailable: $url"
+            return 1
+          }
+
+          wait_http http://127.0.0.1:8021/router-health
+          wait_http http://127.0.0.1:8017/health
+
+          node MarketData/market_data_service.js > .runtime/long-shadow/logs/marketdata.log 2>&1 & echo $! > .runtime/long-shadow/marketdata.pid
+          wait_http http://127.0.0.1:8013/health
+
+          node Indicators/Engine/indicator_service.js > .runtime/long-shadow/logs/indicator.log 2>&1 & echo $! > .runtime/long-shadow/indicator.pid
+          node Liquidity/Engine/liquidity_service.js > .runtime/long-shadow/logs/liquidity.log 2>&1 & echo $! > .runtime/long-shadow/liquidity.pid
+
+          wait_http http://127.0.0.1:8012/health
+          wait_http http://127.0.0.1:8014/health
+          sleep 6
+
+      - name: Verify Shadow mode
+        run: node builds/IA-TB_Build_v2.0_DEBUG/MarketData/Tests/test_shadow_runtime_orchestrator_v1.js
+
+      - name: Run long representative observation
+        run: node builds/IA-TB_Build_v2.0_DEBUG/MarketData/Tests/runtime_shadow_long_observation_v1.js
+
+      - name: Analyze long-run telemetry
+        shell: bash
+        run: |
+          cd builds/IA-TB_Build_v2.0_DEBUG
+          cp .runtime/long-shadow/workload_start_ms.txt .runtime/workload_start_ms.txt 2>/dev/null || true
+          mkdir -p .runtime/workload
+          cp .runtime/long-shadow/workload_start_ms.txt .runtime/workload/workload_start_ms.txt
+          cp .runtime/long-shadow/api_telemetry.db .runtime/workload/api_telemetry.db
+          cp .runtime/long-shadow/long_run_report.json .runtime/workload/workload_report.json
+          IATB_WORKLOAD_DIR="$PWD/.runtime/workload" IATB_API_TELEMETRY_DB="$PWD/.runtime/workload/api_telemetry.db"             node MarketData/Tests/analyze_shadow_workload_telemetry_v1.js
+          cp .runtime/workload/telemetry_summary.json .runtime/long-shadow/telemetry_summary.json
+
+      - name: Upload long-run telemetry
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: marketdata-shadow-long-${{ inputs.minutes }}m
+          path: |
+            builds/IA-TB_Build_v2.0_DEBUG/.runtime/long-shadow/api_telemetry.db
+            builds/IA-TB_Build_v2.0_DEBUG/.runtime/long-shadow/long_run_report.json
+            builds/IA-TB_Build_v2.0_DEBUG/.runtime/long-shadow/telemetry_summary.json
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Runtime logs on failure
+        if: failure()
+        shell: bash
+        run: |
+          cd builds/IA-TB_Build_v2.0_DEBUG
+          for f in .runtime/long-shadow/logs/*.log; do
+            echo "===== $f ====="
+            tail -n 260 "$f" || true
+          done
+
+      - name: Stop runtime services
+        if: always()
+        shell: bash
+        run: |
+          cd builds/IA-TB_Build_v2.0_DEBUG
+          for f in .runtime/long-shadow/*.pid; do
+            [ -f "$f" ] && kill "$(cat "$f")" >/dev/null 2>&1 || true
+          done
