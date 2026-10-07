@@ -43,7 +43,7 @@ Unknown limits must remain UNKNOWN. They must never be invented to make a Passpo
 | Hyperliquid | READY | WEIGHTED | DOCUMENTED |
 | Kraken | PARTIAL | SAFE_PACE | SAFE_RECOMMENDATION |
 | OKX | PARTIAL | MIXED_ENDPOINT | DOCUMENTED + UNKNOWN |
-| Bybit | PARTIAL | MULTI_SCOPE_DYNAMIC | DOCUMENTED + OBSERVED_HEADER |
+| Bybit | READY | MULTI_SCOPE_DYNAMIC | DOCUMENTED + OBSERVED_HEADER |
 
 READY means the Passport is sufficiently described for the current Shadow architecture. It does not mean quota enforcement is enabled.
 
@@ -62,3 +62,11 @@ A new provider is not complete until:
 9. ROADMAP is updated.
 
 The Orchestrator stays provider-agnostic. Specialization belongs in Passport/Policy/Profile configuration.
+
+## Non-blocking UNKNOWN rule
+
+A quota with no reliable hard limit must use `OBSERVE_ONLY_NON_BLOCKING`.
+
+This means telemetry, 429/Retry-After detection and cache/dedup continue to work, but the Orchestrator must not turn an UNKNOWN budget into a hard application blocker. Kraken safe pacing is also advisory until a verified applicable hard limit is available.
+
+Documented/scoped providers can remain eligible for future enforcement, but current project policy still keeps Budget/Priority/Cooldown enforcement disabled while Shadow validation continues.
