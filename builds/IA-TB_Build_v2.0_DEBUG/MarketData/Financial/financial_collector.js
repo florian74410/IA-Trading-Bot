@@ -103,10 +103,11 @@ Collector.prototype.refresh=function(opt,cb){
    if(!quality.ok){self.lastError='FINANCIAL_QUALITY_REJECT:'+quality.errors.map(function(x){return x.code}).join(',');return complete(new Error(self.lastError));}
    self.lastRefreshAt=now;self.lastError=errors.join('; ');self.store.set(snap);complete(null,snap);
   }
-  var gates=0;function gateDone(){if(--gates===0)finish();}
-  if(wantCefi&&cefi){gates++;self._gate('COINGECKO',cefi,function(e){if(e){errors.push('COINGECKO_FIREWALL:'+e.message);cefi=prev&&prev.cefi||null;}gateDone();});}
-  if(wantDefi&&defi){gates++;self._gate('DEFILLAMA',defi,function(e){if(e){errors.push('DEFILLAMA_FIREWALL:'+e.message);defi=prev&&prev.defi||null;}gateDone();});}
-  if(!gates)finish();
+  var gateCefi=!!(wantCefi&&cefi),gateDefi=!!(wantDefi&&defi),gates=(gateCefi?1:0)+(gateDefi?1:0);
+  function gateDone(){if(--gates===0)finish();}
+  if(!gates)return finish();
+  if(gateCefi)self._gate('COINGECKO',cefi,function(e){if(e){errors.push('COINGECKO_FIREWALL:'+e.message);cefi=prev&&prev.cefi||null;}gateDone();});
+  if(gateDefi)self._gate('DEFILLAMA',defi,function(e){if(e){errors.push('DEFILLAMA_FIREWALL:'+e.message);defi=prev&&prev.defi||null;}gateDone();});
  }
  if(wantCefi)self._cefi(function(e,o){if(e){errors.push('COINGECKO:'+e.message);cefi=prev&&prev.cefi||null;}else cefi=o;done();});
  if(wantDefi)self._defi(function(e,o){if(e){errors.push('DEFILLAMA:'+e.message);defi=prev&&prev.defi||null;}else defi=o;done();});
