@@ -50,6 +50,8 @@ jobs:
           mkdir -p .runtime/long-shadow/logs
           echo "IATB_LONG_RUN_DIR=$PWD/.runtime/long-shadow" >> "$GITHUB_ENV"
           echo "IATB_API_TELEMETRY_DB=$PWD/.runtime/long-shadow/api_telemetry.db" >> "$GITHUB_ENV"
+          echo "IATB_LONG_RUN_MINUTES=${IATB_LONG_RUN_MINUTES:-60}" >> "$GITHUB_ENV"
+          node -e "var p=require('./Core/Shared/paths'); p.ensureAppRuntimeDirs(); p.ensureInternalServiceRuntimeKey(); p.ensureCommunicationProtocolRuntimeKey(); console.log('Runtime security initialized');"
           date +%s%3N > .runtime/long-shadow/workload_start_ms.txt
 
       - name: Start Shadow runtime services
@@ -59,7 +61,6 @@ jobs:
           cd builds/IA-TB_Build_v2.0_DEBUG
 
           node Core/Router/router.js > .runtime/long-shadow/logs/router.log 2>&1 & echo $! > .runtime/long-shadow/router.pid
-          node Core/Firewall/firewall_service.js > .runtime/long-shadow/logs/firewall.log 2>&1 & echo $! > .runtime/long-shadow/firewall.pid
 
           wait_http () {
             local url="$1"
@@ -72,6 +73,8 @@ jobs:
           }
 
           wait_http http://127.0.0.1:8021/router-health
+
+          node Core/Firewall/firewall_service.js > .runtime/long-shadow/logs/firewall.log 2>&1 & echo $! > .runtime/long-shadow/firewall.pid
           wait_http http://127.0.0.1:8017/health
 
           node MarketData/market_data_service.js > .runtime/long-shadow/logs/marketdata.log 2>&1 & echo $! > .runtime/long-shadow/marketdata.pid
