@@ -39,12 +39,8 @@ function wrap(provider,opt){
     for(var i=args.length-1;i>=0;i--){if(typeof args[i]==='function'){cbIndex=i;break;}}
     var spec=typeof map[prop]==='function'?map[prop](args):map[prop],dataset=String(spec&&spec.dataset||prop).toUpperCase(),cost=spec&&spec.cost||1;
     var ev=orchestrator.observeStart({provider:id,dataset:dataset,signature:signature(args),cost:cost}),exec=orchestrator.execution||{},broker=orchestrator.broker;
-    if(cbIndex>=0&&exec.cacheFirst){
-     var cached=broker.cacheGet(ev.broker.key,ev.policy.cacheTtlMs);
-     if(cached){
-      return process.nextTick(function(){orchestrator.observeEnd(ev,null);args[cbIndex].apply(self,cached);});
-     }
-    }
+    /* Trust boundary: raw provider responses are never served from cache here.
+       Cache admission belongs after Data Firewall validation in collectors/services. */
     if(cbIndex>=0&&exec.dedup&&ev.broker.inflightDuplicate){
      var original=args[cbIndex];
      broker.join(ev.broker.key,function(resultArgs){
@@ -56,7 +52,6 @@ function wrap(provider,opt){
      var cb=args[cbIndex];
      args[cbIndex]=function(err){
       var cbArgs=Array.prototype.slice.call(arguments);
-      if(!err&&exec.cacheFirst)broker.cachePut(ev.broker.key,cbArgs,ev.policy.cacheTtlMs);
       orchestrator.observeEnd(ev,err);
       if(exec.dedup)broker.resolve(ev.broker.key,cbArgs);
       return cb.apply(this,cbArgs);
