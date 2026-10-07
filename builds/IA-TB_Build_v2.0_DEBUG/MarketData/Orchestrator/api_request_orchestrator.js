@@ -8,7 +8,7 @@ var Telemetry=require('./api_telemetry');
 function Orchestrator(o){
  o=o||{};
  this.mode=String(o.mode||'SHADOW').toUpperCase();
- this.execution={cacheFirst:o.cacheFirst===true,dedup:o.dedup===true};
+ this.execution={cacheFirst:o.cacheFirst===true,dedup:o.dedup===true,providerRawCache:false,cacheBoundary:'POST_FIREWALL_ONLY'};
  this.policy=o.policy||new Policy();
  this.broker=o.broker||new Broker({mode:this.mode,maxCacheEntries:o.maxCacheEntries,maxCacheBytes:o.maxCacheBytes});
  this.budget=o.budget||new Budget({mode:this.mode});
