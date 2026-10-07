@@ -22,7 +22,7 @@ var b=Limits.resolve(new URL('https://api.bybit.com/v5/market/orderbook?category
 Bridge.observe({provider:'BYBIT',dataset:b.dataset,cost:1,scopes:b.scopes});
 Bridge.feedback('BYBIT',{scopes:b.scopes,headers:{'x-bapi-limit':'25','x-bapi-limit-status':'24','x-bapi-limit-reset-timestamp':'2000000000000'},statusCode:200});
 var s=orch.status();
-assert.equal(s.version,'1.2');
+assert.equal(s.version,'1.3');
 assert.equal(s.budget.providers.BYBIT.limitScopes.BYBIT_ORDERBOOK.limit,25);
 assert.equal(s.budget.providers.BYBIT.limitScopes.BYBIT_ORDERBOOK.source,'OBSERVED_HEADER');
 
