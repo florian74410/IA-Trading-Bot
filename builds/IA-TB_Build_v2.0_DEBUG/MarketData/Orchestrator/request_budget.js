@@ -35,8 +35,11 @@ Budget.prototype.configure=function(provider,cfg){
  var shortLimit=finitePositive(cfg.shortLimit),longLimit=finitePositive(cfg.longLimit),scopes=Object.create(null);
  Object.keys(cfg.weightedScopes||{}).forEach(function(id){var x=Object.assign({kind:'WEIGHTED'},cfg.weightedScopes[id]);scopes[upper(id)]=makeScope(id,x);});
  Object.keys(cfg.limitScopes||{}).forEach(function(id){scopes[upper(id)]=makeScope(id,cfg.limitScopes[id]);});
+ var limitModel=upper(cfg.limitModel,(Object.keys(scopes).length?'SCOPED':(shortLimit||longLimit)?'KNOWN':'UNKNOWN'));
+ var enforcementPolicy=upper(cfg.enforcementPolicy,limitModel==='UNKNOWN'?'OBSERVE_ONLY_NON_BLOCKING':'SHADOW_ELIGIBLE');
  this.providers[provider]={
-  limitModel:upper(cfg.limitModel,(Object.keys(scopes).length?'SCOPED':(shortLimit||longLimit)?'KNOWN':'UNKNOWN')),
+  limitModel:limitModel,
+  enforcementPolicy:enforcementPolicy,
   shortWindowMs:Math.max(1000,+cfg.shortWindowMs||60000),
   shortLimit:shortLimit,
   longWindowMs:Math.max(60000,+cfg.longWindowMs||2592000000),
@@ -77,21 +80,25 @@ Budget.prototype.observe=function(req){
   var paceAllow=s.minIntervalMs>0?(s.lastObservedAt===0||now-s.lastObservedAt>=s.minIntervalMs):null;
   var cooldownActive=(p.cooldownUntil>now)||(s.cooldownUntil>now);
   var d={known:s.limit!=null||s.minIntervalMs>0,scope:s.id,kind:s.kind,unit:s.unit,source:s.source,cost:cost,used:used,limit:s.limit,reserve:s.reserve,usable:usable,wouldAllowWindow:windowAllow,minIntervalMs:s.minIntervalMs,lastObservedAt:s.lastObservedAt||null,wouldAllowPace:paceAllow,cooldownActive:cooldownActive,cooldownUntil:Math.max(p.cooldownUntil||0,s.cooldownUntil||0)||null,observedLimit:s.observedLimit,observedRemaining:s.observedRemaining,observedResetAt:s.observedResetAt};
+  d.blockingEligible=s.kind!=='OBSERVE_ONLY'&&d.known;
   d.wouldAllow=(windowAllow!==false)&&(paceAllow!==false)&&!cooldownActive;
   scopeDecisions.push(d);
   if(!weighted&&s.kind==='WEIGHTED')weighted=d;
   s.events.push({at:now,cost:cost});s.lastObservedAt=now;
  },this);
  var decision={
-  mode:this.mode,provider:upper(req.provider),dataset:req.dataset,priority:req.priority||'P2',cost:cost,limitModel:p.limitModel,
+  mode:this.mode,provider:upper(req.provider),dataset:req.dataset,priority:req.priority||'P2',cost:cost,limitModel:p.limitModel,enforcementPolicy:p.enforcementPolicy,
   scope:requested.length===1?upper(requested[0].id||requested[0].scope):null,
   short:{known:shortKnown,used:shortUsed,limit:p.shortLimit,wouldAllow:shortKnown?shortUsed+cost<=p.shortLimit:null},
   long:{known:longKnown,used:longUsed,limit:p.longLimit,reserve:p.reserve,usable:usableLong,wouldAllow:longKnown?longUsed+cost<=usableLong:null},
   scopes:scopeDecisions,weighted:weighted,
   providerCooldown:{active:p.cooldownUntil>now,until:p.cooldownUntil||null,reason:p.cooldownReason||''}
  };
+ var providerObserveOnly=p.enforcementPolicy==='OBSERVE_ONLY_NON_BLOCKING'||p.limitModel==='UNKNOWN';
  decision.wouldAllow=(decision.short.wouldAllow!==false)&&(decision.long.wouldAllow!==false)&&scopeDecisions.every(function(x){return x.wouldAllow!==false;})&&!decision.providerCooldown.active;
- decision.enforceable=shortKnown||longKnown||scopeDecisions.some(function(x){return x.known||x.cooldownActive;})||decision.providerCooldown.active;
+ decision.blockingEligible=!providerObserveOnly&&(shortKnown||longKnown||scopeDecisions.some(function(x){return x.blockingEligible;})||decision.providerCooldown.active);
+ decision.enforceable=decision.blockingEligible;
+ if(providerObserveOnly){decision.wouldAllow=true;}
  p.short.push({at:now,cost:cost});p.long.push({at:now,cost:cost});
  this.events.push(Object.assign({at:now},decision));if(this.events.length>this.maxEvents)this.events.shift();
  return decision;
@@ -118,7 +125,7 @@ Budget.prototype.status=function(){
   var p=this.providers[id];p.short=p.short.filter(function(x){return now-x.at<p.shortWindowMs;});p.long=p.long.filter(function(x){return now-x.at<p.longWindowMs;});
   var scopes={};Object.keys(p.limitScopes).forEach(function(k){var s=p.limitScopes[k];s.events=s.events.filter(function(x){return now-x.at<s.windowMs;});scopes[k]={kind:s.kind,windowMs:s.windowMs,used:s.events.reduce(function(z,x){return z+x.cost;},0),limit:s.limit,reserve:s.reserve,minIntervalMs:s.minIntervalMs,unit:s.unit,source:s.source,lastObservedAt:s.lastObservedAt||null,cooldownUntil:s.cooldownUntil||null,observedLimit:s.observedLimit,observedRemaining:s.observedRemaining,observedResetAt:s.observedResetAt};});
   var weighted={};Object.keys(scopes).forEach(function(k){if(scopes[k].kind==='WEIGHTED')weighted[k]=scopes[k];});
-  out.providers[id]={limitModel:p.limitModel,shortUsed:p.short.reduce(function(z,x){return z+x.cost;},0),shortLimit:p.shortLimit,longUsed:p.long.reduce(function(z,x){return z+x.cost;},0),longLimit:p.longLimit,reserve:p.reserve,costDefault:p.costDefault,providerCooldownUntil:p.cooldownUntil||null,providerCooldownReason:p.cooldownReason||'',limitScopes:scopes,weightedScopes:weighted};
+  out.providers[id]={limitModel:p.limitModel,enforcementPolicy:p.enforcementPolicy,shortUsed:p.short.reduce(function(z,x){return z+x.cost;},0),shortLimit:p.shortLimit,longUsed:p.long.reduce(function(z,x){return z+x.cost;},0),longLimit:p.longLimit,reserve:p.reserve,costDefault:p.costDefault,providerCooldownUntil:p.cooldownUntil||null,providerCooldownReason:p.cooldownReason||'',limitScopes:scopes,weightedScopes:weighted};
  },this);
  return out;
 };
