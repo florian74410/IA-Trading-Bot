@@ -98,7 +98,6 @@ Budget.prototype.observe=function(req){
  decision.wouldAllow=(decision.short.wouldAllow!==false)&&(decision.long.wouldAllow!==false)&&scopeDecisions.every(function(x){return x.wouldAllow!==false;})&&!decision.providerCooldown.active;
  decision.blockingEligible=!providerObserveOnly&&(shortKnown||longKnown||scopeDecisions.some(function(x){return x.blockingEligible;})||decision.providerCooldown.active);
  decision.enforceable=decision.blockingEligible;
- if(providerObserveOnly){decision.wouldAllow=true;}
  p.short.push({at:now,cost:cost});p.long.push({at:now,cost:cost});
  this.events.push(Object.assign({at:now},decision));if(this.events.length>this.maxEvents)this.events.shift();
  return decision;
