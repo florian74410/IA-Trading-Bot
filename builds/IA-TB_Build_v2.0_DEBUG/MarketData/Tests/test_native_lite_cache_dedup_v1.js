@@ -9,22 +9,22 @@ var calls=0;
 var raw={getValue:function(x,cb){calls++;setTimeout(function(){cb(null,{x:x,call:calls});},40);}};
 var provider=wrap(raw,{provider:'TEST',orchestrator:o,methods:{getValue:{dataset:'VALUE'}}});
 
-provider.getValue('A',function(e,a){
+provider.getValue('A',function(e){
  assert.ifError(e);assert.equal(calls,1);
- provider.getValue('A',function(e2,b){
-  assert.ifError(e2);assert.equal(calls,1,'second sequential call must be served from cache');
-  assert.deepEqual(b,a);
+ provider.getValue('A',function(e2){
+  assert.ifError(e2);
+  assert.equal(calls,2,'sequential raw provider calls must not be served from pre-firewall cache');
 
   var done=0,vals=[];
   function finish(err,v){assert.ifError(err);vals.push(v);if(++done<2)return;
-   assert.equal(calls,2,'two concurrent calls must collapse to one provider call');
+   assert.equal(calls,3,'two concurrent calls must still collapse to one provider call');
    assert.deepEqual(vals[0],vals[1]);
    var st=o.status();
-   assert(st.execution.cacheFirst&&st.execution.dedup);
-   assert(st.broker.stats.cacheHitsServed>=1);
+   assert.equal(st.execution.providerRawCache,false);
+   assert.equal(st.execution.cacheBoundary,'POST_FIREWALL_ONLY');
+   assert.equal(st.broker.stats.cacheHitsServed,0);
    assert(st.broker.stats.dedupServed>=1);
-   assert.equal(st.execution.budgetEnforcement,false);
-   console.log('PASS Native-Lite Cache First + in-flight dedup');
+   console.log('PASS Native-Lite dedup + post-firewall cache boundary');
   }
   provider.getValue('B',finish);
   provider.getValue('B',finish);
