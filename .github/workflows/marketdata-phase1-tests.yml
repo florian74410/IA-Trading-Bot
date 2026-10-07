@@ -31,6 +31,9 @@ jobs:
       - name: Provider Passport Registry
         run: node builds/IA-TB_Build_v2.0_DEBUG/MarketData/Tests/test_provider_passports_v1.js
 
+      - name: UNKNOWN Quota Non-Blocking
+        run: node builds/IA-TB_Build_v2.0_DEBUG/MarketData/Tests/test_unknown_quota_nonblocking_v1.js
+
       - name: Phase 2 Weighted Budget
         run: node builds/IA-TB_Build_v2.0_DEBUG/MarketData/Tests/test_phase2_weighted_budget_v1.js
 
