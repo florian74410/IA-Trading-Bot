@@ -28,6 +28,9 @@ jobs:
       - name: Phase 1 Provider Profiles
         run: node builds/IA-TB_Build_v2.0_DEBUG/MarketData/Tests/test_phase1_provider_profiles_v1.js
 
+      - name: Provider Passport Registry
+        run: node builds/IA-TB_Build_v2.0_DEBUG/MarketData/Tests/test_provider_passports_v1.js
+
       - name: Phase 2 Weighted Budget
         run: node builds/IA-TB_Build_v2.0_DEBUG/MarketData/Tests/test_phase2_weighted_budget_v1.js
 
