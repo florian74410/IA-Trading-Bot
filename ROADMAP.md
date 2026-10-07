@@ -195,6 +195,15 @@ Le packaging v1.8 est maintenant reproductible : la version est produite depuis 
 ---
 
 
+## Market Data / Data Trust Boundary
+
+- [x] Auditer le chemin réel Provider -> Firewall -> Cache/Store.
+- [x] Interdire le cache des réponses Provider brutes dans le proxy Orchestrator.
+- [x] Conserver l'in-flight dedup avant Provider sans persistance de donnée brute.
+- [x] Imposer `Data Firewall -> cache/stockage` comme frontière de confiance.
+- [x] Ajouter un contrat CI : une donnée rejetée par le Firewall ne doit jamais entrer en cache ni être écrite en stockage.
+- [ ] Toute future implémentation Cache First partagée devra consommer uniquement de la donnée déjà validée par le Firewall.
+
 ## Market Data / Provider Passport
 
 - [x] Créer un **Provider Passport v1** commun à tous les providers Market Data actuels.
