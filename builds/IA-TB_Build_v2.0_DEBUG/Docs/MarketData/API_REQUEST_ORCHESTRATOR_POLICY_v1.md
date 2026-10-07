@@ -7,7 +7,7 @@ Branch: feature/data-policy-orchestrator-v1
 
 API REQUEST ORCHESTRATOR
 - Request Broker
-  - Cache First (G-lite)
+  - Cache First (G-lite, post-firewall trust boundary only)
   - Request Deduplication (H)
 - Request Budget
   - Short-term Budget (D)
@@ -199,3 +199,18 @@ Current first stream integrations:
 Each worker periodically reports cumulative message count, connection count, reconnect count, subscriptions, last message time, last heartbeat time and latest error state.
 
 No stream Budget/Policy enforcement is enabled yet. Stream-specific provider limits will be configured later, after provider retention decisions are finalized.
+
+## Data trust boundary
+
+Authoritative order:
+
+`Market Data Collector -> Orchestrator/Policy/Passport -> external Provider -> Data Firewall -> normalization/cache/storage -> Router -> consumers`
+
+Rules:
+- in-flight deduplication may occur before the provider call because it does not persist provider data;
+- raw provider responses must never be admitted to a persistent/reusable cache before Data Firewall validation;
+- cache/store admission is post-firewall only;
+- a Firewall REJECT must produce zero cache admission and zero storage write;
+- the former raw Provider Proxy Cache First path is disabled. Existing domain caches (candles, liquidity, microstructure, financial snapshots and validated metadata) remain after Firewall validation.
+
+This rule takes priority over optimization. A future shared Cache First implementation must operate on firewall-validated data, not on raw provider payloads.
