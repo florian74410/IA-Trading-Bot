@@ -194,6 +194,18 @@ Le packaging v1.8 est maintenant reproductible : la version est produite depuis 
 
 ---
 
+
+## Market Data / Provider Passport
+
+- [x] Créer un **Provider Passport v1** commun à tous les providers Market Data actuels.
+- [x] Classer chaque provider en `READY` / `PARTIAL` / `UNKNOWN` selon la qualité réelle de son profil.
+- [x] Conserver explicitement les limites inconnues en `UNKNOWN` au lieu d'inventer un quota.
+- [x] Ajouter un contrat CI vérifiant qu'aucun provider suivi par l'Orchestrator ne manque de Passport.
+- [ ] Compléter progressivement les Passports partiels : CoinGecko anonyme, DeFiLlama, GMX, Kraken, OKX Open Interest, Bybit endpoints dynamiques.
+- [ ] Ne considérer un futur provider comme **intégré** qu'après : connexion API, Passport, Policy/TTL, priorité/criticalité, quota/provenance, erreurs spécifiques, télémétrie, tests et mise à jour de la ROADMAP.
+
+> Règle de développement : **« Ajouter l'API » n'est pas égal à « Provider intégré ».** Le Passport fait partie de la Definition of Done du provider.
+
 # 🔜 Après v1.8.2 — travaux futurs
 
 Les éléments ci-dessous ne font pas partie de la v1.8.2 finalisée. Ils constituent la suite de la feuille de route.
