@@ -237,14 +237,16 @@ Initial preference chains:
 - Global market data: CoinGecko only
 - Open Interest aggregate contributors: Binance + OKX + Bybit + Hyperliquid + GMX
 
-## Reference fiat and stable assets
+## Currency Registry
 
-IA-TB separates reference currency metadata from live valuation.
+IA-TB uses one Currency Registry as the source of truth for reference FIAT metadata and Stable Asset -> FIAT relationships.
 
-Reference Fiat Registry v1 contains: USD, EUR, GBP, JPY, CNY, CHF and CAD.
+FIAT references: USD, EUR, GBP, JPY, CNY, CHF and CAD.
 
-Stable Asset Registry v1 maps a stable asset to one of those reference currencies. Initial mappings are USDT -> USD, USDC -> USD, DAI -> USD and EURC -> EUR.
+Stable Asset mappings initially include USDT -> USD, USDC -> USD, DAI -> USD and EURC -> EUR. A single resolution can therefore answer both `USD` and `USDT` without consulting two registries.
 
-The registry never assumes that a stable asset is worth exactly one unit of its peg currency. Live Market Data supplies the observed conversion price. Normalization keeps a receipt containing the source asset, peg currency, source amount, observed USD price and normalized USD amount.
+The Currency Registry stores identity and reference metadata only. It never assumes that a Stable Asset is worth exactly one unit of its reference FIAT and it does not persist live FX/peg prices. Live Market Data supplies the observed conversion price.
+
+Normalization keeps a receipt containing the source asset, source amount/unit, reference FIAT, observed USD price and normalized USD amount.
 
 Open Interest aggregation will consume this metadata later so multiple collateral/quote representations can be normalized to USD while preserving provenance.
