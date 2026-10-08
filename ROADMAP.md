@@ -207,15 +207,16 @@ Le packaging v1.8 est maintenant reproductible : la version est produite depuis 
 - [x] Refuser tout fallback ambigu sur le dataset historique générique `ORDERBOOK`.
 - [ ] Distinguer explicitement `SPOT_ORDERBOOK` et `PERP_ORDERBOOK` dans les anciens chemins qui utilisent encore `ORDERBOOK` avant activation Native.
 
-## Market Data / Reference Fiat & Stable Asset Registry
+## Market Data / Currency Registry
 
-- [x] Créer un **Reference Fiat Registry v1** pour les devises : `USD`, `EUR`, `GBP`, `JPY`, `CNY`, `CHF`, `CAD`.
-- [x] Séparer la devise de référence du Stable Asset afin de ne jamais confondre identité, peg et valeur temps réel.
-- [x] Créer un **Stable Asset Registry v1** extensible avec rattachement obligatoire à une devise de référence connue.
-- [x] Ajouter les premiers mappings utiles : `USDT -> USD`, `USDC -> USD`, `DAI -> USD`, `EURC -> EUR`.
-- [x] Préserver un reçu de normalisation avec actif source, devise de peg, quantité source, prix USD observé et valeur USD normalisée.
-- [x] Ajouter un contrat CI dédié.
-- [ ] Brancher le Stable Asset Registry à la normalisation Open Interest afin de conserver le détail d'origine de chaque contribution avant agrégation USD.
+- [x] Fusionner la devise FIAT de référence et le mapping Stable Asset dans un **Currency Registry v1** unique.
+- [x] Référencer les devises : `USD`, `EUR`, `GBP`, `JPY`, `CNY`, `CHF`, `CAD`.
+- [x] Permettre une résolution unique : FIAT direct ou Stable Asset -> FIAT de référence.
+- [x] Conserver les premiers mappings : `USDT -> USD`, `USDC -> USD`, `DAI -> USD`, `EURC -> EUR`.
+- [x] Conserver la zone monétaire et les métadonnées FIAT sans stocker de taux de change temps réel dans le Registry.
+- [x] Préserver un reçu de normalisation avec actif source, FIAT de référence, quantité source, prix USD observé et valeur USD normalisée.
+- [x] Ajouter un contrat CI dédié au Currency Registry.
+- [ ] Brancher le Currency Registry à la normalisation Open Interest afin de conserver le détail d'origine de chaque contribution avant agrégation USD.
 - [ ] Ajouter d'autres Stable Assets uniquement lorsqu'ils sont réellement supportés/identifiés ; ne jamais inventer un mapping par défaut.
 
 ## Market Data / Data Trust Boundary
