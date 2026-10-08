@@ -94,7 +94,7 @@ P.prototype.openInterest=function(symbol,source,cb){
 P.prototype.aggregateOpenInterest=function(symbol,sources,cb){
  var self=this,list=Array.isArray(sources)&&sources.length?sources:['BINANCE_FUTURES','OKX','BYBIT','HYPERLIQUID','GMX'],left=list.length,rows=[],missing=[];
  if(!left)return cb(null,{ok:true,symbol:symbol,venues:[],coverage:{requested:[],received:[],missing:[]}});
- list.forEach(function(src){self.openInterest(symbol,src,function(e,o){if(e)missing.push({source:src,error:e.message});else if(o&&(isFinite(+o.openInterestNotionalUsd)||isFinite(+o.notionalSourceValue)))rows.push(o);else missing.push({source:src,error:'OI_NOTIONAL_UNAVAILABLE'});if(--left)return;cb(null,{ok:true,symbol:baseCoin(symbol)+'USD',venues:rows,coverage:{requested:list.slice(),received:rows.map(function(x){return x.source;}),missing:missing}});});});
+ list.forEach(function(src){self.openInterest(symbol,src,function(e,o){if(e)missing.push({source:src,error:e.message});else if(o&&((o.openInterestNotionalUsd!=null&&isFinite(+o.openInterestNotionalUsd))||(o.notionalSourceValue!=null&&isFinite(+o.notionalSourceValue))))rows.push(o);else missing.push({source:src,error:'OI_NOTIONAL_UNAVAILABLE'});if(--left)return;cb(null,{ok:true,symbol:baseCoin(symbol)+'USD',venues:rows,coverage:{requested:list.slice(),received:rows.map(function(x){return x.source;}),missing:missing}});});});
 };
 P.prototype.getSnapshot=function(symbol,source,depth,cb){
  var self=this;source=String(source||'AUTO').toUpperCase();
