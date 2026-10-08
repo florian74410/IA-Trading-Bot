@@ -20,9 +20,20 @@ assert.equal(o.scopes[0].id,'OKX_CANDLES');
 var od=null;for(var i=0;i<41;i++)od=budget.observe({provider:'OKX',dataset:o.dataset,cost:1,scopes:o.scopes});
 assert.equal(od.scopes[0].limit,40);assert.equal(od.wouldAllow,false,'41st OKX candles call inside 2s window should exceed Shadow limit');
 
+var krakenBook=resolve('https://api.kraken.com/0/public/Depth?pair=XBTUSD&count=20','KRAKEN');
+assert.equal(krakenBook.dataset,'SPOT_ORDERBOOK');
+
+var okxSpotBook=resolve('https://www.okx.com/api/v5/market/books?instId=BTC-USDT&sz=20','OKX');
+assert.equal(okxSpotBook.dataset,'SPOT_ORDERBOOK');
+var okxPerpBook=resolve('https://www.okx.com/api/v5/market/books?instId=BTC-USDT-SWAP&sz=20','OKX');
+assert.equal(okxPerpBook.dataset,'PERP_ORDERBOOK');
+
 var oi=resolve('https://www.okx.com/api/v5/public/open-interest?instType=SWAP&instId=BTC-USDT-SWAP','OKX');
 var oid=budget.observe({provider:'OKX',dataset:oi.dataset,cost:1,scopes:oi.scopes});
 assert.equal(oid.scopes[0].kind,'OBSERVE_ONLY');assert.equal(oid.scopes[0].limit,null);assert.equal(oid.wouldAllow,true);
+
+var bybitBook=resolve('https://api.bybit.com/v5/market/orderbook?category=linear&symbol=BTCUSDT&limit=20','BYBIT');
+assert.equal(bybitBook.dataset,'PERP_ORDERBOOK');
 
 var b=resolve('https://api.bybit.com/v5/market/kline?category=linear&symbol=BTCUSDT&interval=60&limit=500','BYBIT');
 assert.equal(b.scopes.length,2);assert.equal(b.scopes[0].id,'BYBIT_GLOBAL_IP');assert.equal(b.scopes[1].id,'BYBIT_KLINE');
@@ -46,9 +57,12 @@ var bd4=budget.observe({provider:'BYBIT',dataset:b.dataset,cost:1,scopes:b.scope
 assert.equal(bd4.providerCooldown.active,true);assert.equal(bd4.wouldAllow,false,'explicit Bybit rate-limit signal must simulate cooldown');
 
 var policy=ApplyPhase3(new Policy());
-assert.equal(policy.resolve('KRAKEN','ORDERBOOK').criticality,'CRITICAL');
+assert.equal(policy.resolve('KRAKEN','SPOT_ORDERBOOK').criticality,'CRITICAL');
 assert.equal(policy.resolve('OKX','SPOT_CANDLES').priority,'P1');
-assert.equal(policy.resolve('BYBIT','ORDERBOOK').priority,'P0');
+assert.equal(policy.resolve('OKX','SPOT_ORDERBOOK').priority,'P0');
+assert.equal(policy.resolve('OKX','PERP_ORDERBOOK').priority,'P0');
+assert.equal(policy.resolve('BYBIT','PERP_ORDERBOOK').priority,'P0');
+assert.equal(policy.snapshot().rules.filter(function(x){return x.dataset==='ORDERBOOK';}).length,0,'generic ORDERBOOK policy must not exist');
 assert.equal(profiles.BINANCE.limitModel,'WEIGHTED','Phase 2 Binance profile must be preserved');
 assert.equal(profiles.HYPERLIQUID.limitModel,'WEIGHTED','Phase 2 Hyperliquid profile must be preserved');
 
