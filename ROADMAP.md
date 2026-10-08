@@ -205,7 +205,7 @@ Le packaging v1.8 est maintenant reproductible : la version est produite depuis 
 - [ ] Mesurer les décisions Shadow sur un workload représentatif avant toute activation Native.
 - [x] Ajouter les alternates ordonnés par dataset sans scoring automatique, avec rang 1 = source préférée, saut des providers indisponibles et état terminal `NO_PROVIDER_AVAILABLE`.
 - [x] Refuser tout fallback ambigu sur le dataset historique générique `ORDERBOOK`.
-- [ ] Distinguer explicitement `SPOT_ORDERBOOK` et `PERP_ORDERBOOK` dans les anciens chemins qui utilisent encore `ORDERBOOK` avant activation Native.
+- [x] Distinguer explicitement `SPOT_ORDERBOOK` et `PERP_ORDERBOOK` dans les anciens chemins qui utilisaient `ORDERBOOK`, y compris Policy et profils de requêtes, avec contrat CI empêchant le retour d'un dataset générique.
 
 ## Market Data / Currency Registry
 
