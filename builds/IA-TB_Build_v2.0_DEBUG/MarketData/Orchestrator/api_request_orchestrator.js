@@ -48,6 +48,6 @@ Orchestrator.prototype.feedbackTransport=function(provider,feedback){
  this.events.push(e);if(this.events.length>this.maxEvents)this.events.shift();
  return e;
 };
-Orchestrator.prototype.status=function(){return{ok:true,version:'1.5',mode:this.mode,shadow:this.mode==='SHADOW',execution:{cacheFirst:this.execution.cacheFirst,dedup:this.execution.dedup,providerRawCache:false,cacheBoundary:'POST_FIREWALL_ONLY',budgetEnforcement:false,priorityEnforcement:false,cooldownEnforcement:false,decisionEnforcement:false},policy:this.policy.snapshot(),broker:this.broker.status(),budget:this.budget.status(),recentEvents:this.events.slice(-25)};};
+Orchestrator.prototype.status=function(){return{ok:true,version:'1.6',mode:this.mode,shadow:this.mode==='SHADOW',execution:{cacheFirst:this.execution.cacheFirst,dedup:this.execution.dedup,providerRawCache:false,cacheBoundary:'POST_FIREWALL_ONLY',budgetEnforcement:false,priorityEnforcement:false,cooldownEnforcement:false,decisionEnforcement:false},policy:this.policy.snapshot(),broker:this.broker.status(),budget:this.budget.status(),recentEvents:this.events.slice(-25)};};
 
 module.exports=Orchestrator;
