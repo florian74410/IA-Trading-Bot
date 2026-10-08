@@ -214,3 +214,25 @@ Rules:
 - the former raw Provider Proxy Cache First path is disabled. Existing domain caches (candles, liquidity, microstructure, financial snapshots and validated metadata) remain after Firewall validation.
 
 This rule takes priority over optimization. A future shared Cache First implementation must operate on firewall-validated data, not on raw provider payloads.
+
+## Ranked alternate providers
+
+Alternate Provider Policy v1 is dataset-specific. Rank 1 is the preferred provider; higher ranks are fallbacks only when the preceding provider is unavailable for a fallbackable reason.
+
+Rules:
+- always use the lowest available rank;
+- skip providers currently unavailable/unhealthy for the requested dataset;
+- fallback only to providers offering semantically equivalent data;
+- never infer Spot vs Perpetual from an ambiguous generic dataset;
+- configuration/auth/request errors are not hidden by provider fallback;
+- Open Interest aggregate is not a fallback chain: unavailable contributors make the aggregate PARTIAL;
+- if every compatible provider fails, surface `NO_PROVIDER_AVAILABLE` with an explicit user-facing explanation;
+- v1 remains Shadow-only: no alternate provider is executed automatically yet.
+
+Initial preference chains:
+- Spot price/ticker/candles/orderbook: Binance -> OKX -> Kraken -> Bybit
+- Perpetual price/ticker/candles: Binance -> Bybit -> OKX -> Hyperliquid -> GMX
+- Perpetual orderbook: Binance -> Bybit -> OKX -> Hyperliquid
+- DEX pair liquidity: DexScreener only
+- Global market data: CoinGecko only
+- Open Interest aggregate contributors: Binance + OKX + Bybit + Hyperliquid + GMX
