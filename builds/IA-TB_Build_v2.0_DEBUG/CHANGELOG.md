@@ -1,3 +1,12 @@
+# IA-TB v2.0 DEBUG — Dynamic Trading market catalogue
+
+- Trading IA market selector now consumes each Market Data provider's real dynamic symbol catalogue instead of falling back to BTC/ETH/SOL only.
+- Added dynamic symbol discovery for Binance Spot, Kraken Spot, OKX Spot, Bybit Linear Perpetuals and Hyperliquid Perpetuals; GMX already exposed its dynamic pairs catalogue.
+- Provider adapters keep a runtime symbol-to-provider-instrument mapping so catalogue entries remain usable for OHLCV requests, including non-default quote currencies.
+- Market symbol catalogues now pass through the Data Firewall before Router/UI distribution.
+- Added the `MARKET_SYMBOLS` Firewall data type and advertised the `symbols` capability in the provider catalogue.
+- Added CI contract `Dynamic Symbol Catalog` and enabled MarketData contract CI on the `debug` branch.
+
 # IA-TB v2.0 DEBUG — Local startup migration fix
 
 - Restored `Core/Services/fundamental_ai_synthesis_v3.js`, required by Fundamental Engine AI synthesis.
