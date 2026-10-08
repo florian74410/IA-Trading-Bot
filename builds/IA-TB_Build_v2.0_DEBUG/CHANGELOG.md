@@ -1,3 +1,16 @@
+# IA-TB v2.0 DEBUG — API Request Orchestrator V1 validated
+
+- Orchestrator V1 Shadow accepted for integration in `v2.0_DEBUG`.
+- Final 60-minute Shadow Long Run: GitHub Actions `37712721434`.
+- Representative workload completed 12 cycles / 120 CP/1 actions with 120 successes, 0 soft failures and 0 hard failures.
+- Confirmed resilience when individual providers are unavailable or region-limited; Open Interest remains usable with partial compatible-provider coverage rather than invented data.
+- Provider fallbacks remain observation-only in V1; no Native decision enforcement is enabled.
+- Explicit `SPOT_ORDERBOOK` / `PERP_ORDERBOOK` datasets prevent semantic fallback ambiguity.
+- Currency Registry v1 is integrated into Open Interest normalization; stable assets are normalized with observed USD prices and are excluded from totals if conversion is unavailable.
+- Trust boundary remains `Provider -> Data Firewall -> cache/storage`; raw Provider caching is forbidden.
+- Known V1 limitations are accepted and moved to Orchestrator V2 backlog: unified microstructure decision telemetry, richer runtime health/routing and Long-Run Analyzer improvements.
+- Run observations retained for future optimization: Bybit HTTP 403 from the GitHub runner environment, CoinGecko rate-limit signals, and DeFiLlama as the dominant network-traffic source.
+
 # IA-TB v2.0 DEBUG — Shadow Workload Optimization
 
 - Added boot-inclusive representative MarketData workload telemetry.
