@@ -203,7 +203,9 @@ Le packaging v1.8 est maintenant reproductible : la version est produite depuis 
 - [x] Conserver les quotas UNKNOWN en recommandation non bloquante.
 - [x] Ajouter un contrat CI observation-only.
 - [ ] Mesurer les décisions Shadow sur un workload représentatif avant toute activation Native.
-- [ ] Ajouter ensuite les alternates ordonnés provider/dataset sans scoring automatique.
+- [x] Ajouter les alternates ordonnés par dataset sans scoring automatique, avec rang 1 = source préférée, saut des providers indisponibles et état terminal `NO_PROVIDER_AVAILABLE`.
+- [x] Refuser tout fallback ambigu sur le dataset historique générique `ORDERBOOK`.
+- [ ] Distinguer explicitement `SPOT_ORDERBOOK` et `PERP_ORDERBOOK` dans les anciens chemins qui utilisent encore `ORDERBOOK` avant activation Native.
 
 ## Market Data / Data Trust Boundary
 
