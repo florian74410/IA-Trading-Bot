@@ -28,7 +28,6 @@ var NON_FALLBACKABLE={
 function id(x){return String(x||'').toUpperCase();}
 function canonicalDataset(dataset){
  dataset=id(dataset);
- if(dataset==='ORDERBOOK')return'PERP_ORDERBOOK';
  if(dataset==='OPEN_INTEREST'||dataset==='OPEN_INTEREST_CONTEXT'||dataset==='OPEN_INTEREST_OVERVIEW')return'OPEN_INTEREST_AGGREGATE';
  return dataset;
 }
