@@ -243,10 +243,10 @@ IA-TB uses one Currency Registry as the source of truth for reference FIAT metad
 
 FIAT references: USD, EUR, GBP, JPY, CNY, CHF and CAD.
 
-Stable Asset mappings initially include USDT -> USD, USDC -> USD, DAI -> USD and EURC -> EUR. A single resolution can therefore answer both `USD` and `USDT` without consulting two registries.
+Stable Asset mappings include USDT -> USD, USDC -> USD, DAI -> USD, EURC -> EUR, TGBP -> GBP, ZCHF -> CHF, QCAD -> CAD and JPYC -> JPY. A single resolution can therefore answer both `USD` and `USDT` without consulting two registries.
 
 The Currency Registry stores identity and reference metadata only. It never assumes that a Stable Asset is worth exactly one unit of its reference FIAT and it does not persist live FX/peg prices. Live Market Data supplies the observed conversion price.
 
 Normalization keeps a receipt containing the source asset, source amount/unit, reference FIAT, observed USD price and normalized USD amount.
 
-Open Interest aggregation will consume this metadata later so multiple collateral/quote representations can be normalized to USD while preserving provenance.
+Open Interest aggregation consumes this metadata before summation. Source notional, source unit, reference FIAT, observed conversion price and normalized USD value are preserved per venue. Stable Asset values are never assumed to equal their FIAT peg: if a live conversion price is unavailable, that venue is excluded from the normalized total and coverage is marked partial.
