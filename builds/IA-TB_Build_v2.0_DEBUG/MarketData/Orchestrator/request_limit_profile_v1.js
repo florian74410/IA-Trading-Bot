@@ -11,19 +11,19 @@ function resolve(u,opts,provider){
  var path=String(u.pathname||'');
  if(provider==='KRAKEN'){
   if(path==='/0/public/OHLC')return{provider:provider,dataset:'SPOT_CANDLES',cost:1,costMode:'SAFE_PACE',scopes:[{id:'KRAKEN_OHLC_'+krakenPair(u),kind:'SAFE_PACE',minIntervalMs:1000,unit:'REQUEST',source:'SAFE_RECOMMENDATION'}]};
-  if(path==='/0/public/Depth')return{provider:provider,dataset:'ORDERBOOK',cost:1,costMode:'SAFE_PACE',scopes:[{id:'KRAKEN_PUBLIC_IP',kind:'SAFE_PACE',minIntervalMs:1000,unit:'REQUEST',source:'SAFE_RECOMMENDATION'}]};
+  if(path==='/0/public/Depth')return{provider:provider,dataset:'SPOT_ORDERBOOK',cost:1,costMode:'SAFE_PACE',scopes:[{id:'KRAKEN_PUBLIC_IP',kind:'SAFE_PACE',minIntervalMs:1000,unit:'REQUEST',source:'SAFE_RECOMMENDATION'}]};
   return null;
  }
  if(provider==='OKX'){
   if(path==='/api/v5/market/candles')return{provider:provider,dataset:'SPOT_CANDLES',cost:1,costMode:'ENDPOINT_WINDOW',scopes:[{id:'OKX_CANDLES'}]};
-  if(path==='/api/v5/market/books')return{provider:provider,dataset:'ORDERBOOK',cost:1,costMode:'ENDPOINT_WINDOW',scopes:[{id:'OKX_BOOKS'}]};
+  if(path==='/api/v5/market/books'){var inst=String(q(u,'instId')||'').toUpperCase();return{provider:provider,dataset:/\-SWAP$/.test(inst)?'PERP_ORDERBOOK':'SPOT_ORDERBOOK',cost:1,costMode:'ENDPOINT_WINDOW',scopes:[{id:'OKX_BOOKS'}]};}
   if(path==='/api/v5/public/open-interest')return{provider:provider,dataset:'OPEN_INTEREST',cost:1,costMode:'OBSERVE_ONLY',scopes:[{id:'OKX_OPEN_INTEREST'}]};
   return null;
  }
  if(provider==='BYBIT'){
   var endpoint=null,dataset='';
   if(path==='/v5/market/kline'){endpoint='BYBIT_KLINE';dataset='PERP_CANDLES';}
-  else if(path==='/v5/market/orderbook'){endpoint='BYBIT_ORDERBOOK';dataset='ORDERBOOK';}
+  else if(path==='/v5/market/orderbook'){endpoint='BYBIT_ORDERBOOK';dataset='PERP_ORDERBOOK';}
   else if(path==='/v5/market/tickers'){endpoint='BYBIT_TICKERS';dataset='OPEN_INTEREST_CONTEXT';}
   else return{provider:provider,dataset:'PUBLIC_API',cost:1,costMode:'GLOBAL_IP_WINDOW',scopes:[{id:'BYBIT_GLOBAL_IP'}]};
   return{provider:provider,dataset:dataset,cost:1,costMode:'HIERARCHICAL_DYNAMIC',scopes:[{id:'BYBIT_GLOBAL_IP'},{id:endpoint}]};
