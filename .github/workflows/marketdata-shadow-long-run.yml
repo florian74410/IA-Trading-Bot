@@ -1,6 +1,4 @@
 name: MarketData Shadow Long Run
-# Validation launch marker 2026-10-08
-
 on:
   workflow_dispatch:
     inputs:
