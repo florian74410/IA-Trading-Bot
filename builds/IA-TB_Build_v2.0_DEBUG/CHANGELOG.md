@@ -1,3 +1,9 @@
+# IA-TB v2.0 DEBUG — Local startup migration fix
+
+- Restored `Core/Services/fundamental_ai_synthesis_v3.js`, required by Fundamental Engine AI synthesis.
+- Restored `Core/Services/usage_ledger_v1.js`, shared by Fundamental and Portfolio Engines.
+- Fixes local startup failures `MODULE_NOT_FOUND` on ports 8015 and 8020 after the v2.0 DEBUG migration.
+
 # IA-TB v2.0 DEBUG — API Request Orchestrator V1 validated
 
 - Orchestrator V1 Shadow accepted for integration in `v2.0_DEBUG`.
