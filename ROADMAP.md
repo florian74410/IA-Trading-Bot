@@ -202,7 +202,7 @@ Le packaging v1.8 est maintenant reproductible : la version est produite depuis 
 - [x] Garantir `executable:false`, `blocking:false` et `decisionEnforcement:false` en v1.
 - [x] Conserver les quotas UNKNOWN en recommandation non bloquante.
 - [x] Ajouter un contrat CI observation-only.
-- [ ] Mesurer les décisions Shadow sur un workload représentatif avant toute activation Native.
+- [x] Valider le comportement Shadow sur un workload représentatif de 60 min : run `37712721434`, 12 cycles, 120/120 actions CP/1 réussies, 0 hard failure ; les limitations d'observabilité transport/microstructure sont acceptées pour V1 et reportées en V2.
 - [x] Ajouter les alternates ordonnés par dataset sans scoring automatique, avec rang 1 = source préférée, saut des providers indisponibles et état terminal `NO_PROVIDER_AVAILABLE`.
 - [x] Refuser tout fallback ambigu sur le dataset historique générique `ORDERBOOK`.
 - [x] Distinguer explicitement `SPOT_ORDERBOOK` et `PERP_ORDERBOOK` dans les anciens chemins qui utilisaient `ORDERBOOK`, y compris Policy et profils de requêtes, avec contrat CI empêchant le retour d'un dataset générique.
@@ -241,6 +241,22 @@ Le packaging v1.8 est maintenant reproductible : la version est produite depuis 
 - [ ] Ne considérer un futur provider comme **intégré** qu'après : connexion API, Passport, Policy/TTL, priorité/criticalité, quota/provenance, erreurs spécifiques, télémétrie, tests et mise à jour de la ROADMAP.
 
 > Règle de développement : **« Ajouter l'API » n'est pas égal à « Provider intégré ».** Le Passport fait partie de la Definition of Done du provider.
+
+
+## Market Data / API Request Orchestrator V2 — backlog
+
+La V1 Shadow est considérée comme validée pour le build `v2.0_DEBUG`. Les améliorations ci-dessous ne bloquent pas son intégration et seront traitées dans une V2 dédiée.
+
+- [ ] Unifier la télémétrie de décision `START -> TRANSPORT -> END` pour les appels Provider classiques et microstructure.
+- [ ] Exposer les décisions runtime `FALLBACK_CANDIDATE`, `AGGREGATE_PARTIAL` et `NO_PROVIDER_AVAILABLE` sur tous les transports.
+- [ ] Étudier un mode Native progressif uniquement pour les Providers/Datasets dont le Passport est suffisamment fiable.
+- [ ] Ajouter un Cache First partagé uniquement **après Data Firewall**, sans jamais réintroduire de cache Provider brut.
+- [ ] Ajouter un Provider Health runtime : `HEALTHY`, `DEGRADED`, `RATE_LIMITED`, `REGION_BLOCKED`, `DOWN`.
+- [ ] Rendre le routing sensible à la disponibilité réelle par région/datacenter.
+- [ ] Enrichir les quotas dynamiques via headers, `Retry-After`, poids d'endpoints et historique observé.
+- [ ] Étendre Policy/Budget/Telemetry aux streams : connexions, abonnements, heartbeat, erreurs et reconnexions.
+- [ ] Améliorer le Long-Run Analyzer : fenêtre de mesure figée, schéma `minutes/cycles`, notes régionales et état booléen non sensible des clés API configurées.
+- [ ] Exploiter les opportunités de réduction de trafic révélées par V1, en priorité sur les payloads DeFiLlama.
 
 # 🔜 Après v1.8.2 — travaux futurs
 
