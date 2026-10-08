@@ -49,6 +49,9 @@ jobs:
       - name: Alternate Provider Policy
         run: node builds/IA-TB_Build_v2.0_DEBUG/MarketData/Tests/test_alternate_provider_policy_v1.js
 
+      - name: Reference Fiat Registry
+        run: node builds/IA-TB_Build_v2.0_DEBUG/MarketData/Tests/test_reference_fiat_registry_v1.js
+
       - name: DeFiLlama Public Surface
         run: node builds/IA-TB_Build_v2.0_DEBUG/MarketData/Tests/test_defillama_public_surface_v2.js
 
