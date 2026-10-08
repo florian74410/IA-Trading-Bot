@@ -212,11 +212,12 @@ Le packaging v1.8 est maintenant reproductible : la version est produite depuis 
 - [x] Fusionner la devise FIAT de référence et le mapping Stable Asset dans un **Currency Registry v1** unique.
 - [x] Référencer les devises : `USD`, `EUR`, `GBP`, `JPY`, `CNY`, `CHF`, `CAD`.
 - [x] Permettre une résolution unique : FIAT direct ou Stable Asset -> FIAT de référence.
-- [x] Conserver les premiers mappings : `USDT -> USD`, `USDC -> USD`, `DAI -> USD`, `EURC -> EUR`.
+- [x] Conserver les mappings initiaux : `USDT -> USD`, `USDC -> USD`, `DAI -> USD`, `EURC -> EUR`, `TGBP -> GBP`, `ZCHF -> CHF`, `QCAD -> CAD`, `JPYC -> JPY`.
 - [x] Conserver la zone monétaire et les métadonnées FIAT sans stocker de taux de change temps réel dans le Registry.
 - [x] Préserver un reçu de normalisation avec actif source, FIAT de référence, quantité source, prix USD observé et valeur USD normalisée.
 - [x] Ajouter un contrat CI dédié au Currency Registry.
-- [ ] Brancher le Currency Registry à la normalisation Open Interest afin de conserver le détail d'origine de chaque contribution avant agrégation USD.
+- [x] Brancher le Currency Registry à la normalisation Open Interest afin de conserver le détail d'origine de chaque contribution avant agrégation USD.
+- [x] Ne jamais supposer `1 Stable Asset = 1 FIAT` : si le taux observé manque, exclure la contribution OI du total et marquer la couverture partielle.
 - [ ] Ajouter d'autres Stable Assets uniquement lorsqu'ils sont réellement supportés/identifiés ; ne jamais inventer un mapping par défaut.
 
 ## Market Data / Data Trust Boundary
