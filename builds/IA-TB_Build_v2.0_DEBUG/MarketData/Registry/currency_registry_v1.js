@@ -11,10 +11,14 @@ var FIAT={
 };
 
 var STABLE={
- USDT:{symbol:'USDT',name:'Tether USD',referenceFiat:'USD',class:'FIAT_PEGGED_STABLE_ASSET'},
- USDC:{symbol:'USDC',name:'USD Coin',referenceFiat:'USD',class:'FIAT_PEGGED_STABLE_ASSET'},
- DAI:{symbol:'DAI',name:'Dai',referenceFiat:'USD',class:'CRYPTO_COLLATERALIZED_STABLE_ASSET'},
- EURC:{symbol:'EURC',name:'Euro Coin',referenceFiat:'EUR',class:'FIAT_PEGGED_STABLE_ASSET'}
+ USDT:{symbol:'USDT',name:'Tether USD',referenceFiat:'USD',class:'FIAT_PEGGED_STABLE_ASSET',status:'ACTIVE',marketIds:{COINGECKO:'tether'}},
+ USDC:{symbol:'USDC',name:'USD Coin',referenceFiat:'USD',class:'FIAT_PEGGED_STABLE_ASSET',status:'ACTIVE',marketIds:{COINGECKO:'usd-coin'}},
+ DAI:{symbol:'DAI',name:'Dai',referenceFiat:'USD',class:'CRYPTO_COLLATERALIZED_STABLE_ASSET',status:'ACTIVE',marketIds:{COINGECKO:'dai'}},
+ EURC:{symbol:'EURC',name:'EURC',referenceFiat:'EUR',class:'FIAT_PEGGED_STABLE_ASSET',status:'ACTIVE',marketIds:{COINGECKO:'eurc'}},
+ TGBP:{symbol:'TGBP',name:'Tokenised GBP',referenceFiat:'GBP',class:'FIAT_PEGGED_STABLE_ASSET',status:'ACTIVE',issuer:'BCP Technologies Ltd',marketIds:{COINGECKO:'tokenised-gbp'}},
+ ZCHF:{symbol:'ZCHF',name:'Frankencoin',referenceFiat:'CHF',class:'CRYPTO_COLLATERALIZED_STABLE_ASSET',status:'ACTIVE',issuer:'DECENTRALIZED_PROTOCOL',marketIds:{COINGECKO:'frankencoin'}},
+ QCAD:{symbol:'QCAD',name:'Stablecorp QCAD',referenceFiat:'CAD',class:'FIAT_PEGGED_STABLE_ASSET',status:'ACTIVE',issuer:'QCAD Digital Trust',marketIds:{COINGECKO:'stablecorp-qcad'}},
+ JPYC:{symbol:'JPYC',name:'JPYC',referenceFiat:'JPY',class:'FIAT_PEGGED_STABLE_ASSET',status:'ACTIVE',issuer:'JPYC Inc.',marketIds:{COINGECKO:'jpy-coin'}}
 };
 
 function clone(x){return x?JSON.parse(JSON.stringify(x)):null;}
@@ -36,14 +40,13 @@ function registerStableAsset(x){
  var s=key(x.symbol),f=key(x.referenceFiat||x.pegCurrency);
  if(!/^[A-Z0-9]{2,16}$/.test(s))throw new Error('CURRENCY_REGISTRY_STABLE_ASSET_SYMBOL_INVALID');
  if(!FIAT[f])throw new Error('CURRENCY_REGISTRY_REFERENCE_FIAT_UNKNOWN: '+f);
- STABLE[s]={symbol:s,name:String(x.name||s),referenceFiat:f,class:key(x.class||'STABLE_ASSET')};
+ STABLE[s]={symbol:s,name:String(x.name||s),referenceFiat:f,class:key(x.class||'STABLE_ASSET'),status:key(x.status||'ACTIVE'),issuer:x.issuer?String(x.issuer):null,marketIds:x.marketIds&&typeof x.marketIds==='object'?clone(x.marketIds):{}};
  return getStableAsset(s);
 }
 
 function receipt(symbol,amount,unit,priceUsd,normalizedUsd){
- var x=resolve(symbol);
- if(!x||x.entityType!=='STABLE_ASSET')return null;
- return{sourceAsset:x.id,sourceAmount:amount==null?null:+amount,sourceUnit:key(unit||x.id),referenceFiat:x.referenceFiat.code,observedAssetPriceUsd:priceUsd==null?null:+priceUsd,normalizedUsd:normalizedUsd==null?null:+normalizedUsd};
+ var x=resolve(symbol);if(!x)return null;
+ return{sourceAsset:x.id,sourceAmount:amount==null?null:+amount,sourceUnit:key(unit||x.id),referenceFiat:x.referenceFiat.code,entityType:x.entityType,observedAssetPriceUsd:priceUsd==null?null:+priceUsd,normalizedUsd:normalizedUsd==null?null:+normalizedUsd};
 }
 
 function validate(){
