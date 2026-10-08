@@ -26,6 +26,8 @@ var d=Alt.decision('SPOT_CANDLES','BINANCE',new Error('AUTH_ERROR'));
 assert.equal(d.action,'STOP_NON_FALLBACKABLE_ERROR');
 
 assert.equal(Alt.get('ORDERBOOK'),null,'generic ORDERBOOK must not guess SPOT vs PERP');
+assert.deepEqual(Alt.get('SPOT_ORDERBOOK').providers,['BINANCE','OKX','KRAKEN','BYBIT']);
+assert.deepEqual(Alt.get('PERP_ORDERBOOK').providers,['BINANCE','BYBIT','OKX','HYPERLIQUID']);
 
 var oi=Alt.decision('OPEN_INTEREST','OKX',new Error('TIMEOUT'));
 assert.equal(oi.action,'AGGREGATE_PARTIAL');
