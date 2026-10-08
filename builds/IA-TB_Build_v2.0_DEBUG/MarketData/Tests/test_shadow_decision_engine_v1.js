@@ -41,6 +41,6 @@ assert.deepEqual(fallback.alternates,['OKX','KRAKEN']);
 assert.equal(fallback.executable,false);
 
 var st=o.status();
-assert.equal(st.version,'1.5');
+assert.equal(st.version,'1.6');
 assert.equal(st.execution.decisionEnforcement,false);
 console.log('PASS Shadow Decision Engine v1 observation-only contract');
