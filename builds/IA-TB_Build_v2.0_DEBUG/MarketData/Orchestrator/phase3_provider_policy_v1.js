@@ -10,16 +10,17 @@ module.exports=function(policy){
  ApplyPhase2(policy);
  add(policy,'KRAKEN',{priority:'P1',freshness:'FAST',criticality:'HIGH',cacheTtlMs:15000,mode:'ACTIVE_CONTEXT',firewallRequired:true,retention:'MEMORY',distribution:'ROUTER_CP1'},[
   {dataset:'SPOT_CANDLES',priority:'P1',freshness:'FAST',criticality:'HIGH',cacheTtlMs:15000},
-  {dataset:'ORDERBOOK',priority:'P0',freshness:'FAST',criticality:'CRITICAL',cacheTtlMs:5000}
+  {dataset:'SPOT_ORDERBOOK',priority:'P0',freshness:'FAST',criticality:'CRITICAL',cacheTtlMs:5000}
  ]);
  add(policy,'OKX',{priority:'P1',freshness:'FAST',criticality:'HIGH',cacheTtlMs:10000,mode:'ACTIVE_CONTEXT',firewallRequired:true,retention:'MEMORY',distribution:'ROUTER_CP1'},[
   {dataset:'SPOT_CANDLES',priority:'P1',freshness:'FAST',criticality:'HIGH',cacheTtlMs:15000},
-  {dataset:'ORDERBOOK',priority:'P0',freshness:'FAST',criticality:'CRITICAL',cacheTtlMs:5000},
+  {dataset:'SPOT_ORDERBOOK',priority:'P0',freshness:'FAST',criticality:'CRITICAL',cacheTtlMs:5000},
+  {dataset:'PERP_ORDERBOOK',priority:'P0',freshness:'FAST',criticality:'CRITICAL',cacheTtlMs:5000},
   {dataset:'OPEN_INTEREST',priority:'P1',freshness:'FAST',criticality:'HIGH',cacheTtlMs:10000}
  ]);
  add(policy,'BYBIT',{priority:'P1',freshness:'FAST',criticality:'HIGH',cacheTtlMs:10000,mode:'ACTIVE_CONTEXT',firewallRequired:true,retention:'MEMORY',distribution:'ROUTER_CP1'},[
   {dataset:'PERP_CANDLES',priority:'P1',freshness:'FAST',criticality:'HIGH',cacheTtlMs:15000},
-  {dataset:'ORDERBOOK',priority:'P0',freshness:'FAST',criticality:'CRITICAL',cacheTtlMs:5000},
+  {dataset:'PERP_ORDERBOOK',priority:'P0',freshness:'FAST',criticality:'CRITICAL',cacheTtlMs:5000},
   {dataset:'OPEN_INTEREST_CONTEXT',priority:'P1',freshness:'FAST',criticality:'HIGH',cacheTtlMs:10000}
  ]);
  return policy;
