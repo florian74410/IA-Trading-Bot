@@ -1,3 +1,11 @@
+# IA-TB v2.0 DEBUG — Local UI / Market Data validation fixes
+
+- Large dynamic symbol catalogues are now validated by the Data Firewall in bounded chunks instead of being rejected by the global 512 KiB payload ceiling; Trading IA can therefore consume the full provider market list instead of falling back to BTC/ETH/SOL.
+- Market Registry timestamps are rendered in the browser local timezone instead of raw UTC ISO format.
+- Manual Market Registry refresh no longer surfaces provider/busy failures as opaque `CP_ENGINE_HTTP_500`; the last valid Registry snapshot remains visible with a degraded synchronization message.
+- Trading IA adds a chart bootstrap/recovery path on page show so returning through the global navigation reloads Market Data automatically without requiring a manual exchange click.
+- MarketData Shadow Contract Tests remain green on `debug`.
+
 # IA-TB v2.0 DEBUG — Dynamic Trading market catalogue
 
 - Trading IA market selector now consumes each Market Data provider's real dynamic symbol catalogue instead of falling back to BTC/ETH/SOL only.
