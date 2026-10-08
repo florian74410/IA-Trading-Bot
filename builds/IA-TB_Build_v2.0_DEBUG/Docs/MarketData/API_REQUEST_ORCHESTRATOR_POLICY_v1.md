@@ -236,3 +236,15 @@ Initial preference chains:
 - DEX pair liquidity: DexScreener only
 - Global market data: CoinGecko only
 - Open Interest aggregate contributors: Binance + OKX + Bybit + Hyperliquid + GMX
+
+## Reference fiat and stable assets
+
+IA-TB separates reference currency metadata from live valuation.
+
+Reference Fiat Registry v1 contains: USD, EUR, GBP, JPY, CNY, CHF and CAD.
+
+Stable Asset Registry v1 maps a stable asset to one of those reference currencies. Initial mappings are USDT -> USD, USDC -> USD, DAI -> USD and EURC -> EUR.
+
+The registry never assumes that a stable asset is worth exactly one unit of its peg currency. Live Market Data supplies the observed conversion price. Normalization keeps a receipt containing the source asset, peg currency, source amount, observed USD price and normalized USD amount.
+
+Open Interest aggregation will consume this metadata later so multiple collateral/quote representations can be normalized to USD while preserving provenance.
