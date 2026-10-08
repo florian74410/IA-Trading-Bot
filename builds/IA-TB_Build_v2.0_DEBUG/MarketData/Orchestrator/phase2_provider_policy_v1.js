@@ -14,7 +14,8 @@ module.exports=function(policy){
   mode:'ACTIVE_CONTEXT',firewallRequired:true,retention:'MEMORY',distribution:'ROUTER_CP1'
  },[
   {dataset:'SPOT_CANDLES',priority:'P1',freshness:'FAST',criticality:'HIGH',cacheTtlMs:15000,mode:'ACTIVE_CONTEXT'},
-  {dataset:'ORDERBOOK',priority:'P0',freshness:'FAST',criticality:'CRITICAL',cacheTtlMs:5000,mode:'ACTIVE_CONTEXT'},
+  {dataset:'SPOT_ORDERBOOK',priority:'P0',freshness:'FAST',criticality:'CRITICAL',cacheTtlMs:5000,mode:'ACTIVE_CONTEXT'},
+  {dataset:'PERP_ORDERBOOK',priority:'P0',freshness:'FAST',criticality:'CRITICAL',cacheTtlMs:5000,mode:'ACTIVE_CONTEXT'},
   {dataset:'OPEN_INTEREST',priority:'P1',freshness:'FAST',criticality:'HIGH',cacheTtlMs:10000,mode:'ACTIVE_CONTEXT'},
   {dataset:'MARK_PRICE',priority:'P0',freshness:'FAST',criticality:'CRITICAL',cacheTtlMs:5000,mode:'ACTIVE_CONTEXT'}
  ]);
@@ -23,7 +24,7 @@ module.exports=function(policy){
   mode:'ACTIVE_CONTEXT',firewallRequired:true,retention:'MEMORY',distribution:'ROUTER_CP1'
  },[
   {dataset:'PERP_CANDLES',priority:'P1',freshness:'FAST',criticality:'HIGH',cacheTtlMs:15000,mode:'ACTIVE_CONTEXT'},
-  {dataset:'ORDERBOOK',priority:'P0',freshness:'FAST',criticality:'CRITICAL',cacheTtlMs:5000,mode:'ACTIVE_CONTEXT'},
+  {dataset:'PERP_ORDERBOOK',priority:'P0',freshness:'FAST',criticality:'CRITICAL',cacheTtlMs:5000,mode:'ACTIVE_CONTEXT'},
   {dataset:'OPEN_INTEREST_CONTEXT',priority:'P1',freshness:'FAST',criticality:'HIGH',cacheTtlMs:10000,mode:'ACTIVE_CONTEXT'}
  ]);
  return policy;
