@@ -10,7 +10,8 @@
       "module": "./kraken_provider",
       "capabilities": [
         "candles",
-        "ticker"
+        "ticker",
+        "symbols"
       ],
       "settingsKey": "KRAKEN",
       "transport": "REST",
@@ -23,7 +24,8 @@
       "module": "./binance_provider",
       "capabilities": [
         "candles",
-        "ticker"
+        "ticker",
+        "symbols"
       ],
       "settingsKey": "BINANCE",
       "transport": "REST",
@@ -36,7 +38,8 @@
       "module": "./okx_provider",
       "capabilities": [
         "candles",
-        "ticker"
+        "ticker",
+        "symbols"
       ],
       "settingsKey": "OKX",
       "transport": "REST",
@@ -49,7 +52,8 @@
       "module": "./bybit_provider",
       "capabilities": [
         "candles",
-        "ticker"
+        "ticker",
+        "symbols"
       ],
       "settingsKey": "BYBIT",
       "transport": "REST",
@@ -62,7 +66,8 @@
       "module": "./gmx_provider",
       "capabilities": [
         "candles",
-        "ticker"
+        "ticker",
+        "symbols"
       ],
       "settingsKey": "GMX",
       "transport": "REST_ORACLE",
@@ -75,7 +80,8 @@
       "module": "./hyperliquid_provider",
       "capabilities": [
         "candles",
-        "ticker"
+        "ticker",
+        "symbols"
       ],
       "settingsKey": "HYPERLIQUID",
       "transport": "REST",
