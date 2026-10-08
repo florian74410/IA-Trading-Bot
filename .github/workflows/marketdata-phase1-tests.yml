@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - feature/data-policy-orchestrator-v1
+      - debug
   workflow_dispatch:
 
 jobs:
@@ -81,6 +82,9 @@ jobs:
 
       - name: CEX Provider Contract
         run: node builds/IA-TB_Build_v2.0_DEBUG/MarketData/Tests/test_cex_providers_v2.js
+
+      - name: Dynamic Symbol Catalog
+        run: node builds/IA-TB_Build_v2.0_DEBUG/MarketData/Tests/test_dynamic_symbol_catalog_v1.js
 
       - name: Liquidity Pipeline Contract
         run: node builds/IA-TB_Build_v2.0_DEBUG/MarketData/Tests/test_liquidity_pipeline_v1.js
