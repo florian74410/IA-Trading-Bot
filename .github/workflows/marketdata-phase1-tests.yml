@@ -52,6 +52,9 @@ jobs:
       - name: Currency Registry
         run: node builds/IA-TB_Build_v2.0_DEBUG/MarketData/Tests/test_currency_registry_v1.js
 
+      - name: OI Currency Normalization
+        run: node builds/IA-TB_Build_v2.0_DEBUG/MarketData/Tests/test_open_interest_currency_normalization_v1.js
+
       - name: DeFiLlama Public Surface
         run: node builds/IA-TB_Build_v2.0_DEBUG/MarketData/Tests/test_defillama_public_surface_v2.js
 
