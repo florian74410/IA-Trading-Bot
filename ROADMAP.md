@@ -262,6 +262,22 @@ La V1 Shadow est considérée comme validée pour le build `v2.0_DEBUG`. Les am�
 
 Les éléments ci-dessous ne font pas partie de la v1.8.2 finalisée. Ils constituent la suite de la feuille de route.
 
+## Trade Cost Accounting — reçu détaillé par trade (backlog post-migration VPS)
+
+Statut : **prévu**, à étudier et implémenter après stabilisation de l'environnement `DEBUG` sur le VPS. Intégration coordonnée entre Trading Engine, Portfolio Engine, AI Usage & Cost Tracker et, pour l'estimation avant ordre, Strategy/Risk.
+
+- [ ] Produire une fiche de coûts assimilable à une **petite facture** pour chaque trade (`TRADE001`), consultable dans Portfolio : montant notionnel, devise de référence, frais ventilés, PnL brut et PnL net.
+- [ ] Conserver les identifiants de traçabilité `trade_id`, `order_id`, `execution_id`, `analysis_id`, `request_id`, `provider/exchange`, `strategy_id`, `environment`, horodatages et statut ; prendre en charge plusieurs exécutions pour un ordre et plusieurs ordres pour un trade.
+- [ ] Enregistrer séparément les **frais Maker/Taker réellement facturés** par exécution, à l'entrée comme à la sortie, avec montant et actif de paiement ; éviter les doubles comptages lors des imports ou resynchronisations.
+- [ ] Mesurer le **coût IA OpenAI** par requête (modèle, tokens d'entrée/sortie, tarif applicable, coût estimé/constaté si disponible) et l'associer aux analyses, décisions, exécutions et trades ; ne jamais comptabiliser plusieurs fois une analyse partagée dans le coût total réellement payé.
+- [ ] Enregistrer les **frais gas/réseau**, commissions annexes et **funding** des positions perpétuelles, avec provenance et caractère réel ou estimé.
+- [ ] Quantifier le **slippage** à partir d'un prix de référence horodaté et du prix d'exécution, en le distinguant des commissions et en évitant de le soustraire deux fois si le PnL brut le reflète déjà.
+- [ ] Conserver les frais dans leur **devise native** (BNB, ETH, USDT, etc.), ainsi que leur équivalent EUR, taux utilisé, source du taux et horodatage ; rendre visible toute conversion indisponible.
+- [ ] Calculer les ratios de frais sur une base explicitement affichée (notionnel engagé, montant exécuté ou PnL) ; distinguer coût réel payé, coût imputé aux trades et estimations pré-trade.
+- [ ] Prévoir un **AI Usage & Cost Tracker** transversal avec historique des dépenses, budget mensuel interne configurable, seuils d'alerte et ventilation par moteur, stratégie, analyse et trade ; distinguer estimation locale et solde officiel du fournisseur.
+- [ ] Exposer une **estimation de coût avant exécution** pour Strategy/Risk, puis une régularisation après exécution dans Portfolio ; les limites budgétaires IA ne doivent jamais bloquer les actions critiques de protection de positions.
+- [ ] Tester avec des trades multi-exécutions, frais en cryptoactifs, analyses mutualisées, positions perpétuelles, données manquantes et imports répétés ; vérifier la réconciliation entre frais agrégés et événements bruts.
+
 ## Portfolio Module
 
 - [ ] **Portfolio Module — mémoire financière et source de vérité du portefeuille**
