@@ -262,6 +262,38 @@ La V1 Shadow est considérée comme validée pour le build `v2.0_DEBUG`. Les am�
 
 Les éléments ci-dessous ne font pas partie de la v1.8.2 finalisée. Ils constituent la suite de la feuille de route.
 
+## R&D — Low-Latency Execution Engine / Smart Execution Router (HyperTrading)
+
+Statut : **idée d'architecture à étudier, non implémentée**. À examiner après migration VPS DEBUG, télémétrie REST/streams fiable et stabilisation du Trading Engine. Objectif : trading événementiel à faible latence sur VPS et API publiques, **sans prétention de HFT professionnel** ni promesse de 2 ms.
+
+### Architecture proposée
+
+- [ ] Étudier un nouveau composant **Low-Latency Execution Engine / Smart Execution Router**, distinct de l'API Request Orchestrator (collecte). Ne jamais contourner le Router CP/1, les protections d'ordres ou le Trading Firewall.
+- [ ] Prévoir **HyperTrading** comme stratégie expérimentale du Strategy Engine, distincte du composant de routage. Activation explicite, simulation et environnement DEBUG avant tout ordre réel.
+- [ ] Préparer les routes et connexions persistantes en amont lorsque supportées (WebSocket/FIX/REST keep-alive) ; carnets normalisés en mémoire, calculs préétablis et **aucun appel LLM bloquant** sur le chemin critique signal → ordre.
+- [ ] Instrumenter séparément : établissement TCP/TLS ; latence REST par endpoint ; latence, fraîcheur et jitter des streams ; acceptation/rejet des ordres ; premier fill, dernier fill ; frais, slippage, disponibilité. Une connexion TCP rapide n'est ni une mesure pure du RTT ni une preuve de vitesse d'exécution.
+- [ ] Historiser télémétrie par fournisseur, région, endpoint, protocole, paire et environnement avec médiane, P95/P99, taux d'erreur, jitter, état de santé, DNS et chemins IPv4/IPv6.
+
+### Équation de routage — hypothèse de recherche
+
+Minimiser sur les routes **éligibles** :
+
+    Score(route, stratégie) = α × L_norm + β × C_norm + γ × S_norm + δ × R_norm
+
+- **L_norm** : latence d'exécution attendue normalisée (pas simplement le TCP).
+- **C_norm** : coûts d'exécution attendus normalisés (frais, gas/funding pertinents).
+- **S_norm** : slippage / impact de marché estimé d'après liquidité, carnet et taille.
+- **R_norm** : risque d'échec, rejet, indisponibilité ou données obsolètes.
+- **α, β, γ, δ ≥ 0** : poids configurables par stratégie ; définir les unités, bornes et normalisations avant toute comparaison, puis calibrer les coefficients en simulation.
+
+- [ ] Définir des **contraintes éliminatoires avant scoring** : paire disponible, soldes sur le bon exchange, permissions API, liquidité, fraîcheur, tailles minimales, politiques de risque et séparation DEBUG/RELEASE.
+- [ ] Préserver les responsabilités existantes : Strategy propose ; Risk analyse ; Supervisor prend la décision finale selon le contrat CP/1 ; Trading Engine exécute sous protections du Trading Firewall. Aucun contournement des contrôles.
+- [ ] Distinguer le routage entre endpoints d'un même exchange et le choix entre exchanges (non interchangeables : carnet, fonds, règles et frais).
+- [ ] Prévoir fallback déterministe, circuit breaker, protection contre les doublons, réconciliation des ordres après timeout avant toute réémission ; ne jamais relancer un ordre aveuglément.
+- [ ] Tester sur GEN-1 (6 vCPU / 12 Go) en simulation/paper trading ; comparer route statique et dynamique sur latence bout-en-bout, P95/P99, taux de remplissage, slippage, coûts et PnL net.
+
+> **Décision :** conserver l'idée dans la ROADMAP en R&D. Aucun moteur, stratégie ou trading rapide réel n'est considéré livré à ce stade.
+
 ## Trade Cost Accounting — reçu détaillé par trade (backlog post-migration VPS)
 
 Statut : **prévu**, à étudier et implémenter après stabilisation de l'environnement `DEBUG` sur le VPS. Intégration coordonnée entre Trading Engine, Portfolio Engine, AI Usage & Cost Tracker et, pour l'estimation avant ordre, Strategy/Risk.
