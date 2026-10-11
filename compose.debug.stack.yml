@@ -156,3 +156,22 @@ services:
     depends_on:
       router:
         condition: service_started
+
+  # Prepared only; excluded from manual-stack and never started by CP/1 smoke.
+  # Explicitly disabled to prevent order execution.
+  trading:
+    <<: *iatb-base
+    profiles: ["trading-staged-do-not-start"]
+    command: ["node", "services/trading-engine/trading_service.js"]
+    network_mode: "service:router"
+    environment:
+      <<: *iatb-env
+      IATB_TRADING_LIVE: "0"
+      IATB_TRADING_ENGINE_ENABLED: "0"
+    depends_on:
+      router:
+        condition: service_started
+      firewall:
+        condition: service_started
+      risk:
+        condition: service_started
