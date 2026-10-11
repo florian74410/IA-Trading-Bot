@@ -24,7 +24,20 @@ var SQLiteSettingsStore=require('../Settings/sqlite_settings_store'),SETTINGS_DB
 var ROOT=PATHS.ROOT,COMM_CLIENT=new CPClient({root:PATHS.ROOT,routerPort:+(process.env.ROUTER_PORT||8021),timeout:5000,maxBytes:2*1024*1024}),SUPERVISOR_CLIENT=new CPClient({root:PATHS.ROOT,routerPort:+(process.env.ROUTER_PORT||8021),timeout:60000,maxBytes:4*1024*1024}),CFG=PATHS.Data.config,LOG=PATHS.Data.logs,USER=PATHS.Data.user,VAULT=PATHS.Data.vault,AISET=PATHS.Data.aiSettings,ANNEX_DIR=PATHS.Annexes,STRAT_DIR=PATHS.Strategies,RELEASE_POINTER=PATHS.ReleasePointer,LAUNCHER_CONTROL=PATHS.LauncherControl;
 function currentReleaseVersion(){var env=String(process.env.IATB_RELEASE_VERSION||'');if(/^v?\d+\.\d+(?:\.\d+)?$/.test(env))return env.replace(/^v/,'');try{var x=JSON.parse(fs.readFileSync(RELEASE_POINTER,'utf8'));if(x&&x.application===BUILD.application&&/^v?\d+\.\d+(?:\.\d+)?$/.test(String(x.version||'')))return String(x.version).replace(/^v/,'');}catch(e){}return BUILD.version;}
 var CURRENT_VERSION=currentReleaseVersion(),DEBUG_MODE=String(process.env.IATB_DEBUG_MODE||'0')==='1',DEBUG_CLIENT=null,HOST='127.0.0.1',PORT=+(process.env.IATB_PORT||process.env.CORE_PUBLIC_PORT||8001),MAX_BODY=262144,SESS=Object.create(null),PENDING=Object.create(null),RECOVERY=Object.create(null),logCount=0,SERVER=null,shuttingDown=false,UPDATES=new UpdateManager(ROOT,CURRENT_VERSION,{appName:BUILD.application,maxArchiveBytes:20*1024*1024,maxExtractedBytes:100*1024*1024}),AI_BUILDER=new AIUpdateBuilder(ROOT,{appName:BUILD.application,getVersion:function(){return CURRENT_VERSION;},serverEntrypoint:'Core/Server/server.js'});
-if(DEBUG_MODE){try{DEBUG_CLIENT=CLIENT_SERVICE.bootstrapDebugUser({username:'OVERKILL',password:'root',role:'SUPERADMIN',firstName:'OVERKILL',lastName:'DEBUG',email:'overkill.debug@iatb.local'});console.log('[DEBUG] Client actif: OVERKILL · '+DEBUG_CLIENT.clientId+' · SUPERADMIN');}catch(debugErr){console.error('[DEBUG] Initialisation OVERKILL impossible: '+debugErr.message);}}
+// Disabled by default, even when IATB_DEBUG_MODE=1.
+if(DEBUG_MODE&&process.env.IATB_DEBUG_BOOTSTRAP==='1'){
+  var bootstrapUsername=String(process.env.IATB_DEBUG_ADMIN_USER||'').trim();
+  var bootstrapPassword=String(process.env.IATB_DEBUG_ADMIN_PASSWORD||'');
+  if(!/^[A-Za-z0-9._-]{3,64}$/.test(bootstrapUsername)||bootstrapPassword.length<16){
+    throw new Error('DEBUG_BOOTSTRAP_EXPLICIT_CREDENTIALS_REQUIRED');
+  }
+  DEBUG_CLIENT=CLIENT_SERVICE.bootstrapDebugUser({
+    username:bootstrapUsername,password:bootstrapPassword,role:'SUPERADMIN',
+    firstName:'DEBUG',lastName:'ADMIN',
+    email:'debug.admin@iatb.local'
+  });
+  console.log('[DEBUG] Bootstrap admin created for client '+DEBUG_CLIENT.clientId);
+}
 
 var ADMIN=new AdminBackend(ROOT,{version:CURRENT_VERSION});
 var ADMIN_CONSOLE=new AdminConsole(ROOT,ADMIN);
