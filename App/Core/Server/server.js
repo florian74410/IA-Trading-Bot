@@ -456,6 +456,9 @@ function route(req,res){var u=new URL(req.url,'http://'+HOST+':'+PORT),p=u.pathn
   json(res,200,{ok:true,secretsReset:true,message:'Mot de passe reinitialise. Les cles API chiffrees ont ete effacees et doivent etre ressaisies.'});
  });
  if(req.method==='POST'&&p==='/api/logout'){var lid=cookies(req).sid;if(lid)delete SESS[lid];res.setHeader('Set-Cookie','sid=; Path=/; Max-Age=0');return json(res,200,{ok:true});}
+ // Resolve request-local session before guarded API routes.
+ // Without this, /api/status and other handlers referring to sess crash Core.
+ var sess=session(req);
  if((p==='/api/updates'||p.indexOf('/api/updates/')===0||p==='/api/ai-updates'||p.indexOf('/api/ai-updates/')===0)&&!adminSession(sess,res))return;
  if(p.indexOf('/api/admin/')===0&&!adminSession(sess,res))return;
  if(req.method==='GET'&&p==='/api/bank/vaults')return json(res,200,{ok:true,vaults:BankVaultRegistry.publicList()});
