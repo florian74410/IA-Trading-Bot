@@ -1,6 +1,7 @@
 # IA-TB GEN-1 DEBUG service split — REVIEW FIRST, do not 'up' without approval.
 # Deliberately no published ports and no external network; only loopback is shared.
 # No Trading Engine. Market Data uses offline diagnostic mode (no external provider requests).
+# All non-trading Engines share the Router's isolated network namespace; no individual Docker networks.
 name: iatb-debug-stack
 
 x-iatb-base: &iatb-base
@@ -89,4 +90,69 @@ services:
       router:
         condition: service_started
       firewall:
+        condition: service_started
+
+  indicator:
+    <<: *iatb-base
+    profiles: ["manual-stack"]
+    command: ["node", "Indicators/Engine/indicator_service.js"]
+    network_mode: "service:router"
+    depends_on:
+      router:
+        condition: service_started
+
+  liquidity:
+    <<: *iatb-base
+    profiles: ["manual-stack"]
+    command: ["node", "Liquidity/Engine/liquidity_service.js"]
+    network_mode: "service:router"
+    depends_on:
+      router:
+        condition: service_started
+      marketdata:
+        condition: service_started
+
+  strategy:
+    <<: *iatb-base
+    profiles: ["manual-stack"]
+    command: ["node", "Strategy/Engine/strategy_service.js"]
+    network_mode: "service:router"
+    depends_on:
+      router:
+        condition: service_started
+
+  risk:
+    <<: *iatb-base
+    profiles: ["manual-stack"]
+    command: ["node", "Risk/Engine/risk_service.js"]
+    network_mode: "service:router"
+    depends_on:
+      router:
+        condition: service_started
+
+  portfolio:
+    <<: *iatb-base
+    profiles: ["manual-stack"]
+    command: ["node", "Portfolio/Engine/portfolio_service.js"]
+    network_mode: "service:router"
+    depends_on:
+      router:
+        condition: service_started
+
+  supervisor:
+    <<: *iatb-base
+    profiles: ["manual-stack"]
+    command: ["node", "Supervisor/supervisor_service.js"]
+    network_mode: "service:router"
+    depends_on:
+      router:
+        condition: service_started
+
+  fundamental:
+    <<: *iatb-base
+    profiles: ["manual-stack"]
+    command: ["node", "Fundamental/Engine/fundamental_service.js"]
+    network_mode: "service:router"
+    depends_on:
+      router:
         condition: service_started
