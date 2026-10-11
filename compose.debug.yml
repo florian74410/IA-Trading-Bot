@@ -1,0 +1,22 @@
+# IA-TB GEN-1 DEBUG — safe validation profile only.
+# This file deliberately does not start application services or publish ports.
+# Full service orchestration will be enabled only after auth and path audits.
+name: iatb-debug
+
+services:
+  preflight:
+    profiles: ["validate"]
+    build:
+      context: ./App
+      dockerfile: Dockerfile.app
+    image: iatb:node22-app-validation
+    network_mode: "none"
+    read_only: true
+    tmpfs:
+      - /tmp:rw,nosuid,nodev,mode=1777
+    environment:
+      IATB_RUNTIME_ROOT: /tmp/iatb-debug/runtime
+      IATB_DATA_ROOT: /tmp/iatb-debug/data
+      IATB_STATE_ROOT: /tmp/iatb-debug/state
+      IATB_TRADING_LIVE: "0"
+    restart: "no"
