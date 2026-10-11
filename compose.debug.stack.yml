@@ -1,6 +1,6 @@
 # IA-TB GEN-1 DEBUG service split — REVIEW FIRST, do not 'up' without approval.
 # Deliberately no published ports and no external network; only loopback is shared.
-# Trading Engine and market-facing engines are not included.
+# No Trading Engine. Market Data uses offline diagnostic mode (no external provider requests).
 name: iatb-debug-stack
 
 x-iatb-base: &iatb-base
@@ -73,4 +73,20 @@ services:
       IATB_FIREWALL_PORT: "8017"
     depends_on:
       router:
+        condition: service_started
+
+  marketdata:
+    <<: *iatb-base
+    profiles: ["manual-stack"]
+    command: ["node", "MarketData/market_data_service.js"]
+    network_mode: "service:router"
+    environment:
+      <<: *iatb-env
+      IATB_MARKET_DATA_PORT: "8013"
+      IATB_FIREWALL_PORT: "8017"
+      IATB_MARKETDATA_OFFLINE_DIAGNOSTIC: "1"
+    depends_on:
+      router:
+        condition: service_started
+      firewall:
         condition: service_started
