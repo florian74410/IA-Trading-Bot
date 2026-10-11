@@ -30,7 +30,7 @@ services:
     command: ["node", "Tools/storage_preflight.js"]
     network_mode: "none"
     read_only: true
-    user: "${IATB_UID:?Export IATB_UID before storage validation}:${IATB_GID:?Export IATB_GID before storage validation}"
+    user: "${IATB_UID:-1000}:${IATB_GID:-1000}"
     volumes:
       - /var/lib/iatb/debug/runtime:/iatb/debug/runtime:rw
       - /var/lib/iatb/debug/data:/iatb/debug/data:rw
