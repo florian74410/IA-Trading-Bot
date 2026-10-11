@@ -9,6 +9,8 @@ FROM node:22-bookworm
 WORKDIR /opt/iatb/App
 ENV NODE_ENV=production
 COPY --from=dependencies /opt/iatb/App/node_modules ./node_modules
-COPY . .
+# Initial build is deliberately limited to a safe preflight script.
+# Full application sources and mutable volumes are added in a later audited phase.
+COPY Tools/sqlite_preflight.js ./Tools/sqlite_preflight.js
 # No daemon or trading engine starts when this image is run.
 CMD ["node", "Tools/sqlite_preflight.js"]
