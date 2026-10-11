@@ -27,6 +27,16 @@ function fetchHealth(){return new Promise((resolve,reject)=>{
   });
  });req.on('error',reject);req.on('timeout',()=>req.destroy(new Error('HTTP_TIMEOUT')));
 });}
+function request(method,uri,data){return new Promise((resolve,reject)=>{
+ const raw=data===undefined?'':JSON.stringify(data);
+ const req=http.request({host:'127.0.0.1',port,path:uri,method,timeout:1500,
+  headers:raw?{'Content-Type':'application/json','Content-Length':Buffer.byteLength(raw)}:{}},res=>{
+  let body='';res.on('data',c=>body+=c.toString());res.on('end',()=>{
+   try{resolve({code:res.statusCode,data:JSON.parse(body)});}catch(e){reject(e);}
+  });
+ });req.on('error',reject);req.on('timeout',()=>req.destroy(Error('TIMEOUT')));
+ if(raw)req.write(raw);req.end();
+});}
 (async()=>{
  try{
   let health;
@@ -50,6 +60,31 @@ function fetchHealth(){return new Promise((resolve,reject)=>{
   console.log('TRADING PROTECTION WORKER: OK (no Trading Engine started)');
   console.log('MARKET DATA PROTECTION WORKER: OK');
   console.log('FIREWALL BYPASS: OFF');
+  // Tests de configuration externe, sans toucher a la configuration image.
+  const fs=require('node:fs'),config=path.join(root,'data/firewall/MarketData/rules.json');
+  const changed=await request('POST','/api/thread/config',{thread:'data',patch:{maxPayloadBytes:500000}});
+  assert.equal(changed.code,200,'Config HTTP '+changed.code+' '+JSON.stringify(changed.data));
+  assert.equal(JSON.parse(fs.readFileSync(config,'utf8')).maxPayloadBytes,500000);
+  assert.equal(fs.existsSync(path.resolve(__dirname,'../Core/Firewall/Config/MarketData/rules.json')),true);
+  console.log('FIREWALL EXTERNAL CONFIG WRITE: OK');
+  const restart=await request('POST','/api/thread/restart',{thread:'data'});
+  assert.equal(restart.code,200,'Restart HTTP '+restart.code);
+  const restored=await request('GET','/api/thread/config?thread=data');
+  assert.equal(restored.code,200);
+  assert.equal(restored.data.config.maxPayloadBytes,500000);
+  console.log('FIREWALL CONFIG RESTORE AFTER WORKER RESTART: OK');
+  const stopped=await request('POST','/api/thread/stop',{thread:'data'});
+  assert.equal(stopped.code,200);
+  const degraded=await fetchHealth();
+  assert.equal(degraded.data.healthLevel,'CRITICAL');
+  const inspection=await request('POST','/api/data/inspect',{message:{provider:'BINANCE',type:'PRICE',symbol:'BTC/USDT'},meta:{}});
+  assert.equal(inspection.code,503,'Offline worker inspection must refuse');
+  console.log('FIREWALL WORKER FAILURE FAIL-CLOSED: OK');
+  const recover=await request('POST','/api/thread/restart',{thread:'data'});
+  assert.equal(recover.code,200);
+  const healthy=await fetchHealth();
+  assert.equal(healthy.data.healthLevel,'HEALTHY');
+  console.log('FIREWALL WORKER RECOVERY: OK');
   console.log('FIREWALL SMOKE: SUCCESS');
  }catch(e){process.exitCode=1;console.error('FIREWALL SMOKE FAILED: '+e.message);console.error('FIREWALL LOGS:\n'+logs.slice(-8000));}
  finally{
