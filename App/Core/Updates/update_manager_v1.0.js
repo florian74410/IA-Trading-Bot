@@ -30,7 +30,7 @@ function protectedPath(rel){var r=String(rel||'').replace(/\\/g,'/');var protect
 function UpdateManager(root,currentVersion,opts){
  this.root=root;this.currentVersion=String(currentVersion);opts=opts||{};
  this.appName=opts.appName||APP_NAME;this.updateRoot=this.appName+'/';this.maxArchiveBytes=opts.maxArchiveBytes||20*1024*1024;this.maxExtractedBytes=opts.maxExtractedBytes||100*1024*1024;
- this.dir=path.join(root,'Updates');PATHS.ensureUpdateRuntimeDirs();this.inbox=PATHS.RuntimeUpdates.inbox;this.stage=PATHS.RuntimeUpdates.staging;this.backups=PATHS.RuntimeUpdates.backups;this.historyFile=path.join(this.dir,'update_history.dat');
+ this.dir=PATHS.Updates;PATHS.ensureUpdateRuntimeDirs();this.inbox=PATHS.RuntimeUpdates.inbox;this.stage=PATHS.RuntimeUpdates.staging;this.backups=PATHS.RuntimeUpdates.backups;this.historyFile=path.join(this.dir,'update_history.dat');
  ensureDir(this.dir);if(!fs.existsSync(this.historyFile))writeJsonAtomic(this.historyFile,{schema:1,application:this.appName,installed:[]});
  this.previews=Object.create(null);
 }
