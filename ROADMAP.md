@@ -12,6 +12,19 @@ Cette feuille de route est la référence officielle du développement du projet
 - Une version ne devient **STABLE** qu'après validation de ses fonctions, tests, documentation et packaging.
 - `ROADMAP.md` décrit le travail prévu ou en cours ; `CHANGELOG.md` décrit le travail réellement livré.
 
+## 🔐 GEN-1 — Gestionnaire de certificats TLS/HTTPS (ÉVOLUTION FUTURE — NON PRIORITAIRE)
+
+- [ ] Développer un gestionnaire de certificats dans l'administration IA-TB, sans perturber la mise en service HTTPS actuelle.
+- [ ] Lister les certificats disponibles : domaine/IP couverts, émetteur, validité, date d'expiration, statut et emplacement logique.
+- [ ] Ajouter/importer un nouveau certificat et sa chaîne, avec vérification de la correspondance certificat/clé privée ; protéger les clés privées et interdire leur affichage dans l'UI ou les logs.
+- [ ] Stocker les certificats et clés de façon persistante avec permissions strictes, sans dépôt Git ni exposition publique.
+- [ ] Permettre la suppression sécurisée d'un certificat non utilisé, avec confirmation et protection du certificat actif.
+- [ ] Vérifier automatiquement l'état et l'expiration des certificats toutes les 24 heures (fréquence initiale envisagée) et signaler les anomalies ou expirations proches.
+- [ ] Prévoir le renouvellement automatique lorsque l'autorité de certification et le mode de validation le permettent ; contrôler le certificat obtenu avant son activation et conserver une possibilité de retour arrière.
+- [ ] Prévoir des tests de validité, de permissions, de renouvellement et d'échec sans interrompre l'accès HTTPS existant.
+
+**Statut :** idée enregistrée pour une version ultérieure. Ne pas développer ni déployer pendant la phase actuelle de tests DEBUG GEN-1.
+
 ## 🔒 GEN-1 — Jalon préalable à la première intégration RELEASE (À FAIRE PLUS TARD)
 
 **Priorité actuelle :** terminer et valider l'accès à l'UI Docker DEBUG du VPS Contabo par tunnel SSH. Ce chantier *Shared Data* est explicitement différé ; **aucune intégration RELEASE n'est autorisée à ce stade**.
