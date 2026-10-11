@@ -37,3 +37,16 @@ logs.dat
 
 # This tracked PEM is a public CA trust bundle, not a private key.
 !Core/Certificates/cacert.pem
+
+# GEN-1 clean runtime image: QA scripts stay versioned in Git, never packaged.
+# All engine/unit/integration suites and diagnostic CLI tooling are source-only.
+**/Tests/
+**/tests/
+**/*test*.js
+Tools/*smoke*.js
+Tools/*audit*.js
+Tools/*preflight*.js
+Tools/provider_policy_smoke.js
+Tools/persistence_volume_smoke.js
+# Debug-only isolated launchers and archived report artifacts
+**/Reports/
