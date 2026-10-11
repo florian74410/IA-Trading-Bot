@@ -1,7 +1,8 @@
 # IA-TB GEN-1 DEBUG service split — REVIEW FIRST, do not 'up' without approval.
-# Deliberately no published ports and no external network; only loopback is shared.
-# No Trading Engine. Market Data uses offline diagnostic mode (no external provider requests).
-# All non-trading Engines share the Router's isolated network namespace; no individual Docker networks.
+# DEBUG Internet test: dedicated bridge network for outbound HTTPS, no published ports.
+# Services still listen on 127.0.0.1 in Router's shared network namespace.
+# No Trading Engine. Market Data remains offline until egress is verified.
+# All non-trading Engines share the Router's network namespace; no individual Docker networks.
 name: iatb-debug-stack
 
 x-iatb-base: &iatb-base
@@ -41,7 +42,8 @@ services:
       context: ./App
       dockerfile: Dockerfile.app
     command: ["node", "Core/Router/router.js"]
-    network_mode: "none"
+    networks:
+      - debug-egress
 
   core:
     <<: *iatb-base
@@ -189,3 +191,9 @@ services:
         condition: service_started
       risk:
         condition: service_started
+
+# Dedicated bridge for DEBUG outbound provider access; never publish application ports.
+networks:
+  debug-egress:
+    driver: bridge
+    internal: false
