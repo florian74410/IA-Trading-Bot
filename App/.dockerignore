@@ -34,3 +34,6 @@ logs.dat
 **/wallet_master.key
 **/Data/*.db
 **/Data/*.sqlite
+
+# This tracked PEM is a public CA trust bundle, not a private key.
+!Core/Certificates/cacert.pem
