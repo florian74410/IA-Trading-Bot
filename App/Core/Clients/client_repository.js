@@ -1,5 +1,5 @@
 'use strict';
-var fs=require('fs'),path=require('path'),child=require('child_process');
+var fs=require('fs'),path=require('path'),SqliteCompat=require('../Shared/sqlite_compat');
 
 function q(v){return "'"+String(v==null?'':v).replace(/'/g,"''")+"'";}
 function rows(text){
@@ -12,21 +12,22 @@ function rows(text){
 function ClientRepository(opts){
   opts=opts||{};
   this.dbPath=path.resolve(opts.dbPath);
-  this.sqlite=opts.sqlite||process.env.IATB_SQLITE_BIN||'sqlite3';
+  this.native=null;
   this.migrationsDir=path.resolve(opts.migrationsDir);
   this.ready=false;this.lastError=null;this.schemaVersion=0;
   this.init();
 }
 ClientRepository.prototype.run=function(sql,read){
-  var dir=path.dirname(this.dbPath);
-  try{if(!fs.existsSync(dir))fs.mkdirSync(dir,{recursive:true,mode:448});fs.chmodSync(dir,448);}catch(e){}
-  var pre='.timeout 5000\nPRAGMA foreign_keys=ON;\n';
-  var args=read?['-batch','-noheader','-separator','\t',this.dbPath]:['-batch',this.dbPath];
-  var r=child.spawnSync(this.sqlite,args,{input:pre+String(sql||''),encoding:'utf8',timeout:7000,maxBuffer:2*1024*1024});
-  if(r.error)throw r.error;
-  if(r.status!==0)throw new Error(String(r.stderr||'CLIENT_SQLITE_ERROR').trim());
-  try{if(fs.existsSync(this.dbPath))fs.chmodSync(this.dbPath,384);}catch(e){}
-  return String(r.stdout||'');
+  if(!this.native){
+    var dir=path.dirname(this.dbPath);
+    fs.mkdirSync(dir,{recursive:true,mode:448});
+    this.native=new SqliteCompat(this.dbPath,{timeoutMs:5000,foreignKeys:true});
+    try{fs.chmodSync(this.dbPath,384);}catch(e){}
+  }
+  return this.native.run(sql,read);
+};
+ClientRepository.prototype.close=function(){
+  if(this.native){this.native.close();this.native=null;}
 };
 ClientRepository.prototype.init=function(){
   try{
@@ -116,5 +117,5 @@ ClientRepository.prototype.audit=function(clientId,action,subjectId,detailsEnc){
   this.assertReady();
   this.run('INSERT INTO client_audit(client_id,action,subject_id,created_at,details_enc) VALUES('+(clientId?q(clientId):'NULL')+','+q(action)+','+(subjectId?q(subjectId):'NULL')+','+q(new Date().toISOString())+','+q(detailsEnc||'')+');');
 };
-ClientRepository.prototype.status=function(){return{ready:this.ready,dbPath:this.dbPath,schemaVersion:this.schemaVersion,backend:'sqlite3-cli',lastError:this.lastError};};
+ClientRepository.prototype.status=function(){return{ready:this.ready,dbPath:this.dbPath,schemaVersion:this.schemaVersion,backend:'better-sqlite3',lastError:this.lastError};};
 module.exports=ClientRepository;
