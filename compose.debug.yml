@@ -79,3 +79,21 @@ services:
       IATB_DEBUG_BOOTSTRAP: "0"
       IATB_DEBUG_MODE: "0"
     restart: "no"
+
+  ui-core-router-smoke:
+    profiles: ["ui-core-router-smoke"]
+    build:
+      context: ./App
+      dockerfile: Dockerfile.app
+    image: iatb:node22-app-validation
+    command: ["node", "Tools/ui_core_router_smoke.js"]
+    network_mode: "none"
+    read_only: true
+    tmpfs:
+      - /tmp:rw,nosuid,nodev,mode=1777
+    environment:
+      IATB_TRADING_LIVE: "0"
+      IATB_DEBUG_BOOTSTRAP: "0"
+      IATB_DEBUG_MODE: "0"
+      IATB_AUTH_MODE: "disabled"
+    restart: "no"
