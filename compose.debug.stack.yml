@@ -63,6 +63,20 @@ services:
       core:
         condition: service_started
 
+
+  # DEBUG-only SSH bridge: private Unix socket in runtime volume.
+  # Same Docker network namespace as Router, no published port and no external networking.
+  ssh-ui-bridge:
+    <<: *iatb-base
+    profiles: ["manual-stack"]
+    command: ["node", "Tools/ssh_ui_bridge.js"]
+    network_mode: "service:router"
+    depends_on:
+      router:
+        condition: service_started
+      ui:
+        condition: service_started
+
   firewall:
     <<: *iatb-base
     profiles: ["manual-stack"]
