@@ -41,6 +41,9 @@ function fetchHealth(){return new Promise((resolve,reject)=>{
   assert.equal(health.data.firewallEnabled,true);
   assert.equal(health.data.bypassMode,false);
   assert.equal(health.data.workerCount,2);
+  assert.equal(health.data.healthLevel,'HEALTHY');
+  assert.equal(health.data.metrics.received,0);
+  console.log('FIREWALL HEALTH TELEMETRY: OK');
   assert(health.data.threads.some(x=>x.id==='trading'&&x.online));
   assert(health.data.threads.some(x=>x.id==='data'&&x.online));
   console.log('FIREWALL COORDINATOR: OK');
