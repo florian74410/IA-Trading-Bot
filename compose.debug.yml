@@ -182,3 +182,28 @@ services:
       IATB_DEBUG_BOOTSTRAP: "0"
       IATB_MARKETDATA_OFFLINE_DIAGNOSTIC: "1"
     restart: "no"
+
+  persistence-volume-smoke:
+    profiles: ["persistence-volume-smoke"]
+    build:
+      context: ./App
+      dockerfile: Dockerfile.app
+    image: iatb:node22-app-validation
+    user: "${IATB_UID:?Export IATB_UID}:${IATB_GID:?Export IATB_GID}"
+    command: ["node", "Tools/persistence_volume_smoke.js", "verify"]
+    network_mode: "none"
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    volumes:
+      - /var/lib/iatb/debug/data:/iatb/debug/data:rw
+    tmpfs:
+      - /tmp:rw,nosuid,nodev,mode=1777
+    environment:
+      IATB_DATA_ROOT: /iatb/debug/data
+      IATB_TRADING_LIVE: "0"
+      IATB_DEBUG_BOOTSTRAP: "0"
+      IATB_MARKETDATA_OFFLINE_DIAGNOSTIC: "1"
+    restart: "no"
