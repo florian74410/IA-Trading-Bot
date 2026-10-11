@@ -33,7 +33,7 @@ function get(url){return new Promise((resolve,reject)=>{
     let response=null;
     for(let i=0;i<35;i++){
       if(child.exitCode!==null)throw new Error('Router exited early: '+logs);
-      try{response=await get('http://127.0.0.1:'+port+'/router-health');break;}
+      try{response=await get('http://127.0.0.1:'+port+'/router-health-internal');break;}
       catch(e){await new Promise(r=>setTimeout(r,150));}
     }
     assert(response,'Router did not bind within timeout: '+logs);
