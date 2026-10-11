@@ -30,7 +30,7 @@ services:
     command: ["node", "Tools/storage_preflight.js"]
     network_mode: "none"
     read_only: true
-    user: "${IATB_UID:-1000}:${IATB_GID:-1000}"
+    user: "${IATB_UID:?Set IATB_UID to id -u}:${IATB_GID:?Set IATB_GID to id -g}"
     volumes:
       - /var/lib/iatb/debug/runtime:/iatb/debug/runtime:rw
       - /var/lib/iatb/debug/data:/iatb/debug/data:rw
