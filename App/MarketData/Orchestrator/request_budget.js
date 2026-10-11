@@ -102,6 +102,111 @@ Budget.prototype.observe=function(req){
  this.events.push(Object.assign({at:now},decision));if(this.events.length>this.maxEvents)this.events.shift();
  return decision;
 };
+Budget.prototype.admit=function(req){
+ req=req||{};
+ var now=Date.now();
+ var provider=upper(req.provider);
+ var p=this._state(provider);
+ var cost=req.cost==null?p.costDefault:Number(req.cost);
+
+ if(!isFinite(cost)||cost<=0)
+  return {allowed:false,provider:provider,reason:"INVALID_COST",at:now};
+
+ var scopes=Array.isArray(req.scopes)?req.scopes:
+  (req.scope?[{id:req.scope}]:[]);
+
+ var known=p.shortLimit!=null||p.longLimit!=null;
+ var checks=[];
+ var allowed=p.cooldownUntil<=now;
+ var retryAfterMs=Math.max(0,p.cooldownUntil-now);
+ function waitWindow(events,windowMs,limit,reserve){
+  if(limit==null)return 0;
+  var usable=Math.max(0,limit-(reserve||0));
+  var used=events.reduce(function(n,x){return n+x.cost;},0);
+  if(cost>usable)return null;
+  if(used+cost<=usable)return 0;
+  var sorted=events.slice().sort(function(a,b){return a.at-b.at;});
+  for(var i=0;i<sorted.length;i++){
+   used-=sorted[i].cost;
+   if(used+cost<=usable)
+    return Math.max(1,sorted[i].at+windowMs-now);
+  }
+  return null;
+ }
+ function applyWait(value){
+  if(value===null){retryAfterMs=null;return;}
+  if(retryAfterMs!==null)retryAfterMs=Math.max(retryAfterMs,value);
+ }
+
+ var short=p.short.filter(function(x){return now-x.at<p.shortWindowMs;});
+ var long=p.long.filter(function(x){return now-x.at<p.longWindowMs;});
+
+ var shortUsed=short.reduce(function(n,x){return n+x.cost;},0);
+ var longUsed=long.reduce(function(n,x){return n+x.cost;},0);
+
+ if(p.shortLimit!=null&&shortUsed+cost>p.shortLimit){
+  allowed=false;
+  applyWait(waitWindow(short,p.shortWindowMs,p.shortLimit,0));
+ }
+ if(p.longLimit!=null&&longUsed+cost>Math.max(0,p.longLimit-p.reserve)){
+  allowed=false;
+  applyWait(waitWindow(long,p.longWindowMs,p.longLimit,p.reserve));
+ }
+
+ scopes.forEach(function(item){
+  var scope=this._ensureScope(p,item);
+  if(!scope)return;
+
+  if(scope.limit!=null||scope.minIntervalMs>0)known=true;
+
+  var events=scope.events.filter(function(x){
+   return now-x.at<scope.windowMs;
+  });
+  var used=events.reduce(function(n,x){return n+x.cost;},0);
+
+  if(scope.cooldownUntil>now){
+   allowed=false;
+   applyWait(scope.cooldownUntil-now);
+  }
+  if(scope.limit!=null&&used+cost>Math.max(0,scope.limit-scope.reserve)){
+   allowed=false;
+   applyWait(waitWindow(events,scope.windowMs,scope.limit,scope.reserve));
+  }
+  if(scope.minIntervalMs>0&&scope.lastObservedAt>0&&
+     now-scope.lastObservedAt<scope.minIntervalMs){
+   allowed=false;
+   applyWait(scope.lastObservedAt+scope.minIntervalMs-now);
+  }
+
+  checks.push({scope:scope,events:events});
+ },this);
+
+ if(!known)
+  return {allowed:false,provider:provider,reason:"UNKNOWN_QUOTA",at:now};
+
+ if(allowed){
+  p.short=short;
+  p.long=long;
+  p.short.push({at:now,cost:cost});
+  p.long.push({at:now,cost:cost});
+
+  checks.forEach(function(x){
+   x.scope.events=x.events;
+   x.scope.events.push({at:now,cost:cost});
+   x.scope.lastObservedAt=now;
+  });
+ }
+
+ return {
+  allowed:allowed,
+  provider:provider,
+  cost:cost,
+  at:now,
+  reason:allowed?"ADMITTED":"QUOTA_OR_COOLDOWN",
+  retryAfterMs:allowed?0:retryAfterMs
+ };
+};
+
 Budget.prototype.feedback=function(provider,feedback){
  feedback=feedback||{};var now=Date.now(),p=this._state(provider),headers=feedback.headers||{},requested=Array.isArray(feedback.scopes)?feedback.scopes:[],updated=[];
  requested.forEach(function(item){

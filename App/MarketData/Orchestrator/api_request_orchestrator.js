@@ -43,6 +43,27 @@ Orchestrator.prototype.observeTransport=function(req){
  this.events.push(event);if(this.events.length>this.maxEvents)this.events.shift();
  return event;
 };
+Orchestrator.prototype.resolveTransportPriority=function(req){
+ req=req||{};
+ var policy=this.policy.resolve(req.provider,req.dataset);
+ var weights={P0:400,P1:300,P2:200,P3:100};
+ return weights[String(policy.priority||"P2").toUpperCase()]||200;
+};
+
+Orchestrator.prototype.admitTransport=function(req){
+ req=req||{};
+ if(this.mode!=='NATIVE')
+  return {allowed:false,reason:'NATIVE_MODE_REQUIRED'};
+ var provider=String(req.provider||'').toUpperCase();
+ var dataset=String(req.dataset||'').toUpperCase();
+ var policy=this.policy.resolve(provider,dataset);
+ var admission=this.budget.admit({
+  provider:provider,dataset:dataset,priority:policy.priority,
+  cost:req.cost,scope:req.scope,scopes:req.scopes
+ });
+ return Object.assign({mode:this.mode,priority:policy.priority},admission);
+};
+
 Orchestrator.prototype.feedbackTransport=function(provider,feedback){
  var e=this.budget.feedback(provider,feedback||{});
  this.events.push(e);if(this.events.length>this.maxEvents)this.events.shift();
