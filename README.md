@@ -3,7 +3,7 @@
 Application modulaire de trading crypto : CEX/DEX, Market Data, Chart Viewer, Indicator Engine, Strategy Engine, Fundamental Engine, gestion centralisée des API et Update Manager versionné.
 
 <p align="center">
-  <img src="assets/app_architecture.jpg" alt="IA-Trading-Bot architecture" width="100%" />
+  <img src="Assets/app_architecture.jpg" alt="IA-Trading-Bot architecture" width="100%" />
 </p>
 
 ## Architecture générale
@@ -163,8 +163,8 @@ Le patch v1.7.9, son test d'installation, le build complet et l'archive complèt
 
 - [x] Packaging du patch v1.7.9 finalisé dans `updates/v1.7.9/` avec ZIP et SHA-256.
 - [x] Test d'installation du patch documenté dans `updates/v1.7.9/INSTALL_TEST_RESULT.md`.
-- [x] Build complet publié dans `builds/v1.7.9/`.
-- [x] Archive complète publiée dans `archives/IA-Trading-Bot_V1.7.9.zip` avec SHA-256.
+- [x] Build complet publié dans `Builds/v1.7.9/`.
+- [x] Archive complète publiée dans `Archives/IA-Trading-Bot_V1.7.9.zip` avec SHA-256.
 - [x] `CHANGELOG.md` et `VERSION` disponibles dans le code livré.
 - [x] La v1.7.9 a servi de source officielle vérifiée pour le passage UpdateManager vers v1.8.0.
 - [ ] Validation end-to-end de toutes les fonctions prévues sur la machine cible.
@@ -175,7 +175,7 @@ Le patch v1.7.9, son test d'installation, le build complet et l'archive complèt
 
 # 🚧 v1.8 — PATCH / BUILD FINALISÉS, TEST MACHINE CIBLE EN COURS
 
-Le packaging v1.8 est maintenant reproductible : la version est produite depuis l'archive officielle v1.7.9 au moyen d'un patch UpdateManager `1.7.9 -> 1.8.0`. Le patch a été accepté et installé par le vrai UpdateManager de la v1.7.9 sous Node.js 16.20.2, puis le résultat a été comparé au build `builds/v1.8`.
+Le packaging v1.8 est maintenant reproductible : la version est produite depuis l'archive officielle v1.7.9 au moyen d'un patch UpdateManager `1.7.9 -> 1.8.0`. Le patch a été accepté et installé par le vrai UpdateManager de la v1.7.9 sous Node.js 16.20.2, puis le résultat a été comparé au build `Builds/v1.8`.
 
 **État packaging : PASS.**  
 **État runtime complet : validation sur macOS High Sierra / machine cible en cours.**
@@ -252,7 +252,7 @@ Le packaging v1.8 est maintenant reproductible : la version est produite depuis 
 - [x] ZIP final vérifié sans erreur.
 - [x] Rapport `updates/Patch_v1.7.9_to_v1.8.0/VALIDATION_REPORT.json` publié avec `status = PASS`.
 - [x] Patch, SHA-256, manifeste et informations de build publiés dans `main`.
-- [x] Build complet v1.8 publié dans `builds/v1.8/`.
+- [x] Build complet v1.8 publié dans `Builds/v1.8/`.
 
 ## Validation v1.8
 
@@ -298,19 +298,19 @@ Ce dépôt est la **source de vérité du code source courant de IA-TB**.
 
 ## Documentation
 
-La documentation officielle est versionnée dans [`docs/wiki`](docs/wiki/Home.md).
+La documentation officielle est versionnée dans [`Documentation/wiki`](Documentation/wiki/Home.md).
 
-- [Accueil documentation](docs/wiki/Home.md)
-- [Installation](docs/wiki/Installation.md)
-- [Architecture](docs/wiki/Architecture.md)
-- [Connecteurs CEX / DEX](docs/wiki/Connectors-CEX-DEX.md)
-- [Market Data](docs/wiki/Market-Data.md)
-- [Chart Viewer](docs/wiki/Chart-Viewer.md)
-- [Indicator Engine](docs/wiki/Indicator-Engine.md)
-- [Settings / API](docs/wiki/Settings-API.md)
-- [Update Manager](docs/wiki/Update-Manager.md)
-- [Sécurité](docs/wiki/Security.md)
-- [Roadmap](docs/wiki/Roadmap.md)
+- [Accueil documentation](Documentation/wiki/Home.md)
+- [Installation](Documentation/wiki/Installation.md)
+- [Architecture](Documentation/wiki/Architecture.md)
+- [Connecteurs CEX / DEX](Documentation/wiki/Connectors-CEX-DEX.md)
+- [Market Data](Documentation/wiki/Market-Data.md)
+- [Chart Viewer](Documentation/wiki/Chart-Viewer.md)
+- [Indicator Engine](Documentation/wiki/Indicator-Engine.md)
+- [Settings / API](Documentation/wiki/Settings-API.md)
+- [Update Manager](Documentation/wiki/Update-Manager.md)
+- [Sécurité](Documentation/wiki/Security.md)
+- [Roadmap](Documentation/wiki/Roadmap.md)
 
 ## Versionnage
 
@@ -320,4 +320,4 @@ Cycle officiel :
 
 `Source GitHub N -> Développement N+1 -> Tests -> Patch -> CHANGELOG -> Commit source N+1 -> Updates/Patches -> Wiki`
 
-Voir [Versionnage et releases](docs/wiki/Versioning-and-Releases.md) et le [protocole de mise à jour](docs/RELEASE_PROTOCOL.md).
+Voir [Versionnage et releases](Documentation/wiki/Versioning-and-Releases.md) et le [protocole de mise à jour](Documentation/RELEASE_PROTOCOL.md).

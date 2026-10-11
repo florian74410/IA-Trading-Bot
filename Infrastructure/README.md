@@ -3,7 +3,7 @@
 Déploiement cible Contabo Debian 13, Docker Engine/Compose.
 
 - App/ : copie de travail du build v2.0_DEBUG, arborescence interne conservée pour ne pas casser les chemins relatifs.
-- builds/ : builds historiques conservés, inchangés.
+- Builds/ : builds historiques conservés, inchangés.
 - Infrastructure/ : scripts et manifests de déploiement validés progressivement.
 - /opt/iatb/source/IA-Trading-Bot : clone Git sur GEN-1.
 - /opt/iatb/debug et /opt/iatb/release : instances séparées.

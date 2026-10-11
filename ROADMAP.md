@@ -137,8 +137,8 @@ Le patch v1.7.9, son test d'installation, le build complet et l'archive complèt
 
 - [x] Packaging du patch v1.7.9 finalisé dans `updates/v1.7.9/` avec ZIP et SHA-256.
 - [x] Test d'installation du patch documenté dans `updates/v1.7.9/INSTALL_TEST_RESULT.md`.
-- [x] Build complet publié dans `builds/v1.7.9/`.
-- [x] Archive complète publiée dans `archives/IA-Trading-Bot_V1.7.9.zip` avec SHA-256.
+- [x] Build complet publié dans `Builds/v1.7.9/`.
+- [x] Archive complète publiée dans `Archives/IA-Trading-Bot_V1.7.9.zip` avec SHA-256.
 - [x] `CHANGELOG.md` et `VERSION` disponibles dans le code livré.
 - [x] La v1.7.9 a servi de source officielle vérifiée pour le passage UpdateManager vers v1.8.0.
 - [ ] Validation end-to-end de toutes les fonctions prévues sur la machine cible.
@@ -149,7 +149,7 @@ Le patch v1.7.9, son test d'installation, le build complet et l'archive complèt
 
 # ✅ v1.8.2 — FINALISÉE
 
-Le packaging v1.8 est maintenant reproductible : la version est produite depuis l'archive officielle v1.7.9 au moyen d'un patch UpdateManager `1.7.9 -> 1.8.0`. Le patch a été accepté et installé par le vrai UpdateManager de la v1.7.9 sous Node.js 16.20.2, puis le résultat a été comparé au build `builds/v1.8`.
+Le packaging v1.8 est maintenant reproductible : la version est produite depuis l'archive officielle v1.7.9 au moyen d'un patch UpdateManager `1.7.9 -> 1.8.0`. Le patch a été accepté et installé par le vrai UpdateManager de la v1.7.9 sous Node.js 16.20.2, puis le résultat a été comparé au build `Builds/v1.8`.
 
 **État packaging : PASS.**  
 **État v1.8.2 : FINALISÉ. Les développements suivants commencent après cette version.**
@@ -382,7 +382,7 @@ Statut : **prévu**, à étudier et implémenter après stabilisation de l'envir
 - [x] ZIP final vérifié sans erreur.
 - [x] Rapport `updates/Patch_v1.7.9_to_v1.8.0/VALIDATION_REPORT.json` publié avec `status = PASS`.
 - [x] Patch, SHA-256, manifeste et informations de build publiés dans `main`.
-- [x] Build complet v1.8 publié dans `builds/v1.8/`.
+- [x] Build complet v1.8 publié dans `Builds/v1.8/`.
 
 ## Validation v1.8.x
 
