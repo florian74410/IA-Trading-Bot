@@ -18,6 +18,21 @@ for(const dir of canonical){
   finally{try{fs.unlinkSync(marker);}catch(e){}}
 }
 const paths=require('../Core/Shared/paths');
+const extras=[
+  ['IATB_ANNEX_ROOT',paths.Annexes,'/iatb/debug/annexes'],
+  ['IATB_UPDATES_ROOT',paths.Updates,'/iatb/debug/updates']
+];
+for(const [key,actual,expected] of extras){
+  assert.equal(path.resolve(process.env[key]||''),expected,key+' not correctly configured');
+  assert.equal(path.resolve(actual),expected,key+' paths mismatch');
+  assert(fs.statSync(expected).isDirectory(),'Missing '+key+' mounted directory');
+  const probe=path.join(expected,'.iatb-write-probe-'+crypto.randomBytes(8).toString('hex'));
+  try{fs.writeFileSync(probe,'probe',{flag:'wx',mode:0o600});assert.equal(fs.readFileSync(probe,'utf8'),'probe');}
+  finally{try{fs.unlinkSync(probe);}catch(e){}}
+}
+assert.equal(paths.Strategies,path.join(paths.Annexes,'Strategies'));
+assert.equal(paths.ReleasePointer,path.join(paths.Updates,'current_release.dat'));
+
 assert.equal(path.resolve(paths.AppRuntime.root),canonical[0]);
 assert.equal(path.resolve(paths.PersistentData.root),canonical[1]);
 assert.equal(path.resolve(path.dirname(paths.Data.user)),canonical[2]);
@@ -36,6 +51,7 @@ try{
 }finally{if(store.native)store.native.close();}
 assert(!fs.existsSync(path.join(paths.ROOT,'.runtime')),'Unexpected mutable app runtime inside image');
 console.log('DEBUG MOUNTS: OK');
+console.log('ANNEXES AND UPDATES MOUNTS: OK');
 console.log('RUNTIME KEYS: OK');
 console.log('SQLITE WRITE/READ: OK');
 console.log('APP ROOT IMMUTABLE: OK');
