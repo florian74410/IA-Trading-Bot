@@ -1,6 +1,6 @@
 # IA-TB GEN-1 DEBUG service split — REVIEW FIRST, do not 'up' without approval.
 # Deliberately no published ports and no external network; only loopback is shared.
-# No Trading Engine or other engines are present.
+# Trading Engine and market-facing engines are not included.
 name: iatb-debug-stack
 
 x-iatb-base: &iatb-base
@@ -60,4 +60,17 @@ services:
       router:
         condition: service_started
       core:
+        condition: service_started
+
+  firewall:
+    <<: *iatb-base
+    profiles: ["manual-stack"]
+    command: ["node", "Core/Firewall/firewall_service.js"]
+    network_mode: "service:router"
+    environment:
+      <<: *iatb-env
+      IATB_FIREWALL_ENABLED: "1"
+      IATB_FIREWALL_PORT: "8017"
+    depends_on:
+      router:
         condition: service_started
