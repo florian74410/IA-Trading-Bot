@@ -25,6 +25,51 @@ Cette feuille de route est la référence officielle du développement du projet
 
 **Statut :** idée enregistrée pour une version ultérieure. Ne pas développer ni déployer pendant la phase actuelle de tests DEBUG GEN-1.
 
+## 🧪 GEN-1 DEBUG — Audit fonctionnel UI / MarketData (12 octobre 2026)
+
+**Statut :** audit utilisateur en cours, aucune correction de code lancée. Déploiement actuel à préserver : image `iatb:debug-aac8341`, 13 services DEBUG, Trading Engine désactivé ; graphiques réactifs. Ne pas modifier le circuit de collecte MarketData opérationnel, le mode HTTP `maxBytes`, ni activer le Trading Live. Tests HTTP externes temporaires : fermer Socat et retirer la règle Contabo après la séance. Authentification avant HTTPS lors d'une séance ultérieure.
+
+### Étape C1 — Statistiques : Top Pools et coût d'exécution (PHOTO 1 — VALIDÉE)
+
+- [ ] Reproduire les quatre tableaux vides « Top Pools » : TVL, volume 24 h, APR/APY, liquidité ; relever les endpoints appelés, leurs réponses et leurs éventuelles erreurs, sans inventer de données.
+- [ ] Vérifier les acquisitions DeFiLlama (TVL/protocoles, volumes DEX et autres datasets réellement disponibles) et DexScreener (paires/pools, liquidité), les formats attendus et les sources propres à chaque métrique ; documenter les métriques non exposées par les API.
+- [ ] Suivre les données depuis MarketData vers Firewall, Router/Core puis composants Statistiques : propagation, normalisation, filtres, critères de classement, unités, fraîcheur et erreurs.
+- [ ] Corriger uniquement le maillon manquant, afficher les cinq meilleurs résultats réels par métrique quand disponibles et un motif clair lorsqu'ils sont indisponibles ; ne pas assimiler APR/APY à TVL/liquidité ni fabriquer des rendements.
+- [ ] Pour « Coût total d'exécution », vérifier le couple de tokens, la chaîne, le pool DexScreener exploitable, la liquidité et les entrées du simulateur ; calculer gas/frais DEX/slippage uniquement si les données suffisantes existent ; sinon afficher « estimation indisponible » et raison.
+- [ ] Corriger le statut LIVE pour qu'il exprime une donnée effectivement récente, et non seulement un service joignable ; ajouter tests intégration et non-régression.
+
+### Étape C2 — Fundamental : erreurs de collecte RSS/Atom (PHOTO 2 — VALIDÉE)
+
+- [ ] Inspecter les erreurs `feed.collect.error` observées sur THEBLOCK, FT, BLOOMBERG et REUTERS ; vérifier logs, statut HTTP, URL, timeout, parsing et éventuel blocage par source.
+- [ ] Distinguer source temporairement indisponible, limitation/anti-bot, flux non conforme et défaut de configuration ; conserver les sources valides sans ralentir la collecte globale.
+- [ ] Mettre en place un diagnostic et un statut propres à chaque flux, avec reprise/retry raisonnable et tests de collecte sans appels répétés excessifs.
+
+### Étape C3 — Fundamental : dernières News absentes malgré ~867 publications (PHOTO 2 / PHOTO 3 — VALIDÉE)
+
+- [ ] Reproduire l'écart : compteurs Fundamental annonçant ~867 publications, alors que le bloc des dernières News affiche « Aucune publication collectée pour le moment ».
+- [ ] Comparer le chemin des compteurs et celui du bloc News : même base/dataset ? même instance, schéma, stockage Docker persistant, endpoint, filtres, statut et pagination ?
+- [ ] Contrôler la réponse JSON du endpoint News, les erreurs Core ↔ Router ↔ Fundamental, le parsing UI et les filtres (source, catégorie, plage temporelle, état, publication) susceptibles d'exclure les éléments.
+- [ ] Vérifier le champ de date utilisé et les dates invalides/manquantes ; afficher par défaut les **5 actualités disponibles les plus récentes**, triées par date de publication décroissante avec repli explicite sur la date de collecte si nécessaire, indépendamment d'un filtre « dernières 24 h » destiné aux statistiques.
+- [ ] Afficher pour chaque news titre, source et horodatage quand présents ; état vide uniquement lorsque le résultat confirmé est réellement vide, erreur/timeout avec message distinct lorsque la requête échoue.
+- [ ] Garantir pagination et déduplication stable, rafraîchissement après collecte, et tests sur données réelles + cas 0/1/5/N publications. Ne jamais masquer un échec d'endpoint sous un message « aucune publication ».
+- [ ] Examiner le `CP_ENGINE_TIMEOUT` aperçu dans l'écran Fundamental : déterminer quelle requête expire, si elle bloque le bloc News et si son exécution doit être asynchrone ; ne pas augmenter globalement les timeouts sans diagnostic.
+
+### Étape C4 — Trading IA : catalogue des paires (PHOTO 4 — À CONFIRMER DANS L'AUDIT)
+
+- [ ] Vérifier pourquoi Binance ne propose que BTC/USDT, ETH/USDT et SOL/USDT dans la liste, alors que les bougies ETH/USDT s'affichent.
+- [ ] Remplacer un éventuel catalogue statique par les instruments réellement disponibles chez le provider choisi via MarketData, avec statut, typologie Spot/Perp, format normalisé, recherche et pagination/virtualisation si nécessaire.
+- [ ] Vérifier chargement, changement de marché et non-régression de la latence du graphique.
+
+### Étape C5 — Interface Chart Viewer (PHOTO 4 — À CONFIRMER)
+
+- [ ] Vérifier si le défilement horizontal visible est un défaut de CSS, un conteneur volontaire ou un débordement ; corriger seulement s'il est parasite, sans affecter le graphique.
+
+### Hors anomalie retenue
+
+- « Clé OpenAI absente » : comportement attendu tant que la clé n'est pas configurée ; aucune saisie de secret via HTTP temporaire. Configuration à traiter après AUTH + HTTPS.
+- « 867 publications / 867 publications 24 h » : ne pas présumer d'une erreur de compteur ; priorité au bloc News effectivement vide.
+- Aucun élément de cette checklist ne doit être coché avant correction et validation utilisateur.
+
 ## 🔒 GEN-1 — Jalon préalable à la première intégration RELEASE (À FAIRE PLUS TARD)
 
 **Priorité actuelle :** terminer et valider l'accès à l'UI Docker DEBUG du VPS Contabo par tunnel SSH. Ce chantier *Shared Data* est explicitement différé ; **aucune intégration RELEASE n'est autorisée à ce stade**.
