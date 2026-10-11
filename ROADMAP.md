@@ -83,12 +83,23 @@ Cette feuille de route est la référence officielle du développement du projet
 
 ### Étape C8 — Livraison du lot de corrections en patch v2.0.1 compatible Docker DEBUG (À PRÉPARER APRÈS AUDIT)
 
-- [ ] Finaliser l'audit et figer la liste des corrections C1 à C7 ; rattacher chaque changement à une anomalie et à des critères d'acceptation mesurables.
+- [ ] Finaliser l'audit et figer la liste des corrections C1 à C7 et C9 ; rattacher chaque changement à une anomalie et à des critères d'acceptation mesurables.
 - [ ] Préparer un patch **v2.0.1** incrémental depuis le commit/image DEBUG validé, avec liste des fichiers modifiés, manifeste/version, notes de changement, tests et procédure de retour arrière.
 - [ ] Rendre l'intégration simple sur GEN-1 : reconstruire une **nouvelle image Docker versionnée** depuis le source patché, fournir un override Compose **persistant** et un déploiement explicite des seuls services nécessaires ; ne pas modifier les conteneurs en place à la main et éviter l'override éphémère de `/tmp` pour les mises à jour pérennes.
 - [ ] Préserver volumes/state, configuration des ports privés, `IATB_MARKETDATA_OFFLINE_DIAGNOSTIC=0`, orchestrateur SHADOW tant que non validé, et Trading Engine **désactivé** ; ne pas toucher au traitement HTTP `maxBytes` ni réécrire le MarketData opérationnel.
 - [ ] Vérifier tests unitaires et intégration (UI/Core/Router/Firewall/MarketData/Fundamental/Providers), temps de chargement et changement de marché, puis déployer progressivement avec contrôle de santé et rollback documenté vers l'image `iatb:debug-aac8341`.
 - [ ] Garder l'accès HTTP externe temporaire strictement restreint, puis arrêter Socat et supprimer l'exception Contabo une fois les tests terminés ; traiter **authentification avant HTTPS** dans un chantier séparé.
+
+### Étape C9 — Trading IA : indicateurs sélectionnés mais invisibles sur le graphique (NOUVELLE ANOMALIE — SIGNALÉE)
+
+- [ ] Reproduire avec un indicateur simple (SMA/EMA) puis un oscillateur (RSI/MACD), sur au moins deux providers et deux unités de temps ; noter si la sélection est mémorisée, si le bouton réagit et si une erreur apparaît.
+- [ ] Auditer le flux complet du bouton « Indicateurs » : identifiant de l'indicateur sélectionné, configuration active, état frontend, événements de sélection/désélection et éventuelle persistance par contexte marché/paire/timeframe.
+- [ ] Contrôler le registre des indicateurs et l'Indicator Engine : disponibilité, paramètres, données OHLC nécessaires, requête et réponse Core ↔ Router ↔ Indicator, traitement des erreurs et correspondance des timestamps avec les bougies.
+- [ ] Vérifier la connexion entre les séries calculées et le Chart Viewer : affectation de l'indicateur au graphique, création/destruction des séries, visibilité, axe et échelle, plage temporelle, données nulles/insuffisantes, dessin au-dessus du prix ou dans un panneau inférieur selon le type d'indicateur.
+- [ ] Corriger uniquement le composant fautif (événement UI, API/distribution, calcul ou rendu), sans modifier la collecte des bougies ni casser la réactivité obtenue lors du changement de paire et de provider.
+- [ ] Afficher un état utilisateur clair « chargé / calcul en cours / données insuffisantes / erreur », avec suppression et reconfiguration d'un indicateur fonctionnelles ; éviter les échecs silencieux.
+- [ ] Ajouter les tests de non-régression : activation, désactivation, plusieurs indicateurs, changement de paire, provider et timeframe, retour sur la page Trading IA, rafraîchissement et rendu à largeur réduite ; chronométrer l'impact sur l'affichage graphique.
+- [ ] Inclure le correctif C9 dans le périmètre du patch v2.0.1 et ses critères d'acceptation, sans déclarer l'anomalie résolue avant validation sur Docker DEBUG.
 
 ### Hors anomalie retenue
 
