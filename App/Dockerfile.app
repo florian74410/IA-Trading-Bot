@@ -10,5 +10,6 @@ WORKDIR /opt/iatb/App
 ENV NODE_ENV=production
 COPY --from=dependencies /opt/iatb/App/node_modules ./node_modules
 COPY . .
-# The safe in-memory SQLite preflight is the only default command.
-CMD ["node", "Tools/sqlite_preflight.js"]
+# No service starts implicitly; compose provides explicit service commands.
+# QA/preflight scripts remain in Git but are not copied into this image.
+CMD ["node", "-e", "console.log('IA-TB GEN-1 runtime image: start services through compose only')"]
