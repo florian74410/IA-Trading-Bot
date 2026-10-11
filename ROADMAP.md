@@ -12,6 +12,29 @@ Cette feuille de route est la référence officielle du développement du projet
 - Une version ne devient **STABLE** qu'après validation de ses fonctions, tests, documentation et packaging.
 - `ROADMAP.md` décrit le travail prévu ou en cours ; `CHANGELOG.md` décrit le travail réellement livré.
 
+## 🔒 GEN-1 — Jalon préalable à la première intégration RELEASE (À FAIRE PLUS TARD)
+
+**Priorité actuelle :** terminer et valider l'accès à l'UI Docker DEBUG du VPS Contabo par tunnel SSH. Ce chantier *Shared Data* est explicitement différé ; **aucune intégration RELEASE n'est autorisée à ce stade**.
+
+**Décision d'architecture :** DEBUG accessible uniquement par tunnel SSH ; RELEASE accessible par domaine HTTPS authentifié ainsi que par tunnel SSH. Les exécutions, configurations, secrets, utilisateurs, wallets, portefeuilles, ordres, historiques privés et journaux restent séparés. Seules les données publiques explicitement éligibles sont mutualisées.
+
+**Jalon bloquant avant la première promotion d'un build en RELEASE — Shared Data GEN-1 et Compatibility Layer v1 :**
+
+- [ ] Concevoir un stockage persistant commun dédié (cible `/var/lib/iatb/shared/`) pour les news RSS/Atom publiques, données de marché, métadonnées CoinGecko/DeFiLlama et calendriers/FED Watch, selon les droits de réutilisation des providers.
+- [ ] Mutualiser l'acquisition externe avec l'API Request Orchestrator : cache-first, TTL/fraîcheur, déduplication des requêtes en cours, budgets/quotas par provider et politique explicite en cas de cache incompatible.
+- [ ] Interdire l'écriture concurrente libre par DEBUG et RELEASE dans les mêmes tables SQLite ; désigner un collecteur/propriétaire unique de l'écriture et exposer des lectures contrôlées.
+- [ ] Versionner chaque enregistrement partagé : `schema_id`, `schema_version`, `producer_version` (traçabilité), timestamps de création/mise à jour/expiration, provenance et payload ; séparer la version du schéma de données de celle du schéma SQL et de l'application.
+- [ ] Publier un registre de compatibilité par Engine/version de build, décrivant précisément les `schema_id` et `schema_version` acceptés (ou une plage explicitement vérifiée), sans déduire la compatibilité du seul numéro de version IA-TB.
+- [ ] **Vérifier avant toute désérialisation/consommation** la compatibilité du schéma, la fraîcheur et les droits d'accès ; si incompatibilité ou schéma inconnu : **ne pas charger la donnée**, signaler `CACHE_INCOMPATIBLE`, puis utiliser uniquement un repli explicitement compatible.
+- [ ] Permettre la coexistence de plusieurs variantes d'un même objet par version de schéma ; une DEBUG récente ne doit jamais écraser la seule variante encore lisible par une ancienne RELEASE.
+- [ ] Prévoir éventuellement des adaptateurs de migration/conversion versionnés et testés, mais **aucune conversion implicite ni réinterprétation silencieuse**.
+- [ ] Tester le scénario critique : DEBUG produit un schéma plus récent que celui accepté par RELEASE ; RELEASE refuse la nouvelle version et continue à lire ses données compatibles sans perturbation. Tester également coexistence, cache expiré, déduplication et rollback.
+- [ ] Valider tests, documentation, sauvegarde/restauration et séparation des permissions avant tout premier déploiement RELEASE.
+
+**Statut :** décision validée, développement non commencé. **Ordre imposé :** tunnel SSH + UI DEBUG → validation fonctionnelle DEBUG → implémentation/validation Shared Data + compatibilité → seulement ensuite première intégration d'un build RELEASE.
+
+---
+
 ---
 
 ## ✅ Dernière version stabilisée
