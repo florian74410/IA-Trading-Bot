@@ -35,10 +35,14 @@ services:
       - /var/lib/iatb/debug/runtime:/iatb/debug/runtime:rw
       - /var/lib/iatb/debug/data:/iatb/debug/data:rw
       - /var/lib/iatb/debug/state:/iatb/debug/state:rw
+      - /var/lib/iatb/debug/annexes:/iatb/debug/annexes:rw
+      - /var/lib/iatb/debug/updates:/iatb/debug/updates:rw
     environment:
       IATB_RUNTIME_ROOT: /iatb/debug/runtime
       IATB_DATA_ROOT: /iatb/debug/data
       IATB_STATE_ROOT: /iatb/debug/state
+      IATB_ANNEX_ROOT: /iatb/debug/annexes
+      IATB_UPDATES_ROOT: /iatb/debug/updates
       IATB_TRADING_LIVE: "0"
       IATB_DEBUG_BOOTSTRAP: "0"
     restart: "no"
