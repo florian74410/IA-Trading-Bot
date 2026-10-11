@@ -1,0 +1,21 @@
+TradingBot Kraken Unified v1.0.2 — Architecture
+=================================================
+
+Navigateur : http://127.0.0.1:8000
+                |
+                v
+           router.js :8000
+           /            \
+          /              \
+Core TradingBot :8001   Kraken Add-On :8011
+       |                    |
+      GMX                 Kraken API
+
+Interface :
+- /trading?exchange=GMX : même page Trading, source GMX.
+- /trading?exchange=KRAKEN : même page Trading, source Kraken.
+- /kraken : redirection vers /trading?exchange=KRAKEN.
+- /router-health : diagnostic uniquement.
+
+TradingView / Chart Viewer reste direct vers TradingView et ne passe pas par le proxy Kraken.
+Le build v1.0.2 valide uniquement le routage Kraken PUBLIC. Kraken Private / ordres ne sont pas activés dans cette étape.
