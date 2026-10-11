@@ -61,7 +61,8 @@ ClientService.prototype.verifyPassword=function(clientId,password){
 };
 ClientService.prototype.bootstrapDebugUser=function(opts){
   opts=opts||{};this.repo.assertReady();
-  var username=String(opts.username||'OVERKILL').trim().toUpperCase(),password=String(opts.password||'root'),role=String(opts.role||'SUPERADMIN').trim().toUpperCase();
+  var username=String(opts.username||'').trim().toUpperCase(),password=String(opts.password||''),role=String(opts.role||'SUPERADMIN').trim().toUpperCase();
+  if(!/^[A-Z0-9._-]{3,64}$/.test(username)||password.length<16)throw new Error('DEBUG_BOOTSTRAP_EXPLICIT_CREDENTIALS_REQUIRED');
   var email=cleanEmail(opts.email||'overkill.debug@iatb.local'),first=cleanName(opts.firstName||'OVERKILL'),last=cleanName(opts.lastName||'DEBUG');
   var extHash=this.crypto.externalHash('debug-user:'+username),x=this.repo.byExternalHash(extHash),now=new Date().toISOString();
   if(!x){
