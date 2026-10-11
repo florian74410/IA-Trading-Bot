@@ -165,3 +165,20 @@ services:
       IATB_DEBUG_BOOTSTRAP: "0"
       IATB_MARKETDATA_OFFLINE_DIAGNOSTIC: "1"
     restart: "no"
+
+  provider-policy-smoke:
+    profiles: ["provider-policy-smoke"]
+    build:
+      context: ./App
+      dockerfile: Dockerfile.app
+    image: iatb:node22-app-validation
+    command: ["node", "Tools/provider_policy_smoke.js"]
+    network_mode: "none"
+    read_only: true
+    tmpfs:
+      - /tmp:rw,nosuid,nodev,mode=1777
+    environment:
+      IATB_TRADING_LIVE: "0"
+      IATB_DEBUG_BOOTSTRAP: "0"
+      IATB_MARKETDATA_OFFLINE_DIAGNOSTIC: "1"
+    restart: "no"
