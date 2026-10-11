@@ -64,6 +64,32 @@ Cette feuille de route est la référence officielle du développement du projet
 
 - [ ] Vérifier si le défilement horizontal visible est un défaut de CSS, un conteneur volontaire ou un débordement ; corriger seulement s'il est parasite, sans affecter le graphique.
 
+### Étape C6 — UI : supprimer les barres de défilement internes visibles (NOUVELLES PHOTOS 01:33/01:34 — VALIDÉE)
+
+- [ ] Repérer les scrollbars horizontales visibles dans la barre d'outils Trading IA / Chart Viewer et dans la sous-navigation Paramètres (ainsi que les débordements analogues de l'interface).
+- [ ] Conserver **uniquement la barre de défilement verticale de la page entière comme barre visible** ; supprimer les scrollbars internes inutiles en corrigeant les dimensions flex/min-width/overflow, sans cacher du contenu.
+- [ ] Si la sous-navigation comporte plus d'onglets que la largeur disponible, prévoir adaptation responsive / défilement horizontal utilisable sans barre apparente (trackpad, molette adaptée, clavier ou flèches explicites accessibles) ; ne pas rendre les onglets inaccessibles.
+- [ ] Sur Trading IA, faire tenir la barre d'outils sans défilement parasite et préserver la zone graphique et ses contrôles ; si nécessaire réorganiser les contrôles aux petites largeurs.
+- [ ] Vérifier le rendu sur Chrome de Macro et plusieurs largeurs, le défilement vertical global, l'accessibilité et l'absence de régression des performances du graphique ; rapprocher cette étape de C5 sans créer deux changements CSS contradictoires.
+
+### Étape C7 — Providers / Statistiques : métriques réelles et historique compact (NOUVELLE PHOTO 01:34 — VALIDÉE)
+
+- [ ] Auditer les statistiques et événements déjà disponibles par provider dans MarketData, la télémétrie REST/Stream, le Firewall et l'orchestrateur : succès, erreurs, rejets bloqués, codes HTTP, limitation 429, cache et dates ; identifier les champs réellement disponibles et ceux non instrumentés.
+- [ ] Définir précisément les compteurs **requêtes réussies**, **requêtes en erreur** et **requêtes bloquées** (ex. refus Firewall, politique/budget en mode exécutoire) en distinguant observations SHADOW, 429 provider, retries et cache hits ; éviter les doubles comptages et ne pas afficher des chiffres inventés.
+- [ ] Agréger les événements par provider et par tranche temporelle avec horodatage, volume de requêtes, taux de réussite et erreurs ; conserver un historique borné persistant ou exploiter la télémétrie existante, avec rétention configurable et faible coût VPS.
+- [ ] Ajouter à l'onglet « Providers > Statistiques » quelques KPI compacts (réussies, erreurs, bloquées, éventuellement taux de réussite), sans déborder ni remplacer les statistiques existantes.
+- [ ] Afficher un **mini-graphique temporel compact** (courbes ou barres empilées) au sein du panneau actuel, avec légende et plage de temps courte (ex. 1 h/24 h/7 j lorsque les données existent), sans agrandir la page inutilement.
+- [ ] Actualiser les statistiques à cadence raisonnable, avec gestion de l'absence de télémétrie (« indisponible » ou zéro avéré), test de cohérence des totaux, isolation par provider, tests de redémarrage et de charge ; ne pas générer de requêtes vers les exchanges pour construire ce graphique.
+
+### Étape C8 — Livraison du lot de corrections en patch v2.0.1 compatible Docker DEBUG (À PRÉPARER APRÈS AUDIT)
+
+- [ ] Finaliser l'audit et figer la liste des corrections C1 à C7 ; rattacher chaque changement à une anomalie et à des critères d'acceptation mesurables.
+- [ ] Préparer un patch **v2.0.1** incrémental depuis le commit/image DEBUG validé, avec liste des fichiers modifiés, manifeste/version, notes de changement, tests et procédure de retour arrière.
+- [ ] Rendre l'intégration simple sur GEN-1 : reconstruire une **nouvelle image Docker versionnée** depuis le source patché, fournir un override Compose **persistant** et un déploiement explicite des seuls services nécessaires ; ne pas modifier les conteneurs en place à la main et éviter l'override éphémère de `/tmp` pour les mises à jour pérennes.
+- [ ] Préserver volumes/state, configuration des ports privés, `IATB_MARKETDATA_OFFLINE_DIAGNOSTIC=0`, orchestrateur SHADOW tant que non validé, et Trading Engine **désactivé** ; ne pas toucher au traitement HTTP `maxBytes` ni réécrire le MarketData opérationnel.
+- [ ] Vérifier tests unitaires et intégration (UI/Core/Router/Firewall/MarketData/Fundamental/Providers), temps de chargement et changement de marché, puis déployer progressivement avec contrôle de santé et rollback documenté vers l'image `iatb:debug-aac8341`.
+- [ ] Garder l'accès HTTP externe temporaire strictement restreint, puis arrêter Socat et supprimer l'exception Contabo une fois les tests terminés ; traiter **authentification avant HTTPS** dans un chantier séparé.
+
 ### Hors anomalie retenue
 
 - « Clé OpenAI absente » : comportement attendu tant que la clé n'est pas configurée ; aucune saisie de secret via HTTP temporaire. Configuration à traiter après AUTH + HTTPS.
