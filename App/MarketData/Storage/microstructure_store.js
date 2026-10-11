@@ -1,19 +1,18 @@
 'use strict';
-var fs=require('fs'),path=require('path'),os=require('os'),child=require('child_process');
+var fs=require('fs'),path=require('path'),os=require('os'),SqliteCompat=require('../../Core/Shared/sqlite_compat');
 function q(s){return "'"+String(s==null?'':s).replace(/'/g,"''")+"'";}
 function Store(o){
- o=o||{};this.sqlite=process.env.IATB_SQLITE_BIN||'sqlite3';
+ o=o||{};this.native=null;
  this.retentionDays=Math.max(30,Math.min(90,+o.retentionDays||90));
  this.persistIntervalMs=Math.max(15000,+o.persistIntervalMs||60000);
  this.file=path.resolve(o.file||process.env.IATB_MARKET_MICROSTRUCTURE_DB||path.join(process.env.IATB_DATA_ROOT||path.join(os.homedir(),'IA-TB-UserData-Server'),'Shared Data','MarketData','market_microstructure.db'));
  this.ready=false;this.lastError='';this.lastPruneAt=0;this.lastPersistByKey=Object.create(null);this.init();
 }
 Store.prototype.run=function(sql,read){
- fs.mkdirSync(path.dirname(this.file),{recursive:true});
- var a=read?['-batch','-noheader','-separator','\t',this.file]:['-batch',this.file],
-     r=child.spawnSync(this.sqlite,a,{input:String(sql||''),encoding:'utf8',timeout:12000,maxBuffer:16*1024*1024});
- if(r.error)throw r.error;if(r.status!==0)throw new Error(String(r.stderr||'SQLITE_ERROR').trim());return String(r.stdout||'');
+ if(!this.native)this.native=new SqliteCompat(this.file,{timeoutMs:5000});
+ return this.native.run(sql,read);
 };
+Store.prototype.close=function(){if(this.native){this.native.close();this.native=null;}};
 Store.prototype.init=function(){try{
  this.run("PRAGMA journal_mode=WAL; PRAGMA busy_timeout=5000;"+
  " CREATE TABLE IF NOT EXISTS microstructure_snapshots(id INTEGER PRIMARY KEY AUTOINCREMENT,timestamp INTEGER NOT NULL,provider TEXT NOT NULL,symbol TEXT NOT NULL,depth INTEGER NOT NULL,firewall_decision TEXT,data_json TEXT NOT NULL);"+
