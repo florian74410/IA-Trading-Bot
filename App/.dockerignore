@@ -21,3 +21,16 @@ node_modules
 *.key
 *.pem
 *.log
+# Legacy credentials and private mutable stores
+secrets_v2.dat
+user.dat
+ai_settings_v2.dat
+config_v1.0.dat
+logs.dat
+**/secrets_v2.dat
+**/user.dat
+**/ai_settings_v2.dat
+**/client_master.key
+**/wallet_master.key
+**/Data/*.db
+**/Data/*.sqlite
