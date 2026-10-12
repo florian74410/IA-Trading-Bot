@@ -26,8 +26,8 @@ if [[ -f "$WORK/compose.yml" ]] && [[ -n "$(compose ps -q)" ]]; then
   echo "C3 preview already running: stop it before rebuilding" >&2; exit 1
 fi
 mkdir -p "$WORK/src" "$WORK/data/Shared Data/Fundamental" "$WORK/runtime" "$WORK/state" "$WORK/annexes" "$WORK/updates"
-git -C "$SOURCE_REPO" fetch origin fix/v2.0.1-debug
-git -C "$SOURCE_REPO" archive FETCH_HEAD App | tar -xf - -C "$WORK/src"
+git -c safe.directory="$SOURCE_REPO" -C "$SOURCE_REPO" rev-parse --verify FETCH_HEAD >/dev/null || { echo "FETCH_HEAD missing: first run git fetch origin fix/v2.0.1-debug as iatbadmin" >&2; exit 2; }
+git -c safe.directory="$SOURCE_REPO" -C "$SOURCE_REPO" archive FETCH_HEAD App | tar -xf - -C "$WORK/src"
 python3 - "$WORK/data/Shared Data/Fundamental/fundamental.db" <<'PY'
 import pathlib,sqlite3,sys,urllib.parse
 src=pathlib.Path("/var/lib/iatb/debug/data/Shared Data/Fundamental/fundamental.db")
