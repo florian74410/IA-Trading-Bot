@@ -367,3 +367,60 @@ Les niveaux ci-dessus reflètent **l'impact potentiel** en cas d'accès au port 
 | ANY | `/api/internal/*` | `Gateway/ui_service.js:52` |
 | ANY | `/api/*` | `Gateway/ui_service.js:53` |
 | ANY | `/api/*` | `Gateway/ui_service.js:53` |
+
+---
+
+## 6 — Audit complémentaire statique P1.3 (version 1.1, à valider)
+
+**Objectif :** réduire les incertitudes du catalogue initial sans toucher à GEN-1. Sources relues : services HTTP canoniques, fichiers frontend et tests existants de la branche `fix/v2.0.1-debug`.
+
+### A. Routes dynamiques et appels navigateur
+
+- **UI Gateway :** `/api/*` relaie les requêtes vers Core, `/assets/*` sert les ressources, `/firewall-admin/*` relaie vers Firewall et `/ui-data/market/candles` contacte Router. Les pages sont résolues par `PAGE_MAP`. Références : `App/UI/Gateway/ui_service.js:15,47-53`.
+- **Router :** toute requête non traitée explicitement est proxyfiée vers Core (`App/Core/Router/router.js:211-212`). Attention aux en-têtes navigateur relayés (`App/UI/Gateway/ui_service.js:27-30` et `App/Core/Router/router.js:183-185`). Il faudra **retirer** les en-têtes internes injectés par un navigateur et établir la confiance interservices.
+- **Appels frontend :** parcours de `App/Frontend/Pages/app_v1.0.html`, `settings.html`, `admin_v1.0.html` et des principaux contrôleurs JS (Admin, wallets, transferts, swap, Trading IA, Fundamental, indicateurs, notifications, navigation, portfolio, mises à jour). Les flux incluent notamment `/communication/v1/ui/read`, `/communication/v1/ui/write`, `/api/settings/*`, `/api/admin/*`, `/api/security/wallets/*`, `/api/transfers/*`, `/api/ai-updates/*`.
+- **Route à confirmer :** l'interface indicateurs contient également des chemins `/api/registry/reload`, `/api/definition/create`, `/api/compute-market-batch`, etc. Ils sont appelés dynamiquement et nécessitent une correspondance de routage, sans conclure qu'ils sont accessibles/fonctionnels.
+- **Permissions :** `App/UI/Permissions/ui_permissions.js:8-18` classe tout GET/HEAD en `READ`, ne possède pas de rôle GUEST et normalise les rôles inconnus en USER. En mode authentifié, cela ne doit jamais donner un droit d'écriture à GUEST, ni rendre des données privées lisibles par simple GET.
+
+### B. WebSocket et processus d'entrée
+
+- Vérification de `App/UI/Gateway/ui_service.js`, `App/Core/Server/server.js`, `App/Core/Router/router.js` et des serveurs canoniques Firewall, MarketData, Fundamental, Indicator, Liquidity, Strategy, Risk, Portfolio, Supervisor et Trading : **aucun serveur WebSocket navigateur ni handler `upgrade` explicite détecté dans cet ensemble**.
+- `App/MarketData/Transport/simple_websocket.js:23-40` est un **client WebSocket sortant** (providers) ; ne pas le compter comme port HTTP entrant.
+- `App/Tools/ssh_ui_bridge.js:30-45` crée un socket Unix privé de relais vers la Gateway, non une socket WebSocket publique.
+- **Limite :** inspection des points d'entrée canoniques uniquement ; ne garantit pas qu'un override/deuxième process du déploiement réel n'expose pas d'endpoint supplémentaire.
+
+### C. Vérification des garde-fous interservices
+
+- Les endpoints CP/1 basés sur l'adaptateur commun vérifient jeton partagé et HMAC (`App/Core/Communication/component_cp1_adapter.js:15-16`) ; ces contrôles doivent être maintenus.
+- Les endpoints du Router `/communication/v1/request` et apparentés exigent un jeton CP (`App/Core/Router/router.js:172-180`), mais `/communication/v1/ui/read` et `/communication/v1/ui/write` sont sur un autre chemin sans vérification de session utilisateur propre (`...:87-169`).
+- `App/UI/Gateway/ui_service.js:33` demande `/api/bootstrap` au Core en mode authentifié ; le Core répond actuellement `authenticated:true` de façon inconditionnelle (`App/Core/Server/server.js:405`).
+- **Conséquence de conception :** ne pas simplement changer `IATB_AUTH_MODE=enabled` : il faut implémenter la chaîne de validation session + RBAC sur Gateway/Core/Router avant toute exposition.
+
+### D. Contrôle réel GEN-1 : commande CLI déjà disponible
+
+**Sur Macro, utiliser uniquement la commande existante :**
+
+```bash
+iatb vps audit
+```
+
+Ce diagnostic existant (`IA-TB-CLI/tools/gen1_full_audit.py`) vérifie, en lecture seule, l'état des conteneurs DEBUG, les **numéros** de ports TCP en écoute, l'éventuel listener 8080, l'état du Trading Engine et plusieurs health checks. Il masque les secrets, les lignes de bases et les logs bruts. Il demande le mot de passe `sudo` du VPS dans un terminal interactif, sans le stocker, et récupère un rapport sur Macro.
+
+**Résultat attendu pour l'étape :**
+- état Docker connu et liste cohérente des conteneurs DEBUG ;
+- présence ou absence explicite du port temporaire 8080 ;
+- pas de Trading Engine LIVE ;
+- fichier local `GEN1_AUDIT` généré et transmis pour lecture ;
+- anomalies signalées, sans aucun changement de Docker, des clés ou des ports.
+
+**Limites du CLI actuel :** cette commande n'inclut pas les adresses d'écoute de `ss`, les `HostConfig.PortBindings` complets, les arguments Socat, les overrides Compose réels ni les règles du pare-feu hébergé Contabo. Par conséquent, **un audit complémentaire ciblé peut rester nécessaire** après le premier retour. Si c'est le cas, ajouter une sous-commande bornée `iatb vps auth-surface` (lecture seule), plutôt que demander des commandes SSH dangereuses ou exposant des secrets.
+
+### État de validation
+
+- [x] Complément GitHub : routes dynamiques, flux frontend et identification des canaux CP/1 concernés.
+- [x] Vérification statique : pas de WebSocket serveur explicite dans les points d'entrée canoniques inspectés.
+- [ ] Réception et analyse du rapport `iatb vps audit` sur GEN-1.
+- [ ] Levée des incertitudes restantes sur les binds, Socat, les règles réseau et les différences de version réellement déployée (selon anomalies relevées).
+- [ ] Validation utilisateur puis coche de la **case P1.3** dans `AUTH_DEBUG_2.1_WORKPLAN.md`.
+
+**P1.3 reste non validé : aucun test dynamique GEN-1 ni exposition de service n'a été exécuté dans ce complément.**
