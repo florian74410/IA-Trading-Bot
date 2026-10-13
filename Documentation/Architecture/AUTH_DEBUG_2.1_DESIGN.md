@@ -75,12 +75,14 @@ Les mots de passe sont demandés par invite TTY masquée (ni argument shell, ni 
 ## Wallets — report assumé
 
 - Le code actuel associe les wallets à clientId, mais la clé AES du serveur peut déchiffrer leurs secrets : **pas de confidentialité cryptographique vis-à-vis de l'admin VPS** aujourd'hui.
-- Phase initiale : **watch-only** sur adresse publique ; aucun import de seed/private key via HTTP ; aucune utilisation de wallet réel sur l'environnement DEBUG.
+- **Après le premier déploiement seulement** : envisager watch-only sur adresse publique ; aucun import de seed/private key via HTTP ; aucune utilisation de wallet réel sur l'environnement DEBUG.
 - Phase future après Supervisor : connecteur Web sans installer une application IA-TB : extension de portefeuille déjà présente, WalletConnect vers un portefeuille existant sur téléphone, ou hardware wallet compatible. L'utilisateur signe localement, le serveur reçoit uniquement la transaction signée ou une preuve de contrôle.
 - Ne pas promettre le non-custodial sur une interface JavaScript servie par un administrateur sans attestation/inspection indépendante : prévoir revue de code, CSP stricte, contrôle d'intégrité et tests de transactions.
 - Prévoir un chantier de migration **opt-in** pour les wallets historiques, sans déchiffrement ni transfert automatique au cours du déploiement 2.1.
 
 ## Plan de réalisation optimisé — jalons bloquants
+
+**Checklist d'exécution et validations point par point :** [AUTH_DEBUG_2.1_WORKPLAN.md](AUTH_DEBUG_2.1_WORKPLAN.md). Les phases ci-dessous sont un résumé historique ; la checklist dédiée fait foi.
 
 | Phase | Travail regroupé | Livrable / blocage |
 | --- | --- | --- |

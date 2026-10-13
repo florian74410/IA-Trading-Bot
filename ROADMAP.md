@@ -14,6 +14,9 @@ Cette feuille de route est la référence officielle du développement du projet
 
 ## 🔐 IA-TB DEBUG 2.1 — Authentification native multiutilisateur (CONCEPTION EN COURS)
 
+**Fiche de travail officielle et cases de validation :** [AUTH_DEBUG_2.1_WORKPLAN.md](Documentation/Architecture/AUTH_DEBUG_2.1_WORKPLAN.md). Cette fiche est l'unique source de vérité pour cocher les tâches ; les lots ci-dessous restent un résumé de référence.
+
+
 **Décision validée :** Modèle A (Core Auth + UI Gateway + RBAC + SQLite), trois rôles ADMIN / USER / GUEST, CLI natif sur GEN-1 réutilisé à distance par IA-TB CLI. Première étape de conception documentée dans [AUTH_DEBUG_2.1_DESIGN.md](Documentation/Architecture/AUTH_DEBUG_2.1_DESIGN.md). **Version 2.1 cible, non livrée ; pas de changement au VPS à ce stade.**
 
 ### Lot 1 — Contrat et état initial
