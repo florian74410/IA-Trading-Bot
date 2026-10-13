@@ -12,9 +12,8 @@
 
 - [x] Valider le **modèle A**, les trois rôles ADMIN / USER / GUEST et la séparation DEBUG / RELEASE (décisions de conception confirmées).
 - [x] Inspecter les composants existants de DEBUG 2.0 : Clients/SQLite, Core, ancien login, UI Gateway, permissions et association wallet/clientId (revue initiale Git).
-- [ ] Inventorier toutes les routes HTTP, WebSocket et canaux Core/Router/Engines, leurs écritures et les accès directs possibles.
-  - **Sous-état :** revue GitHub complémentaire réalisée, rapport `AUTH_ENDPOINT_AUDIT_v1.md §6` ; contrôles réseau GEN-1 et validation utilisateur en attente. Ne pas cocher prématurément.
-- [ ] Définir les frontières de confiance navigateur → Gateway → Core → Router/Engines, la provenance des identités et les protections fail-closed.
+- [x] **P1.3 — Inventorier les voies HTTP/WebSocket/CP1 et accès directs possibles.** Routes et canaux documentés, rapport GEN-1 confronté aux sources ; les contrôles complets d'exposition réseau restent à faire au jalon P1.4 / Phase 7. Voir `Documentation/Security/AUTH_ENDPOINT_AUDIT_v1.md §7`.
+- [ ] **P1.4 — Définir les frontières de confiance** navigateur → Gateway → Core → Router/Engines, la provenance des identités et les protections fail-closed ; inclure la revue des namespaces, adresses d'écoute, ports publiés, relais et configurations réseau avant exposition.
 - [ ] Confirmer SQLite et les chemins persistants/montages Docker, les accès OS et le mécanisme de sauvegarde/restauration.
 - [ ] Définir les versions distinctes `auth_schema_version`, `auth_protocol_version`, `permissions_version` et leurs règles de compatibilité/rollback.
 - [ ] Établir la matrice RBAC détaillée (ADMIN, USER, GUEST), les règles de propriété par `clientId` et les tests négatifs associés.

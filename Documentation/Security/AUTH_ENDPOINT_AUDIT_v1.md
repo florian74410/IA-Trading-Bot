@@ -1,7 +1,7 @@
 # IA-TB DEBUG 2.1 — Security Endpoint Audit v1
 
 **Référence :** P1.3 — Routes HTTP, WebSocket et communications internes.  
-**État :** AUDIT STATIQUE EFFECTUÉ — **validation utilisateur encore attendue**, case P1.3 inchangée.  
+**État :** P1.3 (inventaire) validé après lecture du rapport GEN-1 ; vérifications détaillées de l'exposition réseau transférées à P1.4 et à la Phase 7.  
 **Source :** `fix/v2.0.1-debug` au commit `4a5024473e1318491f4f66516292274f4a4c852c`.  
 **Sécurité de l'opération :** lecture GitHub seule, aucun test de requête sensible, aucun port ouvert ni changement de compte, Docker ou VPS.
 
@@ -370,7 +370,7 @@ Les niveaux ci-dessus reflètent **l'impact potentiel** en cas d'accès au port 
 
 ---
 
-## 6 — Audit complémentaire statique P1.3 (version 1.1, à valider)
+## 6 — Audit complémentaire statique P1.3 (version 1.1, reconcilié)
 
 **Objectif :** réduire les incertitudes du catalogue initial sans toucher à GEN-1. Sources relues : services HTTP canoniques, fichiers frontend et tests existants de la branche `fix/v2.0.1-debug`.
 
@@ -419,8 +419,42 @@ Ce diagnostic existant (`IA-TB-CLI/tools/gen1_full_audit.py`) vérifie, en lectu
 
 - [x] Complément GitHub : routes dynamiques, flux frontend et identification des canaux CP/1 concernés.
 - [x] Vérification statique : pas de WebSocket serveur explicite dans les points d'entrée canoniques inspectés.
-- [ ] Réception et analyse du rapport `iatb vps audit` sur GEN-1.
-- [ ] Levée des incertitudes restantes sur les binds, Socat, les règles réseau et les différences de version réellement déployée (selon anomalies relevées).
-- [ ] Validation utilisateur puis coche de la **case P1.3** dans `AUTH_DEBUG_2.1_WORKPLAN.md`.
+- [x] Rapport `iatb vps audit` du 13/10/2026 à 23:12 UTC reçu et analysé après récupération via CLI 1.3.1.
+- [ ] Transféré à P1.4 / Phase 7 : adresses d'écoute, namespaces, ports publiés, relais Socat, filtres Contabo et différences de version réelle.
+- [x] P1.3 coché comme inventaire des voies d'accès, après réception du rapport GEN-1 ; ce n'est pas une certification d'absence d'exposition Internet.
 
-**P1.3 reste non validé : aucun test dynamique GEN-1 ni exposition de service n'a été exécuté dans ce complément.**
+**P1.3 inventaire validé après état réel GEN-1 ; les tests négatifs de sécurité et la validation d'exposition restent bloquants avant mise en ligne.**
+
+---
+
+## 7 — Réconciliation avec le rapport réel GEN-1 (13 octobre 2026, 23:12 UTC)
+
+**Source :** audit CLI 1.3.1 transmis par l'utilisateur après récupération. Les données brutes ne sont pas commitées dans GitHub. Aucune modification du VPS.
+
+| Contrôle | Observation réelle | Déduction pour Auth DEBUG 2.1 |
+| --- | --- | --- |
+| Docker | 13/13 conteneurs attendus `running`, 0 redémarrage | Topologie DEBUG cohérente à l'instant de l'audit |
+| Trading LIVE | Aucun conteneur Trading trouvé ; Engine non exécuté | Préserver ce comportement en DEBUG 2.1 |
+| Auth | `/ui-health` répond 200 avec `authMode=disabled` | Ne pas exposer l'UI à Internet avant Auth et transport sécurisé |
+| Ports hôte | 22, 25, 53, 5355 ; port HTTP 8080 absent | Ne prouve pas que les services internes, relais ou firewall externe sont inaccessibles |
+| Santé HTTP | UI, Firewall, MarketData, Fundamental = 200 ; Core, Router = 404 sur `/health` | Probablement des chemins de contrôle incorrects : Core utilise `/api/health`, Router `/router-health` |
+| SQLite | `clients.sqlite` quick_check OK ; `clients=1`, `client_accounts=0`, `client_wallets=0`, `client_audit=1` | Préserver l'identité existante ; création du premier ADMIN via CLI après sauvegarde, sans suppression aveugle |
+| Stockage | 8 SQLite avec quick_check OK, WAL/SHM présents | Sauvegarde SQLite transactionnellement cohérente + secrets persistants nécessaires |
+| Ressources | ~10 Gio RAM et ~82 Go disque disponibles, charge faible | Marge suffisante pour audit/développement ; pas de benchmark Auth |
+| Logs | 0 ligne Docker sur fenêtre auditée malgré logs applicatifs locaux | Ne pas conclure que zéro erreur est survenue ; compléter observabilité séparément |
+
+**Observations secondaires :** 58 feeds Fundamental, 912 raw items, 647 événements ; 72 498 appels télémétriques MarketData, dont 1 572 erreurs HTTP 429 CoinGecko. Cela relève de l'amélioration des providers, pas de P1.3.
+
+### Décision de clôture P1.3
+
+- [x] Inventaire statique des routes et canaux, routes dynamiques principales, transports WebSocket/CP1 et risques prioritaires.
+- [x] Confrontation à l'état réel des conteneurs, du Gateway et des ports hôte, via rapport utilisateur.
+- [ ] **À traiter pendant P1.4 puis la Phase 7** : IP d'écoute par namespace, `docker port`/PortBindings, Socat/proxy/overrides, règles firewall/Contabo et authentification des en-têtes de confiance.
+
+**Conclusion :** P1.3 clos **comme inventaire**. Cette clôture n'atteste PAS de l'absence d'exposition Internet et n'autorise aucune publication du Gateway.
+
+### Point suivant proposé : P1.4 — Frontières de confiance
+
+Définir un contrat **navigateur -> Gateway -> Core -> Router/Engines** avec authentification des services, session humaine vérifiée, `clientId` exclusivement issu du compte authentifié, permissions granulaires et refus par défaut. Filtrer les en-têtes entrants `x-iatb-*` et les en-têtes d'identité transmis par le navigateur. Le secret CP1 prouve l'origine du service, pas le rôle humain ; la frontière Router doit imposer un contrôle explicite pour chaque écriture.
+
+La validation de P1.4 nécessitera une matrice de flux autorisés/interdits, une preuve du contrôle des frontières internes et la liste des vérifications réseau avant exposition.
