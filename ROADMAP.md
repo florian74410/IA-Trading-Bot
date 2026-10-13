@@ -12,18 +12,71 @@ Cette feuille de route est la référence officielle du développement du projet
 - Une version ne devient **STABLE** qu'après validation de ses fonctions, tests, documentation et packaging.
 - `ROADMAP.md` décrit le travail prévu ou en cours ; `CHANGELOG.md` décrit le travail réellement livré.
 
-## 🔐 GEN-1 — Gestionnaire de certificats TLS/HTTPS (ÉVOLUTION FUTURE — NON PRIORITAIRE)
+## 🔐 IA-TB DEBUG 2.1 — Authentification native multiutilisateur (CONCEPTION EN COURS)
 
-- [ ] Développer un gestionnaire de certificats dans l'administration IA-TB, sans perturber la mise en service HTTPS actuelle.
-- [ ] Lister les certificats disponibles : domaine/IP couverts, émetteur, validité, date d'expiration, statut et emplacement logique.
-- [ ] Ajouter/importer un nouveau certificat et sa chaîne, avec vérification de la correspondance certificat/clé privée ; protéger les clés privées et interdire leur affichage dans l'UI ou les logs.
-- [ ] Stocker les certificats et clés de façon persistante avec permissions strictes, sans dépôt Git ni exposition publique.
-- [ ] Permettre la suppression sécurisée d'un certificat non utilisé, avec confirmation et protection du certificat actif.
-- [ ] Vérifier automatiquement l'état et l'expiration des certificats toutes les 24 heures (fréquence initiale envisagée) et signaler les anomalies ou expirations proches.
-- [ ] Prévoir le renouvellement automatique lorsque l'autorité de certification et le mode de validation le permettent ; contrôler le certificat obtenu avant son activation et conserver une possibilité de retour arrière.
-- [ ] Prévoir des tests de validité, de permissions, de renouvellement et d'échec sans interrompre l'accès HTTPS existant.
+**Décision validée :** Modèle A (Core Auth + UI Gateway + RBAC + SQLite), trois rôles ADMIN / USER / GUEST, CLI natif sur GEN-1 réutilisé à distance par IA-TB CLI. Première étape de conception documentée dans [AUTH_DEBUG_2.1_DESIGN.md](Documentation/Architecture/AUTH_DEBUG_2.1_DESIGN.md). **Version 2.1 cible, non livrée ; pas de changement au VPS à ce stade.**
 
-**Statut :** idée enregistrée pour une version ultérieure. Ne pas développer ni déployer pendant la phase actuelle de tests DEBUG GEN-1.
+### Lot 1 — Contrat et état initial
+- [x] Recenser les composants existants (Core Clients, ancien login, SQLite, UI Gateway, permissions et lien wallet/clientId).
+- [x] Décider séparation DEBUG / RELEASE et persistance des comptes à travers les mises à jour.
+- [ ] Auditer les routes publiques, sous-routes, accès directs Core/Router, en-têtes de rôle, protections interservices et écran de login ; cartographier la surface d'attaque.
+- [ ] Définir et tester la matrice de permissions serveur (refus par défaut) et l'isolation par propriétaire.
+- [ ] Définir les formats versionnés : auth_schema_version, auth_protocol_version, permissions_version ; migration uniquement explicite/contrôlée.
+
+### Lot 2 — Stockage et comptes
+- [ ] Conserver SQLite et les volumes persistants existants ; sauvegarde cohérente de clients.sqlite **et** des clés séparées avant toute migration.
+- [ ] Migrer les tables par scripts versionnés ; vérifier intégrité, permissions, absence d'auto-génération dangereuse de nouvelle clé si une ancienne base existe.
+- [ ] Implémenter hash de mot de passe Argon2id (Node 22 : dépendance compatible et contrôlée à valider), compatibilité PBKDF2 temporaire, politique de mot de passe et anti-brute-force.
+- [ ] Préparer la remise à zéro **des seuls comptes de connexion existants** après inventaire/sauvegarde et approbation ; ne pas effacer clients, associations, wallets, secrets ou clés par effet de bord.
+- [ ] Préserver un ADMIN actif pendant la migration ; premier compte ADMIN créé depuis CLI natif en canal SSH ; garder une procédure de récupération hors Web.
+
+### Lot 3 — Auth, verrouillage et privilèges
+- [ ] Neutraliser le bypass local pour tout mode exposé ; supprimer inscription/recovery publique ancienne ou l'isoler strictement ; /api/bootstrap ne doit plus toujours répondre authenticated=true.
+- [ ] Authentification via compte actif et mot de passe valide ; sessions serveur à durée limitée, cookies HttpOnly/Secure/SameSite sous HTTPS, régénération d'ID, révocation et CSRF.
+- [ ] AutoLock après **5 minutes d'inactivité réelle**, vérifié côté serveur ; le polling des données n'entretient pas la session déverrouillée ; mot de passe obligatoire au déverrouillage, sans perte du contexte de la page.
+- [ ] Associer chaque requête autorisée à l'identité vérifiée et aux permissions; protections appliquées dans UI Gateway **et** aux frontières métier Core/Router ; refuser en-têtes de rôle fournis par un navigateur.
+- [ ] ADMIN : application complète, sans privilèges shell/root ; USER : application hors Admin ; GUEST : lecture seule, modifications visuelles locales seulement, jamais d'écriture/passage d'ordres.
+- [ ] Séparer stratégies, préférences, wallets, portefeuilles, événements privés par clientId et confirmer le refus d'accès cross-user (IDOR).
+- [ ] Journalisation de sécurité sans secrets, sessions expirées, comptes désactivés, audit des opérations ; tests de contournement automatisés.
+
+### Lot 4 — Administration et CLI
+- [ ] Implémenter le programme d'administration **dans IA-TB** (list/create/role/enable/disable/reset-password/delete/audit) utilisable depuis SSH sur GEN-1, saisie du mot de passe masquée et aucun secret en argument.
+- [ ] Appeler les **mêmes commandes natives** via iatb users ... sur Macro, avec droits OS strictement nécessaires ; ne pas donner d'accès Docker ni sudo générique au navigateur.
+- [ ] Empêcher suppression/rétrogradation du dernier ADMIN, journaliser les changements et invalider les sessions concernées.
+- [ ] Prévoir export/import chiffré, versionné et **volontaire** de comptes entre DEBUG/RELEASE ; ne pas transférer sessions ni clés de wallets ; confirmation des rôles à l'import.
+
+### Lot 5 — Intégration et déploiement contrôlé
+- [ ] Intégrer ou adapter le formulaire de connexion existant, sans inscription ; tests des routes et de l'interface.
+- [ ] Tests de sécurité et non-régression de Core/UI/Router/Engines ; livraison en image DEBUG 2.1 versionnée, rollback et volume persistants garantis.
+- [ ] Déployer d'abord en environnement isolé puis sur GEN-1 **sans publier de port** ; tester HTTP privé via tunnel SSH/VPN uniquement.
+- [ ] Créer l'ADMIN depuis CLI et vérifier ADMIN/USER/GUEST, AutoLock, sessions et revocation.
+- [ ] Pour ouverture à tous sur Internet, placer uniquement le Gateway derrière **HTTPS** (certificat ACME gratuit et renouvellement automatique possible avant le gestionnaire Admin), filtrer les autres ports et bloquer si une protection échoue.
+- [ ] Ne pas activer le Trading Engine LIVE et conserver l'état MarketData/collecte fonctionnel.
+
+### Hors périmètre prioritaire DEBUG 2.1
+- **Wallets :** ne modifier ni remplacer les clés persistantes ni la logique de chiffrement pendant ce chantier. Le lien wallet/clientId existe déjà mais le serveur possède la clé maître ; ne pas prétendre que l'admin VPS ne peut accéder aux secrets. Audit futur **après Supervisor Engine**, étude watch-only et connecteurs externes (WalletConnect/extensions/hardware wallets), sans logiciel IA-TB obligatoire à télécharger. Aucun wallet réel pour les tests DEBUG.
+- **TLS Manager Admin :** fonctionnalités détaillées plus bas ; non requis pour coder/tester l'auth en HTTP privé.
+
+**Critères bloquants :** aucun login public sur HTTP non chiffré, aucune route sensible accessible sans authentification et privilèges serveur, migration réversible, zéro secret dans Git, vérifications négatives et restauration ADMIN testées.
+
+---
+
+## 🔐 GEN-1 — Gestionnaire de certificats TLS/HTTPS depuis Admin (ROADMAP FUTURE)
+
+**Idée validée, développement différé.** Objectif : suivre les certificats du Gateway depuis la page Admin sans intervention manuelle récurrente ; le renouvellement peut être automatisé auparavant par un reverse proxy/ACME (Caddy ou Certbot) sans attendre cette UI.
+
+- [ ] Lister domaines et éventuellement IP couverts, émetteur, chaîne, numéro de série abrégé, dates de validité, jours restants, statut HTTPS et prochain contrôle.
+- [ ] Surveillance quotidienne et alertes progressives (renouvellement proche, échec, expiration, perte du service), horodatées et auditables.
+- [ ] Utiliser ACME et les informations de renouvellement de l'autorité (ARI quand disponible) ; ne **pas** supposer que tous les certificats durent 6 jours. En octobre 2026 : Let's Encrypt standard 90 j ; profil 6 j facultatif ; durée par défaut appelée à évoluer.
+- [ ] Renouveler automatiquement avant expiration avec tentatives espacées, tests de chaîne/nom de domaine, activation atomique et retour arrière sans coupure.
+- [ ] Ajouter/importer un certificat existant, vérifier le couple certificat/clé privée, afficher son état et retirer uniquement un certificat non actif après confirmation.
+- [ ] Séparer clés privées et certificats, permissions système restrictives, stockage persistant hors Git ; aucune clé privée, contenu sensible ou commande shell arbitraire dans le navigateur/API.
+- [ ] UI Admin **statut et actions bornées** ; un agent système dédié à privilèges minimaux exécute la rotation. Ne pas donner l'accès root/SSH/Docker via la page Admin.
+- [ ] Tests de renouvellement en staging ACME, test d'expiration simulée, rollback et restauration documentés.
+
+**Statut :** R&D planifiée après la sécurisation de l'accès ; ne pas confondre interface de gestion TLS future et nécessité de TLS pour un login public.
+
+---
 
 ## 🧪 GEN-1 DEBUG — Audit fonctionnel UI / MarketData (12 octobre 2026)
 
