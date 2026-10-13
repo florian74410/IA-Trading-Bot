@@ -5,6 +5,7 @@
 **CLI compagnon :** `IA-TB-CLI` (commande `iatb` sur Macro).  
 **Objectif :** Authentification multiutilisateur native, isolation des données et privilèges, administration des comptes en SSH/CLI, puis ouverture réseau après validation de sécurité.  
 **Règle de suivi :** une case est cochée `[x]` uniquement après réalisation, tests et confirmation du retour attendu ; un commit ne suffit pas à valider un développement. Cette fiche est la checklist de référence.
+**Contrainte transverse dès P1.4 :** sécurité *ET* performance : isoler Argon2id et handshakes des chemins rapides, viser une régression p95 ≤ +5 % et p99 ≤ +10 % sur mesures comparables ; aucun affaiblissement Auth/ownership pour atteindre les seuils. Voir [plan de benchmark](../Security/AUTH_DEBUG_2.1_SECURITY_PERFORMANCE.md). Ces seuils sont des objectifs provisoires, pas des résultats mesurés.
 
 ---
 
@@ -14,6 +15,7 @@
 - [x] Inspecter les composants existants de DEBUG 2.0 : Clients/SQLite, Core, ancien login, UI Gateway, permissions et association wallet/clientId (revue initiale Git).
 - [x] **P1.3 — Inventorier les voies HTTP/WebSocket/CP1 et accès directs possibles.** Routes et canaux documentés, rapport GEN-1 confronté aux sources ; les contrôles complets d'exposition réseau restent à faire au jalon P1.4 / Phase 7. Voir `Documentation/Security/AUTH_ENDPOINT_AUDIT_v1.md §7`.
 - [ ] **P1.4 — Définir les frontières de confiance** navigateur → Gateway → Core → Router/Engines, la provenance des identités et les protections fail-closed ; inclure la revue des namespaces, adresses d'écoute, ports publiés, relais et configurations réseau avant exposition.
+  - **Sous-état :** quatre principes et contrainte de performance acceptés par Overflow ; contrat détaillé [`AUTH_DEBUG_2.1_TRUST_BOUNDARIES.md`](AUTH_DEBUG_2.1_TRUST_BOUNDARIES.md) et plan de latence [`AUTH_DEBUG_2.1_SECURITY_PERFORMANCE.md`](../Security/AUTH_DEBUG_2.1_SECURITY_PERFORMANCE.md) rédigés. **À valider :** revue du contrat, relevé réseau en lecture seule et tests de sécurité/benchmarks dans les phases d'implémentation. Ne pas cocher avant validation.
 - [ ] Confirmer SQLite et les chemins persistants/montages Docker, les accès OS et le mécanisme de sauvegarde/restauration.
 - [ ] Définir les versions distinctes `auth_schema_version`, `auth_protocol_version`, `permissions_version` et leurs règles de compatibilité/rollback.
 - [ ] Établir la matrice RBAC détaillée (ADMIN, USER, GUEST), les règles de propriété par `clientId` et les tests négatifs associés.

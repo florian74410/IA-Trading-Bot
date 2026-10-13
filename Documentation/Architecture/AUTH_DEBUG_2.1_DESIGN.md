@@ -4,6 +4,10 @@
 > **Base :** branche fix/v2.0.1-debug ; branche de travail feature/debug-2.1-auth-design.  
 > **Portée :** DEBUG 2.1 et interface CLI native ; pas de changement réseau ni de données lors de cette étape.
 
+## Contrat de confiance et latence (P1.4)
+
+Les quatre principes Gateway / Core Auth / Router-Engines / fail-closed et la contrainte de **latence de sécurité minimale** sont approuvés en principe. Le détail de conception est dans le [Trust Boundary Contract](AUTH_DEBUG_2.1_TRUST_BOUNDARIES.md), accompagné du [plan de performance](../Security/AUTH_DEBUG_2.1_SECURITY_PERFORMANCE.md). **P1.4 reste en cours** : revoir le contrat, vérifier les interfaces et namespaces réels, et valider ultérieurement les benchmarks ; aucun changement réseau/runtime lors de la documentation.
+
 ## Décisions approuvées
 
 - Architecture native Core Auth Service + UI Gateway + moteur de permissions RBAC (ADMIN, USER, GUEST), refus par défaut.
