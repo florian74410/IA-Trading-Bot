@@ -223,6 +223,13 @@ var server=http.createServer(function(req,res){var u=new URL(req.url,'http://'+H
  if(req.method==='GET'&&p==='/market-data/candles')return proxy(req,res,MARKET_DATA_HOST,MARKET_DATA_PORT,'/candles'+u.search,{label:'Market Data Candles · firewall validated at ingestion'});
  return proxy(req,res,CORE_HOST,CORE_PORT,u.pathname+u.search,{label:'IA-TB Core'});
 });
+server.on('upgrade',function(req,socket){
+ if(require("../Clients/auth21_service_boundary").active(process.env)){
+  try{socket.end('HTTP/1.1 403 Forbidden\r\nConnection: close\r\n\r\n');}catch(_){socket.destroy();}
+  return;
+ }
+ socket.destroy();
+});
 server.on('error',function(e){console.error('IA-TB Router bind error:',e&&e.message||e);process.exit(13);});server.listen(PORT,HOST,function(){console.log('IA-TB Communication Router v'+BUILD.version+' : http://'+HOST+':'+PORT);
 console.log('Communication Protocol: CP/1 (canal Supervisor authentifie)');console.log('Core interne      : http://'+CORE_HOST+':'+CORE_PORT);console.log('Market Data       : http://'+MARKET_DATA_HOST+':'+MARKET_DATA_PORT);
 console.log('Trading Engine    : http://'+TRADING_ENGINE_HOST+':'+TRADING_ENGINE_PORT);console.log('Strategy Engine   : http://'+STRATEGY_HOST+':'+STRATEGY_PORT);});
