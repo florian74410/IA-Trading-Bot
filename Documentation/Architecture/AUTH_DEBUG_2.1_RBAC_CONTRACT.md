@@ -1,6 +1,6 @@
 # IA-TB DEBUG 2.1 — P1.7 — Contrat RBAC et isolation multiutilisateur
 
-> **Statut :** conception proposée **en attente d'approbation d'Overflow** ; aucun mécanisme de contrôle d'accès nouveau n'est actuellement déployé.  
+> **Statut : contrat RBAC P1.7 validé par Overflow le 14/10/2026** ; les 212 entrées et 77 actions restent une **référence documentaire non active**. Aucun moteur RBAC nouveau n'est encore déployé.  
 > **Périmètre :** navigateur, Gateway, Core Auth, Router, Engines, accès directs et propriété `clientId` ; 212 entrées d'inventaire statique P1.3 (dont alias, gardes et catch-all).  
 > **Sources :** `App/UI/Permissions/ui_permissions.js`, `App/Core/Admin/admin_permissions.js`, `App/UI/Gateway/ui_service.js`, `App/Core/Server/server.js`, `App/Core/Router/router.js`, `App/Core/Clients/client_service.js`, `App/Core/Clients/client_repository.js`, [P1.3 inventaire](../Security/AUTH_ENDPOINT_INVENTORY_v1.json), [P1.4](AUTH_DEBUG_2.1_TRUST_BOUNDARIES.md) et [P1.6](AUTH_DEBUG_2.1_VERSION_COMPATIBILITY.md).  
 > **Compagnons :** [matrice de décision JSON **non exécutable**](AUTH_DEBUG_2.1_RBAC_MATRIX_PROPOSAL.json) et [plan de tests négatifs](../Security/AUTH_DEBUG_2.1_RBAC_NEGATIVE_TEST_PLAN.md).  
@@ -128,8 +128,8 @@ Les codes exacts seront stabilisés à l'implémentation ; l'invariant est **zé
 - [x] Inventaire des routes et des classes de données rapproché de P1.3 et des sources Core/Gateway/Router.
 - [x] Matrice de permissions ADMIN / USER / GUEST / SERVICE / ANONYMOUS et ownership `clientId` **proposée**, avec transitions pour paramètres legacy globaux.
 - [x] Plan de tests négatifs et seuils de performance documentés.
-- [ ] **Accord d'Overflow sur la matrice proposée, en particulier :** GUEST seulement sur flux publics sans coût, USER propriétaire, paramètres et collecteurs globaux ADMIN, comptes administrés uniquement par CLI, Wallet gelé.
+- [x] **Matrice RBAC approuvée par Overflow le 14/10/2026 :** GUEST lectures publiques sans mutation/coût, USER propriétaire, paramètres/collecteurs globaux ADMIN, comptes uniquement par CLI, Wallet gelé.
 - [ ] Tests réels du contrôle d'accès/RBAC et du stockage partitionné (Phases 2–4) ; pas requis pour la clôture **de conception**, mais bloquants avant toute ouverture.
-- [ ] **P1.7 ne doit pas être coché** dans le workplan avant validation du point de conception par Overflow.
+- [x] **P1.7 coché dans le workplan après validation utilisateur** ; les tests de contrôle d'accès et les permissions en production restent bloquants avant déploiement.
 
-**Décision actuelle : P1.7 en revue.** Aucun comportement runtime, mot de passe, donnée wallet, port Contabo ou privilège Docker n'est modifié.
+**Décision : P1.7 validé comme contrat de conception.** Nouvelle exigence transversale : chaque nouvelle fonction ou route doit être classée RBAC et couverte par des tests négatifs, sinon refus par défaut. Voir [RBAC Change Policy](../Security/AUTH_DEBUG_2.1_RBAC_CHANGE_POLICY.md). Aucun runtime, wallet, port Contabo ou privilège Docker modifié.

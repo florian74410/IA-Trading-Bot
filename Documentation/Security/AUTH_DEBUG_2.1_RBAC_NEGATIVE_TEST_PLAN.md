@@ -1,6 +1,6 @@
 # IA-TB DEBUG 2.1 — P1.7 — Plan de tests RBAC négatifs
 
-> **Statut :** catalogue de tests de conception uniquement, non exécuté. Tester sur environnement jetable et bases factices, jamais contre GEN-1 ou une clé wallet réelle.  
+> **Statut :** catalogue de 48 tests **approuvé au niveau du contrat RBAC P1.7** par Overflow le 14/10/2026, non exécuté ; tests réels indispensables avant déploiement. Tester sur environnement jetable et bases factices, jamais contre GEN-1 ou une clé wallet réelle.  
 > **Références :** [contrat RBAC P1.7](../Architecture/AUTH_DEBUG_2.1_RBAC_CONTRACT.md), [inventaire HTTP/CP/1 P1.3](AUTH_ENDPOINT_INVENTORY_v1.json), [compatibilité P1.6](../Architecture/AUTH_DEBUG_2.1_VERSION_COMPATIBILITY.md).  
 > **Invariants :** tout refus = 0 modification, 0 émission d'ordre LIVE, 0 fuite d'objets d'autre client, 0 repli localBypass ; test de performance distinct.
 
@@ -88,4 +88,4 @@ Les contrôles de tests peuvent être signés ou HMAC en environnement fictif ; 
 - [ ] Rapport de benchmark `baseline` / `auth-on` (p50/p95/p99, débit, CPU/RAM) et décision sur objectifs provisoires.
 - [ ] Validation utilisateur d'une montée progressive, réversible, sans publication Internet avant HTTPS.
 
-**P1.7 peut être clôturé comme contrat de conception seulement après l'accord d'Overflow sur les droits ; tous ces tests sont requis à l'implémentation avant déploiement.**
+**P1.7 est clôturé comme contrat de conception après l'accord d'Overflow ; tous les 48 tests restent à réaliser à l'implémentation avant déploiement.** Toute nouvelle action nécessitera aussi une déclaration et ses tests, selon [RBAC Change Policy](AUTH_DEBUG_2.1_RBAC_CHANGE_POLICY.md).

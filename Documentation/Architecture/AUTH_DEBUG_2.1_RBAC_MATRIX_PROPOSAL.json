@@ -1,6 +1,6 @@
 {
   "schema": "iatb.auth.rbac-matrix-proposal/1",
-  "status": "PROPOSAL_UNAPPROVED_NOT_ACTIVE",
+  "status": "DESIGN_APPROVED_NOT_ACTIVE",
   "source": {
     "repository": "florian74410/IA-Trading-Bot",
     "ref": "fix/v2.0.1-debug",
@@ -8,7 +8,7 @@
     "endpoint_inventory": "Documentation/Security/AUTH_ENDPOINT_INVENTORY_v1.json",
     "entries": 212
   },
-  "scope": "P1.7 design only; never import this file as running policy without audited implementation.",
+  "scope": "P1.7 design approved, 212 route entries and 77 Router actions classified; NOT runtime policy; runtime enforcement and CI coverage gate have not been activated.",
   "roles": [
     "ADMIN",
     "USER",
@@ -2227,5 +2227,7 @@
     }
   },
   "transition": "Legacy globals in default SQLite/User Data must remain ADMIN-only for mutations until tenant-scoped storage exists. No current runtime behavior changes at P1.7.",
-  "negative_tests": "Documentation/Security/AUTH_DEBUG_2.1_RBAC_NEGATIVE_TEST_PLAN.md"
+  "negative_tests": "Documentation/Security/AUTH_DEBUG_2.1_RBAC_NEGATIVE_TEST_PLAN.md",
+  "approved_by_operator_date": "2026-10-14",
+  "change_policy": "Documentation/Security/AUTH_DEBUG_2.1_RBAC_CHANGE_POLICY.md"
 }

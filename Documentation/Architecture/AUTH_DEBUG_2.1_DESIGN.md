@@ -12,9 +12,13 @@ Les quatre principes Gateway / Core Auth / Router-Engines / fail-closed et la co
 
 Les migrations clients historiques `001` et `002` et CP/1 restent fonctionnellement inchangés. L'évolution du système Auth s'appuiera sur les versions **distinctes** `auth_schema_version`, `auth_protocol_version` et `permissions_version`, plus le compteur individuel `clients.security_version`. Voir [contrat de versionnage et compatibilité](AUTH_DEBUG_2.1_VERSION_COMPATIBILITY.md) et [manifest proposé (non actif)](AUTH_DEBUG_2.1_VERSION_MANIFEST_PROPOSAL.json). **P1.6 est approuvé comme architecture**, aucun runtime modifié ; choix définitifs de cryptographie et tests de compatibilité restent pour l'implémentation. Les données et clés wallets demeurent hors du périmètre.
 
-## Matrice RBAC et propriété des données (P1.7 — proposition)
+## Matrice RBAC et propriété des données (P1.7 — approuvée en conception)
 
-Après validation de P1.6, la cible RBAC est détaillée dans le [contrat ADMIN/USER/GUEST](AUTH_DEBUG_2.1_RBAC_CONTRACT.md), la [matrice JSON non active des 212 entrées](AUTH_DEBUG_2.1_RBAC_MATRIX_PROPOSAL.json) (dont 77 actions CP/1 UI) et les [48 cas négatifs](../Security/AUTH_DEBUG_2.1_RBAC_NEGATIVE_TEST_PLAN.md). Distinction impérative : PUBLIC partagé assaini, ressources OWNER liées au `clientId` de session, configuration GLOBAL réservée à ADMIN et principal machine CP/1 distinct. **P1.7 est en attente d'Overflow**, aucun code ou donnée modifié. Wallet gelé et ordres LIVE désactivés.
+Après validation de P1.6, la cible RBAC est détaillée dans le [contrat ADMIN/USER/GUEST](AUTH_DEBUG_2.1_RBAC_CONTRACT.md), la [matrice JSON non active des 212 entrées](AUTH_DEBUG_2.1_RBAC_MATRIX_PROPOSAL.json) (dont 77 actions CP/1 UI) et les [48 cas négatifs](../Security/AUTH_DEBUG_2.1_RBAC_NEGATIVE_TEST_PLAN.md). Distinction impérative : PUBLIC partagé assaini, ressources OWNER liées au `clientId` de session, configuration GLOBAL réservée à ADMIN et principal machine CP/1 distinct. **P1.7 est approuvé par Overflow le 14/10/2026**, et toute nouvelle fonctionnalité doit déclarer ses permissions conformément à la [politique de changement](../Security/AUTH_DEBUG_2.1_RBAC_CHANGE_POLICY.md). Contrôles runtime/CI à construire et tester ; aucun code métier ni donnée modifié. Wallet gelé et ordres LIVE désactivés.
+
+## Portabilité volontaire des comptes DEBUG ↔ RELEASE (P1.8 — en revue)
+
+Le [contrat de portabilité](AUTH_DEBUG_2.1_ACCOUNT_PORTABILITY_CONTRACT.md) et son [manifeste de référence non actif](AUTH_DEBUG_2.1_ACCOUNT_TRANSFER_MANIFEST_PROPOSAL.json) définissent un transfert **identité minimale seulement**, par CLI SSH autorisée, chiffré et lié au destinataire. **Pas de session, hash de mot de passe, clé maître, donnée wallet, API key ou promotion automatique ADMIN** ; identité ré-encryptée sous la clé de destination, compte importé désactivé et réenrôlé par mot de passe. P1.8 attend validation d'Overflow ; aucune exportation réelle.
 
 ## Décisions approuvées
 
