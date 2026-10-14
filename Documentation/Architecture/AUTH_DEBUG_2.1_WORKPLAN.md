@@ -95,6 +95,8 @@
 
 **Réseau interprocessus — banc DEBUG 14/10/2026 :** un test complémentaire lance un **processus Node indépendant** et vérifie qu'il accepte une preuve HMAC signée dans le processus parent avec la clé privée du dossier temporaire ; refus de l'absence de preuve et anti-rejeu déjà testés. [CI 344/344 SUCCESS](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38624350649). Le Core isolé dispose de l'émission conditionnelle (`POST /auth21/ipc/probe-proof`) et le véritable Router d'une vérification conditionnelle (`GET /auth21/ipc/probe`). Il s'agit d'un **handshake de diagnostic uniquement** : pas encore de requête HTTP réseau de bout en bout ni de commande CP/1 métier autorisée, pas de préparation de clé multi-service en production, pas de persistance anti-rejeu inter-redémarrage. Routes métiers et Trading LIVE toujours bloqués ; Phase 4 ouverte.
 
+**Validation IPC réseau réel — banc DEBUG isolé 14/10/2026 :** test complémentaire de bout en bout **HTTP localhost entre deux processus Node**. Le parent construit une preuve `router/shared.read/GET`, le second ouvre un serveur de vérification avec une clé 0600 sous racine temporaire, accepte une première requête (HTTP 200), refuse le rejeu (403) et la requête sans preuve (403). [CI 345/345 SUCCESS](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38624639896). Cette validation ne lance pas tout IA-TB, ne fait pas circuler de véritables commandes CP/1 métier et ne couvre pas encore les autorisations effectives dans les Engines. **Phase 4 non terminée** ; tout reste sur feature DEBUG isolé, sans déploiement.
+
 ### PHASE 4 — Privilèges et isolation métier
 
 - [ ] ADMIN : accès complet aux fonctions applicatives, sans accès SSH/root/Docker par le navigateur.
