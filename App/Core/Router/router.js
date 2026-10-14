@@ -157,6 +157,10 @@ var UI_WRITE_ACTIONS={
  }
 };
 function communicationUiWrite(req,res){
+ // No legacy UI role/headers may confer Auth21 business-write authority.
+ // Reject until the Core can issue a signed proof bound to this exact action.
+ if(require('../Clients/auth21_service_boundary').active(process.env))
+  return sendJson(res,403,{ok:false,error:'AUTH21_BUSINESS_WRITE_PROOF_REQUIRED'});
  readJsonBody(req,262144,function(e,b){
   if(e)return sendJson(res,400,{ok:false,error:e.message});
   b=b&&typeof b==='object'?b:{};
