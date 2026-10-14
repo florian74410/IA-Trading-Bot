@@ -38,3 +38,18 @@ test('Router IPC probe does not start without private key and explicit opt-in',t
  fs.chmodSync(path.join(f.root,'userdata','Security','auth21_ipc.key'),0o644);
  assert.throws(()=>createRouterProbe(f),/AUTH21_IPC_KEY_UNSAFE/);
 });
+
+test('separate Node process verifies Core-style signed IPC proof from private trial file',t=>{
+ const f=fixture(t);
+ const {execFileSync}=require('node:child_process');
+ const proof=proofCodec({secret:f.key}).issue({
+  principal:{clientId:'CL000001',role:'USER'},audience:'router',operation:'shared.read',method:'GET'
+ });
+ const loader=path.resolve(__dirname,'../../Core/Clients/auth21_ipc_probe.js');
+ const child="const probe=require(process.argv[1]).createRouterProbe({env:process.env,root:process.env.IATB_AUTH21_LOCAL_TRIAL_ROOT});"+
+  "let status=0;probe({method:'GET',headers:{'x-iatb-auth21-proof':process.env.IATB_TEST_PROOF}}, {writeHead(s){status=s},end(){process.stdout.write(String(status))}});";
+ const status=execFileSync(process.execPath,['-e',child,loader],{
+  env:{...process.env,...f.env,IATB_TEST_PROOF:proof},encoding:'utf8',timeout:5000
+ });
+ assert.equal(status,'200');
+});
