@@ -10,8 +10,8 @@ function deny(res,status,error){
   'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});
  res.end(JSON.stringify({error}));
 }
-function createIsolatedCoreGate({sessions}={}){
- const auth=createAuth21HttpHandler({sessions});
+function createIsolatedCoreGate({sessions,browserSessions=null,allowedBrowserOrigin=null}={}){
+ const auth=createAuth21HttpHandler({sessions,browserSessions,allowedBrowserOrigin});
  return async function isolatedCoreGate(req,res){
   let pathname;
   try{pathname=new URL(req.url,'http://localhost').pathname}
@@ -28,7 +28,7 @@ function createIsolatedCoreGate({sessions}={}){
 /** Attach native SQLite sessions to the Core-local DEBUG sandbox only.
  * Never auto-migrate or generate an encryption key. All other routes denied.
  */
-function openCoreAuthTrial({root,clientCrypto,snapshotGate,env}={}){
+function openCoreAuthTrial({root,clientCrypto,snapshotGate,env,browserSessions=null,allowedBrowserOrigin=null}={}){
  const fs=require('node:fs'),path=require('node:path');
  const allowed=require('../Backup/auth21_core_local_trial_wiring').preflightEnv(env||process.env);
  if(root!==allowed.root)throw Error('AUTH21_CORE_TRIAL_ROOT_MISMATCH');
@@ -49,7 +49,7 @@ function openCoreAuthTrial({root,clientCrypto,snapshotGate,env}={}){
   if(db.pragma('integrity_check',{simple:true})!=='ok'||db.pragma('foreign_key_check').length)
    throw Error('AUTH21_CORE_TRIAL_DB_INTEGRITY');
   const sessions=new Auth21SessionStore({db,clientCrypto,snapshotGate,idleLockSeconds:300});
-  return {handler:createIsolatedCoreGate({sessions}),close(){db.close()}};
+  return {handler:createIsolatedCoreGate({sessions,browserSessions,allowedBrowserOrigin}),close(){db.close()}};
  }catch(error){db.close();throw error}
 }
 module.exports={createIsolatedCoreGate,openCoreAuthTrial};
