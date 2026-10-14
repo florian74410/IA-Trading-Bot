@@ -10,7 +10,7 @@ const path=require('node:path');
 const crypto=require('node:crypto');
 const Database=require('better-sqlite3');
 const ClientCrypto=require('../../Core/Clients/client_crypto');
-const {backupRestoreFixture}=require('../CI/auth21_key_restore_trial');
+const {backupRestoreFixture,attestRestoredPairFixture}=require('../CI/auth21_key_restore_trial');
 
 const DIR=path.resolve(__dirname,'../../Core/Clients/migrations');
 function fixture(t){
@@ -173,4 +173,48 @@ test('tampered AES-GCM ciphertext is rejected, and existing DB remains unmodifie
  f.db.prepare("UPDATE clients SET first_name_enc=? WHERE client_id='CL000001'").run(edited);
  await assert.rejects(()=>backupRestoreFixture({db:f.db,fixtureRoot:f.root,keyFile:f.keyFile}),/AUTH21_RESTORE_KEY_NOT_COMPATIBLE/);
  assert.equal(raw(f.db,'clients','first_name_enc','CL000001'),edited);
+});
+
+test('restored pair independently proves original key/identity compatibility',async t=>{
+ const f=fixture(t);insert(f);
+ await backupRestoreFixture({db:f.db,fixtureRoot:f.root,keyFile:f.keyFile});
+ const dbFile=path.join(f.root,'key-restore-check','restored.sqlite');
+ const keyFile=path.join(f.root,'key-restore-check','client_master.key');
+ const r=attestRestoredPairFixture({dbFile,keyFile,fixtureRoot:f.root});
+ assert.equal(r.verified,true);assert.equal(r.indexChecks,2);assert.equal(r.walletLinks,1);
+});
+test('restored valid-but-wrong key must be rejected without modifying original data',async t=>{
+ const f=fixture(t);insert(f);
+ await backupRestoreFixture({db:f.db,fixtureRoot:f.root,keyFile:f.keyFile});
+ const dir=path.join(f.root,'key-restore-check');
+ const copyKey=path.join(dir,'client_master.key'),before=raw(f.db,'clients','first_name_enc','CL000001');
+ fs.writeFileSync(copyKey,crypto.randomBytes(32).toString('hex'),{mode:0o600});
+ assert.throws(()=>attestRestoredPairFixture({
+  dbFile:path.join(dir,'restored.sqlite'),keyFile:copyKey,fixtureRoot:f.root
+ }),/AUTH21_RESTORE_KEY_NOT_COMPATIBLE/);
+ assert.equal(raw(f.db,'clients','first_name_enc','CL000001'),before);
+});
+test('restored DB without accompanying key is refused and no substitute is generated',async t=>{
+ const f=fixture(t);insert(f);
+ await backupRestoreFixture({db:f.db,fixtureRoot:f.root,keyFile:f.keyFile});
+ const dir=path.join(f.root,'key-restore-check'),missing=path.join(dir,'client_master.key');
+ fs.unlinkSync(missing);
+ assert.throws(()=>attestRestoredPairFixture({
+  dbFile:path.join(dir,'restored.sqlite'),keyFile:missing,fixtureRoot:f.root
+ }),/ENOENT/);
+ assert.equal(fs.existsSync(missing),false);
+});
+test('ciphertext altered after restoration is rejected by independent attestation',async t=>{
+ const f=fixture(t);insert(f);
+ await backupRestoreFixture({db:f.db,fixtureRoot:f.root,keyFile:f.keyFile});
+ const dir=path.join(f.root,'key-restore-check');
+ const copy=path.join(dir,'restored.sqlite');
+ const other=new Database(copy);
+ try{
+  other.prepare("UPDATE clients SET first_name_enc='NOT_A_VALID_CIPHER' WHERE client_id='CL000001'").run();
+ }finally{other.close();}
+ assert.throws(()=>attestRestoredPairFixture({
+  dbFile:copy,keyFile:path.join(dir,'client_master.key'),fixtureRoot:f.root
+ }),/AUTH21_RESTORE_KEY_NOT_COMPATIBLE/);
+ assert.equal(f.key.open(raw(f.db,'clients','first_name_enc','CL000001')),'GivenCL000001');
 });
