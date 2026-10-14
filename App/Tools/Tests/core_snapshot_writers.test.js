@@ -91,6 +91,10 @@ test('Core-local coordinator blocks SQL (including disguised read) until release
     assert.throws(()=>store.run('UPDATE iatb_settings_v2 SET value_b64=1',false),/SNAPSHOT_WRITE_QUIESCED/);
     assert.throws(()=>store.runNative('SELECT 1',true),/SNAPSHOT_WRITE_QUIESCED/);
     assert.throws(()=>store.setRaw('testing','fixture','changed'),/SNAPSHOT_WRITE_QUIESCED/);
+    assert.throws(()=>store.getRaw('testing','fixture'),/SNAPSHOT_WRITE_QUIESCED/);
+    assert.throws(()=>store.listKeys('testing'),/SNAPSHOT_WRITE_QUIESCED/);
+    assert.throws(()=>store.hasMigration('test'),/SNAPSHOT_WRITE_QUIESCED/);
+    assert.throws(()=>store.seedCanonicalAppDefaults(),/SNAPSHOT_WRITE_QUIESCED/);
     assert.throws(()=>store.markMigration('test',{}),/SNAPSHOT_WRITE_QUIESCED/);
     return 'fixture-captured';
   });
