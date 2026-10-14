@@ -211,3 +211,26 @@ test('valid hex but wrong client master key cannot produce authenticated archive
  assert.equal(fs.existsSync(archived(f)),false);
  assert.equal(f.gate.heldEpoch,null);
 });
+
+test('authenticated but internally inconsistent backup fails restored key attestation and cleans scratch files',async t=>{
+ const f=fixture(t);seed(f);await captureEncryptedFixture(args(f));
+ const file=archived(f),wrapped=JSON.parse(fs.readFileSync(file,'utf8'));
+ const decrypt=crypto.createDecipheriv('aes-256-gcm',f.transport,Buffer.from(wrapped.iv,'base64'));
+ decrypt.setAAD(Buffer.from(wrapped.type));decrypt.setAuthTag(Buffer.from(wrapped.tag,'base64'));
+ const obj=JSON.parse(Buffer.concat([decrypt.update(Buffer.from(wrapped.ciphertext,'base64')),decrypt.final()]).toString('utf8'));
+ // Simulate a defective backup process using a different valid master key but
+ // recomputing its manifest hash and AEAD tag correctly. AEAD alone cannot
+ // prove that the key belongs to the database; independent restore must.
+ obj.masterKey=crypto.randomBytes(32).toString('hex');
+ obj.keyHash=crypto.createHash('sha256').update(Buffer.from(obj.masterKey,'hex')).digest('hex');
+ const iv=crypto.randomBytes(12),c=crypto.createCipheriv('aes-256-gcm',f.transport,iv);
+ c.setAAD(Buffer.from(wrapped.type));
+ const cipher=Buffer.concat([c.update(Buffer.from(JSON.stringify(obj))),c.final()]);
+ wrapped.iv=iv.toString('base64');
+ wrapped.tag=c.getAuthTag().toString('base64');
+ wrapped.ciphertext=cipher.toString('base64');
+ fs.writeFileSync(file,JSON.stringify(wrapped),{mode:0o600});
+ assert.throws(()=>restoreEncryptedFixture(restoreArgs(f,file)),/AUTH21_RESTORE_KEY_NOT_COMPATIBLE/);
+ assert.equal(fs.existsSync(restored(f)),false);
+ assert.equal(f.db.prepare('SELECT COUNT(*) AS n FROM clients').get().n,1);
+});
