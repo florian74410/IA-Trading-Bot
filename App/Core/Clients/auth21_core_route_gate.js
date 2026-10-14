@@ -25,4 +25,29 @@ function createIsolatedCoreGate({sessions}={}){
   deny(res,404,'NOT_FOUND');
  };
 }
-module.exports={createIsolatedCoreGate};
+/** Attach native SQLite sessions to the Core-local DEBUG sandbox only.
+ * Never auto-migrate or generate an encryption key. All other routes denied.
+ */
+function openCoreAuthTrial({root,clientCrypto,snapshotGate}={}){
+ const fs=require('node:fs'),path=require('node:path');
+ if(typeof root!=='string'||!clientCrypto||!snapshotGate)throw Error('AUTH21_CORE_TRIAL_REQUIRED');
+ const dbFile=path.join(root,'userdata','Database','clients.sqlite');
+ const keyFile=path.join(root,'userdata','Security','client_master.key');
+ for(const file of [dbFile,keyFile]){
+  const real=fs.realpathSync(file),stat=fs.lstatSync(file);
+  if(real!==file||!stat.isFile()||stat.isSymbolicLink()||(stat.mode&0o077)!==0)
+   throw Error('AUTH21_CORE_TRIAL_FILE_UNSAFE');
+ }
+ if(clientCrypto.keyFile!==keyFile)throw Error('AUTH21_CORE_TRIAL_KEY_MISMATCH');
+ const Database=require('better-sqlite3');
+ const {Auth21SessionStore}=require('./auth21_session_store');
+ const db=new Database(dbFile,{fileMustExist:true});
+ try{
+  db.pragma('foreign_keys=ON');
+  if(db.pragma('integrity_check',{simple:true})!=='ok'||db.pragma('foreign_key_check').length)
+   throw Error('AUTH21_CORE_TRIAL_DB_INTEGRITY');
+  const sessions=new Auth21SessionStore({db,clientCrypto,snapshotGate});
+  return {handler:createIsolatedCoreGate({sessions}),close(){db.close()}};
+ }catch(error){db.close();throw error}
+}
+module.exports={createIsolatedCoreGate,openCoreAuthTrial};
