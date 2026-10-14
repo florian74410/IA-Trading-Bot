@@ -26,7 +26,7 @@ function current(hash){return {clientId:'CL_FAKE',enabled:true,passwordAlgo:'ARG
 
 test('native argon2 generates PHC Argon2id v19 at pinned policy cost',async ()=>{
  const hash=await Kdf.hashNewPassword(FIXTURE_PASSWORD);
- assert.ok(hash.startsWith('$argon2id$v=19$m=65536,t=3,p=1$'), 'expected Argon2id PHC; returned prefix: '+hash.split('$').slice(0,4).join('$'));
+ assert.ok(hash.startsWith('$argon2id$v=19$'), 'expected Argon2id PHC; returned prefix: '+hash.split('$').slice(0,3).join('$'));
  assert.deepEqual(Kdf.parseArgon2Cost(hash),{memoryCost:65536,timeCost:3,parallelism:1});
  assert.equal(await argon2.verify(hash,FIXTURE_PASSWORD),true);
  assert.equal(await argon2.verify(hash,BAD_PASSWORD),false);
