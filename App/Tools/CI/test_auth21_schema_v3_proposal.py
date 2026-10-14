@@ -154,5 +154,133 @@ class Auth21SchemaFixture(unittest.TestCase):
         ).fetchone()[0], "AUTH_EVENT_FIXTURE")
 
 
+
+    def test_sql_transaction_rollback_keeps_existing_client_state(self):
+        self.client("CL000001", role="USER")
+        initial = self.db.execute(
+            "SELECT password_hash FROM client_accounts WHERE client_id='CL000001'"
+        ).fetchone()[0]
+        with self.assertRaises(sqlite3.OperationalError):
+            self.db.executescript(
+                "BEGIN IMMEDIATE; "
+                "ALTER TABLE client_accounts ADD COLUMN password_algo TEXT; "
+                "THIS IS NOT SQL; COMMIT;"
+            )
+        self.db.rollback()
+        columns = [r[1] for r in self.db.execute("PRAGMA table_info(client_accounts)")]
+        self.assertNotIn("password_algo", columns)
+        self.assertEqual(
+            self.db.execute("SELECT password_hash FROM client_accounts WHERE client_id='CL000001'").fetchone()[0],
+            initial,
+        )
+        self.assertEqual(self.db.execute("PRAGMA integrity_check").fetchone()[0], "ok")
+
+    def test_sqlite_backup_before_v3_can_restore_exact_old_schema(self):
+        self.client("CL000001", role="USER")
+        self.db.execute(
+            "INSERT INTO client_wallets(client_id,wallet_id,created_at) VALUES(?,?,?)",
+            ("CL000001", "FICTIONAL_PUBLIC_ID", NOW),
+        )
+        self.db.commit()
+        target = Path(self.tmp.name) / "original-before-v3.sqlite"
+        restored = sqlite3.connect(str(target))
+        try:
+            self.db.backup(restored)
+            self.migrate()
+            self.assertIn("password_algo", [
+                r[1] for r in self.db.execute("PRAGMA table_info(client_accounts)")
+            ])
+            self.assertNotIn("password_algo", [
+                r[1] for r in restored.execute("PRAGMA table_info(client_accounts)")
+            ])
+            self.assertEqual(
+                restored.execute("SELECT wallet_id FROM client_wallets").fetchone()[0],
+                "FICTIONAL_PUBLIC_ID",
+            )
+            self.assertEqual(restored.execute("PRAGMA integrity_check").fetchone()[0], "ok")
+        finally:
+            restored.close()
+
+    def test_credentials_update_cas_requires_original_legacy_fields(self):
+        self.client("CL000001", role="USER")
+        self.migrate()
+        before = self.db.execute(
+            "SELECT password_hash,password_salt,password_iterations,role,updated_at "
+            "FROM client_accounts WHERE client_id='CL000001'"
+        ).fetchone()
+        result = self.db.execute(
+            """UPDATE client_accounts
+               SET password_algo='ARGON2ID',password_hash=?,password_salt='',
+                   password_iterations=0,password_params_json='{}',updated_at=?
+               WHERE client_id=? AND password_algo='PBKDF2_SHA256'
+                 AND password_hash=? AND password_salt=? AND password_iterations=?
+                 AND role=? AND enabled=1 AND updated_at=?
+                 AND EXISTS(SELECT 1 FROM clients
+                   WHERE client_id=? AND status='ACTIVE' AND security_version=?)""",
+            ("$argon2id$v=19$FICTIONAL_HASH_ONLY", NOW, "CL000001",
+             before[0], before[1], before[2], before[3], before[4], "CL000001", 1),
+        )
+        self.assertEqual(result.rowcount, 1)
+        self.assertEqual(
+            self.db.execute("SELECT password_algo FROM client_accounts").fetchone()[0],
+            "ARGON2ID",
+        )
+
+    def test_cas_rejects_reset_during_password_hashing(self):
+        self.client("CL000001", role="USER")
+        self.migrate()
+        old = self.db.execute(
+            "SELECT password_hash,password_salt,password_iterations,role,updated_at "
+            "FROM client_accounts WHERE client_id='CL000001'"
+        ).fetchone()
+        self.db.execute(
+            "UPDATE client_accounts SET password_hash='RESET_OLD_HASH',updated_at='CHANGED' "
+            "WHERE client_id='CL000001'"
+        )
+        changed = self.db.execute(
+            """UPDATE client_accounts SET password_hash=?,password_algo='ARGON2ID'
+               WHERE client_id=? AND password_algo='PBKDF2_SHA256'
+                 AND password_hash=? AND password_salt=? AND password_iterations=?
+                 AND role=? AND enabled=1 AND updated_at=?
+                 AND EXISTS(SELECT 1 FROM clients
+                   WHERE client_id=? AND status='ACTIVE' AND security_version=?)""",
+            ("FAKE_PHC", "CL000001", old[0], old[1], old[2], old[3],
+             old[4], "CL000001", 1),
+        )
+        self.assertEqual(changed.rowcount, 0)
+        self.assertEqual(self.db.execute(
+            "SELECT password_hash FROM client_accounts").fetchone()[0], "RESET_OLD_HASH")
+
+    def test_cas_rejects_client_disable_and_version_change(self):
+        for mode in ["disable", "version"]:
+            with self.subTest(mode=mode):
+                self.db.execute("DELETE FROM client_accounts")
+                self.db.execute("DELETE FROM clients")
+                self.db.commit()
+                self.client("CL000001", role="USER")
+                self.migrate() if mode == "disable" else None
+                old = self.db.execute(
+                    "SELECT password_hash,password_salt,password_iterations,role,updated_at "
+                    "FROM client_accounts WHERE client_id='CL000001'"
+                ).fetchone()
+                if mode == "disable":
+                    self.db.execute("UPDATE client_accounts SET enabled=0")
+                else:
+                    self.db.execute("UPDATE clients SET security_version=2")
+                changed = self.db.execute(
+                    """UPDATE client_accounts SET password_hash=?,password_algo='ARGON2ID'
+                       WHERE client_id=? AND password_algo='PBKDF2_SHA256'
+                       AND password_hash=? AND password_salt=? AND password_iterations=?
+                       AND role=? AND enabled=1 AND updated_at=?
+                       AND EXISTS(SELECT 1 FROM clients
+                         WHERE client_id=? AND status='ACTIVE' AND security_version=?)""",
+                    ("FAKE_PHC", "CL000001", old[0], old[1], old[2], old[3],
+                     old[4], "CL000001", 1),
+                )
+                self.assertEqual(changed.rowcount, 0)
+                self.assertEqual(self.db.execute(
+                    "SELECT password_algo FROM client_accounts").fetchone()[0], "PBKDF2_SHA256")
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
