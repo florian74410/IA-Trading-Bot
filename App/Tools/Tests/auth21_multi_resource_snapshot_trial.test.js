@@ -119,9 +119,11 @@ test('WAL commits in all three databases are included without copying WAL sideca
  const a=await capture(f),r=restore(f,a.archiveFile);
  assert.equal(r.databases,3);
  for(const name of ['clients','settings','portfolio']){
+  // Opening a restored SQLite database itself may create -wal/-shm.
+  // Assert the archive restored a self-contained main DB BEFORE opening it.
+  assert.equal(fs.existsSync(path.join(r.restoredDir,name+'-fixture.sqlite-wal')),false);
   const db=new Database(path.join(r.restoredDir,name+'-fixture.sqlite'),{readonly:true});
   try{assert.equal(db.pragma('integrity_check',{simple:true}),'ok');}finally{db.close()}
-  assert.equal(fs.existsSync(path.join(r.restoredDir,name+'-fixture.sqlite-wal')),false);
  }
 });
 test('missing or invalid writers prevent capture before an archive appears',async t=>{
