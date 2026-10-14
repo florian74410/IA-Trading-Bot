@@ -176,3 +176,21 @@
 - [ ] Accord final explicite sur la publication réseau.
 
 **Méthodologie obligatoire :** un point à la fois, travaux et tests regroupés côté assistant autant que possible, puis **une commande CLI compacte** sur Macro/GEN-1 uniquement si nécessaire. La commande vise modification, tests, validation, compte rendu et contrôle GitHub ; elle ne doit pas déployer en production ou ouvrir un port sans accord spécifique. L'utilisateur transmet la sortie réelle, le résultat est comparé au résultat attendu, **puis et seulement puis** le point est coché et le suivant démarre. Toute erreur reste `[ ]` avec diagnostic et correctif tracé.
+
+
+### Bilan transversal de contrôle — 15/10/2026 (branche de conception)
+
+**État vérifié sur code GitHub : non livrable / déploiement interdit.** Les trois workflows Auth21 valident des fixtures et de la conformité statique, pas une sécurité effective de toutes les routes.
+
+- **Phase 1 :** clôturée uniquement en conception (comme indiqué ci-dessus).
+- **Phase 2 :** ouverte ; P2.1 validé en fixtures, P2.2 reste ouvert faute de coordination et restauration réelles interservices.
+- **Phases 3–4 :** non closes ; des modules de sessions, RBAC, IPC et route gates DEBUG sont présents, sans couverture exhaustive des véritables points d'entrée.
+- **Phase 5 / intégration :** non close ; Gateway et Router répondent en mode Auth21 isolé par refus par défaut hors routes explicitement autorisées. Cela garantit le verrouillage mais **pas un flux métier fonctionnel**.
+- **Phase 6 :** tests cryptographiques, quatre processus HTTP *simulés* et écriture persistante sur fixture ; les vrais Engines ne sont pas passés par un test HTTP complet commun.
+- **Phase 7 :** audit/benchmarks/rollback sur GEN-1 non validés et interdits jusqu'au feu vert explicite d'Overflow.
+
+**Extension transversale ajoutée (contrat de test, non monté) :** `auth21_engine_guard.js` prévoit un garde *fail closed* pour 12 frontières (Indicator, MarketData, Liquidity, Fundamental, Trading, Firewall, Strategy, Risk, Portfolio, Kraken, Supervisor, Router). Actuellement, seules des actions de lecture explicites peuvent passer ce contrat ; Wallet, ordres LIVE et écritures non inventoriées sont refusés. La présence du module ne protège pas un serveur tant que son entrée HTTP et ses opérations CP/1/WS ne l'invoquent pas.
+
+**Critères indispensables avant de cocher l'intégration :** inventorier toutes les routes HTTP/WS/CP/1 de chaque moteur, brancher et tester un garde commun à l'entrée effective, vérifier identité de service et autorisation par opération/ownership, lier les écritures au corps exact, imposer l'anti-rejeu multi-processus, prouver une écriture DEBUG isolée avec le vrai Core/Router/Engine, auditer les protections des volumes, secrets et sauvegardes, mesurer p95/p99 et assurer rollback. Un middleware générique ne dispense jamais de la revue des autorisations métier propres à chaque Engine.
+
+**Règle de livraison :** ne plus confondre « contrat créé », « CI fixtures verte », « routes réellement câblées », « tests interservices validés » et « déploiement approuvé ». **Aucun nouveau Docker DEBUG sur GEN-1**, aucun Trading LIVE, aucune migration ni intervention Wallet sans validation explicite d'Overflow.
