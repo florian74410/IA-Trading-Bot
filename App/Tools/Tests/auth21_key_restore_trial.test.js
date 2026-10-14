@@ -218,3 +218,16 @@ test('ciphertext altered after restoration is rejected by independent attestatio
  }),/AUTH21_RESTORE_KEY_NOT_COMPATIBLE/);
  assert.equal(f.key.open(raw(f.db,'clients','first_name_enc','CL000001')),'GivenCL000001');
 });
+
+test('parent symlink cannot redirect master key lookup outside synthetic fixture root',async t=>{
+ const f=fixture(t);insert(f);
+ const outside=fs.mkdtempSync(path.join(os.tmpdir(),'auth21-outside-'));
+ t.after(()=>fs.rmSync(outside,{recursive:true,force:true}));
+ const keyFile=path.join(outside,'client_master.key');
+ fs.writeFileSync(keyFile,crypto.randomBytes(32).toString('hex'),{mode:0o600});
+ fs.symlinkSync(outside,path.join(f.root,'indirect-key-dir'),'dir');
+ await assert.rejects(()=>backupRestoreFixture({
+  db:f.db,fixtureRoot:f.root,keyFile:path.join(f.root,'indirect-key-dir','client_master.key')
+ }),/AUTH21_KEY_OUTSIDE_FIXTURE/);
+ assert.equal(fs.existsSync(path.join(f.root,'key-restore-check')),false);
+});
