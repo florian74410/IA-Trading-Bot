@@ -48,8 +48,8 @@ Les [tests](../../Tools/CI/test_auth_storage_preflight.py) vérifient **six cas 
 ## 5. Critères restants avant autorisation de déployer
 
 - [x] Prototype coopératif sur fixtures, isolé sous `/tmp`, sans opération GEN-1.
-- [ ] Exécution GitHub Actions des tests de concurrence et de reprise confirmée.
-- [ ] Inventaire complet des écrivains métier de **chaque** base critique, y compris accès secondaires et migrations legacy.
+- [x] Exécution GitHub Actions [20/20 tests P2.1 — success](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38499587022), [RBAC — success](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38499586839).
+- [ ] Inventaire **complet** des écrivains métier de chaque base critique, y compris accès secondaires et migrations legacy. Une [revue statique préliminaire](AUTH_DEBUG_2.1_SQLITE_WRITER_INVENTORY.md) est disponible ; elle n'est pas exhaustive.
 - [ ] Intégration d'un protocole `PREPARE/QUIESCED/RELEASE` ou équivalent à **tous** les chemins d'écriture, tests multiprocessus/multiconteneurs, crash/restart et rollback sur banc isolé.
 - [ ] Durées de blocage bornées, mesures de performance p95/p99 comparables, aucune perturbation significative des moteurs.
 - [ ] Sauvegarde chiffrée **réellement restaurable sur copie** avec données autorisées et clés originales, puis validation d'Overflow avant déploiement Docker DEBUG.

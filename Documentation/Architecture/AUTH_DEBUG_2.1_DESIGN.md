@@ -28,6 +28,10 @@ Le JSON des permissions est une **référence de conception**, jamais un fichier
 
 **Décision d'Overflow (14/10/2026) : aucune nouvelle version Docker DEBUG publiée/déployée sur GEN-1 avant intégration et validation complète du système Auth 2.1.** Tests et commits sur branche de développement uniquement. Le [préflight et les 13 tests SQLite fictifs](AUTH_DEBUG_2.1_PHASE2_STORAGE_PRECHECK.md) sont un prototype de non-régression, pas un outil de restauration réel. Les méthodes de chiffrement/clé wallet et les règles Contabo restent inchangées.
 
+## P2.1 — Cohérence des sauvegardes et écrivains SQLite
+
+Le [prototype de barrière coopérative sur fixtures](AUTH_DEBUG_2.1_COHERENT_SNAPSHOT_BARRIER.md) et l'[inventaire préliminaire des écrivains SQLite](AUTH_DEBUG_2.1_SQLITE_WRITER_INVENTORY.md) complètent le [plan de stockage P2.1](AUTH_DEBUG_2.1_PHASE2_STORAGE_PRECHECK.md). Les **20 tests Python/Node** ont réussi sur GitHub Actions ; ce n'est **pas une coordination active des 13 services**. P2.1 reste ouvert jusqu'aux validations de tous les writers, gels d'écriture interservices et performance sur banc isolé. Toujours aucune nouvelle version Docker sur GEN-1 avant Auth 2.1 complet.
+
 ## Décisions approuvées
 
 - Architecture native Core Auth Service + UI Gateway + moteur de permissions RBAC (ADMIN, USER, GUEST), refus par défaut.
