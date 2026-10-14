@@ -63,3 +63,39 @@ test('default inferred DB path protects key without explicit options',t=>{
  assert.throws(()=>new ClientCrypto(x.keyFile),/CLIENT_MASTER_KEY_MISSING_WITH_EXISTING_DB/);
  assert.equal(fs.existsSync(x.keyFile),false);
 });
+
+
+test('held opt-in clients gate blocks secret directory and key generation before filesystem changes',t=>{
+ const x=fixture(t);
+ const {LocalSnapshotWriter}=require('../../Core/Backup/snapshot_coordinator');
+ const gate=new LocalSnapshotWriter('clients');
+ gate.prepare(1);
+ assert.throws(()=>new ClientCrypto(x.keyFile,{clientDbPath:x.dbFile,snapshotGate:gate}),
+  /SNAPSHOT_WRITE_QUIESCED/);
+ assert.equal(fs.existsSync(path.dirname(x.keyFile)),false);
+ gate.abort(1);
+ const c=new ClientCrypto(x.keyFile,{clientDbPath:x.dbFile,snapshotGate:gate});
+ assert.equal(c.master.length,32);
+ assert.equal(fs.existsSync(x.keyFile),true);
+});
+test('held client gate does not chmod a pre-existing fixture master key',t=>{
+ const x=fixture(t);
+ const first=new ClientCrypto(x.keyFile,{clientDbPath:x.dbFile});
+ const bytes=fs.readFileSync(x.keyFile,'utf8');
+ fs.chmodSync(path.dirname(x.keyFile),0o700);
+ const {LocalSnapshotWriter}=require('../../Core/Backup/snapshot_coordinator');
+ const gate=new LocalSnapshotWriter('clients');
+ gate.prepare(1);
+ assert.throws(()=>new ClientCrypto(x.keyFile,{clientDbPath:x.dbFile,snapshotGate:gate}),
+  /SNAPSHOT_WRITE_QUIESCED/);
+ assert.equal(fs.readFileSync(x.keyFile,'utf8'),bytes);
+ assert.equal(fs.statSync(path.dirname(x.keyFile)).mode&0o777,0o700);
+ gate.abort(1);
+ assert.equal(new ClientCrypto(x.keyFile,{clientDbPath:x.dbFile,snapshotGate:gate}).master.length,32);
+});
+test('invalid opt-in master-key gate rejects constructor before creating key',t=>{
+ const x=fixture(t);
+ assert.throws(()=>new ClientCrypto(x.keyFile,{clientDbPath:x.dbFile,snapshotGate:{}}),
+  /SNAPSHOT_GATE_INVALID/);
+ assert.equal(fs.existsSync(path.dirname(x.keyFile)),false);
+});
