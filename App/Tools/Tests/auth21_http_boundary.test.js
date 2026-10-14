@@ -190,3 +190,12 @@ test('login throttle refuses attempts after fifth bad password',async()=>{
  now+=300001;
  assert.equal((await sendBad()).status,401);
 });
+
+test('unlock password throttling blocks repeated guesses',async()=>{
+ const x=fixture(),gate=createIsolatedCoreGate({sessions:x.sessions});
+ x.sessions.unlockWithPassword=async()=>false;
+ const headers={authorization:'Bearer '+VALID_TOKEN,'content-type':'application/json'};
+ const ask=()=>send(gate,{method:'POST',url:'/auth21/unlock',headers,body:{password:'wrong'}});
+ for(let i=0;i<5;i++)assert.equal((await ask()).status,401);
+ assert.equal((await ask()).status,429);
+});
