@@ -10,14 +10,14 @@ function deny(res,status,error){
   'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});
  res.end(JSON.stringify({error}));
 }
-function createIsolatedCoreGate({sessions,browserSessions=null,allowedBrowserOrigin=null}={}){
- const auth=createAuth21HttpHandler({sessions,browserSessions,allowedBrowserOrigin});
+function createIsolatedCoreGate({sessions,browserSessions=null,allowedBrowserOrigin=null,ipcCodec=null}={}){
+ const auth=createAuth21HttpHandler({sessions,browserSessions,allowedBrowserOrigin,ipcCodec});
  return async function isolatedCoreGate(req,res){
   let pathname;
   try{pathname=new URL(req.url,'http://localhost').pathname}
   catch(_){deny(res,404,'NOT_FOUND');return}
   // Auth boundary rechecks path, query string, method and bearer itself.
-  if(['/auth21/login','/auth21/me','/auth21/logout','/auth21/preferences','/auth21/activity','/auth21/unlock'].includes(pathname)){
+  if(['/auth21/login','/auth21/me','/auth21/logout','/auth21/preferences','/auth21/activity','/auth21/unlock','/auth21/ipc/probe-proof'].includes(pathname)){
    await auth(req,res);return;
   }
   // No legacy cookie, localBypass, active_client_id, recovery, setup, admin,
@@ -49,7 +49,9 @@ function openCoreAuthTrial({root,clientCrypto,snapshotGate,env,browserSessions=n
   if(db.pragma('integrity_check',{simple:true})!=='ok'||db.pragma('foreign_key_check').length)
    throw Error('AUTH21_CORE_TRIAL_DB_INTEGRITY');
   const sessions=new Auth21SessionStore({db,clientCrypto,snapshotGate,idleLockSeconds:300});
-  return {handler:createIsolatedCoreGate({sessions,browserSessions,allowedBrowserOrigin}),close(){db.close()}};
+  const ipcCodec=env&&env.IATB_AUTH21_IPC_PROBE_TRIAL==='1'?
+   require('./auth21_ipc_proof').proofCodec({secret:require('./auth21_ipc_keyfile').loadTrialSecret({env,root})}):null;
+  return {handler:createIsolatedCoreGate({sessions,browserSessions,allowedBrowserOrigin,ipcCodec}),close(){db.close()}};
  }catch(error){db.close();throw error}
 }
 module.exports={createIsolatedCoreGate,openCoreAuthTrial};
