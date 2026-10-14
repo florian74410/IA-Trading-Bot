@@ -151,7 +151,7 @@ class Auth21FirstAdminTrial {
    if(target){
     const fresh=this.db.prepare('SELECT status FROM clients WHERE client_id=?').get(target);
     if(!fresh||fresh.status!=='ACTIVE')throw Error('AUTH21_BOOTSTRAP_STALE_CLIENT');
-    const auth=this.db.prepare('SELECT role,username_enc AS usernameEnc FROM client_accounts WHERE client_id=?').get(target);
+    const auth=this.db.prepare('SELECT role,username_enc AS usernameEnc,password_hash AS passwordHash,updated_at AS updatedAt,enabled FROM client_accounts WHERE client_id=?').get(target);
     if(Boolean(auth)!==Boolean(current)||
        (auth&&(auth.role!==current.role||auth.passwordHash!==current.passwordHash||
         auth.updatedAt!==current.updatedAt||auth.enabled!==current.enabled||
