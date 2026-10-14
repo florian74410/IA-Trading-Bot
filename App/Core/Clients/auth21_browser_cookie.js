@@ -27,7 +27,7 @@ function createBrowserSession({secret,origin}={}){
  }
  function originAllowed(req){
   return req.headers.origin===originUrl.origin &&
-   (req.socket?.encrypted===true || req.headers['x-iatb-auth21-fixture-https']==='1' && process.env.IATB_AUTH21_LOCAL_SNAPSHOT_TRIAL==='1');
+   req.socket?.encrypted===true;
  }
  return {csrf,cookie,expire,parse,validate,originAllowed,origin};
 }
