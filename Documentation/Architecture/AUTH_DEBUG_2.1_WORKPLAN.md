@@ -97,6 +97,8 @@
 
 **Validation IPC réseau réel — banc DEBUG isolé 14/10/2026 :** test complémentaire de bout en bout **HTTP localhost entre deux processus Node**. Le parent construit une preuve `router/shared.read/GET`, le second ouvre un serveur de vérification avec une clé 0600 sous racine temporaire, accepte une première requête (HTTP 200), refuse le rejeu (403) et la requête sans preuve (403). [CI 345/345 SUCCESS](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38624639896). Cette validation ne lance pas tout IA-TB, ne fait pas circuler de véritables commandes CP/1 métier et ne couvre pas encore les autorisations effectives dans les Engines. **Phase 4 non terminée** ; tout reste sur feature DEBUG isolé, sans déploiement.
 
+**Essai de capacité Router lecture seule — 14/10/2026 :** `auth21_ipc_probe.js` contient désormais un vérificateur signé `createRouterReadOnlyCapabilities`, qui retourne exclusivement une métadonnée `auth21.readonly` sans données métier et affiche `writes:false`, `tradingLive:false`. Test anti-rejeu et absence de permissions LIVE validé : [CI 346/346 SUCCESS](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38625390198). **ATTENTION : l'écriture du raccordement de ce nouveau point d'entrée à `Core/Router/router.js` a été bloquée par les contrôles de sécurité ; cette route n'est PAS montée sur le serveur réel.** Ne pas affirmer que le RBAC métier Router/Engines est intégré. Phase 4 ouverte ; aucun déploiement.
+
 ### PHASE 4 — Privilèges et isolation métier
 
 - [ ] ADMIN : accès complet aux fonctions applicatives, sans accès SSH/root/Docker par le navigateur.
