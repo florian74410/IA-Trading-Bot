@@ -50,3 +50,12 @@ test('expired and forged proof rejected',()=>{
  const forged=business.issue({sessions:g.sessions,token:'valid',codec:other,action:'fundamental.feed.create'});
  assert.equal(business.verify({codec:g.codec,proof:forged,action:'fundamental.feed.create'}).allowed,false);
 });
+
+test('same permission but different business action cannot reuse proof',()=>{
+ const f=fixture();
+ const proof=business.issue({...f,token:'valid',action:'indicator.settings.set'});
+ assert.equal(business.verify({codec:f.codec,proof,action:'marketdata.settings.set'}).allowed,false);
+ assert.equal(business.verify({codec:f.codec,proof,action:'indicator.settings.set'}).allowed,true);
+ const p=business.issue({...f,token:'valid',action:'portfolio.preference.set',ownerClientId:'CLAlice'});
+ assert.equal(business.verify({codec:f.codec,proof:p,action:'strategy.preference.set',ownerClientId:'CLAlice'}).allowed,false);
+});
