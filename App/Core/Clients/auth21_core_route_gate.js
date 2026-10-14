@@ -48,7 +48,7 @@ function openCoreAuthTrial({root,clientCrypto,snapshotGate,env}={}){
   db.pragma('foreign_keys=ON');
   if(db.pragma('integrity_check',{simple:true})!=='ok'||db.pragma('foreign_key_check').length)
    throw Error('AUTH21_CORE_TRIAL_DB_INTEGRITY');
-  const sessions=new Auth21SessionStore({db,clientCrypto,snapshotGate});
+  const sessions=new Auth21SessionStore({db,clientCrypto,snapshotGate,idleLockSeconds:300});
   return {handler:createIsolatedCoreGate({sessions}),close(){db.close()}};
  }catch(error){db.close();throw error}
 }
