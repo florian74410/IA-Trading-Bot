@@ -192,6 +192,8 @@ function routerHealth(res){
 }
 
 var server=http.createServer(function(req,res){var u=new URL(req.url,'http://'+HOST+':'+PORT),p=u.pathname;
+ var auth21Boundary=require('../Clients/auth21_service_boundary').decision(process.env,'router',req.method,p);
+ if(auth21Boundary.intercept)return sendJson(res,404,{error:'NOT_FOUND'});
  if(p==='/router-health-internal')return sendJson(res,200,{ok:true,router:true,pid:process.pid,port:PORT,version:BUILD.version});
  if(p==='/router-health')return routerHealth(res);
  if(req.method==='GET'&&p==='/communication-health')return COMM.health(function(e,o){if(e)return sendJson(res,503,{ok:false,error:e.message});sendJson(res,200,o);});
