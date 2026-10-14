@@ -15,18 +15,18 @@ function contract(action){
  if(typeof action!=='string'||!Object.hasOwn(ACTIONS,action))return null;
  return ACTIONS[action];
 }
-function issue({sessions,token,codec,action,ownerClientId}={}){
+function issue({sessions,token,codec,action,ownerClientId,bodyDigest}={}){
  const spec=contract(action);
  if(!spec)return null;
  if(spec.permission==='self.write'&&!ownerClientId)return null;
  return issueAuthorizedProof({sessions,token,codec,audience:spec.audience,
-  operation:spec.permission,method:'POST',ownerClientId:spec.permission==='self.write'?ownerClientId:null,action});
+  operation:spec.permission,method:'POST',ownerClientId:spec.permission==='self.write'?ownerClientId:null,action,bodyDigest});
 }
-function verify({codec,proof,action,ownerClientId}={}){
+function verify({codec,proof,action,ownerClientId,bodyDigest}={}){
  const spec=contract(action);
  if(!spec)return {allowed:false,reason:'UNKNOWN_ACTION'};
  if(spec.permission==='self.write'&&!ownerClientId)return {allowed:false,reason:'OWNER_REQUIRED'};
  return authorizeInterprocess({codec,proof,audience:spec.audience,
-  operation:spec.permission,method:'POST',ownerClientId:spec.permission==='self.write'?ownerClientId:null,action});
+  operation:spec.permission,method:'POST',ownerClientId:spec.permission==='self.write'?ownerClientId:null,action,bodyDigest});
 }
 module.exports={contract,issue,verify};
