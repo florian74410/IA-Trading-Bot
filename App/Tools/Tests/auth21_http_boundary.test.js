@@ -199,3 +199,22 @@ test('unlock password throttling blocks repeated guesses',async()=>{
  for(let i=0;i<5;i++)assert.equal((await ask()).status,401);
  assert.equal((await ask()).status,429);
 });
+
+test('browser Origin policy rejects cross-site requests and adds hardening headers',async()=>{
+ const x=fixture(),handler=createAuth21HttpHandler({sessions:x.sessions,allowedBrowserOrigin:'http://127.0.0.1:8001'});
+ const login=(origin)=>send(handler,{method:'POST',url:'/auth21/login',
+  headers:{'content-type':'application/json',origin},
+  body:{clientId:'CL000001',password:'correct-16-characters'}});
+ const forbidden=await login('https://evil.example');
+ assert.equal(forbidden.status,403);
+ assert.equal(forbidden.body.error,'ORIGIN_FORBIDDEN');
+ assert.equal(forbidden.headers['X-Frame-Options'],'DENY');
+ assert.equal(forbidden.headers['Referrer-Policy'],'no-referrer');
+ assert.deepEqual(x.events,[]);
+ const approved=await login('http://127.0.0.1:8001');
+ assert.equal(approved.status,200);
+ assert.equal(approved.body.token,VALID_TOKEN);
+ const defaultHandler=createAuth21HttpHandler({sessions:x.sessions});
+ assert.equal((await send(defaultHandler,{headers:{origin:'http://127.0.0.1:8001'}})).status,403);
+ assert.throws(()=>createAuth21HttpHandler({sessions:x.sessions,allowedBrowserOrigin:'https://evil.example/path'}),/AUTH21_BROWSER_ORIGIN_INVALID/);
+});
