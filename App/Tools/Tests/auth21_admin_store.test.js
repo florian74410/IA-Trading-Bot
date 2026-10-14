@@ -257,3 +257,65 @@ test('audit failure rolls back role mutation and preserves ADMIN session',async 
  assert.equal(metadata(f,'CL000002').role,'USER');
  assert.ok(sessions.verifySession(user));
 });
+
+
+test('INSERT OR REPLACE into last ADMIN account cannot bypass DELETE triggers',async t=>{
+ const f=setup(t);seed(f,'CL000001','ADMIN');seed(f,'CL000002','USER');
+ await migrateFixture(f.db,{fixtureRoot:f.root});
+ // Same clientId and a role downgrade: REPLACE uses implicit DELETE.
+ const src=f.db.prepare('SELECT * FROM client_accounts WHERE client_id=?').get('CL000001');
+ assert.throws(()=>f.db.prepare([
+  'INSERT OR REPLACE INTO client_accounts',
+  '(client_id,username_enc,username_hash,password_salt,password_hash,',
+  'password_iterations,role,enabled,created_at,updated_at,password_algo,password_params_json)',
+  'VALUES(?,?,?,?,?,?,?,?,?,?,?,?)'
+ ].join(' ')).run(src.client_id,src.username_enc,src.username_hash,src.password_salt,
+  src.password_hash,src.password_iterations,'USER',1,src.created_at,src.updated_at,
+  src.password_algo,src.password_params_json),/LAST_ACTIVE_ADMIN_REQUIRED/);
+ assert.equal(count(f),1);
+ assert.equal(metadata(f,'CL000001').role,'ADMIN');
+});
+test('username UNIQUE replacement of final ADMIN is blocked without deleting unrelated identity',async t=>{
+ const f=setup(t);seed(f,'CL000001','ADMIN');seed(f,'CL000002','USER');
+ await migrateFixture(f.db,{fixtureRoot:f.root});
+ const a=f.db.prepare('SELECT * FROM client_accounts WHERE client_id=?').get('CL000001');
+ assert.throws(()=>f.db.prepare([
+  'INSERT OR REPLACE INTO client_accounts',
+  '(client_id,username_enc,username_hash,password_salt,password_hash,',
+  'password_iterations,role,enabled,created_at,updated_at,password_algo,password_params_json)',
+  'VALUES(?,?,?,?,?,?,?,?,?,?,?,?)'
+ ].join(' ')).run('CL000002','OTHER_USERNAME',a.username_hash,a.password_salt,
+  a.password_hash,180000,'USER',1,a.created_at,a.updated_at,'PBKDF2_SHA256','{}'),
+ /LAST_ACTIVE_ADMIN_REQUIRED/);
+ assert.equal(count(f),1);
+ assert.equal(metadata(f,'CL000001').role,'ADMIN');
+ assert.equal(metadata(f,'CL000002').role,'USER');
+});
+test('INSERT OR REPLACE of final ADMIN parent client cannot cascade-delete account',async t=>{
+ const f=setup(t);seed(f,'CL000001','ADMIN');await migrateFixture(f.db,{fixtureRoot:f.root});
+ assert.throws(()=>f.db.prepare([
+  'INSERT OR REPLACE INTO clients(client_id,external_ref_hash,status,created_at,updated_at)',
+  'VALUES(?,?,?,?,?)'
+ ].join(' ')).run('CL000001','DUPLICATE_REPLACEMENT','DISABLED','2026','2026'),
+ /LAST_ACTIVE_ADMIN_REQUIRED/);
+ assert.equal(count(f),1);
+ assert.equal(f.db.pragma('foreign_key_check').length,0);
+});
+test('UNIQUE external reference replacement of final ADMIN parent is blocked',async t=>{
+ const f=setup(t);seed(f,'CL000001','ADMIN');seed(f,'CL000002','USER');
+ await migrateFixture(f.db,{fixtureRoot:f.root});
+ assert.throws(()=>f.db.prepare([
+  'INSERT OR REPLACE INTO clients(client_id,external_ref_hash,status,created_at,updated_at)',
+  'VALUES(?,?,?,?,?)'
+ ].join(' ')).run('CL000003','FAKE_CL000001','ACTIVE','2026','2026'),
+ /LAST_ACTIVE_ADMIN_REQUIRED/);
+ assert.equal(count(f),1);
+ assert.equal(f.db.prepare("SELECT COUNT(*) AS n FROM clients WHERE client_id='CL000003'").get().n,0);
+});
+test('missing replace guard triggers refuse manager initialization',async t=>{
+ const f=setup(t);seed(f,'CL000001','ADMIN');await migrateFixture(f.db,{fixtureRoot:f.root});
+ const sessions=new Auth21SessionStore({db:f.db,clientCrypto:f.clientCrypto,nowSeconds:()=>f.now});
+ f.db.exec('DROP TRIGGER auth21_last_admin_account_replace');
+ assert.throws(()=>new Auth21AdminStore({sessionStore:sessions,authorizeLocalOperator:()=>true}),/AUTH21_ADMIN_SQL_GUARD_MISSING/);
+ await assert.rejects(()=>migrateFixture(f.db,{fixtureRoot:f.root}),/AUTH21_SCHEMA_PARTIAL/);
+});
