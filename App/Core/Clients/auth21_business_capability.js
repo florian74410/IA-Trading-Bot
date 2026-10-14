@@ -20,13 +20,13 @@ function issue({sessions,token,codec,action,ownerClientId}={}){
  if(!spec)return null;
  if(spec.permission==='self.write'&&!ownerClientId)return null;
  return issueAuthorizedProof({sessions,token,codec,audience:spec.audience,
-  operation:spec.permission,method:'POST',ownerClientId:spec.permission==='self.write'?ownerClientId:null});
+  operation:spec.permission,method:'POST',ownerClientId:spec.permission==='self.write'?ownerClientId:null,action});
 }
 function verify({codec,proof,action,ownerClientId}={}){
  const spec=contract(action);
  if(!spec)return {allowed:false,reason:'UNKNOWN_ACTION'};
  if(spec.permission==='self.write'&&!ownerClientId)return {allowed:false,reason:'OWNER_REQUIRED'};
  return authorizeInterprocess({codec,proof,audience:spec.audience,
-  operation:spec.permission,method:'POST',ownerClientId:spec.permission==='self.write'?ownerClientId:null});
+  operation:spec.permission,method:'POST',ownerClientId:spec.permission==='self.write'?ownerClientId:null,action});
 }
 module.exports={contract,issue,verify};
