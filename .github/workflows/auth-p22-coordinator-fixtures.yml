@@ -7,6 +7,9 @@ on:
     paths:
       - 'App/Core/Backup/snapshot_coordinator.js'
       - 'App/Core/Shared/paths.js'
+      - 'App/Core/Server/server.js'
+      - 'App/Core/Backup/auth21_core_local_trial_wiring.js'
+      - 'App/Tools/Tests/auth21_core_local_trial_wiring.test.js'
       - 'App/Tools/Tests/auth21_paths_startup_preflight.test.js'
       - 'App/Tools/CI/auth21_writer_inventory.js'
       - 'App/Tools/Tests/auth21_writer_inventory.test.js'
@@ -60,6 +63,9 @@ on:
     paths:
       - 'App/Core/Backup/snapshot_coordinator.js'
       - 'App/Core/Shared/paths.js'
+      - 'App/Core/Server/server.js'
+      - 'App/Core/Backup/auth21_core_local_trial_wiring.js'
+      - 'App/Tools/Tests/auth21_core_local_trial_wiring.test.js'
       - 'App/Tools/Tests/auth21_paths_startup_preflight.test.js'
       - 'App/Tools/CI/auth21_writer_inventory.js'
       - 'App/Tools/Tests/auth21_writer_inventory.test.js'
@@ -126,6 +132,9 @@ jobs:
         run: |
           node --check App/Core/Backup/snapshot_coordinator.js
           node --check App/Core/Shared/paths.js
+          node --check App/Core/Server/server.js
+          node --check App/Core/Backup/auth21_core_local_trial_wiring.js
+          node --check App/Tools/Tests/auth21_core_local_trial_wiring.test.js
           node --check App/Tools/Tests/auth21_paths_startup_preflight.test.js
           node --check App/Tools/CI/auth21_writer_inventory.js
           node --check App/Tools/Tests/auth21_writer_inventory.test.js
@@ -170,7 +179,7 @@ jobs:
       - name: Isolated ACK and failure-handling fixtures
         run: node --test App/Tools/Tests/snapshot_coordinator.test.js App/Tools/Tests/core_snapshot_writers.test.js App/Tools/Tests/portfolio_snapshot_writer.test.js App/Tools/Tests/fundamental_snapshot_writer.test.js App/Tools/Tests/fundamental_legacy_snapshot_bridge.test.js App/Tools/Tests/marketdata_snapshot_writers.test.js App/Tools/Tests/financial_jsonl_snapshot_writer.test.js App/Tools/Tests/trading_usage_jsonl_snapshot_writers.test.js App/Tools/Tests/mosaic_snapshot_writer.test.js App/Tools/Tests/client_master_key_safety.test.js
       - name: Startup paths read-only preflight and reviewed writer inventory
-        run: node --test App/Tools/Tests/auth21_paths_startup_preflight.test.js App/Tools/Tests/auth21_writer_inventory.test.js
+        run: node --test App/Tools/Tests/auth21_paths_startup_preflight.test.js App/Tools/Tests/auth21_writer_inventory.test.js App/Tools/Tests/auth21_core_local_trial_wiring.test.js
       - name: Auth v3 offline SQLite schema fixtures (no live databases)
         run: python3 App/Tools/CI/test_auth21_schema_v3_proposal.py
       - name: Install SQLite and Argon2 into runner temp directory
