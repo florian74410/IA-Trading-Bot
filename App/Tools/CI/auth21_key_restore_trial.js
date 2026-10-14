@@ -125,4 +125,28 @@ async function backupRestoreFixture({db,fixtureRoot,keyFile}={}){
   };
  }finally{savedDb.close();recoveredDb.close();}
 }
-module.exports={backupRestoreFixture};
+/** Independent read-only attestation of a separately restored SQLite/key pair.
+ * Proves key can decrypt records and reproduce stable lookup indexes.
+ * Does not claim that this pair is the latest version of the original DB.
+ */
+function attestRestoredPairFixture({dbFile,keyFile,fixtureRoot}={}){
+ if(typeof fixtureRoot!=='string'||typeof dbFile!=='string')throw Error('AUTH21_FIXTURE_ONLY');
+ const home=fs.realpathSync(fixtureRoot);
+ const file=fs.realpathSync(dbFile);
+ if(!file.startsWith(home+path.sep)||path.extname(file)!=='.sqlite')
+  throw Error('AUTH21_FIXTURE_ONLY');
+ requireFixtureKey(fixtureRoot,keyFile);
+ const db=new Database(file,{readonly:true,fileMustExist:true});
+ try{
+  assertFixture(db,fixtureRoot);
+  const report=inspection(db,keyFile);
+  return {
+   verified:true,
+   encryptedFields:report.encryptedFields,
+   indexChecks:report.indexChecks,
+   walletLinks:report.walletLinks,
+   tables:report.tables
+  };
+ }finally{db.close();}
+}
+module.exports={backupRestoreFixture,attestRestoredPairFixture};
