@@ -22,6 +22,7 @@
 /* Opt-in DEBUG trial validates all data/runtime paths BEFORE paths.js can
  * perform its usual eager initialization. Absent flag = exact legacy path. */
 var AUTH21_LOCAL_TRIAL=null;
+if(process.env.IATB_AUTH21_CORE_AUTH_TRIAL==='1'&&process.env.IATB_AUTH21_LOCAL_SNAPSHOT_TRIAL!=='1')throw Error('AUTH21_CORE_AUTH_REQUIRES_LOCAL_SANDBOX');
 if(process.env.IATB_AUTH21_LOCAL_SNAPSHOT_TRIAL==='1'){
   AUTH21_LOCAL_TRIAL=require('../Backup/auth21_core_local_trial_wiring');
   AUTH21_LOCAL_TRIAL.preflightEnv(process.env);
