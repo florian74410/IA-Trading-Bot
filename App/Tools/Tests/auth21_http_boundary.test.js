@@ -14,7 +14,10 @@ function fixture(){
    ?{token:VALID_TOKEN,clientId:id,role:'USER',expiresAt:1900000000}:null},
   verifySession(token){events.push('verify');return token===VALID_TOKEN&&!state.revoked
    ?{clientId:'CL000001',role:'USER',expiresAt:1900000000}:null},
-  revokeSession(token){events.push('revoke');if(token!==VALID_TOKEN)return false;state.revoked=true;return true;}
+  revokeSession(token){events.push('revoke');if(token!==VALID_TOKEN)return false;state.revoked=true;return true;},
+  getPreference(token,scope,key){events.push('read');return state[scope+':'+key]||null},
+  setPreference(token,scope,key,value){events.push('write');state[scope+':'+key]=value;return true},
+  deletePreference(token,scope,key){events.push('delete');delete state[scope+':'+key];return true}
  };
  return {events,state,sessions,handler:createAuth21HttpHandler({sessions})};
 }
@@ -134,4 +137,27 @@ test('isolated Core gate ignores fake ADMIN cookies and request parameters',asyn
   assert.equal(r.status,404,url);
  }
  assert.deepEqual(x.events,[]);
+});
+
+test('authenticated preference API never uses user-supplied clientId or forged role',async()=>{
+ const x=fixture(),gate=createIsolatedCoreGate({sessions:x.sessions});
+ const url='/auth21/preferences?scope=ui&key=theme';
+ const head={authorization:'Bearer '+VALID_TOKEN,'content-type':'application/json',cookie:'role=ADMIN;clientId=CL999999'};
+ assert.equal((await send(gate,{method:'GET',url})).status,401);
+ assert.equal((await send(gate,{method:'PUT',url,headers:head,body:{value:'dark',clientId:'CL999999'}})).status,400);
+ assert.equal((await send(gate,{method:'PUT',url,headers:head,body:{value:'dark'}})).status,200);
+ assert.equal((await send(gate,{method:'GET',url,headers:head})).body.value,'dark');
+ assert.equal((await send(gate,{method:'GET',url:url+'&clientId=CL999999',headers:head})).status,400);
+ assert.equal((await send(gate,{method:'DELETE',url,headers:head})).status,200);
+ assert.equal((await send(gate,{method:'GET',url,headers:head})).body.value,null);
+});
+test('GUEST preference mutations rejected before calling underlying storage',async()=>{
+ const x=fixture(),gate=createIsolatedCoreGate({sessions:x.sessions});
+ x.sessions.verifySession=()=>({clientId:'CL000001',role:'GUEST'});
+ const url='/auth21/preferences?scope=ui&key=theme';
+ const headers={authorization:'Bearer '+VALID_TOKEN,'content-type':'application/json'};
+ assert.equal((await send(gate,{method:'PUT',url,headers,body:{value:'red'}})).status,403);
+ assert.equal((await send(gate,{method:'DELETE',url,headers})).status,403);
+ assert.equal((await send(gate,{method:'GET',url,headers})).status,200);
+ assert.deepEqual(x.events,['read']);
 });
