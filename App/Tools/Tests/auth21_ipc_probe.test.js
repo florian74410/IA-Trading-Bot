@@ -53,3 +53,30 @@ test('separate Node process verifies Core-style signed IPC proof from private tr
  });
  assert.equal(status,'200');
 });
+
+test('two processes exchange a real loopback HTTP proof and reject replay',async t=>{
+ const f=fixture(t),http=require('node:http'),{spawn}=require('node:child_process');
+ const loader=path.resolve(__dirname,'../../Core/Clients/auth21_ipc_probe.js');
+ const child="const http=require('node:http');const probe=require(process.argv[1]).createRouterProbe({env:process.env,root:process.env.IATB_AUTH21_LOCAL_TRIAL_ROOT});"+
+  "const s=http.createServer((req,res)=>probe(req,res));s.listen(0,'127.0.0.1',()=>process.send({port:s.address().port}));";
+ const proc=spawn(process.execPath,['-e',child,loader],{
+  env:{...process.env,...f.env},stdio:['ignore','pipe','pipe','ipc']
+ });
+ t.after(()=>proc.kill());
+ const port=await Promise.race([
+  new Promise((resolve,reject)=>{proc.once('message',m=>resolve(m.port));proc.once('error',reject);proc.once('exit',c=>reject(Error('IPC_CHILD_EXIT_'+c)));}),
+  new Promise((_,reject)=>setTimeout(()=>reject(Error('IPC_CHILD_TIMEOUT')),4000).unref())
+ ]);
+ const proof=proofCodec({secret:f.key}).issue({principal:{clientId:'CL000001',role:'USER'},
+  audience:'router',operation:'shared.read',method:'GET'});
+ async function request(headers){
+  return new Promise((resolve,reject)=>{
+   http.get({hostname:'127.0.0.1',port,path:'/auth21/ipc/probe',headers,timeout:3000},res=>{
+    res.resume();res.on('end',()=>resolve(res.statusCode));
+   }).on('error',reject);
+  });
+ }
+ assert.equal(await request({'x-iatb-auth21-proof':proof}),200);
+ assert.equal(await request({'x-iatb-auth21-proof':proof}),403);
+ assert.equal(await request({}),403);
+});
