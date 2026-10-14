@@ -11,6 +11,7 @@ const crypto=require('node:crypto');
 const Database=require('better-sqlite3');
 const ClientCrypto=require('../../Core/Clients/client_crypto');
 const {Auth21SessionStore}=require('../../Core/Clients/auth21_session_store');
+const {Auth21AdminStore}=require('../../Core/Clients/auth21_admin_store');
 const {Auth21FirstAdminTrial}=require('../../Core/Clients/auth21_first_admin_trial');
 const {migrateFixture}=require('../CI/auth21_v3_migration_trial');
 const {LocalSnapshotWriter}=require('../../Core/Backup/snapshot_coordinator');
@@ -246,4 +247,102 @@ test('missing or disabled selected existing client fails closed',async t=>{
  await assert.rejects(()=>m.createFirstAdmin({clientId:'CL009999',username:USERNAME,
   password:PASS,confirmation:'CREATE FIRST ADMIN ON FIXTURE'}),/AUTH21_BOOTSTRAP_CLIENT_UNAVAILABLE/);
  assert.equal(adminCount(f),0);
+});
+
+async function transitionFixture(f){
+ addClient(f,'CL000001','debug');addLogin(f,'CL000001');
+ f.db.prepare('INSERT INTO client_wallets(client_id,wallet_id,created_at) VALUES(?,?,?)')
+  .run('CL000001','WALLET_PUBLIC_REFERENCE_TEST','2026-10-14');
+ const bootstrap=await prep(f);
+ const actor=await bootstrap.createFirstAdmin(options({
+  username:'NEW_ADMIN_USER',
+  identity:{firstName:'Next',lastName:'Administrator',email:'new.admin@example.invalid'}
+ }));
+ const sessions=new Auth21SessionStore({
+  db:f.db,clientCrypto:f.cipher,snapshotGate:f.gate,nowSeconds:()=>1900000000
+ });
+ const adminStore=new Auth21AdminStore({
+  sessionStore:sessions,authorizeLocalOperator:()=>f.permission.allowed,
+  snapshotGate:f.gate
+ });
+ const auth=await sessions.loginWithPassword(actor.clientId,PASS);
+ assert.ok(auth);
+ return {bootstrap,sessions,adminStore,adminToken:auth.token,actor};
+}
+test('approved per-client DEBUG login retirement saves backup without deleting identity or wallet link',async t=>{
+ const f=fixture(t);
+ const {bootstrap,adminStore,adminToken,actor}=await transitionFixture(f);
+ const old=snapshot(f,'CL000001');
+ assert.equal(bootstrap.review().legacyCandidates.length,1);
+ const result=await bootstrap.retireLegacyDebugLoginFixture({
+  adminStore,adminToken,targetClientId:'CL000001',
+  confirmation:'RETIRE DEBUG LOGIN ON FIXTURE: CL000001'
+ });
+ assert.equal(result.loginRetired,true);
+ assert.equal(result.clientId,'CL000001');
+ assert.equal(result.identityPreserved,true);
+ assert.equal(adminCount(f),1);
+ const afterward=snapshot(f,'CL000001');
+ assert.deepEqual(afterward.client,old.client);
+ assert.deepEqual(afterward.wallets,old.wallets);
+ assert.equal(afterward.account,undefined);
+ assert.equal(fs.existsSync(result.backupFile),true);
+ const before=new Database(result.backupFile,{readonly:true,fileMustExist:true});
+ try{
+  assert.equal(before.prepare("SELECT COUNT(*) AS n FROM client_accounts WHERE client_id='CL000001'").get().n,1);
+  assert.equal(before.prepare("SELECT COUNT(*) AS n FROM client_accounts WHERE role='ADMIN'").get().n,1);
+ }finally{before.close();}
+ const log=f.db.prepare("SELECT action,actor_client_id AS actor,detail_enc AS details FROM client_security_audit WHERE action='LEGACY_DEBUG_LOGIN_RETIRED'").get();
+ assert.deepEqual(log,{action:'LEGACY_DEBUG_LOGIN_RETIRED',actor:actor.clientId,details:''});
+});
+test('without per-client confirmation or admin proof legacy DEBUG login stays intact',async t=>{
+ const f=fixture(t);const {bootstrap,adminStore,adminToken,sessions}=await transitionFixture(f);
+ await assert.rejects(()=>bootstrap.retireLegacyDebugLoginFixture({adminStore,adminToken,targetClientId:'CL000001',
+  confirmation:'yes'}),/AUTH21_DEBUG_RESET_APPROVAL_REQUIRED/);
+ await assert.rejects(()=>bootstrap.retireLegacyDebugLoginFixture({adminStore,adminToken:'BAD_TOKEN',targetClientId:'CL000001',
+  confirmation:'RETIRE DEBUG LOGIN ON FIXTURE: CL000001'}),/AUTH21_ADMIN_FORBIDDEN/);
+ sessions.revokeSession(adminToken);
+ await assert.rejects(()=>bootstrap.retireLegacyDebugLoginFixture({adminStore,adminToken,targetClientId:'CL000001',
+  confirmation:'RETIRE DEBUG LOGIN ON FIXTURE: CL000001'}),/AUTH21_ADMIN_FORBIDDEN/);
+ assert.ok(snapshot(f,'CL000001').account);
+ assert.equal(fs.existsSync(path.join(f.root,'pre-legacy-debug-CL000001.sqlite')),false);
+});
+test('unknown provenance SUPERADMIN login cannot be removed by DEBUG transition',async t=>{
+ const f=fixture(t);const {bootstrap,adminStore,adminToken}=await transitionFixture(f);
+ addClient(f,'CL000002','manual');addLogin(f,'CL000002','SUPERADMIN','MANUAL_SUPER');
+ await assert.rejects(()=>bootstrap.retireLegacyDebugLoginFixture({
+  adminStore,adminToken,targetClientId:'CL000002',
+  confirmation:'RETIRE DEBUG LOGIN ON FIXTURE: CL000002'
+ }),/AUTH21_DEBUG_PROVENANCE_UNVERIFIED/);
+ assert.ok(snapshot(f,'CL000002').account);
+});
+test('concurrent DEBUG password reset aborts retirement and preserves new password hash',async t=>{
+ const f=fixture(t);const {bootstrap,adminStore,adminToken}=await transitionFixture(f);
+ await assert.rejects(()=>bootstrap.retireLegacyDebugLoginFixture({
+  adminStore,adminToken,targetClientId:'CL000001',
+  confirmation:'RETIRE DEBUG LOGIN ON FIXTURE: CL000001',
+  hooks:{beforeCommit(db){
+   db.prepare("UPDATE client_accounts SET password_hash='NEW_FAKE_HASH' WHERE client_id='CL000001'").run();
+  }}
+ }),/AUTH21_DEBUG_ACCOUNT_STALE/);
+ assert.equal(f.db.prepare("SELECT password_hash AS h FROM client_accounts WHERE client_id='CL000001'").get().h,'NEW_FAKE_HASH');
+ assert.equal(adminCount(f),1);
+});
+test('audit failure rolls back DEBUG login retirement while preserving ADMIN account',async t=>{
+ const f=fixture(t);const {bootstrap,adminStore,adminToken}=await transitionFixture(f);
+ f.db.exec("CREATE TRIGGER fail_debug_audit BEFORE INSERT ON client_security_audit WHEN NEW.action='LEGACY_DEBUG_LOGIN_RETIRED' BEGIN SELECT RAISE(ABORT,'FIXTURE_AUDIT_REJECT'); END;");
+ await assert.rejects(()=>bootstrap.retireLegacyDebugLoginFixture({
+  adminStore,adminToken,targetClientId:'CL000001',
+  confirmation:'RETIRE DEBUG LOGIN ON FIXTURE: CL000001'
+ }),/FIXTURE_AUDIT_REJECT/);
+ assert.ok(snapshot(f,'CL000001').account);
+ assert.equal(adminCount(f),1);
+});
+test('second attempt cannot repeat a retired login or reuse its backup',async t=>{
+ const f=fixture(t);const {bootstrap,adminStore,adminToken}=await transitionFixture(f);
+ const args={adminStore,adminToken,targetClientId:'CL000001',
+  confirmation:'RETIRE DEBUG LOGIN ON FIXTURE: CL000001'};
+ await bootstrap.retireLegacyDebugLoginFixture(args);
+ await assert.rejects(()=>bootstrap.retireLegacyDebugLoginFixture(args),/AUTH21_DEBUG_PROVENANCE_UNVERIFIED/);
+ assert.equal(adminCount(f),1);
 });
