@@ -69,4 +69,4 @@ async function migrateFixture(db,options){
  }
  return {applied:true,version:3,backupFile};
 }
-module.exports={migrateFixture};
+module.exports={migrateFixture,assertFixture:insistFixture};
