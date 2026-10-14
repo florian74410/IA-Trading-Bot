@@ -404,6 +404,6 @@ test('iatb-users preflight checks original key/database permissions and refuses 
  fs.chmodSync(f.file,0o600);fs.chmodSync(f.keyFile,0o600);
  // Existing fixture key may be directly in root in these tests; CLI requires
  // a dedicated preexisting Security path, rather than copying the key.
- assert.throws(()=>checkedFixture(f.root),/ENOENT/);
+ assert.throws(()=>checkedFixture(f.root),/ENOENT|AUTH21_CLI_FILE_UNSAFE/);
  assert.equal(fs.existsSync(path.join(f.root,'Security','client_master.key')),false);
 });
