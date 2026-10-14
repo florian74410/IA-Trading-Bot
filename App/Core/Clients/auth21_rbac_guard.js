@@ -35,4 +35,10 @@ function authorizeInterprocess({codec,proof,audience,operation,method,ownerClien
  if(operation.endsWith('.write')&&!['POST','PUT','PATCH','DELETE'].includes(method))return {allowed:false,reason:'METHOD_DENIED'};
  return {allowed:true,clientId:principal.clientId,role:principal.role};
 }
-module.exports={authorize,authorizeInterprocess};
+function issueAuthorizedProof({sessions,token,codec,audience,operation,method,ownerClientId}={}){
+ if(!codec||typeof codec.issue!=='function')throw Error('AUTH21_PROOF_CODEC_REQUIRED');
+ const access=authorize({sessions,token,operation,method,ownerClientId});
+ if(!access.allowed)return null;
+ return codec.issue({principal:{clientId:access.clientId,role:access.role},audience,operation,method,ownerClientId});
+}
+module.exports={authorize,authorizeInterprocess,issueAuthorizedProof};
