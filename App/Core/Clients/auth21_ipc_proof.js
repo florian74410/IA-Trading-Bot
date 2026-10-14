@@ -13,21 +13,22 @@ function proofCodec({secret,now=()=>Date.now(),replayWindowMs=30000}={}){
  if(!Number.isSafeInteger(replayWindowMs)||replayWindowMs<1000||replayWindowMs>60000)throw Error('AUTH21_PROOF_WINDOW_INVALID');
  const used=new Map();
  const mac=s=>crypto.createHmac('sha256',secret).update('iatb-auth21-ipc-v1:').update(s).digest('base64url');
- function issue({principal,audience,operation,method,ownerClientId}={}){
+ function issue({principal,audience,operation,method,ownerClientId,action}={}){
   if(!principal||!ID.test(principal.clientId)||!ROLES.has(principal.role)||
    !LABEL.test(audience)||!LABEL.test(operation)||
    !['GET','POST','PUT','PATCH','DELETE'].includes(method)||
-   (ownerClientId!==null&&ownerClientId!==undefined&&!ID.test(ownerClientId)))
+   (ownerClientId!==null&&ownerClientId!==undefined&&!ID.test(ownerClientId))||
+   (action!==undefined&&!LABEL.test(action)))
    throw Error('AUTH21_PROOF_INPUT_INVALID');
   const at=now();
   if(!Number.isSafeInteger(at)||at<=0)throw Error('AUTH21_PROOF_CLOCK_INVALID');
   const payload={v:1,sub:principal.clientId,role:principal.role,aud:audience,
-   op:operation,method,owner:ownerClientId||null,iat:at,exp:at+replayWindowMs,
+   op:operation,method,owner:ownerClientId||null,action:action||null,iat:at,exp:at+replayWindowMs,
    jti:crypto.randomBytes(16).toString('base64url')};
   const body=Buffer.from(JSON.stringify(payload)).toString('base64url');
   return body+'.'+mac(body);
  }
- function verify(proof,{audience,operation,method,ownerClientId}={}){
+ function verify(proof,{audience,operation,method,ownerClientId,action}={}){
   if(typeof proof!=='string'||proof.length>1024||!LABEL.test(audience)||
      !LABEL.test(operation)||!['GET','POST','PUT','PATCH','DELETE'].includes(method))return null;
   const parts=proof.split('.');
@@ -39,6 +40,7 @@ function proofCodec({secret,now=()=>Date.now(),replayWindowMs=30000}={}){
   const t=now();
   if(p.v!==1||!ID.test(p.sub)||!ROLES.has(p.role)||p.aud!==audience||
       p.op!==operation||p.method!==method||p.owner!==(ownerClientId||null)||
+      (action!==undefined&&p.action!==action)||
       !Number.isSafeInteger(p.iat)||!Number.isSafeInteger(p.exp)||
       p.exp-p.iat!==replayWindowMs||p.iat>t||t>=p.exp||
       typeof p.jti!=='string'||!/^[A-Za-z0-9_-]{22}$/.test(p.jti))return null;
