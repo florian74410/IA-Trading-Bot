@@ -128,7 +128,7 @@ class Auth21FirstAdminTrial {
    this.db.prepare('SELECT client_id AS clientId,status FROM clients WHERE client_id=?').get(clientId):null;
   if(clientId&&(!existing||existing.status!=='ACTIVE'))throw Error('AUTH21_BOOTSTRAP_CLIENT_UNAVAILABLE');
   const current=clientId?this.db.prepare(
-   'SELECT role,username_enc AS usernameEnc FROM client_accounts WHERE client_id=?').get(clientId):null;
+   'SELECT role,username_enc AS usernameEnc,password_hash AS passwordHash,updated_at AS updatedAt,enabled FROM client_accounts WHERE client_id=?').get(clientId):null;
   if(current){
    if(current.role!=='SUPERADMIN'||convertLegacy!==true)
     throw Error('AUTH21_BOOTSTRAP_EXISTING_LOGIN_REQUIRES_REVIEW');
@@ -153,7 +153,9 @@ class Auth21FirstAdminTrial {
     if(!fresh||fresh.status!=='ACTIVE')throw Error('AUTH21_BOOTSTRAP_STALE_CLIENT');
     const auth=this.db.prepare('SELECT role,username_enc AS usernameEnc FROM client_accounts WHERE client_id=?').get(target);
     if(Boolean(auth)!==Boolean(current)||
-       (auth&&(auth.role!=='SUPERADMIN'||!convertLegacy||this.crypto.open(auth.usernameEnc)!==username)))
+       (auth&&(auth.role!==current.role||auth.passwordHash!==current.passwordHash||
+        auth.updatedAt!==current.updatedAt||auth.enabled!==current.enabled||
+        !convertLegacy||this.crypto.open(auth.usernameEnc)!==username)))
       throw Error('AUTH21_BOOTSTRAP_STALE_ACCOUNT');
    }else{
     target='CL'+crypto.randomBytes(12).toString('hex').toUpperCase();
