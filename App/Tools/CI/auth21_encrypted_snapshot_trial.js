@@ -127,6 +127,10 @@ async function captureEncryptedFixture({db,fixtureRoot,keyFile,archiveKey,coordi
   if(before!==master)fail('AUTH21_BUNDLE_KEY_CHANGED');
   if(db.pragma('integrity_check',{simple:true})!=='ok'||
      db.pragma('foreign_key_check').length)fail('AUTH21_BUNDLE_DB_INTEGRITY');
+  // Cryptographic preflight while the cooperative writer is held; SQLite
+  // integrity alone cannot detect a missing/wrong master key or corrupt AEAD.
+  const proof=attestRestoredPairFixture({dbFile:db.name,keyFile,fixtureRoot:home});
+  if(!proof.verified||proof.indexChecks<1)fail('AUTH21_BUNDLE_SOURCE_KEY_UNPROVEN');
   const image=db.serialize();
   if(allowedKey(home,keyFile)!==before)fail('AUTH21_BUNDLE_KEY_CHANGED');
   return {image,master:before};
