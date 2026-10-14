@@ -14,6 +14,8 @@ on:
       - 'App/Tools/Tests/portfolio_snapshot_writer.test.js'
       - 'App/Fundamental/Engine/database_core.js'
       - 'App/Tools/Tests/fundamental_snapshot_writer.test.js'
+      - 'App/Fundamental/Engine/database.js'
+      - 'App/Tools/Tests/fundamental_legacy_snapshot_bridge.test.js'
       - '.github/workflows/auth-p22-coordinator-fixtures.yml'
   pull_request:
     branches:
@@ -30,6 +32,8 @@ on:
       - 'App/Tools/Tests/portfolio_snapshot_writer.test.js'
       - 'App/Fundamental/Engine/database_core.js'
       - 'App/Tools/Tests/fundamental_snapshot_writer.test.js'
+      - 'App/Fundamental/Engine/database.js'
+      - 'App/Tools/Tests/fundamental_legacy_snapshot_bridge.test.js'
       - '.github/workflows/auth-p22-coordinator-fixtures.yml'
   workflow_dispatch:
 
@@ -59,5 +63,7 @@ jobs:
           node --check App/Tools/Tests/portfolio_snapshot_writer.test.js
           node --check App/Fundamental/Engine/database_core.js
           node --check App/Tools/Tests/fundamental_snapshot_writer.test.js
+          node --check App/Fundamental/Engine/database.js
+          node --check App/Tools/Tests/fundamental_legacy_snapshot_bridge.test.js
       - name: Isolated ACK and failure-handling fixtures
-        run: node --test App/Tools/Tests/snapshot_coordinator.test.js App/Tools/Tests/core_snapshot_writers.test.js App/Tools/Tests/portfolio_snapshot_writer.test.js App/Tools/Tests/fundamental_snapshot_writer.test.js
+        run: node --test App/Tools/Tests/snapshot_coordinator.test.js App/Tools/Tests/core_snapshot_writers.test.js App/Tools/Tests/portfolio_snapshot_writer.test.js App/Tools/Tests/fundamental_snapshot_writer.test.js App/Tools/Tests/fundamental_legacy_snapshot_bridge.test.js
