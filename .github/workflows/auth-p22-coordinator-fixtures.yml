@@ -7,6 +7,9 @@ on:
     paths:
       - 'App/Core/Backup/snapshot_coordinator.js'
       - 'App/Tools/Tests/snapshot_coordinator.test.js'
+      - 'App/Tools/Tests/core_snapshot_writers.test.js'
+      - 'App/Core/Clients/client_repository.js'
+      - 'App/Core/Settings/sqlite_settings_store.js'
       - '.github/workflows/auth-p22-coordinator-fixtures.yml'
   pull_request:
     branches:
@@ -16,6 +19,9 @@ on:
     paths:
       - 'App/Core/Backup/snapshot_coordinator.js'
       - 'App/Tools/Tests/snapshot_coordinator.test.js'
+      - 'App/Tools/Tests/core_snapshot_writers.test.js'
+      - 'App/Core/Clients/client_repository.js'
+      - 'App/Core/Settings/sqlite_settings_store.js'
       - '.github/workflows/auth-p22-coordinator-fixtures.yml'
   workflow_dispatch:
 
@@ -38,5 +44,8 @@ jobs:
         run: |
           node --check App/Core/Backup/snapshot_coordinator.js
           node --check App/Tools/Tests/snapshot_coordinator.test.js
+          node --check App/Tools/Tests/core_snapshot_writers.test.js
+          node --check App/Core/Clients/client_repository.js
+          node --check App/Core/Settings/sqlite_settings_store.js
       - name: Isolated ACK and failure-handling fixtures
-        run: node --test App/Tools/Tests/snapshot_coordinator.test.js
+        run: node --test App/Tools/Tests/snapshot_coordinator.test.js App/Tools/Tests/core_snapshot_writers.test.js
