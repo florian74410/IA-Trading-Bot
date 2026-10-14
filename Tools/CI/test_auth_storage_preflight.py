@@ -6,6 +6,7 @@ import hashlib
 from contextlib import closing
 import hmac
 import os
+import subprocess
 from pathlib import Path
 import sqlite3
 import stat
@@ -182,6 +183,43 @@ class StoragePreflightTests(unittest.TestCase):
         with self.assertRaisesRegex(p.UnsafeStorage, "CLIENT_MASTER_KEY_REQUIRED"):
             p.fixture_restore(self.root, snap)
         self.assertFalse((self.root / "_restored").exists())
+
+    def test_real_client_crypto_aes_fixture_restoration(self):
+        # Invoke the existing ClientCrypto module ONLY with an explicitly created
+        # test key and temp DB. The normal metadata preflight imports no runtime.
+        client_crypto = REPO / "App/Core/Clients/client_crypto.js"
+        crypto_js = """const C=require(process.argv[1]);
+const c=new C(process.argv[2]);
+const command=process.argv[3], value=process.argv[4];
+process.stdout.write(command==='seal'?c.seal(value):c.open(value));
+"""
+
+        def invoke(keyfile, operation, payload):
+            return subprocess.run(
+                ["node", "-e", crypto_js, str(client_crypto), str(keyfile), operation, payload],
+                capture_output=True, text=True, timeout=10,
+            )
+
+        keyfile = self.root / p.CLIENT_KEY
+        fictitious_identity = "SIMULATION-ONLY-NO-REAL-USER"
+        sealed = invoke(keyfile, "seal", fictitious_identity)
+        self.assertEqual(sealed.returncode, 0, sealed.stderr[:160])
+        client_db = self.root / p.FIXTURE_DATABASES[0]
+        with closing(sqlite3.connect(client_db)) as db:
+            db.execute("UPDATE clients SET last_name_enc=? WHERE client_id=?", (sealed.stdout, FIXTURE_ID))
+            db.commit()
+        snapshot = p.fixture_snapshot(self.root)
+        restored = p.fixture_restore(self.root, snapshot)
+        with closing(sqlite3.connect(restored / p.FIXTURE_DATABASES[0])) as db:
+            encrypted = db.execute("SELECT last_name_enc FROM clients WHERE client_id=?", (FIXTURE_ID,)).fetchone()[0]
+        opened = invoke(restored / p.CLIENT_KEY, "open", encrypted)
+        self.assertEqual(opened.returncode, 0, opened.stderr[:160])
+        self.assertEqual(opened.stdout, fictitious_identity)
+        # A different key cannot decrypt the copied AES-GCM identity.
+        restored_key = restored / p.CLIENT_KEY
+        restored_key.write_text(os.urandom(32).hex() + "\n")
+        wrong = invoke(restored_key, "open", encrypted)
+        self.assertNotEqual(wrong.returncode, 0)
 
     def test_no_wallet_created_or_modified(self):
         self.assertFalse((self.root / "data/Security/wallet_master.key").exists())

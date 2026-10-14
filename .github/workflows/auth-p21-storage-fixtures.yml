@@ -36,6 +36,10 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+      - name: Node 22 (ClientCrypto compatibility fixture only)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
       - name: Check syntax without executing runtime modules
         run: python -m py_compile Tools/CI/auth_storage_preflight.py Tools/CI/test_auth_storage_preflight.py
       - name: Run isolated SQLite fixture tests only

@@ -1,6 +1,6 @@
 # IA-TB DEBUG 2.1 — Phase 2 / P2.1 — Préflight stockage et reprise Auth
 
-> **État :** P2.1 **en cours de développement** sur fixtures et copies isolées. Préflight Python sans imports des modules runtime et suite de 13 tests SQLite fictifs créés ; **ne pas cocher P2.1 avant les résultats GitHub et la revue d'Overflow**. Aucun accès, sauvegarde ni modification du GEN-1.  
+> **État :** P2.1 **en cours de développement** sur fixtures et copies isolées. Préflight Python sans imports des modules runtime et suite de 14 tests SQLite fictifs créés ; **ne pas cocher P2.1 avant les résultats GitHub et la revue d'Overflow**. Aucun accès, sauvegarde ni modification du GEN-1.  
 > **Décisions validées par Overflow :** garder l'arborescence et les données existantes ; ne pas refondre ce qui fonctionne, améliorer l'isolation interne, **Wallet complètement gelé** ; pas de transfert de DB/données DEBUG ↔ RELEASE dans Auth 2.1.  
 > **Sources :** [audit P1.5](../Security/AUTH_DEBUG_2.1_STORAGE_AUDIT.md), [backup/restore P1.5](AUTH_DEBUG_2.1_BACKUP_RESTORE_CONTRACT.md), [versions P1.6](AUTH_DEBUG_2.1_VERSION_COMPATIBILITY.md), [intégrité RBAC](../Security/AUTH_DEBUG_2.1_RBAC_POLICY_INTEGRITY.md).
 
@@ -10,7 +10,7 @@ Obtenir un outil de préflight et une preuve de restauration reproductible **sur
 
 **Inventaire GEN-1 déjà reçu, suffisant pour la conception :**
 
-- 13/13 conteneurs en `1001:1001`, cinq volumes `:rw`, rootfs readonly ; les permissions interservices devront évoluer graduellement.
+- 14/14 conteneurs en `1001:1001`, cinq volumes `:rw`, rootfs readonly ; les permissions interservices devront évoluer graduellement.
 - `clients.sqlite` (mode DELETE dans la source) en `0600` ; identité client chiffrée liée à `client_master.key`, présent `0600`.
 - Plusieurs autres SQLite en WAL (Settings/Portfolio/MarketData/Fundamental) ; `user_data.db` et `portfolio.db` en `0644` sous des répertoires `0700`.
 - `wallet_master.key` absente : **ne jamais la générer, l'ouvrir, la restaurer ou tenter de déchiffrer une donnée Wallet** durant Auth 2.1.
@@ -52,9 +52,9 @@ La restauration est un test de continuité **du même environnement**, jamais un
 - [Outil de préflight P2.1](../../Tools/CI/auth_storage_preflight.py) : le mode CLI ne réalise **que des `lstat` sur des chemins prédéfinis**. Aucun import de `paths.js`, de `ClientCrypto`, de `WalletService`, aucune lecture de clé et aucune ouverture SQLite en mode inventaire. Le rapport sort uniquement les types de fichiers, modes, UID/GID et blocages.
 - [Tests P2.1](../../Tools/CI/test_auth_storage_preflight.py) : 13 cas sur un répertoire privé temporaire avec DB clients fictive créée depuis les migrations SQL historiques réelles `001`/`002`, Settings et Portfolio fictifs en WAL. Deux connexions WAL restent ouvertes pendant la sauvegarde et les fichiers `-wal` sont capturés par l'API SQLite Online Backup.
 - Les sauvegardes et restaurations de tests sont **exclusivement internes à `/tmp` avec un marqueur de fixture** ; aucune sous-commande de backup/restore sur GEN-1 n'est fournie. Les copies sont normalisées en mode `DELETE` **sur la copie seulement**, avec `quick_check` et `foreign_key_check` ; le fichier source WAL n'est pas checkpointé par cet outil.
-- La présence d'une clé **factice** correspondante est vérifiée au moyen d'un canary HMAC synthétique, **qui ne prouve pas le déchiffrement AES-256-GCM en production**. La vraie interopérabilité de `ClientCrypto` et la procédure de gel multi-bases interservices restent à tester sur fixtures dans le chantier suivant ; ne pas toucher à la clé client réelle pour l'instant.
-- **Essai local isolé (14/10/2026)** : `python3 -W error::ResourceWarning -m unittest discover -s Tools/CI -p 'test_auth_storage_preflight.py' -v` → **13 tests exécutés, 13 réussis**, Python 3.13.5 / SQLite standard ; aucun wallet, aucun GEN-1. Une exécution réelle [GitHub Actions](../../.github/workflows/auth-p21-storage-fixtures.yml) sur Python 3.11 constitue la prochaine preuve attendue.
-- **Ce que cela ne démontre PAS :** sauvegarde chiffrée exploitable de GEN-1, reprise de huit bases à une génération interservice atomique, compatibilité de la clé AES réelle, latence p95/p99 de trading, intégrité de l'ensemble des volumes, ni isolation Docker.
+- La présence d'une clé **factice** correspondante est vérifiée par un canary HMAC synthétique ; **un 14ᵉ test supplémentaire invoque le vrai module `App/Core/Clients/client_crypto.js` exclusivement sur la fixture pour chiffrer et déchiffrer une identité fictive AES-256-GCM après restauration.** Une clé différente ne peut pas la déchiffrer. La capacité à reprendre une DB réelle n'est **pas prouvée** : le test ne doit jamais charger la clé client GEN-1. La procédure de gel multi-bases interservices reste à développer.
+- **Essai local isolé (14/10/2026)** : `python3 -W error::ResourceWarning -m unittest discover -s Tools/CI -p 'test_auth_storage_preflight.py' -v` → **14 tests exécutés, 13 réussis**, Python 3.13.5 / SQLite standard ; aucun wallet, aucun GEN-1. Une exécution réelle [GitHub Actions](../../.github/workflows/auth-p21-storage-fixtures.yml) sur Python 3.11 constitue la prochaine preuve attendue.
+- **Ce que cela ne démontre PAS :** sauvegarde chiffrée exploitable de GEN-1, reprise de huit bases à une génération interservice atomique, capacité d'accéder aux **vraies données et à la vraie clé client GEN-1**, latence p95/p99 de trading, intégrité de l'ensemble des volumes, ni isolation Docker.
 - **Verrou utilisateur :** aucun nouveau Docker DEBUG déployé sur GEN-1 tant que l'architecture Auth 2.1 n'est pas totalement implémentée/testée et que l'autorisation explicite d'Overflow n'a pas été obtenue.
 
 ## 6. Portes de validation P2.1
@@ -65,7 +65,8 @@ La restauration est un test de continuité **du même environnement**, jamais un
 - [x] Tests backup SQLite WAL/DELETE et restauration de fixtures exécutés localement, sans publication ni copie de DB réelle. **La cohérence multi-bases en production nécessite encore un gel d'écritures à concevoir.**
 - [x] Tests négatifs locaux (clé factice manquante/incorrecte, rollback de staging, DB corrompue, FK, symlink et génération incohérente) exécutés ; smoke test local sans benchmark p95/p99.
 - [ ] Exécution CI GitHub vérifiée et écarts corrigés ; aucun gain de performance extrapolé de la fixture à GEN-1.
-- [ ] Établir plus tard la preuve AES-GCM réelle et le gel inter-DB avec outils isolés avant toute autorisation de migration.
+- [x] Interopérabilité **AES-256-GCM sur identité et clé fictives** vérifiée avec le vrai module `ClientCrypto`, y compris refus de clé incorrecte ; aucune exécution sur une DB GEN-1.
+- [ ] Concevoir et éprouver le gel inter-DB des écritures entre services (pas seulement une fixture quiescente) avant toute autorisation de migration.
 - [ ] Accès à un snapshot réel, si nécessaire ultérieurement, demandé à Overflow séparément ; **aucun accès direct ni changement GEN-1 dans ce point sans accord**.
 - [ ] Résultats et validation utilisateur pour cocher **P2.1**.
 
