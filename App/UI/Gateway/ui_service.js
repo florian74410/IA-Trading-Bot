@@ -43,7 +43,13 @@ var server=http.createServer(function(req,res){var u=new URL(req.url,'http://'+H
  if(req.method==='GET'&&p==='/router-health')return authorizePage(req,res,'USER',function(){proxy(req,res,ROUTER_PORT,p+u.search,{service:'Router Health',permission:'READ'});});
  if(req.method==='POST'&&p==='/communication-test')return authorizePage(req,res,'USER',function(){proxy(req,res,ROUTER_PORT,p+u.search,{service:'Communication Router',permission:'READ'});});
  if(req.method==='POST'&&p==='/communication/v1/ui/read')return authorizePage(req,res,'USER',function(){proxy(req,res,ROUTER_PORT,p+u.search,{service:'Communication Router UI Read',permission:'READ'});});
- if(req.method==='POST'&&p==='/communication/v1/ui/write')return authorizePage(req,res,'USER',function(){proxy(req,res,ROUTER_PORT,p+u.search,{service:'Communication Router UI Write',permission:'WRITE'});});
+ if(req.method==='POST'&&p==='/communication/v1/ui/write'){
+  // Auth21 never authorizes writes through the legacy page-role check.
+  // A Core-issued, action-bound interprocess proof is required before enabling this bridge.
+  if(require('../../Core/Clients/auth21_service_boundary').active(process.env))
+   return json(res,403,{ok:false,error:'AUTH21_BUSINESS_WRITE_NOT_AUTHORIZED'});
+  return authorizePage(req,res,'USER',function(){proxy(req,res,ROUTER_PORT,p+u.search,{service:'Communication Router UI Write',permission:'WRITE'});});
+ }
  if(req.method==='POST'&&p==='/communication/v1/client/ack')return authorizePage(req,res,'USER',function(){readJsonBody(req,131072,function(e,b){if(e)return json(res,400,{ok:false,error:e.message});ROUTER_CLIENT.ackClientAction(b,function(er,o){if(er)return json(res,er.statusCode||400,{ok:false,error:er.message});json(res,200,o);});});});
  if(p.indexOf('/communication/')===0)return json(res,403,{ok:false,error:'UI_COMMUNICATION_ENDPOINT_FORBIDDEN'});
  if((req.method==='GET'||req.method==='HEAD')&&PAGE_MAP[p])return authorizePage(req,res,(p==='/admin'||p==='/admin/'||p==='/admin/vaults'||p==='/admin/vaults/')?'ADMIN':'USER',function(){if(p==='/admin'||p==='/admin/')return serveAdminPage(res);serveFile(res,PAGE_MAP[p]);});
