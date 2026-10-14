@@ -346,3 +346,34 @@ test('second attempt cannot repeat a retired login or reuse its backup',async t=
  await assert.rejects(()=>bootstrap.retireLegacyDebugLoginFixture(args),/AUTH21_DEBUG_PROVENANCE_UNVERIFIED/);
  assert.equal(adminCount(f),1);
 });
+
+test('concurrent profile mutation prevents elevation of a selected existing client',async t=>{
+ const f=fixture(t);addClient(f,'CL000001','manual');const m=await prep(f);
+ await assert.rejects(()=>m.createFirstAdmin({
+  clientId:'CL000001',username:USERNAME,password:PASS,
+  confirmation:'CREATE FIRST ADMIN ON FIXTURE',
+  hooks:{beforeCommit(db){db.prepare("UPDATE clients SET email_enc='CHANGED_EXTERNALLY' WHERE client_id='CL000001'").run();}}
+ }),/AUTH21_BOOTSTRAP_STALE_CLIENT/);
+ assert.equal(adminCount(f),0);
+ assert.equal(f.db.prepare("SELECT COUNT(*) AS n FROM client_accounts WHERE client_id='CL000001'").get().n,0);
+});
+test('concurrent profile mutation prevents retirement of an old DEBUG login',async t=>{
+ const f=fixture(t);const {bootstrap,adminStore,adminToken}=await transitionFixture(f);
+ await assert.rejects(()=>bootstrap.retireLegacyDebugLoginFixture({
+  adminStore,adminToken,targetClientId:'CL000001',
+  confirmation:'RETIRE DEBUG LOGIN ON FIXTURE: CL000001',
+  hooks:{beforeCommit(db){db.prepare("UPDATE clients SET first_name_enc='CHANGED_EXTERNALLY' WHERE client_id='CL000001'").run();}}
+ }),/AUTH21_DEBUG_CLIENT_STALE/);
+ assert.ok(snapshot(f,'CL000001').account);
+ assert.equal(adminCount(f),1);
+});
+test('legacy username lookup hash mismatch blocks unauthorized first ADMIN conversion',async t=>{
+ const f=fixture(t);addClient(f,'CL000001','debug');addLogin(f,'CL000001');
+ f.db.prepare("UPDATE client_accounts SET username_hash='INCONSISTENT_INDEX' WHERE client_id='CL000001'").run();
+ const m=await prep(f);
+ await assert.rejects(()=>m.createFirstAdmin({
+  clientId:'CL000001',username:USERNAME,password:PASS,convertLegacy:true,
+  confirmation:'CREATE FIRST ADMIN ON FIXTURE'
+ }),/AUTH21_BOOTSTRAP_LEGACY_USERNAME_INDEX_INVALID/);
+ assert.equal(adminCount(f),0);
+});
