@@ -257,3 +257,16 @@ test('browser helper rejects insecure transport, duplicate cookies and altered C
  assert.equal(browser.validate({...req,headers:{...req.headers,'x-iatb-csrf':'A'.repeat(43)}},token),false);
  assert.throws(()=>createBrowserSession({secret:Buffer.alloc(16),origin:'https://localhost:8443'}),/AUTH21_COOKIE_CONFIG_INVALID/);
 });
+
+test('isolated Core gate accepts opt-in TLS browser mode, not arbitrary cookie bearer',async()=>{
+ const {createBrowserSession}=require('../../Core/Clients/auth21_browser_cookie');
+ const browser=createBrowserSession({secret:Buffer.alloc(32,9),origin:'https://localhost:8443'});
+ const x=fixture(),gate=createIsolatedCoreGate({sessions:x.sessions,browserSessions:browser,allowedBrowserOrigin:browser.origin});
+ const req=Readable.from([Buffer.from(JSON.stringify({clientId:'CL000001',password:'correct-16-characters'}))]);
+ req.url='/auth21/login';req.method='POST';req.headers={origin:browser.origin,'content-type':'application/json'};req.socket={encrypted:true};
+ const res={writableEnded:false,writeHead(status,headers){this.status=status;this.headers=headers;return this},end(data){this.body=JSON.parse(data);this.writableEnded=true}};
+ await gate(req,res);
+ assert.equal(res.status,200);
+ assert.equal(Object.hasOwn(res.body,'token'),false);
+ assert.match(res.headers['Set-Cookie'],/^__Host-iatb21=/);
+});
