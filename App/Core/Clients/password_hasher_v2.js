@@ -57,9 +57,20 @@ function validLegacy(account) {
 function parseArgon2Cost(encoded) {
   if (typeof encoded !== 'string' || encoded.length > 512 || encoded.length < 50) return null;
   // Accept only PHC Argon2id version 19 and the expected fields.
-  const m = /^\$argon2id\$v=19\$m=(\d+),t=(\d+),p=(\d+)\$[A-Za-z0-9+/]{11,}\$[A-Za-z0-9+/]{20,}$/.exec(encoded);
+  const m = /^\$argon2id\$v=19\$([^$]{1,80})\$[A-Za-z0-9+/]{11,}\$[A-Za-z0-9+/]{20,}$/.exec(encoded);
   if (!m) return null;
-  const memory = Number(m[1]),time = Number(m[2]),parallel = Number(m[3]);
+  // Different native Argon2 providers serialize m/t/p in different orders.
+  // Accept only these exact three unique parameter names, no extras.
+  const fields = m[1].split(',');
+  if (fields.length !== 3) return null;
+  const params = Object.create(null);
+  for (const field of fields) {
+    const pair = /^(m|t|p)=(\d+)$/.exec(field);
+    if (!pair || Object.hasOwn(params,pair[1])) return null;
+    params[pair[1]] = Number(pair[2]);
+  }
+  if (!Object.hasOwn(params,'m') || !Object.hasOwn(params,'t') || !Object.hasOwn(params,'p')) return null;
+  const memory = params.m,time = params.t,parallel = params.p;
   // Bound resource costs so a corrupted database row cannot cause memory/CPU DoS.
   if (!Number.isSafeInteger(memory) || memory < 19456 || memory > 131072 ||
       !Number.isSafeInteger(time) || time < 2 || time > 6 ||
