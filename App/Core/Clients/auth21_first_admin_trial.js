@@ -88,9 +88,11 @@ class Auth21FirstAdminTrial {
   if(typeof username!=='string'||!NAME.test(username))throw Error('AUTH21_ADMIN_USERNAME_INVALID');
   return username;
  }
- async _backup(){
+ async _backup(fileName='pre-first-admin.sqlite'){
+  if(!/^(pre-first-admin|pre-legacy-debug-CL[A-Z0-9_-]{1,64})\.sqlite$/.test(fileName))
+   throw Error('AUTH21_BACKUP_NAME_INVALID');
   this._writable();
-  const dest=path.join(this.root,'pre-first-admin.sqlite');
+  const dest=path.join(this.root,fileName);
   if(fs.existsSync(dest))throw Error('AUTH21_FIRST_ADMIN_BACKUP_EXISTS');
   await this.db.backup(dest);
   let copy;
@@ -192,9 +194,49 @@ class Auth21FirstAdminTrial {
   }).immediate();
   return {...created,backupFile};
  }
- /** Dry-run-only plan. No destructive method is included in Phase 2.
-  * Any future cleanup of verified old DEBUG credentials requires a separate
-  * explicit approval, new backup, authenticated ADMIN CLI, and per-ID review.
+ /** DISPOSABLE FIXTURE ONLY. Simulates the future approved cleanup of ONE
+  * verified historical DEBUG bootstrap login. Never removes clients/wallets.
+  * The real deletion workflow and OS attestation belong to Phase 5/6.
   */
+ async retireLegacyDebugLoginFixture({adminStore,adminToken,targetClientId,confirmation,hooks}={}){
+  this._authorized();
+  if(typeof targetClientId!=='string'||!ID.test(targetClientId))
+   throw Error('AUTH21_DEBUG_TARGET_INVALID');
+  if(confirmation!=='RETIRE DEBUG LOGIN ON FIXTURE: '+targetClientId)
+   throw Error('AUTH21_DEBUG_RESET_APPROVAL_REQUIRED');
+  if(!adminStore||adminStore.db!==this.db||typeof adminStore.removeLogin!=='function')
+   throw Error('AUTH21_DEBUG_ADMIN_STORE_REQUIRED');
+  let principal=adminStore.sessions.verifySession(adminToken);
+  if(!principal||principal.role!=='ADMIN')throw Error('AUTH21_ADMIN_FORBIDDEN');
+  const planned=this._legacyCandidates().find(x=>x.clientId===targetClientId);
+  if(!planned||planned.origin!=='VERIFIED_DEBUG_BOOTSTRAP')
+   throw Error('AUTH21_DEBUG_PROVENANCE_UNVERIFIED');
+  if(this._adminCount()<1)throw Error('AUTH21_DEBUG_FIRST_ADMIN_REQUIRED');
+  this._writable();
+  const backupFile=await this._backup('pre-legacy-debug-'+targetClientId+'.sqlite');
+  if(hooks&&typeof hooks.beforeCommit==='function')await hooks.beforeCommit(this.db);
+  this._writable();
+  const result=this.db.transaction(()=>{
+   this._authorized();this._writable();
+   principal=adminStore.sessions.verifySession(adminToken);
+   if(!principal||principal.role!=='ADMIN')throw Error('AUTH21_ADMIN_FORBIDDEN');
+   const fresh=this._legacyCandidates().find(x=>x.clientId===targetClientId);
+   if(!fresh||fresh.origin!=='VERIFIED_DEBUG_BOOTSTRAP')
+    throw Error('AUTH21_DEBUG_PROVENANCE_CHANGED');
+   if(this._adminCount()<1)throw Error('AUTH21_DEBUG_FIRST_ADMIN_REQUIRED');
+   const deleted=this.db.prepare([
+    "DELETE FROM client_accounts WHERE client_id=? AND role='SUPERADMIN'"
+   ].join(' ')).run(targetClientId);
+   if(deleted.changes!==1)throw Error('AUTH21_DEBUG_DELETE_RACE');
+   this.db.prepare([
+    'INSERT INTO client_security_audit',
+    "(client_id,actor_client_id,action,created_at,detail_enc)",
+    "VALUES(?,?,'LEGACY_DEBUG_LOGIN_RETIRED',?,'')"
+   ].join(' ')).run(targetClientId,principal.clientId,new Date().toISOString());
+   return {clientId:targetClientId,loginRetired:true,identityPreserved:true};
+  }).immediate();
+  return {...result,backupFile};
+ }
+
 }
 module.exports={Auth21FirstAdminTrial};
