@@ -59,6 +59,8 @@
 **Validation :** migrations et rollback sur copie isolée, contrôles d'intégrité, cohérence des associations et essais de restauration réussis. Aucun effacement réel avant approbation.
 
 ### PHASE 3 — Authentification et sécurité serveur
+**Première intégration Phase 3/4 — 14/10/2026 :** le Core isolé expose maintenant `GET/PUT/DELETE /auth21/preferences?scope=...&key=...` avec vérification de session à chaque demande ; l'identité `clientId` vient exclusivement du jeton signé côté serveur, jamais du navigateur. GUEST ne peut écrire ni supprimer ; payload `clientId` ou paramètres de propriété ajoutés refusés ; les routes legacy restent interdites dans ce mode. **[311/311 tests P2.2 réussis](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38569782467)** ; workflows RBAC et P2.1 également SUCCESS. Cette première API de préférences est limitée à la DB fictive en Core DEBUG isolé, n'applique pas encore le RBAC à toutes les routes Gateway/Router/Engines, ni AutoLock/cookies/CSRF/anti-bruteforce ; **Phases 3 et 4 restent ouvertes**. Aucune intégration d'update ou migration GEN-1.
+
 
 - [ ] Supprimer les bypass de l'ancien système en mode authentifié et neutraliser `/api/setup`, inscription/recovery publiques non prévues en DEBUG 2.1.
 - [ ] Implémenter login, logout, lock, unlock avec compte actif, mot de passe valide et sessions créées/révoquées côté serveur.
