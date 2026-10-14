@@ -1,6 +1,13 @@
 'use strict';
 var fs=require('fs'),path=require('path'),crypto=require('crypto');
 
+// Node's Buffer.from(text,'hex') silently truncates malformed suffixes.
+// Never accept partial/ambiguous master key material.
+function decodeMasterKey(text){
+  var input=String(text).trim();
+  if(!/^[0-9a-fA-F]{64}$/.test(input))throw new Error('CLIENT_MASTER_KEY_INVALID');
+  return Buffer.from(input,'hex');
+}
 function ensureDir(dir){
   if(!fs.existsSync(dir))fs.mkdirSync(dir,{recursive:true,mode:448});
   try{fs.chmodSync(dir,448);}catch(e){}
@@ -17,7 +24,7 @@ function ClientCrypto(keyFile,opts){
 }
 ClientCrypto.prototype._loadKey=function(){
   var k;
-  try{k=Buffer.from(String(fs.readFileSync(this.keyFile,'utf8')).trim(),'hex');if(k.length===32)return k;}catch(e){}
+  try{k=decodeMasterKey(fs.readFileSync(this.keyFile,'utf8'));return k;}catch(e){}
   if(fs.existsSync(this.keyFile))throw new Error('CLIENT_MASTER_KEY_INVALID');
   // Even a WAL-only or journal file is evidence of pre-existing client data.
   // Blocking a new key is safer than rendering old ciphertext unreadable.
@@ -29,7 +36,7 @@ ClientCrypto.prototype._loadKey=function(){
   }
   k=crypto.randomBytes(32);
   try{fs.writeFileSync(this.keyFile,k.toString('hex'),{encoding:'utf8',mode:384,flag:'wx'});}catch(e){
-    try{k=Buffer.from(String(fs.readFileSync(this.keyFile,'utf8')).trim(),'hex');}catch(x){}
+    try{k=decodeMasterKey(fs.readFileSync(this.keyFile,'utf8'));}catch(x){}
   }
   if(!k||k.length!==32)throw new Error('CLIENT_MASTER_KEY_UNAVAILABLE');
   try{fs.chmodSync(this.keyFile,384);}catch(e){}
