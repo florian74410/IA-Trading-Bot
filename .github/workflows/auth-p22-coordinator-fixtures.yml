@@ -55,6 +55,8 @@ on:
       - 'App/Tools/Tests/auth21_session_store.test.js'
       - 'App/Core/Clients/auth21_http_boundary.js'
       - 'App/Core/Clients/auth21_browser_cookie.js'
+      - 'App/Core/Clients/auth21_rbac_guard.js'
+      - 'App/Tools/Tests/auth21_rbac_guard.test.js'
       - 'App/Core/Clients/auth21_core_route_gate.js'
       - 'App/Tools/Tests/auth21_http_boundary.test.js'
       - 'App/Core/Clients/auth21_admin_store.js'
@@ -123,6 +125,8 @@ on:
       - 'App/Tools/Tests/auth21_session_store.test.js'
       - 'App/Core/Clients/auth21_http_boundary.js'
       - 'App/Core/Clients/auth21_browser_cookie.js'
+      - 'App/Core/Clients/auth21_rbac_guard.js'
+      - 'App/Tools/Tests/auth21_rbac_guard.test.js'
       - 'App/Tools/Tests/auth21_http_boundary.test.js'
       - 'App/Core/Clients/auth21_admin_store.js'
       - 'App/Core/Clients/auth21_local_operator.js'
@@ -200,6 +204,8 @@ jobs:
           node --check App/Tools/Tests/auth21_session_store.test.js
           node --check App/Core/Clients/auth21_http_boundary.js
           node --check App/Core/Clients/auth21_browser_cookie.js
+          node --check App/Core/Clients/auth21_rbac_guard.js
+          node --check App/Tools/Tests/auth21_rbac_guard.test.js
           node --check App/Core/Clients/auth21_core_route_gate.js
           node --check App/Tools/Tests/auth21_http_boundary.test.js
           node --check App/Core/Clients/auth21_admin_store.js
