@@ -64,7 +64,7 @@ La restauration est un test de continuité **du même environnement**, jamais un
 - [x] Script de préflight **sans effet de bord** implémenté et vérifié avec fichiers fictifs (13 essais locaux, Python 3.13.5).
 - [x] Tests backup SQLite WAL/DELETE et restauration de fixtures exécutés localement, sans publication ni copie de DB réelle. **La cohérence multi-bases en production nécessite encore un gel d'écritures à concevoir.**
 - [x] Tests négatifs locaux (clé factice manquante/incorrecte, rollback de staging, DB corrompue, FK, symlink et génération incohérente) exécutés ; smoke test local sans benchmark p95/p99.
-- [ ] Exécution CI GitHub vérifiée et écarts corrigés ; aucun gain de performance extrapolé de la fixture à GEN-1.
+- [x] **GitHub Actions P2.1 SUCCESS : 14/14 tests** ([run 38498590581](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38498590581), Python 3.11 + Node 22) et **RBAC SUCCESS** ([run 38498589990](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38498589990)). Ce n'est pas une mesure de performance sur GEN-1.
 - [x] Interopérabilité **AES-256-GCM sur identité et clé fictives** vérifiée avec le vrai module `ClientCrypto`, y compris refus de clé incorrecte ; aucune exécution sur une DB GEN-1.
 - [ ] Concevoir et éprouver le gel inter-DB des écritures entre services (pas seulement une fixture quiescente) avant toute autorisation de migration.
 - [ ] Accès à un snapshot réel, si nécessaire ultérieurement, demandé à Overflow séparément ; **aucun accès direct ni changement GEN-1 dans ce point sans accord**.
