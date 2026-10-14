@@ -54,7 +54,7 @@ function createAuth21HttpHandler({sessions}={}){
   try{
    let uri;
    try{uri=new URL(req.url||'', 'http://localhost');}catch(_){reply(res,404,{error:'NOT_FOUND'});return}
-   if(uri.search||uri.hash||!['/auth21/login','/auth21/me','/auth21/logout','/auth21/preferences'].includes(uri.pathname)){
+   if((uri.search&&uri.pathname!=='/auth21/preferences')||uri.hash||!['/auth21/login','/auth21/me','/auth21/logout','/auth21/preferences'].includes(uri.pathname)){
     reply(res,404,{error:'NOT_FOUND'});return;
    }
    if(req.method==='POST'&&uri.pathname==='/auth21/login'){
