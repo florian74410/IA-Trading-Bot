@@ -83,6 +83,35 @@ WHEN EXISTS (SELECT 1 FROM client_accounts a WHERE a.client_id=OLD.client_id
       WHERE a.role='ADMIN' AND a.enabled=1 AND c.status='ACTIVE')<=1
 BEGIN SELECT RAISE(ABORT,'LAST_ACTIVE_ADMIN_REQUIRED'); END;
 
+
+-- Automatically invalidate every already-issued session if any account-security
+-- attribute changes. This also protects modifications by legacy SQL writers.
+-- Upgrades of a password hash correctly force a fresh login.
+CREATE TRIGGER auth21_account_security_invalidation
+AFTER UPDATE OF password_hash,password_salt,password_iterations,password_algo,role,enabled ON client_accounts
+WHEN OLD.password_hash IS NOT NEW.password_hash
+  OR OLD.password_salt IS NOT NEW.password_salt
+  OR OLD.password_iterations IS NOT NEW.password_iterations
+  OR OLD.password_algo IS NOT NEW.password_algo
+  OR OLD.role IS NOT NEW.role
+  OR OLD.enabled IS NOT NEW.enabled
+BEGIN
+  UPDATE clients SET security_version=security_version+1,updated_at=datetime('now')
+   WHERE client_id=NEW.client_id;
+  UPDATE client_sessions SET revoked_at=CAST(strftime('%s','now') AS INTEGER)
+   WHERE client_id=NEW.client_id AND revoked_at IS NULL;
+END;
+
+-- Deactivate/suspend client identity -> invalidate tokens, regardless of caller.
+CREATE TRIGGER auth21_client_status_invalidation
+AFTER UPDATE OF status ON clients
+WHEN OLD.status IS NOT NEW.status
+BEGIN
+  UPDATE clients SET security_version=security_version+1 WHERE client_id=NEW.client_id;
+  UPDATE client_sessions SET revoked_at=CAST(strftime('%s','now') AS INTEGER)
+   WHERE client_id=NEW.client_id AND revoked_at IS NULL;
+END;
+
 INSERT OR IGNORE INTO client_schema_migrations(version,name,applied_at)
 VALUES(3,'auth21_schema_v3_offline_proposal',datetime('now'));
 COMMIT;
