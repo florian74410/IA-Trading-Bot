@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import hashlib
+import json
+import shutil
 from contextlib import closing
 import hmac
 import os
@@ -418,6 +420,81 @@ db.close()
         with self.assertRaisesRegex(p.UnsafeStorage, "INTER_DATABASE_DRIFT"):
             p.coherent_fixture_snapshot(self.root, timeout_s=2)
         self.assertFalse((self.root / "_snapshots").exists())
+
+
+    def _crypt_bundle(self, action: str, path: Path, ephemeral: bytes):
+        runner = REPO / "Tools/CI/fixture_aead_bundle.js"
+        return subprocess.run(
+            ["node", str(runner), action, str(self.root), str(path)],
+            input=ephemeral.hex() + "\n", capture_output=True,
+            text=True, timeout=15,
+        )
+
+    def test_authenticated_encrypted_fixture_bundle_and_restore(self):
+        snap = p.coherent_fixture_snapshot(self.root)
+        ephemeral = os.urandom(32)
+        sealed = self._crypt_bundle("seal", snap, ephemeral)
+        self.assertEqual(sealed.returncode, 0, sealed.stderr[:160])
+        archive = Path(sealed.stdout.strip())
+        self.assertTrue(archive.is_file())
+        self.assertEqual(stat.S_IMODE(archive.stat().st_mode), 0o600)
+        bytes_saved = archive.read_bytes()
+        self.assertNotIn(b"clients.sqlite", bytes_saved)
+        self.assertNotIn(self.key.hex().encode(), bytes_saved)
+        self.assertNotIn(FIXTURE_ID.encode(), bytes_saved)
+        # Demonstrate standalone recovery: remove the original *fixture-only*
+        # unencrypted snapshot before decrypting the authenticated package.
+        shutil.rmtree(snap)
+        unsealed = self._crypt_bundle("open", archive, ephemeral)
+        self.assertEqual(unsealed.returncode, 0, unsealed.stderr[:160])
+        unpacked = Path(unsealed.stdout.strip())
+        self.assertTrue(unpacked.is_dir())
+        self.assertEqual(p._validate_fixture_bundle(unpacked),
+                         (FIXTURE_ID, FIXTURE_EPOCH))
+        restored = p.fixture_restore(self.root, unpacked)
+        self.assertEqual(p._validate_fixture_bundle(restored),
+                         (FIXTURE_ID, FIXTURE_EPOCH))
+
+    def test_fixture_encrypted_bundle_rejects_wrong_key(self):
+        snap = p.coherent_fixture_snapshot(self.root)
+        sealed = self._crypt_bundle("seal", snap, os.urandom(32))
+        self.assertEqual(sealed.returncode, 0, sealed.stderr[:160])
+        archive = Path(sealed.stdout.strip())
+        before = list((self.root / "_snapshots").iterdir())
+        rejected = self._crypt_bundle("open", archive, os.urandom(32))
+        self.assertNotEqual(rejected.returncode, 0)
+        self.assertIn("FIXTURE_AEAD_AUTH_FAILED", rejected.stderr)
+        self.assertEqual(list((self.root / "_snapshots").iterdir()), before)
+
+    def test_fixture_encrypted_bundle_detects_tamper_without_restoring(self):
+        snap = p.coherent_fixture_snapshot(self.root)
+        key = os.urandom(32)
+        sealed = self._crypt_bundle("seal", snap, key)
+        self.assertEqual(sealed.returncode, 0, sealed.stderr[:160])
+        archive = Path(sealed.stdout.strip())
+        bundle = json.loads(archive.read_text())
+        ciphertext = bundle["ciphertext"]
+        # Replace one base64 character so the AEAD tag cannot authenticate.
+        bundle["ciphertext"] = ("A" if ciphertext[0] != "A" else "B") + ciphertext[1:]
+        archive.write_text(json.dumps(bundle) + "\n")
+        before = list((self.root / "_snapshots").iterdir())
+        rejected = self._crypt_bundle("open", archive, key)
+        self.assertNotEqual(rejected.returncode, 0)
+        self.assertIn("FIXTURE_AEAD_AUTH_FAILED", rejected.stderr)
+        self.assertEqual(list((self.root / "_snapshots").iterdir()), before)
+
+    def test_fixture_encryption_rejects_non_fixture_source(self):
+        # The JS helper MUST refuse to access real GEN-1 files even if
+        # someone accidentally invokes it with an actual deployment path.
+        runner = REPO / "Tools/CI/fixture_aead_bundle.js"
+        rejected = subprocess.run(
+            ["node", str(runner), "seal", "/var/lib/iatb/debug",
+             "/var/lib/iatb/debug/data/Database/clients.sqlite"],
+            input=os.urandom(32).hex() + "\n",
+            capture_output=True, text=True, timeout=10,
+        )
+        self.assertNotEqual(rejected.returncode, 0)
+        self.assertIn("FIXTURE_SANDBOX_REQUIRED", rejected.stderr)
 
     def test_snapshot_repeat_does_not_mutate_source_generation(self):
         one = p.coherent_fixture_snapshot(self.root)
