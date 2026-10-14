@@ -98,7 +98,10 @@ function createAuth21HttpHandler({sessions,nowMilliseconds=Date.now}={}){
     if(Object.keys(input).length!==1||typeof input.password!=='string'||input.password.length>1024){
      reply(res,400,{error:'INVALID_REQUEST'});return;
     }
+    const throttleKey='unlock:'+token;
+    if(failureDelay(throttleKey)){reply(res,429,{error:'AUTH_THROTTLED'});return}
     const ok=await sessions.unlockWithPassword(token,input.password);
+    if(!ok)failedLogin(throttleKey);else attempts.delete(throttleKey);
     reply(res,ok?200:401,ok?{ok:true}:{error:'UNAUTHORIZED'});return;
    }
    if(req.method==='POST'&&uri.pathname==='/auth21/activity'){
