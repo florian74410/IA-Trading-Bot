@@ -10,6 +10,13 @@ Transformer la barrière de démonstration P2.1 en une **coordination applicable
 
 Le prototype P2.1 reste test-only. **P2.2 devra concevoir puis tester le mécanisme runtime sur un banc isolé** avant tout déploiement ou opération sur un jeu réel.
 
+## Décision de mise en œuvre minimale (Overflow — 14/10/2026)
+
+- **Pas de surarchitecture :** intégrer un coordinateur unique et léger dans Core, avec un registre minimal des ressources/écrivains et des acquittements d'arrêt/reprise. Réutiliser les canaux et cycles de vie existants ; pas de nouveau conteneur, broker, moteur de workflow, protocole distribué générique ou abstraction supplémentaire sans nécessité démontrée.
+- **Développement progressif :** protéger d'abord les chemins d'écriture critiques et vérifier au fil de l'eau leurs tests unitaires, fixtures, erreurs et sauvegardes locales. Le registre pourra être étendu uniquement lorsqu'un écrivain réel est confirmé, sans supposer qu'il est exhaustif.
+- **Tests inter-Engines en fin de développement :** conserver les tests de cohérence, d'isolation, de permissions, de crash/restart et de contournement **multi-Engines** pour une campagne complète à la fin de l'intégration Auth 2.1 (Phase 6) sur banc isolé, avant tout passage à la Phase 7. Jusqu'alors, P2.2 demeure **OUVERT**, même si ses composants sont codés et leurs tests unitaires réussissent.
+- **Aucun raccourci de sûreté :** une sauvegarde globale n'est pas autorisée ni qualifiée « cohérente » tant que les writers concernés ne sont pas réellement coordonnés et validés. ABORT/fail-closed en cas de writer inconnu ou non coopératif. Wallet et GEN-1 restent intouchés ; interdiction de déployer un nouveau Docker DEBUG maintenue.
+
 ## Registre des écrivains — couverture exigée
 
 Chaque base, fichier persistant, écriture d'initialisation ou migration doit disposer d'un enregistrement :
