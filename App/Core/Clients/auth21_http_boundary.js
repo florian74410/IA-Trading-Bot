@@ -47,7 +47,7 @@ function bearer(req){
  const match=TOKEN.exec(h);
  return match?match[1]:null;
 }
-function createAuth21HttpHandler({sessions,nowMilliseconds=Date.now,allowedBrowserOrigin=null,browserSessions=null}={}){
+function createAuth21HttpHandler({sessions,nowMilliseconds=Date.now,allowedBrowserOrigin=null,browserSessions=null,ipcCodec=null}={}){
  if(browserSessions&&(!browserSessions.parse||!browserSessions.csrf||!browserSessions.originAllowed||!browserSessions.validate))throw Error('AUTH21_COOKIE_CONFIG_INVALID');
  if(browserSessions&&allowedBrowserOrigin!==browserSessions.origin)throw Error('AUTH21_COOKIE_ORIGIN_MISMATCH');
  if(allowedBrowserOrigin!==null&&(!/^https?:\/\/[^/]+$/.test(allowedBrowserOrigin)||
@@ -75,7 +75,7 @@ function createAuth21HttpHandler({sessions,nowMilliseconds=Date.now,allowedBrows
   try{
    let uri;
    try{uri=new URL(req.url||'', 'http://localhost');}catch(_){reply(res,404,{error:'NOT_FOUND'});return}
-   if((uri.search&&uri.pathname!=='/auth21/preferences')||uri.hash||!['/auth21/login','/auth21/me','/auth21/logout','/auth21/preferences','/auth21/activity','/auth21/unlock'].includes(uri.pathname)){
+   if((uri.search&&uri.pathname!=='/auth21/preferences')||uri.hash||!['/auth21/login','/auth21/me','/auth21/logout','/auth21/preferences','/auth21/activity','/auth21/unlock','/auth21/ipc/probe-proof'].includes(uri.pathname)){
     reply(res,404,{error:'NOT_FOUND'});return;
    }
    // Strict Origin guard on browser requests. No cookie authorization is accepted.
@@ -92,6 +92,18 @@ function createAuth21HttpHandler({sessions,nowMilliseconds=Date.now,allowedBrows
    if(browserSessions&&cookieToken&&req.method!=='GET'&&uri.pathname!=='/auth21/login'&&
       !browserSessions.validate(req,cookieToken)){
     reply(res,403,{error:'CSRF_FORBIDDEN'});return;
+   }
+   // Only the Core-local DEBUG fixture may supply ipcCodec. Never a business grant.
+   if(uri.pathname==='/auth21/ipc/probe-proof'){
+    if(!ipcCodec||browserSessions||req.method!=='POST'){
+     reply(res,404,{error:'NOT_FOUND'});return;
+    }
+    const token=tokenFor();
+    const proof=require('./auth21_rbac_guard').issueAuthorizedProof({
+     sessions,token,codec:ipcCodec,audience:'router',operation:'shared.read',method:'GET'
+    });
+    if(!proof){reply(res,401,{error:'UNAUTHORIZED'});return}
+    reply(res,200,{proof});return;
    }
    if(req.method==='POST'&&uri.pathname==='/auth21/login'){
     const input=await readJSON(req);
