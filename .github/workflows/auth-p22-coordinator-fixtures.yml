@@ -216,6 +216,22 @@ jobs:
         run: |
           npm --prefix App ci --no-audit --no-fund
           node -e "const p=require('./App/package.json');const lock=require('./App/package-lock.json');if(p.dependencies.argon2!=='0.45.1'||lock.packages[''].dependencies.argon2!=='0.45.1'||lock.packages['node_modules/argon2'].version!=='0.45.1')process.exit(1);if(typeof require('./App/node_modules/argon2').hash!=='function')process.exit(2)"
+      - name: Argon2id 64 MiB 3-pass calibration on CI runner (not GEN-1)
+        run: |
+          node - <<'NODE'
+          const {performance}=require('node:perf_hooks');
+          const argon2=require('./App/node_modules/argon2');
+          (async()=>{
+            const ms=[];
+            for(let i=0;i<3;i++){
+              const start=performance.now();
+              const digest=await argon2.hash('BENCHMARK_ONLY_NOT_A_SECRET',{type:argon2.argon2id,memoryCost:65536,timeCost:3,parallelism:1,hashLength:32});
+              if(!await argon2.verify(digest,'BENCHMARK_ONLY_NOT_A_SECRET'))throw Error('ARGON2_CALIBRATION_VERIFY_FAILED');
+              ms.push(Math.round(performance.now()-start));
+            }
+            console.log(JSON.stringify({profile:'CI_UBUNTU_NODE22_NOT_GEN1',iterations:3,memoryMiB:64,passes:3,parallelism:1,durationsMs:ms,maxRssMiB:Math.round(process.resourceUsage().maxRSS/1024)}));
+          })().catch(e=>{console.error(e.message);process.exitCode=1});
+          NODE
       - name: Install SQLite and Argon2 into runner temp directory
         run: npm --prefix "$RUNNER_TEMP/iatb-auth-v3" install --no-save --no-package-lock --no-audit --no-fund better-sqlite3@12.4.1 argon2@0.45.1
       - name: Verify native v3 migration and credential CAS on fixtures
