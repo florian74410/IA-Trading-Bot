@@ -18,8 +18,8 @@ function createWriter({root,codec}={}){
   const value=JSON.parse(fs.readFileSync(target,'utf8'));
   return value;
  }
- function write({proof,settings}={}){
-  const access=verify({codec,proof,action:'indicator.settings.set'});
+ function write({proof,settings,bodyDigest}={}){
+  const access=verify({codec,proof,action:'indicator.settings.set',bodyDigest});
   if(!access.allowed)return {ok:false,error:'FORBIDDEN'};
   if(!settings||Object.keys(settings).sort().join(',')!=='enabled,refreshMs'||
     typeof settings.enabled!=='boolean'||!Number.isSafeInteger(settings.refreshMs)||
