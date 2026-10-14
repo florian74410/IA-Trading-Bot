@@ -274,3 +274,39 @@ test('encrypted archive already present is never silently replaced',async t=>{
  await assert.rejects(()=>capture(f),/AUTH21_MULTI_ARCHIVE_EXISTS/);
  assert.equal(fs.readFileSync(archive(f),'utf8'),'SENTINEL_NOT_A_VALID_ARCHIVE');
 });
+
+test('fake coordinator object cannot impersonate the approved snapshot protocol',async t=>{
+ const f=fixture(t);seed(f);
+ const impostor={writerIds:[...WRITERS],execute:async fn=>fn({epoch:1})};
+ await assert.rejects(()=>capture(f,{coordinator:impostor}),/AUTH21_MULTI_WRITER_ALLOWLIST_REQUIRED/);
+ assert.equal(fs.existsSync(archive(f)),false);
+});
+test('oversized annex aborts all participating writers without publishing an archive',async t=>{
+ const f=fixture(t);seed(f);
+ fs.writeFileSync(path.join(f.root,ANNEXES[0]),Buffer.alloc(1024*1024+1),{mode:0o600});
+ await assert.rejects(()=>capture(f),/AUTH21_MULTI_ANNEX_SIZE_INVALID/);
+ assert.equal(fs.existsSync(archive(f)),false);
+ assert.equal(f.coordinator.state,'IDLE');
+ for(const id of WRITERS)assert.equal(f.gates[id].heldEpoch,null);
+});
+test('even a correctly authenticated archive with corrupt Settings SQLite is rejected and rolled back',async t=>{
+ const f=fixture(t);seed(f);await capture(f);
+ const e=readEnvelope(f);
+ const d=crypto.createDecipheriv('aes-256-gcm',f.transport,Buffer.from(e.iv,'base64'));
+ d.setAAD(Buffer.from(e.type));d.setAuthTag(Buffer.from(e.tag,'base64'));
+ const payload=JSON.parse(Buffer.concat([d.update(Buffer.from(e.data,'base64')),d.final()]).toString('utf8'));
+ const invalid=Buffer.alloc(512);
+ payload.databases.settings=invalid.toString('base64');
+ payload.manifest['sqlite/settings']={
+  bytes:invalid.length,sha256:crypto.createHash('sha256').update(invalid).digest('hex')
+ };
+ const iv=crypto.randomBytes(12),c=crypto.createCipheriv('aes-256-gcm',f.transport,iv);
+ c.setAAD(Buffer.from(e.type));
+ const bytes=Buffer.concat([c.update(Buffer.from(JSON.stringify(payload))),c.final()]);
+ e.iv=iv.toString('base64');e.tag=c.getAuthTag().toString('base64');
+ e.data=bytes.toString('base64');
+ replaceEnvelope(f,e);
+ assert.throws(()=>restore(f,archive(f)));
+ assert.equal(fs.existsSync(restored(f)),false);
+ assert.equal(f.dbs.settings.prepare('SELECT COUNT(*) AS n FROM settings').get().n,1);
+});
