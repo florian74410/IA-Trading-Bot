@@ -9,7 +9,8 @@ const TOKEN=/^Bearer ([A-Za-z0-9_-]{43})$/;
 function reply(res,status,data){
  if(res.headersSent||res.writableEnded)return;
  res.writeHead(status,{'Content-Type':'application/json; charset=utf-8',
-  'Cache-Control':'no-store','Pragma':'no-cache','X-Content-Type-Options':'nosniff'});
+  'Cache-Control':'no-store','Pragma':'no-cache','X-Content-Type-Options':'nosniff',
+  'Referrer-Policy':'no-referrer','X-Frame-Options':'DENY','Content-Security-Policy':"default-src 'none'; frame-ancestors 'none'"});
  res.end(JSON.stringify(data));
 }
 function readJSON(req){
@@ -46,7 +47,9 @@ function bearer(req){
  const match=TOKEN.exec(h);
  return match?match[1]:null;
 }
-function createAuth21HttpHandler({sessions,nowMilliseconds=Date.now}={}){
+function createAuth21HttpHandler({sessions,nowMilliseconds=Date.now,allowedBrowserOrigin=null}={}){
+ if(allowedBrowserOrigin!==null&&(!/^https?:\/\/[^/]+$/.test(allowedBrowserOrigin)||
+    allowedBrowserOrigin.includes('@')))throw Error('AUTH21_BROWSER_ORIGIN_INVALID');
  const attempts=new Map();
  const WINDOW_MS=300000,MAX_FAILURES=5,MAX_TRACKED=2048;
  function failureDelay(clientId){
@@ -72,6 +75,12 @@ function createAuth21HttpHandler({sessions,nowMilliseconds=Date.now}={}){
    try{uri=new URL(req.url||'', 'http://localhost');}catch(_){reply(res,404,{error:'NOT_FOUND'});return}
    if((uri.search&&uri.pathname!=='/auth21/preferences')||uri.hash||!['/auth21/login','/auth21/me','/auth21/logout','/auth21/preferences','/auth21/activity','/auth21/unlock'].includes(uri.pathname)){
     reply(res,404,{error:'NOT_FOUND'});return;
+   }
+   // Strict Origin guard on browser requests. No cookie authorization is accepted.
+   // An Origin header is rejected unless the operator explicitly set its exact value.
+   if(req.headers.origin!==undefined &&
+      (typeof req.headers.origin!=='string'||req.headers.origin!==allowedBrowserOrigin)){
+    reply(res,403,{error:'ORIGIN_FORBIDDEN'});return;
    }
    if(req.method==='POST'&&uri.pathname==='/auth21/login'){
     const input=await readJSON(req);
