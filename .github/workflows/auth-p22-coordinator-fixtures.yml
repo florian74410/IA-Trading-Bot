@@ -53,6 +53,8 @@ on:
       - 'App/Core/Clients/password_hasher_v2.js'
       - 'App/Core/Clients/auth21_session_store.js'
       - 'App/Tools/Tests/auth21_session_store.test.js'
+      - 'App/Core/Clients/auth21_http_boundary.js'
+      - 'App/Tools/Tests/auth21_http_boundary.test.js'
       - 'App/Core/Clients/auth21_admin_store.js'
       - 'App/Tools/Tests/auth21_admin_store.test.js'
       - 'App/Core/Clients/auth21_first_admin_trial.js'
@@ -112,6 +114,8 @@ on:
       - 'App/Core/Clients/password_hasher_v2.js'
       - 'App/Core/Clients/auth21_session_store.js'
       - 'App/Tools/Tests/auth21_session_store.test.js'
+      - 'App/Core/Clients/auth21_http_boundary.js'
+      - 'App/Tools/Tests/auth21_http_boundary.test.js'
       - 'App/Core/Clients/auth21_admin_store.js'
       - 'App/Tools/Tests/auth21_admin_store.test.js'
       - 'App/Core/Clients/auth21_first_admin_trial.js'
@@ -181,6 +185,8 @@ jobs:
           node --check App/Tools/Tests/auth21_v3_migration_trial.test.js
           node --check App/Core/Clients/auth21_session_store.js
           node --check App/Tools/Tests/auth21_session_store.test.js
+          node --check App/Core/Clients/auth21_http_boundary.js
+          node --check App/Tools/Tests/auth21_http_boundary.test.js
           node --check App/Core/Clients/auth21_admin_store.js
           node --check App/Tools/Tests/auth21_admin_store.test.js
           node --check App/Core/Clients/auth21_first_admin_trial.js
@@ -197,6 +203,8 @@ jobs:
         run: NODE_PATH="$RUNNER_TEMP/iatb-auth-v3/node_modules" node --test App/Tools/Tests/auth21_v3_migration_trial.test.js
       - name: Auth v3 session, revocation and encrypted preference fixtures
         run: NODE_PATH="$RUNNER_TEMP/iatb-auth-v3/node_modules" node --test App/Tools/Tests/auth21_session_store.test.js
+      - name: Auth21 isolated HTTP bearer boundary negative tests
+        run: node --test App/Tools/Tests/auth21_http_boundary.test.js
       - name: Auth v3 ADMIN persistence, last-admin guard and local-CLI fixtures
         run: NODE_PATH="$RUNNER_TEMP/iatb-auth-v3/node_modules" node --test App/Tools/Tests/auth21_admin_store.test.js
       - name: Auth 2.1 first ADMIN consent, backup and legacy DEBUG preflight fixtures
