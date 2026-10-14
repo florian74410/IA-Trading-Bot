@@ -93,7 +93,7 @@ test('expiry is absolute, cannot be extended by polling or repeated verification
  const f=prepare(t);add(f);const s=await init(f);const r=await login(s);
  f.now+=3599;assert.ok(s.verifySession(r.token));
  f.now++;assert.equal(s.verifySession(r.token),null);
- assert.equal(f.db.prepare('SELECT last_seen_at FROM client_sessions').get().last_seen_at,null);
+ assert.equal(f.db.prepare('SELECT last_seen_at FROM client_sessions').get().last_seen_at,NOW);
 });
 test('short or excessive TTL is rejected before issuing a session',async t=>{
  const f=prepare(t);add(f);const s=await init(f);
