@@ -22,7 +22,7 @@ const ACCOUNT_SQL=[
 const SESSION_SQL=[
  'SELECT s.client_id AS clientId,s.issued_at AS issuedAt,',
  's.expires_at AS expiresAt,s.revoked_at AS revokedAt,',
- 's.security_version AS sessionVersion,s.auth_protocol_version AS protocolVersion,',
+ 's.security_version AS sessionVersion,s.auth_protocol_version AS protocolVersion,s.last_seen_at AS lastActivityAt,',
  'c.security_version AS currentVersion,c.status AS status,',
  'a.enabled AS enabled,a.role AS role',
  'FROM client_sessions s',
@@ -56,13 +56,15 @@ function sameAccount(before,after){
 }
 
 class Auth21SessionStore {
- constructor({db,clientCrypto,snapshotGate,nowSeconds}={}){
+ constructor({db,clientCrypto,snapshotGate,nowSeconds,idleLockSeconds=0}={}){
   if(!db||typeof db.prepare!=='function'||typeof db.transaction!=='function'||
      typeof db.pragma!=='function')throw Error('AUTH21_DB_REQUIRED');
   if(!clientCrypto||typeof clientCrypto.seal!=='function'||
      typeof clientCrypto.open!=='function')throw Error('AUTH21_CRYPTO_REQUIRED');
   if(snapshotGate&&typeof snapshotGate.assertWritable!=='function')throw Error('SNAPSHOT_GATE_INVALID');
   if(nowSeconds&&typeof nowSeconds!=='function')throw Error('AUTH21_CLOCK_INVALID');
+  if(!Number.isSafeInteger(idleLockSeconds)||idleLockSeconds<0||idleLockSeconds>3600)throw Error('AUTH21_IDLE_LOCK_INVALID');
+  this.idleLockSeconds=idleLockSeconds;
   this.db=db;this.clientCrypto=clientCrypto;
   this.snapshotGate=snapshotGate||null;
   this.clock=nowSeconds||(()=>Math.floor(Date.now()/1000));
@@ -98,13 +100,15 @@ class Auth21SessionStore {
     VALID_ROLES.has(account.role)&&Number.isSafeInteger(account.securityVersion)&&
     account.securityVersion>=1);
  }
- _resolve(token){
+ _resolve(token,{allowLocked=false}={}){
   const hash=tokenHash(token);
   if(!hash)return null;
   const row=this.db.prepare(SESSION_SQL).get(hash);
   if(!row||row.revokedAt!==null||row.expiresAt<=this._now()||
      row.protocolVersion!==1||row.sessionVersion!==row.currentVersion||
      row.status!=='ACTIVE'||row.enabled!==1||!VALID_ROLES.has(row.role))return null;
+  if(!allowLocked&&this.idleLockSeconds&&(!Number.isSafeInteger(row.lastActivityAt)||
+     this._now()-row.lastActivityAt>=this.idleLockSeconds))return null;
   return {clientId:row.clientId,role:row.role,issuedAt:row.issuedAt,expiresAt:row.expiresAt};
  }
  /** Authenticate a client with the password KDF; the clientId is a lookup
@@ -130,9 +134,9 @@ class Auth21SessionStore {
    if(!this._active(current)||!sameAccount(before,current))return null;
    this.db.prepare([
     'INSERT INTO client_sessions',
-    '(session_hash,client_id,issued_at,expires_at,security_version,auth_protocol_version)',
-    'VALUES(?,?,?,?,?,1)'
-   ].join(' ')).run(digest,clientId,now,now+ttlSeconds,current.securityVersion);
+    '(session_hash,client_id,issued_at,expires_at,security_version,auth_protocol_version,last_seen_at)',
+    'VALUES(?,?,?,?,?,1,?)'
+   ].join(' ')).run(digest,clientId,now,now+ttlSeconds,current.securityVersion,now);
    this._audit(clientId,'SESSION_ISSUED');
    return {token,clientId,role:current.role,expiresAt:now+ttlSeconds};
   }).immediate();
@@ -141,6 +145,36 @@ class Auth21SessionStore {
   * including when used by polling, WebSocket or background data refresh.
   */
  verifySession(token){return this._resolve(token);}
+ /** Explicit trusted user activity only; automatic polling never refreshes idle time. */
+ recordUserActivity(token){
+  if(!this.idleLockSeconds)throw Error('AUTH21_IDLE_LOCK_DISABLED');
+  this._writable();
+  return this.db.transaction(()=>{
+   const principal=this._resolve(token);
+   if(!principal)return false;
+   const hash=tokenHash(token);
+   return this.db.prepare('UPDATE client_sessions SET last_seen_at=? WHERE session_hash=? AND revoked_at IS NULL')
+    .run(this._now(),hash).changes===1;
+  }).immediate();
+ }
+ /** A locked but unexpired session requires the original password again. */
+ async unlockWithPassword(token,password){
+  if(!this.idleLockSeconds||typeof password!=='string')return false;
+  const before=this._resolve(token,{allowLocked:true});
+  if(!before)return false;
+  const account=this._account(before.clientId);
+  if(!this._active(account))return false;
+  const verified=await Kdf.verifyAccountPassword(account,password);
+  if(!verified.verified)return false;
+  this._writable();
+  return this.db.transaction(()=>{
+   const principal=this._resolve(token,{allowLocked:true});
+   const current=this._account(before.clientId);
+   if(!principal||!this._active(current)||!sameAccount(account,current))return false;
+   return this.db.prepare('UPDATE client_sessions SET last_seen_at=? WHERE session_hash=? AND revoked_at IS NULL')
+    .run(this._now(),tokenHash(token)).changes===1;
+  }).immediate();
+ }
  /** Logout is limited to the caller's presented token, even if expired. */
  revokeSession(token){
   const digest=tokenHash(token);
