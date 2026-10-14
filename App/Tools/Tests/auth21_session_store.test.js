@@ -293,3 +293,34 @@ test('integrated HTTP SQLite enforces identity isolation and invalidates role ch
  const fresh=await requestAuth21(handler,'POST','/auth21/login',{clientId:'CL000002',password:PASSWORD});
  assert.equal(fresh.status,200);assert.equal(fresh.body.role,'GUEST');
 });
+
+test('Core native trial opens preserved v3/legacy-PBKDF2 identities and blocks legacy routes',async t=>{
+ const f=prepare(t);add(f,'CL000001','ADMIN');await init(f);
+ const root=fs.mkdtempSync(path.join(os.tmpdir(),'iatb-auth21-core-runtime-'));
+ t.after(()=>fs.rmSync(root,{recursive:true,force:true}));
+ fs.chmodSync(root,0o700);
+ const {MARKER,CONTENT}=require('../../Core/Backup/auth21_core_local_trial_wiring');
+ fs.writeFileSync(path.join(root,MARKER),CONTENT,{mode:0o600});
+ const dbFile=path.join(root,'userdata','Database','clients.sqlite');
+ const keyFile=path.join(root,'userdata','Security','client_master.key');
+ fs.mkdirSync(path.dirname(dbFile),{recursive:true,mode:0o700});
+ fs.mkdirSync(path.dirname(keyFile),{recursive:true,mode:0o700});
+ await f.db.backup(dbFile);fs.chmodSync(dbFile,0o600);
+ fs.copyFileSync(f.keyFile,keyFile);fs.chmodSync(keyFile,0o600);
+ const env={IATB_AUTH21_LOCAL_SNAPSHOT_TRIAL:'1',IATB_DEBUG_MODE:'1',
+  IATB_DEBUG_BOOTSTRAP:'0',IATB_AUTH21_LOCAL_TRIAL_ROOT:root,
+  IATB_RUNTIME_ROOT:path.join(root,'runtime'),IATB_DATA_ROOT:path.join(root,'userdata'),
+  IATB_ANNEX_ROOT:path.join(root,'annexes'),IATB_UPDATES_ROOT:path.join(root,'updates'),
+  IATB_STATE_ROOT:path.join(root,'legacy')};
+ const copyCrypto=new ClientCrypto(keyFile,{clientDbPath:dbFile});
+ const {openCoreAuthTrial}=require('../../Core/Clients/auth21_core_route_gate');
+ const active=openCoreAuthTrial({root,env,clientCrypto:copyCrypto,snapshotGate:new LocalSnapshotWriter('clients')});
+ try{
+  const got=await requestAuth21(active.handler,'POST','/auth21/login',{clientId:'CL000001',password:PASSWORD});
+  assert.equal(got.status,200);
+  assert.equal((await requestAuth21(active.handler,'GET','/auth21/me',undefined,got.body.token)).status,200);
+  assert.equal((await requestAuth21(active.handler,'GET','/api/bootstrap',undefined,got.body.token)).status,404);
+  assert.equal((await requestAuth21(active.handler,'POST','/auth21/logout',undefined,got.body.token)).status,200);
+  assert.equal((await requestAuth21(active.handler,'GET','/auth21/me',undefined,got.body.token)).status,401);
+ }finally{active.close()}
+});
