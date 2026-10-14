@@ -17,7 +17,7 @@ function createIsolatedCoreGate({sessions}={}){
   try{pathname=new URL(req.url,'http://localhost').pathname}
   catch(_){deny(res,404,'NOT_FOUND');return}
   // Auth boundary rechecks path, query string, method and bearer itself.
-  if(['/auth21/login','/auth21/me','/auth21/logout','/auth21/preferences'].includes(pathname)){
+  if(['/auth21/login','/auth21/me','/auth21/logout','/auth21/preferences','/auth21/activity','/auth21/unlock'].includes(pathname)){
    await auth(req,res);return;
   }
   // No legacy cookie, localBypass, active_client_id, recovery, setup, admin,
