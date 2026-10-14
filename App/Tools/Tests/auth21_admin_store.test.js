@@ -377,3 +377,33 @@ test('local ADMIN CLI dispatcher uses live ADMIN + OS gate, not forged command a
  assert.equal(f.db.prepare("SELECT role FROM client_accounts WHERE client_id='CL000002'").get().role,'GUEST');
  assert.throws(()=>call('remove-login',['CL000001']),/LAST_ADMIN|LAST_ACTIVE_ADMIN/i);
 });
+
+test('iatb-users command parser rejects secrets in argv and unknown privilege operations',()=>{
+ const {validateArgs}=require('../CLI/iatb-users');
+ assert.deepEqual(validateArgs(['admin','CL000001','list']),{verb:'admin',rest:['CL000001','list']});
+ assert.deepEqual(validateArgs(['migrate-v3']),{verb:'migrate-v3',rest:[]});
+ assert.deepEqual(validateArgs(['create-first-admin']),{verb:'create-first-admin',rest:[]});
+ for(const args of [
+  ['migrate-v3','SECRET'],['create-first-admin','PASSWORD'],
+  ['admin','CL000001','reset-password','SECRET'],
+  ['admin','CL000001','set-role','CL000002','SUPERADMIN'],
+  ['admin','CL000001','list','EXTRA'],['reset-everything']
+ ])assert.throws(()=>validateArgs(args),/AUTH21_CLI_/);
+});
+test('iatb-users preflight rejects fixture without explicit marker and never mutates it',t=>{
+ const {checkedFixture}=require('../CLI/iatb-users');
+ const f=setup(t);seed(f,'CL000001','ADMIN');
+ assert.throws(()=>checkedFixture(f.root),/ENOENT|AUTH21_CLI_MARKER_REQUIRED/);
+ assert.equal(f.db.prepare('SELECT COUNT(*) n FROM clients').get().n,1);
+});
+test('iatb-users preflight checks original key/database permissions and refuses unsafe copies',t=>{
+ const {checkedFixture,MARKER,CONTENT}=require('../CLI/iatb-users');
+ const f=setup(t);seed(f,'CL000001','ADMIN');
+ fs.chmodSync(f.root,0o700);
+ fs.writeFileSync(path.join(f.root,MARKER),CONTENT,{mode:0o600});
+ fs.chmodSync(f.file,0o600);fs.chmodSync(f.keyFile,0o600);
+ // Existing fixture key may be directly in root in these tests; CLI requires
+ // a dedicated preexisting Security path, rather than copying the key.
+ assert.throws(()=>checkedFixture(f.root),/ENOENT/);
+ assert.equal(fs.existsSync(path.join(f.root,'Security','client_master.key')),false);
+});
