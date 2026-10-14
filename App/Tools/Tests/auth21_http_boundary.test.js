@@ -99,3 +99,39 @@ test('non-allowed HTTP method refuses with 405 and no state changes',async()=>{
  const x=fixture();const r=await send(x.handler,{method:'PUT',url:'/auth21/login'});
  assert.equal(r.status,405);assert.deepEqual(x.events,[]);
 });
+
+const {createIsolatedCoreGate}=require('../../Core/Clients/auth21_core_route_gate');
+test('isolated Core gate denies all legacy routes even with legacy sid cookie',async()=>{
+ const x=fixture(),gate=createIsolatedCoreGate({sessions:x.sessions});
+ for(const url of ['/api/bootstrap','/api/setup','/api/login','/api/admin/session',
+   '/api/bank/vaults','/api/session/change-password','/api/updates',
+   '/communication/v1/ui/read','/api/health','/']){
+  const r=await send(gate,{method:'GET',url,headers:{
+   cookie:'sid=FAKE_SUPERADMIN;role=ADMIN',authorization:'Bearer '+VALID_TOKEN
+  }});
+  assert.equal(r.status,404,url);
+  assert.deepEqual(r.body,{error:'NOT_FOUND'});
+ }
+ assert.deepEqual(x.events,[]);
+});
+test('isolated Core gate delegates only explicit auth21 endpoints to actual boundary',async()=>{
+ const x=fixture(),gate=createIsolatedCoreGate({sessions:x.sessions});
+ const r=await send(gate,{method:'POST',url:'/auth21/login',
+  headers:{'content-type':'application/json'},body:{clientId:'CL000001',password:'correct-16-characters'}});
+ assert.equal(r.status,200);
+ assert.equal((await send(gate,{method:'GET',url:'/auth21/me',
+  headers:{authorization:'Bearer '+r.body.token}})).status,200);
+ assert.equal((await send(gate,{method:'POST',url:'/auth21/logout',
+  headers:{authorization:'Bearer '+r.body.token}})).status,200);
+ assert.equal((await send(gate,{method:'GET',url:'/auth21/me',
+  headers:{authorization:'Bearer '+r.body.token}})).status,401);
+});
+test('isolated Core gate ignores fake ADMIN cookies and request parameters',async()=>{
+ const x=fixture(),gate=createIsolatedCoreGate({sessions:x.sessions});
+ for(const url of ['/auth21/admin','/api/bootstrap?authenticated=true',
+   '/auth21/me?clientId=CL000001','/auth21/%2e%2e/api/bootstrap']){
+  const r=await send(gate,{method:'GET',url,headers:{cookie:'sid=ADMIN;role=ADMIN'}});
+  assert.equal(r.status,404,url);
+ }
+ assert.deepEqual(x.events,[]);
+});
