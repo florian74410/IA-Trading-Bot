@@ -7,6 +7,8 @@ from contextlib import closing
 import hmac
 import os
 import subprocess
+import sys
+import threading
 from pathlib import Path
 import sqlite3
 import stat
@@ -94,7 +96,7 @@ class StoragePreflightTests(unittest.TestCase):
 
     def test_wal_delete_online_backup_and_restore_preserve_fixture(self):
         start = time.monotonic()
-        snapshot = p.fixture_snapshot(self.root)
+        snapshot = p.coherent_fixture_snapshot(self.root)
         self.assertTrue(snapshot.exists())
         self.assertEqual(stat.S_IMODE(snapshot.stat().st_mode), 0o700)
         for rel in p.FIXTURE_DATABASES:
@@ -115,7 +117,7 @@ class StoragePreflightTests(unittest.TestCase):
         key_file.unlink()
         self.assertFalse(p.metadata_preflight(self.root)["ready_for_change"])
         with self.assertRaisesRegex(p.UnsafeStorage, "CLIENT_MASTER_KEY_REQUIRED"):
-            p.fixture_snapshot(self.root)
+            p.coherent_fixture_snapshot(self.root)
         self.assertFalse(key_file.exists())
         self.assertFalse((self.root / "_snapshots").exists())
 
@@ -124,7 +126,7 @@ class StoragePreflightTests(unittest.TestCase):
         new_key = os.urandom(32).hex() + "\n"
         key_file.write_text(new_key)
         with self.assertRaisesRegex(p.UnsafeStorage, "DOES_NOT_MATCH"):
-            p.fixture_snapshot(self.root)
+            p.coherent_fixture_snapshot(self.root)
         self.assertEqual(key_file.read_text(), new_key)
         self.assertFalse((self.root / "_snapshots").exists())
 
@@ -133,7 +135,7 @@ class StoragePreflightTests(unittest.TestCase):
         path = self.root / p.FIXTURE_DATABASES[2]
         path.write_bytes(b"NOT A SQLITE FILE")
         with self.assertRaises(sqlite3.DatabaseError):
-            p.fixture_snapshot(self.root)
+            p.coherent_fixture_snapshot(self.root)
         self.assertFalse((self.root / "_snapshots").exists())
 
     def test_foreign_key_violation_rejected(self):
@@ -144,18 +146,18 @@ class StoragePreflightTests(unittest.TestCase):
                        ("CL999999", "bad", "bad", "bad", "bad", "USER", "x", "x"))
             db.commit()
         with self.assertRaisesRegex(p.UnsafeStorage, "FOREIGN_KEY"):
-            p.fixture_snapshot(self.root)
+            p.coherent_fixture_snapshot(self.root)
 
     def test_inter_database_epoch_drift_rejected(self):
         db = self.live_connections[0]
         db.execute("UPDATE fixture_generation SET epoch='different-generation'")
         db.commit()
         with self.assertRaisesRegex(p.UnsafeStorage, "INTER_DATABASE_DRIFT"):
-            p.fixture_snapshot(self.root)
+            p.coherent_fixture_snapshot(self.root)
 
     def test_failed_mid_backup_removes_partial_stage(self):
         with self.assertRaisesRegex(p.UnsafeStorage, "INJECTED_BACKUP_FAILURE"):
-            p.fixture_snapshot(self.root, injected_failure_after=1)
+            p.coherent_fixture_snapshot(self.root, injected_failure_after=1)
         stage = self.root / "_snapshots"
         self.assertEqual(list(stage.iterdir()), [])
         self.assertEqual(p._validate_fixture_bundle(self.root), (FIXTURE_ID, FIXTURE_EPOCH))
@@ -168,17 +170,17 @@ class StoragePreflightTests(unittest.TestCase):
         self.assertEqual(outcome["targets"][p.CLIENT_KEY]["kind"], "symlink_refused")
         self.assertFalse(outcome["ready_for_change"])
         with self.assertRaises(p.UnsafeStorage):
-            p.fixture_snapshot(self.root)
+            p.coherent_fixture_snapshot(self.root)
         self.assertFalse((self.root / "not-to-be-created.key").exists())
 
     def test_fixture_guard_rejects_nonfixture_directories(self):
         with self.assertRaisesRegex(p.UnsafeStorage, "FIXTURE_SANDBOX_REQUIRED"):
-            p.fixture_snapshot(Path("/var/lib/iatb/debug"))
+            p.coherent_fixture_snapshot(Path("/var/lib/iatb/debug"))
         with self.assertRaisesRegex(p.UnsafeStorage, "FIXTURE_SANDBOX_REQUIRED"):
-            p.fixture_snapshot(self.root / "data")
+            p.coherent_fixture_snapshot(self.root / "data")
 
     def test_snapshot_key_deleted_before_restore_fails_closed(self):
-        snap = p.fixture_snapshot(self.root)
+        snap = p.coherent_fixture_snapshot(self.root)
         (snap / p.CLIENT_KEY).unlink()
         with self.assertRaisesRegex(p.UnsafeStorage, "CLIENT_MASTER_KEY_REQUIRED"):
             p.fixture_restore(self.root, snap)
@@ -208,7 +210,7 @@ process.stdout.write(command==='seal'?c.seal(value):c.open(value));
         with closing(sqlite3.connect(client_db)) as db:
             db.execute("UPDATE clients SET last_name_enc=? WHERE client_id=?", (sealed.stdout, FIXTURE_ID))
             db.commit()
-        snapshot = p.fixture_snapshot(self.root)
+        snapshot = p.coherent_fixture_snapshot(self.root)
         restored = p.fixture_restore(self.root, snapshot)
         with closing(sqlite3.connect(restored / p.FIXTURE_DATABASES[0])) as db:
             encrypted = db.execute("SELECT last_name_enc FROM clients WHERE client_id=?", (FIXTURE_ID,)).fetchone()[0]
@@ -223,14 +225,146 @@ process.stdout.write(command==='seal'?c.seal(value):c.open(value));
 
     def test_no_wallet_created_or_modified(self):
         self.assertFalse((self.root / "data/Security/wallet_master.key").exists())
-        snap = p.fixture_snapshot(self.root)
+        snap = p.coherent_fixture_snapshot(self.root)
         p.fixture_restore(self.root, snap)
         self.assertFalse((self.root / "data/Security/wallet_master.key").exists())
         self.assertFalse((snap / "data/Security/wallet_master.key").exists())
 
+
+    def test_writer_batched_updates_block_snapshot_until_consistent(self):
+        first_update = threading.Event()
+        continue_writer = threading.Event()
+        snapshot_started = threading.Event()
+        outcomes = []
+        errors = []
+
+        def writer():
+            try:
+                with p.fixture_writer_guard(self.root, timeout_s=4):
+                    with closing(sqlite3.connect(self.root / p.FIXTURE_DATABASES[0])) as db:
+                        db.execute("UPDATE fixture_generation SET epoch='generation-2'")
+                        db.commit()
+                    first_update.set()
+                    if not continue_writer.wait(timeout=4):
+                        raise RuntimeError("fixture writer interrupted")
+                    for rel in p.FIXTURE_DATABASES[1:]:
+                        with closing(sqlite3.connect(self.root / rel)) as db:
+                            db.execute("UPDATE fixture_generation SET epoch='generation-2'")
+                            db.commit()
+            except Exception as exc:
+                errors.append(str(exc))
+                first_update.set()
+
+        def snapshot():
+            try:
+                snapshot_started.set()
+                outcomes.append(p.coherent_fixture_snapshot(self.root, timeout_s=4))
+            except Exception as exc:
+                errors.append(str(exc))
+
+        wt = threading.Thread(target=writer, daemon=True)
+        st = threading.Thread(target=snapshot, daemon=True)
+        wt.start()
+        try:
+            self.assertTrue(first_update.wait(3), "Writer never reached partial generation")
+            st.start()
+            self.assertTrue(snapshot_started.wait(3))
+            # The exclusive lock must remain blocked while a participating
+            # writer holds the shared lock, even with a partially changed DB.
+            self.assertTrue(st.is_alive())
+            self.assertEqual(outcomes, [])
+        finally:
+            continue_writer.set()
+            wt.join(timeout=5)
+            if st.ident is not None:
+                st.join(timeout=5)
+        self.assertFalse(wt.is_alive())
+        self.assertFalse(st.is_alive())
+        self.assertEqual(errors, [])
+        self.assertEqual(len(outcomes), 1)
+        self.assertEqual(p._validate_fixture_bundle(outcomes[0]), (FIXTURE_ID, "generation-2"))
+
+    def test_snapshot_exclusive_lock_prevents_new_writer(self):
+        attempted = threading.Event()
+        done = threading.Event()
+        failures = []
+
+        def writer():
+            attempted.set()
+            try:
+                with p.fixture_writer_guard(self.root, timeout_s=4):
+                    with closing(sqlite3.connect(self.root / p.FIXTURE_DATABASES[1])) as db:
+                        db.execute("INSERT INTO public_fixture(payload) VALUES('second-event')")
+                        db.commit()
+            except Exception as exc:
+                failures.append(str(exc))
+            finally:
+                done.set()
+
+        with p.fixture_snapshot_barrier(self.root):
+            worker = threading.Thread(target=writer, daemon=True)
+            worker.start()
+            self.assertTrue(attempted.wait(3))
+            self.assertFalse(done.is_set(), "Writer bypassed exclusive snapshot barrier")
+            with closing(p._sqlite_ro(self.root / p.FIXTURE_DATABASES[1])) as db:
+                self.assertEqual(db.execute("SELECT COUNT(*) FROM public_fixture").fetchone()[0], 1)
+        worker.join(timeout=5)
+        self.assertFalse(worker.is_alive())
+        self.assertEqual(failures, [])
+        with closing(p._sqlite_ro(self.root / p.FIXTURE_DATABASES[1])) as db:
+            self.assertEqual(db.execute("SELECT COUNT(*) FROM public_fixture").fetchone()[0], 2)
+
+    def test_busy_barrier_fails_closed_before_any_snapshot(self):
+        with p.fixture_writer_guard(self.root):
+            with self.assertRaisesRegex(p.UnsafeStorage, "BARRIER_BUSY_TIMEOUT"):
+                p.coherent_fixture_snapshot(self.root, timeout_s=0.07)
+        self.assertFalse((self.root / "_snapshots").exists())
+        self.assertEqual(p._validate_fixture_bundle(self.root), (FIXTURE_ID, FIXTURE_EPOCH))
+
+    def test_lockfile_symlink_and_invalid_mode_rejected(self):
+        lockfile = self.root / p.FIXTURE_BARRIER
+        lockfile.symlink_to(self.root / "never-touch-me")
+        with self.assertRaisesRegex(p.UnsafeStorage, "BARRIER_OPEN_REFUSED"):
+            p.coherent_fixture_snapshot(self.root)
+        self.assertFalse((self.root / "never-touch-me").exists())
+        lockfile.unlink()
+        lockfile.write_text("untrusted")
+        os.chmod(lockfile, 0o666)
+        with self.assertRaisesRegex(p.UnsafeStorage, "UNTRUSTED_PERMISSIONS"):
+            p.coherent_fixture_snapshot(self.root)
+        self.assertFalse((self.root / "_snapshots").exists())
+
+    def test_fixture_writer_lock_rejects_unmarked_storage(self):
+        with self.assertRaisesRegex(p.UnsafeStorage, "FIXTURE_SANDBOX_REQUIRED"):
+            with p.fixture_writer_guard(Path("/var/lib/iatb/debug")):
+                self.fail("Writer lock unexpectedly opened on GEN-1 root")
+        self.assertFalse((self.root / "_snapshots").exists())
+
+    def test_write_barrier_is_interprocess_and_unlocks_on_process_exit(self):
+        source = """
+import sys, time
+from pathlib import Path
+sys.path.insert(0, sys.argv[2])
+import auth_storage_preflight as p
+with p.fixture_writer_guard(Path(sys.argv[1]), timeout_s=3):
+    print('WRITE_LOCK_HELD', flush=True)
+    time.sleep(0.5)
+"""
+        with subprocess.Popen(
+            [sys.executable, "-c", source, str(self.root), str(Path(__file__).resolve().parent)],
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+        ) as worker:
+            self.assertEqual(worker.stdout.readline().strip(), "WRITE_LOCK_HELD")
+            with self.assertRaisesRegex(p.UnsafeStorage, "BARRIER_BUSY_TIMEOUT"):
+                p.coherent_fixture_snapshot(self.root, timeout_s=0.09)
+            stdout, stderr = worker.communicate(timeout=5)
+            self.assertEqual(worker.returncode, 0, stderr[:200])
+        snap = p.coherent_fixture_snapshot(self.root, timeout_s=2)
+        self.assertEqual(p._validate_fixture_bundle(snap), (FIXTURE_ID, FIXTURE_EPOCH))
+
     def test_snapshot_repeat_does_not_mutate_source_generation(self):
-        one = p.fixture_snapshot(self.root)
-        two = p.fixture_snapshot(self.root)
+        one = p.coherent_fixture_snapshot(self.root)
+        two = p.coherent_fixture_snapshot(self.root)
         self.assertNotEqual(one, two)
         self.assertEqual(p._validate_fixture_bundle(self.root), (FIXTURE_ID, FIXTURE_EPOCH))
         self.assertEqual(p._validate_fixture_bundle(one), p._validate_fixture_bundle(two))

@@ -8,8 +8,10 @@ private, generated testing fixture marker AND a scratch directory under /tmp.
 from __future__ import annotations
 
 import argparse
-from contextlib import closing
+from contextlib import closing, contextmanager
+import fcntl
 import hashlib
+import time
 import hmac
 import json
 import os
@@ -38,6 +40,7 @@ FIXTURE_DATABASES = (
 )
 CLIENT_KEY = "data/Security/client_master.key"
 TEST_MARKER = ".iatb-auth-p21-fixture-only"
+FIXTURE_BARRIER = ".iatb-auth-p21-coherence.lock"
 TEST_CANARY = b"IA-TB-P21-FICTITIOUS-KEY-BINDING-V1"
 
 
@@ -120,6 +123,67 @@ def _fixture_guard(root: Path) -> Path:
     return real
 
 
+
+@contextmanager
+def _fixture_barrier(root: Path, *, exclusive: bool, timeout_s: float = 3.0):
+    """Cooperative *fixture-only* cross-process fcntl.flock barrier.
+
+    Every simulated writer MUST hold a shared lock throughout its SQL
+    transaction(s); the multi-DB snapshot holds an exclusive lock throughout
+    source validation and copying. This is NOT production coordination unless
+    every real writer independently adopts and obeys a reviewed protocol.
+    No request/tick path imports or uses this code in GEN-1.
+    """
+    root = _fixture_guard(root)
+    if not isinstance(timeout_s, (int, float)) or timeout_s <= 0 or timeout_s > 60:
+        raise UnsafeStorage("FIXTURE_BARRIER_TIMEOUT_INVALID")
+    flags = os.O_CREAT | os.O_RDWR | getattr(os, "O_CLOEXEC", 0) | getattr(os, "O_NOFOLLOW", 0)
+    try:
+        location = _inside(root, FIXTURE_BARRIER)
+        fd = os.open(location, flags, 0o600)
+    except (OSError, UnsafeStorage) as exc:
+        raise UnsafeStorage("FIXTURE_BARRIER_OPEN_REFUSED") from exc
+    locked = False
+    try:
+        st = os.fstat(fd)
+        if not stat.S_ISREG(st.st_mode) or stat.S_IMODE(st.st_mode) != 0o600 \
+           or st.st_uid != os.getuid():
+            raise UnsafeStorage("FIXTURE_BARRIER_UNTRUSTED_PERMISSIONS")
+        operation = fcntl.LOCK_EX if exclusive else fcntl.LOCK_SH
+        until = time.monotonic() + timeout_s
+        while True:
+            try:
+                fcntl.flock(fd, operation | fcntl.LOCK_NB)
+                locked = True
+                break
+            except BlockingIOError as exc:
+                if time.monotonic() >= until:
+                    raise UnsafeStorage("FIXTURE_BARRIER_BUSY_TIMEOUT") from exc
+                time.sleep(0.01)
+        yield
+    finally:
+        if locked:
+            fcntl.flock(fd, fcntl.LOCK_UN)
+        os.close(fd)
+
+
+def fixture_writer_guard(root: Path, *, timeout_s: float = 3.0):
+    """Use on *every* fixture write, including the full multi-DB generation."""
+    return _fixture_barrier(root, exclusive=False, timeout_s=timeout_s)
+
+
+def fixture_snapshot_barrier(root: Path, *, timeout_s: float = 3.0):
+    """Reserve all fixture DB writers while capturing a coherent generation."""
+    return _fixture_barrier(root, exclusive=True, timeout_s=timeout_s)
+
+
+def coherent_fixture_snapshot(root: Path, *, timeout_s: float = 3.0,
+                              injected_failure_after: int | None = None) -> Path:
+    """Only public fixture snapshot API: lock then copy as one generation."""
+    with fixture_snapshot_barrier(root, timeout_s=timeout_s):
+        return _fixture_snapshot_unlocked(root, injected_failure_after=injected_failure_after)
+
+
 def _sqlite_ro(path: Path) -> sqlite3.Connection:
     if not path.is_file() or path.is_symlink():
         raise UnsafeStorage("FIXTURE_SQLITE_NOT_REGULAR_FILE")
@@ -178,11 +242,11 @@ def _validate_fixture_bundle(root: Path) -> tuple[str, str]:
     return client[0], next(iter(generations))
 
 
-def fixture_snapshot(root: Path, *, injected_failure_after: int | None = None) -> Path:
-    """Fixture-only Online Backup of three DBs with write quiescence *assumed*.
+def _fixture_snapshot_unlocked(root: Path, *, injected_failure_after: int | None = None) -> Path:
+    """Internal backup; call coherent_fixture_snapshot to lock fixture writers.
 
-    This is NOT a production multi-DB quiescence mechanism; the test harness
-    owns all fixture writers and ensures a stable epoch before calling here.
+    The file lock guarantees coherence ONLY between participating fictitious
+    writers; do not mistake it for a GEN-1 business-write barrier.
     """
     root = _fixture_guard(root)
     _validate_fixture_bundle(root)

@@ -1,0 +1,57 @@
+# IA-TB DEBUG 2.1 — P2.1 — Barrière de cohérence interbases (protocole à implémenter)
+
+> **État :** conception du protocole + **prototype de test coopératif uniquement sur SQLite fictives**. Non intégré aux Engines, pas un mécanisme de sauvegarde GEN-1 opérationnel.  
+> **Périmètre :** même environnement DEBUG, stabilité des comptes clients, paramètres et portfolio pendant un snapshot ; *aucune migration DEBUG ↔ RELEASE*.  
+> **Décision de déploiement :** **aucun nouveau Docker DEBUG sur GEN-1** tant que toute l'authentification 2.1 n'est pas développée/intégrée/testée et approuvée par Overflow. Ne pas toucher aux Wallets, aux clés Wallet, aux règles Contabo ni aux bases réelles.
+
+## 1. Pourquoi un SQLite Online Backup par fichier n'est pas suffisant
+
+SQLite `backup()` garantit une vue transactionnellement cohérente **d'une base individuelle**, y compris si celle-ci utilise WAL. Il ne fige **pas simultanément** `clients.sqlite`, `user_data.db`, `portfolio.db` et les autres DB. Un client pourrait être modifié dans Core après la copie de `clients.sqlite` mais avant celle du Portfolio, donnant une archive incohérente **bien que chaque DB passe `PRAGMA quick_check`**.
+
+La simple égalité d'un `epoch` factice dans les DB est utile en test, mais ne démontre pas une capture atomique des moteurs réels.
+
+## 2. Proposition — Coordinateur de maintenance avec barrière coopérative
+
+1. **Demande explicite d'opération autorisée** (CLI native de maintenance, jamais depuis la boucle MarketData) ; cible, versions, protections, espace et état validés avant toute mutation.
+2. **Préparer** : un coordinateur identifié (Core/Supervisor, à choisir) publie `PREPARE_SNAPSHOT(generation)`. Chaque *writer métier* ayant accès à une des DB du jeu doit fermer proprement les transactions en cours, interrompre ses futures écritures métier et accuser réception de `QUIESCED(generation, writer_id, in_flight=0)` après vidage de ses buffers/transactions.
+3. **Barrière de tous les écrivains** : aucune copie tant que la liste d'écrivains **réellement active** n'a pas répondu. Toute absence d'ACK, nouveau writer non enregistré, TTL expiré, redémarrage d'Engine ou erreur de synchronisation = **abandon fail-closed** de la sauvegarde cohérente, puis reprise supervisée sans archive validée.
+4. **Fenêtre de snapshot** : barrière active, connexions SQLite de sauvegarde indépendantes, Online Backup de chaque DB, copie sécurisée des éléments requis dans un staging privé ; maintenir la même génération pendant toute cette fenêtre.
+5. **Valider et publier** : `quick_check`, `foreign_key_check`, liens `clientId` entre données concernées, manifeste et concordance génération ; chiffrement authentifié de l'archive avant son stockage durable ou externe. La sauvegarde **n'est visible comme complète** qu'après validation et finalisation atomique du manifeste.
+6. **Relâcher** : `RELEASE_SNAPSHOT(generation)`, chaque writer reprend après confirmation de la génération, buffers bornés et logs expurgés ; rollback de staging incomplet en cas d'erreur.
+7. **Observabilité & performances** : mesurer attente des ACK, durée de pause des écritures métier, temps SQLite backup, CPU/RAM/I/O, backlog, p50/p95/p99 des requêtes et ticks ; seuils et erreurs bloquantes validés avant intégration.
+
+Les **lecteurs** et caches de flux publics peuvent rester actifs si l'accès en lecture est sans effet et si les buffers sont bornés. Les mutations utilisateur entrantes pendant la barrière doivent être refusées temporairement avec réponse claire de maintenance, ou mises dans une file bornée et idempotente avec traçabilité ; **ne jamais perdre silencieusement une mutation ni exécuter deux fois un ordre**. Le Trading LIVE est désactivé dans DEBUG.
+
+## 3. Prototype technique : `fcntl.flock` sur fixtures
+
+Le [préflight Python](../../Tools/CI/auth_storage_preflight.py) propose uniquement pour les fixtures isolées :
+
+- `fixture_writer_guard(root)` : acquérir `LOCK_SH` pendant **toutes** les transactions SQLite liées, y compris si plusieurs DB changent successivement.
+- `fixture_snapshot_barrier(root)` : acquérir `LOCK_EX` pendant vérification de génération et sauvegardes de toutes les DB.
+- `coherent_fixture_snapshot(root)` : sauvegarde en ligne des trois DB fictives sous la barrière exclusive, puis restitution du verrou.
+- Un fichier de verrou créé sous le **répertoire temporaire privé marqué** `/tmp/iatb-p21-fixture-*/.iatb-auth-p21-coherence.lock` (mode `0600`), sans symlink, avec validation UID, permissions et délai d'attente fini.
+- Linux/POSIX : verrou **advisory** via `fcntl.flock`, libéré automatiquement quand un descripteur/processus se termine. L'outil ne met **aucune barrière** sur les vrais chemins des Engines ou de GEN-1.
+
+Les [tests](../../Tools/CI/test_auth_storage_preflight.py) vérifient **six cas supplémentaires** : un writer qui garde le verrou sur un changement en plusieurs DB, le snapshot exclusif qui bloque un nouveau writer, timeout sans snapshot partiel, fichier verrou symlink/mode refusé, refus de racine non-constructible/GEN-1, verrou actif dans **un processus distinct**, puis libéré après fermeture.
+
+**Limite non négociable :** `flock` est coopératif. Un programme qui écrit dans SQLite **sans prendre le verrou partagé** n'est pas bloqué par ce mécanisme. Le protocole réel exige donc une intégration explicite de **tous** les écrivains, un inventaire fiable et des tests de crash/restart ; il peut nécessiter un coordinateur supervisé plus robuste qu'un simple fichier de verrou. La séparation des clés/volumes Docker et les privilèges RBAC ne sont pas fournis par `flock`.
+
+## 4. Invariants de sécurité et de non-régression
+
+- Inventorier **les vrais writers** de Core, Settings, Portfolio, MarketData/Fundamental et autres bases avant d'imposer une barrière. Un Engine sans ACK ne doit pas être ignoré pour accélérer une sauvegarde.
+- Aucun module d'initialisation pouvant créer une clé ne doit être chargé pendant un préflight lecture seule. **Absence de `client_master.key` avec données existantes = refus**, aucune génération automatique.
+- **Wallet totalement gelé** : aucune génération de `wallet_master.key`, migration, lecture de seed, test de déchiffrement d'un secret réel ou exécution de WalletService. Un snapshot futur doit prendre en compte l'existence de données historiques sans les interpréter dans ce chantier.
+- Le staging de fixtures est **non chiffré**, temporaire et fictif ; jamais exportable comme archive GEN-1. Une sauvegarde réelle future exigerait chiffrement, gestion des clés, permissions, tests de restauration et autorisation dédiée.
+- Toute tâche de sauvegarde doit rester **hors chemin critique** des Engines ; la coordination au moment du snapshot est exceptionnelle, mesurée et peut provoquer une courte pause contrôlée. Aucune opération cryptographique lourde par tick.
+- Échec d'un writer, timeout de lock, corruption, drift génération, manque d'espace ou mismatch clé => aucune archive complète publiée ; nettoyage borné de staging ; aucun contournement de RBAC.
+
+## 5. Critères restants avant autorisation de déployer
+
+- [x] Prototype coopératif sur fixtures, isolé sous `/tmp`, sans opération GEN-1.
+- [ ] Exécution GitHub Actions des tests de concurrence et de reprise confirmée.
+- [ ] Inventaire complet des écrivains métier de **chaque** base critique, y compris accès secondaires et migrations legacy.
+- [ ] Intégration d'un protocole `PREPARE/QUIESCED/RELEASE` ou équivalent à **tous** les chemins d'écriture, tests multiprocessus/multiconteneurs, crash/restart et rollback sur banc isolé.
+- [ ] Durées de blocage bornées, mesures de performance p95/p99 comparables, aucune perturbation significative des moteurs.
+- [ ] Sauvegarde chiffrée **réellement restaurable sur copie** avec données autorisées et clés originales, puis validation d'Overflow avant déploiement Docker DEBUG.
+
+**Conclusion :** la fixture démontre un mécanisme de coordination possible ; l'ensemble des bases de GEN-1 n'est **pas encore couvert**. Ce contrat ne change rien à l'installation existante.
