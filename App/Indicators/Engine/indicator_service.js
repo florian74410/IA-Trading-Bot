@@ -86,5 +86,5 @@ function route(req,res){var u=new URL(req.url,'http://'+HOST+':'+PORT),p=u.pathn
  if(req.method==='POST'&&p==='/cp/v1')return handleCP(req,res);
  return json(res,404,{ok:false,error:'Not found'});
 }
-var registrationHandle=null;var server=http.createServer(route);server.on('clientError',function(e,s){try{s.end('HTTP/1.1 400 Bad Request\r\n\r\n');}catch(x){}});server.listen(PORT,HOST,function(){console.log('IA-TB Indicator Engine v'+VERSION+' http://'+HOST+':'+PORT);registrationHandle=cpClient.maintainRegistration(registrationDescriptor(),{initialDelayMs:800});});
+var registrationHandle=null;var server=require('../../Core/Clients/auth21_engine_ingress').createServer(route);server.on('clientError',function(e,s){try{s.end('HTTP/1.1 400 Bad Request\r\n\r\n');}catch(x){}});server.listen(PORT,HOST,function(){console.log('IA-TB Indicator Engine v'+VERSION+' http://'+HOST+':'+PORT);registrationHandle=cpClient.maintainRegistration(registrationDescriptor(),{initialDelayMs:800});});
 function stop(){if(registrationHandle)registrationHandle.stop();server.close(function(){process.exit(0);});setTimeout(function(){process.exit(0);},1200);}process.on('SIGTERM',stop);process.on('SIGINT',stop);

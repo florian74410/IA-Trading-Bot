@@ -65,6 +65,15 @@ on:
       - 'App/Tools/Tests/auth21_ipc_boundary.test.js'
       - 'App/Tools/Tests/auth21_ipc_proof.test.js'
       - 'App/Core/Clients/auth21_service_boundary.js'
+      - 'App/Core/Clients/auth21_engine_ingress.js'
+      - 'App/Tools/Tests/auth21_real_engines_ingress.test.js'
+      - 'App/Indicators/Engine/indicator_service.js'
+      - 'App/Fundamental/Engine/fundamental_service.js'
+      - 'App/Liquidity/Engine/liquidity_service.js'
+      - 'App/MarketData/market_data_service.js'
+      - 'App/Strategy/Engine/strategy_service.js'
+      - 'App/Supervisor/supervisor_service.js'
+      - 'App/Core/Firewall/firewall_service.js'
       - 'App/Tools/Tests/auth21_service_boundary.test.js'
       - 'App/UI/Gateway/ui_service.js'
       - 'App/Core/Router/router.js'
@@ -150,6 +159,15 @@ on:
       - 'App/Tools/Tests/auth21_ipc_boundary.test.js'
       - 'App/Tools/Tests/auth21_ipc_proof.test.js'
       - 'App/Core/Clients/auth21_service_boundary.js'
+      - 'App/Core/Clients/auth21_engine_ingress.js'
+      - 'App/Tools/Tests/auth21_real_engines_ingress.test.js'
+      - 'App/Indicators/Engine/indicator_service.js'
+      - 'App/Fundamental/Engine/fundamental_service.js'
+      - 'App/Liquidity/Engine/liquidity_service.js'
+      - 'App/MarketData/market_data_service.js'
+      - 'App/Strategy/Engine/strategy_service.js'
+      - 'App/Supervisor/supervisor_service.js'
+      - 'App/Core/Firewall/firewall_service.js'
       - 'App/Tools/Tests/auth21_service_boundary.test.js'
       - 'App/UI/Gateway/ui_service.js'
       - 'App/Core/Router/router.js'
@@ -288,6 +306,8 @@ jobs:
         run: |
           npm --prefix App ci --no-audit --no-fund
           node -e "const p=require('./App/package.json');const lock=require('./App/package-lock.json');if(p.dependencies.argon2!=='0.45.1'||lock.packages[''].dependencies.argon2!=='0.45.1'||lock.packages['node_modules/argon2'].version!=='0.45.1')process.exit(1);if(typeof require('./App/node_modules/argon2').hash!=='function')process.exit(2)"
+      - name: Real Engine processes reject unauthorized HTTP CP1 Upgrade and CONNECT
+        run: node --test App/Tools/Tests/auth21_real_engines_ingress.test.js
       - name: Argon2id 64 MiB 3-pass calibration on CI runner (not GEN-1)
         run: |
           node - <<'NODE'

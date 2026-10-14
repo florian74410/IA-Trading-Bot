@@ -194,3 +194,27 @@
 **Critères indispensables avant de cocher l'intégration :** inventorier toutes les routes HTTP/WS/CP/1 de chaque moteur, brancher et tester un garde commun à l'entrée effective, vérifier identité de service et autorisation par opération/ownership, lier les écritures au corps exact, imposer l'anti-rejeu multi-processus, prouver une écriture DEBUG isolée avec le vrai Core/Router/Engine, auditer les protections des volumes, secrets et sauvegardes, mesurer p95/p99 et assurer rollback. Un middleware générique ne dispense jamais de la revue des autorisations métier propres à chaque Engine.
 
 **Règle de livraison :** ne plus confondre « contrat créé », « CI fixtures verte », « routes réellement câblées », « tests interservices validés » et « déploiement approuvé ». **Aucun nouveau Docker DEBUG sur GEN-1**, aucun Trading LIVE, aucune migration ni intervention Wallet sans validation explicite d'Overflow.
+
+### Validation locale des véritables entrées Engine — 15/10/2026
+
+`auth21_engine_ingress.js` est désormais monté à la création des serveurs
+Indicator, MarketData, Liquidity, Fundamental, Trading, Firewall, Strategy,
+Risk, Portfolio et Supervisor. En mode Auth21 DEBUG isolé, il refuse les
+requêtes avant tout dispatch legacy HTTP/CP1 et ferme aussi Upgrade et CONNECT.
+Le runtime hors de ce mode conserve son comportement existant.
+
+Validation locale sous Node 22.23.3 : **386/386 tests Node + 15/15 tests SQL
+Python réussis**, dont **11 nouveaux tests**. Dix tests lancent chacun le
+véritable script de service dans un processus distinct, sur copie temporaire
+sans données utilisateur, et vérifient par sockets les refus HTTP, identité
+forgée, CP1, WebSocket et CONNECT. Le onzième vérifie la conservation du
+handler legacy hors mode isolé. Cette suite est ajoutée au workflow P2.2.
+Ces nombres sont des résultats locaux ; la CI distante doit être consultée
+séparément sur le commit publié.
+
+**Limite explicite :** ce raccordement ferme les accès, il n'autorise encore
+aucun parcours métier. Il ne prouve ni les échanges autorisés Core/Router/Engines,
+ni l'isolation multiutilisateur, ni les sauvegardes interservices. Aucun service
+Kraken autonome n'est présent dans `App` à cette révision ; l'adaptateur Kraken
+est chargé par Trading. Les cases et les phases 2 à 6 restent ouvertes.
+Aucun déploiement, migration réelle ou accès à GEN-1 effectué.

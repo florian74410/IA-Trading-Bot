@@ -126,7 +126,7 @@ var cpAdapter=new CPAdapter({root:APP_ROOT,id:'marketdata',label:'Market Data Co
  'marketdata.registry.list':function(a){return{ok:true,items:registry.list(a.offset||0,a.limit||100,a.term||'')};},
  'marketdata.registry.query':function(a){return{ok:true,result:registry.query(a.action||'search',a.arguments||a.args||{})};}
 }});
-var srv=http.createServer(function(req,res){if(cpAdapter.handle(req,res))return;var u=new URL(req.url,'http://'+HOST+':'+PORT),p=u.pathname;
+var srv=require('../Core/Clients/auth21_engine_ingress').createServer(function(req,res){if(cpAdapter.handle(req,res))return;var u=new URL(req.url,'http://'+HOST+':'+PORT),p=u.pathname;
  if(req.method==='GET'&&p==='/health')return send(res,200,marketHealth());
  if(req.method==='GET'&&p==='/candles')return candles(u.searchParams.get('symbol')||'BTCUSD',u.searchParams.get('interval')||'1h',u.searchParams.get('limit')||300,u.searchParams.get('force')==='1',u.searchParams.get('exchange')||u.searchParams.get('source')||settings.defaultSource,function(e,o){if(e)return send(res,502,{ok:false,error:e.message});send(res,200,o);});
  send(res,404,{ok:false,error:'NOT_FOUND'});

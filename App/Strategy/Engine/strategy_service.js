@@ -30,7 +30,7 @@ var adapter=new Adapter({root:ROOT,id:'strategy',label:'Strategy Engine v2',port
  'strategy.resume':function(){state.mode='RUNNING';return{ok:true,mode:state.mode};},
  'strategy.reset_stats':function(){return{ok:true,stats:stats.reset()};}
  }});
-var server=http.createServer(function(req,res){if(adapter.handle(req,res))return;if(req.method==='GET'&&String(req.url).split('?')[0]==='/health')return send(res,200,health());return send(res,404,{ok:false,error:'NOT_FOUND'});});
+var server=require('../../Core/Clients/auth21_engine_ingress').createServer(function(req,res){if(adapter.handle(req,res))return;if(req.method==='GET'&&String(req.url).split('?')[0]==='/health')return send(res,200,health());return send(res,404,{ok:false,error:'NOT_FOUND'});});
 server.on('error',function(e){log('FATAL',e.message);process.exit(12);});
 server.listen(PORT,HOST,function(){log('START','Strategy Engine v2 port='+PORT+' protocol=CP/1 execution=INTENTION_ONLY');adapter.maintainRegistration({initialDelayMs:500,onResult:function(ok,e,o,state){if(!ok)log('CP_REGISTER',e&&e.message||'failed');else if(state.attempts===1)log('CP_REGISTER','OK');}});});
 function stop(){log('STOP','signal received');adapter.stopRegistration();server.close(function(){process.exit(0);});setTimeout(function(){process.exit(0);},1200);}
