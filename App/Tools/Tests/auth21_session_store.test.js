@@ -14,6 +14,8 @@ const {Auth21SessionStore}=require('../../Core/Clients/auth21_session_store');
 const {migrateFixture}=require('../CI/auth21_v3_migration_trial');
 const {LocalSnapshotWriter}=require('../../Core/Backup/snapshot_coordinator');
 const Kdf=require('../../Core/Clients/password_hasher_v2');
+const {Readable}=require('node:stream');
+const {createAuth21HttpHandler}=require('../../Core/Clients/auth21_http_boundary');
 
 const PASSWORD='FICTION_ONLY_auth_22$2030';
 const NOW=1900000000;
@@ -246,4 +248,48 @@ test('unchanged role or status do not revoke a valid session',async t=>{
  f.db.prepare("UPDATE clients SET status='ACTIVE' WHERE client_id='CL000001'").run();
  assert.ok(s.verifySession(r.token));
  assert.equal(f.db.prepare('SELECT security_version AS v FROM clients').get().v,previous);
+});
+
+
+/* Integration: actual native SQLite and Argon2id behind the real HTTP
+ * handler, without starting a TCP listener or mounting on legacy Core. */
+async function requestAuth21(handler,method,url,body,token){
+ const req=Readable.from(body===undefined?[]:[Buffer.from(JSON.stringify(body))]);
+ req.method=method;req.url=url;req.headers={};
+ if(body!==undefined)req.headers['content-type']='application/json';
+ if(token)req.headers.authorization='Bearer '+token;
+ const res={headersSent:false,writableEnded:false,
+  writeHead(status,headers){this.status=status;this.headers=headers;this.headersSent=true},
+  end(value){this.body=JSON.parse(value);this.writableEnded=true}};
+ await handler(req,res);
+ return res;
+}
+test('integrated HTTP Argon2id login issues hashed SQLite-backed token and revokes on logout',async t=>{
+ const f=prepare(t);add(f,'CL000001','ADMIN');
+ const session=await init(f);
+ const digest=await Kdf.hashNewPassword(PASSWORD);
+ f.db.prepare("UPDATE client_accounts SET password_algo='ARGON2ID', password_hash=?,password_salt='',password_iterations=0 WHERE client_id='CL000001'").run(digest);
+ const handler=createAuth21HttpHandler({sessions:session});
+ const a=await requestAuth21(handler,'POST','/auth21/login',{clientId:'CL000001',password:PASSWORD});
+ assert.equal(a.status,200);assert.equal(a.body.role,'ADMIN');
+ const row=f.db.prepare('SELECT session_hash FROM client_sessions').get();
+ assert.equal(row.session_hash,crypto.createHash('sha256').update(Buffer.from(a.body.token,'base64url')).digest('hex'));
+ const me=await requestAuth21(handler,'GET','/auth21/me',undefined,a.body.token);
+ assert.equal(me.status,200);assert.equal(me.body.clientId,'CL000001');
+ assert.equal((await requestAuth21(handler,'POST','/auth21/logout',undefined,a.body.token)).status,200);
+ assert.equal((await requestAuth21(handler,'GET','/auth21/me',undefined,a.body.token)).status,401);
+});
+test('integrated HTTP SQLite enforces identity isolation and invalidates role changes',async t=>{
+ const f=prepare(t);add(f,'CL000001','ADMIN');add(f,'CL000002','USER');
+ const session=await init(f),handler=createAuth21HttpHandler({sessions:session});
+ const a=await requestAuth21(handler,'POST','/auth21/login',{clientId:'CL000001',password:PASSWORD});
+ const u=await requestAuth21(handler,'POST','/auth21/login',{clientId:'CL000002',password:PASSWORD});
+ assert.equal(a.status,200);assert.equal(u.status,200);
+ assert.equal((await requestAuth21(handler,'GET','/auth21/me',undefined,u.body.token)).body.clientId,'CL000002');
+ assert.equal((await requestAuth21(handler,'GET','/auth21/me?clientId=CL000001',undefined,u.body.token)).status,404);
+ f.db.prepare("UPDATE client_accounts SET role='GUEST' WHERE client_id='CL000002'").run();
+ assert.equal((await requestAuth21(handler,'GET','/auth21/me',undefined,u.body.token)).status,401);
+ assert.equal((await requestAuth21(handler,'GET','/auth21/me',undefined,a.body.token)).status,200);
+ const fresh=await requestAuth21(handler,'POST','/auth21/login',{clientId:'CL000002',password:PASSWORD});
+ assert.equal(fresh.status,200);assert.equal(fresh.body.role,'GUEST');
 });
