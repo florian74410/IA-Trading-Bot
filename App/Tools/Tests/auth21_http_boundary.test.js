@@ -270,3 +270,18 @@ test('isolated Core gate accepts opt-in TLS browser mode, not arbitrary cookie b
  assert.equal(Object.hasOwn(res.body,'token'),false);
  assert.match(res.headers['Set-Cookie'],/^__Host-iatb21=/);
 });
+
+test('Core issues Router handshake proof only with authenticated bearer in explicit IPC trial',async()=>{
+ const {proofCodec}=require('../../Core/Clients/auth21_ipc_proof');
+ const codec=proofCodec({secret:Buffer.alloc(32,2)});
+ const x=fixture(),handler=createAuth21HttpHandler({sessions:x.sessions,ipcCodec:codec});
+ const req=(headers={})=>send(handler,{method:'POST',url:'/auth21/ipc/probe-proof',headers});
+ assert.equal((await req()).status,401);
+ const valid=await req({authorization:'Bearer '+VALID_TOKEN});
+ assert.equal(valid.status,200);
+ assert.equal(typeof valid.body.proof,'string');
+ const decoded=codec.verify(valid.body.proof,{audience:'router',operation:'shared.read',method:'GET'});
+ assert.equal(decoded.clientId,'CL000001');
+ assert.equal(codec.verify(valid.body.proof,{audience:'router',operation:'shared.read',method:'GET'}),null);
+ assert.equal((await send(x.handler,{method:'POST',url:'/auth21/ipc/probe-proof',headers:{authorization:'Bearer '+VALID_TOKEN}})).status,404);
+});
