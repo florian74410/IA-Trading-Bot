@@ -351,3 +351,29 @@ test('local OS gate and ADMIN bearer BOTH required to mutate role',async t=>{
  assert.equal(admin.changeRole(bearer,'CL000002','GUEST').changed,true);
  assert.equal(f.db.prepare("SELECT role FROM client_accounts WHERE client_id='CL000002'").get().role,'GUEST');
 });
+
+test('local ADMIN CLI dispatcher uses live ADMIN + OS gate, not forged command args',async t=>{
+ const {dispatchLocalAdmin}=require('../../Core/Clients/auth21_admin_cli_dispatch');
+ const {createLocalOperatorCheck}=require('../../Core/Clients/auth21_local_operator');
+ const f=setup(t);seed(f,'CL000001','ADMIN');seed(f,'CL000002','USER');
+ let uid=1001;
+ const allowed=createLocalOperatorCheck({allowedUid:1001,stdin:{isTTY:true,fd:0},
+  processUid:()=>uid,ttyStat:()=>({uid:1001,isCharacterDevice:()=>true})});
+ const {sessions}=await ready(f,allowed);
+ const store=new Auth21AdminStore({sessionStore:sessions,authorizeLocalOperator:allowed});
+ const adminToken=await token(sessions,'CL000001');
+ const call=(command,args=[])=>dispatchLocalAdmin({adminStore:store,adminToken,command,args});
+ assert.equal(call('admin-count').activeAdmins,1);
+ assert.equal(call('list').length,2);
+ for(const [cmd,args] of [
+  ['set-role',['CL000002','SUPERADMIN']],['set-role',['CL000002','ADMIN','extra']],
+  ['remove-login',['CL000001','yes']],['reset-password',['CL000002','secret']],
+  ['set-enabled',['CL000002','1']],['set-status',['CL000002','SUPERADMIN']]
+ ])assert.throws(()=>call(cmd,args),/AUTH21_CLI_/);
+ uid=1002;
+ assert.throws(()=>call('set-role',['CL000002','GUEST']),/AUTH21_LOCAL_OPERATOR_DENIED/);
+ uid=1001;
+ assert.equal(call('set-role',['CL000002','GUEST']).changed,true);
+ assert.equal(f.db.prepare("SELECT role FROM client_accounts WHERE client_id='CL000002'").get().role,'GUEST');
+ assert.throws(()=>call('remove-login',['CL000001']),/LAST_ADMIN|LAST_ACTIVE_ADMIN/i);
+});
