@@ -17,6 +17,14 @@ Le prototype P2.1 reste test-only. **P2.2 devra concevoir puis tester le mécani
 - **Tests inter-Engines en fin de développement :** conserver les tests de cohérence, d'isolation, de permissions, de crash/restart et de contournement **multi-Engines** pour une campagne complète à la fin de l'intégration Auth 2.1 (Phase 6) sur banc isolé, avant tout passage à la Phase 7. Jusqu'alors, P2.2 demeure **OUVERT**, même si ses composants sont codés et leurs tests unitaires réussissent.
 - **Aucun raccourci de sûreté :** une sauvegarde globale n'est pas autorisée ni qualifiée « cohérente » tant que les writers concernés ne sont pas réellement coordonnés et validés. ABORT/fail-closed en cas de writer inconnu ou non coopératif. Wallet et GEN-1 restent intouchés ; interdiction de déployer un nouveau Docker DEBUG maintenue.
 
+## Avancement d'implémentation — prototype isolé (14/10/2026)
+
+- **Ajouté :** `App/Core/Backup/snapshot_coordinator.js`, module Node 22 sans dépendance, **non instancié et non importé par les services actifs**. Aucun accès à une DB, au réseau, au Wallet, aux secrets ou à GEN-1.
+- **Contrat minimal :** allowlist d'écrivains connue, `prepare(epoch)` avec ACK `{epoch, writerId, pending:0}`, appel de capture uniquement après tous les ACK, puis `release(epoch)` ; `abort(epoch)` en cas d'échec. Refus d'un writer absent, inconnu ou sans acquittement ; état `BLOCKED` si la libération/annulation échoue.
+- **Vérification locale :** 10/10 tests unitaires Node 22 réussis avec callbacks simulés, sans moteurs ni fichiers persistants. Voir `App/Tools/Tests/snapshot_coordinator.test.js`, exécuté par `.github/workflows/auth-p22-coordinator-fixtures.yml` (résultat CI à vérifier séparément).
+- **Limites :** ce prototype ne fige **aucun véritable writer** et ne prouve ni la cohérence interservices, ni la restauration, ni le contrôle des writer/restarts ou les performances. Les `prepare` tardifs doivent respecter l'invalidation d'epoch après ABORT : à implémenter et tester dans chaque participant lors de l'intégration. **Aucune sauvegarde réelle n'est autorisée** par ce module.
+- **Prochaine étape :** intégrer le contrat de manière ciblée dans les writers critiques sur branche de conception, sans activer le système. Les tests complets multi-Engines restent prévus en Phase 6, avant la Phase 7.
+
 ## Registre des écrivains — couverture exigée
 
 Chaque base, fichier persistant, écriture d'initialisation ou migration doit disposer d'un enregistrement :
