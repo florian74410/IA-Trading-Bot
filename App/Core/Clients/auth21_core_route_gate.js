@@ -28,8 +28,10 @@ function createIsolatedCoreGate({sessions}={}){
 /** Attach native SQLite sessions to the Core-local DEBUG sandbox only.
  * Never auto-migrate or generate an encryption key. All other routes denied.
  */
-function openCoreAuthTrial({root,clientCrypto,snapshotGate}={}){
+function openCoreAuthTrial({root,clientCrypto,snapshotGate,env}={}){
  const fs=require('node:fs'),path=require('node:path');
+ const allowed=require('../Backup/auth21_core_local_trial_wiring').preflightEnv(env||process.env);
+ if(root!==allowed.root)throw Error('AUTH21_CORE_TRIAL_ROOT_MISMATCH');
  if(typeof root!=='string'||!clientCrypto||!snapshotGate)throw Error('AUTH21_CORE_TRIAL_REQUIRED');
  const dbFile=path.join(root,'userdata','Database','clients.sqlite');
  const keyFile=path.join(root,'userdata','Security','client_master.key');
