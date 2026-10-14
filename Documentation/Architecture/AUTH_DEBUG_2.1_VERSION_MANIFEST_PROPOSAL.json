@@ -1,8 +1,8 @@
 {
   "title": "IA-TB DEBUG 2.1 — Auth/version compatibility proposal (NOT active runtime config)",
-  "description": "Proposal only; must not be consumed by production until version contract P1.6 approved and runtime validators implemented.",
+  "description": "P1.6 design approved by Overflow 2026-10-14; documentation only. NOT a runtime configuration; exact signature and key rotation remain subject to implementation/benchmark.",
   "contract_id": "iatb.auth-compatibility/1",
-  "status": "PROPOSAL_UNAPPROVED",
+  "status": "DESIGN_APPROVED_NOT_ACTIVE",
   "environment": "DEBUG",
   "versions": {
     "auth_schema_version": 1,
@@ -54,7 +54,7 @@
       "nonce",
       "key_id"
     ],
-    "recommended_signature_candidate": "Ed25519 Core-only signing, Router/Engines verify public key; benchmark before finalizing",
+    "recommended_signature_candidate": "Ed25519 candidate for Core-only signing and public-key Router/Engines validation; compare benchmark vs truly isolated HMAC; not finalized.",
     "machine_layer_preserved": "CP/1",
     "do_not_accept_unverified_browser_role": true,
     "replay_protection_for_mutations": true
@@ -82,5 +82,6 @@
     "forbid_password_hash_per_market_tick": true,
     "forbid_permission_shortcut": true
   },
-  "manifest_format": "iatb.auth-compatibility-proposal-json/1"
+  "manifest_format": "iatb.auth-compatibility-proposal-json/1",
+  "design_approved_date": "2026-10-14"
 }

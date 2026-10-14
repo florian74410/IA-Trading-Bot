@@ -1,6 +1,6 @@
 # IA-TB DEBUG 2.1 — P1.6 — Versionnement Auth, compatibilité et rollback
 
-> **Statut :** PROPOSITION DE CONTRAT (revue utilisateur attendue avant de cocher P1.6).  
+> **Statut : CONTRAT DE CONCEPTION APPROUVÉ par Overflow le 14/10/2026 (P1.6)** ; format concret des preuves, signature définitive, migrations et tests de compatibilité à implémenter/valider aux phases suivantes.  
 > **Portée :** modèle d'API, de données et d'autorisation pour la future implémentation ; **aucune migration, activation Auth, clé ni configuration Docker n'est exécutée**.  
 > **Source d'audit :** branche `fix/v2.0.1-debug`, `App/Core/Clients/migrations/{001_clients_v1.sql,002_client_accounts_v1.sql}`, `client_repository.js`, `communication_protocol_v1.js`, `component_cp1_adapter.js`, `Core/Router/router.js`, `ui_permissions.js` ; voir aussi [P1.4](AUTH_DEBUG_2.1_TRUST_BOUNDARIES.md) et [P1.5](AUTH_DEBUG_2.1_BACKUP_RESTORE_CONTRACT.md).
 
@@ -130,7 +130,9 @@ Les tests sont **spécifiés, pas exécutés**. Ils seront implémentés avec fi
 - [x] Audit des numéros existants (clients 001/002, CP/1, rôles legacy, UI policy) effectué.
 - [x] Contrat de versions et matrice de compatibilité proposés ; distinction schéma/protocole/permissions explicite.
 - [x] Procédure de migration/rollback et tests négatifs décrits, avec gel Wallet et préservation des données/performances.
-- [ ] **Revue et approbation du contrat par Overflow** ; ajustement éventuel avant cochage P1.6.
+- [x] **Revue et approbation des règles de versionnage et de compatibilité par Overflow le 14/10/2026** ; options de signature et détail d'API encore candidats et à benchmarker.
 - [ ] Implémentation des migrations, validations cryptographiques, tests de compatibilité et benchmarks — **Phases 2 à 7 seulement**.
 
-**Conclusion : P1.6 en revue.** Aucun changement de runtime, de version CP/1 existante, de base GEN-1, de règle Contabo ni de wallet pendant cette étape.
+**Contrat de contrôle métier complémentaire :** [P1.7 — RBAC / propriété `clientId`](AUTH_DEBUG_2.1_RBAC_CONTRACT.md) détaille l'application de `permissions_version` aux 212 routes inventoriées et aux 77 actions UI-CP/1 ; proposition distincte en attente de validation, tests prévus sur banc isolé.
+
+**Conclusion : P1.6 validé au niveau du contrat de conception.** Aucun changement runtime, CP/1, base GEN-1, Contabo ou wallet ; tests/migrations et performance restent des jalons obligatoires avant activation.

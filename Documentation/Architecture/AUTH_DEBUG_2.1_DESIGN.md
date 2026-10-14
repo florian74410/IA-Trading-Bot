@@ -8,9 +8,13 @@
 
 Les quatre principes Gateway / Core Auth / Router-Engines / fail-closed et la contrainte de **latence de sécurité minimale** sont approuvés en principe. Le détail de conception est dans le [Trust Boundary Contract](AUTH_DEBUG_2.1_TRUST_BOUNDARIES.md), accompagné du [plan de performance](../Security/AUTH_DEBUG_2.1_SECURITY_PERFORMANCE.md). **P1.4 est validé comme contrat d'architecture et diagnostic réseau** : [relevé GEN-1](../Security/AUTH_DEBUG_2.1_NETWORK_BOUNDARY_AUDIT.md) effectué le 14/10/2026 (zéro port Docker publié, services IA-TB en loopback dans namespace partagé). Le versionnage du protocole, les tests Auth/ownership et les benchmarks restent des jalons ultérieurs ; aucun changement runtime ou réseau effectué.
 
-## Versionnage indépendant des contrats (P1.6 — en revue)
+## Versionnage indépendant des contrats (P1.6 — approuvé en conception)
 
-Les migrations clients historiques `001` et `002` et CP/1 restent fonctionnellement inchangés. L'évolution du système Auth s'appuiera sur les versions **distinctes** `auth_schema_version`, `auth_protocol_version` et `permissions_version`, plus le compteur individuel `clients.security_version`. Voir [contrat de versionnage et compatibilité](AUTH_DEBUG_2.1_VERSION_COMPATIBILITY.md) et [manifest proposé (non actif)](AUTH_DEBUG_2.1_VERSION_MANIFEST_PROPOSAL.json). **P1.6 est à approuver**, aucun runtime modifié. Les données et clés wallets demeurent hors du périmètre.
+Les migrations clients historiques `001` et `002` et CP/1 restent fonctionnellement inchangés. L'évolution du système Auth s'appuiera sur les versions **distinctes** `auth_schema_version`, `auth_protocol_version` et `permissions_version`, plus le compteur individuel `clients.security_version`. Voir [contrat de versionnage et compatibilité](AUTH_DEBUG_2.1_VERSION_COMPATIBILITY.md) et [manifest proposé (non actif)](AUTH_DEBUG_2.1_VERSION_MANIFEST_PROPOSAL.json). **P1.6 est approuvé comme architecture**, aucun runtime modifié ; choix définitifs de cryptographie et tests de compatibilité restent pour l'implémentation. Les données et clés wallets demeurent hors du périmètre.
+
+## Matrice RBAC et propriété des données (P1.7 — proposition)
+
+Après validation de P1.6, la cible RBAC est détaillée dans le [contrat ADMIN/USER/GUEST](AUTH_DEBUG_2.1_RBAC_CONTRACT.md), la [matrice JSON non active des 212 entrées](AUTH_DEBUG_2.1_RBAC_MATRIX_PROPOSAL.json) (dont 77 actions CP/1 UI) et les [48 cas négatifs](../Security/AUTH_DEBUG_2.1_RBAC_NEGATIVE_TEST_PLAN.md). Distinction impérative : PUBLIC partagé assaini, ressources OWNER liées au `clientId` de session, configuration GLOBAL réservée à ADMIN et principal machine CP/1 distinct. **P1.7 est en attente d'Overflow**, aucun code ou donnée modifié. Wallet gelé et ordres LIVE désactivés.
 
 ## Décisions approuvées
 

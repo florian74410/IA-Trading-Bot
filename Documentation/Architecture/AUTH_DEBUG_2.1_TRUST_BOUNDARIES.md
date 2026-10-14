@@ -140,7 +140,8 @@ La révocation et le verrouillage côté serveur sont prioritaires sur le confor
 - [x] Contrat de flux, sources de vérité et contrôles anti-usurpation documentés.
 - [x] Quatre principes et priorité performance validés par Overflow ; cette rédaction détaille leur conception. Les modalités exactes des preuves cryptographiques et du protocole restent à approuver au jalon de versionnage.
 - [x] Relevé **en lecture seule** du 14/10/2026 reçu : zéro port Docker publié, 13 conteneurs dans le namespace Router, douze écouteurs IA-TB sur loopback interne ; [rapport réseau](../Security/AUTH_DEBUG_2.1_NETWORK_BOUNDARY_AUDIT.md).
-- [ ] Validation du schéma d'autorisation et du protocole versionné au jalon P1.6 (y compris tests négatifs). Un [contrat de compatibilité](AUTH_DEBUG_2.1_VERSION_COMPATIBILITY.md) est désormais proposé, **sans validation utilisateur ni tests d'implémentation**.
+- [x] Contrat de versionnage P1.6 **approuvé par Overflow le 14/10/2026** : voir [compatibilité Auth](AUTH_DEBUG_2.1_VERSION_COMPATIBILITY.md). Formats cryptographiques détaillés et tests d'implémentation restant à valider aux phases techniques.
+- [ ] Matrice RBAC P1.7 [proposée](AUTH_DEBUG_2.1_RBAC_CONTRACT.md) avec [plan de tests négatifs](../Security/AUTH_DEBUG_2.1_RBAC_NEGATIVE_TEST_PLAN.md) : accord utilisateur en attente.
 - [ ] Avant mise en ligne (Phase 7) : tests réels d'authN/AuthZ/RBAC/ownership, d'isolation des clés et des performances sur version implémentée.
 
 **Statut final : P1.4 validé pour la conception et la topologie actuelle.** Aucun mécanisme Auth 2.1 nouveau n'a encore été implémenté ni benchmarké. Les contrôles d'identité, d'isolation des clés, les refus 401/403 et l'évaluation du pare-feu Contabo restent obligatoires aux jalons d'implémentation et d'ouverture publique.
