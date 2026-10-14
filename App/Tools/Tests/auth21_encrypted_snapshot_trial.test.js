@@ -195,3 +195,19 @@ test('invalid transport key length fails closed',async t=>{
  await assert.rejects(()=>captureEncryptedFixture({...args(f),archiveKey:crypto.randomBytes(16)}),
   /AUTH21_BUNDLE_TRANSPORT_KEY_REQUIRED/);
 });
+
+test('already tampered source identity is refused before sealed archive creation',async t=>{
+ const f=fixture(t);seed(f);
+ f.db.prepare("UPDATE clients SET first_name_enc='BAD_AEAD_CIPHERTEXT' WHERE client_id='CL000001'").run();
+ await assert.rejects(()=>captureEncryptedFixture(args(f)),/AUTH21_RESTORE_KEY_NOT_COMPATIBLE/);
+ assert.equal(fs.existsSync(archived(f)),false);
+ assert.equal(f.coordinator.state,'IDLE');
+ assert.equal(f.gate.heldEpoch,null);
+});
+test('valid hex but wrong client master key cannot produce authenticated archive',async t=>{
+ const f=fixture(t);seed(f);
+ fs.writeFileSync(f.keyFile,crypto.randomBytes(32).toString('hex'),{mode:0o600});
+ await assert.rejects(()=>captureEncryptedFixture(args(f)),/AUTH21_RESTORE_KEY_NOT_COMPATIBLE/);
+ assert.equal(fs.existsSync(archived(f)),false);
+ assert.equal(f.gate.heldEpoch,null);
+});
