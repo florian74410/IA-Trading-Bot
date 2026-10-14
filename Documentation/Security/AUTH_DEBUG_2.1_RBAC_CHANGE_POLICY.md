@@ -55,7 +55,7 @@ performance: no password hash per request; benchmark latency p95
 
 ## 4. Transition sans perturber IA-TB
 
-- **Dès maintenant :** exigences documentées, checklist de PR ajoutée à GitHub, test de couverture statique initial pour les **77 actions UI Router**. Aucun changement de permissions réelles sur GEN-1 ou de trading.
+- **Dès maintenant :** exigences documentées, checklist de PR ajoutée à GitHub, test de couverture statique initial pour les **77 actions UI Router** et **128 déclarations HTTP explicites** Core/Gateway/Router ; **vérifié sur GitHub Actions**, non exhaustif pour routes dynamiques. Aucun changement de permissions réelles sur GEN-1 ou de trading.
 - **Avant premier merge d'Auth 2.1 :** linter source robuste pour toutes les familles de routes, vérification de chaque classification + tests automatisés et statut GitHub obligatoire pour merges vers DEBUG/RELEASE.
 - **Avant activation du nouveau mode Auth** : moteur RBAC, sessions et `clientId` appliqués à toutes les frontières, tests d'intrusion IDOR et des 48 cas négatifs, et tests des ajouts. Les nouveaux endpoints doivent rester **inaccessibles** avant implémentation de leur garde.
 - **Wallet :** les permissions futures pour adresses, signatures, prêts, earn et transferts exigent un projet spécifique ; **aucune modification Wallet dans Auth DEBUG 2.1**.
@@ -65,7 +65,8 @@ performance: no password hash per request; benchmark latency p95
 
 - [x] Règle de gouvernance demandée et approuvée par Overflow.
 - [x] Inventaire de référence 212 entrées / 77 actions et refus par défaut documentés.
-- [ ] CI initial vérifié sur GitHub, puis configuré en contrôle de branche obligatoire selon l'approbation d'Overflow.
+- [x] **CI initial vérifié sur GitHub Actions** : job `Verify static RBAC route & action coverage` en succès sur commit `185d19c` (run [`38494625230`](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38494625230)). Couverture : 128 routes HTTP explicites, 77 actions Router et synchronisation avec 212 entrées déclarées ; auto-tests d'ajouts non autorisés réussis.
+- [ ] Configurer ce statut comme **contrôle requis** via les protections de branche GitHub ; tant que ce réglage n'est pas réalisé, un succès de workflow n'empêche pas à lui seul un merge manuel.
 - [ ] Scanner complet des routes dynamiques et tests automatisés de toutes les classes de permissions.
 - [ ] Tests sur le runtime Auth 2.1 réel et performance ; sans cela la matrice est **conception uniquement**.
 
