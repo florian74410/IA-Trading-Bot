@@ -76,6 +76,8 @@ Commandes cibles : list ; create --role admin|user|guest ; role ; enable ; disab
 
 Les mots de passe sont demandés par invite TTY masquée (ni argument shell, ni fichier temporaire en clair, ni logs). La suppression d'un client ne supprime jamais par défaut ses wallets ou clés ; un administrateur ne doit pas pouvoir retirer le dernier ADMIN actif. Les procédures de récupération d'accès restent privées via SSH, jamais par URL de secours publique.
 
+**Décision P1.5 (14/10/2026) — conserver l'existant et isoler :** ne pas refondre les services stables ; le nouveau système Auth réduit progressivement l'accès aux volumes/identités OS des services avec validations et rollback. Les données wallet historiques restent inchangées ; la clé `wallet_master.key` étant absente sur le GEN-1 audité, **ne pas la créer**. Le modèle Wallet sera éventuellement redessiné dans un autre chantier, sans modification de clés pendant Auth 2.1.
+
 ## Wallets — report assumé
 
 - Le code actuel associe les wallets à clientId, mais la clé AES du serveur peut déchiffrer leurs secrets : **pas de confidentialité cryptographique vis-à-vis de l'admin VPS** aujourd'hui.

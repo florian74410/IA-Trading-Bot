@@ -72,10 +72,10 @@ Le code source et le rapport précédent ne suffisent pas à vérifier l'**UID/G
 - [x] Risques de création silencieuse de clés, dualité des journaux et sauvegarde en ligne documentés.
 - [x] Contrat de sauvegarde/restauration rédigé.
 - [x] Relevé distant OS/Docker du 14/10/2026 examiné : 13/13 conteneurs UID 1001:1001, rootfs RO et cinq volumes RW ; modes et présences des fichiers relevés (voir §6).
-- [ ] Validation utilisateur des choix et des risques avant case P1.5.
+- [x] Overflow valide le 14/10/2026 le contrat : conserver les protections fonctionnelles, isoler progressivement les services et ne toucher à aucune clé ou logique wallet pendant le chantier Auth.
 - [ ] **Lors des Phases 2 et 7** seulement : snapshots réels, restauration sur copie, tests de rollback, puis déploiement conditionnel ; **ne pas les faire sur GEN-1 durant P1.5**.
 
-**État :** P1.5 **non coché** : revue et diagnostic réels terminés, accord final d'Overflow sur le contrat et les réserves encore attendu.
+**État : P1.5 validé au niveau de la conception et du diagnostic réel**, conformément à la décision d'Overflow du 14/10/2026. Les sauvegardes réelles, restaurations, conversions de clés et modifications de montages restent hors périmètre de cette validation. **Wallet : aucun changement**, la clé wallet absente reste dans son état actuel.
 ---
 
 ## 6. Réconciliation : permissions et montages réellement actifs sur GEN-1 (14 octobre 2026)

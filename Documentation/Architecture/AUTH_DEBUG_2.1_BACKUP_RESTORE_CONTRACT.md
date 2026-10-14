@@ -108,7 +108,9 @@ Le [diagnostic GEN-1 du 14/10/2026](../Security/AUTH_DEBUG_2.1_STORAGE_AUDIT.md#
 - [x] Risques de clés, wallets legacy, identités et liens logiques identifiés.
 - [x] Stratégie de sauvegarde/reprise/rollback sur copies spécifiée, coûts/performances considérés.
 - [x] Permissions et montages réels GEN-1 du 14/10/2026 inspectés sans lire les secrets.
-- [ ] Choix du contrat approuvé par Overflow.
-- [ ] Case P1.5 cochée dans la checklist canonique uniquement après contrôles précédents.
+- [x] Overflow approuve le 14/10/2026 la stratégie de sauvegarde et la correction d'isolation interservices, avec conservation de ce qui fonctionne déjà et gel du chantier Wallet.
+- [x] P1.5 coché après revue du rapport réel et approbation du contrat ; mise en œuvre et restauration à tester plus tard.
+
+**Décision spécifique Wallet (14/10/2026) :** pas de nouvelle clé wallet et aucune opération de génération, import, conversion, rotation, migration, suppression, déchiffrement ou restauration de secret wallet dans DEBUG 2.1 Auth. Préserver les références existantes ; les futures évolutions du modèle Wallet nécessiteront un projet et une autorisation distincts. Le plan de sauvegarde couvre la conservation des fichiers déjà présents, sans toucher aux contenus ni créer de clé absente.
 
 **Implémentation et preuve de restauration réelle (Phases 2 et 7) :** toute écriture/sauvegarde/reprise sur GEN-1 requiert une autorisation séparée. Les prototypes et leurs tests devront fonctionner sur DB factices ou copies isolées.
