@@ -27,6 +27,10 @@ function requireFixtureKey(root,keyFile){
  if(typeof keyFile!=='string'||!path.isAbsolute(keyFile))throw Error('AUTH21_KEY_PATH_INVALID');
  const candidate=path.resolve(keyFile);
  if(!candidate.startsWith(home+path.sep))throw Error('AUTH21_KEY_OUTSIDE_FIXTURE');
+ // Check canonical path as well: a symlink in a parent directory could
+ // otherwise route the apparent fixture key to an unrelated secret outside.
+ const canonical=fs.realpathSync(candidate);
+ if(!canonical.startsWith(home+path.sep))throw Error('AUTH21_KEY_OUTSIDE_FIXTURE');
  const item=fs.lstatSync(candidate);
  if(!item.isFile()||item.isSymbolicLink())throw Error('AUTH21_KEY_FILE_INVALID');
  if((item.mode&0o077)!==0)throw Error('AUTH21_KEY_PERMISSIONS_UNSAFE');
