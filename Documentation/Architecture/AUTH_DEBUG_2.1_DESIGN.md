@@ -6,7 +6,7 @@
 
 ## Contrat de confiance et latence (P1.4)
 
-Les quatre principes Gateway / Core Auth / Router-Engines / fail-closed et la contrainte de **latence de sécurité minimale** sont approuvés en principe. Le détail de conception est dans le [Trust Boundary Contract](AUTH_DEBUG_2.1_TRUST_BOUNDARIES.md), accompagné du [plan de performance](../Security/AUTH_DEBUG_2.1_SECURITY_PERFORMANCE.md). **P1.4 reste en cours** : revoir le contrat, vérifier les interfaces et namespaces réels, et valider ultérieurement les benchmarks ; aucun changement réseau/runtime lors de la documentation.
+Les quatre principes Gateway / Core Auth / Router-Engines / fail-closed et la contrainte de **latence de sécurité minimale** sont approuvés en principe. Le détail de conception est dans le [Trust Boundary Contract](AUTH_DEBUG_2.1_TRUST_BOUNDARIES.md), accompagné du [plan de performance](../Security/AUTH_DEBUG_2.1_SECURITY_PERFORMANCE.md). **P1.4 est validé comme contrat d'architecture et diagnostic réseau** : [relevé GEN-1](../Security/AUTH_DEBUG_2.1_NETWORK_BOUNDARY_AUDIT.md) effectué le 14/10/2026 (zéro port Docker publié, services IA-TB en loopback dans namespace partagé). Le versionnage du protocole, les tests Auth/ownership et les benchmarks restent des jalons ultérieurs ; aucun changement runtime ou réseau effectué.
 
 ## Décisions approuvées
 
