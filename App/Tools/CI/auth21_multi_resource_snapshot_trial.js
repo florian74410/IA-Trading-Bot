@@ -266,8 +266,12 @@ function restoreMultiFixture({root,archiveFile,archiveKey}={}){
   let checks=0;
   for(const name of Object.keys(DBFILES)){
    const restored=inside(dest,DBFILES[name]);
-   const db=new Database(restored,{readonly:true,fileMustExist:true});
+   // Normalize ONLY the recovered scratch DB: WAL-mode serialized images
+   // otherwise create sidecar files when opened. Source DB is never altered.
+   const db=new Database(restored,{fileMustExist:true});
    try{
+    db.pragma('journal_mode=DELETE');
+    db.pragma('foreign_keys=ON');
     if(db.pragma('integrity_check',{simple:true})!=='ok'||
        db.pragma('foreign_key_check').length)refuse('AUTH21_MULTI_RESTORED_DB_BAD');
     checks++;
