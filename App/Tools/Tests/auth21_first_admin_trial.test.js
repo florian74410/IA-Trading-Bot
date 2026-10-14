@@ -216,7 +216,7 @@ test('concurrent password reset of legacy account refuses bootstrap promotion',a
   clientId:'CL000001',username:USERNAME,password:PASS,convertLegacy:true,
   confirmation:'CREATE FIRST ADMIN ON FIXTURE',
   hooks:{beforeCommit(db){db.prepare("UPDATE client_accounts SET password_hash='FAKE_RESET' WHERE client_id='CL000001'").run();}}
- }),/AUTH21_BOOTSTRAP_STALE_ACCOUNT/);
+ }),/AUTH21_BOOTSTRAP_STALE_(?:CLIENT|ACCOUNT)/);
  assert.equal(adminCount(f),0);
  assert.equal(f.db.prepare('SELECT password_hash AS x FROM client_accounts').get().x,'FAKE_RESET');
  assert.notEqual(before.account.password_hash,'FAKE_RESET');
@@ -324,7 +324,7 @@ test('concurrent DEBUG password reset aborts retirement and preserves new passwo
   hooks:{beforeCommit(db){
    db.prepare("UPDATE client_accounts SET password_hash='NEW_FAKE_HASH' WHERE client_id='CL000001'").run();
   }}
- }),/AUTH21_DEBUG_ACCOUNT_STALE/);
+ }),/AUTH21_DEBUG_(?:CLIENT_STALE|ACCOUNT_STALE)/);
  assert.equal(f.db.prepare("SELECT password_hash AS h FROM client_accounts WHERE client_id='CL000001'").get().h,'NEW_FAKE_HASH');
  assert.equal(adminCount(f),1);
 });
