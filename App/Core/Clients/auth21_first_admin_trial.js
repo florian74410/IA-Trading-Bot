@@ -217,6 +217,7 @@ class Auth21FirstAdminTrial {
    throw Error('AUTH21_DEBUG_PROVENANCE_UNVERIFIED');
   if(this._adminCount()<1)throw Error('AUTH21_DEBUG_FIRST_ADMIN_REQUIRED');
   const original=this.db.prepare('SELECT password_hash AS digest,updated_at AS updatedAt,enabled,username_enc AS usernameEnc,role FROM client_accounts WHERE client_id=?').get(targetClientId);
+  const originalClient=this.db.prepare('SELECT * FROM clients WHERE client_id=?').get(targetClientId);
   this._writable();
   const backupFile=await this._backup('pre-legacy-debug-'+targetClientId+'.sqlite');
   if(hooks&&typeof hooks.beforeCommit==='function')await hooks.beforeCommit(this.db);
@@ -230,6 +231,9 @@ class Auth21FirstAdminTrial {
     throw Error('AUTH21_DEBUG_PROVENANCE_CHANGED');
    if(this._adminCount()<1)throw Error('AUTH21_DEBUG_FIRST_ADMIN_REQUIRED');
    const current=this.db.prepare('SELECT password_hash AS digest,updated_at AS updatedAt,enabled,username_enc AS usernameEnc,role FROM client_accounts WHERE client_id=?').get(targetClientId);
+   const currentClient=this.db.prepare('SELECT * FROM clients WHERE client_id=?').get(targetClientId);
+   if(!currentClient||Object.keys(originalClient).some(key=>originalClient[key]!==currentClient[key]))
+    throw Error('AUTH21_DEBUG_CLIENT_STALE');
    if(!current||Object.keys(original).some(key=>original[key]!==current[key]))
     throw Error('AUTH21_DEBUG_ACCOUNT_STALE');
    const deleted=this.db.prepare([
