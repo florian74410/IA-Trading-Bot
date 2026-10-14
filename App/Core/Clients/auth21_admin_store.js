@@ -26,6 +26,7 @@ class Auth21AdminStore {
   for(const name of [
    'auth21_last_admin_account_update','auth21_last_admin_account_delete',
    'auth21_last_admin_client_update','auth21_last_admin_client_delete',
+   'auth21_last_admin_account_replace','auth21_last_admin_client_replace',
    'auth21_account_security_invalidation','auth21_client_status_invalidation'
   ]){
    if(!this.db.prepare("SELECT 1 FROM sqlite_master WHERE type='trigger' AND name=?").get(name))
