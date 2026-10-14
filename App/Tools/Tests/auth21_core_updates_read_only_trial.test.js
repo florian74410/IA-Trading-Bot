@@ -15,7 +15,7 @@ function root(t){
  return {dir,updates:path.join(dir,'Updates'),runtime:path.join(dir,'Runtime'),
   userdata:path.join(dir,'UserData')};
 }
-function child(f,code){
+function child(f,code,{pathsReadOnly=true}={}){
  const lines=[
   'const fs=require("node:fs"),path=require("node:path");',
   'const UpdateManager=require('+JSON.stringify(managerPath)+');',
@@ -24,7 +24,7 @@ function child(f,code){
  ];
  const r=spawnSync(process.execPath,['-e',lines.join('\n')+'\n'+code],{
   timeout:5000,encoding:'utf8',
-  env:{...process.env,IATB_PATHS_PREFLIGHT_READONLY:'1',
+  env:{...process.env,IATB_PATHS_PREFLIGHT_READONLY:pathsReadOnly?'1':'0',
    IATB_RUNTIME_ROOT:f.runtime,IATB_DATA_ROOT:f.userdata,
    IATB_UPDATES_ROOT:f.updates,IATB_ANNEX_ROOT:path.join(f.dir,'annex'),
    IATB_STATE_ROOT:path.join(f.dir,'legacy')}
@@ -86,4 +86,17 @@ test('server injects readOnlyTrial into both update components during Core trial
  const s=fs.readFileSync(serverPath,'utf8');
  assert.ok((s.match(/readOnlyTrial:!!AUTH21_LOCAL_WRITERS/g)||[]).length>=2);
  assert.match(s,/function installAIUpdate\(build,cb\)\{if\(AUTH21_LOCAL_WRITERS\)return cb\(new Error\('AUTH21_UPDATES_READ_ONLY'\)\)/);
+});
+
+test('historical update initialization still creates only synthetic update directories without opt-in flag',t=>{
+ const f=root(t);
+ const r=child(f,'const u=new UpdateManager(fixture,"2.1");'+
+  'const b=new AIUpdateBuilder(fixture);'+
+  'console.log(JSON.stringify({readOnly:u.readOnlyTrial,builder:b.readOnlyTrial,'+
+  'history:fs.existsSync(u.historyFile),generated:fs.existsSync(b.dir)}));',
+  {pathsReadOnly:false});
+ assert.equal(r.readOnly,false);assert.equal(r.builder,false);
+ assert.equal(r.history,true);assert.equal(r.generated,true);
+ assert.equal(fs.existsSync(path.join(f.updates,'update_history.dat')),true);
+ assert.equal(fs.existsSync(path.join(f.updates,'AI-Generated')),true);
 });
