@@ -158,3 +158,25 @@ test('Core server default mode does not instantiate or expose trial coordinator'
  assert.match(src,/AUTH21_LOCAL_WRITERS=AUTH21_LOCAL_TRIAL\?AUTH21_LOCAL_TRIAL\.createTrial\(process\.env\):null/);
  assert.equal(src.includes("'/api/auth21/snapshot'"),false);
 });
+
+test('native Auth21 Core bridge refuses absent sandbox and never creates SQLite files',t=>{
+ const f=fixture(t);
+ const {openCoreAuthTrial}=require('../../Core/Clients/auth21_core_route_gate');
+ assert.throws(()=>openCoreAuthTrial({root:f.root,env:{...f.env,IATB_DEBUG_MODE:'0'}}),
+  /AUTH21_CORE_LOCAL_TRIAL_UNSAFE/);
+ assert.equal(fs.existsSync(path.join(f.root,'userdata')),false);
+});
+test('native Auth21 Core bridge refuses wrong sandbox root before inspecting credentials',t=>{
+ const f=fixture(t);
+ const {openCoreAuthTrial}=require('../../Core/Clients/auth21_core_route_gate');
+ assert.throws(()=>openCoreAuthTrial({root:'/tmp/unrelated',env:f.env}),
+  /AUTH21_CORE_TRIAL_ROOT_MISMATCH/);
+ assert.equal(fs.existsSync(path.join(f.root,'userdata')),false);
+});
+test('native Auth21 bridge rejects missing original database without generating a replacement key',t=>{
+ const f=fixture(t);
+ const {openCoreAuthTrial}=require('../../Core/Clients/auth21_core_route_gate');
+ assert.throws(()=>openCoreAuthTrial({root:f.root,env:f.env,clientCrypto:{keyFile:'NONE'},snapshotGate:{assertWritable(){}}}),
+  /ENOENT/);
+ assert.equal(fs.existsSync(path.join(f.root,'userdata')),false);
+});
