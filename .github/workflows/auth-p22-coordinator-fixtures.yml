@@ -57,6 +57,7 @@ on:
       - 'App/Core/Clients/auth21_core_route_gate.js'
       - 'App/Tools/Tests/auth21_http_boundary.test.js'
       - 'App/Core/Clients/auth21_admin_store.js'
+      - 'App/Core/Clients/auth21_local_operator.js'
       - 'App/Tools/Tests/auth21_admin_store.test.js'
       - 'App/Core/Clients/auth21_first_admin_trial.js'
       - 'App/Tools/Tests/auth21_first_admin_trial.test.js'
@@ -118,6 +119,7 @@ on:
       - 'App/Core/Clients/auth21_http_boundary.js'
       - 'App/Tools/Tests/auth21_http_boundary.test.js'
       - 'App/Core/Clients/auth21_admin_store.js'
+      - 'App/Core/Clients/auth21_local_operator.js'
       - 'App/Tools/Tests/auth21_admin_store.test.js'
       - 'App/Core/Clients/auth21_first_admin_trial.js'
       - 'App/Tools/Tests/auth21_first_admin_trial.test.js'
@@ -190,6 +192,7 @@ jobs:
           node --check App/Core/Clients/auth21_core_route_gate.js
           node --check App/Tools/Tests/auth21_http_boundary.test.js
           node --check App/Core/Clients/auth21_admin_store.js
+          node --check App/Core/Clients/auth21_local_operator.js
           node --check App/Tools/Tests/auth21_admin_store.test.js
           node --check App/Core/Clients/auth21_first_admin_trial.js
           node --check App/Tools/Tests/auth21_first_admin_trial.test.js
