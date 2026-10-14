@@ -84,6 +84,36 @@ WHEN EXISTS (SELECT 1 FROM client_accounts a WHERE a.client_id=OLD.client_id
 BEGIN SELECT RAISE(ABORT,'LAST_ACTIVE_ADMIN_REQUIRED'); END;
 
 
+-- SQLite INSERT OR REPLACE can silently delete a conflicting row without
+-- invoking DELETE triggers (recursive_triggers is normally OFF). BEFORE INSERT
+-- protects the *last* live ADMIN against PK or UNIQUE replacement bypasses.
+-- This deliberately rejects legacy UPSERT of the final ADMIN, which must use
+-- an explicitly authorized UPDATE path after Auth 2.1 integration.
+CREATE TRIGGER auth21_last_admin_account_replace
+BEFORE INSERT ON client_accounts
+WHEN (SELECT COUNT(*) FROM client_accounts a JOIN clients c ON c.client_id=a.client_id
+      WHERE a.role='ADMIN' AND a.enabled=1 AND c.status='ACTIVE')<=1
+ AND EXISTS(
+  SELECT 1 FROM client_accounts a JOIN clients c ON c.client_id=a.client_id
+  WHERE a.role='ADMIN' AND a.enabled=1 AND c.status='ACTIVE'
+    AND (a.client_id=NEW.client_id OR a.username_hash=NEW.username_hash)
+ )
+BEGIN SELECT RAISE(ABORT,'LAST_ACTIVE_ADMIN_REQUIRED'); END;
+
+CREATE TRIGGER auth21_last_admin_client_replace
+BEFORE INSERT ON clients
+WHEN (SELECT COUNT(*) FROM client_accounts a JOIN clients c ON c.client_id=a.client_id
+      WHERE a.role='ADMIN' AND a.enabled=1 AND c.status='ACTIVE')<=1
+ AND EXISTS(
+  SELECT 1 FROM client_accounts a JOIN clients c ON c.client_id=a.client_id
+  WHERE a.role='ADMIN' AND a.enabled=1 AND c.status='ACTIVE'
+    AND (c.client_id=NEW.client_id
+      OR c.external_ref_hash=NEW.external_ref_hash
+      OR (NEW.email_hash IS NOT NULL AND NEW.email_hash!='' AND c.email_hash=NEW.email_hash))
+ )
+BEGIN SELECT RAISE(ABORT,'LAST_ACTIVE_ADMIN_REQUIRED'); END;
+
+
 -- Automatically invalidate every already-issued session if any account-security
 -- attribute changes. This also protects modifications by legacy SQL writers.
 -- Upgrades of a password hash correctly force a fresh login.
