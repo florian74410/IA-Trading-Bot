@@ -41,3 +41,12 @@ test('real service HTTP entrypoints invoke the isolated boundary before legacy h
   assert.ok(gate>server&&server>=0,relative);
  }
 });
+
+test('gateway method allowlist never forwards writes as reads or unknown operations',()=>{
+ for(const [method,path] of [['GET','/auth21/login'],['POST','/auth21/me'],['GET','/auth21/logout'],['POST','/auth21/preferences'],['PATCH','/auth21/preferences'],['DELETE','/auth21/login']]){
+  assert.deepEqual(decision(env,'gateway',method,path),{intercept:true,forwardToCore:false});
+ }
+ for(const [method,path] of [['GET','/auth21/me'],['GET','/auth21/preferences'],['PUT','/auth21/preferences'],['DELETE','/auth21/preferences'],['POST','/auth21/unlock']]){
+  assert.deepEqual(decision(env,'gateway',method,path),{intercept:true,forwardToCore:true});
+ }
+});
