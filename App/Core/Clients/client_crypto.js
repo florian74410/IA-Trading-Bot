@@ -15,6 +15,13 @@ function ensureDir(dir){
 function ClientCrypto(keyFile,opts){
   opts=opts||{};
   this.keyFile=path.resolve(keyFile);
+  // Constructor can create/chmod a master-key file or Security directory.
+  // Its opt-in gate must be checked BEFORE any filesystem side effects.
+  this.snapshotGate=opts.snapshotGate||null;
+  if(this.snapshotGate){
+    if(typeof this.snapshotGate.assertWritable!=='function')throw new Error('SNAPSHOT_GATE_INVALID');
+    this.snapshotGate.assertWritable();
+  }
   // A client DB may contain identities encrypted by the original master key.
   // Never replace that key silently. Optional override is for isolated fixtures.
   this.clientDbPath=path.resolve(opts.clientDbPath||path.join(path.dirname(this.keyFile),'..','Database','clients.sqlite'));
