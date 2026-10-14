@@ -151,7 +151,8 @@ function createAuth21HttpHandler({sessions,nowMilliseconds=Date.now,allowedBrows
     if(req.method==='GET'){
      reply(res,200,{value:sessions.getPreference(token,scope,key)});return;
     }
-    if(principal.role==='GUEST'){reply(res,403,{error:'FORBIDDEN'});return}
+    const policy=require('./auth21_rbac_guard').authorize({sessions,token,operation:'self.write',ownerClientId:principal.clientId,method:req.method});
+   if(!policy.allowed){reply(res,403,{error:'FORBIDDEN'});return}
     if(req.method==='PUT'){
      const input=await readJSON(req);
      if(Object.keys(input).length!==1||typeof input.value!=='string'||
