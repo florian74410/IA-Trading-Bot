@@ -1,6 +1,7 @@
 'use strict';
 /* Isolated fixture server only; launched as a child process by the test. */
 const http=require('node:http');
+const crypto=require('node:crypto');
 const {proofCodec}=require('../../Core/Clients/auth21_ipc_proof');
 const business=require('../../Core/Clients/auth21_business_capability');
 const {createWriter}=require('../../Core/Clients/auth21_indicator_fixture_writer');
@@ -36,6 +37,7 @@ const server=http.createServer((req,res)=>{
   let body;try{body=JSON.parse(Buffer.concat(chunks).toString('utf8'))}catch(_){return respond(res,400,{error:'BAD_JSON'})}
   if(!body||typeof body!=='object'||!body.settings)return respond(res,400,{error:'BAD_INPUT'});
   const settings=body.settings;
+  const bodyDigest=crypto.createHash('sha256').update(Buffer.concat(chunks)).digest('hex');
   if(Object.keys(settings).sort().join(',')!=='enabled,refreshMs'||typeof settings.enabled!=='boolean'||
    !Number.isSafeInteger(settings.refreshMs)||settings.refreshMs<1000||settings.refreshMs>60000)
    return respond(res,400,{error:'BAD_SETTINGS'});
@@ -45,16 +47,16 @@ const server=http.createServer((req,res)=>{
   }
   if(role==='core'){
    const token=String(req.headers.authorization||'').replace(/^Bearer /,'');
-   const proof=business.issue({sessions,token,codec,action:'indicator.settings.set'});
+   const proof=business.issue({sessions,token,codec,action:'indicator.settings.set',bodyDigest});
    if(!proof)return respond(res,403,{error:'FORBIDDEN'});
    return forward(res,body,{'x-iatb-auth21-proof':proof});
   }
   const proof=req.headers['x-iatb-auth21-proof'];
   if(role==='router'){
-   if(!business.verify({codec,proof,action:'indicator.settings.set'}).allowed)return respond(res,403,{error:'FORBIDDEN'});
+   if(!business.verify({codec,proof,action:'indicator.settings.set',bodyDigest}).allowed)return respond(res,403,{error:'FORBIDDEN'});
    return forward(res,body,{'x-iatb-auth21-proof':proof});
   }
-  const result=writer.write({proof,settings});
+  const result=writer.write({proof,settings,bodyDigest});
   return respond(res,result.ok?200:403,result);
  });
 });
