@@ -32,6 +32,9 @@ function schemaStatus(db){
   for(const name of ['password_algo','password_params_json']){
    if(!db.pragma('table_info(client_accounts)').some(x=>x.name===name))throw Error('AUTH21_SCHEMA_PARTIAL');
   }
+  for(const name of ['auth21_account_security_invalidation','auth21_client_status_invalidation']){
+   if(!db.prepare("SELECT 1 FROM sqlite_master WHERE type='trigger' AND name=?").get(name))throw Error('AUTH21_SCHEMA_PARTIAL');
+  }
   return 3;
  }
  if(db.pragma('table_info(client_accounts)').some(x=>x.name==='password_algo'))throw Error('AUTH21_SCHEMA_PARTIAL');
