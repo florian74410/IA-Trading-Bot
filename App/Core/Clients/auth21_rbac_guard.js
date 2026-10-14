@@ -24,10 +24,10 @@ function authorize({sessions,token,operation,ownerClientId,method}={}){
  if(operation.endsWith('.write')&&!['POST','PUT','PATCH','DELETE'].includes(method))return {allowed:false,reason:'METHOD_DENIED'};
  return {allowed:true,clientId:principal.clientId,role:principal.role};
 }
-function authorizeInterprocess({codec,proof,audience,operation,method,ownerClientId}={}){
+function authorizeInterprocess({codec,proof,audience,operation,method,ownerClientId,action}={}){
  if(!codec||typeof codec.verify!=='function')throw Error('AUTH21_PROOF_CODEC_REQUIRED');
  if(typeof operation!=='string'||!Object.hasOwn(PERMISSIONS,operation))return {allowed:false,reason:'UNKNOWN_OPERATION'};
- const principal=codec.verify(proof,{audience,operation,method,ownerClientId});
+ const principal=codec.verify(proof,{audience,operation,method,ownerClientId,action});
  if(!principal)return {allowed:false,reason:'INVALID_PROOF'};
  if(!PERMISSIONS[operation].includes(principal.role))return {allowed:false,reason:'FORBIDDEN'};
  if(operation.startsWith('self.')&&principal.clientId!==ownerClientId)return {allowed:false,reason:'OWNERSHIP_DENIED'};
@@ -35,10 +35,10 @@ function authorizeInterprocess({codec,proof,audience,operation,method,ownerClien
  if(operation.endsWith('.write')&&!['POST','PUT','PATCH','DELETE'].includes(method))return {allowed:false,reason:'METHOD_DENIED'};
  return {allowed:true,clientId:principal.clientId,role:principal.role};
 }
-function issueAuthorizedProof({sessions,token,codec,audience,operation,method,ownerClientId}={}){
+function issueAuthorizedProof({sessions,token,codec,audience,operation,method,ownerClientId,action}={}){
  if(!codec||typeof codec.issue!=='function')throw Error('AUTH21_PROOF_CODEC_REQUIRED');
  const access=authorize({sessions,token,operation,method,ownerClientId});
  if(!access.allowed)return null;
- return codec.issue({principal:{clientId:access.clientId,role:access.role},audience,operation,method,ownerClientId});
+ return codec.issue({principal:{clientId:access.clientId,role:access.role},audience,operation,method,ownerClientId,action});
 }
 module.exports={authorize,authorizeInterprocess,issueAuthorizedProof};
