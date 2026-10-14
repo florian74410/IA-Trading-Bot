@@ -54,6 +54,7 @@ on:
       - 'App/Core/Clients/auth21_session_store.js'
       - 'App/Tools/Tests/auth21_session_store.test.js'
       - 'App/Core/Clients/auth21_http_boundary.js'
+      - 'App/Core/Clients/auth21_core_route_gate.js'
       - 'App/Tools/Tests/auth21_http_boundary.test.js'
       - 'App/Core/Clients/auth21_admin_store.js'
       - 'App/Tools/Tests/auth21_admin_store.test.js'
@@ -186,6 +187,7 @@ jobs:
           node --check App/Core/Clients/auth21_session_store.js
           node --check App/Tools/Tests/auth21_session_store.test.js
           node --check App/Core/Clients/auth21_http_boundary.js
+          node --check App/Core/Clients/auth21_core_route_gate.js
           node --check App/Tools/Tests/auth21_http_boundary.test.js
           node --check App/Core/Clients/auth21_admin_store.js
           node --check App/Tools/Tests/auth21_admin_store.test.js
