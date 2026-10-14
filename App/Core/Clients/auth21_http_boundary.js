@@ -54,7 +54,7 @@ function createAuth21HttpHandler({sessions}={}){
   try{
    let uri;
    try{uri=new URL(req.url||'', 'http://localhost');}catch(_){reply(res,404,{error:'NOT_FOUND'});return}
-   if(uri.search||uri.hash||!['/auth21/login','/auth21/me','/auth21/logout'].includes(uri.pathname)){
+   if(uri.search||uri.hash||!['/auth21/login','/auth21/me','/auth21/logout','/auth21/preferences'].includes(uri.pathname)){
     reply(res,404,{error:'NOT_FOUND'});return;
    }
    if(req.method==='POST'&&uri.pathname==='/auth21/login'){
@@ -72,6 +72,36 @@ function createAuth21HttpHandler({sessions}={}){
     if(!result){reply(res,401,{error:'INVALID_CREDENTIALS'});return}
     reply(res,200,{token:result.token,role:result.role,clientId:result.clientId,expiresAt:result.expiresAt});
     return;
+   }
+   // Client-scoped preference API: identity always resolved from the live token,
+   // never from clientId, role, cookie, URL or request body. GUEST is read-only.
+   if(uri.pathname==='/auth21/preferences'){
+    const token=bearer(req),principal=token&&sessions.verifySession(token);
+    if(!principal){reply(res,401,{error:'UNAUTHORIZED'});return}
+    if(!['GET','PUT','DELETE'].includes(req.method)){
+     reply(res,405,{error:'METHOD_NOT_ALLOWED'});return;
+    }
+    const keys=[...uri.searchParams.keys()];
+    if(keys.length!==2||keys.some(k=>k!=='scope'&&k!=='key')||
+       !uri.searchParams.has('scope')||!uri.searchParams.has('key')||
+       !/^[a-z][a-z0-9_.:-]{0,63}$/i.test(uri.searchParams.get('scope'))||
+       !/^[a-z][a-z0-9_.:-]{0,63}$/i.test(uri.searchParams.get('key'))){
+     reply(res,400,{error:'INVALID_REQUEST'});return;
+    }
+    const scope=uri.searchParams.get('scope'),key=uri.searchParams.get('key');
+    if(req.method==='GET'){
+     reply(res,200,{value:sessions.getPreference(token,scope,key)});return;
+    }
+    if(principal.role==='GUEST'){reply(res,403,{error:'FORBIDDEN'});return}
+    if(req.method==='PUT'){
+     const input=await readJSON(req);
+     if(Object.keys(input).length!==1||typeof input.value!=='string'||
+       Buffer.byteLength(input.value,'utf8')>16384){reply(res,400,{error:'INVALID_REQUEST'});return}
+     sessions.setPreference(token,scope,key,input.value);
+     reply(res,200,{ok:true});return;
+    }
+    sessions.deletePreference(token,scope,key);
+    reply(res,200,{ok:true});return;
    }
    if(req.method==='GET'&&uri.pathname==='/auth21/me'){
     const token=bearer(req),session=token&&sessions.verifySession(token);
