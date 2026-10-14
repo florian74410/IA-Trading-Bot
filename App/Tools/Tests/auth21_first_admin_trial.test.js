@@ -232,7 +232,9 @@ test('database opened without original fixture master key is rejected',async t=>
  const f=fixture(t);await migrateFixture(f.db,{fixtureRoot:f.root});
  const foreign=fs.mkdtempSync(path.join(os.tmpdir(),'iatb-other-key-'));
  t.after(()=>fs.rmSync(foreign,{recursive:true,force:true}));
- const key=new ClientCrypto(path.join(foreign,'client_master.key'),{clientDbPath:f.file});
+ const foreignKey=path.join(foreign,'client_master.key');
+ fs.writeFileSync(foreignKey,crypto.randomBytes(32).toString('hex'),{mode:0o600});
+ const key=new ClientCrypto(foreignKey,{clientDbPath:f.file});
  assert.throws(()=>new Auth21FirstAdminTrial({db:f.db,fixtureRoot:f.root,
   authorizeLocalOperator:()=>true,clientCrypto:key}),/AUTH21_FIXTURE_KEY_REQUIRED/);
 });
