@@ -26,6 +26,10 @@ function validateArgs(argv){
   if(!/^CL[A-Za-z0-9_-]{1,64}$/.test(rest[0])||!Object.hasOwn(ACTIONS,action)||
      args.length!==ACTIONS[action]||args.some(v=>typeof v!=='string'||v.length>64))
    throw Error('AUTH21_CLI_ARGUMENT_INVALID');
+  if(action==='set-role'&&!['ADMIN','USER','GUEST'].includes(args[1]))throw Error('AUTH21_CLI_ROLE_INVALID');
+  if(action==='set-enabled'&&!['true','false'].includes(args[1]))throw Error('AUTH21_CLI_BOOLEAN_INVALID');
+  if(action==='set-status'&&!['ACTIVE','DISABLED'].includes(args[1]))throw Error('AUTH21_CLI_STATUS_INVALID');
+  if(args.length&&!/^CL[A-Za-z0-9_-]{1,64}$/.test(args[0]))throw Error('AUTH21_CLI_CLIENT_ID_INVALID');
  }else throw Error('AUTH21_CLI_COMMAND_INVALID');
  return {verb,rest};
 }
