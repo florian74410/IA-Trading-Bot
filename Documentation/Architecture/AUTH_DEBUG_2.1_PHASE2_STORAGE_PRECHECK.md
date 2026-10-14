@@ -1,6 +1,6 @@
 # IA-TB DEBUG 2.1 — Phase 2 / P2.1 — Préflight stockage et reprise Auth
 
-> **État :** P2.1 **en cours de développement** sur fixtures et copies isolées. Préflight Python sans imports des modules runtime et suite de 20 tests SQLite fictifs en cours de validation CI (14 tests précédemment confirmés, 6 tests de gel coopératif supplémentaires) ; **ne pas cocher P2.1 avant les résultats GitHub et la revue d'Overflow**. Aucun accès, sauvegarde ni modification du GEN-1.  
+> **État : P2.1 CLOS sur le périmètre de fixtures uniquement, avec 26/26 tests GitHub Actions en succès.** Voir [rapport de clôture](AUTH_DEBUG_2.1_P21_FIXTURE_VALIDATION_REPORT.md). **P2.2 OUVERT** pour la véritable coordination de tous les writers, restaurations autorisées et performances [plan P2.2](AUTH_DEBUG_2.1_PHASE2_WRITER_COORDINATION.md). Aucun accès, sauvegarde ni modification du GEN-1.  
 > **Décisions validées par Overflow :** garder l'arborescence et les données existantes ; ne pas refondre ce qui fonctionne, améliorer l'isolation interne, **Wallet complètement gelé** ; pas de transfert de DB/données DEBUG ↔ RELEASE dans Auth 2.1.  
 > **Sources :** [audit P1.5](../Security/AUTH_DEBUG_2.1_STORAGE_AUDIT.md), [backup/restore P1.5](AUTH_DEBUG_2.1_BACKUP_RESTORE_CONTRACT.md), [versions P1.6](AUTH_DEBUG_2.1_VERSION_COMPATIBILITY.md), [intégrité RBAC](../Security/AUTH_DEBUG_2.1_RBAC_POLICY_INTEGRITY.md).
 
@@ -10,7 +10,7 @@ Obtenir un outil de préflight et une preuve de restauration reproductible **sur
 
 **Inventaire GEN-1 déjà reçu, suffisant pour la conception :**
 
-- 14/14 conteneurs en `1001:1001`, cinq volumes `:rw`, rootfs readonly ; les permissions interservices devront évoluer graduellement.
+- 13/13 conteneurs en `1001:1001`, cinq volumes `:rw`, rootfs readonly ; les permissions interservices devront évoluer graduellement.
 - `clients.sqlite` (mode DELETE dans la source) en `0600` ; identité client chiffrée liée à `client_master.key`, présent `0600`.
 - Plusieurs autres SQLite en WAL (Settings/Portfolio/MarketData/Fundamental) ; `user_data.db` et `portfolio.db` en `0644` sous des répertoires `0700`.
 - `wallet_master.key` absente : **ne jamais la générer, l'ouvrir, la restaurer ou tenter de déchiffrer une donnée Wallet** durant Auth 2.1.
@@ -37,7 +37,7 @@ La restauration est un test de continuité **du même environnement**, jamais un
 4. Capturer un **ensemble cohérent** de bases liées au même `clientId` via un gel d'écritures factice contrôlé. Un backup individuel ne garantit pas la cohérence **entre** huit bases : le banc de test doit démontrer la procédure retenue.
 5. Construire un manifeste de snapshot **ne comportant pas de données personnelles ou de secret**, versions, tailles et checksum d'archives **chiffrées** ; vérifier `PRAGMA quick_check` et les contraintes sur copie.
 6. Restaurer sur un autre dossier temporaire isolé sans publier de port et sans démarrer Trading LIVE ; vérifier le même `clientId`, le bon état de comptes factices, le déchiffrement possible uniquement avec la **clé factice d'origine**, pas avec une clé régénérée.
-7. Injecter erreurs de test : clé client absente, clé erronée, WAL transactionné, interruption backup, copie partielle, espace insuffisant simulé, schéma inconnu, autorisation RBAC absente. **Attendu : fail closed, aucune identité remplacée, aucun ADMIN nouveau, aucune perte silencieuse.**
+7. Injecter sur fixtures les erreurs effectivement couvertes : clé client absente/incorrecte, SQLite corrompu, FK invalide, génération inter-DB différente, interruption backup, symlinks, timeout et contournement du verrou coopératif, archive chiffrée altérée. **Tests espace disque plein, intégration RBAC et schéma de production inconnu restent à compléter dans P2.2 / jalons suivants.**
 8. Détruire seulement le dossier de fixtures explicitement créé **par le test**. Ne jamais nettoyer un chemin GEN-1 ou un dossier utilisateur arbitraire.
 
 ## 4. Isolation future et performances
@@ -50,7 +50,7 @@ La restauration est un test de continuité **du même environnement**, jamais un
 ## 5. Implémentation initiale et résultats locaux
 
 - [Outil de préflight P2.1](../../Tools/CI/auth_storage_preflight.py) : le mode CLI ne réalise **que des `lstat` sur des chemins prédéfinis**. Aucun import de `paths.js`, de `ClientCrypto`, de `WalletService`, aucune lecture de clé et aucune ouverture SQLite en mode inventaire. Le rapport sort uniquement les types de fichiers, modes, UID/GID et blocages.
-- [Tests P2.1](../../Tools/CI/test_auth_storage_preflight.py) : 14 cas initiaux et 6 nouveaux tests de barrière, soit 20 cas sur un répertoire privé temporaire avec DB clients fictive créée depuis les migrations SQL historiques réelles `001`/`002`, Settings et Portfolio fictifs en WAL. Deux connexions WAL restent ouvertes pendant la sauvegarde et les fichiers `-wal` sont capturés par l'API SQLite Online Backup.
+- [Tests P2.1](../../Tools/CI/test_auth_storage_preflight.py) : **26 cas** dont 14 initiaux, 6 de barrière, 2 de crash/contournement et 4 de chiffrement d'archive, sur un répertoire privé temporaire avec DB clients fictive créée depuis les migrations SQL historiques réelles `001`/`002`, Settings et Portfolio fictifs en WAL. Deux connexions WAL restent ouvertes pendant la sauvegarde et les fichiers `-wal` sont capturés par l'API SQLite Online Backup.
 - Les sauvegardes et restaurations de tests sont **exclusivement internes à `/tmp` avec un marqueur de fixture** ; aucune sous-commande de backup/restore sur GEN-1 n'est fournie. Les copies sont normalisées en mode `DELETE` **sur la copie seulement**, avec `quick_check` et `foreign_key_check` ; le fichier source WAL n'est pas checkpointé par cet outil.
 - La présence d'une clé **factice** correspondante est vérifiée par un canary HMAC synthétique ; **un 14ᵉ test supplémentaire invoque le vrai module `App/Core/Clients/client_crypto.js` exclusivement sur la fixture pour chiffrer et déchiffrer une identité fictive AES-256-GCM après restauration.** Une clé différente ne peut pas la déchiffrer. La capacité à reprendre une DB réelle n'est **pas prouvée** : le test ne doit jamais charger la clé client GEN-1. La procédure de gel multi-bases interservices reste à développer.
 - **Essai local isolé (14/10/2026)** : `python3 -W error::ResourceWarning -m unittest discover -s Tools/CI -p 'test_auth_storage_preflight.py' -v` → **14/14 tests initiaux réussis**, puis [GitHub Actions](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38498590581) **SUCCESS** sur Python 3.11/Node 22. Les **20/20 tests** ont été exécutés sur [GitHub Actions (run 38499587022)](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38499587022) avec succès, y compris six tests supplémentaires de concurrence. Aucun Wallet ni GEN-1.
@@ -68,21 +68,16 @@ Le [contrat technique de cohérence interbases](AUTH_DEBUG_2.1_COHERENT_SNAPSHOT
 - Les fichiers de verrou de fixture restent `0600`, privés, et ne contiennent aucun secret.
 - **Très important : `flock` est advisory et ne protège que des writers qui le prennent volontairement.** Ces tests ne coordonnent pas nos 13 conteneurs réels. Un protocole `PREPARE/QUIESCED/RELEASE` orchestré avec ACK de tous les vrais Engines et Core reste indispensable, avec rollback et timeout lors d'un writer non coopératif. Aucun chemin de tick Trading ne doit faire de hash coûteux.
 
-**CI des 20 tests : succès vérifié** ([run P2.1](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38499587022), Python 3.11 / Node 22). [RBAC CI également succès](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38499586839). Aucun nouvel accès GEN-1, pas de pause moteur réelle, aucune modification Wallet.
+**Historique CI de la barrière de test (20 cas) :** [run P2.1](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38499587022). **Dernière validation de P2.1 : 26/26 SUCCESS** ([run P2.1](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38501734180)) et [RBAC SUCCESS](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38501734170). Aucun nouvel accès GEN-1, pas de pause moteur réelle, Wallet inchangé.
 
-## 6. Portes de validation P2.1
+## 6. Critères de clôture P2.1 (fixtures uniquement)
 
-- [x] Rapport GEN-1 antérieur et structure du stockage analysés dans P1.5.
-- [x] Conception des tests de reprise sur copie et contraintes Wallet / séparation des environnements documentées.
-- [x] Script de préflight **sans effet de bord** implémenté et vérifié avec fichiers fictifs (13 essais locaux, Python 3.13.5).
-- [x] Tests backup SQLite WAL/DELETE et restauration de fixtures exécutés localement, sans publication ni copie de DB réelle. **La cohérence multi-bases en production nécessite encore un gel d'écritures à concevoir.**
-- [x] Tests négatifs locaux (clé factice manquante/incorrecte, rollback de staging, DB corrompue, FK, symlink et génération incohérente) exécutés ; smoke test local sans benchmark p95/p99.
-- [x] **GitHub Actions P2.1 SUCCESS : 14/14 tests** ([run 38498590581](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38498590581), Python 3.11 + Node 22) et **RBAC SUCCESS** ([run 38498589990](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38498589990)). Ce n'est pas une mesure de performance sur GEN-1.
-- [x] Interopérabilité **AES-256-GCM sur identité et clé fictives** vérifiée avec le vrai module `ClientCrypto`, y compris refus de clé incorrecte ; aucune exécution sur une DB GEN-1.
-- [x] **Prototype de gel inter-DB coopératif uniquement sur fixtures** : verrou partagé/exclusif, simulation de writer simultané et subprocessus, gestion timeout et paths dangereux ; [contrat](AUTH_DEBUG_2.1_COHERENT_SNAPSHOT_BARRIER.md). **6 tests supplémentaires vérifiés par CI GitHub, 20/20 au total.**
-- [ ] **Intégrer un gel réel entre les services** : inventaire exhaustif des writers et fichiers non SQLite, protocole d'ACK, tests multicomposants, crash/restart, non-coopératifs, mesure p95/p99. Les fixtures ne procurent pas cette garantie.
-- [x] **22/22 tests vérifiés sur GitHub Actions** ([run P2.1](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38500642897)) ; scénarios de crash et de contournement du verrou advisory inclus. [RBAC CI success](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38500642802). Voir [inventaire élargi](AUTH_DEBUG_2.1_SQLITE_WRITER_INVENTORY.md).
-- [ ] Accès à un snapshot réel, si nécessaire ultérieurement, demandé à Overflow séparément ; **aucun accès direct ni changement GEN-1 dans ce point sans accord**.
-- [ ] Résultats et validation utilisateur pour cocher **P2.1**.
+- [x] Préflight sans effet de bord sur chemins connus ; ne charge pas `paths.js`, `ClientCrypto` ni WalletService lors de l'inventaire.
+- [x] Trois DB fictives, migrations Clients historiques `001/002`, journal SQLite WAL/DELETE et Online Backup validés.
+- [x] Restauration sur une copie de fixture, `clientId` et identité AES-256-GCM de test préservés avec la bonne clé factice ; mauvaise clé refusée.
+- [x] Barrière coopérative multiprocessus, timeout, crash, writer non coopératif, rollback de staging et détection de génération incohérente : scénarios de test validés.
+- [x] Bundle de fixture **chiffré et authentifié AES-256-GCM** testé avec restauration après suppression du snapshot original de test. Tampering et mauvaise clé refusés sans restauration partielle.
+- [x] **26/26 tests GitHub Actions success** ([run](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38501734180)) ; [RBAC success](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38501734170).
+- [x] Clôture demandée par Overflow, **sans autorisation de toucher aux données ou conteneurs réels**. [Procès-verbal](AUTH_DEBUG_2.1_P21_FIXTURE_VALIDATION_REPORT.md).
 
-**P2.1 reste ouvert, non validé.** Le prototype fonctionne sur fixtures ; la prochaine étape est l'inventaire et l'intégration supervisée de tous les vrais écrivains, suivis de crash/restart, rollback et benchmarks **sur banc isolé**. Voir [inventaire ciblé des writers](AUTH_DEBUG_2.1_SQLITE_WRITER_INVENTORY.md). Aucune donnée Wallet ou GEN-1 n'est utilisée.
+**P2.1 clôturé comme étape sur fixtures, pas comme mécanisme de reprise de GEN-1.** Les preuves manquantes sont conservées dans [P2.2](AUTH_DEBUG_2.1_PHASE2_WRITER_COORDINATION.md) : **inventaire exhaustif des writers, coordination effective et ACK, JSONL/Annexes, tests crash/restart de la pile réelle, sauvegarde chiffrée restaurable sur copies autorisées et performances p95/p99.** Leur validation reste obligatoire **avant** tout déploiement. Wallet gelé ; aucune modification GEN-1/Contabo.

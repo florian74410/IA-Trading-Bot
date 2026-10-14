@@ -26,11 +26,11 @@ Le JSON des permissions est une **référence de conception**, jamais un fichier
 
 ## Phase 2 engagée — P2.1 / gel de déploiement DEBUG
 
-**Décision d'Overflow (14/10/2026) : aucune nouvelle version Docker DEBUG publiée/déployée sur GEN-1 avant intégration et validation complète du système Auth 2.1.** Tests et commits sur branche de développement uniquement. Le [préflight et les 13 tests SQLite fictifs](AUTH_DEBUG_2.1_PHASE2_STORAGE_PRECHECK.md) sont un prototype de non-régression, pas un outil de restauration réel. Les méthodes de chiffrement/clé wallet et les règles Contabo restent inchangées.
+**Décision d'Overflow (14/10/2026) : aucune nouvelle version Docker DEBUG publiée/déployée sur GEN-1 avant intégration et validation complète du système Auth 2.1.** Tests et commits sur branche de développement uniquement. Le [préflight et les 26 tests SQLite fictifs](AUTH_DEBUG_2.1_PHASE2_STORAGE_PRECHECK.md) sont un prototype de non-régression, pas un outil de restauration réel. Les méthodes de chiffrement/clé wallet et les règles Contabo restent inchangées.
 
 ## P2.1 — Cohérence des sauvegardes et écrivains SQLite
 
-Le [prototype de barrière coopérative sur fixtures](AUTH_DEBUG_2.1_COHERENT_SNAPSHOT_BARRIER.md) et l'[inventaire préliminaire des écrivains SQLite](AUTH_DEBUG_2.1_SQLITE_WRITER_INVENTORY.md) complètent le [plan de stockage P2.1](AUTH_DEBUG_2.1_PHASE2_STORAGE_PRECHECK.md). Les **20 tests Python/Node** ont réussi sur GitHub Actions ; ce n'est **pas une coordination active des 13 services**. P2.1 reste ouvert jusqu'aux validations de tous les writers, gels d'écriture interservices et performance sur banc isolé. Toujours aucune nouvelle version Docker sur GEN-1 avant Auth 2.1 complet.
+Le [prototype de barrière coopérative sur fixtures](AUTH_DEBUG_2.1_COHERENT_SNAPSHOT_BARRIER.md) et l'[inventaire préliminaire des écrivains SQLite](AUTH_DEBUG_2.1_SQLITE_WRITER_INVENTORY.md) complètent le [plan de stockage P2.1](AUTH_DEBUG_2.1_PHASE2_STORAGE_PRECHECK.md). Les **26 tests P2.1** sur fixtures ont réussi dans [GitHub Actions](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38501734180) : **P2.1 est clos au périmètre de préparation sur fixtures**. Cette preuve ne coordonne **aucun des 13 services réels** : [P2.2](AUTH_DEBUG_2.1_PHASE2_WRITER_COORDINATION.md) reste ouvert pour l'inventaire exhaustif, les ACK multi-writers, les restaurations complètes sur copies autorisées et les performances. Toujours aucune nouvelle version Docker sur GEN-1 avant Auth 2.1 complet.
 
 ## Décisions approuvées
 

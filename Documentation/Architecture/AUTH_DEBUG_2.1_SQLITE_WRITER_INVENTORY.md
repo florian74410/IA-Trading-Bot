@@ -1,7 +1,7 @@
 # IA-TB DEBUG 2.1 — P2.1 — Inventaire préliminaire des écrivains SQLite
 
 > **Revue statique ciblée du 14/10/2026** sur `fix/v2.0.1-debug`, sans lancement des modules ou connexion à GEN-1.  
-> **Statut : PRÉLIMINAIRE** ; ce tableau ne prétend **pas** identifier tous les chemins dynamiques, toutes les tâches planifiées ni les dépendances d'exécution. L'inventaire complet des écrivains reste bloquant pour la barrière de production.  
+> **Statut : PRÉLIMINAIRE**, transmis au jalon [P2.2](AUTH_DEBUG_2.1_PHASE2_WRITER_COORDINATION.md) après clôture de P2.1 sur fixtures. Ce tableau ne prétend **pas** identifier tous les chemins dynamiques, toutes les tâches planifiées ni les dépendances d'exécution. L'inventaire complet des écrivains reste bloquant pour la barrière de production.  
 > **Liens :** [P2.1 — protocole de gel](AUTH_DEBUG_2.1_COHERENT_SNAPSHOT_BARRIER.md), [rapport stockage P1.5](../Security/AUTH_DEBUG_2.1_STORAGE_AUDIT.md), [contrat backup/restore](AUTH_DEBUG_2.1_BACKUP_RESTORE_CONTRACT.md).  
 > **Verrou :** aucun nouveau Docker DEBUG sur GEN-1 avant intégration et validation complète du système Auth 2.1 par Overflow. Wallet et secrets Wallet hors périmètre.
 
@@ -59,4 +59,4 @@ La barrière de test actuelle porte sur **trois DB SQLite fictives** uniquement.
 
 **Validation CI du prototype (22 tests)** : [GitHub Actions P2.1 — success](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38500642897), démontrant notamment que le writer non coopératif n'est **pas arrêté** par le verrou advisory. Cela renforce l'exigence d'inventaire exhaustif, d'ACK et de sécurité des montages.
 
-**Cette revue ne coche pas P2.1 et n'autorise aucun accès aux fichiers existants de GEN-1.**
+**Cette revue demeure INCOMPLÈTE pour P2.2** et n'autorise aucun accès aux fichiers existants de GEN-1. **P2.1 est clos uniquement pour la preuve sur fixtures, selon son [rapport](AUTH_DEBUG_2.1_P21_FIXTURE_VALIDATION_REPORT.md).**

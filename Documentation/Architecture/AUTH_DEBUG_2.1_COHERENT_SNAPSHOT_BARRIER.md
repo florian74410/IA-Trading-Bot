@@ -51,14 +51,13 @@ Cette limite impose l'inventaire exhaustif des writers, les ACK par identifiant/
 - Toute tâche de sauvegarde doit rester **hors chemin critique** des Engines ; la coordination au moment du snapshot est exceptionnelle, mesurée et peut provoquer une courte pause contrôlée. Aucune opération cryptographique lourde par tick.
 - Échec d'un writer, timeout de lock, corruption, drift génération, manque d'espace ou mismatch clé => aucune archive complète publiée ; nettoyage borné de staging ; aucun contournement de RBAC.
 
-## 5. Critères restants avant autorisation de déployer
+## 5. Résultats P2.1 et garanties à construire en P2.2
 
-- [x] Prototype coopératif sur fixtures, isolé sous `/tmp`, sans opération GEN-1.
-- [x] Exécution GitHub Actions [20/20 tests P2.1 — success](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38499587022), [RBAC — success](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38499586839) pour la version précédente.
-- [x] **22/22 tests P2.1 réussis sur [GitHub Actions](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38500642897)**, dont crash d'un writer et contournement par un writer non coopératif ; [RBAC CI également success](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38500642802). Ces résultats n'autorisent pas un déploiement.
-- [ ] Inventaire **complet** des écrivains métier de chaque base critique, y compris accès secondaires et migrations legacy. Une [revue statique préliminaire](AUTH_DEBUG_2.1_SQLITE_WRITER_INVENTORY.md) est disponible ; elle n'est pas exhaustive.
-- [ ] Intégration d'un protocole `PREPARE/QUIESCED/RELEASE` ou équivalent à **tous** les chemins d'écriture, tests multiprocessus/multiconteneurs, crash/restart et rollback sur banc isolé.
-- [ ] Durées de blocage bornées, mesures de performance p95/p99 comparables, aucune perturbation significative des moteurs.
-- [ ] Sauvegarde chiffrée **réellement restaurable sur copie** avec données autorisées et clés originales, puis validation d'Overflow avant déploiement Docker DEBUG.
+- [x] Prototype coopératif sur fixtures isolées uniquement sous `/tmp`, avec validations de chemins/modes et libération de verrou après crash.
+- [x] **26/26 tests P2.1 en réussite GitHub Actions** ([run 38501734180](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38501734180)) et [RBAC success](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38501734170) : 22 scénarios précédents + 4 tests d'archive AES-256-GCM fictive.
+- [x] Conclusion documentée : **un writer non coopératif contourne le verrou advisory**, donc aucune garantie de coordination pour le runtime réel.
+- [ ] **P2.2 :** inventaire exhaustif des écritures SQLite et hors SQLite, ACK multi-writers, démarrage/migrations, tests crashes/restarts et rollback.
+- [ ] **P2.2 :** sauvegarde réellement cohérente sur copies autorisées, chiffrement de production, restauration vérifiée et contrôle de la clé client originale avant migration.
+- [ ] **P2.2 / Phases 6–7 :** mesures de performance p95/p99 sur services et autorisation spécifique avant publication.
 
-**Conclusion :** la fixture démontre un mécanisme de coordination possible ; l'ensemble des bases de GEN-1 n'est **pas encore couvert**. Ce contrat ne change rien à l'installation existante.
+**P2.1 ne valide que les fixtures.** La [suite P2.2](AUTH_DEBUG_2.1_PHASE2_WRITER_COORDINATION.md) reste bloquante pour une intégration réelle ; **aucun changement de conteneur ni de donnée GEN-1**.
