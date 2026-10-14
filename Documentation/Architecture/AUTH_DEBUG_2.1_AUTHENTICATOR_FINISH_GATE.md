@@ -14,6 +14,13 @@
 - Ils vérifient la session dont seul le SHA-256 du jeton est conservé en base, le succès de `/auth21/me`, la révocation par `/auth21/logout`, l'isolement ADMIN/USER, le refus de `?clientId=` et l'invalidation d'une session après modification du rôle en SQLite.
 - **[GitHub Actions P2.2 SUCCESS — run 38560724999](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38560724999)** : **280/280 tests Node.js + 15/15 SQLite Python = 295/295 tests réussis**. Le serveur principal et les routes historiques restent strictement hors de cette campagne.
 
+## Nouvelle frontière Core — refus systématique des routes legacy (isolée)
+
+- `App/Core/Clients/auth21_core_route_gate.js` : composant autonome, **pas monté sur `server.js`**, qui accepte uniquement `/auth21/login`, `/auth21/me`, `/auth21/logout` et refuse tout le reste par HTTP 404 avec `Cache-Control: no-store`. Il délègue la vérification des tokens au handler Auth 2.1 existant, sans appel à `session(req)`, aux cookies `sid`, au `localBypass`, ni aux routes Wallet/CP1.
+- `App/Tools/Tests/auth21_http_boundary.test.js` : **3 tests supplémentaires** couvrant la suppression du faux bootstrap anonyme, le blocage des cookies ADMIN falsifiés, des routes Update/Wallet/diagnostic et la conservation du parcours Auth 2.1 minimal. Les 3 tests sont in-process, non équivalents à une activation du serveur.
+- [GitHub Actions P2.2 — SUCCESS run 38561378158](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38561378158) : **283 tests Node + 15 tests SQLite Python = 298/298 réussis**.
+- **Limite principale :** aucune fermeture des anciennes routes sur le serveur existant. La vraie activation nécessite de remplacer le routeur historique, non de simplement ajouter `/auth21/*` à côté de `/api/bootstrap`, sous peine de bypass.
+
 ## Déjà disponible, mais NON activé dans l'application
 
 - SQLite schéma v3 de proposition, garde triggers dernier ADMIN, migrateur offline ; Argon2id natif ; sessions et préférences chiffrées ; compte ADMIN opt-in et revue des anciens SUPERADMIN ; sauvegardes et restauration chiffrées sur fixtures ; mode Core trial avec writers locaux.
