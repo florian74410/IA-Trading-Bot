@@ -74,6 +74,13 @@ class Auth21SessionStore {
     throw Error('AUTH21_SCHEMA_INCOMPLETE');
    }
   }
+  // A stale partially-applied v3 must NEVER authenticate with revocation
+  // triggers absent; otherwise a changed role could inherit old sessions.
+  for(const name of ['auth21_account_security_invalidation','auth21_client_status_invalidation']){
+   if(!db.prepare("SELECT 1 FROM sqlite_master WHERE type='trigger' AND name=?").get(name)){
+    throw Error('AUTH21_SECURITY_TRIGGERS_MISSING');
+   }
+  }
  }
  _now(){
   const n=this.clock();
