@@ -35,6 +35,8 @@ on:
       - 'App/Tools/CI/auth21_credential_upgrade_trial.js'
       - 'App/Tools/Tests/auth21_v3_migration_trial.test.js'
       - 'App/Core/Clients/password_hasher_v2.js'
+      - 'App/Core/Clients/auth21_session_store.js'
+      - 'App/Tools/Tests/auth21_session_store.test.js'
       - '.github/workflows/auth-p22-coordinator-fixtures.yml'
   pull_request:
     branches:
@@ -72,6 +74,8 @@ on:
       - 'App/Tools/CI/auth21_credential_upgrade_trial.js'
       - 'App/Tools/Tests/auth21_v3_migration_trial.test.js'
       - 'App/Core/Clients/password_hasher_v2.js'
+      - 'App/Core/Clients/auth21_session_store.js'
+      - 'App/Tools/Tests/auth21_session_store.test.js'
       - '.github/workflows/auth-p22-coordinator-fixtures.yml'
   workflow_dispatch:
 
@@ -119,6 +123,8 @@ jobs:
           node --check App/Tools/CI/auth21_v3_migration_trial.js
           node --check App/Tools/CI/auth21_credential_upgrade_trial.js
           node --check App/Tools/Tests/auth21_v3_migration_trial.test.js
+          node --check App/Core/Clients/auth21_session_store.js
+          node --check App/Tools/Tests/auth21_session_store.test.js
       - name: Isolated ACK and failure-handling fixtures
         run: node --test App/Tools/Tests/snapshot_coordinator.test.js App/Tools/Tests/core_snapshot_writers.test.js App/Tools/Tests/portfolio_snapshot_writer.test.js App/Tools/Tests/fundamental_snapshot_writer.test.js App/Tools/Tests/fundamental_legacy_snapshot_bridge.test.js App/Tools/Tests/marketdata_snapshot_writers.test.js App/Tools/Tests/financial_jsonl_snapshot_writer.test.js App/Tools/Tests/trading_usage_jsonl_snapshot_writers.test.js App/Tools/Tests/mosaic_snapshot_writer.test.js App/Tools/Tests/client_master_key_safety.test.js
       - name: Auth v3 offline SQLite schema fixtures (no live databases)
@@ -127,3 +133,5 @@ jobs:
         run: npm --prefix "$RUNNER_TEMP/iatb-auth-v3" install --no-save --no-package-lock --no-audit --no-fund better-sqlite3@12.4.1 argon2@0.45.1
       - name: Verify native v3 migration and credential CAS on fixtures
         run: NODE_PATH="$RUNNER_TEMP/iatb-auth-v3/node_modules" node --test App/Tools/Tests/auth21_v3_migration_trial.test.js
+      - name: Auth v3 session, revocation and encrypted preference fixtures
+        run: NODE_PATH="$RUNNER_TEMP/iatb-auth-v3/node_modules" node --test App/Tools/Tests/auth21_session_store.test.js
