@@ -52,7 +52,7 @@ test('v3 migration creates consistent original backup and is idempotent',async t
  assert.equal(fs.existsSync(r.backupFile),true);
  assert.equal(f.db.pragma('integrity_check',{simple:true}),'ok');
  assert.equal(f.db.pragma('foreign_key_check').length,0);
- assert.equal(account(f.db).passwordHash,old.password_hash);
+ assert.equal(account(f.db).password_hash,old.password_hash);
  assert.equal(account(f.db).password_algo,'PBKDF2_SHA256');
  assert.equal((await migrateFixture(f.db,{fixtureRoot:f.root})).applied,false);
  const prev=new Database(r.backupFile,{readonly:true,fileMustExist:true});
