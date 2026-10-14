@@ -5,8 +5,12 @@ function ensureDir(dir){
   if(!fs.existsSync(dir))fs.mkdirSync(dir,{recursive:true,mode:448});
   try{fs.chmodSync(dir,448);}catch(e){}
 }
-function ClientCrypto(keyFile){
+function ClientCrypto(keyFile,opts){
+  opts=opts||{};
   this.keyFile=path.resolve(keyFile);
+  // A client DB may contain identities encrypted by the original master key.
+  // Never replace that key silently. Optional override is for isolated fixtures.
+  this.clientDbPath=path.resolve(opts.clientDbPath||path.join(path.dirname(this.keyFile),'..','Database','clients.sqlite'));
   ensureDir(path.dirname(this.keyFile));
   this.master=this._loadKey();
   this.indexKey=crypto.createHash('sha256').update(this.master).update('IA-TB_CLIENT_INDEX_V1').digest();
@@ -14,6 +18,15 @@ function ClientCrypto(keyFile){
 ClientCrypto.prototype._loadKey=function(){
   var k;
   try{k=Buffer.from(String(fs.readFileSync(this.keyFile,'utf8')).trim(),'hex');if(k.length===32)return k;}catch(e){}
+  if(fs.existsSync(this.keyFile))throw new Error('CLIENT_MASTER_KEY_INVALID');
+  // Even a WAL-only or journal file is evidence of pre-existing client data.
+  // Blocking a new key is safer than rendering old ciphertext unreadable.
+  var suffixes=['','-wal','-shm','-journal'];
+  for(var i=0;i<suffixes.length;i++){
+    if(fs.existsSync(this.clientDbPath+suffixes[i])){
+      throw new Error('CLIENT_MASTER_KEY_MISSING_WITH_EXISTING_DB');
+    }
+  }
   k=crypto.randomBytes(32);
   try{fs.writeFileSync(this.keyFile,k.toString('hex'),{encoding:'utf8',mode:384,flag:'wx'});}catch(e){
     try{k=Buffer.from(String(fs.readFileSync(this.keyFile,'utf8')).trim(),'hex');}catch(x){}
