@@ -1,6 +1,6 @@
 # IA-TB DEBUG 2.1 — P1.4 — Trust Boundary Contract v1
 
-> **Statut :** spécification technique P1.4 rédigée après validation des quatre principes par Overflow ; **à relire et valider avant de cocher P1.4**.  
+> **Statut :** spécification technique P1.4 rédigée après validation des quatre principes par Overflow ; **P1.4 clôturé au niveau conception après validation des principes et relevé réseau ; implémentation et benchmarks non réalisés**.  
 > **Source :** `fix/v2.0.1-debug` / `App` ; inventaire [P1.3](../Security/AUTH_ENDPOINT_AUDIT_v1.md) ; état GEN-1 du 13/10/2026 23:12 UTC.  
 > **Objectif :** empêcher toute usurpation de rôle/compte et tout contournement par route interne **sans ralentissement significatif du chemin critique marché/trading**.  
 > **Portée de ce commit :** documentation et contrat uniquement ; aucun binaire ni serveur DEBUG, conteneur, port, compte, wallet ou secret n'est modifié.
@@ -138,9 +138,9 @@ La révocation et le verrouillage côté serveur sont prioritaires sur le confor
 - [x] Quatre principes architecture Gateway / Core / Router-Engine / fail closed validés oralement.
 - [x] Contrainte « sécurité avec impact minime sur la latence » enregistrée ; plan de mesures défini.
 - [x] Contrat de flux, sources de vérité et contrôles anti-usurpation documentés.
-- [ ] Revue/accord de la présente spécification complète par Overflow.
-- [ ] Relevé **en lecture seule** des binds effectifs dans le namespace Docker, publications et relais, sans afficher secrets/adresses clients privés ; méthode depuis IA-TB CLI à confirmer.
+- [x] Quatre principes et priorité performance validés par Overflow ; cette rédaction détaille leur conception. Les modalités exactes des preuves cryptographiques et du protocole restent à approuver au jalon de versionnage.
+- [x] Relevé **en lecture seule** du 14/10/2026 reçu : zéro port Docker publié, 13 conteneurs dans le namespace Router, douze écouteurs IA-TB sur loopback interne ; [rapport réseau](../Security/AUTH_DEBUG_2.1_NETWORK_BOUNDARY_AUDIT.md).
 - [ ] Validation du schéma d'autorisation et du protocole versionné au jalon de version de Phase 1 (y compris tests négatifs de régression).
 - [ ] Avant mise en ligne (Phase 7) : tests réels d'authN/AuthZ/RBAC/ownership, d'isolation des clés et des performances sur version implémentée.
 
-**Statut final :** contrat P1.4 **rédigé**, point non coché jusqu'à revue et diagnostic réseau complémentaire. Aucune implémentation ni promesse de performance non mesurée.
+**Statut final : P1.4 validé pour la conception et la topologie actuelle.** Aucun mécanisme Auth 2.1 nouveau n'a encore été implémenté ni benchmarké. Les contrôles d'identité, d'isolation des clés, les refus 401/403 et l'évaluation du pare-feu Contabo restent obligatoires aux jalons d'implémentation et d'ouverture publique.
