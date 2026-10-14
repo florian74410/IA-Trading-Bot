@@ -11,9 +11,9 @@ function createCoreBusinessIssuer({sessions,codec,env}={}){
  if(!sessions||typeof sessions.verifySession!=='function'||!codec||
     typeof codec.issue!=='function')throw Error('AUTH21_CORE_ISSUER_DEPENDENCIES_REQUIRED');
  return Object.freeze({
-  issueForService({token,action,ownerClientId}={}){
+  issueForService({token,action,ownerClientId,bodyDigest}={}){
    if(action!=='indicator.settings.set')return null;
-   return business.issue({sessions,token,codec,action,ownerClientId});
+   return business.issue({sessions,token,codec,action,ownerClientId,bodyDigest});
   }
  });
 }
