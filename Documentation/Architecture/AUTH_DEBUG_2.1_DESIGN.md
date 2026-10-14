@@ -16,9 +16,13 @@ Les migrations clients historiques `001` et `002` et CP/1 restent fonctionnellem
 
 Après validation de P1.6, la cible RBAC est détaillée dans le [contrat ADMIN/USER/GUEST](AUTH_DEBUG_2.1_RBAC_CONTRACT.md), la [matrice JSON non active des 212 entrées](AUTH_DEBUG_2.1_RBAC_MATRIX_PROPOSAL.json) (dont 77 actions CP/1 UI) et les [48 cas négatifs](../Security/AUTH_DEBUG_2.1_RBAC_NEGATIVE_TEST_PLAN.md). Distinction impérative : PUBLIC partagé assaini, ressources OWNER liées au `clientId` de session, configuration GLOBAL réservée à ADMIN et principal machine CP/1 distinct. **P1.7 est approuvé par Overflow le 14/10/2026**, et toute nouvelle fonctionnalité doit déclarer ses permissions conformément à la [politique de changement](../Security/AUTH_DEBUG_2.1_RBAC_CHANGE_POLICY.md). Contrôles runtime/CI à construire et tester ; aucun code métier ni donnée modifié. Wallet gelé et ordres LIVE désactivés.
 
-## Portabilité volontaire des comptes DEBUG ↔ RELEASE (P1.8 — en revue)
+## P1.8 — Export/import DEBUG ↔ RELEASE écarté du périmètre
 
-Le [contrat de portabilité](AUTH_DEBUG_2.1_ACCOUNT_PORTABILITY_CONTRACT.md) et son [manifeste de référence non actif](AUTH_DEBUG_2.1_ACCOUNT_TRANSFER_MANIFEST_PROPOSAL.json) définissent un transfert **identité minimale seulement**, par CLI SSH autorisée, chiffré et lié au destinataire. **Pas de session, hash de mot de passe, clé maître, donnée wallet, API key ou promotion automatique ADMIN** ; identité ré-encryptée sous la clé de destination, compte importé désactivé et réenrôlé par mot de passe. P1.8 attend validation d'Overflow ; aucune exportation réelle.
+**Décision explicite d'Overflow (14/10/2026)** : ne **pas** développer la portabilité automatique des comptes ni des données entre DEBUG et RELEASE en version 2.x. Créer à l'arrivée de RELEASE son compte ADMIN propre par la CLI SSH native. L'hypothèse de quelques comptes en version majeure 3.x sera traitée par une **migration manuelle de la DB clients uniquement si nécessaire**, en chantier séparé, après sauvegarde/restauration testée, contrôle de la clé client et accord opérateur ; aucun transfert implicite de rôle, session, permission, wallet ou donnée métier. L'arborescence existante des données reste inchangée. [Ancien contrat abandonné, conservé pour traçabilité](AUTH_DEBUG_2.1_ACCOUNT_PORTABILITY_CONTRACT.md).
+
+## Intégrité de la matrice RBAC — exigence ajoutée par Overflow
+
+Le JSON des permissions est une **référence de conception**, jamais un fichier librement éditable donnant directement des droits. Voir [RBAC Policy Integrity](../Security/AUTH_DEBUG_2.1_RBAC_POLICY_INTEGRITY.md) : tests anti-élévation GUEST, protection de PR, politique embarquée dans un build vérifié avec origine de confiance indépendante, contrôle au démarrage et refus par défaut ; contrôle des permissions à faible coût pour ne pas ralentir les Engines.
 
 ## Décisions approuvées
 
@@ -27,7 +31,7 @@ Le [contrat de portabilité](AUTH_DEBUG_2.1_ACCOUNT_PORTABILITY_CONTRACT.md) et 
 - Administration des comptes depuis un exécutable **dans IA-TB** sur le VPS, appelé également via SSH par IA-TB CLI. Pas d'inscription Web en 2.1.
 - Clients identifiés durablement par clientId ; préférences, stratégies, portefeuilles et wallets isolés logiquement par compte, contrôles de propriété côté serveur.
 - Durée de session bornée, verrouillage après 5 min d'inactivité, mot de passe demandé pour déverrouiller. Le simple chargement automatique de données ne prolonge pas le délai d'activité.
-- DEBUG et RELEASE isolés par DB, clés, sessions et autorité d'exécution. Transfert de comptes uniquement par export/import explicite, chiffré, versionné, avec approbation des rôles ; pas de duplication des sessions, secrets de wallets ou privilèges automatiques.
+- DEBUG et RELEASE isolés par DB, clés, sessions et autorité d'exécution. **Aucun export/import automatique entre environnements en 2.x** ; création manuelle du compte ADMIN propre à RELEASE, migrations DB futures éventuelles traitées séparément. Pas de duplication de sessions, clés ou droits.
 - HTTP permis **uniquement en environnement privé de test** (127.0.0.1/tunnel SSH ou VPN protégé) ; Internet public requiert HTTPS/TLS, même si l'interface Admin des certificats reste prévue ultérieurement.
 - Wallets et custody différés **après Supervisor Engine**. Ne pas altérer les secrets ou migrer les clés existants lors du chantier d'authentification.
 
@@ -84,7 +88,7 @@ Les opérations de trading LIVE demeurent désactivées sur DEBUG, quel que soit
 
 Programme cible : App/Tools/iatb-users.js (nom à confirmer), utilisant le même service métier que Core, exécuté sous une identité Linux dédiée limitée à la base de comptes et aux clés nécessaires.
 
-Commandes cibles : list ; create --role admin|user|guest ; role ; enable ; disable ; reset-password ; delete (soft-delete/anonymisation contrôlée) ; audit ; export/import chiffrés à développer plus tard.
+Commandes cibles : list ; create --role admin|user|guest ; role ; enable ; disable ; reset-password ; delete (soft-delete/anonymisation contrôlée) ; audit. **Aucune commande export/import/migrate inter-environnements dans DEBUG 2.1**.
 
 Les mots de passe sont demandés par invite TTY masquée (ni argument shell, ni fichier temporaire en clair, ni logs). La suppression d'un client ne supprime jamais par défaut ses wallets ou clés ; un administrateur ne doit pas pouvoir retirer le dernier ADMIN actif. Les procédures de récupération d'accès restent privées via SSH, jamais par URL de secours publique.
 

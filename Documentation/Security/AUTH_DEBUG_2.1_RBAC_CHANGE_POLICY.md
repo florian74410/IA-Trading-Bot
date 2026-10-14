@@ -70,4 +70,6 @@ performance: no password hash per request; benchmark latency p95
 - [ ] Scanner complet des routes dynamiques et tests automatisés de toutes les classes de permissions.
 - [ ] Tests sur le runtime Auth 2.1 réel et performance ; sans cela la matrice est **conception uniquement**.
 
+**Intégrité du registre :** [contrat de protection RBAC](AUTH_DEBUG_2.1_RBAC_POLICY_INTEGRITY.md) ; fichiers sensibles attribués à CODEOWNERS, CI renforcé contre les élévations GUEST et les reclassifications de routes ADMIN. Le JSON ne doit pas être chargé depuis un volume `:rw` comme source d'autorité. Une empreinte dans le même fichier ne suffit pas : prévoir provenance de build signée et politique immuable avant mise en ligne. Le workflow automatique existe ; **la règle GitHub rendant ses contrôles obligatoires reste à configurer et vérifier**.
+
 **Règle non négociable : ne jamais déployer une action Auth 2.1 nouvellement accessible si sa permission n'est pas connue, validée et testée.**

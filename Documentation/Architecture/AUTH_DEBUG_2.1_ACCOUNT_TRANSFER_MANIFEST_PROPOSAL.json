@@ -1,7 +1,7 @@
 {
   "schema": "iatb.auth.account-transfer-envelope-proposal/1",
-  "status": "PROPOSAL_NOT_ACTIVE",
-  "warning": "DOCUMENTATION ONLY — not executable, not a real transfer, no credentials or personal data",
+  "status": "SUPERSEDED_DO_NOT_IMPLEMENT",
+  "warning": "HISTORICAL ARCHIVE ONLY: P1.8 automated DEBUG↔RELEASE account portability explicitly cancelled by Overflow 2026-10-14. Do not use this as a runtime or implementation specification.",
   "source_environment": "DEBUG",
   "destination_environment": "RELEASE",
   "format_version": 1,
@@ -91,5 +91,12 @@
     "gen1_operations_allowed_during_P1_8": false,
     "expiry_hours_candidate": 24,
     "requires_vetted_crypto_and_fake_account_end_to_end_tests": true
+  },
+  "cancellation": {
+    "date": "2026-10-14",
+    "decision": "NO_ACCOUNT_EXPORT_IMPORT_DEBUG_RELEASE_IN_AUTH_2_1",
+    "release_admin": "CREATE_SEPARATELY_VIA_AUTHORIZED_NATIVE_SSH_CLI",
+    "future_3x": "MANUAL_DB_REVIEW_ONLY_IF_NEEDED_IN_SEPARATE_PROJECT",
+    "wallet_data": "UNCHANGED"
   }
 }

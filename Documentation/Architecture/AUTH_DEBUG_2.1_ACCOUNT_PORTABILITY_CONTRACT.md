@@ -1,6 +1,6 @@
-# IA-TB DEBUG 2.1 — P1.8 — Contrat de portabilité des comptes DEBUG ↔ RELEASE
+# ARCHIVE — IA-TB DEBUG 2.1 — P1.8 — Ancienne proposition de portabilité des comptes DEBUG ↔ RELEASE
 
-> **Statut : PROPOSITION DE CONCEPTION, P1.8 À VALIDER PAR OVERFLOW** (aucun export/import exécuté).  
+> **STATUT : ABANDONNÉ / SUPERSEDED par la décision d'Overflow du 14/10/2026.** Ne pas implémenter les exports/imports ci-dessous, et ne pas en faire des exigences de conception, de tests ni de déploiement. Document conservé **uniquement comme historique** ; voir [checklist officielle P1.8](AUTH_DEBUG_2.1_WORKPLAN.md).  
 > **Lien roadmap :** [AUTH_DEBUG_2.1_WORKPLAN](AUTH_DEBUG_2.1_WORKPLAN.md) ; [versionnage P1.6](AUTH_DEBUG_2.1_VERSION_COMPATIBILITY.md) ; [RBAC P1.7](AUTH_DEBUG_2.1_RBAC_CONTRACT.md) ; [sauvegardes P1.5](AUTH_DEBUG_2.1_BACKUP_RESTORE_CONTRACT.md).  
 > **Principe :** transfert **volontaire** d'une identité et d'un accès de compte entre environnements **distincts**, jamais synchronisation automatique ni copie de base brute. Compte transféré toujours **désactivé en attente de réactivation** par l'opérateur de destination et réinscription d'un mot de passe.  
 > **Invariants :** Wallet et `wallet_master.key` gelés, sessions et clés privées exclues, séparation DEBUG/RELEASE, pas de promotion ADMIN implicite, aucun changement GEN-1 / Docker / pare-feu Contabo / port HTTP 8080 pendant P1.8.

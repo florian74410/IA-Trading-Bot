@@ -12,6 +12,8 @@
 - [ ] J'ai inventorié **toutes** les nouvelles routes HTTP, actions CP/1, fonctionnalités CLI, tâches planifiées, WebSocket, outils IA et événements à effet.
 - [ ] Pour chaque action ajoutée/modifiée, j'ai renseigné son identifiant, ses rôles **ADMIN/USER/GUEST ou principal SERVICE**, sa classe de données, sa portée `clientId`, ses effets (dont éventuels coûts fournisseurs), les contrôles côté Core/Router/Engine et ses tests.
 - [ ] Les actions et routes nouvelles figurent dans le registre RBAC versionné (ou sont explicitement DENY jusqu'à revue).
+- [ ] J'ai vérifié que le changement n'accorde **aucun droit supplémentaire à GUEST** ou USER par reclassification d'une route privilégiée ; toute élévation voulue a une justification, des tests et une revue du propriétaire du dépôt.
+- [ ] Toute modification de politique ou du vérificateur RBAC est reliée à la [politique d'intégrité](Documentation/Security/AUTH_DEBUG_2.1_RBAC_POLICY_INTEGRITY.md) et exige un build vérifié ; aucune matrice éditable n'est utilisée comme autorité runtime.
 - [ ] J'ai ajouté des **tests négatifs** (GUEST, USER, IDOR autre compte, rôle/clientId falsifié, Core indisponible, accès Router/Engine direct, CSRF si pertinent).
 - [ ] Aucune opération dite « lecture » ne déclenche une écriture, une collecte ou un coût sans droit approprié.
 - [ ] Je n'ai pas introduit de fallback ADMIN/USER, `localBypass`, confiance dans les headers navigateur ou clé CP/1 comme autorité humaine.

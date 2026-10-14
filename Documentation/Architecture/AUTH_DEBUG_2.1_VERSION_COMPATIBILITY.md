@@ -135,4 +135,6 @@ Les tests sont **spécifiés, pas exécutés**. Ils seront implémentés avec fi
 
 **Contrat de contrôle métier complémentaire :** [P1.7 — RBAC / propriété `clientId`](AUTH_DEBUG_2.1_RBAC_CONTRACT.md) détaille l'application de `permissions_version` aux 212 routes inventoriées et aux 77 actions UI-CP/1 ; proposition distincte en attente de validation, tests prévus sur banc isolé.
 
+**Précision P1.8 :** le versionnage Auth couvre les **migrations internes dans chaque environnement** et le rollback local, pas une importation DEBUG ↔ RELEASE. Le module de portabilité automatique a été écarté par Overflow ; une éventuelle migration manuelle de `clients.sqlite` lors d'une future v3.x est un chantier distinct. Aucun transfert de donnée métier ni de Wallet.
+
 **Conclusion : P1.6 validé au niveau du contrat de conception.** Aucun changement runtime, CP/1, base GEN-1, Contabo ou wallet ; tests/migrations et performance restent des jalons obligatoires avant activation.

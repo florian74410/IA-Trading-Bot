@@ -20,6 +20,44 @@ const SOURCES = {
 };
 const HUMAN_ROLES = new Set(['ADMIN', 'USER', 'GUEST']);
 const PRINCIPALS = new Set(['ANONYMOUS', 'SERVICE', ...HUMAN_ROLES]);
+// Hard invariants independent of the mutable matrix. A registry edit must not
+// turn GUEST into a writer, human into machine principal or USER into ADMIN.
+const EXPECTED_CLASS_ROLES = {
+  ANON_MINIMAL:['ANONYMOUS','GUEST','USER','ADMIN'],
+  ANON_STATIC:['ANONYMOUS','GUEST','USER','ADMIN'],
+  ADMIN:['ADMIN'], ADMIN_READ:['ADMIN'],
+  OWN_READ:['ADMIN','USER'], OWN_WRITE:['ADMIN','USER'],
+  GUEST_SHARED:['GUEST','USER','ADMIN'],
+  GUEST_PAGE:['GUEST','USER','ADMIN'],
+  USER_PAGE:['ADMIN','USER'],
+  MACHINE:['SERVICE'], HEALTH:['SERVICE'],
+  FROZEN:[], DISABLED:[], DENY:[], ACTION_READ:[],
+  ACTION_WRITE:['ADMIN'], MIXED:[]
+};
+const EXPECTED_ACTION_GROUP_ROLES = {
+  PUBLIC_SHARED_READ:['GUEST','USER','ADMIN'],
+  OWNER_READ_WITH_TENANT_STORAGE:['ADMIN','USER'],
+  USER_QUOTA_PROTECTED:['ADMIN','USER'],
+  ADMIN_READ_OR_COSTLY:['ADMIN'],
+  AUTH2_1_FREEZE_TRADING:[],
+  GLOBAL_ADMIN_WRITE:['ADMIN']
+};
+function privilegedPathClass(service, pathname) {
+  if (service === 'Core') {
+    if (/^\/api\/(?:admin|updates|ai-updates)(?:\/|$)/.test(pathname) ||
+        pathname === '/api/shutdown' ||
+        pathname === '/api/security/firewall/toggle') return 'ADMIN';
+    if (['/api/logs','/api/status','/api/settings','/api/credits/usage',
+      '/api/token-usage','/api/mosaics/runtime','/api/bank/vaults'].includes(pathname))
+      return 'ADMIN_READ';
+  }
+  if (service === 'UI Gateway') {
+    if (/^\/admin(?:\/|$)/.test(pathname) ||
+        /^\/firewall-admin(?:\/|$)/.test(pathname) ||
+        ['/ui-api/project-tree','/ui-api/project-file'].includes(pathname)) return 'ADMIN';
+  }
+  return null;
+}
 
 function read(rel) { return fs.readFileSync(path.join(ROOT, rel), 'utf8'); }
 function sortedUnique(values) { return [...new Set(values)].sort(); }
@@ -62,6 +100,14 @@ function verify(sources, inventory, matrix) {
   if (matrix.default_decision !== 'DENY') fail('RBAC_DEFAULT_NOT_DENY');
   if (!Array.isArray(inventory.entries) || !Array.isArray(matrix.route_review.entries))
     throw new Error('RBAC_ROUTE_REGISTRY_MISSING');
+  // Compare the set of known classes against security invariants kept in code.
+  for (const [name, roles] of Object.entries(EXPECTED_CLASS_ROLES)) {
+    if (!Array.isArray(matrix.classifications?.[name]?.roles) ||
+        !equals(matrix.classifications[name].roles, roles))
+      fail('RBAC_CLASS_ROLE_ESCALATION:' + name);
+  }
+  for (const name of Object.keys(matrix.classifications || {}))
+    if (!(name in EXPECTED_CLASS_ROLES)) fail('RBAC_UNKNOWN_CLASS:' + name);
   const declarations = new Set(matrix.route_review.entries.map(x => x.service + '|' + x.method + '|' + x.path));
   for (const item of matrix.route_review.entries) {
     const c = matrix.classifications[item.classification];
@@ -70,6 +116,9 @@ function verify(sources, inventory, matrix) {
     if (!c.scope || !c.condition) fail('RBAC_UNDEFINED_SCOPE_OR_GUARD:' + item.path);
     if (item.classification === 'OWN_WRITE' && c.roles.includes('GUEST')) fail('RBAC_GUEST_HAS_OWNER_WRITE');
     if (item.classification === 'ADMIN' && !equals(c.roles, ['ADMIN'])) fail('RBAC_ADMIN_POLICY_UNSAFE');
+    const fixed = privilegedPathClass(item.service, item.path);
+    if (fixed && item.classification !== fixed)
+      fail('RBAC_PRIVILEGED_ROUTE_RECLASSIFIED:' + item.service + ':' + item.path);
   }
   const invSet = inventory.entries.map(x => x.service + '|' + x.method + '|' + x.path);
   const reviewSet = matrix.route_review.entries.map(x => x.service + '|' + x.method + '|' + x.path);
@@ -86,6 +135,11 @@ function verify(sources, inventory, matrix) {
   const {reads, writes} = routerActions(sources.Router);
   const groups = matrix.cp1_action_review?.groups;
   if (!groups) throw new Error('RBAC_CP_ACTION_GROUPS_MISSING');
+  for (const [name, roles] of Object.entries(EXPECTED_ACTION_GROUP_ROLES))
+    if (!Array.isArray(groups[name]?.roles) || !equals(groups[name].roles, roles))
+      fail('RBAC_CP_GROUP_ROLE_ESCALATION:' + name);
+  for (const name of Object.keys(groups))
+    if (!(name in EXPECTED_ACTION_GROUP_ROLES)) fail('RBAC_CP_UNKNOWN_GROUP:' + name);
   const byGroup = new Map();
   for (const [groupName, group] of Object.entries(groups)) {
     if (!Array.isArray(group.actions) || !Array.isArray(group.roles) || !group.guard)
@@ -147,7 +201,25 @@ if (args.some(arg => arg !== '--self-test')) {
         const negRoute = verify(mutatedRoute, inventory, matrix);
         if (negRoute.ok || !negRoute.errors.some(e => e.includes('RBAC_UNREGISTERED_HTTP_ROUTE')))
           throw new Error('RBAC_SELF_TEST_FAILED: route insertion was not detected');
-        console.log('[OK] Negative self-tests: unregistered CP action and explicit HTTP route rejected');
+        const privilegeChanged = JSON.parse(JSON.stringify(matrix));
+        privilegeChanged.classifications.ADMIN_READ.roles.push('GUEST');
+        const negPrivilege = verify(sources, inventory, privilegeChanged);
+        if (negPrivilege.ok || !negPrivilege.errors.some(e => e.includes('RBAC_CLASS_ROLE_ESCALATION')))
+          throw new Error('RBAC_SELF_TEST_FAILED: GUEST privilege escalation was not detected');
+        const routeChanged = JSON.parse(JSON.stringify(matrix));
+        const adminRoute = routeChanged.route_review.entries.find(x =>
+          x.service === 'Core' && x.path === '/api/shutdown');
+        if (!adminRoute) throw new Error('RBAC_SELF_TEST_FAILED: missing critical route fixture');
+        adminRoute.classification = 'GUEST_SHARED';
+        const negRoutePrivilege = verify(sources, inventory, routeChanged);
+        if (negRoutePrivilege.ok || !negRoutePrivilege.errors.some(e => e.includes('RBAC_PRIVILEGED_ROUTE_RECLASSIFIED')))
+          throw new Error('RBAC_SELF_TEST_FAILED: admin path reclassification not detected');
+        const cpChanged = JSON.parse(JSON.stringify(matrix));
+        cpChanged.cp1_action_review.groups.ADMIN_READ_OR_COSTLY.roles.push('GUEST');
+        const negCpPrivilege = verify(sources, inventory, cpChanged);
+        if (negCpPrivilege.ok || !negCpPrivilege.errors.some(e => e.includes('RBAC_CP_GROUP_ROLE_ESCALATION')))
+          throw new Error('RBAC_SELF_TEST_FAILED: CP1 GUEST elevation not detected');
+        console.log('[OK] Negative self-tests: unknown CP action, unknown HTTP route, GUEST class escalation, privileged route and CP group escalation rejected');
       }
     }
   } catch (error) {
