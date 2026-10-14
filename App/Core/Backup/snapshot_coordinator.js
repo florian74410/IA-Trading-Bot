@@ -101,4 +101,50 @@ class SnapshotCoordinator {
   }
 }
 
-module.exports = { SnapshotCoordinator };
+/* Core-local adapter. Opt-in only: no live service registers it yet.
+ * The Core stores are synchronous: PREPARE executes after their current JS
+ * mutation finishes and stops subsequent SQL entry points until RELEASE/ABORT.
+ * Cross-process writers, file copies and snapshot packaging remain out of scope.
+ */
+class LocalSnapshotWriter {
+  constructor(writerId) {
+    if (typeof writerId !== 'string' || !/^[a-z0-9][a-z0-9._-]*$/i.test(writerId)) {
+      throw new Error('SNAPSHOT_INVALID_WRITER_ID');
+    }
+    this.writerId = writerId;
+    this.heldEpoch = null;
+    this.lastEpoch = 0;
+  }
+
+  assertWritable() {
+    if (this.heldEpoch !== null) throw new Error('SNAPSHOT_WRITE_QUIESCED');
+  }
+
+  prepare(epoch) {
+    if (!Number.isSafeInteger(epoch) || epoch < 1 ||
+        epoch <= this.lastEpoch || this.heldEpoch !== null) {
+      throw new Error('SNAPSHOT_STALE_OR_BUSY_EPOCH');
+    }
+    this.lastEpoch = epoch;
+    this.heldEpoch = epoch;
+    return { epoch, writerId: this.writerId, pending: 0 };
+  }
+
+  release(epoch) {
+    if (this.heldEpoch !== epoch) throw new Error('SNAPSHOT_EPOCH_MISMATCH');
+    this.heldEpoch = null;
+  }
+
+  abort(epoch) {
+    if (this.heldEpoch === epoch) {
+      this.heldEpoch = null;
+      return;
+    }
+    // Idempotent cleanup is only safe for this exact latest generation.
+    if (this.heldEpoch !== null || epoch !== this.lastEpoch) {
+      throw new Error('SNAPSHOT_EPOCH_MISMATCH');
+    }
+  }
+}
+
+module.exports = { SnapshotCoordinator, LocalSnapshotWriter };
