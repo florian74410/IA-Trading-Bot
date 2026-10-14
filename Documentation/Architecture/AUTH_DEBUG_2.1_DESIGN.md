@@ -24,6 +24,10 @@ Après validation de P1.6, la cible RBAC est détaillée dans le [contrat ADMIN/
 
 Le JSON des permissions est une **référence de conception**, jamais un fichier librement éditable donnant directement des droits. Voir [RBAC Policy Integrity](../Security/AUTH_DEBUG_2.1_RBAC_POLICY_INTEGRITY.md) : tests anti-élévation GUEST, protection de PR, politique embarquée dans un build vérifié avec origine de confiance indépendante, contrôle au démarrage et refus par défaut ; contrôle des permissions à faible coût pour ne pas ralentir les Engines.
 
+## Phase 2 engagée — P2.1 / gel de déploiement DEBUG
+
+**Décision d'Overflow (14/10/2026) : aucune nouvelle version Docker DEBUG publiée/déployée sur GEN-1 avant intégration et validation complète du système Auth 2.1.** Tests et commits sur branche de développement uniquement. Le [préflight et les 13 tests SQLite fictifs](AUTH_DEBUG_2.1_PHASE2_STORAGE_PRECHECK.md) sont un prototype de non-régression, pas un outil de restauration réel. Les méthodes de chiffrement/clé wallet et les règles Contabo restent inchangées.
+
 ## Décisions approuvées
 
 - Architecture native Core Auth Service + UI Gateway + moteur de permissions RBAC (ADMIN, USER, GUEST), refus par défaut.
