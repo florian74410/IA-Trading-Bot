@@ -99,6 +99,8 @@
 
 **Essai de capacité Router lecture seule — 14/10/2026 :** `auth21_ipc_probe.js` contient désormais un vérificateur signé `createRouterReadOnlyCapabilities`, qui retourne exclusivement une métadonnée `auth21.readonly` sans données métier et affiche `writes:false`, `tradingLive:false`. Test anti-rejeu et absence de permissions LIVE validé : [CI 346/346 SUCCESS](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38625390198). **ATTENTION : l'écriture du raccordement de ce nouveau point d'entrée à `Core/Router/router.js` a été bloquée par les contrôles de sécurité ; cette route n'est PAS montée sur le serveur réel.** Ne pas affirmer que le RBAC métier Router/Engines est intégré. Phase 4 ouverte ; aucun déploiement.
 
+**Déblocage raccordement Router — 14/10/2026 :** le point d'entrée `/auth21/ipc/capabilities`, accessible uniquement en mode Auth21 DEBUG isolé avec opt-in IPC explicite, est maintenant raccordé dans `Core/Router/router.js`. Il réclame une preuve HMAC valide à usage unique, limitée à la lecture de métadonnées de capacités (`auth21.readonly`), sans exécution métier ni Trading LIVE. Écriture auparavant refusée finalement acceptée au nouvel essai, commit `cd8c6f7`. [CI 346/346 SUCCESS](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38632392131). Cela ne clôture pas le RBAC métier ni les tests HTTP sur le serveur Router complet.
+
 ### PHASE 4 — Privilèges et isolation métier
 
 - [ ] ADMIN : accès complet aux fonctions applicatives, sans accès SSH/root/Docker par le navigateur.
