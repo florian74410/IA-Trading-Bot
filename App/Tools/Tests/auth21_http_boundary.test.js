@@ -218,3 +218,26 @@ test('browser Origin policy rejects cross-site requests and adds hardening heade
  assert.equal((await send(defaultHandler,{headers:{origin:'http://127.0.0.1:8001'}})).status,403);
  assert.throws(()=>createAuth21HttpHandler({sessions:x.sessions,allowedBrowserOrigin:'https://evil.example/path'}),/AUTH21_BROWSER_ORIGIN_INVALID/);
 });
+
+test('TLS cookie mode sets HttpOnly Secure SameSite and refuses CSRF-less mutation',async()=>{
+ const {createBrowserSession}=require('../../Core/Clients/auth21_browser_cookie');
+ const browser=createBrowserSession({secret:Buffer.alloc(32,7),origin:'https://localhost:8443'});
+ const x=fixture(),handler=createAuth21HttpHandler({sessions:x.sessions,browserSessions:browser,allowedBrowserOrigin:browser.origin});
+ const run=async(opts)=>{
+  const req=Readable.from(opts.body===undefined?[]:[Buffer.from(JSON.stringify(opts.body))]);
+  req.url=opts.url;req.method=opts.method;req.headers={origin:browser.origin,...opts.headers};
+  req.socket={encrypted:true};
+  const res={writableEnded:false,writeHead(status,headers){this.status=status;this.headers=headers;return this},
+   end(data){this.body=JSON.parse(data);this.writableEnded=true}};
+  await handler(req,res);return res;
+ };
+ const login=await run({method:'POST',url:'/auth21/login',headers:{'content-type':'application/json'},
+  body:{clientId:'CL000001',password:'correct-16-characters'}});
+ assert.equal(login.status,200);
+ assert.equal(Object.hasOwn(login.body,'token'),false);
+ assert.match(login.headers['Set-Cookie'],/Secure; HttpOnly; SameSite=Strict/);
+ const headers={cookie:login.headers['Set-Cookie'].split(';')[0]};
+ assert.equal((await run({method:'GET',url:'/auth21/me',headers})).status,200);
+ assert.equal((await run({method:'POST',url:'/auth21/logout',headers})).status,403);
+ assert.equal((await run({method:'POST',url:'/auth21/logout',headers:{...headers,'x-iatb-csrf':login.body.csrfToken}})).status,200);
+});
