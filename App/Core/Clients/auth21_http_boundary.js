@@ -6,11 +6,11 @@
 const {URL}=require('node:url');
 const MAX_BYTES=4096;
 const TOKEN=/^Bearer ([A-Za-z0-9_-]{43})$/;
-function reply(res,status,data){
+function reply(res,status,data,extraHeaders={}){
  if(res.headersSent||res.writableEnded)return;
  res.writeHead(status,{'Content-Type':'application/json; charset=utf-8',
   'Cache-Control':'no-store','Pragma':'no-cache','X-Content-Type-Options':'nosniff',
-  'Referrer-Policy':'no-referrer','X-Frame-Options':'DENY','Content-Security-Policy':"default-src 'none'; frame-ancestors 'none'"});
+  'Referrer-Policy':'no-referrer','X-Frame-Options':'DENY','Content-Security-Policy':"default-src 'none'; frame-ancestors 'none'",...extraHeaders});
  res.end(JSON.stringify(data));
 }
 function readJSON(req){
@@ -47,7 +47,9 @@ function bearer(req){
  const match=TOKEN.exec(h);
  return match?match[1]:null;
 }
-function createAuth21HttpHandler({sessions,nowMilliseconds=Date.now,allowedBrowserOrigin=null}={}){
+function createAuth21HttpHandler({sessions,nowMilliseconds=Date.now,allowedBrowserOrigin=null,browserSessions=null}={}){
+ if(browserSessions&&(!browserSessions.parse||!browserSessions.csrf||!browserSessions.originAllowed||!browserSessions.validate))throw Error('AUTH21_COOKIE_CONFIG_INVALID');
+ if(browserSessions&&allowedBrowserOrigin!==browserSessions.origin)throw Error('AUTH21_COOKIE_ORIGIN_MISMATCH');
  if(allowedBrowserOrigin!==null&&(!/^https?:\/\/[^/]+$/.test(allowedBrowserOrigin)||
     allowedBrowserOrigin.includes('@')))throw Error('AUTH21_BROWSER_ORIGIN_INVALID');
  const attempts=new Map();
@@ -82,6 +84,15 @@ function createAuth21HttpHandler({sessions,nowMilliseconds=Date.now,allowedBrows
       (typeof req.headers.origin!=='string'||req.headers.origin!==allowedBrowserOrigin)){
     reply(res,403,{error:'ORIGIN_FORBIDDEN'});return;
    }
+   if(browserSessions&&(!browserSessions.originAllowed(req))){
+    reply(res,403,{error:'ORIGIN_FORBIDDEN'});return;
+   }
+   const cookieToken=browserSessions?browserSessions.parse(req):null;
+   const tokenFor=()=>browserSessions?cookieToken:bearer(req);
+   if(browserSessions&&cookieToken&&req.method!=='GET'&&uri.pathname!=='/auth21/login'&&
+      !browserSessions.validate(req,cookieToken)){
+    reply(res,403,{error:'CSRF_FORBIDDEN'});return;
+   }
    if(req.method==='POST'&&uri.pathname==='/auth21/login'){
     const input=await readJSON(req);
     if(Object.keys(input).sort().join(',')!=='clientId,password' ||
@@ -97,11 +108,12 @@ function createAuth21HttpHandler({sessions,nowMilliseconds=Date.now,allowedBrows
     }
     if(!result){failedLogin(input.clientId);reply(res,401,{error:'INVALID_CREDENTIALS'});return}
     attempts.delete(input.clientId);
+    if(browserSessions){reply(res,200,{role:result.role,clientId:result.clientId,expiresAt:result.expiresAt,csrfToken:browserSessions.csrf(result.token)}, {'Set-Cookie':browserSessions.cookie(result.token)});return}
     reply(res,200,{token:result.token,role:result.role,clientId:result.clientId,expiresAt:result.expiresAt});
     return;
    }
    if(req.method==='POST'&&uri.pathname==='/auth21/unlock'){
-    const token=bearer(req);
+    const token=tokenFor();
     if(!token){reply(res,401,{error:'UNAUTHORIZED'});return}
     const input=await readJSON(req);
     if(Object.keys(input).length!==1||typeof input.password!=='string'||input.password.length>1024){
@@ -114,7 +126,7 @@ function createAuth21HttpHandler({sessions,nowMilliseconds=Date.now,allowedBrows
     reply(res,ok?200:401,ok?{ok:true}:{error:'UNAUTHORIZED'});return;
    }
    if(req.method==='POST'&&uri.pathname==='/auth21/activity'){
-    const token=bearer(req);
+    const token=tokenFor();
     if(!token||!sessions.recordUserActivity(token)){
      reply(res,401,{error:'UNAUTHORIZED'});return;
     }
@@ -123,7 +135,7 @@ function createAuth21HttpHandler({sessions,nowMilliseconds=Date.now,allowedBrows
    // Client-scoped preference API: identity always resolved from the live token,
    // never from clientId, role, cookie, URL or request body. GUEST is read-only.
    if(uri.pathname==='/auth21/preferences'){
-    const token=bearer(req),principal=token&&sessions.verifySession(token);
+    const token=tokenFor(),principal=token&&sessions.verifySession(token);
     if(!principal){reply(res,401,{error:'UNAUTHORIZED'});return}
     if(!['GET','PUT','DELETE'].includes(req.method)){
      reply(res,405,{error:'METHOD_NOT_ALLOWED'});return;
@@ -151,16 +163,16 @@ function createAuth21HttpHandler({sessions,nowMilliseconds=Date.now,allowedBrows
     reply(res,200,{ok:true});return;
    }
    if(req.method==='GET'&&uri.pathname==='/auth21/me'){
-    const token=bearer(req),session=token&&sessions.verifySession(token);
+    const token=tokenFor(),session=token&&sessions.verifySession(token);
     if(!session){reply(res,401,{error:'UNAUTHORIZED'});return}
     reply(res,200,{clientId:session.clientId,role:session.role,expiresAt:session.expiresAt});
     return;
    }
    if(req.method==='POST'&&uri.pathname==='/auth21/logout'){
-    const token=bearer(req),session=token&&sessions.verifySession(token);
+    const token=tokenFor(),session=token&&sessions.verifySession(token);
     if(!session){reply(res,401,{error:'UNAUTHORIZED'});return}
     if(sessions.revokeSession(token)!==true){reply(res,401,{error:'UNAUTHORIZED'});return}
-    reply(res,200,{ok:true});return;
+    reply(res,200,{ok:true},browserSessions?{'Set-Cookie':browserSessions.expire}:{});return;
    }
    reply(res,405,{error:'METHOD_NOT_ALLOWED'});
   }catch(error){
