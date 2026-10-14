@@ -241,3 +241,19 @@ test('TLS cookie mode sets HttpOnly Secure SameSite and refuses CSRF-less mutati
  assert.equal((await run({method:'POST',url:'/auth21/logout',headers})).status,403);
  assert.equal((await run({method:'POST',url:'/auth21/logout',headers:{...headers,'x-iatb-csrf':login.body.csrfToken}})).status,200);
 });
+
+test('browser helper rejects insecure transport, duplicate cookies and altered CSRF',()=>{
+ const {createBrowserSession}=require('../../Core/Clients/auth21_browser_cookie');
+ const browser=createBrowserSession({secret:Buffer.alloc(32,5),origin:'https://localhost:8443'});
+ const token=VALID_TOKEN;
+ const cookie=browser.cookie(token).split(';')[0];
+ const req={headers:{origin:'https://localhost:8443',cookie,'x-iatb-csrf':browser.csrf(token)},socket:{encrypted:true}};
+ assert.equal(browser.originAllowed(req),true);
+ assert.equal(browser.parse(req),token);
+ assert.equal(browser.validate(req,token),true);
+ assert.equal(browser.originAllowed({...req,socket:{encrypted:false}}),false);
+ assert.equal(browser.originAllowed({...req,headers:{...req.headers,origin:'https://evil.example'}}),false);
+ assert.equal(browser.parse({...req,headers:{...req.headers,cookie:cookie+'; '+cookie}}),null);
+ assert.equal(browser.validate({...req,headers:{...req.headers,'x-iatb-csrf':'A'.repeat(43)}},token),false);
+ assert.throws(()=>createBrowserSession({secret:Buffer.alloc(16),origin:'https://localhost:8443'}),/AUTH21_COOKIE_CONFIG_INVALID/);
+});
