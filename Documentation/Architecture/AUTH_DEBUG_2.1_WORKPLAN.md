@@ -83,6 +83,8 @@
 
 **Validation :** authentification et verrouillage réellement vérifiés côté serveur ; suite de tests de sécurité et de contournement réussie.
 
+**Avancée intégration RBAC (14/10/2026) :** ajout d'un garde commun `auth21_rbac_guard.js` à refus par défaut, contrôle du rôle, de la méthode et de la propriété exacte `clientId` même pour ADMIN. Le garde est utilisé pour les modifications de préférences sur le Core DEBUG isolé. La passerelle `createIsolatedCoreGate` peut désormais recevoir explicitement le mode navigateur cookie sécurisé, sans l'activer sur le serveur HTTP normal. Tests négatifs ajoutés (rôle forgé, rôle GUEST, accès inter-clients, routes inconnues, usurpation de méthodes). **Les véritables routes Gateway/Router/Engine restent hors du branchement et ne sont pas déclarées sécurisées.** CI : https://github.com/florian74410/IA-Trading-Bot/actions/runs/38618893982. Aucun merge, update réel ou déploiement.
+
 ### PHASE 4 — Privilèges et isolation métier
 
 - [ ] ADMIN : accès complet aux fonctions applicatives, sans accès SSH/root/Docker par le navigateur.
