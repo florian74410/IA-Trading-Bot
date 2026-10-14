@@ -407,6 +407,7 @@ function executeAIUpdate(requestText,mode,sess,cb){if(fs.existsSync(PATHS.Runtim
 function shutdownServer(){if(shuttingDown)return;shuttingDown=true;log('SYSTEM','Arret complet demande depuis interface Web');console.log('\nArret IA-Trading-Bot v'+CURRENT_VERSION+'...');setTimeout(function(){log('SYSTEM','Arret des serveurs locaux');closeLocalServers(0);},180);}
 
 function route(req,res){var u=new URL(req.url,'http://'+HOST+':'+PORT),p=u.pathname;
+ if(AUTH21_CORE_AUTH){AUTH21_CORE_AUTH.handler(req,res);return;}
  if(AI_GATEWAY_ADAPTER&&AI_GATEWAY_ADAPTER.handle(req,res))return;
  if(X_GATEWAY_ADAPTER&&X_GATEWAY_ADAPTER.handle(req,res))return;
  if(req.method==='GET'&&p==='/api/health'){var cdb=CLIENT_SERVICE.status();return json(res,200,{ok:true,application:BUILD.application,version:CURRENT_VERSION,pid:process.pid,supervised:process.env.IATB_SUPERVISED==='1',headless:true,uiSeparated:true,clientDb:{ready:cdb.ready,schemaVersion:cdb.schemaVersion,backend:cdb.backend,lastError:cdb.ready?null:cdb.lastError}});}
