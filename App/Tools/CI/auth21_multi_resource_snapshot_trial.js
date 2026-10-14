@@ -10,6 +10,7 @@ const path=require('node:path');
 const crypto=require('node:crypto');
 const Database=require('better-sqlite3');
 const {assertFixture}=require('./auth21_v3_migration_trial');
+const {SnapshotCoordinator}=require('../../Core/Backup/snapshot_coordinator');
 const {attestRestoredPairFixture}=require('./auth21_key_restore_trial');
 const {MARKER,MARKER_CONTENT}=require('./auth21_encrypted_snapshot_trial');
 
@@ -184,7 +185,7 @@ function decrypt(wrapped,key){
 async function captureMultiFixture({root,dbs,keyFile,archiveKey,coordinator}={}){
  const home=homeOf(root),key=getMaster(home,keyFile);
  transportKey(archiveKey,key);
- if(!coordinator||typeof coordinator.execute!=='function'||
+ if(!(coordinator instanceof SnapshotCoordinator)||
     !Array.isArray(coordinator.writerIds)||
     JSON.stringify([...coordinator.writerIds].sort())!==JSON.stringify([...WRITERS].sort()))
   refuse('AUTH21_MULTI_WRITER_ALLOWLIST_REQUIRED');
@@ -220,9 +221,18 @@ async function captureMultiFixture({root,dbs,keyFile,archiveKey,coordinator}={})
  // Atomic visibility and no incomplete archive on encryption/write failure.
  const pending=path.join(home,'.pending-multi-'+crypto.randomUUID());
  try{
-  fs.writeFileSync(pending,JSON.stringify(captured)+'\n',{flag:'wx',mode:0o600});
-  if(fs.existsSync(archive))refuse('AUTH21_MULTI_ARCHIVE_EXISTS');
-  fs.renameSync(pending,archive);
+  const fd=fs.openSync(pending,'wx',0o600);
+  try{
+   fs.writeFileSync(fd,JSON.stringify(captured)+'\n');
+   fs.fsyncSync(fd);
+  }finally{fs.closeSync(fd)}
+  // Hard-link publication is atomic and refuses a concurrent existing name;
+  // unlike rename(), it can never replace an already-created archive.
+  try{fs.linkSync(pending,archive)}
+  catch(error){
+   if(error.code==='EEXIST')refuse('AUTH21_MULTI_ARCHIVE_EXISTS');
+   throw error;
+  }
  }finally{if(fs.existsSync(pending))fs.unlinkSync(pending)}
  return {archiveFile:archive,encrypted:true,epoch:coordinator.epoch};
 }
