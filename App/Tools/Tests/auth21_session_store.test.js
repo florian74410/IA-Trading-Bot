@@ -232,3 +232,18 @@ test('unsupported authentication role and protocol version are rejected',async t
  f.db.prepare('UPDATE client_sessions SET auth_protocol_version=99').run();
  assert.equal(s.verifySession(r.token),null);
 });
+
+test('partially installed schema without revoke triggers fails closed',async t=>{
+ const f=prepare(t);add(f);await init(f);
+ f.db.exec('DROP TRIGGER auth21_account_security_invalidation');
+ assert.throws(()=>new Auth21SessionStore({db:f.db,clientCrypto:f.clientCrypto}),/AUTH21_SECURITY_TRIGGERS_MISSING/);
+ await assert.rejects(()=>migrateFixture(f.db,{fixtureRoot:f.root}),/AUTH21_SCHEMA_PARTIAL/);
+});
+test('unchanged role or status do not revoke a valid session',async t=>{
+ const f=prepare(t);add(f);const s=await init(f);const r=await login(s);
+ const previous=f.db.prepare('SELECT security_version AS v FROM clients').get().v;
+ f.db.prepare("UPDATE client_accounts SET role='USER' WHERE client_id='CL000001'").run();
+ f.db.prepare("UPDATE clients SET status='ACTIVE' WHERE client_id='CL000001'").run();
+ assert.ok(s.verifySession(r.token));
+ assert.equal(f.db.prepare('SELECT security_version AS v FROM clients').get().v,previous);
+});
