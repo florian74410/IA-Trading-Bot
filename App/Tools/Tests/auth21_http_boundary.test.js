@@ -161,3 +161,21 @@ test('GUEST preference mutations rejected before calling underlying storage',asy
  assert.equal((await send(gate,{method:'GET',url,headers})).status,200);
  assert.deepEqual(x.events,['read']);
 });
+
+test('unlock requires existing bearer and password; idle refresh is explicit',async()=>{
+ const x=fixture(),gate=createIsolatedCoreGate({sessions:x.sessions});
+ let locked=true;
+ x.sessions.verifySession=()=>locked?null:{clientId:'CL000001',role:'USER'};
+ x.sessions.recordUserActivity=()=>!locked;
+ x.sessions.unlockWithPassword=async(token,pw)=>{
+  if(token!==VALID_TOKEN||pw!=='correct-16-characters')return false;
+  locked=false;return true;
+ };
+ const headers={authorization:'Bearer '+VALID_TOKEN,'content-type':'application/json'};
+ assert.equal((await send(gate,{method:'POST',url:'/auth21/activity',headers})).status,401);
+ assert.equal((await send(gate,{method:'POST',url:'/auth21/unlock',headers,body:{password:'wrong'}})).status,401);
+ assert.equal((await send(gate,{method:'POST',url:'/auth21/unlock',headers,body:{password:'correct-16-characters',role:'ADMIN'}})).status,400);
+ assert.equal((await send(gate,{method:'POST',url:'/auth21/unlock',headers,body:{password:'correct-16-characters'}})).status,200);
+ assert.equal((await send(gate,{method:'POST',url:'/auth21/activity',headers})).status,200);
+ assert.equal((await send(gate,{method:'GET',url:'/auth21/me',headers})).status,200);
+});
