@@ -80,3 +80,19 @@ test('two processes exchange a real loopback HTTP proof and reject replay',async
  assert.equal(await request({'x-iatb-auth21-proof':proof}),403);
  assert.equal(await request({}),403);
 });
+
+test('signed Router capability metadata is read-only, single-use and excludes LIVE',t=>{
+ const f=fixture(t);
+ const {createRouterReadOnlyCapabilities}=require('../../Core/Clients/auth21_ipc_probe');
+ const handler=createRouterReadOnlyCapabilities(f),codec=proofCodec({secret:f.key});
+ const proof=codec.issue({principal:{clientId:'CL000001',role:'GUEST'},audience:'router',operation:'shared.read',method:'GET'});
+ const req={method:'GET',headers:{'x-iatb-auth21-proof':proof}};
+ const response=()=>{
+  const res={writeHead(status){this.status=status},end(body){this.body=JSON.parse(body)}};
+  handler(req,res);return res;
+ };
+ const first=response();assert.equal(first.status,200);
+ assert.deepEqual(first.body.capabilities,['auth21.readonly']);
+ assert.equal(first.body.writes,false);assert.equal(first.body.tradingLive,false);
+ assert.equal(response().status,403);
+});
