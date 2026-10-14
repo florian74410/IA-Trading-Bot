@@ -25,3 +25,16 @@ test('different process key never authenticates and invalid payload fails closed
  assert.equal(receiver.verify(p,scope),null);
  for(const v of ['',{},'malformed.token','x'.repeat(2000)])assert.equal(receiver.verify(v,scope),null);
 });
+
+test('Router/Engine role enforcement uses signed proof, never claimed browser role',()=>{
+ const {authorizeInterprocess}=require('../../Core/Clients/auth21_rbac_guard');
+ const codec=proofCodec({secret});
+ const p=codec.issue({principal,...scope});
+ assert.equal(authorizeInterprocess({codec,proof:p,...scope}).allowed,true);
+ const admin=codec.issue({principal:{clientId:'CL000002',role:'ADMIN'},audience:'risk',operation:'admin.write',method:'POST'});
+ assert.equal(authorizeInterprocess({codec,proof:admin,audience:'risk',operation:'admin.write',method:'POST'}).allowed,true);
+ const guest=codec.issue({principal:{clientId:'CL000003',role:'GUEST'},audience:'portfolio',operation:'self.write',method:'POST',ownerClientId:'CL000003'});
+ assert.equal(authorizeInterprocess({codec,proof:guest,audience:'portfolio',operation:'self.write',method:'POST',ownerClientId:'CL000003'}).allowed,false);
+ const spoof=codec.issue({principal, audience:'trading',operation:'trade.live',method:'POST'});
+ assert.equal(authorizeInterprocess({codec,proof:spoof,audience:'trading',operation:'trade.live',method:'POST'}).allowed,false);
+});
