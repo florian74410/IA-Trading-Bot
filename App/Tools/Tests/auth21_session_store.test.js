@@ -324,3 +324,24 @@ test('Core native trial opens preserved v3/legacy-PBKDF2 identities and blocks l
   assert.equal((await requestAuth21(active.handler,'GET','/auth21/me',undefined,got.body.token)).status,401);
  }finally{active.close()}
 });
+
+test('Core idle lock denies at 300 seconds, polling does not extend and password unlock restores access',async t=>{
+ const f=prepare(t);add(f,'CL000001','USER');await init(f);
+ const sessions=new Auth21SessionStore({db:f.db,clientCrypto:f.clientCrypto,nowSeconds:()=>f.now,idleLockSeconds:300});
+ const login=await sessions.loginWithPassword('CL000001',PASSWORD);
+ assert.ok(login);
+ f.now+=299;
+ assert.equal(sessions.verifySession(login.token).clientId,'CL000001');
+ f.now+=1;
+ assert.equal(sessions.verifySession(login.token),null);
+ assert.equal(sessions.recordUserActivity(login.token),false);
+ assert.equal(await sessions.unlockWithPassword(login.token,'WRONG'),false);
+ assert.equal(await sessions.unlockWithPassword(login.token,PASSWORD),true);
+ assert.equal(sessions.verifySession(login.token).clientId,'CL000001');
+ f.now+=250;
+ assert.equal(sessions.recordUserActivity(login.token),true);
+ f.now+=250;
+ assert.equal(sessions.verifySession(login.token).clientId,'CL000001');
+ assert.equal(sessions.revokeSession(login.token),true);
+ assert.equal(await sessions.unlockWithPassword(login.token,PASSWORD),false);
+});
