@@ -38,3 +38,14 @@ test('Router/Engine role enforcement uses signed proof, never claimed browser ro
  const spoof=codec.issue({principal, audience:'trading',operation:'trade.live',method:'POST'});
  assert.equal(authorizeInterprocess({codec,proof:spoof,audience:'trading',operation:'trade.live',method:'POST'}).allowed,false);
 });
+
+test('Core issues scoped proof only from verified server session and permitted owner',()=>{
+ const {issueAuthorizedProof,authorizeInterprocess}=require('../../Core/Clients/auth21_rbac_guard');
+ const codec=proofCodec({secret});
+ const sessions={verifySession:t=>t==='valid'?{clientId:'CL000001',role:'USER'}:null};
+ assert.equal(issueAuthorizedProof({sessions,token:'forged',codec,...scope}),null);
+ assert.equal(issueAuthorizedProof({sessions,token:'valid',codec,...scope,ownerClientId:'CL000009'}),null);
+ assert.equal(issueAuthorizedProof({sessions,token:'valid',codec,audience:'trading',operation:'admin.write',method:'POST'}),null);
+ const proof=issueAuthorizedProof({sessions,token:'valid',codec,...scope});
+ assert.equal(authorizeInterprocess({codec,proof,...scope}).allowed,true);
+});
