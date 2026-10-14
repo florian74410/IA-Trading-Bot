@@ -36,6 +36,12 @@ Les [tests](../../Tools/CI/test_auth_storage_preflight.py) vérifient **six cas 
 
 **Limite non négociable :** `flock` est coopératif. Un programme qui écrit dans SQLite **sans prendre le verrou partagé** n'est pas bloqué par ce mécanisme. Le protocole réel exige donc une intégration explicite de **tous** les écrivains, un inventaire fiable et des tests de crash/restart ; il peut nécessiter un coordinateur supervisé plus robuste qu'un simple fichier de verrou. La séparation des clés/volumes Docker et les privilèges RBAC ne sont pas fournis par `flock`.
 
+## 3 bis. Crash, redémarrage et processus non coopératifs — démonstration de sécurité
+
+Deux tests supplémentaires (**22 au total**) vérifient : (a) la terminaison brutale d'un processus factice détenteur du verrou partagé libère le verrou OS, sans prétendre réparer une transaction applicative interrompue ; (b) un processus **non coopératif** peut écrire dans une base malgré le verrou exclusif `flock` d'un autre processus. La divergence de génération ainsi créée est détectée au préflight et le snapshot est refusé. **La détection n'est pas une protection exhaustive** : un writer clandestin qui conserve un `epoch` valide peut toujours contourner le prototype.
+
+Cette limite impose l'inventaire exhaustif des writers, les ACK par identifiant/génération, la gestion des restarts et la restriction des droits sur les volumes avant un déploiement réel. Les fichiers JSONL et Annexes n'entrent pas dans le périmètre de l'Online Backup SQLite. Voir l'[inventaire élargi](AUTH_DEBUG_2.1_SQLITE_WRITER_INVENTORY.md).
+
 ## 4. Invariants de sécurité et de non-régression
 
 - Inventorier **les vrais writers** de Core, Settings, Portfolio, MarketData/Fundamental et autres bases avant d'imposer une barrière. Un Engine sans ACK ne doit pas être ignoré pour accélérer une sauvegarde.
@@ -48,7 +54,8 @@ Les [tests](../../Tools/CI/test_auth_storage_preflight.py) vérifient **six cas 
 ## 5. Critères restants avant autorisation de déployer
 
 - [x] Prototype coopératif sur fixtures, isolé sous `/tmp`, sans opération GEN-1.
-- [x] Exécution GitHub Actions [20/20 tests P2.1 — success](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38499587022), [RBAC — success](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38499586839).
+- [x] Exécution GitHub Actions [20/20 tests P2.1 — success](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38499587022), [RBAC — success](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38499586839) pour la version précédente.
+- [ ] Vérifier en CI les **22 tests** après ajout des deux cas crash/écriture non coopérative. Ne pas annoncer le nouveau résultat comme acquis avant le workflow.
 - [ ] Inventaire **complet** des écrivains métier de chaque base critique, y compris accès secondaires et migrations legacy. Une [revue statique préliminaire](AUTH_DEBUG_2.1_SQLITE_WRITER_INVENTORY.md) est disponible ; elle n'est pas exhaustive.
 - [ ] Intégration d'un protocole `PREPARE/QUIESCED/RELEASE` ou équivalent à **tous** les chemins d'écriture, tests multiprocessus/multiconteneurs, crash/restart et rollback sur banc isolé.
 - [ ] Durées de blocage bornées, mesures de performance p95/p99 comparables, aucune perturbation significative des moteurs.

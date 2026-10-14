@@ -362,6 +362,63 @@ with p.fixture_writer_guard(Path(sys.argv[1]), timeout_s=3):
         snap = p.coherent_fixture_snapshot(self.root, timeout_s=2)
         self.assertEqual(p._validate_fixture_bundle(snap), (FIXTURE_ID, FIXTURE_EPOCH))
 
+    def test_abrupt_writer_process_termination_releases_lock(self):
+        # A crashed worker drops its advisory file lock. This does not
+        # guarantee all application-level transactions/side effects survived.
+        child = """
+import sys, time
+from pathlib import Path
+sys.path.insert(0, sys.argv[2])
+import auth_storage_preflight as p
+with p.fixture_writer_guard(Path(sys.argv[1]), timeout_s=3):
+    print('LOCK_ACQUIRED', flush=True)
+    time.sleep(30)
+"""
+        proc = subprocess.Popen(
+            [sys.executable, "-c", child, str(self.root),
+             str(Path(__file__).resolve().parent)],
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
+        )
+        try:
+            self.assertEqual(proc.stdout.readline().strip(), "LOCK_ACQUIRED")
+            with self.assertRaisesRegex(p.UnsafeStorage, "BARRIER_BUSY_TIMEOUT"):
+                p.coherent_fixture_snapshot(self.root, timeout_s=0.08)
+        finally:
+            proc.terminate()
+            try:
+                proc.communicate(timeout=3)
+            except subprocess.TimeoutExpired:
+                proc.kill()
+                proc.communicate(timeout=3)
+            self.assertIsNotNone(proc.returncode)
+        self.assertEqual(p._validate_fixture_bundle(self.root),
+                         (FIXTURE_ID, FIXTURE_EPOCH))
+        snapshot = p.coherent_fixture_snapshot(self.root, timeout_s=2)
+        self.assertEqual(p._validate_fixture_bundle(snapshot),
+                         (FIXTURE_ID, FIXTURE_EPOCH))
+
+    def test_noncooperative_writer_can_bypass_advisory_lock_and_is_detected(self):
+        # The next process deliberately does NOT call fixture_writer_guard.
+        # This is evidence that flock alone is NOT a GEN-1 safety mechanism.
+        rogue = """
+import sqlite3, sys
+db = sqlite3.connect(sys.argv[1], timeout=2)
+db.execute("UPDATE fixture_generation SET epoch='UNREGISTERED-WRITER'")
+db.commit()
+db.close()
+"""
+        with p.fixture_snapshot_barrier(self.root, timeout_s=2):
+            proc = subprocess.run(
+                [sys.executable, "-c", rogue,
+                 str(self.root / p.FIXTURE_DATABASES[1])],
+                capture_output=True, text=True, timeout=5
+            )
+            self.assertEqual(proc.returncode, 0, proc.stderr[:200])
+        # The preliminary generation check refuses the inconsistent set.
+        with self.assertRaisesRegex(p.UnsafeStorage, "INTER_DATABASE_DRIFT"):
+            p.coherent_fixture_snapshot(self.root, timeout_s=2)
+        self.assertFalse((self.root / "_snapshots").exists())
+
     def test_snapshot_repeat_does_not_mutate_source_generation(self):
         one = p.coherent_fixture_snapshot(self.root)
         two = p.coherent_fixture_snapshot(self.root)

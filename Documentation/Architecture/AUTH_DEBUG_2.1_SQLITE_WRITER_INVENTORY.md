@@ -19,6 +19,24 @@
 
 **Attention :** aucune de ces classes n'autorise actuellement une suppression de données. « Reconstructible » reste une hypothèse de politique backup à confirmer, pas une permission de tronquer, d'ignorer ou de régénérer une base. L'inventaire GEN-1 a observé **huit DB** ; cette revue statique liste des **familles de writers connues**, pas une correspondance garantie 1:1 à ces huit chemins.
 
+## 1 bis. Autres fichiers persistants et migrations dangereuses à inventorier
+
+L'analyse des modules adjacents montre que **la persistance IA-TB n'est pas exclusivement SQLite**. Les éléments ci-dessous sont constatés dans le code canonique `fix/v2.0.1-debug`, pas dans les fichiers privés de GEN-1.
+
+| Module | Données et écriture identifiées | Classe à statuer | Conséquence |
+| --- | --- | --- | --- |
+| `App/MarketData/Financial/financial_store.js` | `Shared Data/MarketData/financial_snapshots.jsonl` (chemin par défaut configurable `IATB_FINANCIAL_STORE`) ; `appendFileSync`, `_prune()`, `purge()` avec écriture temporaire et renommage | Historique de marché, potentiellement reconstructible **à valider** | Une sauvegarde exclusivement SQLite **n'inclut pas** cet historique ; les troncatures/rétentions JSONL sont des écritures concurrentes |
+| `App/services/trading-engine/history-store.js` | `User Data/<username>/trading_history.jsonl` ou `IATB_TRADING_HISTORY`, `appendFileSync` | **Historique trading potentiellement non reconstructible** ; décision dédiée nécessaire, même si LIVE reste OFF en DEBUG | Protéger l'intégrité des événements historiques ; aucune suppression/copie à chaud avant définition de cohérence |
+| `App/Core/Mosaics/mosaic_store_v1.0.js` | `Annexes/Mosaiques/*.moz.json` ; création, `writeFileSync` + `renameSync`, suppression | Configuration utilisateur/partagée, selon politique owner | Les fichiers peuvent changer pendant un snapshot, indépendamment de SQLite et sans coordination du verrou `flock` |
+| `App/Core/Services/usage_ledger_v1.js` | `.runtime/accounting/usage_ledger.jsonl` ; journal de consommation via append | **Audit/coûts potentiellement critiques** ; à classer | Des événements de consommation doivent être préservés selon politique d'audit, hors simple Online Backup SQLite |
+| `App/Fundamental/Engine/database.js` | Au chargement, `migrateLegacy()` peut déplacer ou copier `Fundamental/Data/fundamental.db` et ses `-wal/-shm` dans la racine persistante | **Mutation à l'import, critique** | Ne jamais importer ce module depuis un inventaire lecture seule ; migration des DB ouvertes et WAL/SHM **sans arrêt coordonné** à proscrire |
+| `App/Core/Shared/paths.js` | Exécution à l'import de créations d'arborescences et de clés internes si manquantes | **Mutation à l'import, critique** | Un scanner préflight ne doit pas charger ce module pour découvrir des chemins ; sa reprise/migration reste indépendante de P2.1 |
+| `App/Bank/Core/vault_registry.js` | Fichier `Bank/vault_registry.json` pouvant être créé et modifié | **Wallet/Bank GELÉ** | Mentionné uniquement comme exclusion de sécurité ; **aucun accès, import, test ou modification de Wallet** pendant Auth 2.1 |
+
+**Décision architecturale à prendre plus tard :** distinguer `SNAPSHOT_AUTH_CRITIQUE` (données de compte et relations indispensables), `SNAPSHOT_METIER` (historique trading/stratégie/audit, potentiellement non reconstructible), et `RECONSTRUCTIBLE` (caches et télémétrie après vérification), plutôt que bloquer **tous** les ticks pendant de longues copies. **Aucune exclusion de sauvegarde n'est approuvée à cette étape.**
+
+La barrière de test actuelle porte sur **trois DB SQLite fictives** uniquement. Elle **ne garantit pas** la capture atomique des fichiers JSONL ou Annexes. Il faudra prévoir un mécanisme de génération ou de copie en rotation des journaux, avec ACK des writers, et le tester avant un véritable snapshot métier.
+
 ## 2. Conséquences pour la barrière de production
 
 - **Registre exhaustif des écrivains actifs**, et non des seules classes de code : tout processus susceptible de faire `INSERT`, `UPDATE`, `DELETE`, DDL, rétention ou migration doit être surveillé à l'ouverture et après restart. Inclure scripts CLI, jobs schedulers, maintenance et hooks d'initialisation.
@@ -33,7 +51,7 @@
 
 - [x] Familles principales d'écrivains identifiées dans les sources canonique (Core Clients, Settings, Portfolio, Fundamental, MarketData).
 - [x] Mutations à l'initialisation, rétention et migrations recensées dans les modules inspectés.
-- [ ] Lister toutes les autres DB, scripts et tâches cachées/dynamiques ; retrouver les appels à chaque Store et le service/identité OS effectivement exécutant.
+- [ ] Lister toutes les autres DB, scripts et tâches cachées/dynamiques ; retrouver les appels à chaque Store et le service/identité OS effectivement exécutant. **Étude complémentaire :** JSONL Financial/Trading/Usage, fichiers Mosaic et migration Fundamental à l'import identifiés (voir §1 bis) ; revue **non exhaustive**.
 - [ ] Définir la frontière précise des invariants transactionnels `clientId` / crédits / portfolio / réglages, avec owner mapping.
 - [ ] Décider quelles bases **très actives** peuvent avoir une sauvegarde indépendante sans briser les exigences d'intégrité ou d'audit.
 - [ ] Intégrer un protocole contrôlé sur **tous** les chemins d'écriture réels (y compris startup, retention, recovery), avec tests de restart, crash et temporisation sur banc isolé.
