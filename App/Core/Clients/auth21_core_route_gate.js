@@ -52,7 +52,10 @@ function openCoreAuthTrial({root,clientCrypto,snapshotGate,env,browserSessions=n
   const runtimeEnv=env||process.env;
   const ipcCodec=runtimeEnv.IATB_AUTH21_IPC_PROBE_TRIAL==='1'?
    require('./auth21_ipc_proof').proofCodec({secret:require('./auth21_ipc_keyfile').loadTrialSecret({env:runtimeEnv,root})}):null;
-  return {handler:createIsolatedCoreGate({sessions,browserSessions,allowedBrowserOrigin,ipcCodec}),close(){db.close()}};
+  // Core-internal capability issuer uses this real SQLite-backed session store.
+  // It is never exposed through the HTTP handler or sent to the browser.
+  const businessIssuer=ipcCodec?require('./auth21_core_business_issuer').createCoreBusinessIssuer({sessions,codec:ipcCodec,env:runtimeEnv}):null;
+  return {handler:createIsolatedCoreGate({sessions,browserSessions,allowedBrowserOrigin,ipcCodec}),businessIssuer,close(){db.close()}};
  }catch(error){db.close();throw error}
 }
 module.exports={createIsolatedCoreGate,openCoreAuthTrial};
