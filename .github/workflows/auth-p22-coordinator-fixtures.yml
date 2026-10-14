@@ -56,6 +56,10 @@ on:
       - 'App/Core/Clients/auth21_http_boundary.js'
       - 'App/Core/Clients/auth21_browser_cookie.js'
       - 'App/Core/Clients/auth21_rbac_guard.js'
+      - 'App/Core/Clients/auth21_service_boundary.js'
+      - 'App/Tools/Tests/auth21_service_boundary.test.js'
+      - 'App/UI/Gateway/ui_service.js'
+      - 'App/Core/Router/router.js'
       - 'App/Tools/Tests/auth21_rbac_guard.test.js'
       - 'App/Core/Clients/auth21_core_route_gate.js'
       - 'App/Tools/Tests/auth21_http_boundary.test.js'
@@ -126,6 +130,10 @@ on:
       - 'App/Core/Clients/auth21_http_boundary.js'
       - 'App/Core/Clients/auth21_browser_cookie.js'
       - 'App/Core/Clients/auth21_rbac_guard.js'
+      - 'App/Core/Clients/auth21_service_boundary.js'
+      - 'App/Tools/Tests/auth21_service_boundary.test.js'
+      - 'App/UI/Gateway/ui_service.js'
+      - 'App/Core/Router/router.js'
       - 'App/Tools/Tests/auth21_rbac_guard.test.js'
       - 'App/Tools/Tests/auth21_http_boundary.test.js'
       - 'App/Core/Clients/auth21_admin_store.js'
@@ -205,6 +213,10 @@ jobs:
           node --check App/Core/Clients/auth21_http_boundary.js
           node --check App/Core/Clients/auth21_browser_cookie.js
           node --check App/Core/Clients/auth21_rbac_guard.js
+          node --check App/Core/Clients/auth21_service_boundary.js
+          node --check App/Tools/Tests/auth21_service_boundary.test.js
+          node --check App/UI/Gateway/ui_service.js
+          node --check App/Core/Router/router.js
           node --check App/Tools/Tests/auth21_rbac_guard.test.js
           node --check App/Core/Clients/auth21_core_route_gate.js
           node --check App/Tools/Tests/auth21_http_boundary.test.js
@@ -248,7 +260,7 @@ jobs:
       - name: Auth v3 session, revocation and encrypted preference fixtures
         run: NODE_PATH="$RUNNER_TEMP/iatb-auth-v3/node_modules" node --test App/Tools/Tests/auth21_session_store.test.js
       - name: Auth21 isolated HTTP bearer boundary negative tests
-        run: node --test App/Tools/Tests/auth21_http_boundary.test.js App/Tools/Tests/auth21_rbac_guard.test.js
+        run: node --test App/Tools/Tests/auth21_http_boundary.test.js App/Tools/Tests/auth21_rbac_guard.test.js App/Tools/Tests/auth21_service_boundary.test.js
       - name: Auth v3 ADMIN persistence, last-admin guard and local-CLI fixtures
         run: NODE_PATH="$RUNNER_TEMP/iatb-auth-v3/node_modules" node --test App/Tools/Tests/auth21_admin_store.test.js
       - name: Auth 2.1 first ADMIN consent, backup and legacy DEBUG preflight fixtures
