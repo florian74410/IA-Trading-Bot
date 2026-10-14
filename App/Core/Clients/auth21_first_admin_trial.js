@@ -127,10 +127,10 @@ class Auth21FirstAdminTrial {
     throw Error('AUTH21_BOOTSTRAP_IDENTITY_REQUIRED');
   }
   const existing=clientId?
-   this.db.prepare('SELECT client_id AS clientId,status FROM clients WHERE client_id=?').get(clientId):null;
+   this.db.prepare('SELECT * FROM clients WHERE client_id=?').get(clientId):null;
   if(clientId&&(!existing||existing.status!=='ACTIVE'))throw Error('AUTH21_BOOTSTRAP_CLIENT_UNAVAILABLE');
   const current=clientId?this.db.prepare(
-   'SELECT role,username_enc AS usernameEnc,password_hash AS passwordHash,updated_at AS updatedAt,enabled FROM client_accounts WHERE client_id=?').get(clientId):null;
+   'SELECT role,username_enc AS usernameEnc,username_hash AS usernameHash,password_hash AS passwordHash,updated_at AS updatedAt,enabled FROM client_accounts WHERE client_id=?').get(clientId):null;
   if(current){
    if(current.role!=='SUPERADMIN'||convertLegacy!==true)
     throw Error('AUTH21_BOOTSTRAP_EXISTING_LOGIN_REQUIRES_REVIEW');
@@ -138,6 +138,7 @@ class Auth21FirstAdminTrial {
     throw Error('AUTH21_BOOTSTRAP_USERNAME_MISMATCH');
   }else if(convertLegacy)throw Error('AUTH21_BOOTSTRAP_LEGACY_MISSING');
   const usernameHash=this.crypto.lookupHash('username:'+username);
+  if(current&&current.usernameHash!==usernameHash)throw Error('AUTH21_BOOTSTRAP_LEGACY_USERNAME_INDEX_INVALID');
   const taken=this.db.prepare('SELECT client_id FROM client_accounts WHERE username_hash=?').get(usernameHash);
   if(taken&&taken.client_id!==clientId)throw Error('AUTH21_BOOTSTRAP_USERNAME_TAKEN');
   const hash=await Kdf.hashNewPassword(password);
@@ -151,12 +152,14 @@ class Auth21FirstAdminTrial {
    if(this._adminCount()!==0)throw Error('AUTH21_FIRST_ADMIN_ALREADY_EXISTS');
    let target=clientId;
    if(target){
-    const fresh=this.db.prepare('SELECT status FROM clients WHERE client_id=?').get(target);
-    if(!fresh||fresh.status!=='ACTIVE')throw Error('AUTH21_BOOTSTRAP_STALE_CLIENT');
-    const auth=this.db.prepare('SELECT role,username_enc AS usernameEnc,password_hash AS passwordHash,updated_at AS updatedAt,enabled FROM client_accounts WHERE client_id=?').get(target);
+    const fresh=this.db.prepare('SELECT * FROM clients WHERE client_id=?').get(target);
+    if(!fresh||Object.keys(existing).some(key=>fresh[key]!==existing[key]))
+     throw Error('AUTH21_BOOTSTRAP_STALE_CLIENT');
+    const auth=this.db.prepare('SELECT role,username_enc AS usernameEnc,username_hash AS usernameHash,password_hash AS passwordHash,updated_at AS updatedAt,enabled FROM client_accounts WHERE client_id=?').get(target);
     if(Boolean(auth)!==Boolean(current)||
        (auth&&(auth.role!==current.role||auth.passwordHash!==current.passwordHash||
         auth.updatedAt!==current.updatedAt||auth.enabled!==current.enabled||
+        auth.usernameHash!==current.usernameHash||
         !convertLegacy||this.crypto.open(auth.usernameEnc)!==username)))
       throw Error('AUTH21_BOOTSTRAP_STALE_ACCOUNT');
    }else{
