@@ -25,3 +25,19 @@ test('Engine direct HTTP paths default deny in isolated mode',()=>{
   assert.deepEqual(decision(env,'engine','POST',p),{intercept:true,forwardToCore:false});
  }
 });
+
+test('real service HTTP entrypoints invoke the isolated boundary before legacy handlers',()=>{
+ const fs=require('node:fs'),path=require('node:path');
+ const specs=[
+ ['../../UI/Gateway/ui_service.js',"decision(process.env,'gateway'"],
+ ['../../Core/Router/router.js',"decision(process.env,'router'"],
+ ['../../services/trading-engine/trading_service.js',"decision(process.env,'engine'"],
+ ['../../Portfolio/Engine/portfolio_service.js',"decision(process.env,'engine'"],
+ ['../../Risk/Engine/risk_service.js',"decision(process.env,'engine'"]
+ ];
+ for(const [relative,proof] of specs){
+  const source=fs.readFileSync(path.resolve(__dirname,relative),'utf8');
+  const gate=source.indexOf(proof),server=source.indexOf('createServer(');
+  assert.ok(gate>server&&server>=0,relative);
+ }
+});
