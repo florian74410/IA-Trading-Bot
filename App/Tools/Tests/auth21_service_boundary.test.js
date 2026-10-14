@@ -1,0 +1,27 @@
+'use strict';
+const test=require('node:test'),assert=require('node:assert/strict');
+const {decision,active}=require('../../Core/Clients/auth21_service_boundary');
+const env={IATB_AUTH21_CORE_AUTH_TRIAL:'1',IATB_AUTH21_LOCAL_SNAPSHOT_TRIAL:'1',IATB_DEBUG_MODE:'1'};
+test('trial boundary cannot be activated by partial flags',()=>{
+ for(const key of Object.keys(env)){
+  const v={...env};delete v[key];
+  assert.equal(active(v),false);
+  assert.equal(decision(v,'router','POST','/communication/v1/ui/write').intercept,false);
+ }
+});
+test('Gateway forwards only Auth21 routes and denies legacy pages and API',()=>{
+ assert.deepEqual(decision(env,'gateway','POST','/auth21/login'),{intercept:true,forwardToCore:true});
+ for(const p of ['/api/bootstrap','/api/admin','/firewall-admin/edit','/communication/v1/ui/write','/bank/keys','/assets/hack.js']){
+  assert.deepEqual(decision(env,'gateway','POST',p),{intercept:true,forwardToCore:false});
+ }
+});
+test('Router denies CP1, market data and fallback-to-Core in isolated mode',()=>{
+ for(const p of ['/communication/v1/ui/read','/communication/v1/ui/write','/communication/v1/request','/router-health','/market-data/candles','/api/bootstrap','/']){
+  assert.deepEqual(decision(env,'router','GET',p),{intercept:true,forwardToCore:false});
+ }
+});
+test('Engine direct HTTP paths default deny in isolated mode',()=>{
+ for(const p of ['/health','/orders','/open-trades','/api/positions','/cp/v1']){
+  assert.deepEqual(decision(env,'engine','POST',p),{intercept:true,forwardToCore:false});
+ }
+});
