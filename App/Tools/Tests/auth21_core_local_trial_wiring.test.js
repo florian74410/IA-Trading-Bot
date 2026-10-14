@@ -180,3 +180,16 @@ test('native Auth21 bridge rejects missing original database without generating 
   /ENOENT/);
  assert.equal(fs.existsSync(path.join(f.root,'userdata')),false);
 });
+
+test('Core auth routing is disabled by default and checks original DB before constructing Clients',()=>{
+ const src=fs.readFileSync(serverFile,'utf8');
+ const ready=src.indexOf("AUTH21_CORE_AUTH_EXISTING_FILES_REQUIRED");
+ const crypto=src.indexOf("CLIENT_CRYPTO=new ClientCrypto");
+ const bridge=src.indexOf("openCoreAuthTrial({root:AUTH21_LOCAL_WRITERS.root");
+ const route=src.indexOf("if(AUTH21_CORE_AUTH){AUTH21_CORE_AUTH.handler(req,res);return;}");
+ const legacy=src.indexOf("if(p==='/api/bootstrap')");
+ assert.ok(ready>0&&ready<crypto&&bridge>crypto&&route>bridge);
+ assert.ok(legacy<0||legacy>route);
+ assert.match(src,/var AUTH21_CORE_AUTH=null;/);
+ assert.match(src,/IATB_AUTH21_CORE_AUTH_TRIAL==='1'/);
+});
