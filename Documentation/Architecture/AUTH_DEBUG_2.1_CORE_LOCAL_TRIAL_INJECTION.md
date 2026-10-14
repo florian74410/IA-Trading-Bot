@@ -13,9 +13,17 @@
 
 ## Résultats de la validation
 
-- **[GitHub Actions P2.2 — SUCCESS, run 38555718984](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38555718984)** : 84/84 tests historiques (81 + 3 nouveaux `ClientCrypto`), 27/27 tests de startup/inventaire/Core local (14 + 13 nouveaux), 16/16 migration v3, 23/23 sessions, 24/24 ADMIN, 26/26 premier ADMIN/DEBUG, 22/22 master-key restore, 20/20 bundle chiffré client, 20/20 bundle multi-ressources, 15/15 Python SQLite = **262/262 Node + 15/15 Python = 277/277**. Aucun échec.
+- **[GitHub Actions P2.2 — SUCCESS, run 38556607421](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38556607421)** : 84/84 tests historiques (81 + 3 `ClientCrypto`), **34/34** tests de startup/inventaire/Core local/mises à jour (14 + 13 + 7), 16/16 migration v3, 23/23 sessions, 24/24 ADMIN, 26/26 premier ADMIN/DEBUG, 22/22 clé/restauration, 20/20 bundle Clients, 20/20 bundle multi-ressources, 15/15 Python SQLite = **269/269 Node + 15/15 Python = 284/284**. Aucun échec.
 - Les tests supplémentaires `auth21_core_local_trial_wiring.test.js` vérifient l'acceptation du seul contexte temporaire DEBUG, le rejet des modes non autorisés, des chemins détournés, permissions ou symlinks dangereux, les quatre ACK/écritures gelées, la libération et ABORT, le refus de créer Mosaics pendant le gel, et les points de raccordement du serveur par lecture de sa source **sans lancer de serveur**.
 - Les trois nouveaux tests `client_master_key_safety.test.js` valident que la clé n'est pas créée ou chmod pendant un gel et que les gardes invalides échouent avant toute création de répertoire. Le comportement normal de `ClientCrypto` reste testé.
+
+## Durcissement regroupé — Updates et IA Update Builder
+
+- `App/Core/Updates/update_manager_v1.0.js` reçoit un mode de test `readOnlyTrial` strictement facultatif, déclenché uniquement par le Core-local autorisé. Le constructeur n'initialise plus les dossiers de staging ou le journal ; `record`, `newInboxPath`, `receiveUpload`, `download`, `inspectArchive`, `install`, `cleanupPreview` et `cleanupOld` ne produisent aucune mutation. Les API à callback retournent `AUTH21_UPDATES_READ_ONLY` avant toute ouverture de flux HTTP/ZIP.
+- `App/Core/Updates/ai_update_builder_v1.0.js` utilise la même restriction. Aucune création du dossier `AI-Generated` au constructeur ; `applyPlan` et `validateGenerated` refusent directement ; `list` retourne une liste vide sans explorer le disque.
+- `App/Core/Server/server.js` injecte `readOnlyTrial:!!AUTH21_LOCAL_WRITERS` dans les deux gestionnaires. L'assistant `installAIUpdate` vérifie également le mode avant toute copie locale.
+- `App/Tools/Tests/auth21_core_updates_read_only_trial.test.js` valide **7 scénarios en sous-processus** dans des racines fictives : pas de création, upload/download/install refusés sans réseau, pas de nettoyage de rétention, pas d'archive IA, lectures inoffensives et initialisation historique inchangée hors du mode d'essai.
+- Ces restrictions **ne prouvent pas** la couverture des scripts de maintenance et autres Engines : cette intégration reste un critère ouvert de P2.2.
 
 ## Frontières de sécurité à ne pas franchir
 
