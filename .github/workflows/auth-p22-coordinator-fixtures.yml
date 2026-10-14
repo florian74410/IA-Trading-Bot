@@ -16,6 +16,10 @@ on:
       - 'App/Tools/Tests/fundamental_snapshot_writer.test.js'
       - 'App/Fundamental/Engine/database.js'
       - 'App/Tools/Tests/fundamental_legacy_snapshot_bridge.test.js'
+      - 'App/MarketData/Registry/market_registry.js'
+      - 'App/MarketData/Storage/api_telemetry_store.js'
+      - 'App/MarketData/Storage/microstructure_store.js'
+      - 'App/Tools/Tests/marketdata_snapshot_writers.test.js'
       - '.github/workflows/auth-p22-coordinator-fixtures.yml'
   pull_request:
     branches:
@@ -34,6 +38,10 @@ on:
       - 'App/Tools/Tests/fundamental_snapshot_writer.test.js'
       - 'App/Fundamental/Engine/database.js'
       - 'App/Tools/Tests/fundamental_legacy_snapshot_bridge.test.js'
+      - 'App/MarketData/Registry/market_registry.js'
+      - 'App/MarketData/Storage/api_telemetry_store.js'
+      - 'App/MarketData/Storage/microstructure_store.js'
+      - 'App/Tools/Tests/marketdata_snapshot_writers.test.js'
       - '.github/workflows/auth-p22-coordinator-fixtures.yml'
   workflow_dispatch:
 
@@ -65,5 +73,9 @@ jobs:
           node --check App/Tools/Tests/fundamental_snapshot_writer.test.js
           node --check App/Fundamental/Engine/database.js
           node --check App/Tools/Tests/fundamental_legacy_snapshot_bridge.test.js
+          node --check App/MarketData/Registry/market_registry.js
+          node --check App/MarketData/Storage/api_telemetry_store.js
+          node --check App/MarketData/Storage/microstructure_store.js
+          node --check App/Tools/Tests/marketdata_snapshot_writers.test.js
       - name: Isolated ACK and failure-handling fixtures
-        run: node --test App/Tools/Tests/snapshot_coordinator.test.js App/Tools/Tests/core_snapshot_writers.test.js App/Tools/Tests/portfolio_snapshot_writer.test.js App/Tools/Tests/fundamental_snapshot_writer.test.js App/Tools/Tests/fundamental_legacy_snapshot_bridge.test.js
+        run: node --test App/Tools/Tests/snapshot_coordinator.test.js App/Tools/Tests/core_snapshot_writers.test.js App/Tools/Tests/portfolio_snapshot_writer.test.js App/Tools/Tests/fundamental_snapshot_writer.test.js App/Tools/Tests/fundamental_legacy_snapshot_bridge.test.js App/Tools/Tests/marketdata_snapshot_writers.test.js
