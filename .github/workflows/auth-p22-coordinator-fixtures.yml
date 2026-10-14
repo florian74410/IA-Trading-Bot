@@ -31,6 +31,8 @@ on:
       - 'App/Tools/Tests/client_master_key_safety.test.js'
       - 'App/Tools/CI/auth21_key_restore_trial.js'
       - 'App/Tools/Tests/auth21_key_restore_trial.test.js'
+      - 'App/Tools/CI/auth21_encrypted_snapshot_trial.js'
+      - 'App/Tools/Tests/auth21_encrypted_snapshot_trial.test.js'
       - 'App/Core/Clients/auth21_proposed_migrations/003_auth21_schema_v3.sql'
       - 'App/Tools/CI/test_auth21_schema_v3_proposal.py'
       - 'App/Tools/CI/auth21_v3_migration_trial.js'
@@ -76,6 +78,8 @@ on:
       - 'App/Tools/Tests/client_master_key_safety.test.js'
       - 'App/Tools/CI/auth21_key_restore_trial.js'
       - 'App/Tools/Tests/auth21_key_restore_trial.test.js'
+      - 'App/Tools/CI/auth21_encrypted_snapshot_trial.js'
+      - 'App/Tools/Tests/auth21_encrypted_snapshot_trial.test.js'
       - 'App/Core/Clients/auth21_proposed_migrations/003_auth21_schema_v3.sql'
       - 'App/Tools/CI/test_auth21_schema_v3_proposal.py'
       - 'App/Tools/CI/auth21_v3_migration_trial.js'
@@ -134,6 +138,8 @@ jobs:
           node --check App/Tools/Tests/client_master_key_safety.test.js
           node --check App/Tools/CI/auth21_key_restore_trial.js
           node --check App/Tools/Tests/auth21_key_restore_trial.test.js
+          node --check App/Tools/CI/auth21_encrypted_snapshot_trial.js
+          node --check App/Tools/Tests/auth21_encrypted_snapshot_trial.test.js
           node --check App/Tools/CI/auth21_v3_migration_trial.js
           node --check App/Tools/CI/auth21_credential_upgrade_trial.js
           node --check App/Tools/Tests/auth21_v3_migration_trial.test.js
@@ -159,3 +165,5 @@ jobs:
         run: NODE_PATH="$RUNNER_TEMP/iatb-auth-v3/node_modules" node --test App/Tools/Tests/auth21_first_admin_trial.test.js
       - name: Auth client master-key and WAL backup restore compatibility fixtures
         run: NODE_PATH="$RUNNER_TEMP/iatb-auth-v3/node_modules" node --test App/Tools/Tests/auth21_key_restore_trial.test.js
+      - name: Auth encrypted client snapshot and coordinated restore fixtures
+        run: NODE_PATH="$RUNNER_TEMP/iatb-auth-v3/node_modules" node --test App/Tools/Tests/auth21_encrypted_snapshot_trial.test.js
