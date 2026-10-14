@@ -204,26 +204,31 @@ class Auth21FirstAdminTrial {
    throw Error('AUTH21_DEBUG_TARGET_INVALID');
   if(confirmation!=='RETIRE DEBUG LOGIN ON FIXTURE: '+targetClientId)
    throw Error('AUTH21_DEBUG_RESET_APPROVAL_REQUIRED');
-  if(!adminStore||adminStore.db!==this.db||typeof adminStore.removeLogin!=='function')
+  if(!adminStore||adminStore.db!==this.db||typeof adminStore._admin!=='function'||
+     (adminStore.snapshotGate||null)!==(this.snapshotGate||null))
    throw Error('AUTH21_DEBUG_ADMIN_STORE_REQUIRED');
-  let principal=adminStore.sessions.verifySession(adminToken);
+  let principal=adminStore._admin(adminToken);
   if(!principal||principal.role!=='ADMIN')throw Error('AUTH21_ADMIN_FORBIDDEN');
   const planned=this._legacyCandidates().find(x=>x.clientId===targetClientId);
   if(!planned||planned.origin!=='VERIFIED_DEBUG_BOOTSTRAP')
    throw Error('AUTH21_DEBUG_PROVENANCE_UNVERIFIED');
   if(this._adminCount()<1)throw Error('AUTH21_DEBUG_FIRST_ADMIN_REQUIRED');
+  const original=this.db.prepare('SELECT password_hash AS digest,updated_at AS updatedAt,enabled,username_enc AS usernameEnc,role FROM client_accounts WHERE client_id=?').get(targetClientId);
   this._writable();
   const backupFile=await this._backup('pre-legacy-debug-'+targetClientId+'.sqlite');
   if(hooks&&typeof hooks.beforeCommit==='function')await hooks.beforeCommit(this.db);
   this._writable();
   const result=this.db.transaction(()=>{
    this._authorized();this._writable();
-   principal=adminStore.sessions.verifySession(adminToken);
+   principal=adminStore._admin(adminToken);
    if(!principal||principal.role!=='ADMIN')throw Error('AUTH21_ADMIN_FORBIDDEN');
    const fresh=this._legacyCandidates().find(x=>x.clientId===targetClientId);
    if(!fresh||fresh.origin!=='VERIFIED_DEBUG_BOOTSTRAP')
     throw Error('AUTH21_DEBUG_PROVENANCE_CHANGED');
    if(this._adminCount()<1)throw Error('AUTH21_DEBUG_FIRST_ADMIN_REQUIRED');
+   const current=this.db.prepare('SELECT password_hash AS digest,updated_at AS updatedAt,enabled,username_enc AS usernameEnc,role FROM client_accounts WHERE client_id=?').get(targetClientId);
+   if(!current||Object.keys(original).some(key=>original[key]!==current[key]))
+    throw Error('AUTH21_DEBUG_ACCOUNT_STALE');
    const deleted=this.db.prepare([
     "DELETE FROM client_accounts WHERE client_id=? AND role='SUPERADMIN'"
    ].join(' ')).run(targetClientId);
