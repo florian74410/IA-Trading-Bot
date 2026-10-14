@@ -46,7 +46,23 @@ function bearer(req){
  const match=TOKEN.exec(h);
  return match?match[1]:null;
 }
-function createAuth21HttpHandler({sessions}={}){
+function createAuth21HttpHandler({sessions,nowMilliseconds=Date.now}={}){
+ const attempts=new Map();
+ const WINDOW_MS=300000,MAX_FAILURES=5,MAX_TRACKED=2048;
+ function failureDelay(clientId){
+  const now=nowMilliseconds(),record=attempts.get(clientId);
+  if(!record||now-record.started>=WINDOW_MS){attempts.delete(clientId);return false}
+  return record.failures>=MAX_FAILURES;
+ }
+ function failedLogin(clientId){
+  const now=nowMilliseconds(),record=attempts.get(clientId);
+  if(!record||now-record.started>=WINDOW_MS){
+   if(attempts.size>=MAX_TRACKED)attempts.delete(attempts.keys().next().value);
+   attempts.set(clientId,{started:now,failures:1});return;
+  }
+  record.failures++;
+ }
+
  if(!sessions||typeof sessions.loginWithPassword!=='function'||
     typeof sessions.verifySession!=='function'||typeof sessions.revokeSession!=='function')
   throw Error('AUTH21_SESSIONS_REQUIRED');
@@ -64,12 +80,14 @@ function createAuth21HttpHandler({sessions}={}){
       typeof input.password!=='string'||input.password.length>1024){
      reply(res,400,{error:'INVALID_REQUEST'});return;
     }
+    if(failureDelay(input.clientId)){reply(res,429,{error:'AUTH_THROTTLED'});return}
     let result;
     try{result=await sessions.loginWithPassword(input.clientId,input.password)}catch(e){
      if(e.message==='SNAPSHOT_WRITE_QUIESCED'){reply(res,503,{error:'AUTH_UNAVAILABLE'});return}
      throw e;
     }
-    if(!result){reply(res,401,{error:'INVALID_CREDENTIALS'});return}
+    if(!result){failedLogin(input.clientId);reply(res,401,{error:'INVALID_CREDENTIALS'});return}
+    attempts.delete(input.clientId);
     reply(res,200,{token:result.token,role:result.role,clientId:result.clientId,expiresAt:result.expiresAt});
     return;
    }
