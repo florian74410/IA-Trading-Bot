@@ -258,6 +258,8 @@ jobs:
           node --check App/Tools/Tests/auth21_all_engines_guard.test.js
           node --check App/Core/Clients/auth21_router_service_read.js
           node --check App/Tools/Tests/auth21_router_real_ingress.test.js
+          node --check App/UI/Gateway/ui_service.js
+          node --check App/Tools/Tests/auth21_network_upgrade_lockdown.test.js
           node --check App/Core/Router/router.js
           node --check App/Core/Clients/auth21_service_boundary.js
           node --check App/Tools/Tests/auth21_service_boundary.test.js
@@ -309,7 +311,7 @@ jobs:
       - name: Auth v3 session, revocation and encrypted preference fixtures
         run: NODE_PATH="$RUNNER_TEMP/iatb-auth-v3/node_modules" node --test App/Tools/Tests/auth21_session_store.test.js
       - name: Auth21 isolated HTTP bearer boundary negative tests
-        run: node --test App/Tools/Tests/auth21_http_boundary.test.js App/Tools/Tests/auth21_rbac_guard.test.js App/Tools/Tests/auth21_service_boundary.test.js App/Tools/Tests/auth21_ipc_proof.test.js App/Tools/Tests/auth21_ipc_boundary.test.js App/Tools/Tests/auth21_ipc_keyfile.test.js App/Tools/Tests/auth21_ipc_probe.test.js App/Tools/Tests/auth21_business_write_lockdown.test.js App/Tools/Tests/auth21_business_capability.test.js App/Tools/Tests/auth21_indicator_write_flow.test.js App/Tools/Tests/auth21_indicator_persistent_fixture.test.js App/Tools/Tests/auth21_four_process_http.test.js App/Tools/Tests/auth21_core_business_issuer.test.js App/Tools/Tests/auth21_body_digest.test.js App/Tools/Tests/auth21_all_engines_guard.test.js App/Tools/Tests/auth21_router_real_ingress.test.js
+        run: node --test App/Tools/Tests/auth21_http_boundary.test.js App/Tools/Tests/auth21_rbac_guard.test.js App/Tools/Tests/auth21_service_boundary.test.js App/Tools/Tests/auth21_ipc_proof.test.js App/Tools/Tests/auth21_ipc_boundary.test.js App/Tools/Tests/auth21_ipc_keyfile.test.js App/Tools/Tests/auth21_ipc_probe.test.js App/Tools/Tests/auth21_business_write_lockdown.test.js App/Tools/Tests/auth21_business_capability.test.js App/Tools/Tests/auth21_indicator_write_flow.test.js App/Tools/Tests/auth21_indicator_persistent_fixture.test.js App/Tools/Tests/auth21_four_process_http.test.js App/Tools/Tests/auth21_core_business_issuer.test.js App/Tools/Tests/auth21_body_digest.test.js App/Tools/Tests/auth21_all_engines_guard.test.js App/Tools/Tests/auth21_router_real_ingress.test.js App/Tools/Tests/auth21_network_upgrade_lockdown.test.js
       - name: Auth v3 ADMIN persistence, last-admin guard and local-CLI fixtures
         run: NODE_PATH="$RUNNER_TEMP/iatb-auth-v3/node_modules" node --test App/Tools/Tests/auth21_admin_store.test.js
       - name: Auth 2.1 first ADMIN consent, backup and legacy DEBUG preflight fixtures
