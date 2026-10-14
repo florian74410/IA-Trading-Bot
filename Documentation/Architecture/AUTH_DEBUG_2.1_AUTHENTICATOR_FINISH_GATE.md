@@ -5,8 +5,14 @@
 ## Nouvel élément vérifié
 
 - `App/Core/Clients/auth21_http_boundary.js` : handler **non monté** au serveur, natif Node HTTP et sans nouveau port. Endpoints proposés exclusivement `POST /auth21/login`, `GET /auth21/me`, `POST /auth21/logout`. Login délégué à `Auth21SessionStore.loginWithPassword` (PBKDF2 ou Argon2id selon compte), session validée uniquement par `Authorization: Bearer <token>`, logout en base via `revokeSession`. Aucun header ou cookie de rôle accepté comme preuve d'identité. Requête JSON bornée 4096 octets, champs stricts, pas de route Admin/Wallet/Reprise. Pas de secrets dans les réponses d'erreur ; `Cache-Control: no-store`.
-- `App/Tools/Tests/auth21_http_boundary.test.js` : **9/9 tests** sur handler in-process, y compris mauvais mot de passe, entrée malformée ou surdimensionnée, rôle forgé, session obligatoire, déconnexion et 503 lors du gel de writer. Les tests utilisent un mock de `Auth21SessionStore`, et **ne sont pas des tests HTTP + vraie SQLite + vraie Argon2id de bout en bout**.
+- `App/Tools/Tests/auth21_http_boundary.test.js` : **9/9 tests** sur handler in-process, y compris mauvais mot de passe, entrée malformée ou surdimensionnée, rôle forgé, session obligatoire, déconnexion et 503 lors du gel de writer. Les neuf premiers tests utilisent un mock de `Auth21SessionStore`; les deux tests d'intégration supplémentaires ci-dessous utilisent **la vraie SQLite et Argon2id**.
 - [GitHub Actions P2.2 SUCCESS, 38557338823](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38557338823) : **278 Node.js + 15 SQLite Python = 293 tests réussis**, aucun échec.
+
+## Complément validé : HTTP + native SQLite + Argon2id
+
+- `App/Tools/Tests/auth21_session_store.test.js` contient désormais **2 tests end-to-end supplémentaires**, avec le véritable `Auth21SessionStore`, une base SQLite temporaire réellement migrée au schéma proposé v3 et une vérification Argon2id native ; le handler HTTP est appelé **in-process, sans port réseau**.
+- Ils vérifient la session dont seul le SHA-256 du jeton est conservé en base, le succès de `/auth21/me`, la révocation par `/auth21/logout`, l'isolement ADMIN/USER, le refus de `?clientId=` et l'invalidation d'une session après modification du rôle en SQLite.
+- **[GitHub Actions P2.2 SUCCESS — run 38560724999](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38560724999)** : **280/280 tests Node.js + 15/15 SQLite Python = 295/295 tests réussis**. Le serveur principal et les routes historiques restent strictement hors de cette campagne.
 
 ## Déjà disponible, mais NON activé dans l'application
 
