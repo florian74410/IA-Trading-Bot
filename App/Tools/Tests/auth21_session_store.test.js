@@ -70,7 +70,7 @@ test('valid credentials create opaque high-entropy token, only SHA-256 hash stor
  assert.match(row.session_hash,/^[a-f0-9]{64}$/);
  assert.notEqual(row.session_hash,res.token);
  assert.equal(row.session_hash,crypto.createHash('sha256').update(Buffer.from(res.token,'base64url')).digest('hex'));
- assert.equal(row.last_seen_at,null);
+ assert.equal(row.last_seen_at,NOW);
  assert.equal(row.auth_protocol_version,1);
  const audit=f.db.prepare('SELECT detail_enc,action FROM client_security_audit').get();
  assert.equal(audit.action,'SESSION_ISSUED');assert.equal(audit.detail_enc,'');
