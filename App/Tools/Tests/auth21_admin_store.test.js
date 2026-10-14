@@ -319,3 +319,35 @@ test('missing replace guard triggers refuse manager initialization',async t=>{
  assert.throws(()=>new Auth21AdminStore({sessionStore:sessions,authorizeLocalOperator:()=>true}),/AUTH21_ADMIN_SQL_GUARD_MISSING/);
  await assert.rejects(()=>migrateFixture(f.db,{fixtureRoot:f.root}),/AUTH21_SCHEMA_PARTIAL/);
 });
+
+test('local OS operator gate rejects browser-like call, wrong UID, root and forged env',()=>{
+ const {createLocalOperatorCheck}=require('../../Core/Clients/auth21_local_operator');
+ const valid={allowedUid:1001,stdin:{isTTY:true,fd:0},
+  processUid:()=>1001,ttyStat:()=>({uid:1001,isCharacterDevice:()=>true})};
+ assert.equal(createLocalOperatorCheck(valid)(),true);
+ assert.equal(createLocalOperatorCheck({...valid,stdin:{isTTY:false,fd:0}})(),false);
+ assert.equal(createLocalOperatorCheck({...valid,processUid:()=>1002})(),false);
+ assert.equal(createLocalOperatorCheck({...valid,ttyStat:()=>({uid:1002,isCharacterDevice:()=>true})})(),false);
+ assert.equal(createLocalOperatorCheck({...valid,ttyStat:()=>({uid:1001,isCharacterDevice:()=>false})})(),false);
+ assert.equal(createLocalOperatorCheck({...valid,ttyStat:()=>{throw Error('FAKE_TTY_FAILURE')}})(),false);
+ assert.throws(()=>createLocalOperatorCheck({...valid,allowedUid:0}),/AUTH21_OPERATOR_UID_REQUIRED/);
+});
+test('local OS gate and ADMIN bearer BOTH required to mutate role',async t=>{
+ const {createLocalOperatorCheck}=require('../../Core/Clients/auth21_local_operator');
+ const f=setup(t);seed(f,'CL000001','ADMIN');seed(f,'CL000002','USER');
+ const state={uid:1001,tty:true};
+ const check=createLocalOperatorCheck({allowedUid:1001,
+  stdin:{get isTTY(){return state.tty},fd:0},
+  processUid:()=>state.uid,
+  ttyStat:()=>({uid:1001,isCharacterDevice:()=>true})});
+ const {sessions}=await ready(f,check);
+ const admin=new Auth21AdminStore({sessionStore:sessions,authorizeLocalOperator:check});
+ const bearer=await token(sessions,'CL000001');
+ state.tty=false;
+ assert.throws(()=>admin.changeRole(bearer,'CL000002','GUEST'),/AUTH21_LOCAL_OPERATOR_DENIED/);
+ state.tty=true;state.uid=1002;
+ assert.throws(()=>admin.changeRole(bearer,'CL000002','GUEST'),/AUTH21_LOCAL_OPERATOR_DENIED/);
+ state.uid=1001;
+ assert.equal(admin.changeRole(bearer,'CL000002','GUEST').changed,true);
+ assert.equal(f.db.prepare("SELECT role FROM client_accounts WHERE client_id='CL000002'").get().role,'GUEST');
+});
