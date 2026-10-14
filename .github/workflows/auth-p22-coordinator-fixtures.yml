@@ -1,0 +1,42 @@
+name: Auth P2.2 Coordinator Fixture Tests
+
+on:
+  push:
+    branches:
+      - feature/debug-2.1-auth-design
+    paths:
+      - 'App/Core/Backup/snapshot_coordinator.js'
+      - 'App/Tools/Tests/snapshot_coordinator.test.js'
+      - '.github/workflows/auth-p22-coordinator-fixtures.yml'
+  pull_request:
+    branches:
+      - debug
+      - fix/v2.0.1-debug
+      - feature/debug-2.1-auth-design
+    paths:
+      - 'App/Core/Backup/snapshot_coordinator.js'
+      - 'App/Tools/Tests/snapshot_coordinator.test.js'
+      - '.github/workflows/auth-p22-coordinator-fixtures.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  isolated-coordinator-tests:
+    name: P2.2 isolated coordinator - no services or real data
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax check
+        run: |
+          node --check App/Core/Backup/snapshot_coordinator.js
+          node --check App/Tools/Tests/snapshot_coordinator.test.js
+      - name: Isolated ACK and failure-handling fixtures
+        run: node --test App/Tools/Tests/snapshot_coordinator.test.js
