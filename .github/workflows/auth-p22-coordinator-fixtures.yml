@@ -248,7 +248,7 @@ jobs:
       - name: Auth v3 session, revocation and encrypted preference fixtures
         run: NODE_PATH="$RUNNER_TEMP/iatb-auth-v3/node_modules" node --test App/Tools/Tests/auth21_session_store.test.js
       - name: Auth21 isolated HTTP bearer boundary negative tests
-        run: node --test App/Tools/Tests/auth21_http_boundary.test.js
+        run: node --test App/Tools/Tests/auth21_http_boundary.test.js App/Tools/Tests/auth21_rbac_guard.test.js
       - name: Auth v3 ADMIN persistence, last-admin guard and local-CLI fixtures
         run: NODE_PATH="$RUNNER_TEMP/iatb-auth-v3/node_modules" node --test App/Tools/Tests/auth21_admin_store.test.js
       - name: Auth 2.1 first ADMIN consent, backup and legacy DEBUG preflight fixtures
