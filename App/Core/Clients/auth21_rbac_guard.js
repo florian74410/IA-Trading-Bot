@@ -24,4 +24,15 @@ function authorize({sessions,token,operation,ownerClientId,method}={}){
  if(operation.endsWith('.write')&&!['POST','PUT','PATCH','DELETE'].includes(method))return {allowed:false,reason:'METHOD_DENIED'};
  return {allowed:true,clientId:principal.clientId,role:principal.role};
 }
-module.exports={authorize};
+function authorizeInterprocess({codec,proof,audience,operation,method,ownerClientId}={}){
+ if(!codec||typeof codec.verify!=='function')throw Error('AUTH21_PROOF_CODEC_REQUIRED');
+ if(typeof operation!=='string'||!Object.hasOwn(PERMISSIONS,operation))return {allowed:false,reason:'UNKNOWN_OPERATION'};
+ const principal=codec.verify(proof,{audience,operation,method,ownerClientId});
+ if(!principal)return {allowed:false,reason:'INVALID_PROOF'};
+ if(!PERMISSIONS[operation].includes(principal.role))return {allowed:false,reason:'FORBIDDEN'};
+ if(operation.startsWith('self.')&&principal.clientId!==ownerClientId)return {allowed:false,reason:'OWNERSHIP_DENIED'};
+ if(operation.endsWith('.read')&&method!=='GET')return {allowed:false,reason:'METHOD_DENIED'};
+ if(operation.endsWith('.write')&&!['POST','PUT','PATCH','DELETE'].includes(method))return {allowed:false,reason:'METHOD_DENIED'};
+ return {allowed:true,clientId:principal.clientId,role:principal.role};
+}
+module.exports={authorize,authorizeInterprocess};
