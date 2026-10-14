@@ -61,6 +61,13 @@ var server=http.createServer(function(req,res){var u=new URL(req.url,'http://'+H
  if(p.indexOf('/api/')===0){var cl=allowCore(req,res,p);if(!cl)return;return proxy(req,res,CORE_PORT,p+u.search,{service:'Core API',permission:cl.permission});}
  json(res,404,{ok:false,error:'UI_ROUTE_NOT_FOUND'});
 });
+server.on('upgrade',function(req,socket){
+ if(require("../../Core/Clients/auth21_service_boundary").active(process.env)){
+  try{socket.end('HTTP/1.1 403 Forbidden\r\nConnection: close\r\n\r\n');}catch(_){socket.destroy();}
+  return;
+ }
+ socket.destroy();
+});
 server.on('error',function(e){console.error('IA-TB UI Service bind error:',e&&e.message||e);process.exit(17);});
 server.listen(PORT,HOST,function(){console.log('IA-TB UI Service v'+BUILD.version+' : http://'+HOST+':'+PORT);console.log('Core API interne : http://'+HOST+':'+CORE_PORT);console.log('Router interne   : http://'+HOST+':'+ROUTER_PORT);console.log('Firewall interne : http://'+HOST+':'+FIREWALL_PORT);});
 function stop(){server.close(function(){process.exit(0);});setTimeout(function(){process.exit(0);},1200);}process.on('SIGINT',stop);process.on('SIGTERM',stop);
