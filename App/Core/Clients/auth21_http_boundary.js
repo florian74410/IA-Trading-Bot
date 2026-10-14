@@ -54,7 +54,7 @@ function createAuth21HttpHandler({sessions}={}){
   try{
    let uri;
    try{uri=new URL(req.url||'', 'http://localhost');}catch(_){reply(res,404,{error:'NOT_FOUND'});return}
-   if((uri.search&&uri.pathname!=='/auth21/preferences')||uri.hash||!['/auth21/login','/auth21/me','/auth21/logout','/auth21/preferences'].includes(uri.pathname)){
+   if((uri.search&&uri.pathname!=='/auth21/preferences')||uri.hash||!['/auth21/login','/auth21/me','/auth21/logout','/auth21/preferences','/auth21/activity','/auth21/unlock'].includes(uri.pathname)){
     reply(res,404,{error:'NOT_FOUND'});return;
    }
    if(req.method==='POST'&&uri.pathname==='/auth21/login'){
@@ -72,6 +72,23 @@ function createAuth21HttpHandler({sessions}={}){
     if(!result){reply(res,401,{error:'INVALID_CREDENTIALS'});return}
     reply(res,200,{token:result.token,role:result.role,clientId:result.clientId,expiresAt:result.expiresAt});
     return;
+   }
+   if(req.method==='POST'&&uri.pathname==='/auth21/unlock'){
+    const token=bearer(req);
+    if(!token){reply(res,401,{error:'UNAUTHORIZED'});return}
+    const input=await readJSON(req);
+    if(Object.keys(input).length!==1||typeof input.password!=='string'||input.password.length>1024){
+     reply(res,400,{error:'INVALID_REQUEST'});return;
+    }
+    const ok=await sessions.unlockWithPassword(token,input.password);
+    reply(res,ok?200:401,ok?{ok:true}:{error:'UNAUTHORIZED'});return;
+   }
+   if(req.method==='POST'&&uri.pathname==='/auth21/activity'){
+    const token=bearer(req);
+    if(!token||!sessions.recordUserActivity(token)){
+     reply(res,401,{error:'UNAUTHORIZED'});return;
+    }
+    reply(res,200,{ok:true});return;
    }
    // Client-scoped preference API: identity always resolved from the live token,
    // never from clientId, role, cookie, URL or request body. GUEST is read-only.
