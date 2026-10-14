@@ -179,3 +179,14 @@ test('unlock requires existing bearer and password; idle refresh is explicit',as
  assert.equal((await send(gate,{method:'POST',url:'/auth21/activity',headers})).status,200);
  assert.equal((await send(gate,{method:'GET',url:'/auth21/me',headers})).status,200);
 });
+
+test('login throttle refuses attempts after fifth bad password',async()=>{
+ const x=fixture();let now=1000;
+ const handler=createAuth21HttpHandler({sessions:x.sessions,nowMilliseconds:()=>now});
+ const sendBad=()=>send(handler,{method:'POST',url:'/auth21/login',headers:{'content-type':'application/json'},body:{clientId:'CL000001',password:'WRONG'}});
+ for(let i=0;i<5;i++)assert.equal((await sendBad()).status,401);
+ assert.equal((await sendBad()).status,429);
+ assert.equal(x.events.length,5);
+ now+=300001;
+ assert.equal((await sendBad()).status,401);
+});
