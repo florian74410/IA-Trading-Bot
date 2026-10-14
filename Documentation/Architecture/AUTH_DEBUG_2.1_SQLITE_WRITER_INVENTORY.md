@@ -57,4 +57,6 @@ La barrière de test actuelle porte sur **trois DB SQLite fictives** uniquement.
 - [ ] Intégrer un protocole contrôlé sur **tous** les chemins d'écriture réels (y compris startup, retention, recovery), avec tests de restart, crash et temporisation sur banc isolé.
 - [ ] Mesurer p50/p95/p99 sur moteurs benchmark de DEBUG 2.1, puis autoriser un déploiement complet uniquement après accord d'Overflow.
 
+**Validation CI du prototype (22 tests)** : [GitHub Actions P2.1 — success](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38500642897), démontrant notamment que le writer non coopératif n'est **pas arrêté** par le verrou advisory. Cela renforce l'exigence d'inventaire exhaustif, d'ACK et de sécurité des montages.
+
 **Cette revue ne coche pas P2.1 et n'autorise aucun accès aux fichiers existants de GEN-1.**

@@ -55,7 +55,7 @@ Cette limite impose l'inventaire exhaustif des writers, les ACK par identifiant/
 
 - [x] Prototype coopératif sur fixtures, isolé sous `/tmp`, sans opération GEN-1.
 - [x] Exécution GitHub Actions [20/20 tests P2.1 — success](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38499587022), [RBAC — success](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38499586839) pour la version précédente.
-- [ ] Vérifier en CI les **22 tests** après ajout des deux cas crash/écriture non coopérative. Ne pas annoncer le nouveau résultat comme acquis avant le workflow.
+- [x] **22/22 tests P2.1 réussis sur [GitHub Actions](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38500642897)**, dont crash d'un writer et contournement par un writer non coopératif ; [RBAC CI également success](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38500642802). Ces résultats n'autorisent pas un déploiement.
 - [ ] Inventaire **complet** des écrivains métier de chaque base critique, y compris accès secondaires et migrations legacy. Une [revue statique préliminaire](AUTH_DEBUG_2.1_SQLITE_WRITER_INVENTORY.md) est disponible ; elle n'est pas exhaustive.
 - [ ] Intégration d'un protocole `PREPARE/QUIESCED/RELEASE` ou équivalent à **tous** les chemins d'écriture, tests multiprocessus/multiconteneurs, crash/restart et rollback sur banc isolé.
 - [ ] Durées de blocage bornées, mesures de performance p95/p99 comparables, aucune perturbation significative des moteurs.

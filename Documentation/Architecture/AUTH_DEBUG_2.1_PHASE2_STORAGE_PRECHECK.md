@@ -81,7 +81,7 @@ Le [contrat technique de cohérence interbases](AUTH_DEBUG_2.1_COHERENT_SNAPSHOT
 - [x] Interopérabilité **AES-256-GCM sur identité et clé fictives** vérifiée avec le vrai module `ClientCrypto`, y compris refus de clé incorrecte ; aucune exécution sur une DB GEN-1.
 - [x] **Prototype de gel inter-DB coopératif uniquement sur fixtures** : verrou partagé/exclusif, simulation de writer simultané et subprocessus, gestion timeout et paths dangereux ; [contrat](AUTH_DEBUG_2.1_COHERENT_SNAPSHOT_BARRIER.md). **6 tests supplémentaires vérifiés par CI GitHub, 20/20 au total.**
 - [ ] **Intégrer un gel réel entre les services** : inventaire exhaustif des writers et fichiers non SQLite, protocole d'ACK, tests multicomposants, crash/restart, non-coopératifs, mesure p95/p99. Les fixtures ne procurent pas cette garantie.
-- [ ] Contrôler les **22 tests en CI** : deux nouveaux scénarios simulent crash d'un écrivain et contournement du verrou advisory par un processus non coopératif ; [inventaire étendu](AUTH_DEBUG_2.1_SQLITE_WRITER_INVENTORY.md).
+- [x] **22/22 tests vérifiés sur GitHub Actions** ([run P2.1](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38500642897)) ; scénarios de crash et de contournement du verrou advisory inclus. [RBAC CI success](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38500642802). Voir [inventaire élargi](AUTH_DEBUG_2.1_SQLITE_WRITER_INVENTORY.md).
 - [ ] Accès à un snapshot réel, si nécessaire ultérieurement, demandé à Overflow séparément ; **aucun accès direct ni changement GEN-1 dans ce point sans accord**.
 - [ ] Résultats et validation utilisateur pour cocher **P2.1**.
 
