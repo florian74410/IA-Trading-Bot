@@ -191,8 +191,10 @@ function routerHealth(res){
  setTimeout(finish,850);
 }
 
+var AUTH21_IPC_ROUTER_PROBE=process.env.IATB_AUTH21_IPC_PROBE_TRIAL==='1'?require('../Clients/auth21_ipc_probe').createRouterProbe({env:process.env,root:process.env.IATB_AUTH21_LOCAL_TRIAL_ROOT}):null;
 var server=http.createServer(function(req,res){var u=new URL(req.url,'http://'+HOST+':'+PORT),p=u.pathname;
  var auth21Boundary=require('../Clients/auth21_service_boundary').decision(process.env,'router',req.method,p);
+ if(auth21Boundary.intercept&&p==='/auth21/ipc/probe'&&AUTH21_IPC_ROUTER_PROBE)return AUTH21_IPC_ROUTER_PROBE(req,res);
  if(auth21Boundary.intercept)return sendJson(res,404,{error:'NOT_FOUND'});
  if(p==='/router-health-internal')return sendJson(res,200,{ok:true,router:true,pid:process.pid,port:PORT,version:BUILD.version});
  if(p==='/router-health')return routerHealth(res);
