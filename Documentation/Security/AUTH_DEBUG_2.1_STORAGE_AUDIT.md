@@ -71,8 +71,49 @@ Le code source et le rapport précédent ne suffisent pas à vérifier l'**UID/G
 - [x] Localisation du stockage canonique documentée et rapprochée du rapport GEN-1.
 - [x] Risques de création silencieuse de clés, dualité des journaux et sauvegarde en ligne documentés.
 - [x] Contrat de sauvegarde/restauration rédigé.
-- [ ] Relevé distant OS/Docker sans valeurs de secrets ni mutation, examiné.
+- [x] Relevé distant OS/Docker du 14/10/2026 examiné : 13/13 conteneurs UID 1001:1001, rootfs RO et cinq volumes RW ; modes et présences des fichiers relevés (voir §6).
 - [ ] Validation utilisateur des choix et des risques avant case P1.5.
 - [ ] **Lors des Phases 2 et 7** seulement : snapshots réels, restauration sur copie, tests de rollback, puis déploiement conditionnel ; **ne pas les faire sur GEN-1 durant P1.5**.
 
-**État :** P1.5 **non coché** tant que les deux validations immédiates sont en attente.
+**État :** P1.5 **non coché** : revue et diagnostic réels terminés, accord final d'Overflow sur le contrat et les réserves encore attendu.
+---
+
+## 6. Réconciliation : permissions et montages réellement actifs sur GEN-1 (14 octobre 2026)
+
+**Preuve transmise par Overflow :** sortie du préflight P1.5 en lecture seule (`stat` de métadonnées ciblées, `docker ps` et `docker inspect`). Aucun secret lu, aucune commande Docker mutante exécutée, aucune copie de données produite.
+
+### Métadonnées observées
+
+| Cible | Type / permission | UID:GID | Conclusion |
+| --- | --- | --- | --- |
+| Racines `runtime`, `data`, `state`, `annexes`, `updates` | `DIR 0700` chacune | `1001:1001` | Restreint les autres UID Linux, pas les 13 conteneurs du même UID |
+| `data/Database`, `data/Security` | `DIR 0700` | `1001:1001` | Barrière pertinente sur l'hôte, non interservices |
+| `data/Database/clients.sqlite` | `FILE 0600` | `1001:1001` | DB clients présente, protégée contre autres UID sauf élévation de privilèges |
+| `data/Security/client_master.key` | `FILE 0600` | `1001:1001` | Clé client d'origine **présente** : sa conservation et concordance avec les données sont impératives |
+| `data/Security/wallet_master.key` | `ABSENT` | — | Absence constatée **seulement**, pas preuve qu'il n'existe pas de wallets historiques dans Settings/legacy ; ne pas générer automatiquement |
+| `data/User Data/default/user_data.db`, `portfolio.db` | `FILE 0644` | `1001:1001` | Lecture par « autres » autorisée sur le fichier lui-même, **mais racine `data` 0700** empêche normalement sa traversée aux UID distincts ; prudence en cas de copie/déplacement ou modification d'ACL/mount |
+| `state/user.dat`, `secrets_v2.dat`, `ai_settings_v2.dat` | `ABSENT` | — | Ces trois chemins legacy n'existent pas dans le déploiement audité ; aucune conclusion générale sur d'autres sauvegardes |
+| `runtime/state/security` | `DIR 0755` | `1001:1001` | Permission locale permissive, mais ancêtre `runtime` 0700 ; réduire à `0700` lors du hardening testé, pas immédiatement |
+| `internal_service_key.dat`, `communication_protocol_key.dat` | `FILE 0600` | `1001:1001` | Deux secrets internes existants, nécessitant une séparation de droits lors de la refonte interservices |
+
+### Docker : état des 13 conteneurs audités
+
+- **13/13** : `Config.User=1001:1001`, `ReadonlyRootfs=true`.
+- **13/13** : exactement les cinq bind mounts attendus en `RW=true` vers `/iatb/debug/{annexes,data,runtime,state,updates}`.
+- **Déduction de sécurité :** le rootfs en lecture seule ne rend pas les cinq volumes immuables. Chaque processus du même UID et ayant ces montages peut potentiellement lire/écrire des DB et clés auxquelles il ne devrait pas avoir accès. `chmod 0600` n'isole pas deux conteneurs exécutés avec le même UID et le même volume. Réduction de privilèges/montages **bloquante avant activation multiutilisateur/publication**, à faire sur build isolé avec tests et rollback.
+
+### Décisions et réserves
+
+1. **Ne rien modifier sur GEN-1 lors du P1.5** (pas de `chmod`, `chown`, suppression, création de clé, `docker compose`, backup réel, ni changement Contabo).
+2. **Préserver strictement** `client_master.key` et les huit DB SQLite précédemment observées. Une restauration de DB sans sa clé doit échouer de façon explicite.
+3. **Ne pas matérialiser `wallet_master.key` au préflight** ; son absence ne valide ni n'invalide les inventaires wallet historiques. Avant d'autoriser l'utilisation du WalletService ou la création d'une clé sur un stockage existant : inventaire non intrusif sur copie et politique fail closed.
+4. **Cible de durcissement ultérieure :** DB privées `0600` et répertoires secrets `0700` quand compatible, propriétaires/UID différenciés, mounts `:ro` ou absents hors services autorisés ; éviter des `chmod` immédiats sur WAL/SHM actifs. Séparer DEBUG/RELEASE et les secrets de signature des Engines.
+5. **Contrôle de sécurité non encore effectué :** permissions détaillées des huit DB/WAL/SHM, ACL Linux étendues, présence de copies de sauvegarde externes et restauration sur environnement isolé. Aucune de ces incertitudes ne change l'interprétation des permissions relevées.
+
+### État P1.5 après ce rapport
+
+- [x] Revue statique des emplacements et risques terminée.
+- [x] Relevé GEN-1 permissions et mounts reçu et rapproché du code.
+- [x] Stratégie de sauvegarde/restauration proposée et documentée.
+- [ ] **Validation finale par Overflow du contrat et de l'acceptation des réserves** (point P1.5 non coché dans la checklist canonique tant qu'elle n'a pas été confirmée).
+- [ ] Implémentation Auth, isolation des mounts et tests de backup/restore : jalons ultérieurs, **aucune exécution réelle autorisée par ce document**.

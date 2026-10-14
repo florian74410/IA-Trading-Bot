@@ -94,6 +94,12 @@ Mettre en place des UID/permissions et montages adaptés **avec migration progre
 - Temps du gel inter-bases à mesurer, objectif **le plus court possible** sans supprimer la garantie de cohérence ; pas d'ordre LIVE.
 - Benchmarks selon [Security Performance Plan](../Security/AUTH_DEBUG_2.1_SECURITY_PERFORMANCE.md) ; aucune régression notable du p95/p99 des traitements marché par les tâches de sauvegarde.
 
+## 6 bis. Confrontation au déploiement observé
+
+Le [diagnostic GEN-1 du 14/10/2026](../Security/AUTH_DEBUG_2.1_STORAGE_AUDIT.md#6-réconciliation--permissions-et-montages-réellement-actifs-sur-gen-1-14-octobre-2026) confirme que les 13 conteneurs exécutent `1001:1001` avec rootfs en lecture seule **et les cinq volumes persistants montés en écriture**. Les racines sont en `0700`, la DB client et les clés existantes en `0600`, mais les DB Settings/Portfolio en `0644` et le répertoire `runtime/state/security` en `0755`. La permission des parents protège contre d'autres UID sur l'hôte ; **pas** contre les services sous le même UID. La clé `wallet_master.key` est absente du chemin attendu ; ne pas inférer absence de données wallet et ne pas la générer. Les fichiers legacy vérifiés dans `state/` sont absents.
+
+**Décision cible :** faire une copie/sauvegarde sûre et tester sa restauration **avant** tout changement d'UID, de chemin ou de permission. Préserver le fonctionnement de l'existant, puis réduire les volumes accessibles au Gateway/Engines et durcir les dossiers secrets sur un build isolé. Toute action nécessitant les clés maîtres doit échouer en sécurité si elles ne sont pas disponibles avec les données préexistantes. Aucun durcissement appliqué au VPS dans P1.5.
+
 ## 7. Portes de validation
 
 **P1.5 — Conception et inventaire, sans opération de sauvegarde réelle :**
@@ -101,7 +107,7 @@ Mettre en place des UID/permissions et montages adaptés **avec migration progre
 - [x] Emplacements et journaux SQLite (WAL/DELETE) repérés.
 - [x] Risques de clés, wallets legacy, identités et liens logiques identifiés.
 - [x] Stratégie de sauvegarde/reprise/rollback sur copies spécifiée, coûts/performances considérés.
-- [ ] Permissions et montages réels GEN-1 inspectés sans lire les secrets.
+- [x] Permissions et montages réels GEN-1 du 14/10/2026 inspectés sans lire les secrets.
 - [ ] Choix du contrat approuvé par Overflow.
 - [ ] Case P1.5 cochée dans la checklist canonique uniquement après contrôles précédents.
 
