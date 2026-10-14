@@ -25,6 +25,8 @@ on:
       - 'App/services/trading-engine/history-store.js'
       - 'App/Core/Services/usage_ledger_v1.js'
       - 'App/Tools/Tests/trading_usage_jsonl_snapshot_writers.test.js'
+      - 'App/Core/Mosaics/mosaic_store_v1.0.js'
+      - 'App/Tools/Tests/mosaic_snapshot_writer.test.js'
       - '.github/workflows/auth-p22-coordinator-fixtures.yml'
   pull_request:
     branches:
@@ -52,6 +54,8 @@ on:
       - 'App/services/trading-engine/history-store.js'
       - 'App/Core/Services/usage_ledger_v1.js'
       - 'App/Tools/Tests/trading_usage_jsonl_snapshot_writers.test.js'
+      - 'App/Core/Mosaics/mosaic_store_v1.0.js'
+      - 'App/Tools/Tests/mosaic_snapshot_writer.test.js'
       - '.github/workflows/auth-p22-coordinator-fixtures.yml'
   workflow_dispatch:
 
@@ -92,5 +96,7 @@ jobs:
           node --check App/services/trading-engine/history-store.js
           node --check App/Core/Services/usage_ledger_v1.js
           node --check App/Tools/Tests/trading_usage_jsonl_snapshot_writers.test.js
+          node --check App/Core/Mosaics/mosaic_store_v1.0.js
+          node --check App/Tools/Tests/mosaic_snapshot_writer.test.js
       - name: Isolated ACK and failure-handling fixtures
-        run: node --test App/Tools/Tests/snapshot_coordinator.test.js App/Tools/Tests/core_snapshot_writers.test.js App/Tools/Tests/portfolio_snapshot_writer.test.js App/Tools/Tests/fundamental_snapshot_writer.test.js App/Tools/Tests/fundamental_legacy_snapshot_bridge.test.js App/Tools/Tests/marketdata_snapshot_writers.test.js App/Tools/Tests/financial_jsonl_snapshot_writer.test.js App/Tools/Tests/trading_usage_jsonl_snapshot_writers.test.js
+        run: node --test App/Tools/Tests/snapshot_coordinator.test.js App/Tools/Tests/core_snapshot_writers.test.js App/Tools/Tests/portfolio_snapshot_writer.test.js App/Tools/Tests/fundamental_snapshot_writer.test.js App/Tools/Tests/fundamental_legacy_snapshot_bridge.test.js App/Tools/Tests/marketdata_snapshot_writers.test.js App/Tools/Tests/financial_jsonl_snapshot_writer.test.js App/Tools/Tests/trading_usage_jsonl_snapshot_writers.test.js App/Tools/Tests/mosaic_snapshot_writer.test.js
