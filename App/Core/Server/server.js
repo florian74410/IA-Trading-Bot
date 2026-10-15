@@ -620,5 +620,18 @@ function route(req,res){var u=new URL(req.url,'http://'+HOST+':'+PORT),p=u.pathn
  if(req.method==='POST'&&p==='/api/chat')return body(req,function(e,b){if(e||!b||!String(b.message||'').trim())return json(res,400,{error:'Message invalide'});if(String(b.message).length>1400)return json(res,400,{error:'Message trop long'});supervisorChat(b,sess,function(er,o){if(er)return json(res,502,{error:er.message});o.command=enforceCommandPermissions(o.command);planRouterActions(o.command,b.state||{},function(pe,actions,cmd){if(pe){log('COMMUNICATION','Plan Chat IA refusé',pe.message);return json(res,502,{error:'Communication Router: '+pe.message});}json(res,200,{command:cmd,routerActions:actions,source:o.source,multiExchange:true});});});});
  json(res,404,{error:'Not found'});
 }
-SERVER=http.createServer(route);
-SERVER.listen(PORT,HOST,function(){log('SYSTEM','IA-Trading-Bot v'+CURRENT_VERSION+' Core demarre','http://'+HOST+':'+PORT);console.log('\nIA-Trading-Bot v'+CURRENT_VERSION);console.log('Core API : http://'+HOST+':'+PORT+'\n');});
+if(process.env.IATB_AUTH21_BROWSER_TRIAL==='1'){
+ if(!AUTH21_CORE_AUTH||!AUTH21_LOCAL_WRITERS)
+  throw Error('AUTH21_BROWSER_SANDBOX_REQUIRED');
+ var certFile=path.join(AUTH21_LOCAL_WRITERS.root,'userdata','Security','auth21_browser_tls.crt');
+ var privateKeyFile=path.join(AUTH21_LOCAL_WRITERS.root,'userdata','Security','auth21_browser_tls.key');
+ for(var candidate of [certFile,privateKeyFile]){
+  var stat=fs.lstatSync(candidate);
+  if(!stat.isFile()||stat.isSymbolicLink()||(stat.mode&0o077)!==0||
+   fs.realpathSync(candidate)!==candidate)
+   throw Error('AUTH21_BROWSER_TLS_FILE_UNSAFE');
+ }
+ SERVER=https.createServer({key:fs.readFileSync(privateKeyFile),
+  cert:fs.readFileSync(certFile)},route);
+}else SERVER=http.createServer(route);
+SERVER.listen(PORT,HOST,function(){log('SYSTEM','Core listening',PORT);});
