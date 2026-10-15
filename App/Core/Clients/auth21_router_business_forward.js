@@ -21,11 +21,12 @@ function createForward({env,ports}={}){
   const proof=req.headers['x-iatb-auth21-proof'];
   const length=Number(req.headers['content-length']);
   const rule=contract(req.url),port=rule&&ports[rule.engine];
-  if(req.method!=='POST'||!rule||!Number.isSafeInteger(port)||
+  if(!rule||req.method!==(rule.method||'POST')||!Number.isSafeInteger(port)||
      !['127.0.0.1','::1','::ffff:127.0.0.1'].includes(peer)||
      req.headers.authorization||req.headers.cookie||req.headers.origin||
      typeof proof!=='string'||proof.length>4096||
-     !Number.isSafeInteger(length)||length<1||length>2048)
+     !Number.isSafeInteger(length)||length<0||length>2048||
+     (rule.method==='GET'?length!==0:length===0))
    return send(res,403,{error:'AUTH21_ROUTER_BUSINESS_DENIED'});
   let count=0,parts=[];
   req.on('data',chunk=>{count+=chunk.length;if(count>2048){req.destroy();return;}parts.push(chunk);});
@@ -33,7 +34,7 @@ function createForward({env,ports}={}){
    if(count!==length)return send(res,400,{error:'INVALID_BODY'});
    const raw=Buffer.concat(parts);
    const downstream=http.request({hostname:'127.0.0.1',port,
-    path:req.url,method:'POST',timeout:2500,agent:false,headers:{
+    path:req.url,method:rule.method||'POST',timeout:2500,agent:false,headers:{
      'Content-Type':'application/json','Content-Length':raw.length,
      'X-IATB-Auth21-Proof':proof
     }},upstream=>{
