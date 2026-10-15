@@ -68,3 +68,24 @@ testés de façon cohérente ; **le chantier A et les phases 3/4 ne sont pas clo
 Il est interdit de déclarer que le chantier B peut démarrer sur une base
 Auth21 intégralement certifiée tant que les critères ci-dessus ne sont pas
 satisfaits.
+
+
+## Revalidation supplémentaire — 15 octobre 2026, deuxième campagne
+
+Suite de sécurité complétée avec un vrai schéma SQLite v3, un mot de
+passe Argon2id de fixture, l'émission d'une capacité métier authentifiée,
+puis l'interdiction de réutilisation après changement de `security_version`.
+Une vérification explicite affirme également que SQLite empêche la
+rétrogradation du **dernier ADMIN** (`LAST_ACTIVE_ADMIN_REQUIRED`) ; ce
+refus est un succès de sécurité et non un défaut à contourner.
+
+Preuves à la révision `b5328a5f715e0023513b47ff4fea52e908aa2164` :
+- Auth P2.2: https://github.com/florian74410/IA-Trading-Bot/actions/runs/38737079974 — SUCCESS
+- Auth P2.1: https://github.com/florian74410/IA-Trading-Bot/actions/runs/38737080612 — SUCCESS
+- RBAC: https://github.com/florian74410/IA-Trading-Bot/actions/runs/38737080028 — SUCCESS
+
+**Statut d'acceptation identique : non clôturé.** L'API navigateur HTTPS
+avec cookie/CSRF n'est pas encore branchée en conditions réelles et trois
+des cinq POST métier utilisent encore une persistance de fixture plutôt
+qu'une intégration fonctionnelle complète. Il serait incorrect d'annoncer
+que le chantier A est prêt pour B.
