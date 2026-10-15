@@ -82,6 +82,7 @@ on:
       - 'App/Tools/Tests/auth21_business_actions.test.js'
       - 'App/Tools/Tests/auth21_multi_engine_business_e2e.test.js'
       - 'App/Tools/Tests/auth21_core_business_sqlite_sessions.test.js'
+      - 'App/Tools/Tests/auth21_browser_core_tls_integration.test.js'
       - 'App/Core/Clients/auth21_core_business_http.js'
       - 'App/Core/Clients/auth21_router_business_forward.js'
       - 'App/Tools/Tests/auth21_real_indicator_business_ingress.test.js'
@@ -196,6 +197,7 @@ on:
       - 'App/Tools/Tests/auth21_business_actions.test.js'
       - 'App/Tools/Tests/auth21_multi_engine_business_e2e.test.js'
       - 'App/Tools/Tests/auth21_core_business_sqlite_sessions.test.js'
+      - 'App/Tools/Tests/auth21_browser_core_tls_integration.test.js'
       - 'App/Core/Clients/auth21_core_business_http.js'
       - 'App/Core/Clients/auth21_router_business_forward.js'
       - 'App/Tools/Tests/auth21_real_indicator_business_ingress.test.js'
@@ -375,6 +377,8 @@ jobs:
         run: |
           npm --prefix App ci --no-audit --no-fund
           node -e "const p=require('./App/package.json');const lock=require('./App/package-lock.json');if(p.dependencies.argon2!=='0.45.1'||lock.packages[''].dependencies.argon2!=='0.45.1'||lock.packages['node_modules/argon2'].version!=='0.45.1')process.exit(1);if(typeof require('./App/node_modules/argon2').hash!=='function')process.exit(2)"
+      - name: Actual HTTPS cookie session and CSRF security boundary
+        run: node --test App/Tools/Tests/auth21_browser_core_tls_integration.test.js
       - name: Real SQLite session Argon2 ADMIN business revocation integration
         run: node --test App/Tools/Tests/auth21_core_business_sqlite_sessions.test.js
       - name: Five real Engine business actions with scoped ADMIN and USER ownership
