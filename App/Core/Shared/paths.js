@@ -14,7 +14,7 @@ function checkFrozenSnapshotStartup(){
     fs.realpathSync(root)!==root)throw Error('AUTH21_STARTUP_TRIAL_ROOT_INVALID');
  const dir=path.join(root,'runtime');
  if(!fs.existsSync(dir))return false;
- const names=fs.readdirSync(dir).filter(n=>/^auth21-snapshot-[a-z0-9._-]+\\.json$/i.test(n));
+ const names=fs.readdirSync(dir).filter(n=>/^auth21-snapshot-[a-z0-9._-]+\.json$/i.test(n));
  for(const name of names){
   const file=path.join(dir,name),st=fs.lstatSync(file);
   if(!st.isFile()||st.isSymbolicLink()||(st.mode&0o077)!==0)
