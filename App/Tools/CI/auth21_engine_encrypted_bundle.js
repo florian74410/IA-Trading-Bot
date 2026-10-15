@@ -1,0 +1,96 @@
+'use strict';
+/* Auth21 P2.2: encrypted restorable capture from QUIESCED engine data in a
+ * disposable trial root. Captures only caller-allowlisted non-wallet files.
+ * NOT a runtime backup service; caller must attest every real writer's ACK.
+ */
+const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),crypto=require('node:crypto');
+const {preflightEnv}=require('../../Core/Backup/auth21_core_local_trial_wiring');
+const MAGIC='AUTH21_P22_ENGINE_ARCHIVE_V1';
+const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+function assertRel(rel){
+ if(typeof rel!=='string'||rel.length>200||rel.includes('\\')||!/^userdata\/(?:Shared Data|User Data)\/[a-zA-Z0-9._\/ -]+\.(?:db|sqlite|jsonl)$/.test(rel)||
+   rel.split('/').some(s=>!s||s==='.'||s==='..')||
+   /wallet|master|secret|credential|private|\.key/i.test(rel))throw Error('P22_RESOURCE_DISALLOWED');
+}
+function assertRoot(env,root){if(preflightEnv(env).root!==root)throw Error('P22_ROOT_MISMATCH');}
+function ensureSafe(root,rel){
+ const full=path.join(root,...rel.split('/'));let dir=root;
+ for(const piece of rel.split('/')){
+  dir=path.join(dir,piece);
+  if(fs.existsSync(dir)&&fs.lstatSync(dir).isSymbolicLink())throw Error('P22_SYMLINK_REFUSED');
+ }
+ return full;
+}
+function capture({env,root,resources,transportKey,allWritersQuiesced}={}){
+ assertRoot(env,root);
+ if(allWritersQuiesced!==true)throw Error('P22_QUIESCENCE_PROOF_REQUIRED');
+ if(!Buffer.isBuffer(transportKey)||transportKey.length!==32)throw Error('P22_TRANSPORT_KEY_REQUIRED');
+ if(!Array.isArray(resources)||!resources.length||resources.length>32||
+   new Set(resources).size!==resources.length)throw Error('P22_RESOURCE_LIST_INVALID');
+ const Database=require('better-sqlite3'),rows=[];let total=0;
+ for(const rel of [...resources].sort()){
+  assertRel(rel);const file=ensureSafe(root,rel),st=fs.lstatSync(file);
+  if(!st.isFile()||st.size>12*1024*1024)throw Error('P22_RESOURCE_UNSAFE');
+  const sqlite=/\.(db|sqlite)$/.test(rel);
+  let buffer;
+  if(sqlite){
+   const db=new Database(file,{readonly:true,fileMustExist:true});
+   try{
+    if(db.pragma('integrity_check',{simple:true})!=='ok'||db.pragma('foreign_key_check').length)
+     throw Error('P22_SQLITE_INTEGRITY');
+    buffer=db.serialize();
+   }finally{db.close();}
+  }else{
+   buffer=fs.readFileSync(file);
+   for(const line of buffer.toString('utf8').split(/\r?\n/).filter(Boolean))JSON.parse(line);
+  }
+  total+=buffer.length;if(total>32*1024*1024)throw Error('P22_RESOURCE_BUDGET_EXCEEDED');
+  rows.push({rel,kind:sqlite?'sqlite':'jsonl',size:buffer.length,digest:sha(buffer),data:buffer.toString('base64')});
+ }
+ const plain=Buffer.from(JSON.stringify({magic:MAGIC,rows}));
+ const nonce=crypto.randomBytes(12),cipher=crypto.createCipheriv('aes-256-gcm',transportKey,nonce);
+ cipher.setAAD(Buffer.from(MAGIC));const encrypted=Buffer.concat([cipher.update(plain),cipher.final()]);
+ return Buffer.from(JSON.stringify({magic:MAGIC,nonce:nonce.toString('base64'),tag:cipher.getAuthTag().toString('base64'),ciphertext:encrypted.toString('base64')}));
+}
+function restore({archive,transportKey,outputDir}={}){
+ if(!Buffer.isBuffer(archive)||archive.length>50*1024*1024||
+    !Buffer.isBuffer(transportKey)||transportKey.length!==32)throw Error('P22_ARCHIVE_INPUT_INVALID');
+ let outer,inside;
+ try{
+  outer=JSON.parse(archive.toString('utf8'));
+  if(outer.magic!==MAGIC)throw Error('P22_ARCHIVE_MAGIC');
+  const decrypt=crypto.createDecipheriv('aes-256-gcm',transportKey,Buffer.from(outer.nonce,'base64'));
+  decrypt.setAAD(Buffer.from(MAGIC));decrypt.setAuthTag(Buffer.from(outer.tag,'base64'));
+  inside=JSON.parse(Buffer.concat([decrypt.update(Buffer.from(outer.ciphertext,'base64')),decrypt.final()]).toString('utf8'));
+ }catch(_){throw Error('P22_ARCHIVE_AUTH_FAILED');}
+ if(inside.magic!==MAGIC||!Array.isArray(inside.rows)||!inside.rows.length||
+    inside.rows.length>32||new Set(inside.rows.map(r=>r.rel)).size!==inside.rows.length)
+  throw Error('P22_ARCHIVE_MANIFEST_INVALID');
+ const temp=fs.realpathSync(os.tmpdir());
+ if(typeof outputDir!=='string'||!path.isAbsolute(outputDir)||fs.existsSync(outputDir)||
+    !path.resolve(outputDir).startsWith(temp+path.sep)||
+    !path.basename(outputDir).startsWith('iatb-auth21-restore-'))
+  throw Error('P22_RESTORE_TARGET_UNSAFE');
+ const Database=require('better-sqlite3');
+ fs.mkdirSync(outputDir,{mode:0o700});
+ try{
+  for(const item of inside.rows){
+   assertRel(item.rel);
+   if(item.kind!==(/\.(db|sqlite)$/.test(item.rel)?'sqlite':'jsonl')||
+      !Number.isSafeInteger(item.size)||item.size<0||item.size>12*1024*1024)
+    throw Error('P22_RESTORE_MANIFEST_INVALID');
+   const bytes=Buffer.from(item.data,'base64');
+   if(bytes.length!==item.size||sha(bytes)!==item.digest)throw Error('P22_RESTORE_DIGEST_FAILED');
+   const target=path.join(outputDir,...item.rel.split('/'));
+   fs.mkdirSync(path.dirname(target),{recursive:true,mode:0o700});
+   fs.writeFileSync(target,bytes,{flag:'wx',mode:0o600});
+   if(item.kind==='sqlite'){
+    const db=new Database(target,{readonly:true,fileMustExist:true});
+    try{if(db.pragma('integrity_check',{simple:true})!=='ok'||db.pragma('foreign_key_check').length)
+       throw Error('P22_RESTORED_SQLITE_BAD');}finally{db.close();}
+   }else for(const line of bytes.toString('utf8').split(/\r?\n/).filter(Boolean))JSON.parse(line);
+  }
+  return {restored:true,files:inside.rows.map(r=>r.rel),outputDir};
+ }catch(e){fs.rmSync(outputDir,{recursive:true,force:true});throw e;}
+}
+module.exports={capture,restore};
