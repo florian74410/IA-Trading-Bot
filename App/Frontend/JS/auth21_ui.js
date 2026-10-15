@@ -78,9 +78,14 @@
   }catch(e){status('Déverrouillage refusé : '+e.message,true);}
  });
  by('logout').addEventListener('click',async()=>{
-  try{await fetchJson('/auth21/logout',{method:'POST',body:{},mutation:true});}
-  catch(_){/* Browser logout always clears visual session on failure. */ }
-  setLoggedOut();
+  try{
+   const response=await fetchJson('/auth21/logout',{method:'POST',body:{},mutation:true});
+   if(!response.ok)throw Error(response.data.error||'LOGOUT_NOT_CONFIRMED');
+   setLoggedOut();
+  }catch(_){
+   setLocked();
+   status('Déconnexion non confirmée par le serveur. Session verrouillée ; réessayez ou fermez le navigateur.',true);
+  }
  });
  by('market-read').addEventListener('click',async()=>{
   try{
