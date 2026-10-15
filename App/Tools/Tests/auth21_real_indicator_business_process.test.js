@@ -63,8 +63,16 @@ test('genuine Indicator Engine permits only Core-signed fixture settings write',
  const accepted=await call(port,'POST',route,data,{'X-IATB-Auth21-Proof':proof});
  assert.equal(accepted.status,200,accepted.body);
  assert.equal((await call(port,'POST',route,data,{'X-IATB-Auth21-Proof':proof})).status,403);
- const target=path.join(root,'runtime','auth21-business','indicator-settings.fixture.json');
- assert.equal(JSON.parse(fs.readFileSync(target,'utf8')).refreshMs,15000);
+ const indicatorDb=path.join(root,'userdata','User Data','fixture','user_data.db');
+ function indicatorRefresh(){
+  const Database=require('better-sqlite3');
+  const db=new Database(indicatorDb,{readonly:true,fileMustExist:true});
+  try{
+   const row=db.prepare("SELECT value_b64 FROM iatb_settings_v2 WHERE scope='indicator_engine' AND key='settings'").get();
+   return JSON.parse(Buffer.from(row.value_b64,'base64').toString('utf8')).refreshMs;
+  }finally{db.close();}
+ }
+ assert.equal(indicatorRefresh(),15000);
 
  assert.equal((await call(port,'POST','/cp/v1',data,{'X-IATB-Auth21-Proof':issue('admin')})).status,403);
  assert.equal((await call(port,'GET','/health')).status,403);
@@ -99,7 +107,7 @@ test('genuine Indicator Engine permits only Core-signed fixture settings write',
  assert.equal((await call(corePort,'POST',route,data,{...headers,Origin:'https://attacker.example'})).status,403);
  const committed=await call(corePort,'POST',route,data,headers);
  assert.equal(committed.status,200,committed.body);
- assert.equal(JSON.parse(fs.readFileSync(target,'utf8')).refreshMs,15000);
+ assert.equal(indicatorRefresh(),15000);
 
  const uiPort=await freePort();
  const ui=spawn(process.execPath,[path.join(app,'UI/Gateway/ui_service.js')],
