@@ -9,7 +9,7 @@ const {proofCodec}=require('./auth21_ipc_proof');
 const business=require('./auth21_business_capability');
 const {contract,validate}=require('./auth21_business_actions');
 const {createWriter}=require('./auth21_indicator_fixture_writer');
-function openBusinessIngress({env}={}){
+function openBusinessIngress({env,businessHandlers=null}={}){
  if(!env||env.IATB_AUTH21_BUSINESS_TRIAL!=='1'||
     env.IATB_AUTH21_IPC_PROBE_TRIAL!=='1'||env.IATB_TRADING_LIVE==='1')
   throw Error('AUTH21_BUSINESS_TRIAL_DISABLED');
@@ -136,6 +136,14 @@ function openBusinessIngress({env}={}){
    if(typeof proof!=='string')return send(res,403,{error:'AUTH21_BUSINESS_DENIED'});
    try{
     trial.gate.assertWritable();
+    if(businessHandlers&&Object.hasOwn(businessHandlers,rule.action)){
+     const checked=business.verify({codec,proof,action:rule.action,
+      ownerClientId:rule.owner?input.ownerClientId:null,bodyDigest:digest});
+     if(!checked.allowed)return send(res,403,{error:'AUTH21_BUSINESS_DENIED'});
+     const result=businessHandlers[rule.action](input,checked);
+     if(!result||result.ok!==true)return send(res,409,{error:'AUTH21_ENGINE_BUSINESS_HANDLER_FAILED'});
+     return send(res,200,result);
+    }
     if(indicatorWriter){
      const result=indicatorWriter.write({proof,settings:input,bodyDigest:digest});
      return send(res,result.ok?200:403,result);
