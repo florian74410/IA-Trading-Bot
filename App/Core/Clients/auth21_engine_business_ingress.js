@@ -70,6 +70,21 @@ function openBusinessIngress({env}={}){
    try{store.setSetting('auth21.preference.'+principal.clientId+'.'+input.key,input.value);}
    finally{store.close();}
   }
+  if(rule.action==='strategy.preference.set'){
+   const configured=String(env.IATB_USERDATA_USER||'fixture');
+   if(!/^[A-Za-z0-9._-]{1,64}$/.test(configured))
+    throw Error('AUTH21_STRATEGY_USER_INVALID');
+   const expected=path.join(root,'userdata','User Data',configured,'user_data.db');
+   if(env.IATB_USER_DB!==undefined&&path.resolve(env.IATB_USER_DB)!==expected)
+    throw Error('AUTH21_STRATEGY_DB_OUTSIDE_TRIAL');
+   const Store=require('../Settings/sqlite_settings_store');
+   const settings=new Store(path.join(root,'App'),{
+    dbPath:expected,username:configured,snapshotGate:trial.gate});
+   try{
+    if(!settings.ready)throw Error('AUTH21_STRATEGY_SETTINGS_UNAVAILABLE');
+    settings.set('auth21.strategy.'+principal.clientId,input.key,input.value);
+   }finally{if(settings.native)settings.native.close();}
+  }
   let filename;
   if(rule.owner)filename=rule.engine+'-'+principal.clientId+'-'+input.key+'.fixture.json';
   else if(rule.action==='marketdata.settings.set')filename='marketdata-settings.fixture.json';
