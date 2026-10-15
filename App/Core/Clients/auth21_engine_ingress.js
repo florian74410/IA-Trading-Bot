@@ -14,8 +14,15 @@ function createServer(handler, env = process.env) {
     if (!trial) throw Error('AUTH21_SNAPSHOT_WRITER_NOT_BOUND');
     snapshotControl = require('../Backup/auth21_snapshot_control').createSnapshotControl({env,trial});
   }
+  let businessHandler = null;
+  if (isolated && env.IATB_AUTH21_BUSINESS_TRIAL === '1') {
+    if (env.IATB_AUTH21_IPC_PROBE_TRIAL !== '1') throw Error('AUTH21_BUSINESS_PROOF_DISABLED');
+    businessHandler = require('./auth21_engine_business_ingress').openBusinessIngress({env});
+  }
   const server = http.createServer(function(req, res) {
     if (!isolated) return handler(req, res);
+    if (businessHandler && req.url === '/auth21/business/indicator/settings')
+      return businessHandler(req,res);
     if (snapshotControl && req.url === '/auth21/snapshot/control')
       return snapshotControl(req,res);
     res.writeHead(403, {
