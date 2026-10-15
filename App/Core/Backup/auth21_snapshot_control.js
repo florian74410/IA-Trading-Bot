@@ -49,7 +49,7 @@ function createSnapshotControl({env,trial}={}){
       (body.command==='release'?trial.gate.release(body.epoch):trial.gate.abort(body.epoch));
     return finish(200,{ok:true,writerId:trial.engine,epoch:body.epoch,command:body.command,
       pending:result&&result.pending===0?0:null});
-   }catch(e){return finish(409,{error:'SNAPSHOT_WRITER_NOT_READY'});}
+   }catch(e){const cause=String(e&&e.message||'');return finish(409,{error:'SNAPSHOT_WRITER_NOT_READY',cause:/^SNAPSHOT_[A-Z_]+$/.test(cause)?cause:'INTERNAL'});}
   });
   req.on('error',()=>{if(!res.writableEnded)finish(400,{error:'INVALID_REQUEST'});});
  };
