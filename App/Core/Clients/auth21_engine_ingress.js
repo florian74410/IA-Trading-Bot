@@ -5,7 +5,7 @@
 const http = require('node:http');
 const {active} = require('./auth21_service_boundary');
 
-function createServer(handler, env = process.env) {
+function createServer(handler, env = process.env, options = {}) {
   const isolated = active(env);
   let snapshotControl = null;
   if (env.IATB_AUTH21_SNAPSHOT_IPC_TRIAL === '1') {
@@ -20,7 +20,7 @@ function createServer(handler, env = process.env) {
       throw Error('AUTH21_BUSINESS_PROOF_DISABLED');
     const trial=require('../Backup/auth21_engine_snapshot_trial').currentEngineSnapshotTrial();
     if(trial&&['indicators','marketdata','fundamental','portfolio','strategy'].includes(trial.engine))
-      businessHandler=require('./auth21_engine_business_ingress').openBusinessIngress({env});
+      businessHandler=require('./auth21_engine_business_ingress').openBusinessIngress({env,businessHandlers:options.businessHandlers||null});
   }
   const server = http.createServer(function(req, res) {
     if (!isolated) return handler(req, res);
