@@ -141,3 +141,11 @@ l'ensemble des ressources interservices et des Annexes pertinentes avec
 leurs clés originales compatibles, mesures comparables p95/p99 et
 rollback d'un lot complet après panne en pleine capture. **P2.2 reste [ ]**.
 Aucun changement GEN-1, aucun Wallet manipulé, aucune migration réelle.
+
+
+## Suivi P2.2 — Durabilité, latences et recensement (15/10/2026)
+
+- **Redémarrage moteur pendant PREPARE** : `auth21_durable_snapshot_writer.js` écrit une génération et un état de gel durables avant ACK. Le test de bout en bout tue puis relance le véritable Trading Engine pendant un gel, vérifie le refus d'un nouveau PREPARE, et exige `recoverBlocked()` depuis Core avant retour à IDLE. Validé sur runner isolé lors du [run 38662339171](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38662339171).
+- **Latence réelle de barrière** : 16 cycles sur Core et quatre vrais moteurs ; p95 = **21,61 ms**, p99 = **21,61 ms** sur le runner CI. Ce ne sont pas des latences de capture/restauration sous charge ni des benchmarks GEN-1.
+- **Inventaire systématique, non encore clôturé** : `auth21_writer_source_census.js` parcourt en lecture seule les sources JS de `App`, détecte des opérations SQL/filesystem/shell et signale les chemins non revus, sans importer les modules. Une détection statique ne peut pas garantir à elle seule la couverture des appels dynamiques, scripts système et Annexes. Son test a été ajouté à la CI ; le résultat de la dernière exécution doit être validé indépendamment.
+- **État de clôture : P2.2 reste OUVERT** tant qu'une revue des écritures non couvertes (dont scripts et Annexes), une restauration globale de tous les stores/identités et un essai complet d'arrêt/démarrage/rétention/rollback sous charge ne sont pas documentés et réussis. Aucun déploiement GEN-1.
