@@ -7,7 +7,7 @@ const path=require('node:path');
 const {preflightEnv}=require('./auth21_core_local_trial_wiring');
 const {LocalSnapshotWriter}=require('./snapshot_coordinator');
 const ISSUED=new Map();
-const ENGINES=new Set(['portfolio','marketdata','fundamental']);
+const ENGINES=new Set(['portfolio','marketdata','fundamental','trading']);
 function openEngineSnapshotTrial({env=process.env,engine}={}){
  if(!ENGINES.has(engine)||env.IATB_AUTH21_CORE_AUTH_TRIAL!=='1')
   throw Error('AUTH21_ENGINE_SNAPSHOT_TRIAL_DISABLED');
@@ -19,6 +19,10 @@ function openEngineSnapshotTrial({env=process.env,engine}={}){
    const p=path.resolve(configured),data=path.join(root,'userdata');
    if(p===data||!p.startsWith(data+path.sep))throw Error('AUTH21_MARKETDATA_STORE_OUTSIDE_FIXTURE');
   }
+ }
+ if(engine==='trading'&&env.IATB_TRADING_HISTORY){
+  const p=path.resolve(env.IATB_TRADING_HISTORY),data=path.join(root,'userdata');
+  if(p===data||!p.startsWith(data+path.sep))throw Error('AUTH21_TRADING_HISTORY_OUTSIDE_FIXTURE');
  }
  if(engine==='portfolio'){
   const configured=env.IATB_PORTFOLIO_DB;
