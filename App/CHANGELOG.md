@@ -1,3 +1,11 @@
+# IA-TB v2.0.1 DEBUG — Étape 2/4 : Firewall, cache et persistance DexScreener
+
+- Les pools et leurs sommes traversent désormais le Data Firewall ; décision explicite exigée avant SQLite et cache, refus du bypass et des erreurs de validation.
+- Cache partagé entre les écritures équivalentes ETHUSDC/ETH/USDC, copies indépendantes des snapshots ; TTL et intervalle SQL existants conservés.
+- Quote réelle conservée dans l’historique ; erreurs fournisseur, réponse vide et échec SQLite explicites. Compteurs de persistance exposés dans le statut DEX.
+- Validation locale sous Node 22.23.3 : 9/9 scénarios DEX, 13/16 scripts de régression ; trois échecs reproduits sur le commit initial, détaillés dans `Documentation/DEXSCREENER_STEP2_DEBUG_2.0.1.md`.
+- Script de validation réelle GEN-1 fourni, non exécuté ici. Aucun déploiement ; étape 2 en attente de validation Overflow sur GEN-1, étapes 3/4 non commencées.
+
 # IA-TB v2.0.1 DEBUG — Étape 1/4 : lecture DexScreener
 
 - Autorise `marketdata.dex.liquidity.snapshot` dans le canal UI READ_ONLY du Router, avec uniquement `symbol` et `force`, conformément au registre CP/1.

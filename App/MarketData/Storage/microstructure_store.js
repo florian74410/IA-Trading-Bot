@@ -53,14 +53,16 @@ Store.prototype.openInterestHistory=function(o){
  try{var raw=this.run('SELECT data_json FROM open_interest_snapshots'+(where.length?' WHERE '+where.join(' AND '):'')+' ORDER BY timestamp DESC LIMIT '+limit+';',true).trim(),items=[];if(raw)raw.split(/\r?\n/).filter(Boolean).forEach(function(line){try{items.push(JSON.parse(line));}catch(e){}});items.reverse();return{ok:true,schema:'marketdata.open_interest.history/1.0',items:items,count:items.length,retentionDays:this.retentionDays};}catch(e){this.lastError=e.message;return{ok:false,error:e.message,items:[]};}
 };
 Store.prototype.saveDexLiquidity=function(x){
- if(!this.ready||!x)return false;var ts=+x.observedAt||Date.now(),symbol=String(x.canonicalSymbol||x.symbol||'').toUpperCase(),key='DEXLIQ|'+symbol,last=this.lastPersistByKey[key]||0;
- if(ts-last<this.persistIntervalMs)return false;
+ if(!this.ready)return false;
+ if(!x||!x.firewall||['PASS','WARN'].indexOf(x.firewall.decision)<0||!x.firewall.checkedAt||/BYPASS|DISABLED|WOULD_REJECT/.test(x.firewall.reason||'')){this.lastError='DEX_LIQUIDITY_NOT_VALIDATED';return false;}
+ var ts=+x.observedAt||Date.now(),symbol=String(x.canonicalSymbol||x.symbol||'').toUpperCase(),key='DEXLIQ|'+symbol,last=this.lastPersistByKey[key]||0;
+ if(ts-last<this.persistIntervalMs){this.lastError='';return false;}
  try{this.run("INSERT INTO dex_liquidity_snapshots(timestamp,symbol,liquidity_usd,volume_24h_usd,pool_count,data_json) VALUES("+[
   Math.round(ts),q(symbol),isFinite(+x.liquidityUsd)?+x.liquidityUsd:'NULL',isFinite(+x.volume24hUsd)?+x.volume24hUsd:'NULL',Math.max(0,+x.poolCount||0),q(JSON.stringify(x))
  ].join(',')+");");this.lastPersistByKey[key]=ts;this.lastError='';this.prune(false);return true;}catch(e){this.lastError=e.message;return false;}
 };
 Store.prototype.dexLiquidityHistory=function(o){
- o=o||{};if(!this.ready)return{ok:false,error:'MARKET_MICROSTRUCTURE_SQL_UNAVAILABLE',items:[]};var symbol=String(o.symbol||'').toUpperCase(),limit=Math.max(1,Math.min(5000,+o.limit||500)),since=Math.max(0,+o.since||0),where=[];
+ o=o||{};if(!this.ready)return{ok:false,error:'MARKET_MICROSTRUCTURE_SQL_UNAVAILABLE',items:[]};var symbol=o.symbol?require('../Normalizer/symbols').canonical(o.symbol):'',limit=Math.max(1,Math.min(5000,+o.limit||500)),since=Math.max(0,+o.since||0),where=[];
  if(symbol)where.push('symbol='+q(symbol));if(since)where.push('timestamp>='+Math.round(since));
  try{var raw=this.run('SELECT data_json FROM dex_liquidity_snapshots'+(where.length?' WHERE '+where.join(' AND '):'')+' ORDER BY timestamp DESC LIMIT '+limit+';',true).trim(),items=[];if(raw)raw.split(/\r?\n/).filter(Boolean).forEach(function(line){try{items.push(JSON.parse(line));}catch(e){}});items.reverse();return{ok:true,schema:'marketdata.dex.liquidity.history/1.0',items:items,count:items.length,retentionDays:this.retentionDays};}catch(e){this.lastError=e.message;return{ok:false,error:e.message,items:[]};}
 };
@@ -78,6 +80,6 @@ Store.prototype.liquidations=function(o){
 };
 Store.prototype.status=function(){
  var snapshots=0,liquidations=0,openInterestSnapshots=0,dexLiquiditySnapshots=0,oldest=null,newest=null;if(this.ready)try{var r=this.run('SELECT COUNT(*),MIN(timestamp),MAX(timestamp) FROM microstructure_snapshots;',true).trim().split('\t'),l=this.run('SELECT COUNT(*) FROM liquidation_events;',true).trim();snapshots=+r[0]||0;oldest=+r[1]||null;newest=+r[2]||null;liquidations=+l||0;openInterestSnapshots=+(this.run('SELECT COUNT(*) FROM open_interest_snapshots;',true).trim())||0;dexLiquiditySnapshots=+(this.run('SELECT COUNT(*) FROM dex_liquidity_snapshots;',true).trim())||0;}catch(e){this.lastError=e.message;}
- return{ok:this.ready,mode:'SQLITE',file:this.file,retentionDays:this.retentionDays,persistIntervalMs:this.persistIntervalMs,snapshots:snapshots,liquidations:liquidations,oldestTimestamp:oldest,newestTimestamp:newest,lastError:this.lastError||null};
+ return{ok:this.ready,mode:'SQLITE',file:this.file,retentionDays:this.retentionDays,persistIntervalMs:this.persistIntervalMs,snapshots:snapshots,liquidations:liquidations,openInterestSnapshots:openInterestSnapshots,dexLiquiditySnapshots:dexLiquiditySnapshots,oldestTimestamp:oldest,newestTimestamp:newest,lastError:this.lastError||null};
 };
 module.exports=Store;
