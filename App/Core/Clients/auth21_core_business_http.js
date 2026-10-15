@@ -56,7 +56,7 @@ function createCoreBusinessHttp({sessions,codec,routerPort,env}={}){
   }
   const length=req.headers['content-length']===undefined?null:Number(req.headers['content-length']);
   if((length!==null&&(!Number.isSafeInteger(length)||length<1||length>2048))||
-   !/^application\\/json(?:;|$)/i.test(String(req.headers['content-type']||'')))
+   !/^application\/json(?:;|$)/i.test(String(req.headers['content-type']||'')))
    return send(res,400,{error:'INVALID_REQUEST'});
   let count=0,parts=[];
   req.on('data',chunk=>{count+=chunk.length;if(count>2048){req.destroy();return;}parts.push(chunk);});
