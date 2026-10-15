@@ -8,7 +8,7 @@
      Router; Market Data validates external ingress through the Data Firewall before distribution.
    - ADMIN Firewall editor uses an explicit ADMIN-only bridge to port 8017.
 */
-var http=require('http'),fs=require('fs'),path=require('path'),URL=require('url').URL,Permissions=require('../Permissions/ui_permissions'),BUILD=require('../../Core/Shared/build_info'),CPClient=require('../../Core/Communication/cp1_client');
+var http=require('http'),https=require('https'),fs=require('fs'),path=require('path'),URL=require('url').URL,Permissions=require('../Permissions/ui_permissions'),BUILD=require('../../Core/Shared/build_info'),CPClient=require('../../Core/Communication/cp1_client');
 var ROOT=path.resolve(__dirname,'../..'),HOST='127.0.0.1';
 var PORT=+(process.env.IATB_UI_PORT||8000),CORE_PORT=+(process.env.CORE_PUBLIC_PORT||8001),ROUTER_PORT=+(process.env.ROUTER_PORT||8021),FIREWALL_PORT=+(process.env.IATB_FIREWALL_PORT||8017),ROUTER_CLIENT=new CPClient({root:ROOT,routerPort:ROUTER_PORT,timeout:5000,maxBytes:512*1024});
 var AUTH_MODE=String(process.env.IATB_AUTH_MODE||'disabled').toLowerCase(),BYPASS_ROLE=Permissions.normalizeRole(process.env.IATB_UI_BYPASS_ROLE||'ADMIN');
@@ -27,12 +27,31 @@ function findAsset(name){if(!/^[A-Za-z0-9._-]+$/.test(name))return null;for(var 
 function copyHeaders(src){var h={};Object.keys(src||{}).forEach(function(k){var l=k.toLowerCase();if(l==='host'||l==='connection'||l==='content-length')return;h[k]=src[k];});return h;}
 function responseHeaders(src){var h={};Object.keys(src||{}).forEach(function(k){var l=k.toLowerCase();if(l==='connection'||l==='transfer-encoding'||l==='content-length')return;h[k]=src[k];});return h;}
 function readJsonBody(req,max,cb){var a=[],n=0;max=max||131072;req.on('data',function(x){n+=x.length;if(n<=max)a.push(x);});req.on('end',function(){if(n>max)return cb(new Error('UI_BODY_TOO_LARGE'));try{cb(null,JSON.parse(Buffer.concat(a).toString('utf8')||'{}'));}catch(e){cb(new Error('UI_JSON_INVALID'));}});req.on('error',cb);}
-function proxy(req,res,port,targetPath,meta){meta=meta||{};var h=copyHeaders(req.headers),role=AUTH_MODE==='disabled'?BYPASS_ROLE:'SESSION';h.host='127.0.0.1:'+port;h['x-iatb-ui-origin']='IA-TB-UI';h['x-iatb-ui-role']=role;h['x-iatb-ui-permission']=meta.permission||'READ';var q=http.request({host:'127.0.0.1',port:port,path:targetPath,method:req.method,headers:h,timeout:20000},function(r){var rh=responseHeaders(r.headers);res.writeHead(r.statusCode||200,rh);r.pipe(res);});q.on('timeout',function(){q.destroy(new Error('UI_UPSTREAM_TIMEOUT'));});q.on('error',function(e){if(!res.headersSent)json(res,503,{ok:false,error:'UI_UPSTREAM_UNAVAILABLE',service:meta.service||'upstream',detail:e.message});else try{res.end();}catch(x){}});req.pipe(q);}
+function browserTlsOptions(){
+ if(process.env.IATB_AUTH21_BROWSER_TRIAL!=='1')return null;
+ if(!require('../../Core/Clients/auth21_service_boundary').active(process.env))
+  throw Error('AUTH21_BROWSER_SANDBOX_REQUIRED');
+ var preflight=require('../../Core/Backup/auth21_core_local_trial_wiring').preflightEnv(process.env);
+ var base=path.join(preflight.root,'userdata','Security');
+ var certFile=path.join(base,'auth21_browser_tls.crt');
+ var keyFile=path.join(base,'auth21_browser_tls.key');
+ for(var file of [certFile,keyFile]){
+  var st=fs.lstatSync(file);
+  if(!st.isFile()||st.isSymbolicLink()||(st.mode&0o077)!==0||
+   fs.realpathSync(file)!==file)throw Error('AUTH21_BROWSER_TLS_FILE_UNSAFE');
+ }
+ return {cert:fs.readFileSync(certFile),key:fs.readFileSync(keyFile)};
+}
+var AUTH21_BROWSER_TLS=browserTlsOptions();
+function proxy(req,res,port,targetPath,meta){meta=meta||{};var h=copyHeaders(req.headers),role=AUTH_MODE==='disabled'?BYPASS_ROLE:'SESSION';h.host='127.0.0.1:'+port;h['x-iatb-ui-origin']='IA-TB-UI';h['x-iatb-ui-role']=role;h['x-iatb-ui-permission']=meta.permission||'READ';var coreAuthTls=Boolean(AUTH21_BROWSER_TLS&&meta.service==='Auth21 isolated Core');
+ if(coreAuthTls&&!req.socket.encrypted)return json(res,403,{error:'AUTH21_BROWSER_HTTPS_REQUIRED'});
+ var q=(coreAuthTls?https:http).request({host:'127.0.0.1',port:port,path:targetPath,method:req.method,headers:h,timeout:20000,
+ ...(coreAuthTls?{ca:AUTH21_BROWSER_TLS.cert,servername:'localhost',rejectUnauthorized:true}:{})},function(r){var rh=responseHeaders(r.headers);res.writeHead(r.statusCode||200,rh);r.pipe(res);});q.on('timeout',function(){q.destroy(new Error('UI_UPSTREAM_TIMEOUT'));});q.on('error',function(e){if(!res.headersSent)json(res,503,{ok:false,error:'UI_UPSTREAM_UNAVAILABLE',service:meta.service||'upstream',detail:e.message});else try{res.end();}catch(x){}});req.pipe(q);}
 function currentRole(){return AUTH_MODE==='disabled'?BYPASS_ROLE:'SESSION';}
 function isAdminRole(role){role=Permissions.normalizeRole(role);return role==='ADMIN'||role==='SUPERADMIN';}
 function authorizePage(req,res,required,cb){if(AUTH_MODE==='disabled'){var r=BYPASS_ROLE;if(required==='ADMIN'&&!isAdminRole(r))return json(res,403,{ok:false,error:'ADMIN_REQUIRED'});return cb(r);}var h={Accept:'application/json'};if(req.headers.cookie)h.Cookie=req.headers.cookie;var q=http.get({host:'127.0.0.1',port:CORE_PORT,path:'/api/bootstrap',timeout:3000,headers:h},function(r){var a=[];r.on('data',function(c){a.push(c);});r.on('end',function(){var o={};try{o=JSON.parse(Buffer.concat(a).toString('utf8')||'{}');}catch(e){}if((r.statusCode||500)>=400||!o.authenticated)return json(res,401,{ok:false,error:'AUTH_REQUIRED'});var role=Permissions.normalizeRole(o.role||'USER');if(required==='ADMIN'&&!isAdminRole(role))return json(res,403,{ok:false,error:'ADMIN_REQUIRED'});cb(role);});});q.on('timeout',function(){q.destroy(new Error('AUTH_TIMEOUT'));});q.on('error',function(){json(res,503,{ok:false,error:'AUTH_SERVICE_UNAVAILABLE'});});}
 function allowCore(req,res,p){var c=Permissions.classify(req.method,p),role=currentRole();if(AUTH_MODE==='disabled'&&!Permissions.allowed(role,c)){json(res,403,{ok:false,error:'ACCESS_DENIED',role:role,required:c.permission});return false;}return c;}
-var server=http.createServer(function(req,res){var u=new URL(req.url,'http://'+HOST+':'+PORT),p=u.pathname;
+var server=(AUTH21_BROWSER_TLS?https.createServer(AUTH21_BROWSER_TLS,function(req,res){:http.createServer(function(req,res){var u=new URL(req.url,'http://'+HOST+':'+PORT),p=u.pathname;
  var auth21Boundary=require('../../Core/Clients/auth21_service_boundary').decision(process.env,'gateway',req.method,p);
  if(auth21Boundary.intercept){if(auth21Boundary.forwardToCore)return proxy(req,res,CORE_PORT,p+u.search,{service:'Auth21 isolated Core',permission:'AUTH'});return json(res,404,{error:'NOT_FOUND'});}
  if(req.method==='GET'&&p==='/ui-health')return json(res,200,{ok:true,name:'IA-TB UI Service',version:BUILD.version,pid:process.pid,host:HOST,port:PORT,corePort:CORE_PORT,routerPort:ROUTER_PORT,firewallPort:FIREWALL_PORT,authMode:AUTH_MODE,bypassRole:AUTH_MODE==='disabled'?BYPASS_ROLE:null,separation:'UI_PROCESS_ISOLATED'});
