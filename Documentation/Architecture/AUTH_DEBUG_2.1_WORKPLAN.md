@@ -218,3 +218,29 @@ ni l'isolation multiutilisateur, ni les sauvegardes interservices. Aucun service
 Kraken autonome n'est présent dans `App` à cette révision ; l'adaptateur Kraken
 est chargé par Trading. Les cases et les phases 2 à 6 restent ouvertes.
 Aucun déploiement, migration réelle ou accès à GEN-1 effectué.
+
+
+### P2.2 — Intégration multi-processus sur copies isolées (15/10/2026)
+
+**Preuve CI : [Auth P2.2 SUCCESS — run 38661630603](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38661630603).**
+Le Core coordonne **8 participants** (4 écrivains locaux clients/settings/mosaics/annex-root et
+les véritables processus Portfolio/MarketData/Fundamental/Trading) avec PREPARE,
+QUIESCED, RELEASE, ABORT via commandes loopback signées HMAC et liées au contenu
+SHA-256. Les principaux stores de ces Engines sont raccordés en mode
+strictement DEBUG isolé ; aucune exécution Trading LIVE ni opération Wallet.
+
+Tests exécutés avec de vrais processus Engine sur copie scratch : capture
+d'images SQLite WAL et JSONL, archive AES-256-GCM, restauration vers un
+répertoire vierge, contrôle de clé/chiffrement et intégrité SQLite/JSONL.
+Un crash réel de Trading pendant la barrière provoque un échec de cleanup,
+un état Core BLOCKED et le refus d'une nouvelle sauvegarde. Aucun GEN-1 touché.
+
+**Critères restants avant clôture P2.2 :** inventaire exhaustif des écrivains
+y compris scripts, annexes non couvertes et démarrages automatiques ; gel et
+restauration de toutes les ressources utiles à l'application complète,
+reprise *après redémarrage* de processus à génération durable, tests sur
+vrais writers non coopératifs et absence d'événement perdu, comparatifs
+p95/p99, restauration interservices de toutes les identités et clés
+client originales sous la politique approuvée. Les tests complets Phase 6
+restent requis. **P2.2 et Phase 2 restent [ ] jusqu'à satisfaction de ces
+critères**, conformément à la règle de non-clôture anticipée.
