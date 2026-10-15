@@ -93,6 +93,11 @@ test('real four Engine business actions honor roles, ownership and deny all old 
  const ADMIN={'Content-Type':'application/json',Authorization:'Bearer '+'A'.repeat(43)};
  const USER={'Content-Type':'application/json',Authorization:'Bearer '+'B'.repeat(43)};
  const GUEST={'Content-Type':'application/json',Authorization:'Bearer '+'C'.repeat(43)};
+ const metadata=await call(uiPort,'GET','/auth21/business/marketdata/metadata','',
+  {Authorization:'Bearer '+'C'.repeat(43)});
+ assert.equal(metadata.status,200,metadata.body);
+ assert.equal(JSON.parse(metadata.body).readOnly,true);
+ assert.equal((await call(uiPort,'POST','/auth21/business/marketdata/metadata','{}',GUEST)).status,404);
  const steps=[
   ['/auth21/business/marketdata/settings',{refreshMs:15000},ADMIN,'marketdata-settings.fixture.json'],
   ['/auth21/business/fundamental/feed',{feedUrl:'https://example.org/rss.xml'},ADMIN,'fundamental-feed.fixture.json'],
