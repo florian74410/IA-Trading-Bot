@@ -90,7 +90,19 @@ function ensureRuntimeSecret(target,legacy,errorCode,compatibilityLink){
   assertStartupWritable();
   ensureAppRuntimeDirs();
   if(!validSecretFile(target)&&legacy&&validSecretFile(legacy)){try{fs.renameSync(legacy,target);}catch(e){try{fs.copyFileSync(legacy,target);fs.unlinkSync(legacy);}catch(x){}}}
-  if(!validSecretFile(target)){var value=crypto.randomBytes(32).toString('hex');try{fs.writeFileSync(target,value,{encoding:'utf8',mode:384,flag:'wx'});}catch(e){}if(!validSecretFile(target))throw new Error(errorCode);}
+  if(!validSecretFile(target)){
+    // Publish only complete bytes. Concurrent Engines must never see the empty
+    // file created by open(O_EXCL) before its writer has finished write().
+    // link() is atomic and does not replace an existing key or another winner.
+    var temporary=target+'.'+crypto.randomBytes(12).toString('hex')+'.tmp';
+    try{
+      fs.writeFileSync(temporary,crypto.randomBytes(32).toString('hex'),{encoding:'utf8',mode:384,flag:'wx'});
+      var keyFd=fs.openSync(temporary,'r');try{fs.fsyncSync(keyFd);}finally{fs.closeSync(keyFd);}
+      try{fs.linkSync(temporary,target);}catch(e){if(e.code!=='EEXIST')throw e;}
+      var dirFd=fs.openSync(path.dirname(target),'r');try{fs.fsyncSync(dirFd);}finally{fs.closeSync(dirFd);}
+    }finally{try{fs.unlinkSync(temporary);}catch(e){}}
+    if(!validSecretFile(target))throw new Error(errorCode);
+  }
   try{fs.chmodSync(target,384);}catch(e){}
   if(legacy&&compatibilityLink){try{if(fs.existsSync(legacy)||fs.lstatSync(legacy).isSymbolicLink())fs.unlinkSync(legacy);}catch(e){}try{fs.mkdirSync(path.dirname(legacy),{recursive:true});fs.symlinkSync(path.relative(path.dirname(legacy),target),legacy);}catch(e){}}
   return target;

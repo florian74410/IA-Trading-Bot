@@ -102,3 +102,37 @@ test('preflight preserves existing user data and does not create Security path',
  assert.equal(fs.existsSync(path.join(f.data,'Security')),false);
  assert.equal(fs.existsSync(f.runtime),false);
 });
+
+test('simultaneous Engine startup cannot observe or overwrite a partly written secret',{timeout:15000},async t=>{
+ const f=fixture(t),{spawn}=require('node:child_process'),{once}=require('node:events');
+ const release=path.join(f.root,'release');
+ const env={...process.env,IATB_PATHS_PREFLIGHT_READONLY:'0',IATB_RUNTIME_ROOT:f.runtime,
+  IATB_DATA_ROOT:f.data,IATB_ANNEX_ROOT:f.annex,IATB_UPDATES_ROOT:f.updates,
+  IATB_STATE_ROOT:path.join(f.root,'legacy')};
+ // Pause the first writer after creating an EMPTY file but before filling it.
+ // Another Engine must publish/read a complete winner while this one is paused.
+ const code=`const fs=require('node:fs');const original=fs.writeFileSync;let held=false;
+ fs.writeFileSync=function(file,data,options){
+  if(!held&&String(file).includes('internal_service_key.dat')){
+   held=true;original.call(fs,file,'',options);process.send('partial');
+   const start=Date.now();while(!fs.existsSync(${JSON.stringify(release)})){
+    if(Date.now()-start>10000)throw Error('TEST_BARRIER_TIMEOUT');
+    Atomics.wait(new Int32Array(new SharedArrayBuffer(4)),0,0,10);
+   }
+   return original.call(fs,file,data,{...options,flag:'w'});
+  }return original.call(fs,file,data,options);
+ };require(${JSON.stringify(MODULE)});`;
+ const first=spawn(process.execPath,['-e',code],{env,stdio:['ignore','ignore','pipe','ipc']});
+ let errors='';first.stderr.on('data',x=>errors+=x);
+ t.after(()=>first.kill('SIGKILL'));
+ await once(first,'message');
+ const second=invoke(f,requirePaths(),{readonly:false});
+ fs.writeFileSync(release,'release');
+ assert.equal(second.status,0,second.stderr);
+ const key=path.join(f.runtime,'state','security','internal_service_key.dat');
+ const winner=fs.readFileSync(key,'utf8');assert.match(winner,/^[a-f0-9]{64}$/);
+ const [status]=await once(first,'exit');assert.equal(status,0,errors);
+ assert.equal(fs.readFileSync(key,'utf8'),winner);
+ assert.equal(fs.statSync(key).mode&0o777,0o600);
+ assert.deepEqual(fs.readdirSync(path.dirname(key)).filter(x=>x.endsWith('.tmp')),[]);
+});
