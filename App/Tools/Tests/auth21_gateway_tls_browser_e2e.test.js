@@ -7,6 +7,9 @@ const {once}=require('node:events');
 const {setTimeout:delay}=require('node:timers/promises');
 const {createIsolatedCoreGate}=require('../../Core/Clients/auth21_core_route_gate');
 const {createBrowserSession}=require('../../Core/Clients/auth21_browser_cookie');
+const {createCoreBusinessHttp}=require('../../Core/Clients/auth21_core_business_http');
+const {proofCodec}=require('../../Core/Clients/auth21_ipc_proof');
+const business=require('../../Core/Clients/auth21_business_capability');
 const {createServer:netServer}=require('node:net');
 const APP=path.resolve(__dirname,'../..');
 async function port(){const s=netServer();s.listen(0,'127.0.0.1');await once(s,'listening');const p=s.address().port;await new Promise(ok=>s.close(ok));return p;}
@@ -31,9 +34,28 @@ test('real Gateway HTTPS proxies secure cookie login and CSRF through pinned HTT
   getPreference:()=>null,setPreference:()=>{updated++},
   deletePreference:()=>{},recordUserActivity:()=>true
  };
+ const browser=createBrowserSession({secret:crypto.randomBytes(32),origin});
+ const secret=crypto.randomBytes(32),codec=proofCodec({secret});
+ const routerPort=await port();
+ const router=http.createServer((req,res)=>{
+  let parts=[];req.on('data',x=>parts.push(x));req.on('end',()=>{
+   const raw=Buffer.concat(parts);
+   const proof=req.headers['x-iatb-auth21-proof'];
+   const result=business.verify({codec:proofCodec({secret}),proof,
+    action:'indicator.settings.set',
+    bodyDigest:crypto.createHash('sha256').update(raw).digest('hex')});
+   res.writeHead(result.allowed?200:403,{'Content-Type':'application/json'});
+   res.end(JSON.stringify(result.allowed?{ok:true}:{error:'DENIED'}));
+  });
+ });
+ router.listen(routerPort,'127.0.0.1');await once(router,'listening');
+ t.after(()=>new Promise(resolve=>router.close(resolve)));
+ const businessHttp=createCoreBusinessHttp({sessions,codec,routerPort,
+  env:{IATB_AUTH21_BUSINESS_TRIAL:'1',IATB_AUTH21_IPC_PROBE_TRIAL:'1',IATB_TRADING_LIVE:'0',
+   IATB_AUTH21_CORE_AUTH_TRIAL:'1',IATB_DEBUG_MODE:'1',IATB_AUTH21_LOCAL_SNAPSHOT_TRIAL:'1'},
+  browserSessions:browser});
  const handler=createIsolatedCoreGate({sessions,
-  browserSessions:createBrowserSession({secret:crypto.randomBytes(32),origin}),
-  allowedBrowserOrigin:origin});
+  browserSessions:browser,allowedBrowserOrigin:origin,coreBusiness:businessHttp});
  const core=https.createServer({key:fs.readFileSync(key),cert:fs.readFileSync(crt)},handler);
  core.listen(corePort,'127.0.0.1');await once(core,'listening');
  t.after(()=>new Promise(resolve=>core.close(resolve)));
@@ -76,6 +98,12 @@ test('real Gateway HTTPS proxies secure cookie login and CSRF through pinned HTT
  assert.equal((await get('/auth21/preferences?scope=ui&key=theme','PUT',
   {value:'dark'},{Cookie:cookie,'X-IATB-CSRF':csrf})).status,200);
  assert.equal(updated,1);
+ const mutation='/auth21/business/indicator/settings';
+ assert.equal((await get(mutation,'POST',{enabled:true,refreshMs:5000},
+  {Cookie:cookie})).status,403);
+ assert.equal((await get(mutation,'POST',{enabled:true,refreshMs:5000},
+  {Cookie:cookie,'X-IATB-CSRF':csrf})).status,200);
+
  assert.equal((await get('/api/setup','POST',{})).status,404);
  assert.equal((await get('/auth21/logout','POST',{},{
   Cookie:cookie,'X-IATB-CSRF':csrf})).status,200);
