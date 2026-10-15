@@ -52,6 +52,21 @@ function openCoreAuthTrial({root,clientCrypto,snapshotGate,env,browserSessions=n
    throw Error('AUTH21_CORE_TRIAL_DB_INTEGRITY');
   const sessions=new Auth21SessionStore({db,clientCrypto,snapshotGate,idleLockSeconds:300});
   const runtimeEnv=env||process.env;
+  // Browser cookie mode must use a directly TLS-encrypted Core connection.
+  // Never trust forwarded-proto or a browser-provided header as TLS evidence.
+  if(runtimeEnv.IATB_AUTH21_BROWSER_TRIAL==='1'){
+   if(browserSessions||allowedBrowserOrigin)
+    throw Error('AUTH21_BROWSER_CONFIG_CONFLICT');
+   if(runtimeEnv.IATB_AUTH21_BROWSER_ORIGIN!==undefined &&
+      !/^https:\/\/[^/@]+$/.test(runtimeEnv.IATB_AUTH21_BROWSER_ORIGIN))
+    throw Error('AUTH21_BROWSER_ORIGIN_INVALID');
+   const origin=runtimeEnv.IATB_AUTH21_BROWSER_ORIGIN;
+   if(!origin)throw Error('AUTH21_BROWSER_ORIGIN_REQUIRED');
+   const key=require('./auth21_ipc_keyfile').loadTrialSecret({env:runtimeEnv,root});
+   browserSessions=require('./auth21_browser_cookie').createBrowserSession({
+    secret:key,origin});
+   allowedBrowserOrigin=origin;
+  }
   const ipcCodec=runtimeEnv.IATB_AUTH21_IPC_PROBE_TRIAL==='1'?
    require('./auth21_ipc_proof').proofCodec({secret:require('./auth21_ipc_keyfile').loadTrialSecret({env:runtimeEnv,root})}):null;
   // Core-internal capability issuer uses this real SQLite-backed session store.
