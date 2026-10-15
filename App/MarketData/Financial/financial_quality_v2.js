@@ -4,6 +4,13 @@
 function finite(v){return typeof v==='number'&&isFinite(v)}
 function money(v){return v==null||(finite(v)&&v>=0)}
 function pct(v){return v==null||(finite(v)&&v>=-100&&v<=100000)}
+// Conservative outlier guard for the single global 24h volume metric.
+// A daily traded volume >1000x total crypto market capitalization is structurally implausible.
+// Do not modify other CeFi metrics or erase historical raw snapshots.
+function validGlobalVolume(volume,cap){
+ return typeof volume==='number'&&isFinite(volume)&&volume>=0&&
+   typeof cap==='number'&&isFinite(cap)&&cap>0&&volume<=cap*1000;
+}
 function uniq(rows,key,label,warnings){
  var seen=Object.create(null),dups=0;(rows||[]).forEach(function(x){var k=String(x&&x[key]||'').trim().toLowerCase();if(!k)return;if(seen[k])dups++;else seen[k]=1;});
  if(dups)warnings.push({code:'DUPLICATE_'+label,count:dups});
@@ -35,4 +42,4 @@ function inspect(snapshot,opt){
  if(!c&&!d)errors.push({code:'NO_FINANCIAL_FAMILY'});
  return{ok:errors.length===0,status:errors.length?'REJECT':warnings.length?'WARN':'PASS',checkedAt:now,errors:errors,warnings:warnings};
 }
-module.exports={inspect:inspect};
+module.exports={inspect:inspect,validGlobalVolume:validGlobalVolume};
