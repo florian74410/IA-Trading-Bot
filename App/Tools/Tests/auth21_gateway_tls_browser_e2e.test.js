@@ -61,7 +61,8 @@ test('real Gateway HTTPS proxies secure cookie login and CSRF through pinned HTT
  t.after(()=>new Promise(resolve=>core.close(resolve)));
  const env={...process.env,IATB_UI_PORT:String(uiPort),CORE_PUBLIC_PORT:String(corePort),
   IATB_AUTH21_CORE_AUTH_TRIAL:'1',IATB_AUTH21_LOCAL_SNAPSHOT_TRIAL:'1',
-  IATB_AUTH21_BROWSER_TRIAL:'1',IATB_DEBUG_MODE:'1',IATB_DEBUG_BOOTSTRAP:'0',
+  IATB_AUTH21_BROWSER_TRIAL:'1',IATB_AUTH21_BUSINESS_TRIAL:'1',
+  IATB_AUTH21_IPC_PROBE_TRIAL:'1',IATB_DEBUG_MODE:'1',IATB_DEBUG_BOOTSTRAP:'0',
   IATB_AUTH21_LOCAL_TRIAL_ROOT:root,IATB_TRADING_LIVE:'0'};
  for(const [k,sub] of [['RUNTIME','runtime'],['DATA','userdata'],
  ['ANNEX','annexes'],['UPDATES','updates'],['STATE','legacy']])
