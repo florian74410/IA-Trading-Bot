@@ -104,7 +104,7 @@ test('real four Engine business actions honor roles, ownership and deny all old 
   const result=await call(uiPort,'POST',route,body,headers);
   assert.equal(result.status,200,route+': '+result.body);
   const saved=JSON.parse(fs.readFileSync(path.join(root,'runtime','auth21-business',file),'utf8'));
-  assert.equal(saved.action,route.split('/').slice(-2).join('.')==='strategy.preference'?'strategy.preference.set':saved.action);
+  assert.ok(['marketdata.settings.set','fundamental.feed.create','portfolio.preference.set','strategy.preference.set'].includes(saved.action));
   if(data.ownerClientId)assert.equal(saved.ownerClientId,'CLBob');
   assert.equal((await call(uiPort,'POST',route,body,GUEST)).status,403);
  }
