@@ -41,7 +41,11 @@ test('Core freezes three real Engines, captures encrypted WAL/JSONL, restores in
   'userdata/Database/clients.sqlite',
   'userdata/Security/client_master.key',
   'annexes/Strategies/fixture.json',
-  'runtime/config/market_data_settings.json'
+  'runtime/config/market_data_settings.json',
+  'userdata/User Data/snapshot-fixture/user_data.db',
+  'annexes/Mosaics/fixture.moz.json',
+  'userdata/Shared Data/MarketData/api_telemetry.db',
+  'userdata/Shared Data/MarketData/market_microstructure.db'
  ];
  const fpath=path.join(root,resources[3]);fs.mkdirSync(path.dirname(fpath),{recursive:true,mode:0o700});
  fs.writeFileSync(fpath,'{"fixture":"snapshotted","time":123}\n',{mode:0o600});
@@ -55,6 +59,12 @@ test('Core freezes three real Engines, captures encrypted WAL/JSONL, restores in
   const target=path.join(root,rel);fs.mkdirSync(path.dirname(target),{recursive:true,mode:0o700});
   fs.writeFileSync(target,JSON.stringify(value),{mode:0o600});
  }
+ for(const index of [9,11,12]){
+  const file=path.join(root,resources[index]);fs.mkdirSync(path.dirname(file),{recursive:true,mode:0o700});
+  const db=new Database(file);db.exec("CREATE TABLE p22_fixture(value TEXT NOT NULL); INSERT INTO p22_fixture(value) VALUES('original');");db.close();
+ }
+ const mosaic=path.join(root,resources[10]);fs.mkdirSync(path.dirname(mosaic),{recursive:true,mode:0o700});
+ fs.writeFileSync(mosaic,JSON.stringify({mosaic:'fixture'}),{mode:0o600});
  const ports={};for(const [engine] of SPEC)ports[engine]=await unusedPort();
  const env={...process.env,IATB_AUTH21_CORE_AUTH_TRIAL:'1',IATB_AUTH21_LOCAL_SNAPSHOT_TRIAL:'1',
   IATB_AUTH21_SNAPSHOT_IPC_TRIAL:'1',IATB_DEBUG_MODE:'1',IATB_DEBUG_BOOTSTRAP:'0',
@@ -119,6 +129,7 @@ test('Core freezes three real Engines, captures encrypted WAL/JSONL, restores in
  assert.deepEqual(fs.readFileSync(path.join(dest,resources[6])),syntheticKey);
  assert.equal(JSON.parse(fs.readFileSync(path.join(dest,resources[7]),'utf8')).strategy,'fixture');
  assert.equal(JSON.parse(fs.readFileSync(path.join(dest,resources[8]),'utf8')).refreshMs,15000);
+ assert.equal(JSON.parse(fs.readFileSync(path.join(dest,resources[10]),'utf8')).mosaic,'fixture');
  const restoredClient=new Database(path.join(dest,resources[5]),{readonly:true});
  assert.equal(restoredClient.prepare('SELECT value FROM fixture').get().value,'original');
  restoredClient.close();
