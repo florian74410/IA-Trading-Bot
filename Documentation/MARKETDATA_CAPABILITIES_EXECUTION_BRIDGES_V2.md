@@ -77,3 +77,7 @@ Le Provider DeFiLlama déjà présent couvre volumes DEX, fees et TVL, mais **au
 - Conserver le chantier des indicateurs Trading IA dans 2.0.3 ; aucune évolution fonctionnelle n'est incluse dans cet audit.
 
 **État :** documentation de capacités et de lacunes, pas engagement de disponibilité runtime ni modification applicative.
+
+## 7. Ajout UI : sélection réseau et DEX (travaux 2.0.3, non déployés)
+
+Les contrôles `execNetwork` et `execDex` de la page Statistiques filtrent maintenant les pools réellement retournées par le snapshot DexScreener validé pour ETH/USDC. Le réseau est issu de `pool.chainId`, le DEX de `pool.dexId`, sans catalogue artificiel, sans nouvelle API ni contourner le Firewall. La pool de référence est la plus liquide **parmi celles du réseau et du DEX sélectionnés**. Le montant de simulation et le modèle x·y=k restent inchangés. La page conserve explicitement `N/D` pour le gas, les frais DEX sans tarif vérifié et le total non chiffrable. **Ce module donne un ordre de grandeur de l'impact théorique et non une estimation complète des frais de transaction.** Les bridges restent hors périmètre ; aucun code bridge ni quote interchaînes ajouté. Validation Firefox et GEN-1 à réaliser avant clôture du chantier.
