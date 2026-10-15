@@ -8,7 +8,7 @@ const http=require('node:http'),net=require('node:net'),crypto=require('node:cry
 const {spawn}=require('node:child_process'),{once}=require('node:events');
 const {setTimeout:delay}=require('node:timers/promises');
 const Database=require('better-sqlite3');
-const {SnapshotCoordinator}=require('../../Core/Backup/snapshot_coordinator');
+const {createTrial}=require('../../Core/Backup/auth21_core_local_trial_wiring');
 const {createSnapshotCoreClient}=require('../../Core/Backup/auth21_snapshot_core_client');
 const {capture,restore}=require('../CI/auth21_engine_encrypted_bundle');
 const APP=path.resolve(__dirname,'../..');
@@ -83,9 +83,10 @@ test('Core freezes three real Engines, captures encrypted WAL/JSONL, restores in
   for(let i=0;i<60;i++){if(fs.existsSync(path.join(root,file))){found=true;break;}await delay(50);}
   assert.ok(found,'missing running Engine SQLite file '+file);
  }
- const core=createSnapshotCoreClient({env,root,timeoutMs:3000});
- const coordinator=new SnapshotCoordinator({writerIds:SPEC.map(s=>s[0]),timeoutMs:3500});
- for(const [engine] of SPEC)coordinator.register(engine,core.participant(engine,ports[engine]));
+ const coordinator=createTrial(env).coordinator;
+ assert.equal(coordinator.writerIds.length,8);
+ assert.ok(coordinator.writerIds.includes('clients'));
+ assert.ok(coordinator.writerIds.includes('trading'));
  const transportKey=crypto.randomBytes(32);
  const archive=await coordinator.execute(({epoch})=>capture({
   env,root,resources,transportKey,coordinator,epoch
