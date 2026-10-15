@@ -5,7 +5,8 @@ const business=require('../../Core/Clients/auth21_business_capability');
 const {proofCodec}=require('../../Core/Clients/auth21_ipc_proof');
 const crypto=require('node:crypto');
 test('five actions have exact immutable destinations and input grammar',()=>{
- assert.equal(Object.keys(RULES).length,5);
+ assert.equal(Object.keys(RULES).length,6);
+ assert.equal(contract('/auth21/business/marketdata/metadata').method,'GET');
  for(const [route,spec] of Object.entries(RULES)){
   assert.ok(route.startsWith('/auth21/business/'));
   assert.equal(contract(route),spec);
@@ -30,6 +31,11 @@ test('Core capability permits only owner and admin actions with non-replayable e
   t==='user'?{clientId:'CLBob',role:'USER'}:null};
  for(const action of ['indicator.settings.set','marketdata.settings.set','fundamental.feed.create'])
   assert.equal(business.issue({sessions,token:'user',codec,action}),null);
+ const guest=proofCodec({secret:crypto.randomBytes(32)});
+ const guestSessions={verifySession:t=>t==='guest'?{clientId:'CLGuest',role:'GUEST'}:null};
+ const shared=business.issue({sessions:guestSessions,token:'guest',codec:guest,action:'marketdata.metadata.get'});
+ assert.equal(typeof shared,'string');
+ assert.equal(business.verify({codec:guest,proof:shared,action:'marketdata.metadata.get'}).allowed,true);
  for(const action of ['portfolio.preference.set','strategy.preference.set']){
   const raw=JSON.stringify({ownerClientId:'CLBob',key:'test',value:'yes'});
   const bodyDigest=crypto.createHash('sha256').update(raw).digest('hex');
