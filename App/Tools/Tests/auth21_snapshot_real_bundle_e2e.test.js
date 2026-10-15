@@ -184,7 +184,8 @@ test('Core freezes three real Engines, captures encrypted WAL/JSONL, restores in
  const timings=[];
  for(let i=0;i<16;i++){
   const started=process.hrtime.bigint();
-  await coordinator.execute(()=>({ok:true}));
+  try{await coordinator.execute(()=>({ok:true}));}
+  catch(err){console.log('# P22_BARRIER_FAILURE '+JSON.stringify({iteration:i,state:coordinator.state,pending:coordinator.pendingCleanup,epoch:coordinator.epoch,error:err.message}));throw err;}
   timings.push(Number(process.hrtime.bigint()-started)/1e6);
  }
  timings.sort((a,b)=>a-b);
