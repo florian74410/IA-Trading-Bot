@@ -20,6 +20,10 @@ test('five actions have exact immutable destinations and input grammar',()=>{
  assert.equal(validate(contract('/auth21/business/marketdata/settings'),{refreshMs:1}),false);
  assert.equal(validate(contract('/auth21/business/fundamental/feed'),{feedUrl:'https://example.org/rss.xml'}),true);
  assert.equal(validate(contract('/auth21/business/fundamental/feed'),{feedUrl:'http://internal.local/'}),false);
+ for(const url of ['https://127.0.0.1/rss','https://localhost/rss',
+  'https://metadata.internal/latest','https://example.local/rss',
+  'https://169.254.169.254/latest','https://example.org:8443/rss'])
+  assert.equal(validate(contract('/auth21/business/fundamental/feed'),{feedUrl:url}),false,url);
  assert.equal(validate(contract('/auth21/business/portfolio/preference'),
   {ownerClientId:'CLAlice',key:'chart.zoom',value:'5'}),true);
  assert.equal(validate(contract('/auth21/business/portfolio/preference'),
