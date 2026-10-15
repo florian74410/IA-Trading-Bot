@@ -41,6 +41,24 @@ function openBusinessIngress({env}={}){
    const updated=settings.save({...settings.load(),refreshMs:input.refreshMs});
    if(updated.refreshMs!==input.refreshMs)throw Error('AUTH21_MARKETDATA_SETTINGS_SAVE_INVALID');
   }
+  if(rule.action==='fundamental.feed.create'){
+   const PATHS=require('../Shared/paths');
+   const file=path.resolve(PATHS.PersistentData.fundamentalDb);
+   const allowed=path.join(root,'userdata')+path.sep;
+   if(!file.startsWith(allowed))throw Error('AUTH21_FUNDAMENTAL_DB_OUTSIDE_TRIAL');
+   const parsed=new URL(input.feedUrl);
+   if(parsed.username||parsed.password||parsed.port||!parsed.hostname.includes('.'))
+    throw Error('AUTH21_FEED_HOST_INVALID');
+   const Storage=require('../../Fundamental/Engine/database');
+   const store=new Storage({snapshotGate:trial.gate});
+   try{
+    const id=crypto.createHash('sha256').update(input.feedUrl).digest('hex').slice(0,12).toUpperCase();
+    store.createFeed({provider:'RSS',endpoint:input.feedUrl,
+     label:'Auth21 '+parsed.hostname,
+     newSource:{code:'AUTH21_'+id,name:'Auth21 '+parsed.hostname,grade:'C',
+      sourceType:'MEDIA',country:'INT'},enabled:false});
+   }finally{store.close();}
+  }
   if(rule.action==='portfolio.preference.set'){
    const base=path.join(root,'userdata','User Data');
    const db=env.IATB_PORTFOLIO_DB&&path.resolve(env.IATB_PORTFOLIO_DB);
