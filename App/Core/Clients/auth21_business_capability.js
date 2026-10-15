@@ -5,6 +5,7 @@
  */
 const {issueAuthorizedProof,authorizeInterprocess}=require('./auth21_rbac_guard');
 const ACTIONS=Object.freeze({
+ 'marketdata.metadata.get':Object.freeze({audience:'marketdata',permission:'shared.read',method:'GET'}),
  'indicator.settings.set':Object.freeze({audience:'indicator',permission:'admin.write'}),
  'marketdata.settings.set':Object.freeze({audience:'marketdata',permission:'admin.write'}),
  'fundamental.feed.create':Object.freeze({audience:'fundamental',permission:'admin.write'}),
@@ -20,7 +21,7 @@ function issue({sessions,token,codec,action,ownerClientId,bodyDigest}={}){
  if(!spec)return null;
  if(spec.permission==='self.write'&&!ownerClientId)return null;
  return issueAuthorizedProof({sessions,token,codec,audience:spec.audience,
-  operation:spec.permission,method:'POST',ownerClientId:spec.permission==='self.write'?ownerClientId:null,action,bodyDigest});
+  operation:spec.permission,method:spec.method||'POST',ownerClientId:spec.permission==='self.write'?ownerClientId:null,action,bodyDigest});
 }
 function verify({codec,proof,action,ownerClientId,bodyDigest}={}){
  const spec=contract(action);
