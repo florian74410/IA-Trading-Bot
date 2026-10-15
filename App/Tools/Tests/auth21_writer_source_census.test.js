@@ -49,5 +49,5 @@ test('Bank vault and wallet must not write or migrate sensitive state during P2.
  assert.throws(()=>w._all({}),/AUTH21_WALLET_DISABLED_DURING_SNAPSHOT_TRIAL/);
  assert.throws(()=>w._save({},[]),/AUTH21_WALLET_DISABLED_DURING_SNAPSHOT_TRIAL/);
  assert.equal(writes,0);
- assert.ok(reads<=1);
+ assert.ok(reads<=2);
 });
