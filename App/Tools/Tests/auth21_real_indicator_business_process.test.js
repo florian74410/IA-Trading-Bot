@@ -66,24 +66,6 @@ test('genuine Indicator Engine permits only Core-signed fixture settings write',
  const target=path.join(root,'runtime','auth21-business','indicator-settings.fixture.json');
  assert.equal(JSON.parse(fs.readFileSync(target,'utf8')).refreshMs,15000);
 
- const uiPort=await freePort();
- const ui=spawn(process.execPath,[path.join(app,'UI/Gateway/ui_service.js')],
-  {cwd:app,env:{...env,IATB_UI_PORT:String(uiPort),CORE_PUBLIC_PORT:String(corePort),
-   ROUTER_PORT:String(businessRouterPort)},stdio:['ignore','pipe','pipe']});
- let uiLog='';ui.stdout.on('data',x=>uiLog+=x);ui.stderr.on('data',x=>uiLog+=x);
- t.after(async()=>{if(ui.exitCode===null&&ui.signalCode===null){ui.kill('SIGKILL');await once(ui,'exit');}});
- let uiReady=false;
- for(let i=0;i<120;i++){
-  if(ui.exitCode!==null)assert.fail('GATEWAY_EXIT: '+uiLog);
-  try{uiReady=(await call(uiPort,'GET','/ui-health')).status===404;}catch(_){}
-  if(uiReady)break;await delay(50);
- }
- assert.equal(uiReady,true,'GATEWAY_NOT_READY: '+uiLog);
- assert.equal((await call(uiPort,'POST',route,data,userHeaders)).status,403);
- const uiAccepted=await call(uiPort,'POST',route,data,headers);
- assert.equal(uiAccepted.status,200,uiAccepted.body);
- assert.equal((await call(uiPort,'POST',route,data,{...headers,Origin:'https://evil.example'})).status,403);
- assert.equal((await call(uiPort,'POST','/communication/v1/ui/write',data,headers)).status,404);
  assert.equal((await call(port,'POST','/cp/v1',data,{'X-IATB-Auth21-Proof':issue('admin')})).status,403);
  assert.equal((await call(port,'GET','/health')).status,403);
 
@@ -118,5 +100,24 @@ test('genuine Indicator Engine permits only Core-signed fixture settings write',
  const committed=await call(corePort,'POST',route,data,headers);
  assert.equal(committed.status,200,committed.body);
  assert.equal(JSON.parse(fs.readFileSync(target,'utf8')).refreshMs,15000);
+
+ const uiPort=await freePort();
+ const ui=spawn(process.execPath,[path.join(app,'UI/Gateway/ui_service.js')],
+  {cwd:app,env:{...env,IATB_UI_PORT:String(uiPort),CORE_PUBLIC_PORT:String(corePort),
+   ROUTER_PORT:String(businessRouterPort)},stdio:['ignore','pipe','pipe']});
+ let uiLog='';ui.stdout.on('data',x=>uiLog+=x);ui.stderr.on('data',x=>uiLog+=x);
+ t.after(async()=>{if(ui.exitCode===null&&ui.signalCode===null){ui.kill('SIGKILL');await once(ui,'exit');}});
+ let uiReady=false;
+ for(let i=0;i<120;i++){
+  if(ui.exitCode!==null)assert.fail('GATEWAY_EXIT: '+uiLog);
+  try{uiReady=(await call(uiPort,'GET','/ui-health')).status===404;}catch(_){}
+  if(uiReady)break;await delay(50);
+ }
+ assert.equal(uiReady,true,'GATEWAY_NOT_READY: '+uiLog);
+ assert.equal((await call(uiPort,'POST',route,data,userHeaders)).status,403);
+ const uiAccepted=await call(uiPort,'POST',route,data,headers);
+ assert.equal(uiAccepted.status,200,uiAccepted.body);
+ assert.equal((await call(uiPort,'POST',route,data,{...headers,Origin:'https://evil.example'})).status,403);
+ assert.equal((await call(uiPort,'POST','/communication/v1/ui/write',data,headers)).status,404);
 
 });
