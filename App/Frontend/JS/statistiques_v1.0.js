@@ -250,10 +250,22 @@ function executionEstimate(pool,amount){
 }
 function renderExecutionCost(){
  var host=q('#defiExecutionCost');if(!host)return;
- var snap=state.defi.swapLiquidity,pools=(snap&&snap.pools||[]).filter(function(x){return number(x.liquidityUsd)>0}).sort(function(a,b){return b.liquidityUsd-a.liquidityUsd}),pool=pools[0],sel=q('#execTradeSize'),amount=number(sel&&sel.value);
+ var snap=state.defi.swapLiquidity,pools=(snap&&snap.pools||[]).filter(function(x){return number(x.liquidityUsd)>0&&x.chainId&&x.dexId}).sort(function(a,b){return b.liquidityUsd-a.liquidityUsd});
+ var networkSelect=q('#execNetwork'),dexSelect=q('#execDex'),sel=q('#execTradeSize'),amount=number(sel&&sel.value);
+ function unique(values){return Array.from(new Set(values)).sort(function(a,b){return a.localeCompare(b)});}
+ function updateSelect(node,values,emptyLabel){
+  if(!node)return values[0]||'';
+  var previous=node.value,chosen=values.indexOf(previous)>=0?previous:(values[0]||'');
+  node.innerHTML=values.length?values.map(function(v){return '<option value="'+esc(v)+'">'+esc(v)+'</option>';}).join(''):'<option value="">'+esc(emptyLabel)+'</option>';
+  node.value=chosen;node.disabled=!values.length;return chosen;
+ }
+ var network=updateSelect(networkSelect,unique(pools.map(function(p){return String(p.chainId)})),'Réseau indisponible');
+ var networkPools=pools.filter(function(p){return String(p.chainId)===network});
+ var dex=updateSelect(dexSelect,unique(networkPools.map(function(p){return String(p.dexId)})),'DEX indisponible');
+ var pool=networkPools.filter(function(p){return String(p.dexId)===dex})[0];
  if(!pool||!amount||amount<=0){host.innerHTML=financeEmpty('Estimation indisponible : aucune pool exploitable ou montant invalide');return;}
  var e=executionEstimate(pool,amount),pair=(pool.base&&pool.base.symbol||'?')+'/'+(pool.quote&&pool.quote.symbol||'?');
- host.innerHTML='<div class="execVisual"><div class="execTotal"><span>COÛT TOTAL</span><b>Indisponible</b><small>Simulation : '+esc(money(amount))+'<br>Gas et cotation exécutable non fournis</small></div></div><div class="execDetails"><div class="execCostRow gas"><span class="costMini">⛽</span><div><b>Gas · N/D</b><small>Aucune estimation RPC validée pour '+esc(pool.chainId||'ce réseau')+'</small></div><strong>N/D</strong></div><div class="execCostRow fee"><span class="costMini">◆</span><div><b>Frais DEX · '+(e.feePct==null?'N/D':'indicatifs')+'</b><small>'+(e.feePct==null?'DexScreener ne fournit pas de tarif exploitable.':'Taux '+esc(e.feePct)+' % extrait du libellé API ; tarif du swap non vérifié.')+'</small></div><strong>'+esc(e.feeUsd==null?'N/D':money(e.feeUsd))+'</strong></div><div class="execCostRow slip"><span class="costMini">⇵</span><div><b>Impact théorique · estimation</b><small>Modèle x·y=k, deux réserves de même valeur : montant / (liquidité de cette pool / 2 + montant). Hors frais, gas, routage et liquidité concentrée.</small></div><strong>'+esc(e.impactPct==null?'N/D':e.impactPct.toLocaleString('fr-FR',{maximumFractionDigits:4})+' %')+'<br><small>'+esc(e.impactUsd==null?'N/D':money(e.impactUsd))+'</small></strong></div><div class="execPoolRef"><span>Pool de référence · donnée API DexScreener</span><b>'+esc(pair)+'</b><small>Protocole '+esc(pool.dexId||'N/D')+' · réseau '+esc(pool.chainId||'N/D')+'</small><small>Liquidité de la pool '+esc(money(pool.liquidityUsd))+' · volume 24 h '+esc(money(pool.volume24hUsd))+'</small><small>'+esc(pool.pairAddress||'Adresse N/D')+'</small></div><p class="metricNote">Cette approximation ne mesure pas le slippage réel. La liquidité de pool ne constitue pas une profondeur exécutable. Aucun total fiable ne peut être calculé avec les sources actuelles.</p></div>';
+ host.innerHTML='<div class="execVisual"><div class="execTotal"><span>COÛT TOTAL · NON CHIFFRABLE</span><b>Indisponible</b><small>Simulation indicative : '+esc(money(amount))+'<br>Gas et cotation exécutable non fournis</small></div></div><div class="execDetails"><div class="execCostRow gas"><span class="costMini">⛽</span><div><b>Gas · N/D</b><small>Aucune estimation RPC validée pour '+esc(pool.chainId||'ce réseau')+'</small></div><strong>N/D</strong></div><div class="execCostRow fee"><span class="costMini">◆</span><div><b>Frais DEX · '+(e.feePct==null?'N/D':'indicatifs')+'</b><small>'+(e.feePct==null?'DexScreener ne fournit pas de tarif exploitable.':'Taux '+esc(e.feePct)+' % extrait du libellé API ; tarif du swap non vérifié.')+'</small></div><strong>'+esc(e.feeUsd==null?'N/D':money(e.feeUsd))+'</strong></div><div class="execCostRow slip"><span class="costMini">⇵</span><div><b>Impact théorique · estimation</b><small>Modèle x·y=k, deux réserves de même valeur : montant / (liquidité de cette pool / 2 + montant). Hors frais, gas, routage et liquidité concentrée.</small></div><strong>'+esc(e.impactPct==null?'N/D':e.impactPct.toLocaleString('fr-FR',{maximumFractionDigits:4})+' %')+'<br><small>'+esc(e.impactUsd==null?'N/D':money(e.impactUsd))+'</small></strong></div><div class="execPoolRef"><span>Pool de référence · donnée API DexScreener</span><b>'+esc(pair)+'</b><small>Protocole '+esc(pool.dexId||'N/D')+' · réseau '+esc(pool.chainId||'N/D')+'</small><small>Liquidité de la pool '+esc(money(pool.liquidityUsd))+' · volume 24 h '+esc(money(pool.volume24hUsd))+'</small><small>'+esc(pool.pairAddress||'Adresse N/D')+'</small></div><p class="metricNote">Ordre de grandeur de l’impact uniquement, pour la pool la plus liquide du réseau et DEX choisis. Cette approximation ne mesure pas le slippage réel. La liquidité de pool ne constitue pas une profondeur exécutable. Aucun total fiable ne peut être calculé avec les sources actuelles.</p></div>';
 }
 function renderFinance(){
  renderCefiVolume();
@@ -456,6 +468,8 @@ function bind(){
  var allEx=q('#toggleAllExchanges');if(allEx)allEx.onclick=function(){state.ui.showAllExchanges=!state.ui.showAllExchanges;renderPlatforms()};
  var allOr=q('#toggleAllOracles');if(allOr)allOr.onclick=function(){state.ui.showAllOracles=!state.ui.showAllOracles;renderOracles()};
  var ex=q('#execTradeSize');if(ex)ex.onchange=renderExecutionCost;
+ var en=q('#execNetwork');if(en)en.onchange=renderExecutionCost;
+ var ed=q('#execDex');if(ed)ed.onchange=renderExecutionCost;
  window.addEventListener('hashchange',function(){showSection();loadFinancialData()});
  document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')loadFinancialData()});
 }
