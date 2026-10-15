@@ -18,7 +18,7 @@ function validate(rule,input){
  const fields=Object.keys(input).sort().join(',');
  if(rule.action==='indicator.settings.set')
   return fields==='enabled,refreshMs'&&typeof input.enabled==='boolean'&&
-   Number.isSafeInteger(input.refreshMs)&&input.refreshMs>=1000&&input.refreshMs<=60000;
+   Number.isSafeInteger(input.refreshMs)&&[1000,5000,15000,30000,60000].includes(input.refreshMs);
  if(rule.action==='marketdata.settings.set')
   return fields==='refreshMs'&&Number.isSafeInteger(input.refreshMs)&&
    input.refreshMs>=3000&&input.refreshMs<=3600000;
