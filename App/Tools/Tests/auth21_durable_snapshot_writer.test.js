@@ -2,6 +2,7 @@
 const test=require('node:test'),assert=require('node:assert/strict');
 const fs=require('node:fs'),os=require('node:os'),path=require('node:path');
 const {DurableSnapshotWriter}=require('../../Core/Backup/auth21_durable_snapshot_writer');
+const {SnapshotCoordinator}=require('../../Core/Backup/snapshot_coordinator');
 test('snapshot freeze survives writer restart and requires same-epoch signed control decision',t=>{
  const root=fs.mkdtempSync(path.join(os.tmpdir(),'iatb-auth21-core-runtime-'));
  t.after(()=>fs.rmSync(root,{recursive:true,force:true}));
@@ -30,4 +31,25 @@ test('corrupt or insecure durable state never fails open',t=>{
  assert.throws(()=>new DurableSnapshotWriter('fundamental',root),/SNAPSHOT_DURABLE_INVALID_STATE/);
  fs.chmodSync(f,0o644);
  assert.throws(()=>new DurableSnapshotWriter('fundamental',root),/SNAPSHOT_DURABLE_UNSAFE_STATE/);
+});
+
+test('Core retries a persisted RELEASE after the remote HTTP response was lost',async t=>{
+ const root=fs.mkdtempSync(path.join(os.tmpdir(),'iatb-auth21-core-runtime-'));
+ t.after(()=>fs.rmSync(root,{recursive:true,force:true}));
+ const gate=new DurableSnapshotWriter('marketdata',root);
+ const coord=new SnapshotCoordinator({writerIds:['marketdata']});
+ let drop=true;
+ coord.register('marketdata',{
+  prepare:epoch=>gate.prepare(epoch),
+  release:epoch=>{gate.release(epoch);if(drop){drop=false;throw Error('ACK_LOST');}},
+  abort:epoch=>gate.abort(epoch)
+ });
+ await assert.rejects(coord.execute(()=>({ok:true})),/SNAPSHOT_CLEANUP_FAILED/);
+ assert.equal(coord.state,'BLOCKED');
+ assert.equal(new DurableSnapshotWriter('marketdata',root).heldEpoch,null);
+ await coord.recoverBlocked();
+ assert.equal(coord.state,'IDLE');
+ assert.throws(()=>gate.release(0),/SNAPSHOT_EPOCH_MISMATCH/);
+ await coord.execute(()=>({ok:true}));
+ assert.equal(coord.state,'IDLE');
 });
