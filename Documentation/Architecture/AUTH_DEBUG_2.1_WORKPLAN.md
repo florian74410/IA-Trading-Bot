@@ -281,3 +281,19 @@ Core recensées, l'inventaire des routes dynamiques/CP1/WS, la qualification
 exhaustive des écrivains ni la campagne complète de charge/rollback.
 Le plan conserve ces critères ouverts. Aucun accès ou déploiement GEN-1,
 aucun ordre LIVE, aucune modification des clés Wallet.
+
+**Correctif complémentaire validé — démarrage simultané des Engines :**
+la CI `38758388170` a révélé une course `CP_SECRET_UNAVAILABLE` : un processus
+pouvait voir un fichier de secret runtime encore vide pendant sa création.
+Le commit `2587b9ef89bc4677143b370212ac082287a073b7` publie les octets complets
+par lien atomique sans écrasement, après fsync, et conserve la clé du processus
+vainqueur. Test déterministe : premier écrivain suspendu sur fichier vide,
+second Engine démarré, identité de clé finale inchangée. Les clés Wallet
+ne sont pas concernées.
+
+Validation finale du code : **456 tests Node réussis localement, 1 skip TTY
+limité à l'hôte**, puis CI Linux complète réussie :
+[P2.2](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38758885534),
+[P2.1](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38758885280),
+[RBAC](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38758885664).
+Le statut global et les critères non satisfaits ci-dessus restent inchangés.
