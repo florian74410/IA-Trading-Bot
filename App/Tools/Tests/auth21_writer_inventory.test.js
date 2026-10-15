@@ -32,7 +32,7 @@ test('inventory explicitly refuses to certify exhaustive runtime coverage',()=>{
  assert.equal(report.allRuntimeWritersInjected,false);
  assert.equal(report.runtimeStartupStillEager,true);
  assert.equal(report.startupPreflightReadOnlyAvailable,true);
- assert.ok(report.remainingRisks.some(x=>x.includes('Phase 6')));
+ assert.ok(report.remainingRisks.some(x=>x.includes('coverage')||x.includes('unregistered')));
 });
 test('missing a reviewed writer fails source preflight instead of marking green',t=>{
  const root=copyFixtures(t);
