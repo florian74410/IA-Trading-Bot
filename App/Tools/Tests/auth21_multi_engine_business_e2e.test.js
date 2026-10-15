@@ -111,6 +111,17 @@ test('real four Engine business actions honor roles, ownership and deny all old 
   const saved=JSON.parse(fs.readFileSync(path.join(root,'runtime','auth21-business',file),'utf8'));
   assert.ok(['marketdata.settings.set','fundamental.feed.create','portfolio.preference.set','strategy.preference.set'].includes(saved.action));
   if(data.ownerClientId)assert.equal(saved.ownerClientId,'CLBob');
+  if(route.includes('fundamental')){
+   const Database=require('better-sqlite3');
+   const dbFile=path.join(root,'userdata','Shared Data','Fundamental','fundamental.db');
+   const actual=new Database(dbFile,{readonly:true,fileMustExist:true});
+   try{
+    const row=actual.prepare('SELECT endpoint,enabled,provider_type FROM feeds WHERE endpoint=?')
+     .get('https://example.org/rss.xml');
+    assert.equal(row.endpoint,'https://example.org/rss.xml');
+    assert.equal(row.provider_type,'RSS');assert.equal(row.enabled,0);
+   }finally{actual.close();}
+  }
   if(route.includes('portfolio')){
    const Database=require('better-sqlite3');
    const actual=new Database(env.IATB_PORTFOLIO_DB,{readonly:true,fileMustExist:true});
