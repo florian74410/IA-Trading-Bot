@@ -149,3 +149,38 @@ Aucun changement GEN-1, aucun Wallet manipulé, aucune migration réelle.
 - **Latence réelle de barrière** : 16 cycles sur Core et quatre vrais moteurs ; p95 = **21,61 ms**, p99 = **21,61 ms** sur le runner CI. Ce ne sont pas des latences de capture/restauration sous charge ni des benchmarks GEN-1.
 - **Inventaire systématique, non encore clôturé** : `auth21_writer_source_census.js` parcourt en lecture seule les sources JS de `App`, détecte des opérations SQL/filesystem/shell et signale les chemins non revus, sans importer les modules. Une détection statique ne peut pas garantir à elle seule la couverture des appels dynamiques, scripts système et Annexes. Son test a été ajouté à la CI ; le résultat de la dernière exécution doit être validé indépendamment.
 - **État de clôture : P2.2 reste OUVERT** tant qu'une revue des écritures non couvertes (dont scripts et Annexes), une restauration globale de tous les stores/identités et un essai complet d'arrêt/démarrage/rétention/rollback sous charge ne sont pas documentés et réussis. Aucun déploiement GEN-1.
+
+
+## Audit statique et stabilisation multi-Engine — 15/10/2026
+
+**Preuve CI sur le commit c8c202f :** [P2.2 SUCCESS](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38670823327),
+[P2.1 SUCCESS](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38670823436) et
+[RBAC SUCCESS](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38670823321).
+
+L'audit automatique resserré signale **52 fichiers**, dont **9 des 12 stores
+pré-revus** détectés par heuristique, et **43 autres fichiers** (31 appels
+filesystem potentiels, 4 appels SQL et 8 appels processus uniquement). Les
+12 stores ont bien leur inventaire explicite indépendant ; le nombre 9
+ne représente pas une régression de protection. Chaque candidat actuel est
+classé dans `auth21_writer_triage.js`, sans confondre triage et protection.
+Voir [le rapport détaillé](AUTH_DEBUG_2.1_P22_WRITER_TRIAGE.md).
+
+**Corrections supplémentaires** : Wallet et Vault refusent tout accès
+mutateur en essai snapshot ; les tâches périodiques Portfolio vérifient
+l'époque gelée et les collecteurs autonomes Fundamental ne démarrent
+pas pendant le test d'IPC isolé. Les fichiers de journal de coûts Portfolio
+`App/.runtime/accounting/usage_ledger.jsonl` sont désormais inclus
+dans l'allowlist de capture/restauration chiffrée et couverts par un test
+de restauration. Les erreurs transitoires d'ACK RELEASE reçoivent au maximum
+une nouvelle tentative sur la **même génération** ; tout échec sémantique
+continue à laisser le coordinateur BLOCKED. Les sauvegardes sur runner
+CI ont produit p95 = **51,90 ms**, p99 = **53,16 ms** pour 20 cycles
+capture chiffrée + restauration ; la barrière seule donne p95/p99 =
+**25,21 ms** pour 16 cycles. Valeurs de fixture synthétique, non GEN-1.
+
+**Pas de clôture prématurée** : P2.2 reste ouvert selon les critères
+initiaux tant que les scripts hors Node, tâches différées non instrumentées
+et la campagne Phase 6 ne sont pas examinés sur un environnement comparable
+à l'instance réelle. Bank/Wallet, logs opérationnels et certains outils
+opérateur sont explicitement exclus de l'archive P2.2 ; aucune restauration
+complète d'une instance réelle ne peut être revendiquée à ce stade.
