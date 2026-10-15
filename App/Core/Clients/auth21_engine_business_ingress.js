@@ -22,7 +22,8 @@ function openBusinessIngress({env,businessHandlers=null}={}){
  const directory=path.join(root,'runtime','auth21-business');
  fs.mkdirSync(directory,{recursive:true,mode:0o700});
  if(fs.lstatSync(directory).isSymbolicLink())throw Error('AUTH21_BUSINESS_SYMLINK');
- const indicatorWriter=trial.engine==='indicators'?createWriter({root:directory,codec}):null;
+ const indicatorWriter=trial.engine==='indicators'?createWriter({root:directory,codec,
+  onVerified:proof=>replayLedger.consume(proof)}):null;
  const send=(res,status,obj)=>{
   if(res.writableEnded)return;
   res.writeHead(status,{'Content-Type':'application/json; charset=utf-8',
