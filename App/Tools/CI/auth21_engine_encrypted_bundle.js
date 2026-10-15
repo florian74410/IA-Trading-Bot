@@ -11,7 +11,7 @@ const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
 function assertRel(rel){
  if(typeof rel!=='string'||rel.length>200||rel.includes('\\')||!(/^(?:userdata\/(?:Shared Data|User Data|Database)\/[a-zA-Z0-9._\/ -]+\.(?:db|sqlite|jsonl)|annexes\/Strategies\/[A-Za-z0-9._\/-]+\.json|runtime\/config\/market_data_settings\.json|userdata\/Security\/client_master\.key)$/.test(rel))||
    rel.split('/').some(s=>!s||s==='.'||s==='..')||
-   /wallet|master|secret|credential|private|\.key/i.test(rel))throw Error('P22_RESOURCE_DISALLOWED');
+   (rel!=='userdata/Security/client_master.key' && /wallet|master|secret|credential|private|\.key/i.test(rel)))throw Error('P22_RESOURCE_DISALLOWED');
 }
 function assertRoot(env,root){if(preflightEnv(env).root!==root)throw Error('P22_ROOT_MISMATCH');}
 function ensureSafe(root,rel){
@@ -44,6 +44,8 @@ function capture({env,root,resources,transportKey,coordinator,epoch}={}){
   assertRel(rel);const file=ensureSafe(root,rel),st=fs.lstatSync(file);
   if(!st.isFile()||st.size>12*1024*1024)throw Error('P22_RESOURCE_UNSAFE');
   const sqlite=/\.(db|sqlite)$/.test(rel);
+  const kind=sqlite?'sqlite':rel.endsWith('.jsonl')?'jsonl':rel.endsWith('.json')?'json':'key';
+  if(kind==='key'&&(st.mode&0o077)!==0)throw Error('P22_KEY_PERMISSIONS');
   let buffer;
   if(sqlite){
    const db=new Database(file,{readonly:true,fileMustExist:true});
@@ -54,7 +56,9 @@ function capture({env,root,resources,transportKey,coordinator,epoch}={}){
    }finally{db.close();}
   }else{
    buffer=fs.readFileSync(file);
-   for(const line of buffer.toString('utf8').split(/\r?\n/).filter(Boolean))JSON.parse(line);
+   if(kind==='jsonl')for(const line of buffer.toString('utf8').split(/\r?\n/).filter(Boolean))JSON.parse(line);
+   if(kind==='json')JSON.parse(buffer.toString('utf8'));
+   if(kind==='key'&&(buffer.length<16||buffer.length>4096))throw Error('P22_CLIENT_KEY_INVALID');
   }
   total+=buffer.length;if(total>32*1024*1024)throw Error('P22_RESOURCE_BUDGET_EXCEEDED');
   rows.push({rel,kind,size:buffer.length,digest:sha(buffer),data:buffer.toString('base64')});
@@ -88,7 +92,7 @@ function restore({archive,transportKey,outputDir}={}){
  try{
   for(const item of inside.rows){
    assertRel(item.rel);
-   if(item.kind!==(/\.(db|sqlite)$/.test(item.rel)?'sqlite':'jsonl')||
+   if(item.kind!==(/\.(db|sqlite)$/.test(item.rel)?'sqlite':item.rel.endsWith('.jsonl')?'jsonl':item.rel.endsWith('.json')?'json':'key')||
       !Number.isSafeInteger(item.size)||item.size<0||item.size>12*1024*1024)
     throw Error('P22_RESTORE_MANIFEST_INVALID');
    const bytes=Buffer.from(item.data,'base64');
@@ -100,7 +104,9 @@ function restore({archive,transportKey,outputDir}={}){
     const db=new Database(target,{readonly:true,fileMustExist:true});
     try{if(db.pragma('integrity_check',{simple:true})!=='ok'||db.pragma('foreign_key_check').length)
        throw Error('P22_RESTORED_SQLITE_BAD');}finally{db.close();}
-   }else for(const line of bytes.toString('utf8').split(/\r?\n/).filter(Boolean))JSON.parse(line);
+   }else if(item.kind==='jsonl')for(const line of bytes.toString('utf8').split(/\r?\n/).filter(Boolean))JSON.parse(line);
+   else if(item.kind==='json')JSON.parse(bytes.toString('utf8'));
+   else if(bytes.length<16||bytes.length>4096)throw Error('P22_RESTORED_CLIENT_KEY_INVALID');
   }
   return {restored:true,files:inside.rows.map(r=>r.rel),outputDir};
  }catch(e){fs.rmSync(outputDir,{recursive:true,force:true});throw e;}
