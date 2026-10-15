@@ -18,6 +18,8 @@ function fixture(t){
   IATB_STATE_ROOT:path.join(root,'legacy')};
 }
 test('actual Portfolio service creates store with opt-in guarded snapshot adapter',()=>{
+ assert.match(source,/usageLedger=new UsageLedger\\(ROOT,AUTH21_PORTFOLIO_SNAPSHOT\\?/);
+ assert.match(source,/store=new Store\\(ROOT,AUTH21_PORTFOLIO_SNAPSHOT\\?/);
  assert.match(source,/openEngineSnapshotTrial\(\{env:process\.env,engine:'portfolio'\}\)\.gate/);
 });
 test('Portfolio fixture gate freezes and releases writes',t=>{
