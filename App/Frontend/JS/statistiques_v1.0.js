@@ -39,7 +39,8 @@ var state={
 };
 state.cefi={shares:[],volume:[],volumeHistory:[],volumeRange:'24H',exchanges:[],assets:[],health:[]};
 state.defi={shares:[],volume:[],volumeHistory:[],volumeDaily:[],volumeRange:'24H',protocols:[],protocolsRaw:[],stableIn:[],stableOut:[],networks:[],yieldPools:[],dexFeeProtocols:[],swapLiquidity:null,leaders:null};
-state.ui={showAllExchanges:false,showAllOracles:false,financialBootstrap:true};
+state.ui={showAllExchanges:false,showAllOracles:false,errors:{},inflight:{},wanted:{},lastKey:{},lastAt:{}};
+state.data={snapshot:{},cefiHistory:null,defiHistory:null,oi:null,liq:null,dex:null,streams:null};
 state.adoptionRange='30J';
 state.oracleCatalog=[
  {id:'redstone',name:'RedStone Oracle',icon:'R',brand:'',status:'Référencé',latency:null,uptime:null,kind:'oracle'},
@@ -48,6 +49,7 @@ state.oracleCatalog=[
  {id:'layerzero',name:'LayerZero Bridge',icon:'L',brand:'',status:'Référencé',latency:null,uptime:null,kind:'bridge'}
 ];
 
+function number(v){return v==null||v===''||!isFinite(+v)?null:+v}
 function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 function q(s,r){return (r||document).querySelector(s)}
 function qa(s,r){return [].slice.call((r||document).querySelectorAll(s))}
@@ -182,66 +184,76 @@ function healthGrid(rows){
  return rows.map(function(x){return'<div class="marketHealthCell '+esc(x[2])+'"><span>'+esc(x[0])+'</span><b>'+esc(x[1])+'</b></div>'}).join('');
 }
 function stableFlow(){
- var d=state.defi;if(!d.stableIn.length||!d.stableOut.length)return '<div class="stableFlowEmpty"><b>Historique insuffisant</b><span>Les flux seront calculés à partir des variations successives de capitalisation des stablecoins.</span></div>';
- var w=620,h=180,p=20,max=Math.max.apply(Math,d.stableIn.concat(d.stableOut).concat([1])),step=(w-p*2)/d.stableIn.length,bars='';
- d.stableIn.forEach(function(v,i){var inH=(v/max)*(h/2-24),outH=(d.stableOut[i]/max)*(h/2-24),x=p+i*step+step*.18,bw=step*.28;bars+='<rect class="stableIn" x="'+x.toFixed(1)+'" y="'+(h/2-inH).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+inH.toFixed(1)+'"/><rect class="stableOut" x="'+(x+bw+2).toFixed(1)+'" y="'+(h/2).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+outH.toFixed(1)+'"/>'});
- return '<svg viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="none"><line class="stableAxis" x1="'+p+'" y1="'+(h/2)+'" x2="'+(w-p)+'" y2="'+(h/2)+'"/>'+bars+'</svg><div class="stableLegend"><span><i class="in"></i>Entrées</span><span><i class="out"></i>Sorties</span></div>';
+ var rows=state.defi.stableFlows||[];
+ if(!rows.length)return '<div class="stableFlowEmpty"><b>Historique indisponible</b><span>Variations de capitalisation USD · DeFiLlama. Aucun flux brut mesuré.</span></div>';
+ var w=620,h=180,p=20,max=Math.max.apply(Math,rows.map(function(x){return Math.abs(x.netChangeUsd)}).concat([1])),step=(w-p*2)/rows.length,bars='';
+ rows.forEach(function(x,i){var v=x.netChangeUsd,bh=Math.abs(v)/max*58,px=p+i*step+step*.18,label=new Date(x.timestamp).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'}),period=x.from?new Date(x.from).toLocaleString('fr-FR')+' → '+new Date(x.timestamp).toLocaleString('fr-FR'):label;
+  bars+='<rect class="'+(v>=0?'stableIn':'stableOut')+'" x="'+px.toFixed(1)+'" y="'+(v>=0?h/2-bh:h/2).toFixed(1)+'" width="'+(step*.64).toFixed(1)+'" height="'+bh.toFixed(1)+'"><title>'+esc(period+' · variation nette '+money(v)+' · DeFiLlama')+'</title></rect>';
+  if(i===0||i===rows.length-1)bars+='<text x="'+px.toFixed(1)+'" y="175" fill="#93b9c9" font-size="10">'+esc(label)+'</text>';
+ });
+ return '<svg role="img" aria-label="Variations nettes de capitalisation des stablecoins, en USD" viewBox="0 0 '+w+' '+h+'"><line class="stableAxis" x1="'+p+'" y1="90" x2="'+(w-p)+'" y2="90"/>'+bars+'</svg><div class="stableLegend"><span><i class="in"></i>Hausse nette</span><span><i class="out"></i>Baisse nette</span><span>USD · échelle ± '+esc(money(max))+'</span></div><p class="metricNote">DeFiLlama · variation entre deux observations datées, pas des entrées/sorties brutes ni un flux garanti sur 24 h.</p>';
 }
 function historySeries(h,family,pathName){
- var rows=(h&&h.items)||[],out=[],parts=String(pathName||'').split('.');
- rows.forEach(function(x){var cur=family==='CEFI'?x.cefi:x.defi;for(var i=0;i<parts.length&&cur!=null;i++)cur=cur[parts[i]];if(cur==null||cur==='')return;cur=+cur;var ts=+x.timestamp||0;if(isFinite(cur)&&cur>0&&ts)out.push({timestamp:ts,valueUsd:cur});});
- return out;
+ var out=[],seen={},parts=String(pathName||'').split('.');
+ ((h&&h.items)||[]).forEach(function(x){var data=family==='CEFI'?x.cefi:x.defi,cur=data;for(var i=0;i<parts.length&&cur!=null;i++)cur=cur[parts[i]];var v=number(cur),ts=+(data&&data.observedAt||x.timestamp)||0;
+  if(v!=null&&v>=0&&ts&&!seen[ts]){seen[ts]=1;out.push({timestamp:ts,valueUsd:v});}
+ });return out.sort(function(a,b){return a.timestamp-b.timestamp});
 }
 function seriesRange(a,range){
- a=(a||[]).filter(function(x){return x&&isFinite(+x.valueUsd)&&+x.timestamp>0}).sort(function(x,y){return x.timestamp-y.timestamp});
- var now=Date.now(),ms=range==='1H'?3600000:range==='24H'?86400000:range==='7J'?604800000:2592000000,cut=now-ms,b=a.filter(function(x){return x.timestamp>=cut});
- if(b.length<2&&a.length>=2)b=a.slice(-Math.min(a.length,range==='1H'?4:range==='24H'?96:range==='7J'?8:31));
- return b;
+ var ms=range==='1H'?3600000:range==='24H'?86400000:range==='7J'?604800000:2592000000,now=Date.now(),seen={};
+ return(a||[]).filter(function(x){var ts=x&&+x.timestamp;if(!ts||ts<now-ms||ts>now||number(x.valueUsd)==null||+x.valueUsd<0||seen[ts])return false;seen[ts]=1;return true;}).sort(function(a,b){return a.timestamp-b.timestamp});
 }
-function seriesChart(series,range){
+function seriesChart(series,range,kind){
  series=(series||[]).filter(function(x){return isFinite(+x.valueUsd)});
  if(series.length<2)return '<div class="financeChartEmpty"><b>Historique '+esc(range)+' en cours de constitution</b><span>Le Market Data Collector conserve les snapshots et le graphique se complète automatiquement.</span></div>';
- var w=760,h=210,pl=56,pr=18,pt=18,pb=30,vals=series.map(function(x){return+x.valueUsd}),max=Math.max.apply(Math,vals),min=Math.min.apply(Math,vals),span=Math.max(1,max-min),pts=[],grid='',labels='';
+ var w=760,h=210,pl=70,pr=18,pt=18,pb=30,vals=series.map(function(x){return+x.valueUsd}),max=Math.max.apply(Math,vals),min=Math.min.apply(Math,vals),pts=[],grid='',labels='';if(max===min){var margin=Math.max(1,max*.05);min=Math.max(0,min-margin);max+=margin;}var span=max-min;
  for(var g=0;g<4;g++){var y=pt+g*((h-pt-pb)/3),v=max-g*(span/3);grid+='<line x1="'+pl+'" y1="'+y.toFixed(1)+'" x2="'+(w-pr)+'" y2="'+y.toFixed(1)+'"/><text x="'+(pl-7)+'" y="'+(y+3).toFixed(1)+'" text-anchor="end">'+esc(money(v))+'</text>';}
- series.forEach(function(x,i){var px=pl+i*((w-pl-pr)/Math.max(1,series.length-1)),py=pt+(max-(+x.valueUsd))/span*(h-pt-pb);pts.push([px,py]);});
+ series.forEach(function(x,i){var px=pl+(x.timestamp-series[0].timestamp)/Math.max(1,series[series.length-1].timestamp-series[0].timestamp)*(w-pl-pr),py=pt+(max-(+x.valueUsd))/span*(h-pt-pb);pts.push([px,py]);});
  var line=pts.map(function(p,i){return(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1);}).join(' '),area=line+' L '+pts[pts.length-1][0].toFixed(1)+' '+(h-pb)+' L '+pts[0][0].toFixed(1)+' '+(h-pb)+' Z';
  var ticks=[0,Math.floor((series.length-1)/2),series.length-1];ticks.filter(function(v,i,a){return a.indexOf(v)===i;}).forEach(function(i){var x=pts[i][0],d=new Date(series[i].timestamp),lab=range==='1H'?d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}):(range==='24H'?d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}):d.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'}));labels+='<text x="'+x.toFixed(1)+'" y="'+(h-8)+'" text-anchor="'+(i===0?'start':i===series.length-1?'end':'middle')+'">'+esc(lab)+'</text>';});
- return '<svg class="defiVolumeSvg" viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="none"><defs><linearGradient id="defiVolArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2dd9ca" stop-opacity=".42"/><stop offset="100%" stop-color="#2dd9ca" stop-opacity=".02"/></linearGradient></defs><g class="financeGrid defiGrid">'+grid+'</g><path class="defiVolumeArea" d="'+area+'"/><path class="defiVolumeLine" d="'+line+'"/><circle class="defiVolumeLast" cx="'+pts[pts.length-1][0].toFixed(1)+'" cy="'+pts[pts.length-1][1].toFixed(1)+'" r="4"/><g class="defiVolumeAxis">'+labels+'</g></svg>';
+ return '<svg role="img" aria-label="Historique des volumes en USD" class="defiVolumeSvg '+(kind==='cefi'?'cefiVolumeSvg':'')+'" viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="none"><defs><linearGradient id="'+(kind==='cefi'?'cefiVolArea':'defiVolArea')+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2dd9ca" stop-opacity=".42"/><stop offset="100%" stop-color="#2dd9ca" stop-opacity=".02"/></linearGradient></defs><g class="financeGrid defiGrid">'+grid+'</g><path class="defiVolumeArea" style="fill:url(#'+(kind==='cefi'?'cefiVolArea':'defiVolArea')+')" d="'+area+'"/><path class="defiVolumeLine" d="'+line+'"/><circle class="defiVolumeLast" cx="'+pts[pts.length-1][0].toFixed(1)+'" cy="'+pts[pts.length-1][1].toFixed(1)+'" r="4"/><g class="defiVolumeAxis">'+labels+'</g></svg>';
 }
 function cexRangeConfig(){
  var r=String(state.cefi.volumeRange||'24H').toUpperCase();
  return ({'1H':{ms:3600000,limit:24},'24H':{ms:86400000,limit:320},'7J':{ms:604800000,limit:2100},'30J':{ms:2592000000,limit:9000}})[r]||{ms:86400000,limit:120};
 }
-function cexSeriesRange(a,range){
- a=(a||[]).filter(function(x){return x&&isFinite(+x.valueUsd)&&+x.valueUsd>0&&+x.timestamp>0}).sort(function(x,y){return x.timestamp-y.timestamp});
- var ms=range==='1H'?3600000:range==='24H'?86400000:range==='7J'?604800000:2592000000,cut=Date.now()-ms;
- return a.filter(function(x){return x.timestamp>=cut});
-}
+function cexSeriesRange(a,range){return seriesRange(a,range)}
 function renderCefiVolume(){
- var range=state.cefi.volumeRange||'24H',series=cexSeriesRange(state.cefi.volumeHistory,range),host=q('#cefiVolumeChart'),sub=q('#cefiVolumeSubtitle');
- state.cefi.volume=series.map(function(x){return+x.valueUsd});
- if(host)host.innerHTML=seriesChart(series,range);
- if(sub)sub.textContent='Volume CEX suivi · '+range+' · snapshots Market Data Collector'+(series.length?' · '+series.length+' points':'');
+ var range=state.cefi.volumeRange||'24H',series=seriesRange(state.cefi.volumeHistory,range),host=q('#cefiVolumeChart'),sub=q('#cefiVolumeSubtitle');
+ if(host)host.innerHTML=seriesChart(series,range,'cefi');
+ if(sub)sub.textContent='Volume CEX glissant sur 24 h (USD) · observations sur '+range+' · CoinGecko via Market Data · '+series.length+' points';
 }
 function renderDefiVolume(){
  var range=state.defi.volumeRange||'24H',useDaily=range==='7J'||range==='30J',src=useDaily?state.defi.volumeDaily:state.defi.volumeHistory,series=seriesRange(src,range),host=q('#defiVolumeChart'),sub=q('#defiVolumeSubtitle');
  if(host)host.innerHTML=seriesChart(series,range);
- if(sub)sub.textContent='Volume total DEX · '+range+' · '+(useDaily?'historique journalier DeFiLlama':'snapshots Market Data Collector')+(series.length?' · '+series.length+' points':'');
+ if(sub)sub.textContent=(useDaily?'Volume DEX journalier (USD)':'Volume DEX glissant sur 24 h (USD)')+' · observations sur '+range+' · DeFiLlama · '+series.length+' points';
 }
 function poolThumb(x,icon){var logo=x&&x.logo&&/^https:\/\//i.test(x.logo)?'<img src="'+esc(x.logo)+'" alt="" loading="lazy" referrerpolicy="no-referrer">':'';return'<span class="poolThumb">'+logo+'<i>'+esc(icon||String(x&&x.name||x&&x.project||'?').charAt(0).toUpperCase())+'</i></span>';}
 function leaderCard(label,icon,x,value,meta,scope){if(!x)return'<div class="poolLeaderCard empty"><span class="poolMetricTag">'+esc(label)+'</span><b>Donnée indisponible</b><small>En attente du provider</small></div>';var name=x.symbol||x.name||x.project||'Pool';return'<div class="poolLeaderCard"><div class="poolLeaderTop">'+poolThumb(x,icon)+'<div><span class="poolMetricTag">'+esc(label)+'</span><b>'+esc(name)+'</b><small>'+esc(meta||x.chain||x.project||'')+'</small></div></div><strong>'+esc(value)+'</strong><em>'+esc(scope||'POOL')+'</em></div>';}
 function parsePoolFeePct(p){var s=String(p&&p.poolMeta||''),m=s.match(/(?:fee(?:\s*tier)?[^0-9]*)?(\d+(?:[.,]\d+)?)\s*%/i);if(!m)return null;var v=+String(m[1]).replace(',','.');return isFinite(v)&&v>=0&&v<=10?v:null;}
 function sourcePool(x,src){return Object.assign({},x,{dataSource:src})}
-function buildLeaders(){var dl=(state.defi.yieldPools||[]).map(function(x){return sourcePool(x,'DEFILLAMA')}),ds=((state.defi.swapLiquidity&&state.defi.swapLiquidity.pools)||[]).map(function(x){return sourcePool({pool:x.pairAddress,symbol:(x.base&&x.base.symbol||'')+'/'+(x.quote&&x.quote.symbol||''),chain:x.chainId,project:x.dexId,tvlUsd:null,liquidityUsd:+x.liquidityUsd||0,volume24hUsd:+x.volume24hUsd||0,apy:null,url:x.url||''},'DEXSCREENER')});var all=dl.concat(ds);function top5(key,filter){return all.filter(filter||function(x){return isFinite(+x[key])&&+x[key]>0}).sort(function(a,b){return(+b[key]||0)-(+a[key]||0)}).slice(0,5)}state.defi.leaders={tvl:top5('tvlUsd'),volume:top5('volume24hUsd'),apr:top5('apy',function(x){return isFinite(+x.apy)&&+x.apy>0&&+x.apy<5000&&+x.tvlUsd>=1000000}),liquidity:top5('liquidityUsd')};}
-function rankList(label,rows,key,fmt){return'<div class="poolRankGroup"><span class="poolMetricTag">'+esc(label)+'</span>'+((rows||[]).map(function(x,i){var name=x.symbol||x.project||x.pool||'Pool',src=x.dataSource||'N/D';return'<div class="poolRankRow"><i>#'+(i+1)+'</i><div><b>'+esc(name)+'</b><small>'+esc((x.project||'')+(x.chain?' · '+x.chain:''))+'</small></div><strong>'+esc(fmt(x[key]))+'</strong><em>'+esc(src)+'</em></div>'}).join('')||'<div class="modulePlaceholder">Donnée indisponible</div>')+'</div>'}
-function renderTopPools(){buildLeaders();var h=q('#defiTopPools'),z=state.defi.leaders||{};if(!h)return;h.innerHTML=rankList('TOP 5 TVL',z.tvl,'tvlUsd',money)+rankList('TOP 5 VOLUME 24H',z.volume,'volume24hUsd',money)+rankList('TOP 5 APR / APY',z.apr,'apy',function(v){return isFinite(+v)?(+v).toFixed(2).replace('.',',')+' %':'N/D'})+rankList('TOP 5 LIQUIDITÉ',z.liquidity,'liquidityUsd',money);}
+function buildLeaders(){
+ var dl=(state.defi.yieldPools||[]).map(function(x){return sourcePool(x,'DeFiLlama')}),ds=((state.defi.swapLiquidity&&state.defi.swapLiquidity.pools)||[]).map(function(x){return sourcePool({pool:x.pairAddress,symbol:(x.base&&x.base.symbol||'?')+'/'+(x.quote&&x.quote.symbol||'?'),chain:x.chainId,project:x.dexId,tvlUsd:null,liquidityUsd:number(x.liquidityUsd),volume24hUsd:number(x.volume24hUsd),apy:null},'DexScreener')});
+ var all=dl.concat(ds);function top5(key){return all.filter(function(x){return number(x[key])!=null&&(key==='apy'||+x[key]>0)}).sort(function(a,b){return+b[key]-+a[key]}).slice(0,5)}
+ state.defi.leaders={tvl:top5('tvlUsd'),volume:top5('volume24hUsd'),apr:top5('apy'),liquidity:top5('liquidityUsd')};
+}
+function rankList(label,rows,key,fmt){
+ var missing=key==='apy'?'APY non fourni : aucune pool de rendement dans le snapshot DeFiLlama ; DexScreener ne fournit pas cette métrique.':key==='tvlUsd'?'TVL par pool non fournie par le snapshot actuel. La liquidité DexScreener ne remplace pas la TVL.':'Aucune pool avec cette métrique disponible.';
+ return '<section class="poolRankGroup"><h3>'+esc(label)+'</h3><ol>'+((rows||[]).map(function(x,i){return'<li class="poolRankRow"><span class="poolRankNumber">'+(i+1)+'</span><div class="poolRankIdentity"><b>'+esc(x.symbol||x.pool||'Paire N/D')+'</b><span>Protocole : '+esc(x.project||'N/D')+'</span><span>Réseau : '+esc(x.chain||'N/D')+'</span></div><div class="poolRankValue"><strong>'+esc(fmt(x[key]))+'</strong><small>'+esc(x.dataSource||'Source N/D')+'</small></div></li>'}).join('')||'<li class="modulePlaceholder">'+esc(missing)+'</li>')+'</ol></section>';
+}
+function renderTopPools(){buildLeaders();var h=q('#defiTopPools'),z=state.defi.leaders;if(h)h.innerHTML=rankList('Top 5 liquidité',z.liquidity,'liquidityUsd',money)+rankList('Top 5 volume 24 h',z.volume,'volume24hUsd',money)+rankList('Top 5 TVL',z.tvl,'tvlUsd',money)+rankList('Top 5 APY annuel',z.apr,'apy',function(v){return number(v)==null?'N/D':(+v).toLocaleString('fr-FR',{maximumFractionDigits:2})+' %'});}
+
+function executionEstimate(pool,amount){
+ var liq=number(pool&&pool.liquidityUsd),feePct=parsePoolFeePct({poolMeta:(pool&&pool.labels||[]).join(' ')});
+ var impact=liq>0&&amount>0?amount/(liq/2+amount)*100:null;
+ return{feePct:feePct,feeUsd:feePct==null?null:amount*feePct/100,impactPct:impact,impactUsd:impact==null?null:amount*impact/100};
+}
 function renderExecutionCost(){
- var h=q('#defiExecutionCost');if(!h)return;var snap=state.defi.swapLiquidity||{},pools=(snap.pools||[]).filter(function(x){return+x.liquidityUsd>0;}).sort(function(a,b){return(+b.liquidityUsd||0)-(+a.liquidityUsd||0);}),pool=snap.bestPool||pools[0]||null,sel=q('#execTradeSize'),amount=sel?(+sel.value||10000):10000;
- if(!pool){h.innerHTML='<div class="modulePlaceholder">Aucune pool DEX exploitable reçue du Market Data Collector · DexScreener.</div>';return;}
- var liq=+pool.liquidityUsd||0,feePct=parsePoolFeePct({poolMeta:(pool.labels||[]).join(' ')}),feeUsd=feePct==null?null:amount*feePct/100,slipPct=liq>0?amount/(liq/2+amount)*100:null,slipUsd=slipPct==null?null:amount*slipPct/100,known=(feeUsd||0)+(slipUsd||0);
- var a=feeUsd==null?0:feeUsd,b=slipUsd==null?0:slipUsd,sum=Math.max(.000001,a+b),gasFlex=18,feeFlex=(a||b)?Math.max(10,82*a/sum):41,slipFlex=(a||b)?Math.max(10,82*b/sum):41,totalFlex=gasFlex+feeFlex+slipFlex;gasFlex=gasFlex/totalFlex*100;feeFlex=feeFlex/totalFlex*100;slipFlex=slipFlex/totalFlex*100;
- var poolName=(pool.base&&pool.base.symbol||'')+'/'+(pool.quote&&pool.quote.symbol||''),dex=pool.dexId||'DEX',chain=pool.chainId||'';
- h.innerHTML='<div class="execVisual"><div class="execTotal"><span>COÛT CONNU</span><b>≥ '+esc(money(known))+'</b><small>hors gas · ordre '+esc(money(amount))+'</small></div><div class="execStack" title="La partie Gas reste grisée tant qu’un RPC gas n’est pas connecté"><i class="execGas" style="height:'+gasFlex.toFixed(1)+'%"></i><i class="execFee" style="height:'+feeFlex.toFixed(1)+'%"></i><i class="execSlip" style="height:'+slipFlex.toFixed(1)+'%"></i></div></div><div class="execDetails"><div class="execCostRow gas"><span class="costMini">⛽</span><div><b>Gas Fees</b><small>RPC gas non connecté pour '+esc(chain||'cette chaîne')+'</small></div><strong>N/D</strong></div><div class="execCostRow fee"><span class="costMini">◆</span><div><b>Frais DEX</b><small>'+(feePct==null?'Fee tier non exposé par DexScreener':esc(feePct.toFixed(3).replace('.',',')+' % · '+dex))+'</small></div><strong>'+(feeUsd==null?'N/D':esc(money(feeUsd)))+'</strong></div><div class="execCostRow slip"><span class="costMini">⇵</span><div><b>Slippage estimé</b><small>Impact simplifié taille / liquidité pool · '+esc(slipPct==null?'N/D':slipPct.toFixed(4).replace('.',',')+' %')+'</small></div><strong>'+(slipUsd==null?'N/D':esc(money(slipUsd)))+'</strong></div><div class="execPoolRef"><span>Pool de référence · DexScreener</span><b>'+esc(poolName||'Pool')+'</b><small>'+esc(dex)+' · '+esc(chain)+' · Liquidité '+esc(money(liq))+' · Volume 24h '+esc(money(pool.volume24hUsd))+'</small></div></div>';
+ var host=q('#defiExecutionCost');if(!host)return;
+ var snap=state.defi.swapLiquidity,pools=(snap&&snap.pools||[]).filter(function(x){return number(x.liquidityUsd)>0}).sort(function(a,b){return b.liquidityUsd-a.liquidityUsd}),pool=pools[0],sel=q('#execTradeSize'),amount=number(sel&&sel.value);
+ if(!pool||!amount||amount<=0){host.innerHTML=financeEmpty('Estimation indisponible : aucune pool exploitable ou montant invalide');return;}
+ var e=executionEstimate(pool,amount),pair=(pool.base&&pool.base.symbol||'?')+'/'+(pool.quote&&pool.quote.symbol||'?');
+ host.innerHTML='<div class="execVisual"><div class="execTotal"><span>COÛT TOTAL</span><b>Indisponible</b><small>Simulation : '+esc(money(amount))+'<br>Gas et cotation exécutable non fournis</small></div></div><div class="execDetails"><div class="execCostRow gas"><span class="costMini">⛽</span><div><b>Gas · N/D</b><small>Aucune estimation RPC validée pour '+esc(pool.chainId||'ce réseau')+'</small></div><strong>N/D</strong></div><div class="execCostRow fee"><span class="costMini">◆</span><div><b>Frais DEX · '+(e.feePct==null?'N/D':'indicatifs')+'</b><small>'+(e.feePct==null?'DexScreener ne fournit pas de tarif exploitable.':'Taux '+esc(e.feePct)+' % extrait du libellé API ; tarif du swap non vérifié.')+'</small></div><strong>'+esc(e.feeUsd==null?'N/D':money(e.feeUsd))+'</strong></div><div class="execCostRow slip"><span class="costMini">⇵</span><div><b>Impact théorique · estimation</b><small>Modèle x·y=k, deux réserves de même valeur : montant / (liquidité de cette pool / 2 + montant). Hors frais, gas, routage et liquidité concentrée.</small></div><strong>'+esc(e.impactPct==null?'N/D':e.impactPct.toLocaleString('fr-FR',{maximumFractionDigits:4})+' %')+'<br><small>'+esc(e.impactUsd==null?'N/D':money(e.impactUsd))+'</small></strong></div><div class="execPoolRef"><span>Pool de référence · donnée API DexScreener</span><b>'+esc(pair)+'</b><small>Protocole '+esc(pool.dexId||'N/D')+' · réseau '+esc(pool.chainId||'N/D')+'</small><small>Liquidité de la pool '+esc(money(pool.liquidityUsd))+' · volume 24 h '+esc(money(pool.volume24hUsd))+'</small><small>'+esc(pool.pairAddress||'Adresse N/D')+'</small></div><p class="metricNote">Cette approximation ne mesure pas le slippage réel. La liquidité de pool ne constitue pas une profondeur exécutable. Aucun total fiable ne peut être calculé avec les sources actuelles.</p></div>';
 }
 function renderFinance(){
  renderCefiVolume();
@@ -259,12 +271,13 @@ function renderFinance(){
 
 
 function money(v){
- v=+v;if(!isFinite(v))return'--';
+ v=number(v);if(v==null)return'N/D';
  var a=Math.abs(v);
  if(a>=1e12)return(v/1e12).toFixed(2).replace('.',',')+' T$';
  if(a>=1e9)return(v/1e9).toFixed(1).replace('.',',')+' B$';
  if(a>=1e6)return(v/1e6).toFixed(1).replace('.',',')+' M$';
- return Math.round(v).toLocaleString('fr-FR')+' $';
+ if(a>0&&a<.01)return(v<0?'− ':'')+'< 0,01 $';
+ return v.toLocaleString('fr-FR',{maximumFractionDigits:a<1000?2:0})+' $';
 }
 function pctShare(v,total){v=+v;total=+total;return isFinite(v)&&isFinite(total)&&total>0?v/total*100:0}
 function scaled(v,max){v=+v;max=+max;return max>0?Math.max(4,Math.min(100,v/max*100)):4}
@@ -281,10 +294,10 @@ function setKpi(id,value,trendValue,note){
 }
 function uiRead(action,args){
  return fetch('/communication/v1/ui/read',{
-  method:'POST',headers:{'Content-Type':'application/json'},cache:'no-store',
+  method:'POST',headers:{'Content-Type':'application/json'},cache:'no-store',signal:AbortSignal.timeout(15000),
   body:JSON.stringify({target:'marketdata',action:action,arguments:args||{}})
  }).then(function(r){return r.json().then(function(o){
-  if(!r.ok||o.status==='ERROR')throw new Error(o.error||(o.data&&o.data.error)||('HTTP '+r.status));
+  if(!r.ok||o.ok===false||o.status==='ERROR'||(o.data&&o.data.ok===false))throw new Error(o.error||(o.data&&o.data.error)||('HTTP '+r.status));
   return o.data!==undefined?o.data:o;
  })});
 }
@@ -308,23 +321,19 @@ function applyFinancialSnapshot(s,cefiHistory,defiHistory,oi,liq,dexLiquidity){
   if(cefiShares.length){var cefiKnown=cefiShares.reduce(function(z,x){return z+(+x[1]||0)},0);if(cefiKnown<99.95)cefiShares.push(['Autres',Math.max(0,100-cefiKnown)]);}
   state.cefi.shares=compactShares(cefiShares);
   state.cefi.exchanges=exAvailable?(c.exchanges||[]).slice(0,8).map(function(x){
-   return{name:x.name||x.id,volume:money(x.volume24hUsd),share:pctShare(x.volume24hUsd,exTotal).toFixed(1).replace('.',',')+'%',liquidity:(+x.trustScore||0)>=8?'Très élevée':(+x.trustScore||0)>=6?'Élevée':'Moyenne',status:'CoinGecko'};
+   return{name:x.name||x.id,volume:money(x.volume24hUsd),share:pctShare(x.volume24hUsd,exTotal).toFixed(1).replace('.',',')+'%',liquidity:number(x.trustScore)==null?'Confiance N/D':'Confiance '+x.trustScore+'/10',status:'CoinGecko'};
   }):[];
   var assets=(c.assets||[]).filter(function(x){return x&&x.volume24hUsd!=null&&isFinite(+x.volume24hUsd)&&+x.volume24hUsd>0}).slice(0,8),
       maxAsset=Math.max.apply(Math,assets.map(function(x){return+x.volume24hUsd||0}).concat([1]));
   state.cefi.assets=assets.map(function(x){return[x.symbol||x.name,money(x.volume24hUsd),scaled(x.volume24hUsd,maxAsset)]});
   var cv=historyValues(cefiHistory,'CEFI','global.totalVolume24hUsd'),
       spotSeries=historySeries(cefiHistory,'CEFI','spotVolume24hUsd');
-  if(exAvailable){var ts=+s.timestamp||Date.now(),last=spotSeries[spotSeries.length-1];if(!last||last.timestamp!==ts)spotSeries.push({timestamp:ts,valueUsd:exTotal});}
+  if(exAvailable){var ts=+c.observedAt||+s.timestamp||Date.now(),last=spotSeries[spotSeries.length-1];if(!last||last.timestamp!==ts)spotSeries.push({timestamp:ts,valueUsd:exTotal});}
   state.cefi.volumeHistory=spotSeries;
   var currentSeries=cexSeriesRange(spotSeries,state.cefi.volumeRange||'24H'),spotHist=currentSeries.map(function(x){return+x.valueUsd});
   var partial=c.partial===true||!exAvailable||!assets.length,partialNote=(c.errors&&c.errors.length)?' · '+String(c.errors[0]).slice(0,54):'';
   setKpi('cefiVolume24',exAvailable?money(exTotal):'N/D',exAvailable?trend(spotHist):'Indisponible',exAvailable?'CoinGecko · échantillon des exchanges CEX suivis':'CoinGecko · données exchanges indisponibles'+partialNote);
   setKpi('cefiSpot24',money(c.global&&c.global.totalVolume24hUsd),trend(cv),'CoinGecko · volume global du marché crypto');
-  var oiUsd=oi&&isFinite(+oi.cexOpenInterestUsd)?+oi.cexOpenInterestUsd:null,oiVenues=oi&&oi.coverage&&oi.coverage.received||[];
-  setKpi('cefiOi',oiUsd!=null?money(oiUsd):'N/D',oiUsd!=null?String(oi.venueCount||oiVenues.length)+' venues':'Indisponible',oiUsd!=null?'OI BTC · CEX connectés · '+oiVenues.join(', '):'OI BTC · aucune venue dérivée disponible');
-  var liqUsd=liq&&liq.totalNotionalUsd!=null&&isFinite(+liq.totalNotionalUsd)?+liq.totalNotionalUsd:(liq&&isFinite(+liq.coveredNotionalUsd)?+liq.coveredNotionalUsd:null),liqProviders=liq&&liq.coverage&&liq.coverage.providers||[];
-  setKpi('cefiLiq',liqUsd!=null?money(liqUsd):'N/D',liq?String(+liq.count||0)+' événements':'Indisponible',liq?'Flux 24h · '+(liqProviders.length?liqProviders.join(', '):'en attente d’événements'):'Flux liquidations indisponible');
   var donut=q('.cefiDonut b');if(donut)donut.textContent=exAvailable?money(exTotal):'N/D';
   var fresh=meta.freshness&&meta.freshness.cefi,age=fresh&&fresh.observedAt?Math.max(0,Date.now()-fresh.observedAt):null;
   state.cefi.health=[
@@ -341,41 +350,70 @@ function applyFinancialSnapshot(s,cefiHistory,defiHistory,oi,liq,dexLiquidity){
   state.defi.protocols=dx.map(function(x){return{name:x.name||x.slug,volume:money(x.volume24hUsd),share:pctShare(x.volume24hUsd,dxTotal).toFixed(1).replace('.',',')+'%',liquidity:'DEX',status:'DeFiLlama'}});
   var chains=(d.chains||[]).slice(0,8),maxTvl=Math.max.apply(Math,chains.map(function(x){return+x.tvlUsd||0}).concat([1]));
   state.defi.networks=chains.map(function(x){return[x.name,money(x.tvlUsd),scaled(x.tvlUsd,maxTvl)]});
-  var dv=historyValues(defiHistory,'DEFI','dexVolume24hUsd');state.defi.volumeHistory=historySeries(defiHistory,'DEFI','dexVolume24hUsd');state.defi.volumeDaily=(d.dexVolumeHistory||[]).map(function(x){return{timestamp:+x.timestamp||0,valueUsd:+x.valueUsd||0};}).filter(function(x){return x.timestamp&&x.valueUsd>0;});state.defi.yieldPools=(d.yieldPools||[]).slice();state.defi.dexFeeProtocols=(d.dexFeeProtocols||[]).slice();
+  var dv=historyValues(defiHistory,'DEFI','dexVolume24hUsd');state.defi.volumeHistory=historySeries(defiHistory,'DEFI','dexVolume24hUsd');if(number(d.dexVolume24hUsd)!=null){var dts=+d.observedAt||+s.timestamp;if(dts&&!state.defi.volumeHistory.some(function(x){return x.timestamp===dts}))state.defi.volumeHistory.push({timestamp:dts,valueUsd:+d.dexVolume24hUsd});}state.defi.volumeDaily=(d.dexVolumeHistory||[]).map(function(x){return{timestamp:+x.timestamp||0,valueUsd:number(x.valueUsd)};}).filter(function(x){return x.timestamp&&x.valueUsd!=null&&x.valueUsd>=0;});state.defi.yieldPools=(d.yieldPools||[]).slice();state.defi.dexFeeProtocols=(d.dexFeeProtocols||[]).slice();
   var tvlHist=historyValues(defiHistory,'DEFI','tvlUsd');
   var stableSeries=(d.stablecoinHistory||[]).filter(function(x){return x&&isFinite(+x.valueUsd)&&+x.valueUsd>0}).sort(function(a,b){return(+a.timestamp||0)-(+b.timestamp||0)});
   var stableHist=stableSeries.length?stableSeries.slice(-30).map(function(x){return+x.valueUsd}):historyValues(defiHistory,'DEFI','stablecoinMarketCapUsd');
   if(dv.length)state.defi.volume=dv;
-  setKpi('defiTvl',money(d.tvlUsd),trend(tvlHist),'DeFiLlama · TVL protocoles/chains');
+  setKpi('defiTvl',money(d.tvlUsd),trend(tvlHist),'DeFiLlama · agrégat des chaînes (chevauchements possibles)');
   setKpi('defiDexVolume',money(d.dexVolume24hUsd),trend(dv),'DeFiLlama · DEX 24h');
   setKpi('defiStable',money(d.stablecoinMarketCapUsd),trend(stableHist),'DeFiLlama · stablecoincharts/all');
   setKpi('defiBridgeVolume','N/D','Non suivi','Donnée non disponible · provider de volume bridge non connecté');
-  var dd=q('.defiDonut b');if(dd)dd.textContent=money(d.tvlUsd);
-  var flows=(d.stablecoinFlowHistory||[]).filter(function(x){return x&&isFinite(+x.inflowUsd)&&isFinite(+x.outflowUsd)}).slice(-14),ins=[],outs=[];
-  if(flows.length){
-   flows.forEach(function(x){ins.push(Math.max(0,+x.inflowUsd||0)/1e9);outs.push(Math.max(0,+x.outflowUsd||0)/1e9)});
-  }else{
-   var stable=stableHist;
-   for(var i=1;i<stable.length;i++){var delta=stable[i]-stable[i-1];ins.push(delta>0?delta/1e9:0);outs.push(delta<0?-delta/1e9:0)}
-  }
-  state.defi.stableIn=ins.slice(-14);
-  state.defi.stableOut=outs.slice(-14);
+  var dd=q('.defiDonut b');if(dd)dd.textContent=catTotal>0?money(catTotal):'N/D';
+  var source=stableSeries.length?stableSeries:historySeries(defiHistory,'DEFI','stablecoinMarketCapUsd');
+  state.defi.stableFlows=[];
+  for(var i=1;i<source.length;i++){var prev=source[i-1],cur=source[i];if(+cur.timestamp>+prev.timestamp)state.defi.stableFlows.push({from:+prev.timestamp,timestamp:+cur.timestamp,netChangeUsd:+cur.valueUsd-+prev.valueUsd});}
+  state.defi.stableFlows=state.defi.stableFlows.slice(-14);
+
  }
+ renderDerivatives(oi,liq,state.data.streams);
  renderFinance();
  renderSummary();
+ renderDataStatus();
+}
+function renderDerivatives(oi,liq,streams){
+ var venues=(oi&&oi.venues||[]).filter(function(x){return String(x.venueType||'').toUpperCase()==='CEX'&&number(x.openInterestNotionalUsd)!=null}),value=oi&&number(oi.cexOpenInterestUsd),coverage=oi&&oi.coverage||{};
+ setKpi('cefiOi',venues.length&&value!=null?money(value):'N/D',venues.length?venues.length+' CEX · couverture partielle':'Indisponible',venues.length?'OI BTC perpétuels (USD) · '+venues.map(function(x){return x.source}).join(', ')+(coverage.missing&&coverage.missing.length?' · manquants : '+coverage.missing.join(', '):''):'OI BTC · '+(state.ui.errors.oi||'en attente de venues dérivées'));
+ var count=number(liq&&liq.count)||0,cov=liq&&liq.coverage||{},known=number(cov.notionalKnownEvents)||0,amount=number(liq&&liq.coveredNotionalUsd),partial=cov.notionalComplete===false;
+ var streamText=!streams?'statut des flux en attente':streams.enabled===false?'flux désactivés':(streams.providers||[]).map(function(x){return x.provider+' '+x.state}).join(', ')||'aucun flux connecté';
+ setKpi('cefiLiq',count&&known&&amount!=null?(partial?'≥ ':'')+money(amount):'N/D',count?count+' événements · échantillon':'Aucun événement observé', 'BTC · fenêtre 24 h · jusqu’à 500 événements · '+(cov.providers||[]).join(', ')+' · '+streamText+(partial?' · notionnels incomplets':''));
+}
+function renderDataStatus(){
+ ['cefi','defi'].forEach(function(section){var names=section==='cefi'?['snapshot','cefiHistory','oi','liq','streams']:['snapshot','defiHistory','dex'],errors=names.filter(function(n){return state.ui.errors[n]}).map(function(n){return n+' : '+state.ui.errors[n]}),pending=names.some(function(n){return !!state.ui.inflight[state.ui.wanted[n]]});
+  var f=state.data.snapshot&&state.data.snapshot.meta&&state.data.snapshot.meta.freshness||{},fresh=f[section],stale=fresh&&fresh.expiresAt&&Date.now()>fresh.expiresAt;
+  setText('#'+section+'DataStatus',(pending?'Actualisation en cours · ':'')+(stale?'Dernier snapshot conservé · données anciennes · ':'')+(errors.length?'Source indisponible ; dernières données conservées · '+errors.join(' | '):'Sources : '+(section==='cefi'?'CoinGecko et venues dérivées via Market Data':'DeFiLlama et DexScreener via Market Data')));
+ });
+}
+function applyResources(){var d=state.data;applyFinancialSnapshot(d.snapshot,d.cefiHistory,d.defiHistory,d.oi,d.liq,d.dex)}
+function scheduleSnapshotRecheck(data){
+ var f=data&&data.meta&&data.meta.freshness||{},stale=['cefi','defi'].some(function(k){return f[k]&&f[k].expiresAt&&Date.now()>f[k].expiresAt});
+ if(!stale){if(state.ui.snapshotFollowup)clearTimeout(state.ui.snapshotFollowup);state.ui.snapshotFollowup=null;return;}
+ if(state.ui.snapshotFollowup)return;
+ // One bounded cache read lets a completed background refresh reach the screen.
+ state.ui.snapshotFollowup=setTimeout(function(){state.ui.snapshotFollowup=null;if(currentSection()!=='server'&&document.visibilityState!=='hidden')loadResource('snapshot','marketdata.financial.snapshot',{force:false,staleWhileRevalidate:true},{followup:true});},15000);
+}
+function loadResource(name,action,args,opt){
+ opt=opt||{};
+ var key=action+'|'+JSON.stringify(args||{});state.ui.wanted[name]=key;
+ if(state.ui.inflight[key])return state.ui.inflight[key];
+ if(!opt.followup&&state.ui.lastKey[name]===key&&Date.now()-state.ui.lastAt[name]<30000)return Promise.resolve();
+ var task=uiRead(action,args).then(function(data){if(state.ui.wanted[name]!==key)return;state.data[name]=data;state.ui.lastKey[name]=key;state.ui.lastAt[name]=Date.now();delete state.ui.errors[name];applyResources();if(name==='snapshot'&&!opt.followup)scheduleSnapshotRecheck(data);}).catch(function(e){if(state.ui.wanted[name]!==key)return;state.ui.errors[name]=e.message;renderDerivatives(state.data.oi,state.data.liq,state.data.streams);}).then(function(){delete state.ui.inflight[key];renderDataStatus();});
+ state.ui.inflight[key]=task;renderDataStatus();return task;
+}
+function loadHistory(section){
+ var cfg=section==='cefi'?cexRangeConfig():{ms:86400000,limit:320};
+ // Rounded lower boundary keeps equivalent requests deduplicable during navigation.
+ return loadResource(section+'History','marketdata.financial.history',{family:section.toUpperCase(),limit:cfg.limit,since:Math.floor((Date.now()-cfg.ms)/60000)*60000});
 }
 function loadFinancialData(){
- var cfg=cexRangeConfig();
- Promise.all([
-  uiRead('marketdata.financial.snapshot',{force:state.ui.financialBootstrap===true}),
-  uiRead('marketdata.financial.history',{family:'CEFI',limit:cfg.limit,since:Date.now()-cfg.ms}),
-  uiRead('marketdata.financial.history',{family:'DEFI',limit:96}),
-  uiRead('marketdata.derivatives.open_interest',{symbol:'BTCUSD'}).catch(function(e){return{ok:false,error:e.message}}),
-  uiRead('marketdata.liquidations.stats',{windowMs:86400000}).catch(function(e){return{ok:false,error:e.message}}),
-  uiRead('marketdata.dex.liquidity.snapshot',{symbol:'BTCUSD',force:false}).catch(function(e){return{ok:false,error:e.message}})
- ]).then(function(x){state.ui.financialBootstrap=false;applyFinancialSnapshot(x[0],x[1],x[2],x[3],x[4],x[5])}).catch(function(e){state.ui.financialBootstrap=false;
-  if(window.console&&console.warn)console.warn('[STATISTICS] financial data unavailable:',e.message);
- });
+ var section=currentSection();if(section==='server'||document.visibilityState==='hidden')return;
+ loadResource('snapshot','marketdata.financial.snapshot',{force:false,staleWhileRevalidate:true});loadHistory(section);
+ if(section==='defi')loadResource('dex','marketdata.dex.liquidity.snapshot',{symbol:'ETHUSDC',force:false});
+ else{
+  loadResource('oi','marketdata.derivatives.open_interest',{symbol:'BTCUSD'});
+  loadResource('liq','marketdata.liquidations.stats',{symbol:'BTCUSD',windowMs:86400000});
+  loadResource('streams','marketdata.liquidations.streams',{});
+ }
 }
 
 function currentSection(){
@@ -405,12 +443,13 @@ function renderAll(){
 }
 function bind(){
  qa('.rangeBtns button').forEach(function(b){b.onclick=function(){var p=b.parentNode;qa('.rangeBtns button',p).forEach(function(x){x.classList.remove('active')});b.classList.add('active');state.adoptionRange=String(b.getAttribute('data-range')||'30J').toUpperCase();renderAdoption()}});
- qa('.financeRanges button:not([data-defi-range])').forEach(function(b){b.onclick=function(){var p=b.parentNode;qa('button',p).forEach(function(x){x.classList.remove('active')});b.classList.add('active');state.cefi.volumeRange=String(b.textContent||'24H').trim().toUpperCase();loadFinancialData()}});
+ qa('.financeRanges button:not([data-defi-range])').forEach(function(b){b.onclick=function(){var p=b.parentNode;qa('button',p).forEach(function(x){x.classList.remove('active')});b.classList.add('active');state.cefi.volumeRange=String(b.textContent||'24H').trim().toUpperCase();renderCefiVolume();loadHistory('cefi')}});
  qa('[data-defi-range]').forEach(function(b){b.onclick=function(){var p=b.parentNode;qa('[data-defi-range]',p).forEach(function(x){x.classList.remove('active')});b.classList.add('active');state.defi.volumeRange=b.getAttribute('data-defi-range')||'24H';renderDefiVolume()}});
  var allEx=q('#toggleAllExchanges');if(allEx)allEx.onclick=function(){state.ui.showAllExchanges=!state.ui.showAllExchanges;renderPlatforms()};
  var allOr=q('#toggleAllOracles');if(allOr)allOr.onclick=function(){state.ui.showAllOracles=!state.ui.showAllOracles;renderOracles()};
  var ex=q('#execTradeSize');if(ex)ex.onchange=renderExecutionCost;
- window.addEventListener('hashchange',function(){showSection()});
+ window.addEventListener('hashchange',function(){showSection();loadFinancialData()});
+ document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')loadFinancialData()});
 }
 function liveProbe(){
  fetch('/ui-health',{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(o){if(!o)return;state.engines.ui=1;renderEngines()}).catch(function(){});

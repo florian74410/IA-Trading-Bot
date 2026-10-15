@@ -26,6 +26,7 @@ async function main(){
   assert.equal(req.headers['x-iatb-cp-token'],token);
   assert.equal(req.headers['x-iatb-cp-signature'],crypto.createHmac('sha256',token).update(body).digest('hex'));
   var q=JSON.parse(body);received.push(q);assert.deepStrictEqual(q.caller,{type:'UI',role:'READ_ONLY'});
+  if(q.action!=='marketdata.dex.liquidity.snapshot'){res.writeHead(200,{'Content-Type':'application/json'});return res.end(JSON.stringify(CP.makeResponse(q,'OK',{ok:true,args:q.arguments})));}
   collector.get(q.arguments.symbol,!!q.arguments.force,function(e,data){res.writeHead(e?403:200,{'Content-Type':'application/json'});res.end(JSON.stringify(e?{ok:false,error:e.message}:CP.makeResponse(q,'OK',data)));});
  });});
  await listen(engine);
@@ -49,6 +50,17 @@ async function main(){
    assert.equal(out.body.data.poolCount,1);assert.equal(out.body.data.firewall.decision,'PASS');
    assert.deepStrictEqual(received[received.length-1].arguments,args);
   }
+  for(var read of [
+   ['marketdata.derivatives.open_interest',{symbol:'BTCUSD'}],
+   ['marketdata.liquidations.stats',{symbol:'BTCUSD',windowMs:86400000}],
+   ['marketdata.liquidations.streams',{}],
+   ['marketdata.financial.snapshot',{force:false,staleWhileRevalidate:true}]
+  ]){var allowed=await post({target:'marketdata',action:read[0],arguments:read[1]});assert.equal(allowed.status,200);assert.deepStrictEqual(allowed.body.data.args,read[1]);}
+  for(var forbiddenArgs of [
+   ['marketdata.derivatives.open_interest',{symbol:'BTCUSD',sources:['UNDECLARED']}],
+   ['marketdata.liquidations.stats',{symbol:'BTCUSD',url:'https://invalid'}],
+   ['marketdata.liquidations.streams',{enabled:true}]
+  ]){var no=await post({target:'marketdata',action:forbiddenArgs[0],arguments:forbiddenArgs[1]});assert.equal(no.status,403);assert.equal(no.body.error,'UI_ARGUMENTS_DENY');}
   var before=received.length;
   for(var extra of ['url','provider','settings','limit']){
    var denied=await post({target:'marketdata',action:action,arguments:Object.assign({symbol:'ETHUSD',force:false},{[extra]:'forbidden'})});

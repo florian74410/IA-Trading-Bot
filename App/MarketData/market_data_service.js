@@ -75,7 +75,7 @@ var cpAdapter=new CPAdapter({root:APP_ROOT,id:'marketdata',label:'Market Data Co
  'marketdata.asset.resolve':function(a,m,done){assetResolve(a.id,a.network,done);},
  'marketdata.symbols':function(a,m,done){var source=String(a.source||a.exchange||settings.defaultSource||'KRAKEN').toUpperCase(),query=String(a.query||a.q||'').toUpperCase().replace(/[^A-Z0-9]/g,''),limit=Math.max(1,Math.min(3000,+a.limit||3000));provider.listSymbols(source,function(e,o){if(e)return done(e);o=o||{};validateSymbolCatalog(source,o,function(fe,validated){if(fe)return done(fe);var all=validated.symbols||[],rows=all.filter(function(x){var symbol=String(x&&x.symbol||'').toUpperCase(),base=String(x&&x.baseAsset||'').toUpperCase();return !query||symbol.indexOf(query)>=0||base.indexOf(query)>=0;}).slice(0,limit);done(null,{ok:true,exchange:o.exchange||source,providerId:o.providerId||source,dynamic:o.dynamic===true,endpoint:o.endpoint||null,total:rows.length,availableTotal:all.length,symbols:rows,firewall:validated.firewall});});});},
  'marketdata.financial.capabilities':function(){return financialCapabilities();},
- 'marketdata.financial.snapshot':function(a,m,done){financial.snapshot(!!a.force,done);},
+ 'marketdata.financial.snapshot':function(a,m,done){financial.snapshot(!!a.force,done,{staleWhileRevalidate:a.staleWhileRevalidate===true});},
  'marketdata.financial.history':function(a){return financial.history({family:a.family||'ALL',limit:a.limit||96,since:a.since||0});},
  'marketdata.financial.ai_context':function(a){return financial.aiContext(a.scope||'ALL');},
  'marketdata.financial.storage':function(){return{ok:true,storage:financialStore.status(),collector:financial.status()};},

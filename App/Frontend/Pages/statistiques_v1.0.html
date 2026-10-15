@@ -3,10 +3,10 @@
 <title>IA-TB · Statistiques</title>
 <link rel="stylesheet" href="/assets/global_navigation_v2.0.css?v=2013">
 <link rel="stylesheet" href="/assets/ia_icons_v1.css">
-<link rel="stylesheet" href="/assets/statistiques_v1.0.css?v=1002?v=1103">
+<link rel="stylesheet" href="/assets/statistiques_v1.0.css?v=201-step3">
 <script defer src="/assets/global_navigation_v2.0.js?v=3022"></script>
 <script defer src="/assets/ia_icons_v1.js"></script>
-<script defer src="/assets/statistiques_v1.0.js?v=1002?v=1206"></script>
+<script defer src="/assets/statistiques_v1.0.js?v=201-step3"></script>
 </head><body>
 <div class="statsApp">
  <aside class="statsSide">
@@ -99,6 +99,7 @@
     <div class="statsSectionBadge"><span>🏛</span><b>CEX</b><small>Vue financière</small></div>
    </section>
 
+   <p id="cefiDataStatus" class="financeLoadStatus" role="status">Chargement des sources…</p>
    <section class="marketKpiGrid">
     <article class="marketKpi cyan"><span>Volume CEX suivi · 24h</span><b id="cefiVolume24">--</b><em>--</em><small>Échantillon exchanges centralisés</small></article>
     <article class="marketKpi violet"><span>Volume marché crypto · 24h</span><b id="cefiSpot24">--</b><em>--</em><small>Volume global observé</small></article>
@@ -112,29 +113,20 @@
      <div class="financeChart" id="cefiVolumeChart"></div>
     </article>
     <article class="statsPanel financeSharePanel">
-     <header class="statsCardHead compact"><div><h2><span class="panelIcon">◔</span> Répartition par exchange</h2><p>Part estimée du volume CeFi</p></div></header>
+     <header class="statsCardHead compact"><div><h2><span class="panelIcon">◔</span> Répartition par exchange</h2><p>Part du volume des CEX suivis · CoinGecko</p></div></header>
      <div class="financeDonutWrap"><div class="financeDonut cefiDonut"><span><b>--</b><small>24H</small></span></div><div class="financeLegend" id="cefiShareLegend"></div></div>
     </article>
    </section>
 
-   <section class="defiInsightGrid">
-    <article class="statsPanel topPoolsPanel">
-     <header class="statsCardHead compact"><div><h2><span class="panelIcon">◈</span> Top Pools</h2><p>Top 5 par TVL, volume 24h, APR/APY et liquidité · DeFiLlama + DexScreener</p></div><span class="statusPill good">● LIVE</span></header>
-     <div id="defiTopPools" class="topPoolsGrid"><div class="modulePlaceholder">Chargement des pools…</div></div>
-    </article>
-    <article class="statsPanel executionCostPanel">
-     <header class="statsCardHead compact"><div><h2><span class="panelIcon">⚡</span> Coût total d’exécution</h2><p>Décomposition estimée d’un swap : gas + frais DEX + slippage</p></div><label class="execAmountControl">Montant <select id="execTradeSize"><option value="1000">1 000 $</option><option value="10000" selected>10 000 $</option><option value="50000">50 000 $</option><option value="100000">100 000 $</option></select></label></header>
-     <div id="defiExecutionCost" class="executionCostBody"><div class="modulePlaceholder">Calcul de l’estimation…</div></div>
-    </article>
-   </section>
+
 
    <section class="statsGrid financeBottomGrid">
     <article class="statsPanel">
-     <header class="statsCardHead compact"><div><h2><span class="panelIcon">⇄</span> Exchanges suivis</h2><p>Volume, liquidité, latence et état API</p></div></header>
+     <header class="statsCardHead compact"><div><h2><span class="panelIcon">⇄</span> Exchanges suivis</h2><p>Volume 24 h et part suivie · score de confiance CoinGecko</p></div></header>
      <div class="financeExchangeTable" id="cefiExchangeTable"></div>
     </article>
     <article class="statsPanel">
-     <header class="statsCardHead compact"><div><h2><span class="panelIcon">▤</span> Volumes par actif</h2><p>Actifs concentrant le plus de volume centralisé</p></div></header>
+     <header class="statsCardHead compact"><div><h2><span class="panelIcon">▤</span> Volumes par actif</h2><p>Volumes globaux des actifs · CoinGecko (CEX et DEX)</p></div></header>
      <div class="assetVolumeList" id="cefiAssetVolumes"></div>
     </article>
     <article class="statsPanel">
@@ -150,6 +142,7 @@
     <div class="statsSectionBadge defi"><span>⛓</span><b>DeFi</b><small>Vue on-chain</small></div>
    </section>
 
+   <p id="defiDataStatus" class="financeLoadStatus" role="status">Chargement des sources…</p>
    <section class="marketKpiGrid">
     <article class="marketKpi cyan"><span>TVL DeFi</span><b id="defiTvl">--</b><em>--</em><small>Valeur totale verrouillée</small></article>
     <article class="marketKpi violet"><span>Volume DEX · 24h</span><b id="defiDexVolume">--</b><em>--</em><small>Swaps décentralisés</small></article>
@@ -163,8 +156,19 @@
      <div class="financeChart defiChart" id="defiVolumeChart"></div>
     </article>
     <article class="statsPanel financeSharePanel">
-     <header class="statsCardHead compact"><div><h2><span class="panelIcon">◔</span> TVL par catégorie</h2><p>Répartition de la valeur verrouillée</p></div></header>
-     <div class="financeDonutWrap"><div class="financeDonut defiDonut"><span><b>--</b><small>TVL</small></span></div><div class="financeLegend" id="defiShareLegend"></div></div>
+     <header class="statsCardHead compact"><div><h2><span class="panelIcon">◔</span> TVL par catégorie</h2><p>Parts des catégories de protocoles suivies · DeFiLlama</p></div></header>
+     <div class="financeDonutWrap"><div class="financeDonut defiDonut"><span><b>--</b><small>CATÉGORIES SUIVIES</small></span></div><div class="financeLegend" id="defiShareLegend"></div></div>
+    </article>
+   </section>
+
+   <section class="defiInsightGrid">
+    <article class="statsPanel topPoolsPanel">
+     <header class="statsCardHead compact"><div><h2><span class="panelIcon">◈</span> Top Pools</h2><p>Pools suivies · ETH/USDC via DexScreener · TVL/APY selon disponibilité DeFiLlama</p></div><span class="statusPill good">Sources suivies</span></header>
+     <div id="defiTopPools" class="topPoolsGrid"><div class="modulePlaceholder">Chargement des pools…</div></div>
+    </article>
+    <article class="statsPanel executionCostPanel">
+     <header class="statsCardHead compact"><div><h2><span class="panelIcon">⚡</span> Estimation d’exécution</h2><p>Pool ETH/USDC · hypothèses de calcul et composantes indisponibles</p></div><label class="execAmountControl">Montant <select id="execTradeSize"><option value="1000">1 000 $</option><option value="10000" selected>10 000 $</option><option value="50000">50 000 $</option><option value="100000">100 000 $</option></select></label></header>
+     <div id="defiExecutionCost" class="executionCostBody"><div class="modulePlaceholder">Calcul de l’estimation…</div></div>
     </article>
    </section>
 
@@ -174,7 +178,7 @@
      <div class="financeExchangeTable" id="defiProtocolTable"></div>
     </article>
     <article class="statsPanel">
-     <header class="statsCardHead compact"><div><h2><span class="panelIcon">◉</span> Flux des stablecoins</h2><p>Entrées et sorties estimées sur 24h</p></div></header>
+     <header class="statsCardHead compact"><div><h2><span class="panelIcon">◉</span> Variations des stablecoins</h2><p>Variation nette de capitalisation en USD · observations DeFiLlama</p></div></header>
      <div class="stableFlowChart" id="defiStableFlow"></div>
     </article>
     <article class="statsPanel">

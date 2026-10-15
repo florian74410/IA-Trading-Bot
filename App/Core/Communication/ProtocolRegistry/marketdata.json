@@ -130,7 +130,8 @@
         "name": "marketdata.financial.snapshot",
         "arguments": {
           "allowed": [
-            "force"
+            "force",
+            "staleWhileRevalidate"
           ]
         },
         "description": "Current firewall-validated CeFi/DeFi financial snapshot."

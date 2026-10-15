@@ -126,7 +126,14 @@ Collector.prototype.requestRefresh=function(cb){
  this.refresh({scope:'ALL'},function(e,o){self.lastRefreshJob={refreshId:id,startedAt:self.refreshStartedAt||null,completedAt:Date.now(),ok:!e,error:e?e.message:null,snapshotTimestamp:o&&o.timestamp||null};self.activeRefreshId=null;self.refreshStartedAt=0;});
  cb(null,{ok:true,accepted:true,busy:true,joined:false,refreshId:id,statusAction:'marketdata.financial.status'});
 };
-Collector.prototype.snapshot=function(force,cb){var h=this.store.get();if(!force&&h&&this.store.isFresh())return cb(null,h);if(force)return this.refresh({scope:'ALL'},cb);this.refreshStale(cb);};
+Collector.prototype.snapshot=function(force,cb,opt){
+ var h=this.store.get();
+ if(!force&&h&&this.store.isFresh())return cb(null,h);
+ // Opt-in UI mode: the stored snapshot already passed Firewall/quality validation.
+ // Other consumers retain the existing fresh-data contract.
+ if(!force&&h&&opt&&opt.staleWhileRevalidate===true){cb(null,h);this.refreshStale(function(){});return;}
+ if(force)return this.refresh({scope:'ALL'},cb);this.refreshStale(cb);
+};
 Collector.prototype.history=function(opt){opt=opt||{};var rows=this.store.list(opt.limit||96,opt.since||0),family=String(opt.family||'ALL').toUpperCase();if(family==='CEFI')rows=rows.map(function(x){return{timestamp:x.timestamp,cefi:x.cefi,meta:x.meta}});if(family==='DEFI')rows=rows.map(function(x){return{timestamp:x.timestamp,defi:x.defi,meta:x.meta}});return{ok:true,schema:'iatb.financial.history/1.0',family:family,items:rows,count:rows.length,storage:this.store.status()}};
 Collector.prototype.aiContext=function(scope){var s=this.store.get();if(!s)return{ok:false,error:'FINANCIAL_SNAPSHOT_UNAVAILABLE'};scope=String(scope||'ALL').toUpperCase();var out={ok:true,schema:'iatb.financial.ai-context/1.0',timestamp:s.timestamp,expiresAt:s.expiresAt,readOnly:true,scope:scope};if(scope==='ALL'||scope==='CEFI')out.cefi=s.cefi;if(scope==='ALL'||scope==='DEFI')out.defi=s.defi;out.meta={provenance:s.meta,storage:this.store.status()};return out};
 Collector.prototype.status=function(){var cur=this.store.get(),quality=cur&&cur.meta&&cur.meta.quality||null,e=this.defiEnrichment;return{ok:true,version:'2.1',busy:this.busy,lastRefreshAt:this.lastRefreshAt,lastError:this.lastError||null,refreshJob:{activeRefreshId:this.activeRefreshId||null,startedAt:this.refreshStartedAt||null,last:this.lastRefreshJob},cefiEnrichment:{ready:!!this.cefiEnrichment.data,busy:!!this.cefiEnrichment.busy,lastAt:this.cefiEnrichment.at||null,ttlMs:this.cefiEnrichmentTtlMs,delayMs:this.cefiEnrichmentDelayMs,lastError:this.cefiEnrichment.lastError||null},defiEnrichment:{ready:!!e.data,busy:!!e.busy,lastAt:e.at||null,ttlMs:this.defiEnrichmentTtlMs,delayMs:this.defiEnrichmentDelayMs,lastError:e.lastError||null},quality:quality,ttl:{cefiMs:this.cefiTtlMs,defiMs:this.defiTtlMs},providers:{coingecko:this.providerEnabled.COINGECKO,defillama:this.providerEnabled.DEFILLAMA},ownership:Policy.describe(),store:this.store.status()}};

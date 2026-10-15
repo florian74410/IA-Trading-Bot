@@ -1,3 +1,10 @@
+# IA-TB v2.0.1 DEBUG — Étape 3/4 : interface Statistiques
+
+- Top Pools lisibles et adaptables dans DeFi, métriques manquantes explicites et sources distinctes ; estimation d’exécution sans faux total fiable.
+- Historiques strictement bornés, unités/provenance et variations nettes des stablecoins clarifiées ; OI/liquidations via leurs actions existantes désormais ouvertes en lecture limitée.
+- Rendu indépendant des sources, absence de refresh initial forcé, déduplication, chargement par onglet ; lecture optionnelle du dernier snapshot validé pendant son actualisation asynchrone.
+- Validation locale : Firefox headless 153.0, Node 22.23.3 ; suites et procédure manuelle GEN-1 détaillées dans `Documentation/STATISTICS_STEP3_DEBUG_2.0.1.md`. Aucun déploiement ; validation visuelle/fonctionnelle Overflow attendue avant étape 4.
+
 # IA-TB v2.0.1 DEBUG — Étape 2/4 : Firewall, cache et persistance DexScreener
 
 - Les pools et leurs sommes traversent désormais le Data Firewall ; décision explicite exigée avant SQLite et cache, refus du bypass et des erreurs de validation.
