@@ -13,7 +13,7 @@ function openEngineSnapshotTrial({env=process.env,engine}={}){
   throw Error('AUTH21_ENGINE_SNAPSHOT_TRIAL_DISABLED');
  const {root}=preflightEnv(env);
  if(engine==='marketdata'){
-  for(const key of ['IATB_MARKET_REGISTRY_DB','IATB_API_TELEMETRY_DB','IATB_MICROSTRUCTURE_DB','IATB_FINANCIAL_STORE']){
+  for(const key of ['IATB_MARKET_REGISTRY_DB','IATB_API_TELEMETRY_DB','IATB_MARKET_MICROSTRUCTURE_DB','IATB_FINANCIAL_STORE']){
    const configured=env[key];
    if(!configured)continue;
    const p=path.resolve(configured),data=path.join(root,'userdata');
