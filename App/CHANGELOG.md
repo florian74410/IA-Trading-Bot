@@ -1,3 +1,11 @@
+# IA-TB v2.0.1 DEBUG — Étape 1/4 : lecture DexScreener
+
+- Autorise `marketdata.dex.liquidity.snapshot` dans le canal UI READ_ONLY du Router, avec uniquement `symbol` et `force`, conformément au registre CP/1.
+- Conserve la collecte et le contrôle Data Firewall existants ; aucune route directe fournisseur ni activation Trading.
+- Aligne les métadonnées du runtime App sur la version de travail 2.0.1 (elles indiquaient encore 2.0.0). Les builds historiques restent inchangés.
+- Validation locale sous Node.js 24.19.0 : 8/10 tests passent (Communication, contrat UI, lecture Strategy, pipeline liquidité, frontière cache/Firewall). Les échecs `test_client_action_ack_v1.js` (chart.add_indicator absent) et `test_router_normalization_v1.8.12.js` (Supervisor ACTIVE au lieu de RESERVED) sont reproduits à l’identique sur le commit initial `63812c7c` ; ils sont préexistants et hors du correctif DexScreener.
+- Test HTTP local dédié : routage CP/1 signé, réponse de liquidité, refus des arguments/actions non autorisés et propagation du rejet Firewall. Validation GEN-1 à effectuer après reconstruction de l’image ; les données du test sont des fixtures locales.
+
 # IA-TB v2.0 DEBUG — Local UI / Market Data validation fixes
 
 - Large dynamic symbol catalogues are now validated by the Data Firewall in bounded chunks instead of being rejected by the global 512 KiB payload ceiling; Trading IA can therefore consume the full provider market list instead of falling back to BTC/ETH/SOL.

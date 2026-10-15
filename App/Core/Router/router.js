@@ -83,7 +83,8 @@ var UI_READ_ACTIONS={
  'marketdata.registry.query':1,
  'marketdata.financial.snapshot':1,
  'marketdata.financial.history':1,
- 'marketdata.financial.storage':1
+ 'marketdata.financial.storage':1,
+ 'marketdata.dex.liquidity.snapshot':1
 };
 function communicationUiRead(req,res){
  readJsonBody(req,65536,function(e,b){
@@ -123,7 +124,8 @@ function communicationUiRead(req,res){
  'marketdata.registry.query':{action:1,arguments:1,args:1},
  'marketdata.financial.snapshot':{force:1},
  'marketdata.financial.history':{family:1,limit:1,since:1},
- 'marketdata.financial.storage':{}
+ 'marketdata.financial.storage':{},
+ 'marketdata.dex.liquidity.snapshot':{symbol:1,force:1}
 }[action]||{},mks=Object.keys(args);for(var mi=0;mi<mks.length;mi++)if(!ma[mks[mi]])return sendJson(res,403,{ok:false,error:'UI_ARGUMENTS_DENY',caller:{type:'UI',role:'READ_ONLY'}});}if(target==='trading'){var ta={'trading.account.positions':{exchange:1,address:1,account:1,chain:1},'trading.account.orders':{exchange:1,address:1,account:1,chain:1},'trading.account.balances':{exchange:1,address:1,account:1,chain:1}}[action]||{},tks=Object.keys(args);for(var ti=0;ti<tks.length;ti++)if(!ta[tks[ti]])return sendJson(res,403,{ok:false,error:'UI_ARGUMENTS_DENY',caller:{type:'UI',role:'READ_ONLY'}});}if(target==='portfolio'){var pa={'portfolio.positions':{},'portfolio.statistics':{},'portfolio.position.health':{tradeId:1,walletId:1,symbol:1,exchange:1},'portfolio.trades':{limit:1},'portfolio.trade.detail':{tradeId:1,id:1},'portfolio.history':{range:1},'portfolio.events':{limit:1,since:1}}[action]||{},pks=Object.keys(args);for(var pi=0;pi<pks.length;pi++)if(!pa[pks[pi]])return sendJson(res,403,{ok:false,error:'UI_ARGUMENTS_DENY',caller:{type:'UI',role:'READ_ONLY'}});}
   var q=CP.makeRequest(target,action,args,'summary');q.caller={type:'UI',role:'READ_ONLY'};
   COMM.route(q,function(er,o){if(er)return sendJson(res,400,{ok:false,error:er.message,protocol:CP.PROTOCOL,caller:{type:'UI',role:'READ_ONLY'}});sendJson(res,200,o);});
