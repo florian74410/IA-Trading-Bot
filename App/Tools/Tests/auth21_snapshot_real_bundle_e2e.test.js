@@ -192,10 +192,8 @@ test('Core freezes three real Engines, captures encrypted WAL/JSONL, restores in
   epoch:coordinator.epoch}),/SNAPSHOT_REMOTE_REJECTED/);
  await coordinator.recoverBlocked();
  assert.equal(coordinator.state,'IDLE');
- await core.send({engine:'trading',port:ports.trading,command:'prepare',
-  epoch:coordinator.epoch+1});
- await core.send({engine:'trading',port:ports.trading,command:'release',
-  epoch:coordinator.epoch+1});
+ // Next generation must be issued by the coordinator itself; never
+ // preemptively advance an individual participant's durable epoch.
  // Second genuine crash: another Engine's SQLite constructors refuse to
  // open while frozen. Start a control-only recovery service, not the full
  // engine, and ensure signed RELEASE reaches the durable held epoch.
