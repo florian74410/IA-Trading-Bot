@@ -32,7 +32,7 @@ function validate(rule,input){
   if(u.username||u.password||u.port||u.hash||!host.includes('.')||
      host==='localhost'||host.endsWith('.localhost')||
      host.endsWith('.local')||host.endsWith('.internal')||
-     /^\\d+\\.\\d+\\.\\d+\\.\\d+$/.test(host)||
+     /^\d+\.\d+\.\d+\.\d+$/.test(host)||
      host.startsWith('0x')||host.includes('..'))return false;
   return true;
  }
