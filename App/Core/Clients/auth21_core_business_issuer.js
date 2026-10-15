@@ -12,7 +12,7 @@ function createCoreBusinessIssuer({sessions,codec,env}={}){
     typeof codec.issue!=='function')throw Error('AUTH21_CORE_ISSUER_DEPENDENCIES_REQUIRED');
  return Object.freeze({
   issueForService({token,action,ownerClientId,bodyDigest}={}){
-   if(action!=='indicator.settings.set')return null;
+   if(!business.contract(action))return null;
    return business.issue({sessions,token,codec,action,ownerClientId,bodyDigest});
   }
  });
