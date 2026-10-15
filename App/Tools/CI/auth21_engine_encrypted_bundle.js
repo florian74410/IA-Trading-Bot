@@ -5,6 +5,7 @@
  */
 const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),crypto=require('node:crypto');
 const {preflightEnv}=require('../../Core/Backup/auth21_core_local_trial_wiring');
+const {SnapshotCoordinator}=require('../../Core/Backup/snapshot_coordinator');
 const MAGIC='AUTH21_P22_ENGINE_ARCHIVE_V1';
 const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
 function assertRel(rel){
@@ -21,12 +22,19 @@ function ensureSafe(root,rel){
  }
  return full;
 }
-function capture({env,root,resources,transportKey,allWritersQuiesced}={}){
+function capture({env,root,resources,transportKey,coordinator,epoch}={}){
  assertRoot(env,root);
- if(allWritersQuiesced!==true)throw Error('P22_QUIESCENCE_PROOF_REQUIRED');
+ if(!(coordinator instanceof SnapshotCoordinator)||coordinator.state!=='QUIESCED'||
+    coordinator.epoch!==epoch||!Number.isSafeInteger(epoch)||epoch<1)
+  throw Error('P22_QUIESCENCE_PROOF_REQUIRED');
  if(!Buffer.isBuffer(transportKey)||transportKey.length!==32)throw Error('P22_TRANSPORT_KEY_REQUIRED');
  if(!Array.isArray(resources)||!resources.length||resources.length>32||
    new Set(resources).size!==resources.length)throw Error('P22_RESOURCE_LIST_INVALID');
+ const required=new Set(resources.map(rel=>rel.startsWith('userdata/User Data/')?'portfolio':
+  rel.startsWith('userdata/Shared Data/MarketData/')?'marketdata':
+  rel.startsWith('userdata/Shared Data/Fundamental/')?'fundamental':'unknown'));
+ if(required.has('unknown')||[...required].some(id=>!coordinator.writerIds.includes(id)))
+  throw Error('P22_WRITER_ACK_MISSING');
  const Database=require('better-sqlite3'),rows=[];let total=0;
  for(const rel of [...resources].sort()){
   assertRel(rel);const file=ensureSafe(root,rel),st=fs.lstatSync(file);
@@ -68,7 +76,7 @@ function restore({archive,transportKey,outputDir}={}){
   throw Error('P22_ARCHIVE_MANIFEST_INVALID');
  const temp=fs.realpathSync(os.tmpdir());
  if(typeof outputDir!=='string'||!path.isAbsolute(outputDir)||fs.existsSync(outputDir)||
-    !path.resolve(outputDir).startsWith(temp+path.sep)||
+    path.dirname(path.resolve(outputDir))!==temp||
     !path.basename(outputDir).startsWith('iatb-auth21-restore-'))
   throw Error('P22_RESTORE_TARGET_UNSAFE');
  const Database=require('better-sqlite3');
