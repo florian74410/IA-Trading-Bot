@@ -4,14 +4,15 @@
  */
 const http=require('node:http');
 const {preflightEnv}=require('../Backup/auth21_core_local_trial_wiring');
-const TARGET='/auth21/business/indicator/settings';
-function createForward({env,indicatorPort}={}){
+const {contract}=require('./auth21_business_actions');
+function createForward({env,ports}={}){
  if(!env||env.IATB_AUTH21_BUSINESS_TRIAL!=='1'||
     env.IATB_AUTH21_IPC_PROBE_TRIAL!=='1'||env.IATB_TRADING_LIVE==='1')
   throw Error('AUTH21_BUSINESS_TRIAL_DISABLED');
  preflightEnv(env);
- if(!Number.isSafeInteger(indicatorPort)||indicatorPort<1024||indicatorPort>65535)
-  throw Error('AUTH21_BUSINESS_INDICATOR_PORT_INVALID');
+ if(!ports||typeof ports!=='object'||Object.values(ports).some(p=>
+   !Number.isSafeInteger(p)||p<1024||p>65535))
+  throw Error('AUTH21_BUSINESS_ENGINE_PORT_INVALID');
  const send=(res,code,obj)=>{if(res.writableEnded)return;res.writeHead(code,{
   'Content-Type':'application/json','Cache-Control':'no-store',
   'X-Content-Type-Options':'nosniff'});res.end(JSON.stringify(obj));};
@@ -19,7 +20,8 @@ function createForward({env,indicatorPort}={}){
   const peer=req.socket&&req.socket.remoteAddress;
   const proof=req.headers['x-iatb-auth21-proof'];
   const length=Number(req.headers['content-length']);
-  if(req.method!=='POST'||req.url!==TARGET||
+  const rule=contract(req.url),port=rule&&ports[rule.engine];
+  if(req.method!=='POST'||!rule||!Number.isSafeInteger(port)||
      !['127.0.0.1','::1','::ffff:127.0.0.1'].includes(peer)||
      req.headers.authorization||req.headers.cookie||req.headers.origin||
      typeof proof!=='string'||proof.length>4096||
@@ -30,8 +32,8 @@ function createForward({env,indicatorPort}={}){
   req.on('end',()=>{
    if(count!==length)return send(res,400,{error:'INVALID_BODY'});
    const raw=Buffer.concat(parts);
-   const downstream=http.request({hostname:'127.0.0.1',port:indicatorPort,
-    path:TARGET,method:'POST',timeout:2500,agent:false,headers:{
+   const downstream=http.request({hostname:'127.0.0.1',port,
+    path:req.url,method:'POST',timeout:2500,agent:false,headers:{
      'Content-Type':'application/json','Content-Length':raw.length,
      'X-IATB-Auth21-Proof':proof
     }},upstream=>{
