@@ -37,17 +37,30 @@ test('Core freezes three real Engines, captures encrypted WAL/JSONL, restores in
   'userdata/Shared Data/MarketData/market_registry.db',
   'userdata/Shared Data/Fundamental/fundamental.db',
   'userdata/Shared Data/MarketData/financial_snapshots.jsonl',
-  'userdata/User Data/snapshot-fixture/trading_history.jsonl'
+  'userdata/User Data/snapshot-fixture/trading_history.jsonl',
+  'userdata/Database/clients.sqlite',
+  'userdata/Security/client_master.key',
+  'annexes/Strategies/fixture.json',
+  'runtime/config/market_data_settings.json'
  ];
  const fpath=path.join(root,resources[3]);fs.mkdirSync(path.dirname(fpath),{recursive:true,mode:0o700});
  fs.writeFileSync(fpath,'{"fixture":"snapshotted","time":123}\n',{mode:0o600});
  fs.mkdirSync(path.dirname(path.join(root,resources[4])),{recursive:true,mode:0o700});
  fs.writeFileSync(path.join(root,resources[4]),'{"fixture":"trading-history"}\n',{mode:0o600});
+ const clientDb=path.join(root,resources[5]);fs.mkdirSync(path.dirname(clientDb),{recursive:true,mode:0o700});
+ const db=new Database(clientDb);db.exec("CREATE TABLE fixture(id INTEGER PRIMARY KEY, value TEXT NOT NULL); INSERT INTO fixture(value) VALUES('original');");db.close();
+ const syntheticKey=crypto.randomBytes(32);
+ fs.writeFileSync(path.join(root,resources[6]),syntheticKey,{mode:0o600});
+ for(const [rel,value] of [[resources[7],{strategy:'fixture'}],[resources[8],{refreshMs:15000}]]){
+  const target=path.join(root,rel);fs.mkdirSync(path.dirname(target),{recursive:true,mode:0o700});
+  fs.writeFileSync(target,JSON.stringify(value),{mode:0o600});
+ }
  const ports={};for(const [engine] of SPEC)ports[engine]=await unusedPort();
  const env={...process.env,IATB_AUTH21_CORE_AUTH_TRIAL:'1',IATB_AUTH21_LOCAL_SNAPSHOT_TRIAL:'1',
   IATB_AUTH21_SNAPSHOT_IPC_TRIAL:'1',IATB_DEBUG_MODE:'1',IATB_DEBUG_BOOTSTRAP:'0',
   IATB_AUTH21_LOCAL_TRIAL_ROOT:root,IATB_TRADING_LIVE:'0',IATB_USERDATA_USER:'snapshot-fixture',
   IATB_PORTFOLIO_DB:path.join(root,resources[0]),
+  IATB_MARKET_SETTINGS:path.join(root,resources[8]),
   IATB_MARKETDATA_OFFLINE_DIAGNOSTIC:'1',IATB_FUNDAMENTAL_STDOUT:'1',
   IATB_RUNTIME_ROOT:path.join(root,'runtime'),IATB_DATA_ROOT:path.join(root,'userdata'),
   IATB_ANNEX_ROOT:path.join(root,'annexes'),IATB_UPDATES_ROOT:path.join(root,'updates'),
@@ -103,6 +116,12 @@ test('Core freezes three real Engines, captures encrypted WAL/JSONL, restores in
  }
  assert.equal(JSON.parse(fs.readFileSync(path.join(dest,resources[3]),'utf8')).fixture,'snapshotted');
  assert.equal(JSON.parse(fs.readFileSync(path.join(dest,resources[4]),'utf8')).fixture,'trading-history');
+ assert.deepEqual(fs.readFileSync(path.join(dest,resources[6])),syntheticKey);
+ assert.equal(JSON.parse(fs.readFileSync(path.join(dest,resources[7]),'utf8')).strategy,'fixture');
+ assert.equal(JSON.parse(fs.readFileSync(path.join(dest,resources[8]),'utf8')).refreshMs,15000);
+ const restoredClient=new Database(path.join(dest,resources[5]),{readonly:true});
+ assert.equal(restoredClient.prepare('SELECT value FROM fixture').get().value,'original');
+ restoredClient.close();
  const rejected=path.join(os.tmpdir(),'iatb-auth21-restore-'+crypto.randomBytes(9).toString('hex'));
  assert.throws(()=>restore({archive,transportKey:crypto.randomBytes(32),outputDir:rejected}),/P22_ARCHIVE_AUTH_FAILED/);
  assert.equal(fs.existsSync(rejected),false);
