@@ -52,6 +52,23 @@ function isAdminRole(role){role=Permissions.normalizeRole(role);return role==='A
 function authorizePage(req,res,required,cb){if(AUTH_MODE==='disabled'){var r=BYPASS_ROLE;if(required==='ADMIN'&&!isAdminRole(r))return json(res,403,{ok:false,error:'ADMIN_REQUIRED'});return cb(r);}var h={Accept:'application/json'};if(req.headers.cookie)h.Cookie=req.headers.cookie;var q=http.get({host:'127.0.0.1',port:CORE_PORT,path:'/api/bootstrap',timeout:3000,headers:h},function(r){var a=[];r.on('data',function(c){a.push(c);});r.on('end',function(){var o={};try{o=JSON.parse(Buffer.concat(a).toString('utf8')||'{}');}catch(e){}if((r.statusCode||500)>=400||!o.authenticated)return json(res,401,{ok:false,error:'AUTH_REQUIRED'});var role=Permissions.normalizeRole(o.role||'USER');if(required==='ADMIN'&&!isAdminRole(role))return json(res,403,{ok:false,error:'ADMIN_REQUIRED'});cb(role);});});q.on('timeout',function(){q.destroy(new Error('AUTH_TIMEOUT'));});q.on('error',function(){json(res,503,{ok:false,error:'AUTH_SERVICE_UNAVAILABLE'});});}
 function allowCore(req,res,p){var c=Permissions.classify(req.method,p),role=currentRole();if(AUTH_MODE==='disabled'&&!Permissions.allowed(role,c)){json(res,403,{ok:false,error:'ACCESS_DENIED',role:role,required:c.permission});return false;}return c;}
 var handler=function(req,res){var u=new URL(req.url,'http://'+HOST+':'+PORT),p=u.pathname;
+ if(AUTH21_BROWSER_TLS&&req.method==='GET'&&
+   (p==='/'||p==='/auth21/ui'||p==='/auth21/ui.js'||p==='/auth21/ui.css')){
+   var uiFiles={'/':'Frontend/Pages/auth21.html',
+    '/auth21/ui':'Frontend/Pages/auth21.html',
+    '/auth21/ui.js':'Frontend/JS/auth21_ui.js',
+    '/auth21/ui.css':'Frontend/CSS/auth21_ui.css'};
+   var rel=uiFiles[p],file=path.resolve(ROOT,rel);
+   return fs.readFile(file,function(e,data){
+    if(e)return json(res,404,{error:'NOT_FOUND'});
+    res.writeHead(200,{'Content-Type':p.endsWith('.js')?'application/javascript; charset=utf-8':
+     p.endsWith('.css')?'text/css; charset=utf-8':'text/html; charset=utf-8',
+     'Cache-Control':'no-store','X-Content-Type-Options':'nosniff',
+     'Referrer-Policy':'no-referrer','X-Frame-Options':'DENY',
+     'Content-Security-Policy':"default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'"});
+    res.end(data);
+   });
+  }
  var auth21Boundary=require('../../Core/Clients/auth21_service_boundary').decision(process.env,'gateway',req.method,p);
  if(auth21Boundary.intercept){if(auth21Boundary.forwardToCore)return proxy(req,res,CORE_PORT,p+u.search,{service:'Auth21 isolated Core',permission:'AUTH'});return json(res,404,{error:'NOT_FOUND'});}
  if(req.method==='GET'&&p==='/ui-health')return json(res,200,{ok:true,name:'IA-TB UI Service',version:BUILD.version,pid:process.pid,host:HOST,port:PORT,corePort:CORE_PORT,routerPort:ROUTER_PORT,firewallPort:FIREWALL_PORT,authMode:AUTH_MODE,bypassRole:AUTH_MODE==='disabled'?BYPASS_ROLE:null,separation:'UI_PROCESS_ISOLATED'});
