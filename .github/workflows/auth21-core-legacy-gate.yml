@@ -1,0 +1,37 @@
+name: Auth21 Core legacy gate
+on:
+  push:
+    branches:
+      - feature/debug-2.1-auth-design
+    paths:
+      - 'App/Core/Server/server.js'
+      - 'App/Core/Clients/auth21_*'
+      - 'App/Core/Tests/auth21_core_*'
+      - '.github/workflows/auth21-core-legacy-gate.yml'
+  pull_request:
+    paths:
+      - 'App/Core/Server/server.js'
+      - 'App/Core/Clients/auth21_*'
+      - 'App/Core/Tests/auth21_core_*'
+      - '.github/workflows/auth21-core-legacy-gate.yml'
+permissions:
+  contents: read
+jobs:
+  legacy-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Auth21 isolated Core deny regression
+        run: node App/Core/Tests/auth21_core_gate_security.test.js
+      - name: Inventory legacy Core paths (report-only, migration not complete)
+        run: node App/Core/Tests/auth21_core_legacy_route_audit.js --json > "$RUNNER_TEMP/auth21-core-legacy-inventory.json"
+      - name: Upload inventory for review
+        uses: actions/upload-artifact@v4
+        with:
+          name: auth21-core-legacy-inventory
+          path: ${{ runner.temp }}/auth21-core-legacy-inventory.json
+          retention-days: 14
