@@ -1,0 +1,46 @@
+name: Auth RBAC Registry Coverage
+
+on:
+  push:
+    branches:
+      - feature/debug-2.1-auth-design
+    paths:
+      - 'App/Core/Server/server.js'
+      - 'App/UI/Gateway/ui_service.js'
+      - 'App/Core/Router/router.js'
+      - 'Documentation/Security/AUTH_ENDPOINT_INVENTORY_v1.json'
+      - 'Documentation/Architecture/AUTH_DEBUG_2.1_RBAC_MATRIX_PROPOSAL.json'
+      - 'Tools/CI/verify_rbac_registry.js'
+      - '.github/workflows/auth-rbac-governance.yml'
+  pull_request:
+    branches:
+      - debug
+      - fix/v2.0.1-debug
+      - feature/debug-2.1-auth-design
+    paths:
+      - 'App/Core/Server/server.js'
+      - 'App/UI/Gateway/ui_service.js'
+      - 'App/Core/Router/router.js'
+      - 'Documentation/Security/AUTH_ENDPOINT_INVENTORY_v1.json'
+      - 'Documentation/Architecture/AUTH_DEBUG_2.1_RBAC_MATRIX_PROPOSAL.json'
+      - 'Tools/CI/verify_rbac_registry.js'
+      - '.github/workflows/auth-rbac-governance.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-rbac-registry:
+    name: Verify static RBAC route & action coverage
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify route/action registry and negative self-tests
+        run: node Tools/CI/verify_rbac_registry.js --self-test

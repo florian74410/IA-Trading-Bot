@@ -22,5 +22,21 @@ function migrateLegacy(){
   moveFile(LEGACY_DB+'-shm',TARGET_DB+'-shm');
  }
 }
-migrateLegacy();
-module.exports=require('./database_core');
+/* Defer migration until an actual storage instance is requested.
+ * This keeps the existing default migration timing before SQLite open,
+ * and allows an optional snapshot gate to refuse startup without moving files.
+ */
+var CoreStorage=require('./database_core');
+class Storage extends CoreStorage {
+ constructor(opts){
+  opts=opts||{};
+  if(opts.snapshotGate){
+   if(typeof opts.snapshotGate.assertWritable!=='function')throw new Error('SNAPSHOT_GATE_INVALID');
+   opts.snapshotGate.assertWritable();
+  }
+  migrateLegacy();
+  super(opts);
+ }
+}
+Storage.sha=CoreStorage.sha;
+module.exports=Storage;

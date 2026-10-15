@@ -1,13 +1,14 @@
 'use strict';
 var fs=require('fs'),path=require('path'),crypto=require('crypto'),Multi=require('./multichain_wallet');
+function denySnapshotTrial(){if(process.env.IATB_AUTH21_LOCAL_SNAPSHOT_TRIAL==='1')throw Error('AUTH21_WALLET_DISABLED_DURING_SNAPSHOT_TRIAL');}
 function WalletService(root,store,clientService,opts){opts=opts||{};this.root=root;this.store=store;this.clientService=clientService;this.legacyKeyFile=path.join(root,'UserData','wallet_master.key');this.keyFile=path.resolve(opts.keyFile||this.legacyKeyFile);this.schemaVersion=3;}
-WalletService.prototype._master=function(){var k;try{k=Buffer.from(String(fs.readFileSync(this.keyFile,'utf8')).trim(),'hex');if(k.length===32)return k;}catch(e){}if(this.keyFile!==this.legacyKeyFile){try{k=Buffer.from(String(fs.readFileSync(this.legacyKeyFile,'utf8')).trim(),'hex');if(k.length===32){var md=path.dirname(this.keyFile);if(!fs.existsSync(md))fs.mkdirSync(md,{recursive:true,mode:448});fs.writeFileSync(this.keyFile,k.toString('hex'),{encoding:'utf8',mode:384,flag:'wx'});try{fs.chmodSync(this.keyFile,384);}catch(x){}return k;}}catch(e){}}k=crypto.randomBytes(32);var d=path.dirname(this.keyFile);if(!fs.existsSync(d))fs.mkdirSync(d,{recursive:true,mode:448});fs.writeFileSync(this.keyFile,k.toString('hex'),{encoding:'utf8',mode:384,flag:'wx'});try{fs.chmodSync(this.keyFile,384);}catch(e){}return k;};
+WalletService.prototype._master=function(){denySnapshotTrial();var k;try{k=Buffer.from(String(fs.readFileSync(this.keyFile,'utf8')).trim(),'hex');if(k.length===32)return k;}catch(e){}if(this.keyFile!==this.legacyKeyFile){try{k=Buffer.from(String(fs.readFileSync(this.legacyKeyFile,'utf8')).trim(),'hex');if(k.length===32){var md=path.dirname(this.keyFile);if(!fs.existsSync(md))fs.mkdirSync(md,{recursive:true,mode:448});fs.writeFileSync(this.keyFile,k.toString('hex'),{encoding:'utf8',mode:384,flag:'wx'});try{fs.chmodSync(this.keyFile,384);}catch(x){}return k;}}catch(e){}}k=crypto.randomBytes(32);var d=path.dirname(this.keyFile);if(!fs.existsSync(d))fs.mkdirSync(d,{recursive:true,mode:448});fs.writeFileSync(this.keyFile,k.toString('hex'),{encoding:'utf8',mode:384,flag:'wx'});try{fs.chmodSync(this.keyFile,384);}catch(e){}return k;};
 WalletService.prototype._legacyOwner=function(sess){var raw=String(sess&&sess.userId||sess&&sess.email||sess&&sess.username||'local-admin').trim().toLowerCase();return crypto.createHash('sha256').update(raw).digest('hex').slice(0,32);};
 WalletService.prototype._client=function(sess){if(!this.clientService)throw new Error('CLIENT_SERVICE_REQUIRED');return this.clientService.resolveSession(sess);};
 WalletService.prototype._key=function(sess){return'wallets:client:'+this._client(sess).clientId;};
 WalletService.prototype._legacyKey=function(sess){return'wallets:'+this._legacyOwner(sess);};
 WalletService.prototype._all=function(sess){
- var client=this._client(sess),key='wallets:client:'+client.clientId,a=this.store.get('bank_wallets',key,[]);
+ denySnapshotTrial();var client=this._client(sess),key='wallets:client:'+client.clientId,a=this.store.get('bank_wallets',key,[]);
  if(!Array.isArray(a))a=[];
  if(!a.length){
   var legacyKey=this._legacyKey(sess),legacy=this.store.get('bank_wallets',legacyKey,[]);
@@ -24,7 +25,7 @@ WalletService.prototype._all=function(sess){
  }
  return a;
 };
-WalletService.prototype._save=function(sess,a){this.store.set('bank_wallets',this._key(sess),a);return a;};
+WalletService.prototype._save=function(sess,a){denySnapshotTrial();this.store.set('bank_wallets',this._key(sess),a);return a;};
 WalletService.prototype._enc=function(text){var iv=crypto.randomBytes(12),c=crypto.createCipheriv('aes-256-gcm',this._master(),iv),d=Buffer.concat([c.update(Buffer.from(String(text),'utf8')),c.final()]);return{v:1,alg:'AES-256-GCM',iv:iv.toString('base64'),tag:c.getAuthTag().toString('base64'),data:d.toString('base64')};};
 WalletService.prototype._dec=function(env){var d=crypto.createDecipheriv('aes-256-gcm',this._master(),Buffer.from(env.iv,'base64'));d.setAuthTag(Buffer.from(env.tag,'base64'));return Buffer.concat([d.update(Buffer.from(env.data,'base64')),d.final()]).toString('utf8');};
 WalletService.prototype._legacyAccounts=function(x){if(Array.isArray(x.accounts))return x.accounts;return[{id:String(x.family||'evm').toLowerCase(),family:x.family||'EVM',address:x.address,publicKey:x.publicKey,networks:[String(x.network||'ethereum').toLowerCase().replace('bnb chain','bnb')],secretEnvelope:x.privateKeyEnvelope||null,recoveryFormat:'HEX_PRIVATE_KEY'}];};

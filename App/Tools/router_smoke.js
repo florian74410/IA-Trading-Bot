@@ -1,4 +1,7 @@
 'use strict';
+// Auth21 P2.2: independent maintenance tools must not bypass a held global snapshot.
+if(process.env.IATB_AUTH21_LOCAL_SNAPSHOT_TRIAL==='1'&&process.env.IATB_AUTH21_SNAPSHOT_IPC_TRIAL==='1')throw Error('AUTH21_MAINTENANCE_BLOCKED_DURING_SNAPSHOT');
+
 // Ephemeral Router-only loopback smoke test, no engine and no external network.
 const assert=require('node:assert/strict');
 const http=require('node:http');

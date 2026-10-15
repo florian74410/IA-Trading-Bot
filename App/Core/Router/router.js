@@ -157,6 +157,10 @@ var UI_WRITE_ACTIONS={
  }
 };
 function communicationUiWrite(req,res){
+ // No legacy UI role/headers may confer Auth21 business-write authority.
+ // Reject until the Core can issue a signed proof bound to this exact action.
+ if(require('../Clients/auth21_service_boundary').active(process.env))
+  return sendJson(res,403,{ok:false,error:'AUTH21_BUSINESS_WRITE_PROOF_REQUIRED'});
  readJsonBody(req,262144,function(e,b){
   if(e)return sendJson(res,400,{ok:false,error:e.message});
   b=b&&typeof b==='object'?b:{};
@@ -191,7 +195,20 @@ function routerHealth(res){
  setTimeout(finish,850);
 }
 
+var AUTH21_IPC_ROUTER_PROBE=process.env.IATB_AUTH21_IPC_PROBE_TRIAL==='1'?require('../Clients/auth21_ipc_probe').createRouterProbe({env:process.env,root:process.env.IATB_AUTH21_LOCAL_TRIAL_ROOT}):null;
+var AUTH21_IPC_ROUTER_READ=process.env.IATB_AUTH21_IPC_PROBE_TRIAL==='1'?require('../Clients/auth21_ipc_probe').createRouterReadOnlyCapabilities({env:process.env,root:process.env.IATB_AUTH21_LOCAL_TRIAL_ROOT}):null;
+var AUTH21_ROUTER_GUARDED_READ=process.env.IATB_AUTH21_IPC_PROBE_TRIAL==='1'?require('../Clients/auth21_router_service_read').createRouterRead({env:process.env,root:process.env.IATB_AUTH21_LOCAL_TRIAL_ROOT}):null;
+var AUTH21_BUSINESS_FORWARD=process.env.IATB_AUTH21_BUSINESS_TRIAL==='1'?
+ require('../Clients/auth21_router_business_forward').createForward({env:process.env,ports:{indicators:INDICATOR_PORT,marketdata:MARKET_DATA_PORT,
+ fundamental:FUNDAMENTAL_PORT,portfolio:PORTFOLIO_PORT,strategy:STRATEGY_PORT}}):null;
 var server=http.createServer(function(req,res){var u=new URL(req.url,'http://'+HOST+':'+PORT),p=u.pathname;
+ var auth21Boundary=require('../Clients/auth21_service_boundary').decision(process.env,'router',req.method,p);
+ if(auth21Boundary.intercept&&
+ require('../Clients/auth21_business_actions').contract(p)&&AUTH21_BUSINESS_FORWARD)return AUTH21_BUSINESS_FORWARD(req,res);
+ if(auth21Boundary.intercept&&p==='/auth21/ipc/probe'&&AUTH21_IPC_ROUTER_PROBE)return AUTH21_IPC_ROUTER_PROBE(req,res);
+ if(auth21Boundary.intercept&&p==='/auth21/ipc/capabilities'&&AUTH21_IPC_ROUTER_READ)return AUTH21_IPC_ROUTER_READ(req,res);
+ if(auth21Boundary.intercept&&p==='/auth21/ipc/router-read'&&AUTH21_ROUTER_GUARDED_READ)return AUTH21_ROUTER_GUARDED_READ(req,res);
+ if(auth21Boundary.intercept)return sendJson(res,404,{error:'NOT_FOUND'});
  if(p==='/router-health-internal')return sendJson(res,200,{ok:true,router:true,pid:process.pid,port:PORT,version:BUILD.version});
  if(p==='/router-health')return routerHealth(res);
  if(req.method==='GET'&&p==='/communication-health')return COMM.health(function(e,o){if(e)return sendJson(res,503,{ok:false,error:e.message});sendJson(res,200,o);});
@@ -210,6 +227,13 @@ var server=http.createServer(function(req,res){var u=new URL(req.url,'http://'+H
  if(req.method==='GET'&&p==='/communication/v1/runtime')return communicationRuntime(req,res);
  if(req.method==='GET'&&p==='/market-data/candles')return proxy(req,res,MARKET_DATA_HOST,MARKET_DATA_PORT,'/candles'+u.search,{label:'Market Data Candles · firewall validated at ingestion'});
  return proxy(req,res,CORE_HOST,CORE_PORT,u.pathname+u.search,{label:'IA-TB Core'});
+});
+server.on('upgrade',function(req,socket){
+ if(require("../Clients/auth21_service_boundary").active(process.env)){
+  try{socket.end('HTTP/1.1 403 Forbidden\r\nConnection: close\r\n\r\n');}catch(_){socket.destroy();}
+  return;
+ }
+ socket.destroy();
 });
 server.on('error',function(e){console.error('IA-TB Router bind error:',e&&e.message||e);process.exit(13);});server.listen(PORT,HOST,function(){console.log('IA-TB Communication Router v'+BUILD.version+' : http://'+HOST+':'+PORT);
 console.log('Communication Protocol: CP/1 (canal Supervisor authentifie)');console.log('Core interne      : http://'+CORE_HOST+':'+CORE_PORT);console.log('Market Data       : http://'+MARKET_DATA_HOST+':'+MARKET_DATA_PORT);
