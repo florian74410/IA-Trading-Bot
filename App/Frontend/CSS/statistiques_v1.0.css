@@ -976,3 +976,9 @@ body[data-stats-view] .execPoolRef b{font-size:13px;line-height:1.5}
  .statsSection .financeTableRow{grid-template-columns:minmax(0,1.3fr) repeat(3,minmax(0,1fr));gap:6px;overflow-wrap:anywhere}
  .statsSection .financeTableRow>span{white-space:normal}
 }
+
+/* Execution estimator: network/DEX selectors drawn from validated pool snapshot. */
+.execSelectors{display:flex;flex-wrap:wrap;gap:10px;padding:10px 0 13px;min-width:0}
+.execSelectors label{display:flex;align-items:center;gap:8px;font-size:12px;color:#8db2c6;min-width:0;flex:1 1 190px}
+.execSelectors select{min-width:0;flex:1;max-width:100%;padding:8px 10px;border:1px solid #23516a;border-radius:7px;color:#e3f5ff;background:#071b29;font:inherit}
+.execSelectors select:disabled{opacity:.65}
