@@ -74,7 +74,7 @@ function openCoreAuthTrial({root,clientCrypto,snapshotGate,env,browserSessions=n
   const businessIssuer=ipcCodec?require('./auth21_core_business_issuer').createCoreBusinessIssuer({sessions,codec:ipcCodec,env:runtimeEnv}):null;
   const coreBusiness=businessIssuer&&runtimeEnv.IATB_AUTH21_BUSINESS_TRIAL==='1'?
    require('./auth21_core_business_http').createCoreBusinessHttp({sessions,codec:ipcCodec,
-    routerPort:Number(runtimeEnv.ROUTER_PORT),env:runtimeEnv}):null;
+    routerPort:Number(runtimeEnv.ROUTER_PORT),env:runtimeEnv,browserSessions}):null;
   return {handler:createIsolatedCoreGate({sessions,browserSessions,allowedBrowserOrigin,ipcCodec,coreBusiness}),businessIssuer,close(){db.close()}};
  }catch(error){db.close();throw error}
 }
