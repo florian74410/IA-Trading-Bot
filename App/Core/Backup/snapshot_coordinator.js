@@ -86,7 +86,20 @@ class SnapshotCoordinator {
     const failures = [], failureCodes = Object.create(null);
     for (const { id, hooks } of visited.reverse()) {
       try {
-        await this.withTimeout(() => (error ? hooks.abort(epoch) : hooks.release(epoch)));
+        const cleanup=() => error ? hooks.abort(epoch) : hooks.release(epoch);
+        try {
+          await this.withTimeout(cleanup);
+        } catch (transient) {
+          // A lost HTTP ACK is not evidence that the durable gate was
+          // released. Retry only transport errors, and only the SAME epoch.
+          // Any semantic rejection still requires explicit BLOCKED recovery.
+          const code=String(transient&&transient.code||'');
+          const msg=String(transient&&transient.message||'');
+          if(!['ECONNRESET','EPIPE','ETIMEDOUT'].includes(code)&&
+             !/^SNAPSHOT_REMOTE_TIMEOUT$/.test(msg)&&
+             !/^(socket hang up|read ECONNRESET)$/.test(msg))throw transient;
+          await this.withTimeout(cleanup);
+        }
       } catch (err) {
         failures.push(id);
         const code=String(err&&err.message||'SNAPSHOT_UNKNOWN_ERROR');
