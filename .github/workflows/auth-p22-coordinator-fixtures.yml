@@ -15,6 +15,8 @@ on:
       - 'App/Strategy/Engine/strategy_stats_v2.js'
       - 'App/Core/Shared/paths.js'
       - 'App/Core/Server/server.js'
+      - 'App/Tools/CI/auth21_legacy_core_route_audit.js'
+      - 'App/Tools/Tests/auth21_legacy_core_route_audit.test.js'
       - 'App/Core/Backup/auth21_core_local_trial_wiring.js'
       - 'App/Core/Updates/update_manager_v1.0.js'
       - 'App/Core/Updates/ai_update_builder_v1.0.js'
@@ -366,6 +368,8 @@ jobs:
           node --check App/Risk/Engine/risk_service.js
           node --check App/Tools/Tests/auth21_rbac_guard.test.js
           node --check App/Core/Clients/auth21_core_route_gate.js
+          node --check App/Tools/CI/auth21_legacy_core_route_audit.js
+          node --check App/Tools/Tests/auth21_legacy_core_route_audit.test.js
           node --check App/Tools/Tests/auth21_http_boundary.test.js
           node --check App/Core/Clients/auth21_admin_store.js
           node --check App/Core/Clients/auth21_local_operator.js
@@ -374,6 +378,8 @@ jobs:
           node --check App/Tools/Tests/auth21_admin_store.test.js
           node --check App/Core/Clients/auth21_first_admin_trial.js
           node --check App/Tools/Tests/auth21_first_admin_trial.test.js
+      - name: Legacy Core route coverage and fail-closed regression
+        run: node --test App/Tools/Tests/auth21_legacy_core_route_audit.test.js
       - name: Isolated ACK and failure-handling fixtures
         run: node --test App/Tools/Tests/auth21_core_durable_recovery.test.js App/Tools/Tests/auth21_paths_frozen_runtime.test.js App/Tools/Tests/auth21_market_settings_snapshot_gate.test.js App/Tools/Tests/auth21_core_direct_writer_guard.test.js App/Tools/Tests/auth21_writer_source_census.test.js App/Tools/Tests/snapshot_coordinator.test.js App/Tools/Tests/auth21_snapshot_recovery.test.js App/Tools/Tests/auth21_durable_snapshot_writer.test.js App/Tools/Tests/auth21_portfolio_real_gate.test.js App/Tools/Tests/auth21_marketdata_real_gate.test.js App/Tools/Tests/auth21_fundamental_real_gate.test.js App/Tools/Tests/core_snapshot_writers.test.js App/Tools/Tests/portfolio_snapshot_writer.test.js App/Tools/Tests/fundamental_snapshot_writer.test.js App/Tools/Tests/fundamental_legacy_snapshot_bridge.test.js App/Tools/Tests/marketdata_snapshot_writers.test.js App/Tools/Tests/financial_jsonl_snapshot_writer.test.js App/Tools/Tests/trading_usage_jsonl_snapshot_writers.test.js App/Tools/Tests/mosaic_snapshot_writer.test.js App/Tools/Tests/client_master_key_safety.test.js
       - name: Core-issued Indicator business proof integration (sandbox only)
