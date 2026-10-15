@@ -4,7 +4,7 @@
  */
 const http=require('node:http'),crypto=require('node:crypto');
 const {createCoreBusinessIssuer}=require('./auth21_core_business_issuer');
-const TARGET='/auth21/business/indicator/settings';
+const {contract,validate}=require('./auth21_business_actions');
 const TOKEN=/^Bearer ([A-Za-z0-9_-]{43})$/;
 function createCoreBusinessHttp({sessions,codec,routerPort,env}={}){
  if(!env||env.IATB_AUTH21_BUSINESS_TRIAL!=='1'||
@@ -17,7 +17,8 @@ function createCoreBusinessHttp({sessions,codec,routerPort,env}={}){
   res.writeHead(status,{'Content-Type':'application/json','Cache-Control':'no-store',
    'X-Content-Type-Options':'nosniff'});res.end(JSON.stringify(x));};
  return function coreBusiness(req,res){
-  if(req.method!=='POST'||req.url!==TARGET||req.headers.origin||req.headers.cookie||
+  const rule=contract(req.url);
+  if(req.method!=='POST'||!rule||req.headers.origin||req.headers.cookie||
     req.headers['x-iatb-auth21-proof'])
    return send(res,403,{error:'AUTH21_BUSINESS_DENIED'});
   const match=TOKEN.exec(String(req.headers.authorization||''));
@@ -33,17 +34,13 @@ function createCoreBusinessHttp({sessions,codec,routerPort,env}={}){
    const raw=Buffer.concat(parts);
    let input;
    try{input=JSON.parse(raw.toString('utf8'));}catch(_){return send(res,400,{error:'INVALID_REQUEST'});}
-   if(!input||typeof input!=='object'||Array.isArray(input)||
-     Object.keys(input).sort().join(',')!=='enabled,refreshMs'||
-     typeof input.enabled!=='boolean'||!Number.isSafeInteger(input.refreshMs)||
-     input.refreshMs<1000||input.refreshMs>60000)
-    return send(res,400,{error:'INVALID_REQUEST'});
+   if(!validate(rule,input))return send(res,400,{error:'INVALID_REQUEST'});
    let proof;
-   try{proof=issuer.issueForService({token:match[1],action:'indicator.settings.set',
+   try{proof=issuer.issueForService({token:match[1],action:rule.action,ownerClientId:rule.owner?input.ownerClientId:null,
      bodyDigest:crypto.createHash('sha256').update(raw).digest('hex')});}
    catch(_){return send(res,403,{error:'FORBIDDEN'});}
    if(!proof)return send(res,403,{error:'FORBIDDEN'});
-   const relay=http.request({hostname:'127.0.0.1',port:routerPort,path:TARGET,
+   const relay=http.request({hostname:'127.0.0.1',port:routerPort,path:req.url,
     method:'POST',timeout:2500,agent:false,headers:{
      'Content-Type':'application/json','Content-Length':raw.length,
      'X-IATB-Auth21-Proof':proof
