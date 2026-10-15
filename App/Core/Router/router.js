@@ -198,8 +198,11 @@ function routerHealth(res){
 var AUTH21_IPC_ROUTER_PROBE=process.env.IATB_AUTH21_IPC_PROBE_TRIAL==='1'?require('../Clients/auth21_ipc_probe').createRouterProbe({env:process.env,root:process.env.IATB_AUTH21_LOCAL_TRIAL_ROOT}):null;
 var AUTH21_IPC_ROUTER_READ=process.env.IATB_AUTH21_IPC_PROBE_TRIAL==='1'?require('../Clients/auth21_ipc_probe').createRouterReadOnlyCapabilities({env:process.env,root:process.env.IATB_AUTH21_LOCAL_TRIAL_ROOT}):null;
 var AUTH21_ROUTER_GUARDED_READ=process.env.IATB_AUTH21_IPC_PROBE_TRIAL==='1'?require('../Clients/auth21_router_service_read').createRouterRead({env:process.env,root:process.env.IATB_AUTH21_LOCAL_TRIAL_ROOT}):null;
+var AUTH21_BUSINESS_FORWARD=process.env.IATB_AUTH21_BUSINESS_TRIAL==='1'?
+ require('../Clients/auth21_router_business_forward').createForward({env:process.env,indicatorPort:INDICATOR_PORT}):null;
 var server=http.createServer(function(req,res){var u=new URL(req.url,'http://'+HOST+':'+PORT),p=u.pathname;
  var auth21Boundary=require('../Clients/auth21_service_boundary').decision(process.env,'router',req.method,p);
+ if(auth21Boundary.intercept&&p==='/auth21/business/indicator/settings'&&AUTH21_BUSINESS_FORWARD)return AUTH21_BUSINESS_FORWARD(req,res);
  if(auth21Boundary.intercept&&p==='/auth21/ipc/probe'&&AUTH21_IPC_ROUTER_PROBE)return AUTH21_IPC_ROUTER_PROBE(req,res);
  if(auth21Boundary.intercept&&p==='/auth21/ipc/capabilities'&&AUTH21_IPC_ROUTER_READ)return AUTH21_IPC_ROUTER_READ(req,res);
  if(auth21Boundary.intercept&&p==='/auth21/ipc/router-read'&&AUTH21_ROUTER_GUARDED_READ)return AUTH21_ROUTER_GUARDED_READ(req,res);
