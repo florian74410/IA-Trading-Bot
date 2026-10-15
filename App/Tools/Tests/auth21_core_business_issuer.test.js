@@ -22,9 +22,11 @@ test('unverified users and dangerous or unknown actions never receive proof',()=
   assert.equal(t.issuer.issueForService({token:'valid',action:'indicator.settings.set'}),null);
  }
  const t=trial();
- for(const action of ['trading.order.place','wallet.transfer','marketdata.settings.set','__proto__'])
+ for(const action of ['trading.order.place','wallet.transfer','__proto__','fundamental.feed.delete'])
   assert.equal(t.issuer.issueForService({token:'valid',action}),null);
  assert.equal(t.issuer.issueForService({token:'bad',action:'indicator.settings.set'}),null);
+ for(const action of ['marketdata.settings.set','fundamental.feed.create'])
+  assert.equal(typeof t.issuer.issueForService({token:'valid',action}),'string');
 });
 test('Core issuer refuses non-isolated contexts',()=>{
  const {codec,sessions}=trial();
