@@ -26,8 +26,11 @@ function createBrowserSession({secret,origin}={}){
   return crypto.timingSafeEqual(Buffer.from(expected),Buffer.from(supplied));
  }
  function originAllowed(req){
-  return req.headers.origin===originUrl.origin &&
-   req.socket?.encrypted===true;
+  if(req.socket?.encrypted!==true)return false;
+  // Browsers normally omit Origin on same-origin GET fetches.
+  // Every mutation still demands the exact HTTPS Origin and a CSRF token.
+  if(req.method==='GET'&&req.headers.origin===undefined)return true;
+  return req.headers.origin===originUrl.origin;
  }
  return {csrf,cookie,expire,parse,validate,originAllowed,origin};
 }
