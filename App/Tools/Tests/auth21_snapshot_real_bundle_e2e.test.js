@@ -83,6 +83,7 @@ test('Core freezes three real Engines, captures encrypted WAL/JSONL, restores in
   for(let i=0;i<60;i++){if(fs.existsSync(path.join(root,file))){found=true;break;}await delay(50);}
   assert.ok(found,'missing running Engine SQLite file '+file);
  }
+ const core=createSnapshotCoreClient({env,root,timeoutMs:3000});
  const coordinator=createTrial(env).coordinator;
  assert.equal(coordinator.writerIds.length,8);
  assert.ok(coordinator.writerIds.includes('clients'));
@@ -115,4 +116,26 @@ test('Core freezes three real Engines, captures encrypted WAL/JSONL, restores in
  }),/SNAPSHOT_CLEANUP_FAILED/);
  assert.equal(coordinator.state,'BLOCKED');
  await assert.rejects(coordinator.execute(async()=>{}),/SNAPSHOT_COORDINATOR_BUSY/);
+ // Start the genuine Trading service again with the SAME isolated journal.
+ const restarted=spawn(process.execPath,[path.join(app,'services/trading-engine/trading_service.js')],
+  {cwd:app,env,stdio:['ignore','pipe','pipe']});
+ let restartLog='';restarted.stdout.on('data',x=>restartLog+=x);
+ restarted.stderr.on('data',x=>restartLog+=x);children.push(restarted);
+ let restartedReady=false;
+ for(let i=0;i<100;i++){
+  if(restarted.exitCode!==null)assert.fail('Trading restart: '+restartLog);
+  if(await probe(ports.trading)){restartedReady=true;break;}
+  await delay(60);
+ }
+ assert.ok(restartedReady,'Trading restart not ready: '+restartLog);
+ // The reloaded persistent epoch remains held: PREPARE cannot silently
+ // succeed with the stale generation, and Core must explicitly clean it.
+ await assert.rejects(core.send({engine:'trading',port:ports.trading,command:'prepare',
+  epoch:coordinator.epoch}),/SNAPSHOT_REMOTE_REJECTED/);
+ await coordinator.recoverBlocked();
+ assert.equal(coordinator.state,'IDLE');
+ await core.send({engine:'trading',port:ports.trading,command:'prepare',
+  epoch:coordinator.epoch+1});
+ await core.send({engine:'trading',port:ports.trading,command:'release',
+  epoch:coordinator.epoch+1});
 });
