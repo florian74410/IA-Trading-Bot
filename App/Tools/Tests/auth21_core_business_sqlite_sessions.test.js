@@ -67,8 +67,12 @@ test('SQLite ADMIN login authorizes exact signed business write; revocation imme
  // Every new Core proof must depend on a currently active session.
  const changed=await sessions.loginWithPassword(account.clientId,PASS);
  assert.equal(changed.role,'ADMIN');
- db.prepare("UPDATE client_accounts SET role='USER',updated_at=? WHERE client_id=?")
-  .run(new Date().toISOString(),account.clientId);
+ // Last ADMIN downgrade MUST fail at the database layer.
+ assert.throws(()=>db.prepare("UPDATE client_accounts SET role='USER',updated_at=? WHERE client_id=?")
+  .run(new Date().toISOString(),account.clientId),/LAST_ACTIVE_ADMIN_REQUIRED/);
+ // Independently invalidate all existing sessions by changing account security version.
+ db.prepare('UPDATE clients SET security_version=security_version+1 WHERE client_id=?')
+  .run(account.clientId);
  assert.equal((await request(core.address().port,route,raw,
   {Authorization:'Bearer '+changed.token})).status,403);
  assert.equal(sessions.revokeSession(login.token),true);
