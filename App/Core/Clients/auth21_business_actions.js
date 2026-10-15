@@ -3,6 +3,7 @@
  * Unknown operations, live trading, Wallet and arbitrary provider access stay denied.
  */
 const RULES=Object.freeze({
+ '/auth21/business/marketdata/metadata':Object.freeze({engine:'marketdata',action:'marketdata.metadata.get',owner:false,method:'GET'}),
  '/auth21/business/indicator/settings':Object.freeze({engine:'indicators',action:'indicator.settings.set',owner:false}),
  '/auth21/business/marketdata/settings':Object.freeze({engine:'marketdata',action:'marketdata.settings.set',owner:false}),
  '/auth21/business/fundamental/feed':Object.freeze({engine:'fundamental',action:'fundamental.feed.create',owner:false}),
