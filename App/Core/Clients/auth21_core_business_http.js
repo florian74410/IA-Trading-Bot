@@ -22,14 +22,14 @@ function createCoreBusinessHttp({sessions,codec,routerPort,env}={}){
    return send(res,403,{error:'AUTH21_BUSINESS_DENIED'});
   const match=TOKEN.exec(String(req.headers.authorization||''));
   if(!match)return send(res,401,{error:'UNAUTHORIZED'});
-  const length=Number(req.headers['content-length']);
-  if(!Number.isSafeInteger(length)||length<1||length>2048||
+  const length=req.headers['content-length']===undefined?null:Number(req.headers['content-length']);
+  if((length!==null&&(!Number.isSafeInteger(length)||length<1||length>2048))||
    !/^application\/json(?:;|$)/i.test(String(req.headers['content-type']||'')))
    return send(res,400,{error:'INVALID_REQUEST'});
   let count=0,parts=[];
   req.on('data',chunk=>{count+=chunk.length;if(count>2048){req.destroy();return;}parts.push(chunk);});
   req.on('end',()=>{
-   if(count!==length)return send(res,400,{error:'INVALID_REQUEST'});
+   if(count<1||(length!==null&&count!==length))return send(res,400,{error:'INVALID_REQUEST'});
    const raw=Buffer.concat(parts);
    let input;
    try{input=JSON.parse(raw.toString('utf8'));}catch(_){return send(res,400,{error:'INVALID_REQUEST'});}
