@@ -122,6 +122,18 @@ test('real four Engine business actions honor roles, ownership and deny all old 
     assert.equal(row.provider_type,'RSS');assert.equal(row.enabled,0);
    }finally{actual.close();}
   }
+  if(route.includes('strategy')){
+   const Database=require('better-sqlite3');
+   const file=path.join(root,'userdata','User Data','fixture','user_data.db');
+   const actual=new Database(file,{readonly:true,fileMustExist:true});
+   try{
+    const row=actual.prepare('SELECT value_b64 FROM iatb_settings_v2 WHERE scope=? AND key=?')
+      .get('auth21.strategy.CLBob','chart.zoom');
+    assert.equal(JSON.parse(Buffer.from(row.value_b64,'base64').toString('utf8')),'3');
+    assert.equal(actual.prepare('SELECT COUNT(*) AS count FROM iatb_settings_v2 WHERE scope=?')
+     .get('auth21.strategy.CLAlice').count,0);
+   }finally{actual.close();}
+  }
   if(route.includes('portfolio')){
    const Database=require('better-sqlite3');
    const actual=new Database(env.IATB_PORTFOLIO_DB,{readonly:true,fileMustExist:true});
