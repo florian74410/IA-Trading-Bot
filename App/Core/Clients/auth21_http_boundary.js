@@ -75,7 +75,7 @@ function createAuth21HttpHandler({sessions,nowMilliseconds=Date.now,allowedBrows
   try{
    let uri;
    try{uri=new URL(req.url||'', 'http://localhost');}catch(_){reply(res,404,{error:'NOT_FOUND'});return}
-   if((uri.search&&uri.pathname!=='/auth21/preferences')||uri.hash||!['/auth21/login','/auth21/me','/auth21/logout','/auth21/preferences','/auth21/activity','/auth21/unlock','/auth21/ipc/probe-proof'].includes(uri.pathname)){
+   if((uri.search&&uri.pathname!=='/auth21/preferences')||uri.hash||!['/auth21/login','/auth21/me','/auth21/csrf','/auth21/logout','/auth21/preferences','/auth21/activity','/auth21/unlock','/auth21/ipc/probe-proof'].includes(uri.pathname)){
     reply(res,404,{error:'NOT_FOUND'});return;
    }
    // Strict Origin guard on browser requests. No cookie authorization is accepted.
@@ -174,6 +174,12 @@ function createAuth21HttpHandler({sessions,nowMilliseconds=Date.now,allowedBrows
     }
     sessions.deletePreference(token,scope,key);
     reply(res,200,{ok:true});return;
+   }
+   if(req.method==='GET'&&uri.pathname==='/auth21/csrf'){
+    if(!browserSessions){reply(res,404,{error:'NOT_FOUND'});return}
+    const token=browserSessions.parse(req),session=token&&sessions.verifySession(token);
+    if(!session){reply(res,401,{error:'UNAUTHORIZED'});return}
+    reply(res,200,{csrfToken:browserSessions.csrf(token)});return;
    }
    if(req.method==='GET'&&uri.pathname==='/auth21/me'){
     const token=tokenFor(),session=token&&sessions.verifySession(token);
