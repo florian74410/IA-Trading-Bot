@@ -17,7 +17,8 @@ function openBusinessIngress({env}={}){
  const trial=require('../Backup/auth21_engine_snapshot_trial').currentEngineSnapshotTrial();
  if(!trial||trial.root!==root||!['indicators','marketdata','fundamental','portfolio','strategy'].includes(trial.engine))
   throw Error('AUTH21_BUSINESS_WRITER_NOT_BOUND');
- const codec=proofCodec({secret:loadTrialSecret({env,root})});
+ const codec=proofCodec({secret:loadTrialSecret({env,root}),
+  replayStore:require('./auth21_durable_business_replay').createDurableReplay({root,engine:trial.engine})});
  const directory=path.join(root,'runtime','auth21-business');
  fs.mkdirSync(directory,{recursive:true,mode:0o700});
  if(fs.lstatSync(directory).isSymbolicLink())throw Error('AUTH21_BUSINESS_SYMLINK');
@@ -78,7 +79,9 @@ function openBusinessIngress({env}={}){
    const proof=req.headers['x-iatb-auth21-proof'];
    if(typeof proof!=='string')return send(res,403,{error:'AUTH21_BUSINESS_DENIED'});
    const digest=crypto.createHash('sha256').update(Buffer.alloc(0)).digest('hex');
-   const access=business.verify({codec,proof,action:rule.action,bodyDigest:digest});
+   let access;
+   try{trial.gate.assertWritable();access=business.verify({codec,proof,action:rule.action,bodyDigest:digest});}
+   catch(_){return send(res,409,{error:'AUTH21_BUSINESS_WRITE_BLOCKED'});}
    if(!access.allowed)return send(res,403,{error:'AUTH21_BUSINESS_DENIED'});
    return send(res,200,{ok:true,action:rule.action,readOnly:true,
     providers:['BINANCE','KRAKEN','OKX','GMX']});
