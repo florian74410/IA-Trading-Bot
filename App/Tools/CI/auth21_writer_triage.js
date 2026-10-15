@@ -29,6 +29,8 @@ const GROUPS=Object.freeze({
   'Core/Clients/auth21_http_boundary.js',
   'Core/Clients/auth21_indicator_fixture_writer.js',
   'Core/Clients/auth21_engine_business_ingress.js',
+  'Core/Clients/auth21_core_business_http.js',
+  'Core/Clients/auth21_router_business_forward.js',
   'Core/Clients/auth21_session_store.js',
   'Core/Clients/client_crypto.js','Core/Clients/password_hasher_v2.js'
  ],
