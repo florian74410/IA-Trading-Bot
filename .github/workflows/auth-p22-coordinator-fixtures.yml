@@ -6,6 +6,11 @@ on:
       - feature/debug-2.1-auth-design
     paths:
       - 'App/Core/Backup/snapshot_coordinator.js'
+      - 'App/Core/Backup/auth21_frozen_recovery_service.js'
+      - 'App/Tools/Tests/auth21_paths_frozen_runtime.test.js'
+      - 'App/Indicators/Engine/indicator_registry.js'
+      - 'App/Indicators/Engine/indicator_settings.js'
+      - 'App/Strategy/Engine/strategy_stats_v2.js'
       - 'App/Core/Shared/paths.js'
       - 'App/Core/Server/server.js'
       - 'App/Core/Backup/auth21_core_local_trial_wiring.js'
@@ -104,6 +109,11 @@ on:
       - feature/debug-2.1-auth-design
     paths:
       - 'App/Core/Backup/snapshot_coordinator.js'
+      - 'App/Core/Backup/auth21_frozen_recovery_service.js'
+      - 'App/Tools/Tests/auth21_paths_frozen_runtime.test.js'
+      - 'App/Indicators/Engine/indicator_registry.js'
+      - 'App/Indicators/Engine/indicator_settings.js'
+      - 'App/Strategy/Engine/strategy_stats_v2.js'
       - 'App/Core/Shared/paths.js'
       - 'App/Core/Server/server.js'
       - 'App/Core/Backup/auth21_core_local_trial_wiring.js'
@@ -216,6 +226,8 @@ jobs:
           node --check App/Core/Backup/snapshot_coordinator.js
           node --check App/Core/Backup/auth21_engine_snapshot_trial.js
           node --check App/Core/Backup/auth21_durable_snapshot_writer.js
+          node --check App/Core/Backup/auth21_frozen_recovery_service.js
+          node --check App/Tools/Tests/auth21_paths_frozen_runtime.test.js
           node --check App/Tools/CI/auth21_writer_source_census.js
           node --check App/Tools/Tests/auth21_writer_source_census.test.js
           node --check App/Tools/Tests/auth21_core_direct_writer_guard.test.js
@@ -329,7 +341,7 @@ jobs:
           node --check App/Core/Clients/auth21_first_admin_trial.js
           node --check App/Tools/Tests/auth21_first_admin_trial.test.js
       - name: Isolated ACK and failure-handling fixtures
-        run: node --test App/Tools/Tests/auth21_market_settings_snapshot_gate.test.js App/Tools/Tests/auth21_core_direct_writer_guard.test.js App/Tools/Tests/auth21_writer_source_census.test.js App/Tools/Tests/snapshot_coordinator.test.js App/Tools/Tests/auth21_snapshot_recovery.test.js App/Tools/Tests/auth21_durable_snapshot_writer.test.js App/Tools/Tests/auth21_portfolio_real_gate.test.js App/Tools/Tests/auth21_marketdata_real_gate.test.js App/Tools/Tests/auth21_fundamental_real_gate.test.js App/Tools/Tests/core_snapshot_writers.test.js App/Tools/Tests/portfolio_snapshot_writer.test.js App/Tools/Tests/fundamental_snapshot_writer.test.js App/Tools/Tests/fundamental_legacy_snapshot_bridge.test.js App/Tools/Tests/marketdata_snapshot_writers.test.js App/Tools/Tests/financial_jsonl_snapshot_writer.test.js App/Tools/Tests/trading_usage_jsonl_snapshot_writers.test.js App/Tools/Tests/mosaic_snapshot_writer.test.js App/Tools/Tests/client_master_key_safety.test.js
+        run: node --test App/Tools/Tests/auth21_paths_frozen_runtime.test.js App/Tools/Tests/auth21_market_settings_snapshot_gate.test.js App/Tools/Tests/auth21_core_direct_writer_guard.test.js App/Tools/Tests/auth21_writer_source_census.test.js App/Tools/Tests/snapshot_coordinator.test.js App/Tools/Tests/auth21_snapshot_recovery.test.js App/Tools/Tests/auth21_durable_snapshot_writer.test.js App/Tools/Tests/auth21_portfolio_real_gate.test.js App/Tools/Tests/auth21_marketdata_real_gate.test.js App/Tools/Tests/auth21_fundamental_real_gate.test.js App/Tools/Tests/core_snapshot_writers.test.js App/Tools/Tests/portfolio_snapshot_writer.test.js App/Tools/Tests/fundamental_snapshot_writer.test.js App/Tools/Tests/fundamental_legacy_snapshot_bridge.test.js App/Tools/Tests/marketdata_snapshot_writers.test.js App/Tools/Tests/financial_jsonl_snapshot_writer.test.js App/Tools/Tests/trading_usage_jsonl_snapshot_writers.test.js App/Tools/Tests/mosaic_snapshot_writer.test.js App/Tools/Tests/client_master_key_safety.test.js
       - name: Startup paths read-only preflight and reviewed writer inventory
         run: node --test App/Tools/Tests/auth21_paths_startup_preflight.test.js App/Tools/Tests/auth21_writer_inventory.test.js App/Tools/Tests/auth21_core_local_trial_wiring.test.js App/Tools/Tests/auth21_core_updates_read_only_trial.test.js
       - name: Auth v3 offline SQLite schema fixtures (no live databases)
