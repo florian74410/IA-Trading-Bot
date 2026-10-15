@@ -75,3 +75,25 @@ test('incomplete quorum cannot capture an Engine store',async t=>{
  await assert.rejects(incomplete.execute(({epoch})=>capture({...f,transportKey:f.key,coordinator:incomplete,epoch})),/P22_WRITER_ACK_MISSING/);
  assert.equal(incomplete.state,'IDLE');
 });
+
+test('mid-restore integrity failure rolls back every already-written file',async t=>{
+ const f=fixture(t);
+ const archive=await f.coordinator.execute(({epoch})=>capture({...f,transportKey:f.key,epoch}));
+ const envelope=JSON.parse(archive.toString('utf8'));
+ const original=crypto.createDecipheriv('aes-256-gcm',f.key,Buffer.from(envelope.nonce,'base64'));
+ original.setAAD(Buffer.from(envelope.magic));
+ original.setAuthTag(Buffer.from(envelope.tag,'base64'));
+ const payload=JSON.parse(Buffer.concat([original.update(Buffer.from(envelope.ciphertext,'base64')),original.final()]).toString('utf8'));
+ assert.ok(payload.rows.length>=2);
+ payload.rows[payload.rows.length-1].digest='0'.repeat(64);
+ const nonce=crypto.randomBytes(12);
+ const encoder=crypto.createCipheriv('aes-256-gcm',f.key,nonce);
+ encoder.setAAD(Buffer.from(envelope.magic));
+ const ciphertext=Buffer.concat([encoder.update(Buffer.from(JSON.stringify(payload))),encoder.final()]);
+ envelope.nonce=nonce.toString('base64');
+ envelope.tag=encoder.getAuthTag().toString('base64');
+ envelope.ciphertext=ciphertext.toString('base64');
+ const dest=path.join(os.tmpdir(),'iatb-auth21-restore-'+crypto.randomBytes(8).toString('hex'));
+ assert.throws(()=>restore({archive:Buffer.from(JSON.stringify(envelope)),transportKey:f.key,outputDir:dest}),/P22_RESTORE_DIGEST_FAILED/);
+ assert.equal(fs.existsSync(dest),false,'partial plaintext files must not survive a failed restore');
+});
