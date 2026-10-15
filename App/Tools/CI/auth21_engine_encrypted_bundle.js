@@ -30,7 +30,8 @@ function capture({env,root,resources,transportKey,coordinator,epoch}={}){
  if(!Buffer.isBuffer(transportKey)||transportKey.length!==32)throw Error('P22_TRANSPORT_KEY_REQUIRED');
  if(!Array.isArray(resources)||!resources.length||resources.length>32||
    new Set(resources).size!==resources.length)throw Error('P22_RESOURCE_LIST_INVALID');
- const required=new Set(resources.map(rel=>rel.startsWith('userdata/User Data/')?'portfolio':
+ const required=new Set(resources.map(rel=>rel.endsWith('/trading_history.jsonl')?'trading':
+  rel.startsWith('userdata/User Data/')?'portfolio':
   rel.startsWith('userdata/Shared Data/MarketData/')?'marketdata':
   rel.startsWith('userdata/Shared Data/Fundamental/')?'fundamental':'unknown'));
  if(required.has('unknown')||[...required].some(id=>!coordinator.writerIds.includes(id)))
