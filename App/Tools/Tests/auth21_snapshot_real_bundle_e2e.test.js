@@ -157,9 +157,10 @@ test('Core freezes three real Engines, captures encrypted WAL/JSONL, restores in
  const fullTimes=[];
  for(let i=0;i<20;i++){
   const begin=process.hrtime.bigint();
-  const encrypted=await coordinator.execute(({epoch})=>capture({
+  let encrypted;
+  try{encrypted=await coordinator.execute(({epoch})=>capture({
    env,root,resources,transportKey,coordinator,epoch
-  }));
+  }));}catch(e){console.log('# P22_FULL_CYCLE_FAILURE '+JSON.stringify({iteration:i,state:coordinator.state,epoch:coordinator.epoch,pending:coordinator.pendingCleanup,error:e.message}));throw e;}
   const out=path.join(os.tmpdir(),'iatb-auth21-restore-'+crypto.randomBytes(9).toString('hex'));
   try{const done=restore({archive:encrypted,transportKey,outputDir:out});
    assert.equal(done.files.length,resources.length);
