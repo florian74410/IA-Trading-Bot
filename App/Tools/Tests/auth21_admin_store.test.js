@@ -407,3 +407,22 @@ test('iatb-users preflight checks original key/database permissions and refuses 
  assert.throws(()=>checkedFixture(f.root),/ENOENT|AUTH21_CLI_FILE_UNSAFE/);
  assert.equal(fs.existsSync(path.join(f.root,'Security','client_master.key')),false);
 });
+
+test('last ADMIN survives SQLite reopen and guarded schema upgrade recheck',async t=>{
+ const f=setup(t);
+ seed(f,'CL000001','ADMIN');
+ seed(f,'CL000002','USER');
+ await ready(f);
+ const orig=f.db.prepare("SELECT COUNT(*) AS n FROM client_accounts WHERE role='ADMIN' AND enabled=1").get().n;
+ assert.equal(orig,1);
+ f.db.close();
+ f.db=new Database(f.file,{fileMustExist:true});
+ f.db.pragma('foreign_keys=ON');
+ assert.equal(f.db.pragma('integrity_check',{simple:true}),'ok');
+ assert.equal(f.db.prepare("SELECT COUNT(*) AS n FROM client_accounts WHERE role='ADMIN' AND enabled=1").get().n,1);
+ assert.throws(()=>f.db.prepare("UPDATE client_accounts SET role='USER' WHERE client_id='CL000001'").run(),/LAST_ACTIVE_ADMIN_REQUIRED/);
+ assert.equal(f.db.prepare("SELECT role FROM client_accounts WHERE client_id='CL000001'").get().role,'ADMIN');
+ await migrateFixture(f.db,{fixtureRoot:f.root});
+ assert.equal(f.db.prepare("SELECT COUNT(*) AS n FROM client_accounts WHERE role='ADMIN' AND enabled=1").get().n,1);
+ assert.equal(f.db.pragma('foreign_key_check').length,0);
+});
