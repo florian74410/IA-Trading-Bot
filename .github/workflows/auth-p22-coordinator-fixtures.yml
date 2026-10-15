@@ -217,6 +217,7 @@ jobs:
           node --check App/Tools/CI/auth21_writer_inventory.js
           node --check App/Tools/Tests/auth21_writer_inventory.test.js
           node --check App/Tools/Tests/snapshot_coordinator.test.js
+          node --check App/Tools/Tests/auth21_snapshot_recovery.test.js
           node --check App/Tools/Tests/core_snapshot_writers.test.js
           node --check App/Core/Clients/client_repository.js
           node --check App/Core/Settings/sqlite_settings_store.js
@@ -299,7 +300,7 @@ jobs:
           node --check App/Core/Clients/auth21_first_admin_trial.js
           node --check App/Tools/Tests/auth21_first_admin_trial.test.js
       - name: Isolated ACK and failure-handling fixtures
-        run: node --test App/Tools/Tests/snapshot_coordinator.test.js App/Tools/Tests/core_snapshot_writers.test.js App/Tools/Tests/portfolio_snapshot_writer.test.js App/Tools/Tests/fundamental_snapshot_writer.test.js App/Tools/Tests/fundamental_legacy_snapshot_bridge.test.js App/Tools/Tests/marketdata_snapshot_writers.test.js App/Tools/Tests/financial_jsonl_snapshot_writer.test.js App/Tools/Tests/trading_usage_jsonl_snapshot_writers.test.js App/Tools/Tests/mosaic_snapshot_writer.test.js App/Tools/Tests/client_master_key_safety.test.js
+        run: node --test App/Tools/Tests/snapshot_coordinator.test.js App/Tools/Tests/auth21_snapshot_recovery.test.js App/Tools/Tests/core_snapshot_writers.test.js App/Tools/Tests/portfolio_snapshot_writer.test.js App/Tools/Tests/fundamental_snapshot_writer.test.js App/Tools/Tests/fundamental_legacy_snapshot_bridge.test.js App/Tools/Tests/marketdata_snapshot_writers.test.js App/Tools/Tests/financial_jsonl_snapshot_writer.test.js App/Tools/Tests/trading_usage_jsonl_snapshot_writers.test.js App/Tools/Tests/mosaic_snapshot_writer.test.js App/Tools/Tests/client_master_key_safety.test.js
       - name: Startup paths read-only preflight and reviewed writer inventory
         run: node --test App/Tools/Tests/auth21_paths_startup_preflight.test.js App/Tools/Tests/auth21_writer_inventory.test.js App/Tools/Tests/auth21_core_local_trial_wiring.test.js App/Tools/Tests/auth21_core_updates_read_only_trial.test.js
       - name: Auth v3 offline SQLite schema fixtures (no live databases)
