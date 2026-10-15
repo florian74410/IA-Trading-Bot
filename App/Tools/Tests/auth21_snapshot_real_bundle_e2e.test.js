@@ -15,7 +15,8 @@ const APP=path.resolve(__dirname,'../..');
 const SPEC=[
  ['portfolio','Portfolio/Engine/portfolio_service.js','IATB_PORTFOLIO_PORT'],
  ['marketdata','MarketData/market_data_service.js','IATB_MARKET_DATA_PORT'],
- ['fundamental','Fundamental/Engine/fundamental_service.js','IATB_FUNDAMENTAL_PORT']
+ ['fundamental','Fundamental/Engine/fundamental_service.js','IATB_FUNDAMENTAL_PORT'],
+ ['trading','services/trading-engine/trading_service.js','IATB_TRADING_ENGINE_PORT']
 ];
 async function unusedPort(){const s=net.createServer();s.listen(0,'127.0.0.1');await once(s,'listening');const p=s.address().port;await new Promise(ok=>s.close(ok));return p;}
 async function probe(port){return new Promise(resolve=>{
@@ -35,10 +36,12 @@ test('Core freezes three real Engines, captures encrypted WAL/JSONL, restores in
   'userdata/User Data/snapshot-fixture/portfolio.db',
   'userdata/Shared Data/MarketData/market_registry.db',
   'userdata/Shared Data/Fundamental/fundamental.db',
-  'userdata/Shared Data/MarketData/financial_snapshots.jsonl'
+  'userdata/Shared Data/MarketData/financial_snapshots.jsonl',
+  'userdata/User Data/snapshot-fixture/trading_history.jsonl'
  ];
  const fpath=path.join(root,resources[3]);fs.mkdirSync(path.dirname(fpath),{recursive:true,mode:0o700});
  fs.writeFileSync(fpath,'{"fixture":"snapshotted","time":123}\n',{mode:0o600});
+ fs.writeFileSync(path.join(root,resources[4]),'{"fixture":"trading-history"}\n',{mode:0o600});
  const ports={};for(const [engine] of SPEC)ports[engine]=await unusedPort();
  const env={...process.env,IATB_AUTH21_CORE_AUTH_TRIAL:'1',IATB_AUTH21_LOCAL_SNAPSHOT_TRIAL:'1',
   IATB_AUTH21_SNAPSHOT_IPC_TRIAL:'1',IATB_DEBUG_MODE:'1',IATB_DEBUG_BOOTSTRAP:'0',
@@ -49,7 +52,8 @@ test('Core freezes three real Engines, captures encrypted WAL/JSONL, restores in
   IATB_ANNEX_ROOT:path.join(root,'annexes'),IATB_UPDATES_ROOT:path.join(root,'updates'),
   IATB_STATE_ROOT:path.join(root,'legacy'),ROUTER_PORT:String(await unusedPort()),
   IATB_PORTFOLIO_PORT:String(ports.portfolio),IATB_MARKET_DATA_PORT:String(ports.marketdata),
-  IATB_FUNDAMENTAL_PORT:String(ports.fundamental)};
+  IATB_FUNDAMENTAL_PORT:String(ports.fundamental),
+  IATB_TRADING_ENGINE_PORT:String(ports.trading),IATB_TRADING_HISTORY:path.join(root,resources[4])};
  delete env.IATB_USER_DB;delete env.IATB_AUTH21_IPC_PROBE_TRIAL;
  const children=[],outputs={};
  t.after(async()=>{
@@ -95,6 +99,7 @@ test('Core freezes three real Engines, captures encrypted WAL/JSONL, restores in
   assert.equal(db.pragma('integrity_check',{simple:true}),'ok');db.close();
  }
  assert.equal(JSON.parse(fs.readFileSync(path.join(dest,resources[3]),'utf8')).fixture,'snapshotted');
+ assert.equal(JSON.parse(fs.readFileSync(path.join(dest,resources[4]),'utf8')).fixture,'trading-history');
  const rejected=path.join(os.tmpdir(),'iatb-auth21-restore-'+crypto.randomBytes(9).toString('hex'));
  assert.throws(()=>restore({archive,transportKey:crypto.randomBytes(32),outputDir:rejected}),/P22_ARCHIVE_AUTH_FAILED/);
  assert.equal(fs.existsSync(rejected),false);
