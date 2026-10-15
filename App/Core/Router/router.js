@@ -29,6 +29,7 @@ var UI_READ_ACTIONS={
  'indicator.registry.status':1,
  'indicator.list_indicators':1,
  'indicator.compute_batch':1,
+ 'indicator.compute_batch_data':1,
  'indicator.analyze':1,
  'indicator.definition.get':1,
  'indicator.definition.validate':1,
