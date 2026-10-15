@@ -153,7 +153,11 @@ function openBusinessIngress({env,businessHandlers=null}={}){
       ownerClientId:rule.owner?input.ownerClientId:null,bodyDigest:digest});
     if(!verified.allowed||!replayLedger.consume(proof))return send(res,403,{error:'AUTH21_BUSINESS_DENIED'});
     return send(res,200,persist(rule,input,verified));
-   }catch(_){return send(res,409,{error:'AUTH21_BUSINESS_WRITE_BLOCKED'});}
+   }catch(error){
+    if(env.IATB_AUTH21_LOCAL_SNAPSHOT_TRIAL==='1')
+     process.stderr.write('[AUTH21_ISOLATED_WRITE_FAILURE] '+String(error.code||error.message||'UNKNOWN').slice(0,120)+'\n');
+    return send(res,409,{error:'AUTH21_BUSINESS_WRITE_BLOCKED'});
+   }
   });
   req.on('error',()=>{if(!res.writableEnded)send(res,400,{error:'INVALID_REQUEST'});});
  };
