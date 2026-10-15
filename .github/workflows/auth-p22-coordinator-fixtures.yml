@@ -95,6 +95,7 @@ on:
       - 'App/Core/Clients/auth21_router_business_forward.js'
       - 'App/Tools/Tests/auth21_real_indicator_business_ingress.test.js'
       - 'App/Tools/Tests/auth21_real_indicator_business_process.test.js'
+      - 'App/Tools/Tests/auth21_full_browser_real_core_engine_e2e.test.js'
       - 'App/Tools/Tests/auth21_real_engines_ingress.test.js'
       - 'App/Indicators/Engine/indicator_service.js'
       - 'App/Fundamental/Engine/fundamental_service.js'
@@ -393,6 +394,8 @@ jobs:
         run: node --test App/Tools/Tests/auth21_durable_business_replay.test.js
       - name: Real Indicator Engine guarded SQLite settings over Gateway Core Router
         run: node --test App/Tools/Tests/auth21_real_indicator_business_process.test.js
+      - name: Full native browser to real Core account and Engine over HTTPS
+        run: node --test App/Tools/Tests/auth21_full_browser_real_core_engine_e2e.test.js
       - name: Five real Engine business actions with scoped ADMIN and USER ownership
         run: node --test App/Tools/Tests/auth21_multi_engine_business_e2e.test.js
       - name: Real Engine processes reject unauthorized HTTP CP1 Upgrade and CONNECT
