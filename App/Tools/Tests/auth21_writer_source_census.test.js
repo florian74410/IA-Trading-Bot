@@ -9,6 +9,7 @@ test('source inventory reports every statically visible storage escape as unfini
  assert.equal(result.coverageComplete,false);
  assert.equal(Object.values(result.priorities).reduce((sum,n)=>sum+n,0),result.uncovered.length);
  assert.ok(result.priorities['potential-write']>0);
+ assert.deepEqual(result.untriaged.map(x=>x.file),[], 'new static writer candidates require explicit review');
  assert.ok(result.uncovered.some(v=>v.file.includes('Core/Server/server.js')));
  console.log('# P22_WRITER_CENSUS '+JSON.stringify({
   scanned:result.scanned,reviewed:result.reviewed,uncovered:result.uncovered.length,
