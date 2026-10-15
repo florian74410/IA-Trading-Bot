@@ -90,7 +90,7 @@ class SnapshotCoordinator {
       } catch (err) {
         failures.push(id);
         const code=String(err&&err.message||'SNAPSHOT_UNKNOWN_ERROR');
-        failureCodes[id]=/^[A-Z0-9_:-]{1,150}$/.test(code)?code:'SNAPSHOT_UNEXPECTED_FAILURE';
+        failureCodes[id]=/^[A-Za-z0-9_:-]{1,150}$/.test(code)?code:'SNAPSHOT_UNEXPECTED_FAILURE';
       }
     }
     if (failures.length) {
