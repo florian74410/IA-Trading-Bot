@@ -97,3 +97,47 @@ Partir de `clients.sqlite`, Settings, Portfolio, Fundamental, Registry, Telemetr
 - [ ] Vérification CI GitHub de tests automatiques, revue du rollback et accord de clôture d'Overflow.
 
 **Clôture P2.2 ≠ permission de déployer** : le verrou de l'ensemble Auth 2.1 s'applique toujours pendant les Phases 3–7. Après réussite, envisager un build DEBUG uniquement dans un environnement de test isolé, pas sur le VPS GEN-1 sans validation finale.
+
+
+## Campagne interprocessus DEBUG isolée — 15/10/2026
+
+**Intégration fonctionnelle vérifiée :** Core `auth21_core_local_trial_wiring.createTrial()`
+inscrit désormais **4 écrivains Core locaux** (clients, settings, mosaics, annex-root)
+et **4 processus Engine réels** (Portfolio, MarketData, Fundamental, Trading)
+dans une barrière PREPARE/QUIESCED/RELEASE/ABORT unique lorsque
+`IATB_AUTH21_SNAPSHOT_IPC_TRIAL=1`. Le transport Core→Engines est
+strictement en loopback et signé HMAC, avec portée par moteur, nonce anti-rejeu
+et SHA-256 du corps exact. La clé IPC préexistante doit être confinée au
+banc isolé avec des permissions 0600 ; aucun secret n'est généré par un service.
+
+**Garde des écritures en mode isolé :** Portfolio SQLite + UsageLedger JSONL,
+MarketData Registry/Telemetry/Microstructure SQLite + Financial JSONL,
+Fundamental SQLite et Trading History JSONL reçoivent un garde de gel au
+point de création des stores. Les commandes d'arrêt et reprise atteignent
+leurs vrais serveurs HTTP. Les services non équipés d'un participant restent
+fermés aux requêtes métier en mode Auth21 isolé.
+
+**Sauvegarde restaurable sur copie :** `auth21_engine_encrypted_bundle.js` capture
+des images SQLite compatibles WAL et des fichiers JSONL strictement allowlistés
+pendant l'état QUIESCED, chiffre le bundle en mémoire (AES-256-GCM), et
+restaure dans un nouveau répertoire scratch privé après contrôle AEAD,
+SHA-256, intégrité SQLite et validité JSONL. Le test de bout en bout démarre
+les vrais scripts des quatre Engines, gèle les huit participants, récupère
+leurs bases et JSONL de test, vérifie la restauration et le refus d'une mauvaise
+clé. Les tests de reprise après échec RELEASE/ABORT vérifient le maintien
+BLOCKED et l'obligation d'une reprise explicite.
+
+**Validation GitHub Actions :**
+[Auth P2.2 SUCCESS (run 38661470422)](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38661470422).
+Les tests P2.1 et RBAC associés au même commit sont aussi SUCCESS.
+Tout cela est exécuté uniquement avec des copies temporaires synthétiques.
+
+**Critères toujours non démontrés avant clôture P2.2 :** inventaire exhaustif
+des écrivains et injections dans tous les services et scripts périphériques,
+incluant startup/rétention hors stores instrumentés, coordination en
+présence d'un redémarrage complet d'Engine avec epoch durable,
+test non-coopératif *sur un vrai processus*, capture/restauration de
+l'ensemble des ressources interservices et des Annexes pertinentes avec
+leurs clés originales compatibles, mesures comparables p95/p99 et
+rollback d'un lot complet après panne en pleine capture. **P2.2 reste [ ]**.
+Aucun changement GEN-1, aucun Wallet manipulé, aucune migration réelle.
