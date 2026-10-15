@@ -9,7 +9,7 @@ const {SnapshotCoordinator}=require('../../Core/Backup/snapshot_coordinator');
 const MAGIC='AUTH21_P22_ENGINE_ARCHIVE_V1';
 const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
 function assertRel(rel){
- if(typeof rel!=='string'||rel.length>200||rel.includes('\\')||!/^userdata\/(?:Shared Data|User Data)\/[a-zA-Z0-9._\/ -]+\.(?:db|sqlite|jsonl)$/.test(rel)||
+ if(typeof rel!=='string'||rel.length>200||rel.includes('\\')||!(/^(?:userdata\/(?:Shared Data|User Data|Database)\/[a-zA-Z0-9._\/ -]+\.(?:db|sqlite|jsonl)|annexes\/Strategies\/[A-Za-z0-9._\/-]+\.json|runtime\/config\/market_data_settings\.json|userdata\/Security\/client_master\.key)$/.test(rel))||
    rel.split('/').some(s=>!s||s==='.'||s==='..')||
    /wallet|master|secret|credential|private|\.key/i.test(rel))throw Error('P22_RESOURCE_DISALLOWED');
 }
@@ -30,7 +30,10 @@ function capture({env,root,resources,transportKey,coordinator,epoch}={}){
  if(!Buffer.isBuffer(transportKey)||transportKey.length!==32)throw Error('P22_TRANSPORT_KEY_REQUIRED');
  if(!Array.isArray(resources)||!resources.length||resources.length>32||
    new Set(resources).size!==resources.length)throw Error('P22_RESOURCE_LIST_INVALID');
- const required=new Set(resources.map(rel=>rel.endsWith('/trading_history.jsonl')?'trading':
+ const required=new Set(resources.map(rel=>rel==='userdata/Security/client_master.key'||rel.startsWith('userdata/Database/')?'clients':
+  rel.startsWith('annexes/Strategies/')?'annex-root':
+  rel==='runtime/config/market_data_settings.json'?'marketdata':
+  rel.endsWith('/trading_history.jsonl')?'trading':
   rel.startsWith('userdata/User Data/')?'portfolio':
   rel.startsWith('userdata/Shared Data/MarketData/')?'marketdata':
   rel.startsWith('userdata/Shared Data/Fundamental/')?'fundamental':'unknown'));
@@ -54,7 +57,7 @@ function capture({env,root,resources,transportKey,coordinator,epoch}={}){
    for(const line of buffer.toString('utf8').split(/\r?\n/).filter(Boolean))JSON.parse(line);
   }
   total+=buffer.length;if(total>32*1024*1024)throw Error('P22_RESOURCE_BUDGET_EXCEEDED');
-  rows.push({rel,kind:sqlite?'sqlite':'jsonl',size:buffer.length,digest:sha(buffer),data:buffer.toString('base64')});
+  rows.push({rel,kind,size:buffer.length,digest:sha(buffer),data:buffer.toString('base64')});
  }
  const plain=Buffer.from(JSON.stringify({magic:MAGIC,rows}));
  const nonce=crypto.randomBytes(12),cipher=crypto.createCipheriv('aes-256-gcm',transportKey,nonce);
