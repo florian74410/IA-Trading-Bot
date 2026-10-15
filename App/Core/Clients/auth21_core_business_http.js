@@ -23,25 +23,14 @@ function createCoreBusinessHttp({sessions,codec,routerPort,env}={}){
    return send(res,403,{error:'AUTH21_BUSINESS_DENIED'});
   const match=TOKEN.exec(String(req.headers.authorization||''));
   if(!match)return send(res,401,{error:'UNAUTHORIZED'});
-  const length=req.headers['content-length']===undefined?null:Number(req.headers['content-length']);
-  if((length!==null&&(!Number.isSafeInteger(length)||length<1||length>2048))||
-   !/^application\/json(?:;|$)/i.test(String(req.headers['content-type']||'')))
-   return send(res,400,{error:'INVALID_REQUEST'});
-  let count=0,parts=[];
-  req.on('data',chunk=>{count+=chunk.length;if(count>2048){req.destroy();return;}parts.push(chunk);});
-  req.on('end',()=>{
-   if(count<1||(length!==null&&count!==length))return send(res,400,{error:'INVALID_REQUEST'});
-   const raw=Buffer.concat(parts);
-   let input;
-   try{input=JSON.parse(raw.toString('utf8'));}catch(_){return send(res,400,{error:'INVALID_REQUEST'});}
-   if(!validate(rule,input))return send(res,400,{error:'INVALID_REQUEST'});
+  const forward=(raw,input)=>{
    let proof;
    try{proof=issuer.issueForService({token:match[1],action:rule.action,ownerClientId:rule.owner?input.ownerClientId:null,
      bodyDigest:crypto.createHash('sha256').update(raw).digest('hex')});}
    catch(_){return send(res,403,{error:'FORBIDDEN'});}
    if(!proof)return send(res,403,{error:'FORBIDDEN'});
    const relay=http.request({hostname:'127.0.0.1',port:routerPort,path:req.url,
-    method:'POST',timeout:2500,agent:false,headers:{
+    method:rule.method||'POST',timeout:2500,agent:false,headers:{
      'Content-Type':'application/json','Content-Length':raw.length,
      'X-IATB-Auth21-Proof':proof
     }},upstream=>{
@@ -58,6 +47,26 @@ function createCoreBusinessHttp({sessions,codec,routerPort,env}={}){
    relay.on('timeout',()=>relay.destroy(Error('AUTH21_ROUTER_TIMEOUT')));
    relay.on('error',()=>send(res,502,{error:'AUTH21_ROUTER_UNAVAILABLE'}));
    relay.end(raw);
+  };
+  if(rule.method==='GET'){
+   if(req.headers['transfer-encoding']||
+      (req.headers['content-length']!==undefined&&String(req.headers['content-length'])!=='0'))
+    return send(res,400,{error:'INVALID_REQUEST'});
+   return forward(Buffer.alloc(0),null);
+  }
+  const length=req.headers['content-length']===undefined?null:Number(req.headers['content-length']);
+  if((length!==null&&(!Number.isSafeInteger(length)||length<1||length>2048))||
+   !/^application\\/json(?:;|$)/i.test(String(req.headers['content-type']||'')))
+   return send(res,400,{error:'INVALID_REQUEST'});
+  let count=0,parts=[];
+  req.on('data',chunk=>{count+=chunk.length;if(count>2048){req.destroy();return;}parts.push(chunk);});
+  req.on('end',()=>{
+   if(count<1||(length!==null&&count!==length))return send(res,400,{error:'INVALID_REQUEST'});
+   const raw=Buffer.concat(parts);
+   let input;
+   try{input=JSON.parse(raw.toString('utf8'));}catch(_){return send(res,400,{error:'INVALID_REQUEST'});}
+   if(!validate(rule,input))return send(res,400,{error:'INVALID_REQUEST'});
+   return forward(raw,input);
   });
   req.on('error',()=>send(res,400,{error:'INVALID_REQUEST'}));
  };
