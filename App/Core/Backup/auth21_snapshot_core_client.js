@@ -33,7 +33,7 @@ function createSnapshotCoreClient({env,root,timeoutMs=3000}={}){
      let answer;try{answer=JSON.parse(Buffer.concat(chunks).toString('utf8'));}catch(_){return reject(Error('SNAPSHOT_RESPONSE_INVALID'));}
      if(res.statusCode!==200||answer.ok!==true||answer.command!==command||
         answer.writerId!==engine||answer.epoch!==epoch)
-      return reject(Error('SNAPSHOT_REMOTE_REJECTED'));
+      return reject(Error('SNAPSHOT_REMOTE_REJECTED:'+engine+':'+command+':HTTP'+res.statusCode+':'+(/^[A-Z_]{1,48}$/.test(String(answer.cause||''))?answer.cause:'UNSPECIFIED')));
      if(command==='prepare'&&answer.pending!==0)return reject(Error('SNAPSHOT_INVALID_ACK'));
      resolve({epoch,writerId:engine,pending:command==='prepare'?0:null});
     });
