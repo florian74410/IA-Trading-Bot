@@ -21,6 +21,7 @@ class SnapshotCoordinator {
     this.writers = new Map();
     this.state = 'IDLE';
     this.epoch = 0;
+    this.pendingCleanup = null;
   }
 
   register(id, hooks) {
@@ -91,7 +92,8 @@ class SnapshotCoordinator {
       }
     }
     if (failures.length) {
-      // Never report readiness if any participant cannot be released/aborted.
+      // No new capture until every failed participant has confirmed cleanup.
+      this.pendingCleanup = {epoch, failedIds: failures, abort: !!error};
       this.state = 'BLOCKED';
       throw new Error('SNAPSHOT_CLEANUP_FAILED');
     }
@@ -99,6 +101,28 @@ class SnapshotCoordinator {
     if (error) throw error;
     return result;
   }
+  // Explicit recovery is safe only after the same epoch is cleared by every
+  // failed participant. Never reset a BLOCKED coordinator on a timer/restart.
+  async recoverBlocked() {
+    if (this.state !== 'BLOCKED' || !this.pendingCleanup)
+      throw new Error('SNAPSHOT_NOT_BLOCKED');
+    const pending = this.pendingCleanup;
+    const stillFailed = [];
+    for (const id of pending.failedIds) {
+      const hooks = this.writers.get(id);
+      try {
+        await this.withTimeout(() => pending.abort ? hooks.abort(pending.epoch) : hooks.release(pending.epoch));
+      } catch (_) { stillFailed.push(id); }
+    }
+    if (stillFailed.length) {
+      pending.failedIds = stillFailed;
+      throw new Error('SNAPSHOT_RECOVERY_INCOMPLETE');
+    }
+    this.pendingCleanup = null;
+    this.state = 'IDLE';
+    return {recovered:true, epoch:pending.epoch};
+  }
+
 }
 
 /* Core-local adapter. Opt-in only: no live service registers it yet.
