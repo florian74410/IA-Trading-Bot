@@ -10,12 +10,14 @@ function deny(res,status,error){
   'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});
  res.end(JSON.stringify({error}));
 }
-function createIsolatedCoreGate({sessions,browserSessions=null,allowedBrowserOrigin=null,ipcCodec=null}={}){
+function createIsolatedCoreGate({sessions,browserSessions=null,allowedBrowserOrigin=null,ipcCodec=null,coreBusiness=null}={}){
  const auth=createAuth21HttpHandler({sessions,browserSessions,allowedBrowserOrigin,ipcCodec});
  return async function isolatedCoreGate(req,res){
   let pathname;
   try{pathname=new URL(req.url,'http://localhost').pathname}
   catch(_){deny(res,404,'NOT_FOUND');return}
+  if(pathname==='/auth21/business/indicator/settings'&&coreBusiness)
+   return coreBusiness(req,res);
   // Auth boundary rechecks path, query string, method and bearer itself.
   if(['/auth21/login','/auth21/me','/auth21/logout','/auth21/preferences','/auth21/activity','/auth21/unlock','/auth21/ipc/probe-proof'].includes(pathname)){
    await auth(req,res);return;
@@ -55,7 +57,10 @@ function openCoreAuthTrial({root,clientCrypto,snapshotGate,env,browserSessions=n
   // Core-internal capability issuer uses this real SQLite-backed session store.
   // It is never exposed through the HTTP handler or sent to the browser.
   const businessIssuer=ipcCodec?require('./auth21_core_business_issuer').createCoreBusinessIssuer({sessions,codec:ipcCodec,env:runtimeEnv}):null;
-  return {handler:createIsolatedCoreGate({sessions,browserSessions,allowedBrowserOrigin,ipcCodec}),businessIssuer,close(){db.close()}};
+  const coreBusiness=businessIssuer&&runtimeEnv.IATB_AUTH21_BUSINESS_TRIAL==='1'?
+   require('./auth21_core_business_http').createCoreBusinessHttp({sessions,codec:ipcCodec,
+    routerPort:Number(runtimeEnv.ROUTER_PORT),env:runtimeEnv}):null;
+  return {handler:createIsolatedCoreGate({sessions,browserSessions,allowedBrowserOrigin,ipcCodec,coreBusiness}),businessIssuer,close(){db.close()}};
  }catch(error){db.close();throw error}
 }
 module.exports={createIsolatedCoreGate,openCoreAuthTrial};
