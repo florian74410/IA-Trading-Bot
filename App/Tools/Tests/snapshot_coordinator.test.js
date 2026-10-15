@@ -89,3 +89,5 @@ test('invalid writer registry and hooks fail safely',()=>{
   const c=new SnapshotCoordinator({writerIds:['clients']});
   assert.throws(()=>c.register('clients',{}),/INVALID_HOOKS/);
 });
+
+test('transport failure cleanup retries same epoch',async()=>{const c=new SnapshotCoordinator({writerIds:['remote']});let n=0;c.register('remote',{prepare:async epoch=>({epoch,writerId:'remote',pending:0}),release:async()=>{if(++n===1)throw Object.assign(Error('reset'),{code:'ECONNRESET'});},abort:async()=>{}});await c.execute(()=>true);assert.equal(n,2);assert.equal(c.state,'IDLE');});
