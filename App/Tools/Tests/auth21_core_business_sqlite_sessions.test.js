@@ -64,6 +64,13 @@ test('SQLite ADMIN login authorizes exact signed business write; revocation imme
  const route='/auth21/business/indicator/settings';
  const raw=JSON.stringify({enabled:true,refreshMs:5000});
  assert.equal((await request(core.address().port,route,raw,bearer)).status,200);
+ // Every new Core proof must depend on a currently active session.
+ const changed=await sessions.loginWithPassword(account.clientId,PASS);
+ assert.equal(changed.role,'ADMIN');
+ db.prepare("UPDATE client_accounts SET role='USER',updated_at=? WHERE client_id=?")
+  .run(new Date().toISOString(),account.clientId);
+ assert.equal((await request(core.address().port,route,raw,
+  {Authorization:'Bearer '+changed.token})).status,403);
  assert.equal(sessions.revokeSession(login.token),true);
  assert.equal((await request(core.address().port,route,raw,bearer)).status,403);
  assert.equal((await request(core.address().port,route,raw,{Authorization:'Bearer '+crypto.randomBytes(32).toString('base64url')})).status,403);
