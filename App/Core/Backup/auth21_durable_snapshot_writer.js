@@ -32,8 +32,8 @@ class DurableSnapshotWriter extends LocalSnapshotWriter{
    const fd=fs.openSync(tmp,'wx',0o600);
    try{fs.writeFileSync(fd,raw);fs.fsyncSync(fd);}finally{fs.closeSync(fd);}
    fs.renameSync(tmp,this.file);
-   const fd=fs.openSync(path.dirname(this.file),'r');
-   try{fs.fsyncSync(fd);}finally{fs.closeSync(fd);}
+   const dirFd=fs.openSync(path.dirname(this.file),'r');
+   try{fs.fsyncSync(dirFd);}finally{fs.closeSync(dirFd);}
   }finally{try{fs.unlinkSync(tmp);}catch(_){}}
  }
  prepare(epoch){
