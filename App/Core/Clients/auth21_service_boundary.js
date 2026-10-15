@@ -16,7 +16,7 @@ function decision(env,service,method,path){
  if(!active(env))return {intercept:false};
  if(service==='gateway'&&env.IATB_AUTH21_BUSINESS_TRIAL==='1'&&
     env.IATB_AUTH21_IPC_PROBE_TRIAL==='1'&&method==='POST'&&
-    path==='/auth21/business/indicator/settings')return {intercept:true,forwardToCore:true};
+    require('./auth21_business_actions').contract(path))return {intercept:true,forwardToCore:true};
  if(service==='gateway'&&Object.hasOwn(AUTH_METHODS,path)&&AUTH_METHODS[path].includes(method))
   return {intercept:true,forwardToCore:true};
  return {intercept:true,forwardToCore:false};
