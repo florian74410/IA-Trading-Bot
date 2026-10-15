@@ -24,7 +24,7 @@ function validate(rule,input){
  if(rule.action==='fundamental.feed.create')
   return fields==='feedUrl'&&typeof input.feedUrl==='string'&&
    input.feedUrl.length>=12&&input.feedUrl.length<=240&&
-   /^https:\/\/[a-z0-9.-]+\/[a-z0-9._~:/?#[\]@!$&'()*+,;=%-]*$/i.test(input.feedUrl);
+   /^https:\/\/[a-z0-9.-]+\/[a-z0-9/_?.=%&-]*$/i.test(input.feedUrl);
  if(rule.owner)
   return fields==='key,ownerClientId,value'&&
     typeof input.ownerClientId==='string'&&/^CL[A-Za-z0-9_-]{1,64}$/.test(input.ownerClientId)&&
