@@ -105,4 +105,14 @@ test('Core freezes three real Engines, captures encrypted WAL/JSONL, restores in
  const rejected=path.join(os.tmpdir(),'iatb-auth21-restore-'+crypto.randomBytes(9).toString('hex'));
  assert.throws(()=>restore({archive,transportKey:crypto.randomBytes(32),outputDir:rejected}),/P22_ARCHIVE_AUTH_FAILED/);
  assert.equal(fs.existsSync(rejected),false);
+ // A genuine Engine crash after all PREPARE ACKs MUST NOT yield a successful
+ // backup. Core keeps the entire coordinator BLOCKED for operator recovery.
+ const trading=children[SPEC.findIndex(x=>x[0]==='trading')];
+ await assert.rejects(coordinator.execute(async()=>{
+  trading.kill('SIGKILL');
+  await once(trading,'exit');
+  return {archive:'UNUSABLE'};
+ }),/SNAPSHOT_CLEANUP_FAILED/);
+ assert.equal(coordinator.state,'BLOCKED');
+ await assert.rejects(coordinator.execute(async()=>{}),/SNAPSHOT_COORDINATOR_BUSY/);
 });
