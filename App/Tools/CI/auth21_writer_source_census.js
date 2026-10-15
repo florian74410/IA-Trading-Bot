@@ -8,7 +8,7 @@ const {WRITERS}=require('./auth21_writer_inventory');
 const OMIT=new Set(['node_modules','.runtime','.git','Data','Logs','Tests','CI','fixtures','dist','vendor']);
 const PATTERNS=[
  ['filesystem',/\b(?:fs|fsp|fsPromises|promises)\.(?:writeFile|appendFile|rename|copyFile|rm|unlink|truncate|mkdir|open|createWriteStream|cp|rmdir)(?:Sync)?\s*\(/g],
- ['sqlite',/\.(?:exec|prepare|transaction|run)\s*\(/g],
+ ['sqlite',/(?:\b(?:db|database|sqlite)\.(?:exec|prepare|transaction|run)|\bthis\.db\.(?:exec|prepare|transaction|run)|\.prepare)\s*\(/g],
  ['shell',/\b(?:execFile|spawn|exec|spawnSync|execSync)\s*\(/g]
 ];
 function census(root){
