@@ -203,7 +203,7 @@ var AUTH21_BUSINESS_FORWARD=process.env.IATB_AUTH21_BUSINESS_TRIAL==='1'?
  fundamental:FUNDAMENTAL_PORT,portfolio:PORTFOLIO_PORT,strategy:STRATEGY_PORT}}):null;
 var server=http.createServer(function(req,res){var u=new URL(req.url,'http://'+HOST+':'+PORT),p=u.pathname;
  var auth21Boundary=require('../Clients/auth21_service_boundary').decision(process.env,'router',req.method,p);
- if(auth21Boundary.intercept&&req.method==='POST'&&
+ if(auth21Boundary.intercept&&
  require('../Clients/auth21_business_actions').contract(p)&&AUTH21_BUSINESS_FORWARD)return AUTH21_BUSINESS_FORWARD(req,res);
  if(auth21Boundary.intercept&&p==='/auth21/ipc/probe'&&AUTH21_IPC_ROUTER_PROBE)return AUTH21_IPC_ROUTER_PROBE(req,res);
  if(auth21Boundary.intercept&&p==='/auth21/ipc/capabilities'&&AUTH21_IPC_ROUTER_READ)return AUTH21_IPC_ROUTER_READ(req,res);
