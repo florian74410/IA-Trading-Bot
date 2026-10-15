@@ -6,7 +6,7 @@ const source=path.join(__dirname,'../../Core/Server/server.js');
 const RE=/if\s*\(\s*req\.method\s*===?\s*['"](GET|POST|PUT|DELETE|PATCH)['"]\s*&&\s*p\s*===?\s*['"]([^'"]+)['"]/g;
 const GROUPS=Object.freeze({
  'bootstrap-obsolete':/^\/api\/(?:setup|login|logout|recovery\/)/,
- 'administration':/^\/api\/(?:admin\/|shutdown$|updates(?:\/|$)|ai-updates(?:\/|$))/,
+ 'administration':/^\/api\/(?:admin\/|shutdown$|updates(?:\/|$)|ai-updates(?:\/|$)|security\/firewall\/toggle$)/,
  'wallet-key-transfer-denied':/^\/api\/(?:bank\/|security\/wallets(?:\/|$)|transfers(?:\/|$)|onchain(?:\/|$)|swap-bridge(?:\/|$))/,
  'legacy-account':/^\/api\/(?:client\/|profile$|session\/)/,
  'external-side-effects':/^\/api\/(?:chat$|companion\/|chart-viewer\/chat$|settings\/test-|notifications\/test$)/,
