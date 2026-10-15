@@ -19,7 +19,7 @@ function createIsolatedCoreGate({sessions,browserSessions=null,allowedBrowserOri
   if(require('./auth21_business_actions').contract(pathname)&&coreBusiness)
    return coreBusiness(req,res);
   // Auth boundary rechecks path, query string, method and bearer itself.
-  if(['/auth21/login','/auth21/me','/auth21/csrf','/auth21/logout','/auth21/preferences','/auth21/activity','/auth21/unlock','/auth21/ipc/probe-proof'].includes(pathname)){
+  if(['/auth21/login','/auth21/me','/auth21/state','/auth21/lock','/auth21/csrf','/auth21/logout','/auth21/preferences','/auth21/activity','/auth21/unlock','/auth21/ipc/probe-proof'].includes(pathname)){
    await auth(req,res);return;
   }
   // No legacy cookie, localBypass, active_client_id, recovery, setup, admin,

@@ -16,6 +16,8 @@ const {migrateFixture}=require('../CI/auth21_v3_migration_trial');
 const {LocalSnapshotWriter}=require('../../Core/Backup/snapshot_coordinator');
 
 const PASSWORD='FICTIONAL_admin_password_2026$';
+const NEW_ACCOUNT={firstName:'Test',lastName:'User',email:'test@example.invalid',
+ username:'TEST_USER',password:'FICTIONAL_new_password_2026$',role:'USER'};
 const legacyDir=path.resolve(__dirname,'../../Core/Clients/migrations');
 function setup(t,{gate=null}={}){
  const root=fs.mkdtempSync(path.join(os.tmpdir(),'iatb-auth21-v3-'));
@@ -67,6 +69,64 @@ function metadata(f,id){
 function actions(f){
  return f.db.prepare('SELECT action,client_id,actor_client_id,detail_enc FROM client_security_audit ORDER BY id').all();
 }
+
+test('native account creation persists encrypted identity and permits real login',async t=>{
+ const f=setup(t);seed(f,'CL000001','ADMIN');const {sessions,adminStore}=await ready(f);
+ const actor=await token(sessions,'CL000001');
+ const result=await adminStore.createAccount(actor,NEW_ACCOUNT);
+ assert.equal(result.role,'USER');
+ const login=await sessions.loginWithPassword(result.clientId,NEW_ACCOUNT.password);
+ assert.ok(login);assert.equal(login.role,'USER');
+ const row=f.db.prepare('SELECT * FROM clients WHERE client_id=?').get(result.clientId);
+ assert.equal(f.clientCrypto.open(row.email_enc),NEW_ACCOUNT.email);
+ assert.equal(JSON.stringify(row).includes(NEW_ACCOUNT.email),false);
+ const audit=adminStore.audit(actor);
+ assert.ok(audit.some(x=>x.action==='ADMIN_ACCOUNT_CREATED'&&x.clientId===result.clientId&&x.actorClientId==='CL000001'));
+ for(const secret of [NEW_ACCOUNT.password,NEW_ACCOUNT.email,actor])assert.equal(JSON.stringify(audit).includes(secret),false);
+ assert.equal(metadata(f,result.clientId).password_algo,'ARGON2ID');
+ await assert.rejects(adminStore.createAccount(actor,{...NEW_ACCOUNT,email:'second@example.invalid'}),/USERNAME_TAKEN/);
+ await assert.rejects(adminStore.createAccount(actor,{...NEW_ACCOUNT,username:'SECOND'}),/EMAIL_TAKEN/);
+ assert.equal(adminStore.listAccounts(actor).length,2);
+ assert.throws(()=>adminStore.audit(login.token),/FORBIDDEN/);
+});
+
+test('creation rechecks ADMIN session after asynchronous hashing and never inserts on revocation',async t=>{
+ const f=setup(t);seed(f,'CL000001','ADMIN');const {sessions,adminStore}=await ready(f);
+ const actor=await token(sessions,'CL000001');
+ const pending=adminStore.createAccount(actor,NEW_ACCOUNT);
+ sessions.revokeSession(actor);
+ await assert.rejects(pending,/FORBIDDEN/);
+ assert.equal(f.db.prepare('SELECT count(*) n FROM clients').get().n,1);
+});
+
+test('native CLI aliases, prompted reset and audit preserve last ADMIN and revoke target sessions',async t=>{
+ const f=setup(t);seed(f,'CL000001','ADMIN');seed(f,'CL000002','USER');
+ const {sessions,adminStore}=await ready(f),actor=await token(sessions,'CL000001');
+ const {dispatchLocalAdmin}=require('../../Core/Clients/auth21_admin_cli_dispatch');
+ const call=(command,args=[],secretInput)=>dispatchLocalAdmin({adminStore,adminToken:actor,command,args,secretInput});
+ const old=await token(sessions,'CL000002');
+ await call('reset-password',['CL000002'],{password:NEW_ACCOUNT.password});
+ assert.equal(sessions.verifySession(old),null);
+ assert.ok(await sessions.loginWithPassword('CL000002',NEW_ACCOUNT.password));
+ call('disable',['CL000002']);assert.equal(await sessions.loginWithPassword('CL000002',NEW_ACCOUNT.password),null);
+ call('enable',['CL000002']);call('role',['CL000002','GUEST']);
+ assert.equal((await sessions.loginWithPassword('CL000002',NEW_ACCOUNT.password)).role,'GUEST');
+ call('delete',['CL000002']);assert.ok(f.db.prepare('SELECT 1 FROM clients WHERE client_id=?').get('CL000002'));
+ assert.throws(()=>call('delete',['CL000001']),/LAST_ACTIVE_ADMIN_REQUIRED/);
+ assert.ok(call('audit').length>0);
+});
+
+test('CLI accepts owner-only 0600 DB and key, rejects group-readable files',t=>{
+ const {checkedFixture,MARKER,CONTENT}=require('../CLI/iatb-users');
+ const root=fs.mkdtempSync(path.join(os.tmpdir(),'iatb-auth21-v3-'));
+ t.after(()=>fs.rmSync(root,{recursive:true,force:true}));
+ fs.chmodSync(root,0o700);fs.mkdirSync(path.join(root,'Security'),{mode:0o700});
+ fs.writeFileSync(path.join(root,MARKER),CONTENT,{mode:0o600});
+ const db=path.join(root,'clients-fixture.sqlite'),key=path.join(root,'Security','client_master.key');
+ fs.writeFileSync(db,'synthetic',{mode:0o600});fs.writeFileSync(key,'synthetic',{mode:0o600});
+ assert.equal(checkedFixture(root).dbFile,db);
+ fs.chmodSync(key,0o640);assert.throws(()=>checkedFixture(root),/FILE_UNSAFE/);
+});
 
 test('missing trusted local-operator gate prevents ADMIN store construction',async t=>{
  const f=setup(t);seed(f,'CL000001','ADMIN');await migrateFixture(f.db,{fixtureRoot:f.root});
@@ -425,4 +485,51 @@ test('last ADMIN survives SQLite reopen and guarded schema upgrade recheck',asyn
  await migrateFixture(f.db,{fixtureRoot:f.root});
  assert.equal(f.db.prepare("SELECT COUNT(*) AS n FROM client_accounts WHERE role='ADMIN' AND enabled=1").get().n,1);
  assert.equal(f.db.pragma('foreign_key_check').length,0);
+});
+
+test('native offline CLI uses real non-root TTY, Unicode input and shared runtime database',
+ {skip:process.platform!=='linux',timeout:40000},async t=>{
+ const f=setup(t);seed(f,'CL000001','ADMIN');await ready(f);f.db.close();
+ const runtime=fs.mkdtempSync(path.join(os.tmpdir(),'iatb-auth21-core-runtime-'));
+ const wiring=require('../../Core/Backup/auth21_core_local_trial_wiring');
+ const uid=process.getuid()||65534;
+ t.after(()=>fs.rmSync(runtime,{recursive:true,force:true}));
+ fs.writeFileSync(path.join(runtime,wiring.MARKER),wiring.CONTENT,{mode:0o600});
+ for(const p of ['runtime','userdata/Database','userdata/Security','annexes','updates','legacy'])
+  fs.mkdirSync(path.join(runtime,p),{recursive:true,mode:0o700});
+ const dbFile=path.join(runtime,'userdata/Database/clients.sqlite');
+ fs.copyFileSync(f.file,dbFile);fs.chmodSync(dbFile,0o600);
+ const keyFile=path.join(runtime,'userdata/Security/client_master.key');
+ fs.copyFileSync(f.keyFile,keyFile);fs.chmodSync(keyFile,0o600);
+ // Cached npm runtimes can reside under a root-only directory.
+ const node=path.join(runtime,'node');fs.copyFileSync(process.execPath,node);fs.chmodSync(node,0o700);
+ function ownership(p){
+  if(process.getuid()===0)fs.chownSync(p,uid,uid);
+  if(fs.statSync(p).isDirectory())for(const name of fs.readdirSync(p))ownership(path.join(p,name));
+ }
+ try{ownership(runtime);}catch(error){
+  if(['EINVAL','EPERM'].includes(error.code)){t.skip('Host cannot map a non-root UID; real TTY test required on Linux CI');return;}
+  throw error;
+ }
+ const env={...process.env,NODE_OPTIONS:'',IATB_AUTH21_CLI_RUNTIME:'1',
+  IATB_AUTH21_CORE_AUTH_TRIAL:'1',IATB_AUTH21_LOCAL_SNAPSHOT_TRIAL:'1',
+  IATB_DEBUG_MODE:'1',IATB_DEBUG_BOOTSTRAP:'0',IATB_AUTH21_LOCAL_TRIAL_ROOT:runtime};
+ for(const [k,p] of [['RUNTIME','runtime'],['DATA','userdata'],['ANNEX','annexes'],['UPDATES','updates'],['STATE','legacy']])env['IATB_'+k+'_ROOT']=path.join(runtime,p);
+ delete env.IATB_USER_DB;
+ const {spawnSync}=require('node:child_process');
+ const out=spawnSync('python3',[path.join(__dirname,'auth21_cli_pty_driver.py')],{encoding:'utf8',timeout:35000,
+  input:JSON.stringify({uid,env,argv:[node,path.resolve(__dirname,'../CLI/iatb-users.js'),'admin','CL000001','create'],steps:[
+   ['ADMIN password: ',PASSWORD],['First name: ','Élodie'],['Last name: ','Test'],
+   ['Email: ','elodie@example.invalid'],['Username: ','ELODIE_TEST'],['Role ADMIN USER GUEST: ','USER'],
+   ['New password: ',NEW_ACCOUNT.password],['Confirm new password: ',NEW_ACCOUNT.password],['Type CONFIRM create: ','CONFIRM create']
+  ]})});
+ assert.equal(out.status,0,out.stderr);
+ const result=JSON.parse(out.stdout);assert.equal(result.code,0,result.output);
+ assert.ok(!result.output.includes(PASSWORD));assert.ok(!result.output.includes(NEW_ACCOUNT.password));
+ const db=new Database(dbFile),cipher=new ClientCrypto(keyFile,{clientDbPath:dbFile});
+ try{
+  const row=db.prepare("SELECT c.first_name_enc,a.client_id FROM clients c JOIN client_accounts a USING(client_id) WHERE a.role='USER'").get();
+  assert.ok(row);assert.equal(cipher.open(row.first_name_enc),'Élodie');
+  assert.equal(db.prepare('SELECT COUNT(*) AS n FROM client_sessions WHERE revoked_at IS NULL').get().n,0);
+ }finally{db.close();}
 });

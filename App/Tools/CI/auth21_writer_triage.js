@@ -11,6 +11,8 @@ const GROUPS=Object.freeze({
   'Bank/Core/wallet_service_v2.js'
  ],
  'operator-control-outside-snapshot':[
+  // Empty persistent lock inode only; kernel lease excludes Core/CLI writers.
+  'Core/Clients/auth21_local_owner_lock.js',
   'Core/Admin/admin_console.js','Core/Admin/CP1/parser.js','Core/Admin/log_reader.js',
   'Core/Admin/restart_all.js','Core/Admin/service_registry.js',
   'Core/Admin/stop_total.js','launcher.js',

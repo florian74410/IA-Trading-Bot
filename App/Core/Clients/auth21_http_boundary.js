@@ -13,18 +13,18 @@ function reply(res,status,data,extraHeaders={}){
   'Referrer-Policy':'no-referrer','X-Frame-Options':'DENY','Content-Security-Policy':"default-src 'none'; frame-ancestors 'none'",...extraHeaders});
  res.end(JSON.stringify(data));
 }
-function readJSON(req){
+function readJSON(req,maxBytes=MAX_BYTES){
  return new Promise((resolve,reject)=>{
   let length=0,parts=[],done=false;
   const fail=err=>{if(done)return;done=true;reject(err);req.resume()};
   const header=req.headers['content-length'];
-  if(header!==undefined&&(!/^\d+$/.test(String(header))||Number(header)>MAX_BYTES)){
+  if(header!==undefined&&(!/^\d+$/.test(String(header))||Number(header)>maxBytes)){
    fail(Error('AUTH21_BODY_TOO_LARGE'));return;
   }
   req.on('data',chunk=>{
    if(done)return;
    length+=chunk.length;
-   if(length>MAX_BYTES){fail(Error('AUTH21_BODY_TOO_LARGE'));return}
+   if(length>maxBytes){fail(Error('AUTH21_BODY_TOO_LARGE'));return}
    parts.push(chunk);
   });
   req.once('aborted',()=>fail(Error('AUTH21_BODY_ABORTED')));
@@ -75,7 +75,7 @@ function createAuth21HttpHandler({sessions,nowMilliseconds=Date.now,allowedBrows
   try{
    let uri;
    try{uri=new URL(req.url||'', 'http://localhost');}catch(_){reply(res,404,{error:'NOT_FOUND'});return}
-   if((uri.search&&uri.pathname!=='/auth21/preferences')||uri.hash||!['/auth21/login','/auth21/me','/auth21/csrf','/auth21/logout','/auth21/preferences','/auth21/activity','/auth21/unlock','/auth21/ipc/probe-proof'].includes(uri.pathname)){
+   if((uri.search&&uri.pathname!=='/auth21/preferences')||uri.hash||!['/auth21/login','/auth21/me','/auth21/state','/auth21/lock','/auth21/csrf','/auth21/logout','/auth21/preferences','/auth21/activity','/auth21/unlock','/auth21/ipc/probe-proof'].includes(uri.pathname)){
     reply(res,404,{error:'NOT_FOUND'});return;
    }
    // Strict Origin guard on browser requests. No cookie authorization is accepted.
@@ -137,6 +137,16 @@ function createAuth21HttpHandler({sessions,nowMilliseconds=Date.now,allowedBrows
     if(!ok)failedLogin(throttleKey);else attempts.delete(throttleKey);
     reply(res,ok?200:401,ok?{ok:true}:{error:'UNAUTHORIZED'});return;
    }
+   if(req.method==='GET'&&uri.pathname==='/auth21/state'){
+    const token=tokenFor(),state=token&&sessions.sessionState(token);
+    if(!state){reply(res,401,{error:'UNAUTHORIZED'});return}
+    reply(res,200,{...state,...(browserSessions?{csrfToken:browserSessions.csrf(token)}:{})});return;
+   }
+   if(req.method==='POST'&&uri.pathname==='/auth21/lock'){
+    const token=tokenFor();
+    if(!token||!sessions.lockSession(token)){reply(res,401,{error:'UNAUTHORIZED'});return}
+    reply(res,200,{ok:true});return;
+   }
    if(req.method==='POST'&&uri.pathname==='/auth21/activity'){
     const token=tokenFor();
     if(!token||!sessions.recordUserActivity(token)){
@@ -166,7 +176,7 @@ function createAuth21HttpHandler({sessions,nowMilliseconds=Date.now,allowedBrows
     const policy=require('./auth21_rbac_guard').authorize({sessions,token,operation:'self.write',ownerClientId:principal.clientId,method:req.method});
    if(!policy.allowed){reply(res,403,{error:'FORBIDDEN'});return}
     if(req.method==='PUT'){
-     const input=await readJSON(req);
+     const input=await readJSON(req,100000);
      if(Object.keys(input).length!==1||typeof input.value!=='string'||
        Buffer.byteLength(input.value,'utf8')>16384){reply(res,400,{error:'INVALID_REQUEST'});return}
      sessions.setPreference(token,scope,key,input.value);
@@ -188,8 +198,8 @@ function createAuth21HttpHandler({sessions,nowMilliseconds=Date.now,allowedBrows
     return;
    }
    if(req.method==='POST'&&uri.pathname==='/auth21/logout'){
-    const token=tokenFor(),session=token&&sessions.verifySession(token);
-    if(!session){reply(res,401,{error:'UNAUTHORIZED'});return}
+    const token=tokenFor();
+    if(!token){reply(res,401,{error:'UNAUTHORIZED'});return}
     if(sessions.revokeSession(token)!==true){reply(res,401,{error:'UNAUTHORIZED'});return}
     reply(res,200,{ok:true},browserSessions?{'Set-Cookie':browserSessions.expire}:{});return;
    }

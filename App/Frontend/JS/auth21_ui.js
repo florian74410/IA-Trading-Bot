@@ -20,17 +20,26 @@
  };
  const setLoggedOut=()=>{
   state.user=null;state.csrf=null;state.locked=false;
+  result('');by('market-result').textContent='';
   if(state.lockTimer)clearTimeout(state.lockTimer);
   by('password').value='';by('unlockPassword').value='';
   show('login-panel');status('Authentification requise.');
  };
  const setLocked=()=>{
   if(!state.user)return;
-  state.locked=true;show('unlock-panel');status('Session verrouillée : mot de passe nécessaire.',true);
+  state.locked=true;result('');by('market-result').textContent='';show('unlock-panel');status('Session verrouillée : mot de passe nécessaire.',true);
+ };
+ const lockOnServer=async()=>{
+  setLocked();
+  try{
+   const response=await fetchJson('/auth21/lock',{method:'POST',body:{},mutation:true});
+   if(response.status===401){setLoggedOut();return;}
+   if(!response.ok)throw Error('LOCK_NOT_CONFIRMED');
+  }catch(_){status('Verrouillage serveur non confirmé. Réessayez la déconnexion.',true);}
  };
  const scheduleLock=()=>{
   if(state.lockTimer)clearTimeout(state.lockTimer);
-  state.lockTimer=setTimeout(setLocked,300000);
+  state.lockTimer=setTimeout(lockOnServer,300000);
  };
  const setConnected=(user,csrf)=>{
   state.user=user;state.csrf=csrf;state.locked=false;state.lastActivity=Date.now();
@@ -41,6 +50,10 @@
   show('session-panel');status('Session authentifiée. Les permissions sont vérifiées par Core et chaque Engine.');
  };
  const authenticated=async()=>{
+  const session=await fetchJson('/auth21/state');
+  if(!session.ok){setLoggedOut();return;}
+  state.csrf=session.data.csrfToken;
+  if(session.data.locked){state.user={};setLocked();return;}
   const me=await fetchJson('/auth21/me');
   if(!me.ok){setLoggedOut();return;}
   const token=await fetchJson('/auth21/csrf');
@@ -77,7 +90,8 @@
    await authenticated();
   }catch(e){status('Déverrouillage refusé : '+e.message,true);}
  });
- by('logout').addEventListener('click',async()=>{
+ by('lock').addEventListener('click',lockOnServer);
+ const logout=async()=>{
   try{
    const response=await fetchJson('/auth21/logout',{method:'POST',body:{},mutation:true});
    if(!response.ok)throw Error(response.data.error||'LOGOUT_NOT_CONFIRMED');
@@ -86,7 +100,9 @@
    setLocked();
    status('Déconnexion non confirmée par le serveur. Session verrouillée ; réessayez ou fermez le navigateur.',true);
   }
- });
+ };
+ by('logout').addEventListener('click',logout);
+ by('locked-logout').addEventListener('click',logout);
  by('market-read').addEventListener('click',async()=>{
   try{
    const response=await fetchJson('/auth21/business/marketdata/metadata');

@@ -14,7 +14,7 @@ function fixture(){
    ?{token:VALID_TOKEN,clientId:id,role:'USER',expiresAt:1900000000}:null},
   verifySession(token){events.push('verify');return token===VALID_TOKEN&&!state.revoked
    ?{clientId:'CL000001',role:'USER',expiresAt:1900000000}:null},
-  revokeSession(token){events.push('revoke');if(token!==VALID_TOKEN)return false;state.revoked=true;return true;},
+  revokeSession(token){events.push('revoke');if(token!==VALID_TOKEN||state.revoked)return false;state.revoked=true;return true;},
   getPreference(token,scope,key){events.push('read');return state[scope+':'+key]||null},
   setPreference(token,scope,key,value){events.push('write');state[scope+':'+key]=value;return true},
   deletePreference(token,scope,key){events.push('delete');delete state[scope+':'+key];return true}

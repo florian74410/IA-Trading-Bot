@@ -345,3 +345,30 @@ test('Core idle lock denies at 300 seconds, polling does not extend and password
  assert.equal(sessions.revokeSession(login.token),true);
  assert.equal(await sessions.unlockWithPassword(login.token,PASSWORD),false);
 });
+
+test('manual lock persists across store instances, state cannot authorize, logout works while locked',async t=>{
+ const f=prepare(t);add(f);await init(f);
+ const options={db:f.db,clientCrypto:f.clientCrypto,idleLockSeconds:300,nowSeconds:()=>f.now};
+ const s=new Auth21SessionStore(options),r=await login(s);
+ assert.equal(s.sessionState(r.token).locked,false);
+ assert.equal(s.lockSession(r.token),true);
+ const restarted=new Auth21SessionStore(options);
+ assert.equal(restarted.verifySession(r.token),null);
+ assert.deepEqual(restarted.sessionState(r.token),{locked:true,expiresAt:r.expiresAt});
+ assert.equal(restarted.recordUserActivity(r.token),false);
+ assert.equal(await restarted.unlockWithPassword(r.token,'incorrect'),false);
+ assert.equal(await restarted.unlockWithPassword(r.token,PASSWORD),true);
+ assert.ok(restarted.verifySession(r.token));
+ restarted.lockSession(r.token);
+ assert.equal(restarted.revokeSession(r.token),true);
+ assert.equal(restarted.sessionState(r.token),null);
+ assert.equal(await restarted.unlockWithPassword(r.token,PASSWORD),false);
+});
+
+test('lock cannot write during a coordinated snapshot',async t=>{
+ const gate=new LocalSnapshotWriter('clients'),f=prepare(t,{gate});add(f);await init(f);
+ const s=new Auth21SessionStore({db:f.db,clientCrypto:f.clientCrypto,snapshotGate:gate,idleLockSeconds:300,nowSeconds:()=>f.now});
+ const r=await login(s);gate.prepare(1);
+ assert.throws(()=>s.lockSession(r.token),/SNAPSHOT_WRITE_QUIESCED/);
+ assert.equal(s.sessionState(r.token).locked,false);gate.release(1);
+});

@@ -32,10 +32,11 @@
 <label for="unlockPassword">Mot de passe actuel</label>
 <input id="unlockPassword" name="password" type="password" required autocomplete="current-password">
 <button type="submit">Déverrouiller</button>
+<button id="locked-logout" type="button" class="secondary">Déconnexion</button>
 </form>
 </section>
 <section id="session-panel" class="panel" hidden>
-<div class="session"><div><h2>Session active</h2><p id="identity"></p></div><button id="logout" type="button" class="secondary">Déconnexion</button></div>
+<div class="session"><div><h2>Session active</h2><p id="identity"></p></div><button id="lock" type="button" class="secondary">Verrouiller</button><button id="logout" type="button" class="secondary">Déconnexion</button></div>
 <h3>Marchés (lecture autorisée à tous les rôles)</h3>
 <button id="market-read" type="button">Lire les capacités MarketData</button>
 <pre id="market-result" aria-live="polite"></pre>

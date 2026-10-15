@@ -145,6 +145,11 @@ class Auth21SessionStore {
   * including when used by polling, WebSocket or background data refresh.
   */
  verifySession(token){return this._resolve(token);}
+ /** Minimal state for resuming the lock screen; never a business principal. */
+ sessionState(token){
+  const session=this._resolve(token,{allowLocked:true});
+  return session?{locked:!this._resolve(token),expiresAt:session.expiresAt}:null;
+ }
  /** Explicit trusted user activity only; automatic polling never refreshes idle time. */
  recordUserActivity(token){
   if(!this.idleLockSeconds)throw Error('AUTH21_IDLE_LOCK_DISABLED');
@@ -155,6 +160,17 @@ class Auth21SessionStore {
    const hash=tokenHash(token);
    return this.db.prepare('UPDATE client_sessions SET last_seen_at=? WHERE session_hash=? AND revoked_at IS NULL')
     .run(this._now(),hash).changes===1;
+  }).immediate();
+ }
+ lockSession(token){
+  if(!this.idleLockSeconds)throw Error('AUTH21_IDLE_LOCK_DISABLED');
+  this._writable();
+  return this.db.transaction(()=>{
+   this._writable();const principal=this._resolve(token,{allowLocked:true});
+   if(!principal)return false;
+   this.db.prepare('UPDATE client_sessions SET last_seen_at=? WHERE session_hash=? AND revoked_at IS NULL')
+    .run(Math.max(0,this._now()-this.idleLockSeconds),tokenHash(token));
+   this._audit(principal.clientId,'SESSION_LOCKED');return true;
   }).immediate();
  }
  /** A locked but unexpired session requires the original password again. */

@@ -1,6 +1,6 @@
 'use strict';
-/* Auth 2.1: OPT-IN management of existing accounts, for trusted local CLI only.
- * Not connected to HTTP/Gateway/GEN-1. Does not create accounts, keys or DBs.
+/* Auth 2.1: OPT-IN management of accounts, for trusted local CLI only.
+ * Not connected to HTTP/Gateway/GEN-1. Creates accounts only in an existing schema; never keys or DBs.
  * First ADMIN must be created by a separate, authorized CLI bootstrap in Phase 5.
  * Every operation needs BOTH a live ADMIN session AND a locally injected OS
  * operator authorization callback; web sessions alone are insufficient.
@@ -81,6 +81,44 @@ class Auth21AdminStore {
    "SELECT COUNT(*) AS n FROM client_accounts a JOIN clients c ON c.client_id=a.client_id",
    "WHERE a.role='ADMIN' AND a.enabled=1 AND c.status='ACTIVE'"
   ].join(' ')).get().n;
+ }
+ /** Local CLI account creation. Identity and credentials commit together;
+  * recheck the actor after the asynchronous password hash completes. */
+ async createAccount(adminToken,{firstName,lastName,email,username,password,role}={}){
+  this._admin(adminToken);
+  if(!ROLES.has(role))throw Error('AUTH21_ROLE_INVALID');
+  if(typeof firstName!=='string'||!firstName.trim()||firstName.length>80||
+     typeof lastName!=='string'||!lastName.trim()||lastName.length>80||
+     typeof email!=='string'||email.length>254||!/^\S+@\S+\.\S+$/.test(email)||
+     typeof username!=='string'||!/^[A-Za-z0-9._-]{3,64}$/.test(username))
+   throw Error('AUTH21_ACCOUNT_IDENTITY_INVALID');
+  const hash=await Kdf.hashNewPassword(password);
+  this._writable();
+  const cipher=this.sessions.clientCrypto;
+  const id='CL'+require('node:crypto').randomBytes(12).toString('hex').toUpperCase();
+  const normalizedEmail=email.trim().toLowerCase(),normalizedUser=username.toUpperCase();
+  return this.db.transaction(()=>{
+   this._writable();const actor=this._admin(adminToken),now=new Date().toISOString();
+   const userHash=cipher.lookupHash('username:'+normalizedUser);
+   if(this.db.prepare('SELECT 1 FROM client_accounts WHERE username_hash=?').get(userHash))
+    throw Error('AUTH21_ACCOUNT_USERNAME_TAKEN');
+   if(this.db.prepare('SELECT 1 FROM clients WHERE email_hash=?').get(cipher.lookupHash(normalizedEmail)))
+    throw Error('AUTH21_ACCOUNT_EMAIL_TAKEN');
+   this.db.prepare("INSERT INTO clients(client_id,external_ref_hash,first_name_enc,last_name_enc,email_enc,email_hash,status,security_version,created_at,updated_at) VALUES(?,?,?,?,?,?,'ACTIVE',1,?,?)")
+    .run(id,cipher.externalHash('auth21-account:'+id),cipher.seal(firstName.trim()),
+     cipher.seal(lastName.trim()),cipher.seal(normalizedEmail),cipher.lookupHash(normalizedEmail),now,now);
+   this.db.prepare("INSERT INTO client_accounts(client_id,username_enc,username_hash,password_salt,password_hash,password_iterations,password_algo,password_params_json,role,enabled,created_at,updated_at) VALUES(?,?,?,'',?,0,'ARGON2ID','{}',?,1,?,?)")
+    .run(id,cipher.seal(normalizedUser),userHash,hash,role,now,now);
+   this.db.prepare("INSERT INTO client_security_audit(client_id,actor_client_id,action,created_at,detail_enc) VALUES(?,?,'ADMIN_ACCOUNT_CREATED',?,'')")
+    .run(id,actor.clientId,now);
+   return {clientId:id,role,created:true};
+  }).immediate();
+ }
+ audit(adminToken,{afterId=0,limit=100}={}){
+  this._admin(adminToken);
+  if(!Number.isSafeInteger(afterId)||afterId<0||!Number.isSafeInteger(limit)||limit<1||limit>500)
+   throw Error('AUTH21_AUDIT_RANGE_INVALID');
+  return this.db.prepare('SELECT id,client_id AS clientId,actor_client_id AS actorClientId,action,created_at AS createdAt FROM client_security_audit WHERE id>? ORDER BY id LIMIT ?').all(afterId,limit);
  }
  changeRole(adminToken,targetClientId,role){
   if(typeof role!=='string'||!ROLES.has(role))throw Error('AUTH21_ROLE_INVALID');

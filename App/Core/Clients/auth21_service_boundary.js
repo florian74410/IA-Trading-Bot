@@ -5,7 +5,7 @@
  */
 const AUTH_METHODS=Object.freeze({
  '/auth21/login':['POST'], '/auth21/me':['GET'], '/auth21/csrf':['GET'], '/auth21/logout':['POST'],
- '/auth21/unlock':['POST'], '/auth21/activity':['POST'],
+ '/auth21/state':['GET'], '/auth21/lock':['POST'], '/auth21/unlock':['POST'], '/auth21/activity':['POST'],
  '/auth21/preferences':['GET','PUT','DELETE']
 });
 function active(env){

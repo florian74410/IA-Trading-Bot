@@ -150,6 +150,19 @@ test('full genuine HTTPS Gateway -> Core SQLite v3 ADMIN -> Router -> Indicator 
   assert.equal(JSON.parse(Buffer.from(row.value_b64,'base64').toString('utf8')).refreshMs,5000);
  }finally{setting.close();}
  assert.equal((await request(uiPort,'POST','/auth21/business/trading/order',{},headers)).status,404);
+ // Lock survives page reload, state yields no principal and no business grant.
+ assert.equal((await request(uiPort,'POST','/auth21/lock',{}, {Cookie:cookie,Origin:headers.Origin})).status,403);
+ assert.equal((await request(uiPort,'POST','/auth21/lock',{},headers)).status,200);
+ assert.equal((await request(uiPort,'GET','/auth21/me',null,headers)).status,401);
+ const locked=await request(uiPort,'GET','/auth21/state',null,headers);
+ assert.equal(locked.status,200);assert.equal(locked.json.locked,true);
+ assert.equal(locked.json.clientId,undefined);assert.equal(locked.json.token,undefined);
+ assert.equal(locked.json.csrfToken,csrf);
+ assert.equal((await request(uiPort,'POST',operation,{enabled:true,refreshMs:15000},headers)).status,403);
+ assert.equal((await request(uiPort,'POST','/auth21/unlock',{password:'incorrect'},headers)).status,401);
+ assert.equal((await request(uiPort,'POST','/auth21/unlock',{password},headers)).status,200);
+ assert.equal((await request(uiPort,'GET','/auth21/me',null,headers)).status,200);
+ assert.equal((await request(uiPort,'POST','/auth21/lock',{},headers)).status,200);
  assert.equal((await request(uiPort,'POST','/auth21/logout',{},headers)).status,200);
  assert.equal((await request(uiPort,'POST',operation,{enabled:true,refreshMs:5000},headers)).status,403);
 });

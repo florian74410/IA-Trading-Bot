@@ -437,7 +437,7 @@ jobs:
       - name: P2.2 genuine cross-process encrypted backup and scratch restore
         run: NODE_PATH=\"$RUNNER_TEMP/iatb-auth-v3/node_modules\" node --test App/Tools/Tests/auth21_snapshot_real_bundle_e2e.test.js
       - name: Auth v3 ADMIN persistence, last-admin guard and local-CLI fixtures
-        run: NODE_PATH="$RUNNER_TEMP/iatb-auth-v3/node_modules" node --test App/Tools/Tests/auth21_admin_store.test.js
+        run: NODE_PATH="$RUNNER_TEMP/iatb-auth-v3/node_modules" node --test App/Tools/Tests/auth21_admin_store.test.js App/Tools/Tests/auth21_local_owner_lock.test.js
       - name: Auth 2.1 first ADMIN consent, backup and legacy DEBUG preflight fixtures
         run: NODE_PATH="$RUNNER_TEMP/iatb-auth-v3/node_modules" node --test App/Tools/Tests/auth21_first_admin_trial.test.js
       - name: Auth client master-key and WAL backup restore compatibility fixtures
