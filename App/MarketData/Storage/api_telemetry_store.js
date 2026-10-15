@@ -88,6 +88,16 @@ Store.prototype.purgeManual=function(o){
  try{var beforeStatus=this.status();this.run(parts.join(' '));var afterStatus=this.status();this.lastError='';return{ok:true,target:target,before:before||null,removedApi:Math.max(0,(beforeStatus.events||0)-(afterStatus.events||0)),removedStreams:Math.max(0,(beforeStatus.streamEvents||0)-(afterStatus.streamEvents||0)),remainingApi:afterStatus.events||0,remainingStreams:afterStatus.streamEvents||0};}
  catch(e){this.lastError=e.message;return{ok:false,error:e.message};}
 };
+// Reuse persistent HTTP telemetry: failed attempts count, duplicate phases do not.
+Store.prototype.coingeckoUsage=function(){
+ if(!this.ready||this.lastError||this.retentionDays<30)return{ok:false,error:'COINGECKO_QUOTA_HISTORY_UNAVAILABLE'};
+ try{
+  var now=Date.now(),r=this.run("SELECT COUNT(DISTINCT CASE WHEN phase='HTTP_START' THEN request_id END),COUNT(DISTINCT CASE WHEN phase='HTTP_START' AND timestamp>="+(now-60000)+" THEN request_id END) FROM api_calls WHERE provider='COINGECKO' AND timestamp>="+(now-2592000000)+";",true).trim().split('\t');
+  var last=this.run("SELECT completed_at,meta_json FROM api_calls WHERE provider='COINGECKO' AND phase='HTTP_END' AND status_code=429 ORDER BY timestamp DESC LIMIT 1;",true).trim().split('\t'),until=0;
+  if(last[0]){var at=+last[0],h=JSON.parse(last[1]||'{}').quotaHeaders||{},raw=h['retry-after'],delay=isFinite(+raw)?+raw*1000:Math.max(0,Date.parse(raw)-at)||0;until=at+Math.max(900000,delay);}
+  return{ok:true,monthUsed:+r[0]||0,minuteUsed:+r[1]||0,cooldownUntil:until,windowMs:2592000000,scope:'THIS_MARKET_DATA_TELEMETRY_NOT_SHARED_IP_OR_ACCOUNT'};
+ }catch(e){return{ok:false,error:e.message};}
+};
 Store.prototype.status=function(){
  var count=0,oldest=null,newest=null,providers=0,streamEvents=0,streamProviders=0;if(this.ready)try{
   var r=this.run('SELECT COUNT(*),MIN(timestamp),MAX(timestamp) FROM api_calls;',true).trim().split('\t');count=+r[0]||0;oldest=+r[1]||null;newest=+r[2]||null;providers=+(this.run("SELECT COUNT(DISTINCT provider) FROM api_calls WHERE provider<>'';",true).trim())||0;streamEvents=+(this.run('SELECT COUNT(*) FROM stream_events;',true).trim())||0;streamProviders=+(this.run("SELECT COUNT(DISTINCT provider) FROM stream_events WHERE provider<>'';",true).trim())||0;

@@ -3,14 +3,7 @@ var parent=require('worker_threads').parentPort,WS=require('../Transport/simple_
 var URL=process.env.IATB_OKX_LIQ_WS||'wss://ws.okx.com:8443/ws/v5/public',ws=null,timer=null,pingTimer=null,statusTimer=null,stopped=false,retries=0,lastEventAt=0,lastHeartbeatAt=0,events=0,lastError='',connections=0;
 
 function status(state){parent.postMessage({type:'status',provider:'OKX',state:state||((ws&&ws.open)?'ONLINE':'CONNECTING'),events:events,lastEventAt:lastEventAt||null,lastHeartbeatAt:lastHeartbeatAt||null,lastError:lastError||null,retries:retries,connections:connections,subscriptions:1});}
-function symbolOf(x){return String(x&&x.instId||x&&x.instFamily||'').toUpperCase().replace(/-SWAP$/,'').replace(/-/g,'');}
-function normalize(o){
- var out=[];(o&&Array.isArray(o.data)?o.data:[]).forEach(function(row){(Array.isArray(row.details)?row.details:[]).forEach(function(d){
-  var p=+d.bkPx,q=+d.sz,ts=+d.ts,ps=String(d.posSide||'').toLowerCase(),side=ps==='long'?'LONG':ps==='short'?'SHORT':(String(d.side||'').toLowerCase()==='sell'?'LONG':'SHORT'),sym=symbolOf(row);
-  if(!sym||!isFinite(p)||p<=0||!isFinite(q)||q<0||!isFinite(ts))return;
-  out.push({provider:'OKX',source:'OKX',provenance:'OKX:liquidation-orders',symbol:sym,side:side,price:p,quantity:q,quantityUnit:'CONTRACT',notionalUsd:null,timestamp:ts,providerEventId:[row.instId,ts,d.posSide,d.side,p,q].join(':'),instrumentId:row.instId||null,instrumentFamily:row.instFamily||null,rawContractSize:q});
- });});return out;
-}
+var normalize=require('../Normalizer/liquidations').okx;
 function connect(){
  if(stopped)return;status('CONNECTING');ws=new WS(URL,{timeout:30000,maxBytes:4*1024*1024});
  ws.on('open',function(){connections++;retries=0;lastError='';try{ws.sendJson({op:'subscribe',args:[{channel:'liquidation-orders',instType:'SWAP'}]});}catch(e){}clearInterval(pingTimer);pingTimer=setInterval(function(){try{if(ws&&ws.open)ws.send('ping');}catch(e){}},20000);clearInterval(statusTimer);statusTimer=setInterval(function(){status();},30000);status('ONLINE');});

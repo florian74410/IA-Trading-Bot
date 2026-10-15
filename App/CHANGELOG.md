@@ -1,3 +1,10 @@
+# IA-TB v2.0.1 DEBUG — Étape 4/4 : CoinGecko et liquidations CeFi
+
+- CoinGecko : fréquences réduites, déduplication des appels, budget SQLite persistant et pause 429/Retry-After ; dernières statistiques CeFi validées conservées en cas d’erreur.
+- Liquidations : unités et prix explicites, contrats OKX via métadonnées validées, conversion observée USDT/USDC vers USD sans parité fictive, reçus et décision Firewall avant stockage ; replays dédupliqués.
+- Agrégation de toute la fenêtre SQLite 24 h, montants partiels/N/D, comptes et sources affichés ; anciens événements sans preuve conservés mais non valorisés comme USD fiables.
+- Tests locaux et procédure manuelle GEN-1 dans `Documentation/FINAL_STEP4_DEBUG_2.0.1.md`. Aucun déploiement ; version applicative 2.0.1 maintenue, validation Overflow attendue.
+
 # IA-TB v2.0.1 DEBUG — Étape 3/4 : interface Statistiques
 
 - Top Pools lisibles et adaptables dans DeFi, métriques manquantes explicites et sources distinctes ; estimation d’exécution sans faux total fiable.

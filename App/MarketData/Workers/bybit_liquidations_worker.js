@@ -5,13 +5,7 @@ var URL=process.env.IATB_BYBIT_LIQ_WS||'wss://stream.bybit.com/v5/public/linear'
 function status(state){parent.postMessage({type:'status',provider:'BYBIT',state:state||((ws&&ws.open)?'ONLINE':'CONNECTING'),events:events,lastEventAt:lastEventAt||null,lastHeartbeatAt:lastHeartbeatAt||null,lastError:lastError||null,retries:retries,connections:connections,subscriptions:Object.keys(symbols)});}
 function normSymbol(s){s=String(s||'').toUpperCase().replace(/[^A-Z0-9]/g,'');if(/USDT$/.test(s))return s;if(/USDC$/.test(s))return s;if(/USD$/.test(s))return s.slice(0,-3)+'USDT';return s+'USDT';}
 function subscribe(list){if(!Array.isArray(list))list=[list];var args=[];list.forEach(function(s){s=normSymbol(s);if(!s||symbols[s])return;symbols[s]=1;args.push('allLiquidation.'+s);});if(args.length&&ws&&ws.open)try{ws.sendJson({op:'subscribe',args:args});}catch(e){lastError=e.message;}}
-function normalize(o){
- var out=[];(o&&Array.isArray(o.data)?o.data:(o&&o.data?[o.data]:[])).forEach(function(d){
-  var p=+d.p,q=+d.v,ts=+d.T||+o.ts||Date.now(),s=String(d.s||'').toUpperCase(),side=String(d.S||'').toUpperCase()==='BUY'?'LONG':'SHORT';
-  if(!s||!isFinite(p)||p<=0||!isFinite(q)||q<0)return;
-  out.push({provider:'BYBIT',source:'BYBIT',provenance:'BYBIT:allLiquidation',symbol:s,side:side,price:p,quantity:q,quantityUnit:'BASE',notionalUsd:p*q,timestamp:ts,providerEventId:[s,ts,d.S,p,q].join(':')});
- });return out;
-}
+var normalize=require('../Normalizer/liquidations').bybit;
 function connect(){
  if(stopped)return;status('CONNECTING');ws=new WS(URL,{timeout:30000,maxBytes:4*1024*1024});
  ws.on('open',function(){connections++;retries=0;lastError='';var current=Object.keys(symbols);symbols=Object.create(null);subscribe(current);clearInterval(pingTimer);pingTimer=setInterval(function(){try{if(ws&&ws.open)ws.sendJson({op:'ping'});}catch(e){}},20000);clearInterval(statusTimer);statusTimer=setInterval(function(){status();},30000);status('ONLINE');});

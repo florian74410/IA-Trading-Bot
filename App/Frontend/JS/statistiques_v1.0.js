@@ -375,8 +375,9 @@ function renderDerivatives(oi,liq,streams){
  var venues=(oi&&oi.venues||[]).filter(function(x){return String(x.venueType||'').toUpperCase()==='CEX'&&number(x.openInterestNotionalUsd)!=null}),value=oi&&number(oi.cexOpenInterestUsd),coverage=oi&&oi.coverage||{};
  setKpi('cefiOi',venues.length&&value!=null?money(value):'N/D',venues.length?venues.length+' CEX · couverture partielle':'Indisponible',venues.length?'OI BTC perpétuels (USD) · '+venues.map(function(x){return x.source}).join(', ')+(coverage.missing&&coverage.missing.length?' · manquants : '+coverage.missing.join(', '):''):'OI BTC · '+(state.ui.errors.oi||'en attente de venues dérivées'));
  var count=number(liq&&liq.count)||0,cov=liq&&liq.coverage||{},known=number(cov.notionalKnownEvents)||0,amount=number(liq&&liq.coveredNotionalUsd),partial=cov.notionalComplete===false;
+ var sourceText=(liq&&liq.byProvider||[]).map(function(x){return x.provider+' : '+x.count+' événements, '+(x.observedNotionalUsd==null?'N/D':money(x.observedNotionalUsd))+' ('+x.knownEvents+' valorisés)';}).join(' ; ')||(cov.providers||[]).join(', ');
  var streamText=!streams?'statut des flux en attente':streams.enabled===false?'flux désactivés':(streams.providers||[]).map(function(x){return x.provider+' '+x.state}).join(', ')||'aucun flux connecté';
- setKpi('cefiLiq',count&&known&&amount!=null?(partial?'≥ ':'')+money(amount):'N/D',count?count+' événements · échantillon':'Aucun événement observé', 'BTC · fenêtre 24 h · jusqu’à 500 événements · '+(cov.providers||[]).join(', ')+' · '+streamText+(partial?' · notionnels incomplets':''));
+ setKpi('cefiLiq',count&&known&&amount!=null?(partial?'≥ ':'')+money(amount):'N/D',count?count+' événements · '+known+' valorisés / '+(count-known)+' N/D':'Aucun événement observé', 'Toutes paires · fenêtre 24 h · montant observé, pas total mondial · valorisation aux prix publiés (faillite pour OKX/Bybit), pas prix d’exécution garanti · '+sourceText+' · '+streamText+(partial?' · notionnels incomplets':'')+(known===0&&count?' · données de contrat ou taux USD non disponibles / anciens événements non vérifiés':''));
 }
 function renderDataStatus(){
  ['cefi','defi'].forEach(function(section){var names=section==='cefi'?['snapshot','cefiHistory','oi','liq','streams']:['snapshot','defiHistory','dex'],errors=names.filter(function(n){return state.ui.errors[n]}).map(function(n){return n+' : '+state.ui.errors[n]}),pending=names.some(function(n){return !!state.ui.inflight[state.ui.wanted[n]]});
@@ -411,7 +412,7 @@ function loadFinancialData(){
  if(section==='defi')loadResource('dex','marketdata.dex.liquidity.snapshot',{symbol:'ETHUSDC',force:false});
  else{
   loadResource('oi','marketdata.derivatives.open_interest',{symbol:'BTCUSD'});
-  loadResource('liq','marketdata.liquidations.stats',{symbol:'BTCUSD',windowMs:86400000});
+  loadResource('liq','marketdata.liquidations.stats',{windowMs:86400000});
   loadResource('streams','marketdata.liquidations.streams',{});
  }
 }

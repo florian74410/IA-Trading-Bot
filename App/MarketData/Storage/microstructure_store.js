@@ -30,11 +30,31 @@ Store.prototype.saveSnapshot=function(snapshot,firewall){
  try{this.run("INSERT INTO microstructure_snapshots(timestamp,provider,symbol,depth,firewall_decision,data_json) VALUES("+[Math.round(ts),q(provider),q(symbol),Math.max(0,+snapshot.depth||0),q(firewall&&firewall.decision||'PASS'),q(JSON.stringify(snapshot))].join(',')+");");this.lastPersistByKey[key]=ts;this.lastError='';this.prune(false);return true;}catch(e){this.lastError=e.message;return false;}
 };
 Store.prototype.save=Store.prototype.saveSnapshot;
+Store.prototype.hasLiquidation=function(x){
+ if(!this.ready)throw new Error('LIQUIDATION_SQL_UNAVAILABLE');
+ var match='event_key='+q(x.eventKey);
+ if(x.providerEventId)match+=' OR (provider='+q(x.provider)+' AND timestamp='+Math.round(x.timestamp)+" AND json_extract(data_json,'$.providerEventId')="+q(x.providerEventId)+')';
+ return +this.run('SELECT COUNT(*) FROM liquidation_events WHERE '+match+';',true).trim()>0;
+};
 Store.prototype.saveLiquidation=function(x){
- if(!this.ready||!x)return false;var key=String(x.eventKey||[x.provider,x.symbol,x.timestamp,x.side,x.price,x.quantity].join('|'));
+ if(!this.ready){this.lastError='LIQUIDATION_SQL_UNAVAILABLE';return false;}
+ if(!x||!x.firewall||!x.firewall.checkedAt||['PASS','WARN'].indexOf(x.firewall.decision)<0){this.lastError='LIQUIDATION_NOT_VALIDATED';return false;}
  try{this.run("INSERT OR IGNORE INTO liquidation_events(timestamp,provider,symbol,side,price,quantity,notional_usd,event_key,data_json) VALUES("+[
-  Math.round(+x.timestamp||Date.now()),q(String(x.provider||x.source||'UNKNOWN').toUpperCase()),q(String(x.symbol||'').toUpperCase()),q(String(x.side||'').toUpperCase()),+x.price||0,+x.quantity||0,isFinite(+x.notionalUsd)?+x.notionalUsd:'NULL',q(key),q(JSON.stringify(x))
- ].join(',')+");");this.lastError='';this.prune(false);return true;}catch(e){this.lastError=e.message;return false;}
+  Math.round(x.timestamp),q(x.provider),q(x.symbol),q(x.side),x.price,x.quantity,x.notionalUsd!=null&&isFinite(+x.notionalUsd)?+x.notionalUsd:'NULL',q(x.eventKey),q(JSON.stringify(x))
+ ].join(',')+');');var inserted=+this.run('SELECT changes();',true).trim()>0;this.lastError='';this.prune(false);return inserted;}catch(e){this.lastError=e.message;return false;}
+};
+Store.prototype.liquidationStats=function(o){
+ o=o||{};if(!this.ready)return{ok:false,error:'LIQUIDATION_SQL_UNAVAILABLE'};
+ var now=Date.now(),windowMs=Math.max(60000,Math.min(86400000,+o.windowMs||86400000)),since=now-windowMs,where='timestamp>='+since+' AND timestamp<='+now;
+ if(o.symbol)where+=' AND symbol='+q(o.symbol);if(o.source)where+=' AND provider='+q(String(o.source).toUpperCase());
+ var verified="json_extract(data_json,'$.normalizationStatus')='NORMALIZED' AND json_type(data_json,'$.normalizationReceipt')='object' AND notional_usd IS NOT NULL AND notional_usd>=0";
+ try{
+  var rows=this.run("SELECT provider,COUNT(*),SUM(CASE WHEN "+verified+" THEN 1 ELSE 0 END),SUM(CASE WHEN "+verified+" THEN notional_usd ELSE 0 END),SUM(CASE WHEN side='LONG' THEN 1 ELSE 0 END),SUM(CASE WHEN side='SHORT' THEN 1 ELSE 0 END),SUM(CASE WHEN side='LONG' AND "+verified+" THEN notional_usd ELSE 0 END),SUM(CASE WHEN side='SHORT' AND "+verified+" THEN notional_usd ELSE 0 END) FROM liquidation_events WHERE "+where+' GROUP BY provider;',true).trim(),count=0,known=0,sum=0,longCount=0,shortCount=0,longUsd=0,shortUsd=0,providers=[];
+  if(rows)rows.split(/\r?\n/).forEach(function(line){var r=line.split('\t');providers.push({provider:r[0],count:+r[1],knownEvents:+r[2]||0,observedNotionalUsd:+r[2]>0?+r[3]:null});count+=+r[1];known+=+r[2]||0;sum+=+r[3]||0;longCount+=+r[4]||0;shortCount+=+r[5]||0;longUsd+=+r[6]||0;shortUsd+=+r[7]||0;});
+  var reasonsRaw=this.run("SELECT COALESCE(json_extract(data_json,'$.normalizationError'),'LEGACY_OR_UNVERIFIED'),COUNT(*) FROM liquidation_events WHERE "+where+" AND NOT COALESCE(("+verified+"),0) GROUP BY 1;",true).trim(),reasons=[];
+  if(reasonsRaw)reasonsRaw.split(/\r?\n/).forEach(function(line){var r=line.split('\t');reasons.push({reason:r[0],count:+r[1]});});
+  return{ok:true,schema:'marketdata.liquidations.stats/1.1',symbol:o.symbol||'',windowMs:windowMs,since:since,to:now,count:count,totalNotionalUsd:count&&known===count?sum:null,coveredNotionalUsd:known?sum:null,long:{count:longCount,coveredNotionalUsd:longUsd},short:{count:shortCount,coveredNotionalUsd:shortUsd},imbalance:sum?(longUsd-shortUsd)/sum:0,byProvider:providers,unavailableReasons:reasons,coverage:{label:'OBSERVED_NOT_GLOBAL',providers:providers.map(function(x){return x.provider;}),notionalKnownEvents:known,notionalUnknownEvents:count-known,notionalComplete:known===count,storage:'SQLITE_24H',truncated:false,legacyNotionalsRequireReceipt:true}};
+ }catch(e){this.lastError=e.message;return{ok:false,error:'LIQUIDATION_SQL_FAILED:'+e.message};}
 };
 Store.prototype.prune=function(force){
  if(!this.ready)return;if(!force&&Date.now()-this.lastPruneAt<3600000)return;

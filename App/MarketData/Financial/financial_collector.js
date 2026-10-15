@@ -5,7 +5,7 @@ function sum(a,f){return(a||[]).reduce(function(z,x){var v=f?f(x):x;v=+v;return 
 function pct(v,t){return t>0?Math.round(v/t*1000)/10:0}
 function top(a,n,fn){return(a||[]).slice().sort(fn).slice(0,n)}
 function groupCategory(rows){var m={};(rows||[]).forEach(function(x){var k=String(x.category||'Other');m[k]=(m[k]||0)+(+x.tvl||0)});return Object.keys(m).map(function(k){return{name:k,tvlUsd:m[k]}}).sort(function(a,b){return b.tvlUsd-a.tvlUsd})}
-function Collector(o){o=o||{};this.coingecko=o.coingecko;this.defillama=o.defillama;this.store=o.store;this.firewallPort=+o.firewallPort||8017;this.firewall=o.firewall||new DataFirewallClient({port:this.firewallPort});this.ttlMs=Math.max(5000,+o.ttlMs||45000);this.cefiTtlMs=Math.max(5000,+o.cefiTtlMs||this.ttlMs);this.defiTtlMs=Math.max(5000,+o.defiTtlMs||Math.max(this.ttlMs,90000));this.providerEnabled={COINGECKO:o.coingeckoEnabled!==false,DEFILLAMA:o.defillamaEnabled!==false};this.busy=false;this.waiters=[];this.lastError='';this.lastRefreshAt=0;this.refreshSeq=0;this.activeRefreshId=null;this.refreshStartedAt=0;this.lastRefreshJob=null;this.cefiEnrichmentTtlMs=Math.max(300000,+o.cefiEnrichmentTtlMs||900000);this.cefiEnrichmentDelayMs=Math.max(10000,+o.cefiEnrichmentDelayMs||120000);this.cefiEnrichment={at:0,data:null,busy:false,timer:null,lastError:''};this.defiEnrichmentTtlMs=Math.max(900000,+o.defiEnrichmentTtlMs||1800000);this.defiEnrichmentDelayMs=Math.max(60000,+o.defiEnrichmentDelayMs||300000);this.defiEnrichment={at:0,data:null,busy:false,timer:null,lastError:''};}
+function Collector(o){o=o||{};this.coingecko=o.coingecko;this.defillama=o.defillama;this.store=o.store;this.firewallPort=+o.firewallPort||8017;this.firewall=o.firewall||new DataFirewallClient({port:this.firewallPort});this.ttlMs=Math.max(5000,+o.ttlMs||45000);this.cefiTtlMs=Math.max(5000,+o.cefiTtlMs||this.ttlMs);this.defiTtlMs=Math.max(5000,+o.defiTtlMs||Math.max(this.ttlMs,90000));this.providerEnabled={COINGECKO:o.coingeckoEnabled!==false,DEFILLAMA:o.defillamaEnabled!==false};this.busy=false;this.waiters=[];this.lastError='';this.lastRefreshAt=0;this.refreshSeq=0;this.activeRefreshId=null;this.refreshStartedAt=0;this.lastRefreshJob=null;this.cefiEnrichmentTtlMs=Math.max(300000,+o.cefiEnrichmentTtlMs||1800000);this.cefiEnrichmentDelayMs=Math.max(10000,+o.cefiEnrichmentDelayMs||120000);this.cefiEnrichment={at:0,data:null,busy:false,timer:null,lastError:''};this.defiEnrichmentTtlMs=Math.max(900000,+o.defiEnrichmentTtlMs||1800000);this.defiEnrichmentDelayMs=Math.max(60000,+o.defiEnrichmentDelayMs||300000);this.defiEnrichment={at:0,data:null,busy:false,timer:null,lastError:''};}
 Collector.prototype._gate=function(provider,data,cb){this.firewall.inspect({provider:provider,source:provider,provenance:{collector:'MARKET_DATA',provider:provider},type:'MARKET_ANALYTICS',symbol:'GLOBAL',timestamp:Date.now(),data:data},cb)};
 Collector.prototype._scheduleCefiEnrichment=function(){
  var self=this,e=this.cefiEnrichment;if(e.busy||e.timer||(e.data&&Date.now()-e.at<this.cefiEnrichmentTtlMs))return;
@@ -15,9 +15,14 @@ Collector.prototype._runCefiEnrichment=function(){
  var self=this,e=this.cefiEnrichment;if(e.busy)return;e.busy=true;
  this.coingecko.exchanges(1,250,function(err,rows){
   if(err){e.busy=false;e.lastError=err.message;return;}
+  if(!Array.isArray(rows)||!rows.length||rows.some(function(x){return !x||typeof x!=='object'||!x.id;})){e.busy=false;e.lastError='COINGECKO_EXCHANGES_EMPTY_OR_INVALID';return;}
+  self._gate('COINGECKO',{exchanges:rows||[]},function(gateError){if(gateError){e.busy=false;e.lastError=gateError.message;return;}
   e.data=(rows||[]).map(function(x){return{id:x.id,name:x.name,rank:+x.trust_score_rank||null,trustScore:+x.trust_score||null,volumeBtc:+x.trade_volume_24h_btc||0,url:x.url||''};}).slice(0,250);
   e.at=Date.now();e.busy=false;e.lastError='';
-  if(!self.busy)self.refresh({scope:'CEFI'},function(){});
+  // Publish initial exchange coverage once; later enrichment is consumed by the next due CeFi cycle.
+  var prior=self.store&&self.store.get&&self.store.get();
+  if(!self.busy&&!(prior&&prior.cefi&&prior.cefi.exchanges&&prior.cefi.exchanges.length))self.refresh({scope:'CEFI'},function(){});
+  });
  });
 };
 Collector.prototype._cefi=function(cb){
@@ -25,6 +30,7 @@ Collector.prototype._cefi=function(cb){
  var self=this,pending=2,err=[],global=null,markets=null;
  function done(){if(--pending)return;if(!global&&!markets)return cb(new Error(err.join('; ')||'COINGECKO_EMPTY'));
   var previous=self.store&&self.store.get&&self.store.get(),prev=previous&&previous.cefi||null;
+  if(err.length&&prev)return cb(new Error('COINGECKO_REFRESH_FAILED:'+err.join('; ')));
   if((!markets||!markets.length)&&prev&&prev.assets&&prev.assets.length){markets=prev.assets.map(function(x){return{id:x.id,symbol:x.symbol,name:x.name,current_price:x.priceUsd,market_cap:x.marketCapUsd,total_volume:x.volume24hUsd,price_change_percentage_24h:x.change24hPct,image:x.image};});err.push('MARKETS_FALLBACK_LAST_GOOD');}
   var gd=global&&global.data||{},btc=(markets||[]).filter(function(x){return String(x.symbol).toLowerCase()==='btc';})[0],btcUsd=btc&&+btc.current_price||0,en=self.cefiEnrichment.data||null;
   var exRaw=en||(prev&&prev.exchanges||[]),ex=(exRaw||[]).map(function(x){var vb=x.volumeBtc!=null?+x.volumeBtc:null,usd=x.volume24hUsd!=null?+x.volume24hUsd:(vb!=null&&btcUsd>0?vb*btcUsd:null);return{id:x.id,name:x.name,rank:x.rank==null?null:+x.rank,trustScore:x.trustScore==null?null:+x.trustScore,volumeBtc:vb,volume24hUsd:usd,url:x.url||''};}).filter(function(x){return x.volume24hUsd!=null;}).sort(function(a,b){return b.volume24hUsd-a.volume24hUsd;});

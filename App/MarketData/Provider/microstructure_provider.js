@@ -27,6 +27,13 @@ function snapshot(source,symbol,canonical,depth,b,oi,mark,errors){
  return{ok:true,schema:'marketdata.liquidity.raw/1.0',source:source,provider:source,provenance:'MARKET_DATA_COLLECTOR:'+source,symbol:symbol,canonicalSymbol:canonical||symbol,depth:+depth||20,observedAt:Date.now(),orderBook:b||{bids:[],asks:[]},openInterest:oi==null?{available:false,value:null,unit:'BASE',markPrice:mark,notional:null}:{available:true,value:oi,unit:'BASE',markPrice:mark,notional:mark==null?null:oi*mark},liquidations:[],partial:Array.isArray(errors)&&errors.length>0,errors:(errors||[]).slice(0,16)};
 }
 function P(o){o=o||{};this.settings=o.settings||{};this.okxBase=String(o.okxBase||process.env.IATB_OKX_PUBLIC_BASE||'https://www.okx.com').replace(/\/$/,'');this.bybitBase=String(o.bybitBase||process.env.IATB_BYBIT_PUBLIC_BASE||'https://api.bybit.com').replace(/\/$/,'');this.name='MICROSTRUCTURE_PROVIDER_REGISTRY';}
+P.prototype.instruments=function(cb){
+ if(!this.enabled('OKX'))return cb(new Error('MARKET_PROVIDER_DISABLED: OKX'));
+ request(this.okxBase+'/api/v5/public/instruments?instType=SWAP',{timeout:10000,maxBytes:4*1024*1024},function(e,o){
+  if(e)return cb(e);if(!o||String(o.code)!=='0'||!Array.isArray(o.data))return cb(new Error('OKX_INSTRUMENTS_INVALID'));
+  cb(null,o.data.map(function(x){return{instId:x.instId,ctVal:x.ctVal,ctValCcy:x.ctValCcy,ctMult:x.ctMult,ctType:x.ctType,settleCcy:x.settleCcy,uly:x.uly};}));
+ });
+};
 P.prototype.enabled=function(source){
  source=String(source||'').toUpperCase();var id=source==='BINANCE_FUTURES'?'BINANCE':source,p=this.settings.providers&&this.settings.providers[id];return !p||p.enabled!==false;
 };

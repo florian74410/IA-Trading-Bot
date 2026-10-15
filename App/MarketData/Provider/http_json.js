@@ -38,19 +38,19 @@ function request(url,opts,cb){opts=opts||{};var redirects=+opts._redirects||0,u=
   done=true;
   var code=e&&e.message||'PROVIDER_RESPONSE_ERROR';
   finishTelemetry(false,status,n,code,res.headers);
-  cb(err(code,status));
+  var re=err(code,status);re.retryAfterMs=Limits.feedback(limitProfile,status,res.headers,null,null).retryAfterMs||0;cb(re);
  });
  res.on('close',function(){
   if(done||res.complete)return;
   done=true;
   finishTelemetry(false,status,n,'PROVIDER_RESPONSE_INTERRUPTED',res.headers);
-  cb(err('PROVIDER_RESPONSE_INTERRUPTED',status));
+  var re=err('PROVIDER_RESPONSE_INTERRUPTED',status);re.retryAfterMs=Limits.feedback(limitProfile,status,res.headers,null,null).retryAfterMs||0;cb(re);
  });
   res.on('end',function(){if(done)return;done=true;if(n>max){finishTelemetry(false,status,n,'PROVIDER_RESPONSE_TOO_LARGE',res.headers);return cb(err('PROVIDER_RESPONSE_TOO_LARGE',status));}
    var txt=Buffer.concat(a).toString('utf8'),o=null,ct=String(res.headers&&res.headers['content-type']||'').toLowerCase(),jsonError=null;
    try{o=JSON.parse(txt||'{}');}catch(x){jsonError=x;}
    if(status!==429){var fb=Limits.feedback(limitProfile,status,res.headers,o,null);TransportBridge.feedback(provider,fb);}
-   if(status>=400){var msg=o&&(o.error||o.message);var e=err(msg?String(msg):('PROVIDER_HTTP_'+status),status,ct);finishTelemetry(false,status,n,e.message,res.headers);return cb(e);}
+   if(status>=400){var msg=o&&(o.error||o.message);var e=err(msg?String(msg):('PROVIDER_HTTP_'+status),status,ct);e.retryAfterMs=Limits.feedback(limitProfile,status,res.headers,o,null).retryAfterMs||0;e.quotaHeaders=quotaHeaders(res.headers);finishTelemetry(false,status,n,e.message,res.headers);return cb(e);}
    if(jsonError){var je=err(/^application\/json\b/.test(ct)||/\+json\b/.test(ct)?'PROVIDER_JSON_INVALID':'PROVIDER_NON_JSON_RESPONSE',status,ct);finishTelemetry(false,status,n,je.message,res.headers);return cb(je);}
    finishTelemetry(true,status,n,'',res.headers);cb(null,o,res);
   });

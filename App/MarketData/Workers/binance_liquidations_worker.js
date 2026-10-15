@@ -3,12 +3,7 @@ var parent=require('worker_threads').parentPort,WS=require('../Transport/simple_
 var URL=process.env.IATB_BINANCE_LIQ_WS||'wss://fstream.binance.com/ws/!forceOrder@arr',ws=null,timer=null,pingTimer=null,statusTimer=null,stopped=false,retries=0,lastEventAt=0,lastHeartbeatAt=0,events=0,lastError='',connections=0;
 
 function status(state){parent.postMessage({type:'status',provider:'BINANCE_FUTURES',state:state||((ws&&ws.open)?'ONLINE':'CONNECTING'),events:events,lastEventAt:lastEventAt||null,lastHeartbeatAt:lastHeartbeatAt||null,lastError:lastError||null,retries:retries,connections:connections,subscriptions:1});}
-function normalize(x){
- x=x&&x.data?x.data:x;if(Array.isArray(x)){var out=[];x.forEach(function(y){var n=normalize(y);if(n)Array.isArray(n)?out.push.apply(out,n):out.push(n);});return out;}
- if(!x||x.e!=='forceOrder'||!x.o)return null;var o=x.o,p=+(o.ap||o.p),q=+(o.z||o.l||o.q),ts=+(o.T||x.E||Date.now()),side=String(o.S||'').toUpperCase()==='SELL'?'LONG':'SHORT';
- if(!o.s||!isFinite(p)||p<=0||!isFinite(q)||q<0)return null;
- return{provider:'BINANCE_FUTURES',source:'BINANCE_FUTURES',provenance:'BINANCE_FUTURES:forceOrder',symbol:String(o.s).toUpperCase(),side:side,price:p,quantity:q,quantityUnit:'BASE',notionalUsd:p*q,timestamp:ts,providerEventId:[o.s,ts,o.S,p,q].join(':')};
-}
+var normalize=require('../Normalizer/liquidations').binance;
 function connect(){
  if(stopped)return;status('CONNECTING');ws=new WS(URL,{timeout:30000,maxBytes:2*1024*1024});
  ws.on('open',function(){connections++;retries=0;lastError='';clearInterval(pingTimer);pingTimer=setInterval(function(){try{if(ws&&ws.open)ws.ping('iatb');}catch(e){}},20000);clearInterval(statusTimer);statusTimer=setInterval(function(){status();},30000);status('ONLINE');});
