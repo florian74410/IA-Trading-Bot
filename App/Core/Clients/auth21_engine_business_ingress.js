@@ -30,6 +30,16 @@ function openBusinessIngress({env}={}){
  };
  function persist(rule,input,principal){
   if(rule.action==='indicator.settings.set')throw Error('AUTH21_INDICATOR_USES_OWN_WRITER');
+  if(rule.action==='marketdata.settings.set'){
+   const expected=path.join(root,'runtime','config','market_data_settings.json');
+   if(env.IATB_MARKET_SETTINGS!==expected)
+    throw Error('AUTH21_MARKETDATA_SETTINGS_OUTSIDE_TRIAL');
+   const settings=require('../../MarketData/Config/market_data_settings');
+   if(path.resolve(settings.file)!==expected)throw Error('AUTH21_MARKETDATA_SETTINGS_OUTSIDE_TRIAL');
+   settings.setSnapshotGate(trial.gate);
+   const updated=settings.save({...settings.load(),refreshMs:input.refreshMs});
+   if(updated.refreshMs!==input.refreshMs)throw Error('AUTH21_MARKETDATA_SETTINGS_SAVE_INVALID');
+  }
   let filename;
   if(rule.owner)filename=rule.engine+'-'+principal.clientId+'-'+input.key+'.fixture.json';
   else if(rule.action==='marketdata.settings.set')filename='marketdata-settings.fixture.json';
