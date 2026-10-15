@@ -13,11 +13,14 @@ function openEngineSnapshotTrial({env=process.env,engine}={}){
   throw Error('AUTH21_ENGINE_SNAPSHOT_TRIAL_DISABLED');
  const {root}=preflightEnv(env);
  if(engine==='marketdata'){
-  for(const key of ['IATB_MARKET_REGISTRY_DB','IATB_API_TELEMETRY_DB','IATB_MARKET_MICROSTRUCTURE_DB','IATB_FINANCIAL_STORE']){
+  for(const key of ['IATB_MARKET_SETTINGS','IATB_MARKET_REGISTRY_DB','IATB_API_TELEMETRY_DB','IATB_MARKET_MICROSTRUCTURE_DB','IATB_FINANCIAL_STORE']){
    const configured=env[key];
    if(!configured)continue;
    const p=path.resolve(configured),data=path.join(root,'userdata');
-   if(p===data||!p.startsWith(data+path.sep))throw Error('AUTH21_MARKETDATA_STORE_OUTSIDE_FIXTURE');
+   const runtime=path.join(root,'runtime');
+   if((p===data||!p.startsWith(data+path.sep))&&
+      !(key==='IATB_MARKET_SETTINGS'&&p.startsWith(path.join(runtime,'config')+path.sep)))
+    throw Error('AUTH21_MARKETDATA_STORE_OUTSIDE_FIXTURE');
   }
  }
  if(engine==='trading'&&env.IATB_TRADING_HISTORY){
