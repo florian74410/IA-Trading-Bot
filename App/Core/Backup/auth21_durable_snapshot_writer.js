@@ -43,6 +43,7 @@ class DurableSnapshotWriter extends LocalSnapshotWriter{
   catch(e){this.lastEpoch=previous;this.heldEpoch=held;throw e;}
  }
  release(epoch){
+  if(this.heldEpoch===null&&this.lastEpoch===epoch)return;
   if(this.heldEpoch!==epoch)throw Error('SNAPSHOT_EPOCH_MISMATCH');
   this._saveRelease(epoch);
  }
