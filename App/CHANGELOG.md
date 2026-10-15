@@ -1,3 +1,10 @@
+# IA-TB v2.0.2.1 DEBUG — Hotfix volume mondial CoinGecko
+
+- Anomalie confirmée à la source : CoinGecko /global a retourné total_volume.usd ≈ 1e21 USD pour une capitalisation ≈ 2.8e12 USD.
+- Garde conservatrice ciblée : si le volume mondial 24 h dépasse 1000 fois la capitalisation, la métrique est déclarée indisponible avant le Data Firewall et le nouveau stockage. Les autres données CeFi sont préservées.
+- Interface : N/D explicite pour la valeur courante, filtrage des anciennes observations incohérentes pour la variation, sans suppression historique.
+- Aucun changement de quotas/réessais, de Router, de liquidations ou du Trading Engine. Validation GEN-1 requise avant déclaration stable.
+
 # IA-TB v2.0.2 DEBUG — Gel des correctifs CeFi / DeFi
 
 - Périmètre figé : autorisations de lecture et affichage Statistiques, DexScreener → Data Firewall → cache/SQLite, classements Top Pools, estimations d'exécution explicitement non exécutables, historiques CeFi/DeFi et rafraîchissement asynchrone.
