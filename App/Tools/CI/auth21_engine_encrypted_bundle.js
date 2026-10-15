@@ -9,7 +9,7 @@ const {SnapshotCoordinator}=require('../../Core/Backup/snapshot_coordinator');
 const MAGIC='AUTH21_P22_ENGINE_ARCHIVE_V1';
 const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
 function assertRel(rel){
- if(typeof rel!=='string'||rel.length>200||rel.includes('\\')||!(/^(?:userdata\/(?:Shared Data|User Data|Database)\/[a-zA-Z0-9._\/ -]+\.(?:db|sqlite|jsonl)|annexes\/Strategies\/[A-Za-z0-9._\/-]+\.json|runtime\/config\/market_data_settings\.json|userdata\/Security\/client_master\.key)$/.test(rel))||
+ if(typeof rel!=='string'||rel.length>200||rel.includes('\\')||!(/^(?:userdata\/(?:Shared Data|User Data|Database)\/[a-zA-Z0-9._\/ -]+\.(?:db|sqlite|jsonl)|annexes\/(?:Strategies|Mosaics)\/[A-Za-z0-9._\/-]+\.json|runtime\/config\/market_data_settings\.json|userdata\/Security\/client_master\.key)$/.test(rel))||
    rel.split('/').some(s=>!s||s==='.'||s==='..')||
    (rel!=='userdata/Security/client_master.key' && /wallet|master|secret|credential|private|\.key/i.test(rel)))throw Error('P22_RESOURCE_DISALLOWED');
 }
@@ -32,6 +32,8 @@ function capture({env,root,resources,transportKey,coordinator,epoch}={}){
    new Set(resources).size!==resources.length)throw Error('P22_RESOURCE_LIST_INVALID');
  const required=new Set(resources.map(rel=>rel==='userdata/Security/client_master.key'||rel.startsWith('userdata/Database/')?'clients':
   rel.startsWith('annexes/Strategies/')?'annex-root':
+  rel.startsWith('annexes/Mosaics/')?'mosaics':
+  rel.endsWith('/user_data.db')?'settings':
   rel==='runtime/config/market_data_settings.json'?'marketdata':
   rel.endsWith('/trading_history.jsonl')?'trading':
   rel.startsWith('userdata/User Data/')?'portfolio':
