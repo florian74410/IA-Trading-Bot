@@ -10,6 +10,6 @@ test('source inventory reports every statically visible storage escape as unfini
  assert.ok(result.uncovered.some(v=>v.file.includes('Core/Server/server.js')));
  console.log('# P22_WRITER_CENSUS '+JSON.stringify({
   scanned:result.scanned,reviewed:result.reviewed,uncovered:result.uncovered.length,
-  examples:result.uncovered.slice(0,15).map(v=>v.file)
+  files:result.uncovered.map(v=>({file:v.file,kinds:v.kinds}))
  }));
 });
