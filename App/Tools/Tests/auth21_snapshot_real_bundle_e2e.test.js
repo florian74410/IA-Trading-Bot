@@ -41,6 +41,7 @@ test('Core freezes three real Engines, captures encrypted WAL/JSONL, restores in
  ];
  const fpath=path.join(root,resources[3]);fs.mkdirSync(path.dirname(fpath),{recursive:true,mode:0o700});
  fs.writeFileSync(fpath,'{"fixture":"snapshotted","time":123}\n',{mode:0o600});
+ fs.mkdirSync(path.dirname(path.join(root,resources[4])),{recursive:true,mode:0o700});
  fs.writeFileSync(path.join(root,resources[4]),'{"fixture":"trading-history"}\n',{mode:0o600});
  const ports={};for(const [engine] of SPEC)ports[engine]=await unusedPort();
  const env={...process.env,IATB_AUTH21_CORE_AUTH_TRIAL:'1',IATB_AUTH21_LOCAL_SNAPSHOT_TRIAL:'1',
