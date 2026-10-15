@@ -40,6 +40,17 @@ function openBusinessIngress({env}={}){
    const updated=settings.save({...settings.load(),refreshMs:input.refreshMs});
    if(updated.refreshMs!==input.refreshMs)throw Error('AUTH21_MARKETDATA_SETTINGS_SAVE_INVALID');
   }
+  if(rule.action==='portfolio.preference.set'){
+   const base=path.join(root,'userdata','User Data');
+   const db=env.IATB_PORTFOLIO_DB&&path.resolve(env.IATB_PORTFOLIO_DB);
+   if(!db||!db.startsWith(base+path.sep)||!db.endsWith('.db'))
+    throw Error('AUTH21_PORTFOLIO_DB_OUTSIDE_TRIAL');
+   const Store=require('../../Portfolio/Engine/portfolio_store');
+   const store=new Store(path.join(root,'App'),
+     {dbPath:db,username:'fixture',snapshotGate:trial.gate});
+   try{store.setSetting('auth21.preference.'+principal.clientId+'.'+input.key,input.value);}
+   finally{store.close();}
+  }
   let filename;
   if(rule.owner)filename=rule.engine+'-'+principal.clientId+'-'+input.key+'.fixture.json';
   else if(rule.action==='marketdata.settings.set')filename='marketdata-settings.fixture.json';
