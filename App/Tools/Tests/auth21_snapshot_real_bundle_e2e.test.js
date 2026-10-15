@@ -17,7 +17,8 @@ const SPEC=[
  ['marketdata','MarketData/market_data_service.js','IATB_MARKET_DATA_PORT'],
  ['fundamental','Fundamental/Engine/fundamental_service.js','IATB_FUNDAMENTAL_PORT'],
  ['trading','services/trading-engine/trading_service.js','IATB_TRADING_ENGINE_PORT'],
- ['indicators','Indicators/Engine/indicator_service.js','IATB_INDICATOR_PORT']
+ ['indicators','Indicators/Engine/indicator_service.js','IATB_INDICATOR_PORT'],
+ ['strategy','Strategy/Engine/strategy_service.js','IATB_STRATEGY_PORT']
 ];
 async function unusedPort(){const s=net.createServer();s.listen(0,'127.0.0.1');await once(s,'listening');const p=s.address().port;await new Promise(ok=>s.close(ok));return p;}
 async function probe(port){return new Promise(resolve=>{
@@ -47,7 +48,8 @@ test('Core freezes three real Engines, captures encrypted WAL/JSONL, restores in
   'annexes/Mosaics/fixture.moz.json',
   'userdata/Shared Data/MarketData/api_telemetry.db',
   'userdata/Shared Data/MarketData/market_microstructure.db',
-  'App/Indicators/Custom/p22_fixture.indicator.json'
+  'App/Indicators/Custom/p22_fixture.indicator.json',
+  'runtime/state/strategy/strategy_stats.json'
  ];
  const fpath=path.join(root,resources[3]);fs.mkdirSync(path.dirname(fpath),{recursive:true,mode:0o700});
  fs.writeFileSync(fpath,'{"fixture":"snapshotted","time":123}\n',{mode:0o600});
@@ -72,6 +74,10 @@ test('Core freezes three real Engines, captures encrypted WAL/JSONL, restores in
  fs.writeFileSync(indicatorFile,JSON.stringify({schema:'iatb.indicator.v1',id:'p22_fixture',
   name:'P22 fixture',version:'1.0',inputs:{source:{type:'series',default:'close'}},
   outputs:{value:{type:'number'}},engine:{operation:'sma'}}),{mode:0o600});
+ const strategyFile=path.join(root,resources[14]);
+ fs.mkdirSync(path.dirname(strategyFile),{recursive:true,mode:0o700});
+ fs.writeFileSync(strategyFile,JSON.stringify({schema:1,evaluations:5,signals:2,
+  holds:3,errors:0,by_strategy:{}}),{mode:0o600});
  const ports={};for(const [engine] of SPEC)ports[engine]=await unusedPort();
  const env={...process.env,IATB_AUTH21_CORE_AUTH_TRIAL:'1',IATB_AUTH21_LOCAL_SNAPSHOT_TRIAL:'1',
   IATB_AUTH21_SNAPSHOT_IPC_TRIAL:'1',IATB_DEBUG_MODE:'1',IATB_DEBUG_BOOTSTRAP:'0',
@@ -85,7 +91,7 @@ test('Core freezes three real Engines, captures encrypted WAL/JSONL, restores in
   IATB_PORTFOLIO_PORT:String(ports.portfolio),IATB_MARKET_DATA_PORT:String(ports.marketdata),
   IATB_FUNDAMENTAL_PORT:String(ports.fundamental),
   IATB_TRADING_ENGINE_PORT:String(ports.trading),IATB_TRADING_HISTORY:path.join(root,resources[4]),
-  IATB_INDICATOR_PORT:String(ports.indicators)};
+  IATB_INDICATOR_PORT:String(ports.indicators),IATB_STRATEGY_PORT:String(ports.strategy)};
  delete env.IATB_USER_DB;delete env.IATB_AUTH21_IPC_PROBE_TRIAL;
  const children=[],outputs={};
  t.after(async()=>{
@@ -116,7 +122,7 @@ test('Core freezes three real Engines, captures encrypted WAL/JSONL, restores in
  }
  const core=createSnapshotCoreClient({env,root,timeoutMs:3000});
  const coordinator=createTrial(env).coordinator;
- assert.equal(coordinator.writerIds.length,9);
+ assert.equal(coordinator.writerIds.length,10);
  assert.ok(coordinator.writerIds.includes('clients'));
  assert.ok(coordinator.writerIds.includes('trading'));
  const transportKey=crypto.randomBytes(32);
@@ -139,6 +145,7 @@ test('Core freezes three real Engines, captures encrypted WAL/JSONL, restores in
  assert.equal(JSON.parse(fs.readFileSync(path.join(dest,resources[8]),'utf8')).refreshMs,15000);
  assert.equal(JSON.parse(fs.readFileSync(path.join(dest,resources[10]),'utf8')).mosaic,'fixture');
  assert.equal(JSON.parse(fs.readFileSync(path.join(dest,resources[13]),'utf8')).id,'p22_fixture');
+ assert.equal(JSON.parse(fs.readFileSync(path.join(dest,resources[14]),'utf8')).evaluations,5);
  const restoredClient=new Database(path.join(dest,resources[5]),{readonly:true});
  assert.equal(restoredClient.prepare('SELECT value FROM fixture').get().value,'original');
  restoredClient.close();
