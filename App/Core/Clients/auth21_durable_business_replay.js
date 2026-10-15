@@ -12,7 +12,8 @@ function createDurableReplay({root,engine}={}){
  const directory=path.join(root,'runtime');
  const stat=fs.lstatSync(directory);
  if(!stat.isDirectory()||stat.isSymbolicLink()||
-  fs.realpathSync(directory)!==directory||(stat.mode&0o077)!==0)
+  fs.realpathSync(directory)!==directory||
+  (process.getuid&&stat.uid!==process.getuid()))
   throw Error('AUTH21_REPLAY_DIRECTORY_UNSAFE');
  const file=path.join(directory,'auth21-business-replay-'+engine+'.json');
  function read(){
