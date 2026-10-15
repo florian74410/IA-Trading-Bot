@@ -56,7 +56,9 @@ function preflightEnv(env){
  */
 function createTrial(env){
  const validated=preflightEnv(env);
- const coordinator=new SnapshotCoordinator({writerIds:[...IDS],timeoutMs:3000});
+ const remoteEnabled=env.IATB_AUTH21_SNAPSHOT_IPC_TRIAL==='1';
+ const remotes=remoteEnabled?['portfolio','marketdata','fundamental','trading']:[];
+ const coordinator=new SnapshotCoordinator({writerIds:[...IDS,...remotes],timeoutMs:3000});
  const gates=Object.create(null);
  for(const id of IDS){
   const gate=new LocalSnapshotWriter(id);
@@ -66,6 +68,17 @@ function createTrial(env){
    release:epoch=>gate.release(epoch),
    abort:epoch=>gate.abort(epoch)
   });
+ }
+ if(remoteEnabled){
+  const portKeys={portfolio:'IATB_PORTFOLIO_PORT',marketdata:'IATB_MARKET_DATA_PORT',
+   fundamental:'IATB_FUNDAMENTAL_PORT',trading:'IATB_TRADING_ENGINE_PORT'};
+  const client=require('./auth21_snapshot_core_client').createSnapshotCoreClient({env,root:validated.root});
+  for(const id of remotes){
+   const raw=env[portKeys[id]],port=Number(raw);
+   if(!raw||!/^\\d{4,5}$/.test(raw)||!Number.isSafeInteger(port)||port<1024||port>65535)
+    throw Error('AUTH21_REMOTE_WRITER_PORT_REQUIRED:'+id);
+   coordinator.register(id,client.participant(id,port));
+  }
  }
  return Object.freeze({
   root:validated.root,coordinator,gates:Object.freeze(gates),
