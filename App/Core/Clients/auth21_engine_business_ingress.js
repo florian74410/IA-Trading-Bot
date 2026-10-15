@@ -115,7 +115,7 @@ function openBusinessIngress({env,businessHandlers=null}={}){
    let access;
    try{trial.gate.assertWritable();access=business.verify({codec,proof,action:rule.action,bodyDigest:digest});}
    catch(_){return send(res,409,{error:'AUTH21_BUSINESS_WRITE_BLOCKED'});}
-   if(!access.allowed)return send(res,403,{error:'AUTH21_BUSINESS_DENIED'});
+   if(!access.allowed||!replayLedger.consume(proof))return send(res,403,{error:'AUTH21_BUSINESS_DENIED'});
    return send(res,200,{ok:true,action:rule.action,readOnly:true,
     providers:['BINANCE','KRAKEN','OKX','GMX']});
   }
@@ -150,7 +150,7 @@ function openBusinessIngress({env,businessHandlers=null}={}){
     }
     const verified=business.verify({codec,proof,action:rule.action,
       ownerClientId:rule.owner?input.ownerClientId:null,bodyDigest:digest});
-    if(!verified.allowed)return send(res,403,{error:'AUTH21_BUSINESS_DENIED'});
+    if(!verified.allowed||!replayLedger.consume(proof))return send(res,403,{error:'AUTH21_BUSINESS_DENIED'});
     return send(res,200,persist(rule,input,verified));
    }catch(_){return send(res,409,{error:'AUTH21_BUSINESS_WRITE_BLOCKED'});}
   });
