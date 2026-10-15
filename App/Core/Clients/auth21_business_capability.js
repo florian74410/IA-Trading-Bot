@@ -28,6 +28,6 @@ function verify({codec,proof,action,ownerClientId,bodyDigest}={}){
  if(!spec)return {allowed:false,reason:'UNKNOWN_ACTION'};
  if(spec.permission==='self.write'&&!ownerClientId)return {allowed:false,reason:'OWNER_REQUIRED'};
  return authorizeInterprocess({codec,proof,audience:spec.audience,
-  operation:spec.permission,method:'POST',ownerClientId:spec.permission==='self.write'?ownerClientId:null,action,bodyDigest});
+  operation:spec.permission,method:spec.method||'POST',ownerClientId:spec.permission==='self.write'?ownerClientId:null,action,bodyDigest});
 }
 module.exports={contract,issue,verify};
