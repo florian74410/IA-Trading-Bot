@@ -67,4 +67,27 @@ test('genuine Indicator Engine permits only Core-signed fixture settings write',
  assert.equal(JSON.parse(fs.readFileSync(target,'utf8')).refreshMs,15000);
  assert.equal((await call(port,'POST','/cp/v1',data,{'X-IATB-Auth21-Proof':issue('admin')})).status,403);
  assert.equal((await call(port,'GET','/health')).status,403);
+
+ const {createForward}=require('../../Core/Clients/auth21_router_business_forward');
+ const {createCoreBusinessHttp}=require('../../Core/Clients/auth21_core_business_http');
+ const router=http.createServer(createForward({env,indicatorPort:port}));
+ router.listen(0,'127.0.0.1');await once(router,'listening');
+ t.after(()=>new Promise(resolve=>router.close(resolve)));
+ const bearer='A'.repeat(43),userBearer='B'.repeat(43);
+ const coreSessions={verifySession:t=>t===bearer?{clientId:'CLAlice',role:'ADMIN'}:
+  t===userBearer?{clientId:'CLBob',role:'USER'}:null};
+ const core=http.createServer(createCoreBusinessHttp({sessions:coreSessions,
+  codec:proofCodec({secret}),routerPort:router.address().port,env}));
+ core.listen(0,'127.0.0.1');await once(core,'listening');
+ t.after(()=>new Promise(resolve=>core.close(resolve)));
+ const corePort=core.address().port;
+ const headers={'Content-Type':'application/json',Authorization:'Bearer '+bearer};
+ const userHeaders={'Content-Type':'application/json',Authorization:'Bearer '+userBearer};
+ assert.equal((await call(corePort,'POST',route,data,userHeaders)).status,403);
+ assert.equal((await call(corePort,'POST',route,data,{'Content-Type':'application/json'})).status,401);
+ assert.equal((await call(corePort,'POST',route,data,{...headers,Origin:'https://attacker.example'})).status,403);
+ const committed=await call(corePort,'POST',route,data,headers);
+ assert.equal(committed.status,200,committed.body);
+ assert.equal(JSON.parse(fs.readFileSync(target,'utf8')).refreshMs,15000);
+
 });
