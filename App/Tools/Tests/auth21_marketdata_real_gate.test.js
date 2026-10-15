@@ -25,4 +25,5 @@ test('MarketData fixture freezes all four writers through one gate',t=>{
  gate.abort(1);
  assert.doesNotThrow(()=>gate.assertWritable());
  assert.throws(()=>openEngineSnapshotTrial({env:{...env,IATB_FINANCIAL_STORE:'/tmp/outside.jsonl'},engine:'marketdata'}),/OUTSIDE_FIXTURE/);
+ assert.throws(()=>openEngineSnapshotTrial({env:{...env,IATB_MARKET_MICROSTRUCTURE_DB:'/tmp/outside.db'},engine:'marketdata'}),/OUTSIDE_FIXTURE/);
 });
