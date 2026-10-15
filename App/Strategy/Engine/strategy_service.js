@@ -8,7 +8,8 @@ var Adapter=require('../../Core/Communication/component_cp1_adapter'),PATHS=requ
 var Registry=require('./strategy_registry_v2'),Core=require('./strategy_v2_core'),Stats=require('./strategy_stats_v2');
 PATHS.ensureAppRuntimeDirs();
 var ROOT=PATHS.ROOT,HOST='127.0.0.1',PORT=+(process.env.IATB_STRATEGY_PORT||8018),ROUTER_PORT=+(process.env.ROUTER_PORT||8021),VERSION=BUILD.version,LOG=PATHS.RuntimeLogs.strategy;
-var registry=new Registry(ROOT),stats=new Stats(ROOT),state={mode:'RUNNING',startedAt:Date.now(),lastEvaluation:null,lastSignal:null};
+var AUTH21_STRATEGY_SNAPSHOT=process.env.IATB_AUTH21_LOCAL_SNAPSHOT_TRIAL==='1'?require('../../Core/Backup/auth21_engine_snapshot_trial').openEngineSnapshotTrial({env:process.env,engine:'strategy'}).gate:null;
+var registry=new Registry(ROOT),stats=new Stats(ROOT,AUTH21_STRATEGY_SNAPSHOT?{snapshotGate:AUTH21_STRATEGY_SNAPSHOT}:{}),state={mode:'RUNNING',startedAt:Date.now(),lastEvaluation:null,lastSignal:null};
 function log(tag,msg){try{fs.appendFileSync(LOG,'['+new Date().toISOString()+'] ['+tag+'] '+String(msg||'').replace(/[\r\n]+/g,' ').slice(0,900)+'\n','utf8');}catch(e){}}
 function send(res,code,o){var b=Buffer.from(JSON.stringify(o));res.writeHead(code,{'Content-Type':'application/json; charset=utf-8','Content-Length':b.length,'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});res.end(b);}
 function health(){return{ok:true,service:'IA-TB Strategy Engine v2',marker:'IA-TB Strategy Engine v2',version:VERSION,pid:process.pid,port:PORT,mode:state.mode,execution:'INTENTION_ONLY',supervisorReady:true,protocol:'CP/1',strategies:registry.items.length,uptimeSec:Math.round((Date.now()-state.startedAt)/1000),lastEvaluation:state.lastEvaluation,lastSignal:state.lastSignal};}
