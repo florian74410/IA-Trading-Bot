@@ -51,7 +51,7 @@ function currentRole(){return AUTH_MODE==='disabled'?BYPASS_ROLE:'SESSION';}
 function isAdminRole(role){role=Permissions.normalizeRole(role);return role==='ADMIN'||role==='SUPERADMIN';}
 function authorizePage(req,res,required,cb){if(AUTH_MODE==='disabled'){var r=BYPASS_ROLE;if(required==='ADMIN'&&!isAdminRole(r))return json(res,403,{ok:false,error:'ADMIN_REQUIRED'});return cb(r);}var h={Accept:'application/json'};if(req.headers.cookie)h.Cookie=req.headers.cookie;var q=http.get({host:'127.0.0.1',port:CORE_PORT,path:'/api/bootstrap',timeout:3000,headers:h},function(r){var a=[];r.on('data',function(c){a.push(c);});r.on('end',function(){var o={};try{o=JSON.parse(Buffer.concat(a).toString('utf8')||'{}');}catch(e){}if((r.statusCode||500)>=400||!o.authenticated)return json(res,401,{ok:false,error:'AUTH_REQUIRED'});var role=Permissions.normalizeRole(o.role||'USER');if(required==='ADMIN'&&!isAdminRole(role))return json(res,403,{ok:false,error:'ADMIN_REQUIRED'});cb(role);});});q.on('timeout',function(){q.destroy(new Error('AUTH_TIMEOUT'));});q.on('error',function(){json(res,503,{ok:false,error:'AUTH_SERVICE_UNAVAILABLE'});});}
 function allowCore(req,res,p){var c=Permissions.classify(req.method,p),role=currentRole();if(AUTH_MODE==='disabled'&&!Permissions.allowed(role,c)){json(res,403,{ok:false,error:'ACCESS_DENIED',role:role,required:c.permission});return false;}return c;}
-var server=(AUTH21_BROWSER_TLS?https.createServer(AUTH21_BROWSER_TLS,function(req,res){:http.createServer(function(req,res){var u=new URL(req.url,'http://'+HOST+':'+PORT),p=u.pathname;
+var handler=function(req,res){var u=new URL(req.url,'http://'+HOST+':'+PORT),p=u.pathname;
  var auth21Boundary=require('../../Core/Clients/auth21_service_boundary').decision(process.env,'gateway',req.method,p);
  if(auth21Boundary.intercept){if(auth21Boundary.forwardToCore)return proxy(req,res,CORE_PORT,p+u.search,{service:'Auth21 isolated Core',permission:'AUTH'});return json(res,404,{error:'NOT_FOUND'});}
  if(req.method==='GET'&&p==='/ui-health')return json(res,200,{ok:true,name:'IA-TB UI Service',version:BUILD.version,pid:process.pid,host:HOST,port:PORT,corePort:CORE_PORT,routerPort:ROUTER_PORT,firewallPort:FIREWALL_PORT,authMode:AUTH_MODE,bypassRole:AUTH_MODE==='disabled'?BYPASS_ROLE:null,separation:'UI_PROCESS_ISOLATED'});
@@ -79,7 +79,8 @@ var server=(AUTH21_BROWSER_TLS?https.createServer(AUTH21_BROWSER_TLS,function(re
  if(p.indexOf('/api/internal/')===0)return json(res,403,{ok:false,error:'UI_INTERNAL_API_FORBIDDEN'});
  if(p.indexOf('/api/')===0){var cl=allowCore(req,res,p);if(!cl)return;return proxy(req,res,CORE_PORT,p+u.search,{service:'Core API',permission:cl.permission});}
  json(res,404,{ok:false,error:'UI_ROUTE_NOT_FOUND'});
-});
+};
+var server=AUTH21_BROWSER_TLS?https.createServer(AUTH21_BROWSER_TLS,handler):http.createServer(handler);
 server.on('upgrade',function(req,socket){
  if(require("../../Core/Clients/auth21_service_boundary").active(process.env)){
   try{socket.end('HTTP/1.1 403 Forbidden\r\nConnection: close\r\n\r\n');}catch(_){socket.destroy();}
