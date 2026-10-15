@@ -6,6 +6,7 @@
 const path=require('node:path');
 const {preflightEnv}=require('./auth21_core_local_trial_wiring');
 const {LocalSnapshotWriter}=require('./snapshot_coordinator');
+const ISSUED=new Map();
 const ENGINES=new Set(['portfolio','marketdata','fundamental']);
 function openEngineSnapshotTrial({env=process.env,engine}={}){
  if(!ENGINES.has(engine)||env.IATB_AUTH21_CORE_AUTH_TRIAL!=='1')
@@ -27,10 +28,18 @@ function openEngineSnapshotTrial({env=process.env,engine}={}){
     throw Error('AUTH21_PORTFOLIO_DB_OUTSIDE_FIXTURE');
   }
  }
+ const key=engine+':'+root;
+ if(ISSUED.has(key))return ISSUED.get(key);
  const gate=new LocalSnapshotWriter(engine);
- return Object.freeze({engine,root,gate,
+ const trial=Object.freeze({engine,root,gate,
   // No remotely accessible coordinator. This module intentionally cannot
   // signal PREPARE/RELEASE without a future authenticated Core connection.
  });
+ ISSUED.set(key,trial);
+ return trial;
 }
-module.exports={openEngineSnapshotTrial};
+function currentEngineSnapshotTrial(){
+ if(ISSUED.size!==1)return null;
+ return [...ISSUED.values()][0];
+}
+module.exports={openEngineSnapshotTrial,currentEngineSnapshotTrial};
