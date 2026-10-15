@@ -18,7 +18,7 @@ function createCoreBusinessHttp({sessions,codec,routerPort,env}={}){
    'X-Content-Type-Options':'nosniff'});res.end(JSON.stringify(x));};
  return function coreBusiness(req,res){
   const rule=contract(req.url);
-  if(req.method!=='POST'||!rule||req.headers.origin||req.headers.cookie||
+  if(!rule||req.method!==(rule.method||'POST')||req.headers.origin||req.headers.cookie||
     req.headers['x-iatb-auth21-proof'])
    return send(res,403,{error:'AUTH21_BUSINESS_DENIED'});
   const match=TOKEN.exec(String(req.headers.authorization||''));
