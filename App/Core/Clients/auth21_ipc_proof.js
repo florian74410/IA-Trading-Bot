@@ -8,7 +8,7 @@ const crypto=require('node:crypto');
 const ID=/^CL[A-Za-z0-9_-]{1,64}$/;
 const LABEL=/^[a-z][a-z0-9_.:-]{0,63}$/;
 const ROLES=new Set(['ADMIN','USER','GUEST']);
-function proofCodec({secret,now=()=>Date.now(),replayWindowMs=30000}={}){
+function proofCodec({secret,now=()=>Date.now(),replayWindowMs=30000,replayStore=null}={}){
  if(!Buffer.isBuffer(secret)||secret.length<32)throw Error('AUTH21_PROOF_SECRET_REQUIRED');
  if(!Number.isSafeInteger(replayWindowMs)||replayWindowMs<1000||replayWindowMs>60000)throw Error('AUTH21_PROOF_WINDOW_INVALID');
  const used=new Map();
@@ -50,6 +50,7 @@ function proofCodec({secret,now=()=>Date.now(),replayWindowMs=30000}={}){
   if(used.has(key))return null;
   for(const [k,exp] of used){if(exp<=t)used.delete(k)}
   if(used.size>=2048)return null;
+  if(replayStore&&(!replayStore.claim||replayStore.claim(key,p.exp,t)!==true))return null;
   used.set(key,p.exp);
   return {clientId:p.sub,role:p.role,ownerClientId:p.owner};
  }
