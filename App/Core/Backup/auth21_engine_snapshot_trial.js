@@ -7,7 +7,7 @@ const path=require('node:path');
 const {preflightEnv}=require('./auth21_core_local_trial_wiring');
 const {DurableSnapshotWriter}=require('./auth21_durable_snapshot_writer');
 const ISSUED=new Map();
-const ENGINES=new Set(['portfolio','marketdata','fundamental','trading']);
+const ENGINES=new Set(['portfolio','marketdata','fundamental','trading','indicators']);
 function openEngineSnapshotTrial({env=process.env,engine}={}){
  if(!ENGINES.has(engine)||env.IATB_AUTH21_CORE_AUTH_TRIAL!=='1')
   throw Error('AUTH21_ENGINE_SNAPSHOT_TRIAL_DISABLED');
