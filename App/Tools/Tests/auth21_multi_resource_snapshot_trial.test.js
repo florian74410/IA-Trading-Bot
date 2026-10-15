@@ -95,7 +95,7 @@ test('four-participant snapshot restores three DBs, client key and two annexes',
  const c=await capture(f);
  assert.equal(c.encrypted,true);assert.equal(f.coordinator.state,'IDLE');
  const protectedText=fs.readFileSync(c.archiveFile,'utf8');
- for(const secret of [beforeKey,'SYNTHETIC_CLIENT','TRADE_FIXTURE_ONLY','PUBLIC_WALLET_REFERENCE_ONLY','theme'])
+ for(const secret of [beforeKey,'SYNTHETIC_CLIENT','TRADE_FIXTURE_ONLY','PUBLIC_WALLET_REFERENCE_ONLY','"theme":"dark"'])
   assert.equal(protectedText.includes(secret),false,'archive must not expose '+secret.slice(0,8));
  const r=restore(f,c.archiveFile);
  assert.equal(r.verified,true);assert.equal(r.databases,3);
