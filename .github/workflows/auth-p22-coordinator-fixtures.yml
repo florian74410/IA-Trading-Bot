@@ -213,6 +213,10 @@ jobs:
           node --check App/Tools/Tests/auth21_marketdata_real_gate.test.js
           node --check App/Fundamental/Engine/fundamental_service.js
           node --check App/Tools/Tests/auth21_fundamental_real_gate.test.js
+          node --check App/Core/Backup/auth21_snapshot_control.js
+          node --check App/Core/Backup/auth21_snapshot_core_client.js
+          node --check App/Tools/Tests/auth21_snapshot_real_service_ipc.test.js
+          node --check App/Core/Clients/auth21_engine_ingress.js
           node --check App/Core/Shared/paths.js
           node --check App/Core/Server/server.js
           node --check App/Core/Backup/auth21_core_local_trial_wiring.js
@@ -318,6 +322,8 @@ jobs:
           node -e "const p=require('./App/package.json');const lock=require('./App/package-lock.json');if(p.dependencies.argon2!=='0.45.1'||lock.packages[''].dependencies.argon2!=='0.45.1'||lock.packages['node_modules/argon2'].version!=='0.45.1')process.exit(1);if(typeof require('./App/node_modules/argon2').hash!=='function')process.exit(2)"
       - name: Real Engine processes reject unauthorized HTTP CP1 Upgrade and CONNECT
         run: node --test App/Tools/Tests/auth21_real_engines_ingress.test.js
+      - name: Signed snapshot IPC for three real Engine processes
+        run: node --test App/Tools/Tests/auth21_snapshot_real_service_ipc.test.js
       - name: Argon2id 64 MiB 3-pass calibration on CI runner (not GEN-1)
         run: |
           node - <<'NODE'
