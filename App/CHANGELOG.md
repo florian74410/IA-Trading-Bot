@@ -1,3 +1,13 @@
+# IA-TB v2.0.2 DEBUG — Gel des correctifs CeFi / DeFi
+
+- Périmètre figé : autorisations de lecture et affichage Statistiques, DexScreener → Data Firewall → cache/SQLite, classements Top Pools, estimations d'exécution explicitement non exécutables, historiques CeFi/DeFi et rafraîchissement asynchrone.
+- CoinGecko : déduplication des requêtes, budget persistant, réduction de cadence et pause après HTTP 429 avec conservation des dernières données CeFi validées.
+- Liquidations CeFi : normalisation par type de contrat, conversion USD contrôlée, reçus Firewall, déduplication, agrégation SQLite 24 h et affichage des montants observés partiels sans valorisation fictive des événements historiques.
+- Validation réelle GEN-1 : affichage de nouveaux événements valorisés observé ; test rapide et observation CoinGecko sur 65 min à clôturer avant toute qualification de stabilité générale.
+- Reporté à v2.0.3 : tracé des indicateurs sur le graphique Trading IA, données Bridges DeFi (provider non connecté).
+- Trois échecs de tests historiques documentés et non traités : test_risk_gate_boundary, test_client_action_ack_v1, test_router_normalization_v1.8.12.
+- Branche : debug-v2.01 ; aucun déploiement GEN-1 ni démarrage du Trading Engine dans ce commit de gel.
+
 # IA-TB v2.0.1 DEBUG — Étape 4/4 : CoinGecko et liquidations CeFi
 
 - CoinGecko : fréquences réduites, déduplication des appels, budget SQLite persistant et pause 429/Retry-After ; dernières statistiques CeFi validées conservées en cas d’erreur.
