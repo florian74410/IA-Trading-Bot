@@ -1,13 +1,13 @@
 'use strict';
-/* Single explicitly allowed Auth21 business action, on disposable DEBUG root.
- * Does not dispatch legacy CP/1, accept browser sessions or touch live settings.
+/* Real Engine HTTP ingress with an opt-in sandbox persistence adapter.
+ * Proof verified by the receiving Engine; writes never touch live resources.
  */
-const fs=require('node:fs');
-const path=require('node:path');
-const crypto=require('node:crypto');
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
 const {preflightEnv}=require('../Backup/auth21_core_local_trial_wiring');
 const {loadTrialSecret}=require('./auth21_ipc_keyfile');
 const {proofCodec}=require('./auth21_ipc_proof');
+const business=require('./auth21_business_capability');
+const {contract,validate}=require('./auth21_business_actions');
 const {createWriter}=require('./auth21_indicator_fixture_writer');
 function openBusinessIngress({env}={}){
  if(!env||env.IATB_AUTH21_BUSINESS_TRIAL!=='1'||
@@ -15,19 +15,38 @@ function openBusinessIngress({env}={}){
   throw Error('AUTH21_BUSINESS_TRIAL_DISABLED');
  const {root}=preflightEnv(env);
  const trial=require('../Backup/auth21_engine_snapshot_trial').currentEngineSnapshotTrial();
- if(!trial||trial.root!==root||trial.engine!=='indicators')
+ if(!trial||trial.root!==root||!['indicators','marketdata','fundamental','portfolio','strategy'].includes(trial.engine))
   throw Error('AUTH21_BUSINESS_WRITER_NOT_BOUND');
  const codec=proofCodec({secret:loadTrialSecret({env,root})});
  const directory=path.join(root,'runtime','auth21-business');
  fs.mkdirSync(directory,{recursive:true,mode:0o700});
- const writer=createWriter({root:directory,codec});
+ if(fs.lstatSync(directory).isSymbolicLink())throw Error('AUTH21_BUSINESS_SYMLINK');
+ const indicatorWriter=trial.engine==='indicators'?createWriter({root:directory,codec}):null;
  const send=(res,status,obj)=>{
+  if(res.writableEnded)return;
   res.writeHead(status,{'Content-Type':'application/json; charset=utf-8',
    'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Connection':'close'});
   res.end(JSON.stringify(obj));
  };
+ function persist(rule,input,principal){
+  if(rule.action==='indicator.settings.set')throw Error('AUTH21_INDICATOR_USES_OWN_WRITER');
+  let filename;
+  if(rule.owner)filename=rule.engine+'-'+principal.clientId+'-'+input.key+'.fixture.json';
+  else if(rule.action==='marketdata.settings.set')filename='marketdata-settings.fixture.json';
+  else filename='fundamental-feed.fixture.json';
+  const target=path.join(directory,filename);
+  const temp=path.join(directory,'.auth21-'+crypto.randomBytes(12).toString('hex')+'.tmp');
+  const value={action:rule.action,clientId:principal.clientId,
+    ownerClientId:rule.owner?principal.clientId:null,settings:input};
+  try{
+   fs.writeFileSync(temp,JSON.stringify(value)+'\n',{flag:'wx',mode:0o600});
+   fs.renameSync(temp,target);
+  }finally{try{fs.unlinkSync(temp);}catch(_){}}
+  return {ok:true,action:rule.action,ownerClientId:value.ownerClientId};
+ }
  return function handler(req,res){
-  if(req.method!=='POST'||req.url!=='/auth21/business/indicator/settings'||
+  const rule=contract(req.url);
+  if(!rule||rule.engine!==trial.engine||req.method!=='POST'||
     !['127.0.0.1','::1','::ffff:127.0.0.1'].includes(req.socket&&req.socket.remoteAddress)||
     req.headers.origin||req.headers.cookie||req.headers.authorization)
    return send(res,403,{error:'AUTH21_BUSINESS_DENIED'});
@@ -40,20 +59,22 @@ function openBusinessIngress({env}={}){
   req.on('end',()=>{
    if(failed)return;
    const raw=Buffer.concat(parts),digest=crypto.createHash('sha256').update(raw).digest('hex');
-   let body;
-   try{body=JSON.parse(raw.toString('utf8'));}
+   let input;
+   try{input=JSON.parse(raw.toString('utf8'));}
    catch(_){return send(res,400,{error:'INVALID_JSON'});}
-   if(!body||Array.isArray(body)||typeof body!=='object'||
-      Object.keys(body).sort().join(',')!=='enabled,refreshMs'||
-      typeof body.enabled!=='boolean'||!Number.isSafeInteger(body.refreshMs)||
-      body.refreshMs<1000||body.refreshMs>60000)
-    return send(res,400,{error:'INVALID_SETTINGS'});
+   if(!validate(rule,input))return send(res,400,{error:'INVALID_SETTINGS'});
    const proof=req.headers['x-iatb-auth21-proof'];
    if(typeof proof!=='string')return send(res,403,{error:'AUTH21_BUSINESS_DENIED'});
    try{
     trial.gate.assertWritable();
-    const result=writer.write({proof,settings:body,bodyDigest:digest});
-    return send(res,result.ok?200:403,result);
+    if(indicatorWriter){
+     const result=indicatorWriter.write({proof,settings:input,bodyDigest:digest});
+     return send(res,result.ok?200:403,result);
+    }
+    const verified=business.verify({codec,proof,action:rule.action,
+      ownerClientId:rule.owner?input.ownerClientId:null,bodyDigest:digest});
+    if(!verified.allowed)return send(res,403,{error:'AUTH21_BUSINESS_DENIED'});
+    return send(res,200,persist(rule,input,verified));
    }catch(_){return send(res,409,{error:'AUTH21_BUSINESS_WRITE_BLOCKED'});}
   });
   req.on('error',()=>{if(!res.writableEnded)send(res,400,{error:'INVALID_REQUEST'});});
