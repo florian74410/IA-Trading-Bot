@@ -196,4 +196,40 @@ test('Core freezes three real Engines, captures encrypted WAL/JSONL, restores in
   epoch:coordinator.epoch+1});
  await core.send({engine:'trading',port:ports.trading,command:'release',
   epoch:coordinator.epoch+1});
+ // Second genuine crash: another Engine's SQLite constructors refuse to
+ // open while frozen. Start a control-only recovery service, not the full
+ // engine, and ensure signed RELEASE reaches the durable held epoch.
+ const market=children[SPEC.findIndex(x=>x[0]==='marketdata')];
+ await assert.rejects(coordinator.execute(async()=>{
+  market.kill('SIGKILL');await once(market,'exit');return {shouldNotBePublished:true};
+ }),/SNAPSHOT_CLEANUP_FAILED/);
+ assert.equal(coordinator.state,'BLOCKED');
+ const helper=spawn(process.execPath,[path.join(app,'Core/Backup/auth21_frozen_recovery_service.js'),'marketdata'],
+  {cwd:app,env,stdio:['ignore','pipe','pipe']});
+ let helperLog='';helper.stdout.on('data',x=>helperLog+=x);helper.stderr.on('data',x=>helperLog+=x);
+ children.push(helper);
+ let recoveryReady=false;
+ for(let i=0;i<100;i++){
+  if(helper.exitCode!==null)assert.fail('snapshot helper died '+helperLog);
+  if(await probe(ports.marketdata)){recoveryReady=true;break;}
+  await delay(50);
+ }
+ assert.ok(recoveryReady,'frozen recovery ingress unavailable: '+helperLog);
+ await assert.rejects(core.send({engine:'marketdata',port:ports.marketdata,
+  command:'prepare',epoch:coordinator.epoch}),/SNAPSHOT_REMOTE_REJECTED/);
+ await coordinator.recoverBlocked();
+ assert.equal(coordinator.state,'IDLE');
+ if(helper.exitCode===null)await once(helper,'exit');
+ assert.equal(helper.exitCode,0);
+ const marketRestart=spawn(process.execPath,[path.join(app,'MarketData/market_data_service.js')],
+  {cwd:app,env,stdio:['ignore','pipe','pipe']});
+ let marketLog='';marketRestart.stdout.on('data',x=>marketLog+=x);
+ marketRestart.stderr.on('data',x=>marketLog+=x);children.push(marketRestart);
+ let resumed=false;
+ for(let i=0;i<100;i++){
+  if(marketRestart.exitCode!==null)assert.fail('MarketData restart '+marketLog);
+  if(await probe(ports.marketdata)){resumed=true;break;}
+  await delay(50);
+ }
+ assert.ok(resumed,'MarketData failed to restart after verified cleanup: '+marketLog);
 });
