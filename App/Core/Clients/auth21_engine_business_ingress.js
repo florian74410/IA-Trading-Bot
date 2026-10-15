@@ -46,10 +46,22 @@ function openBusinessIngress({env}={}){
  }
  return function handler(req,res){
   const rule=contract(req.url);
-  if(!rule||rule.engine!==trial.engine||req.method!=='POST'||
+  if(!rule||rule.engine!==trial.engine||req.method!==(rule.method||'POST')||
     !['127.0.0.1','::1','::ffff:127.0.0.1'].includes(req.socket&&req.socket.remoteAddress)||
     req.headers.origin||req.headers.cookie||req.headers.authorization)
    return send(res,403,{error:'AUTH21_BUSINESS_DENIED'});
+  if(rule.method==='GET'){
+   if(req.headers['transfer-encoding']||
+      (req.headers['content-length']!==undefined&&String(req.headers['content-length'])!=='0'))
+    return send(res,400,{error:'INVALID_REQUEST'});
+   const proof=req.headers['x-iatb-auth21-proof'];
+   if(typeof proof!=='string')return send(res,403,{error:'AUTH21_BUSINESS_DENIED'});
+   const digest=crypto.createHash('sha256').update(Buffer.alloc(0)).digest('hex');
+   const access=business.verify({codec,proof,action:rule.action,bodyDigest:digest});
+   if(!access.allowed)return send(res,403,{error:'AUTH21_BUSINESS_DENIED'});
+   return send(res,200,{ok:true,action:rule.action,readOnly:true,
+    providers:['BINANCE','KRAKEN','OKX','GMX']});
+  }
   let bytes=0,parts=[],failed=false;
   req.on('data',chunk=>{
    bytes+=chunk.length;
