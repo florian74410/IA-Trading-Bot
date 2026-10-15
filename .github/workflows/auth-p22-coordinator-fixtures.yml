@@ -77,6 +77,8 @@ on:
       - 'App/Tools/Tests/auth21_ipc_proof.test.js'
       - 'App/Core/Clients/auth21_service_boundary.js'
       - 'App/Core/Clients/auth21_engine_ingress.js'
+      - 'App/Core/Clients/auth21_engine_business_ingress.js'
+      - 'App/Tools/Tests/auth21_real_indicator_business_ingress.test.js'
       - 'App/Tools/Tests/auth21_real_engines_ingress.test.js'
       - 'App/Indicators/Engine/indicator_service.js'
       - 'App/Fundamental/Engine/fundamental_service.js'
@@ -182,6 +184,8 @@ on:
       - 'App/Tools/Tests/auth21_ipc_proof.test.js'
       - 'App/Core/Clients/auth21_service_boundary.js'
       - 'App/Core/Clients/auth21_engine_ingress.js'
+      - 'App/Core/Clients/auth21_engine_business_ingress.js'
+      - 'App/Tools/Tests/auth21_real_indicator_business_ingress.test.js'
       - 'App/Tools/Tests/auth21_real_engines_ingress.test.js'
       - 'App/Indicators/Engine/indicator_service.js'
       - 'App/Fundamental/Engine/fundamental_service.js'
@@ -348,6 +352,8 @@ jobs:
           node --check App/Tools/Tests/auth21_first_admin_trial.test.js
       - name: Isolated ACK and failure-handling fixtures
         run: node --test App/Tools/Tests/auth21_core_durable_recovery.test.js App/Tools/Tests/auth21_paths_frozen_runtime.test.js App/Tools/Tests/auth21_market_settings_snapshot_gate.test.js App/Tools/Tests/auth21_core_direct_writer_guard.test.js App/Tools/Tests/auth21_writer_source_census.test.js App/Tools/Tests/snapshot_coordinator.test.js App/Tools/Tests/auth21_snapshot_recovery.test.js App/Tools/Tests/auth21_durable_snapshot_writer.test.js App/Tools/Tests/auth21_portfolio_real_gate.test.js App/Tools/Tests/auth21_marketdata_real_gate.test.js App/Tools/Tests/auth21_fundamental_real_gate.test.js App/Tools/Tests/core_snapshot_writers.test.js App/Tools/Tests/portfolio_snapshot_writer.test.js App/Tools/Tests/fundamental_snapshot_writer.test.js App/Tools/Tests/fundamental_legacy_snapshot_bridge.test.js App/Tools/Tests/marketdata_snapshot_writers.test.js App/Tools/Tests/financial_jsonl_snapshot_writer.test.js App/Tools/Tests/trading_usage_jsonl_snapshot_writers.test.js App/Tools/Tests/mosaic_snapshot_writer.test.js App/Tools/Tests/client_master_key_safety.test.js
+      - name: Core-issued Indicator business proof integration (sandbox only)
+        run: node --test App/Tools/Tests/auth21_real_indicator_business_ingress.test.js
       - name: Startup paths read-only preflight and reviewed writer inventory
         run: node --test App/Tools/Tests/auth21_paths_startup_preflight.test.js App/Tools/Tests/auth21_writer_inventory.test.js App/Tools/Tests/auth21_core_local_trial_wiring.test.js App/Tools/Tests/auth21_core_updates_read_only_trial.test.js
       - name: Auth v3 offline SQLite schema fixtures (no live databases)
