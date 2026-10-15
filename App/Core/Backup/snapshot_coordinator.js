@@ -83,17 +83,19 @@ class SnapshotCoordinator {
     this.state = error ? 'ABORTING' : 'RELEASING';
     // Always signal all visited writers, including the one whose prepare failed.
     // A late prepare must ignore an already-aborted generation.
-    const failures = [];
+    const failures = [], failureCodes = Object.create(null);
     for (const { id, hooks } of visited.reverse()) {
       try {
         await this.withTimeout(() => (error ? hooks.abort(epoch) : hooks.release(epoch)));
-      } catch (_) {
+      } catch (err) {
         failures.push(id);
+        const code=String(err&&err.message||'SNAPSHOT_UNKNOWN_ERROR');
+        failureCodes[id]=/^[A-Z0-9_:-]{1,150}$/.test(code)?code:'SNAPSHOT_UNEXPECTED_FAILURE';
       }
     }
     if (failures.length) {
       // No new capture until every failed participant has confirmed cleanup.
-      this.pendingCleanup = {epoch, failedIds: failures, abort: !!error};
+      this.pendingCleanup = {epoch, failedIds: failures, abort: !!error, failureCodes};
       this.state = 'BLOCKED';
       throw new Error('SNAPSHOT_CLEANUP_FAILED');
     }
