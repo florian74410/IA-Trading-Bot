@@ -244,3 +244,40 @@ p95/p99, restauration interservices de toutes les identités et clés
 client originales sous la politique approuvée. Les tests complets Phase 6
 restent requis. **P2.2 et Phase 2 restent [ ] jusqu'à satisfaction de ces
 critères**, conformément à la règle de non-clôture anticipée.
+
+### Validation CLI locale et verrouillage navigateur — 15/10/2026
+
+Code validé : `e5179d68501d65f3b6d7196196a086bceb0d0660`, sur
+`feature/debug-2.1-auth-design`, après rapprochement avec `a6105bcc`.
+Preuves CI : [P2.2 SUCCESS](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38757949452),
+[P2.1 SUCCESS](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38757949256),
+[RBAC SUCCESS](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38757949241).
+
+- CLI : création chiffrée identité/login atomique, rôles, activation,
+  désactivation, suppression du login uniquement, réinitialisation du mot
+  de passe et audit minimal. Protection du dernier ADMIN maintenue ;
+  réautorisation après KDF et révocation de la session opérateur après commande.
+  Saisie Unicode sans écho ; secrets absents des arguments et sorties.
+- Runtime isolé : administration **hors ligne**, uniquement sur schéma v3 et
+  clé préexistants. Core et CLI prennent le même verrou noyau Linux ; une
+  sauvegarde en attente de récupération bloque la CLI. Le verrou est libéré
+  même après SIGKILL. Aucun contournement de la barrière de sauvegarde.
+- UI : verrouillage manuel persisté côté serveur, reprise de l'écran
+  verrouillé après rechargement et déconnexion possible depuis cet écran.
+  L'API d'état ne fournit ni principal métier ni bearer. CSRF reste exigé ;
+  mauvais mot de passe et actions métier sur session verrouillée sont refusés.
+- Vérification locale : **452 tests Node réussis, 1 test TTY non-root ignoré**
+  car cet hôte ne peut mapper un autre UID ; **15 tests SQL Python réussis**.
+  Le test TTY a ensuite **réussi sans skip en CI Linux**, avec le véritable
+  exécutable CLI et la base du banc. Trois tests supplémentaires de comportement
+  UI ont réussi localement (rechargement, timeout, échec de déconnexion).
+- Compagnon `IA-TB-CLI` : commit `9521c046e1d84d7de2d0033bc97bd8a3ee5d4e73`
+  sur sa branche `feature/debug-2.1-auth-design` ; commande locale `iatb users`,
+  aucun SSH ; **12 tests Python réussis**. Aucun changement de `main`.
+
+**Pas de clôture des phases 2 à 6.** Cette validation ne remplace pas la
+migration des parcours métier légitimes encore bloqués dans les 103 routes
+Core recensées, l'inventaire des routes dynamiques/CP1/WS, la qualification
+exhaustive des écrivains ni la campagne complète de charge/rollback.
+Le plan conserve ces critères ouverts. Aucun accès ou déploiement GEN-1,
+aucun ordre LIVE, aucune modification des clés Wallet.
