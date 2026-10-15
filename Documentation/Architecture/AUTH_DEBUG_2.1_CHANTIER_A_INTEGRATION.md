@@ -89,3 +89,46 @@ avec cookie/CSRF n'est pas encore branchée en conditions réelles et trois
 des cinq POST métier utilisent encore une persistance de fixture plutôt
 qu'une intégration fonctionnelle complète. Il serait incorrect d'annoncer
 que le chantier A est prêt pour B.
+
+
+## Rapprochement code réel / validations — 15 octobre 2026 (après-midi)
+
+Le code de branche dispose **maintenant** d'une interface Auth21 dédiée
+`Frontend/Pages/auth21.html` et `auth21_ui.js`, d'un Gateway et Core en HTTPS
+sur banc isolé, de cookies `__Host-iatb21` et d'un CSRF avec validation serveur.
+Les tests `auth21_browser_core_tls_integration.test.js`,
+`auth21_gateway_tls_browser_e2e.test.js` et
+`auth21_full_browser_real_core_engine_e2e.test.js` sont inclus dans le
+workflow d'intégration. Le dernier parcours traverse les vrais processus
+Gateway, Core, Router et Indicator, sans exposer le bearer au JavaScript ;
+il vérifie l'écriture dans le véritable Settings Store isolé.
+
+La persistance métier MarketData, Portfolio, Fundamental et Strategy est
+également désormais raccordée à des stores DEBUG isolés (vérifications par
+permissions/propriété et configuration de racine stricte). Le modèle
+d'autorisation ne concerne pour le moment que **six actions explicitement
+déclarées**, les opérations Trading LIVE et Wallet restant interdites.
+
+Un problème de rejeu après redémarrage d'Engine est traité par le
+`replayStore` persistant de `auth21_ipc_proof.js` et
+`auth21_durable_business_replay.js` ; toute duplication concurrente de
+mécanisme a été supprimée pour préserver une seule source de vérité.
+Le validateur Fundamental refuse désormais les URL HTTPS pointant directement
+vers des IP, `localhost` et les hôtes internes usuels. L'interface ne
+déclare plus une déconnexion réussie si Core n'a pas confirmé la révocation
+de session.
+
+**Preuves du dernier commit de sécurité validé :**
+- [P2.2](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38753043157) — SUCCESS ;
+- [P2.1](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38753043193) — SUCCESS ;
+- [RBAC](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38753043185) — SUCCESS.
+
+**Critère non satisfait :** le serveur Core contient plus de 100 chemins API
+legacy potentiels ; leur adaptation au contexte Auth21, ainsi que les routes
+Router/Engines restantes, n'a pas été validée de bout en bout. Les garder
+bloqués évite de traiter les anciens cookies ou en-têtes comme des preuves.
+La présence d'une UI Auth21 dédiée ne signifie pas que toutes les pages
+fonctionnelles historiques de Trading IA sont migrées.
+
+**Décision : A n'est pas clos et B ne démarre pas.** Pas de GEN-1, pas de
+migration d'identité réelle, pas d'ordre LIVE.
