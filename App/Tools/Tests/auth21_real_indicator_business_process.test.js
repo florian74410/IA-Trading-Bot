@@ -68,16 +68,26 @@ test('genuine Indicator Engine permits only Core-signed fixture settings write',
  assert.equal((await call(port,'POST','/cp/v1',data,{'X-IATB-Auth21-Proof':issue('admin')})).status,403);
  assert.equal((await call(port,'GET','/health')).status,403);
 
- const {createForward}=require('../../Core/Clients/auth21_router_business_forward');
  const {createCoreBusinessHttp}=require('../../Core/Clients/auth21_core_business_http');
- const router=http.createServer(createForward({env,indicatorPort:port}));
- router.listen(0,'127.0.0.1');await once(router,'listening');
- t.after(()=>new Promise(resolve=>router.close(resolve)));
+ const businessRouterPort=await freePort();
+ const routerEnv={...env,ROUTER_PORT:String(businessRouterPort),IATB_INDICATOR_PORT:String(port)};
+ const router=spawn(process.execPath,[path.join(app,'Core/Router/router.js')],
+  {cwd:app,env:routerEnv,stdio:['ignore','pipe','pipe']});
+ let routerLog='';router.stdout.on('data',x=>routerLog+=x);
+ router.stderr.on('data',x=>routerLog+=x);
+ t.after(async()=>{if(router.exitCode===null&&router.signalCode===null){router.kill('SIGKILL');await once(router,'exit');}});
+ let routerReady=false;
+ for(let i=0;i<120;i++){
+  if(router.exitCode!==null)assert.fail('ROUTER_EXIT: '+routerLog);
+  try{routerReady=(await call(businessRouterPort,'GET','/router-health')).status===404;}catch(_){}
+  if(routerReady)break;await delay(50);
+ }
+ assert.equal(routerReady,true,'ROUTER_NOT_READY: '+routerLog);
  const bearer='A'.repeat(43),userBearer='B'.repeat(43);
  const coreSessions={verifySession:t=>t===bearer?{clientId:'CLAlice',role:'ADMIN'}:
   t===userBearer?{clientId:'CLBob',role:'USER'}:null};
  const core=http.createServer(createCoreBusinessHttp({sessions:coreSessions,
-  codec:proofCodec({secret}),routerPort:router.address().port,env}));
+  codec:proofCodec({secret}),routerPort:businessRouterPort,env}));
  core.listen(0,'127.0.0.1');await once(core,'listening');
  t.after(()=>new Promise(resolve=>core.close(resolve)));
  const corePort=core.address().port;
