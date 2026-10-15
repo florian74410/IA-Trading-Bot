@@ -78,7 +78,8 @@ test('real Gateway HTTPS proxies secure cookie login and CSRF through pinned HTT
    rejectUnauthorized:false,headers:{Origin:origin,'Content-Length':Buffer.byteLength(raw),
    ...(body===null?{}:{'Content-Type':'application/json'}),...extra}},r=>{
     let data='';r.on('data',x=>data+=x);r.on('end',()=>resolve({
-      status:r.statusCode,json:JSON.parse(data),cookies:r.headers['set-cookie']||[]}));
+      status:r.statusCode,json:(()=>{try{return JSON.parse(data)}catch(_){return null}})(),
+      text:data,headers:r.headers,cookies:r.headers['set-cookie']||[]}));
   });q.on('error',reject);q.end(raw);
  });
  let ready=false;
@@ -88,10 +89,16 @@ test('real Gateway HTTPS proxies secure cookie login and CSRF through pinned HTT
   if(ready)break;await delay(50);
  }
  assert.ok(ready,'Gateway not ready: '+logs);
+ const page=await get('/','GET');
+ assert.equal(page.status,200);assert.match(page.text,/Centre de session/);
+ assert.match(page.headers['content-security-policy'],/script-src 'self'/);
+ assert.equal((await get('/auth21/ui.js','GET')).status,200);
  const login=await get('/auth21/login','POST',{clientId:'CLAlice',password:'test'});
  assert.equal(login.status,200,JSON.stringify(login.json));
  assert.equal(login.json.token,undefined);
  const cookie=login.cookies[0].split(';')[0],csrf=login.json.csrfToken;
+ const refreshed=await get('/auth21/csrf','GET',null,{Cookie:cookie});
+ assert.equal(refreshed.status,200);assert.equal(refreshed.json.csrfToken,csrf);
  assert.match(login.cookies[0],/Secure; HttpOnly; SameSite=Strict/);
  assert.equal((await get('/auth21/preferences?scope=ui&key=theme','PUT',
   {value:'dark'},{Cookie:cookie})).status,403);
