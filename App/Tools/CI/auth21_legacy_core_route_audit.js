@@ -10,7 +10,7 @@ const GROUPS=Object.freeze({
  'wallet-key-transfer-denied':/^\/api\/(?:bank\/|security\/wallets(?:\/|$)|transfers(?:\/|$)|onchain(?:\/|$)|swap-bridge(?:\/|$))/,
  'legacy-account':/^\/api\/(?:client\/|profile$|session\/)/,
  'external-side-effects':/^\/api\/(?:chat$|companion\/|chart-viewer\/chat$|settings\/test-|notifications\/test$)/,
- 'user-private-settings':/^\/api\/(?:settings(?:\/|$)|app-settings\/|notifications(?:\/|$)|mosaics(?:\/|$)|credits\/|token-usage$)/,
+ 'user-private-settings':/^\/api\/(?:settings(?!\/test-)(?:\/|$)|app-settings\/|notifications(?!\/test$)(?:\/|$)|mosaics(?:\/|$)|credits\/|token-usage$)/,
  'diagnostics':/^\/api\/(?:health$|bootstrap$|status$|logs$|chart-viewer\/status$)/
 });
 function scan(src=fs.readFileSync(source,'utf8')){
