@@ -1,4 +1,7 @@
 'use strict';
+// Auth21 P2.2: independent maintenance tools must not bypass a held global snapshot.
+if(process.env.IATB_AUTH21_LOCAL_SNAPSHOT_TRIAL==='1'&&process.env.IATB_AUTH21_SNAPSHOT_IPC_TRIAL==='1')throw Error('AUTH21_MAINTENANCE_BLOCKED_DURING_SNAPSHOT');
+
 // Static-only audit. Never require() trading modules or start Trading Engine.
 const fs=require('node:fs'),assert=require('node:assert/strict');
 const {spawnSync}=require('node:child_process');
