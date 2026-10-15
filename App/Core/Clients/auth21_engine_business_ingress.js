@@ -22,8 +22,7 @@ function openBusinessIngress({env,businessHandlers=null}={}){
  const directory=path.join(root,'runtime','auth21-business');
  fs.mkdirSync(directory,{recursive:true,mode:0o700});
  if(fs.lstatSync(directory).isSymbolicLink())throw Error('AUTH21_BUSINESS_SYMLINK');
- const indicatorWriter=trial.engine==='indicators'?createWriter({root:directory,codec,
-  onVerified:proof=>replayLedger.consume(proof)}):null;
+ const indicatorWriter=trial.engine==='indicators'?createWriter({root:directory,codec}):null;
  const send=(res,status,obj)=>{
   if(res.writableEnded)return;
   res.writeHead(status,{'Content-Type':'application/json; charset=utf-8',
@@ -116,7 +115,7 @@ function openBusinessIngress({env,businessHandlers=null}={}){
    let access;
    try{trial.gate.assertWritable();access=business.verify({codec,proof,action:rule.action,bodyDigest:digest});}
    catch(_){return send(res,409,{error:'AUTH21_BUSINESS_WRITE_BLOCKED'});}
-   if(!access.allowed||!replayLedger.consume(proof))return send(res,403,{error:'AUTH21_BUSINESS_DENIED'});
+   if(!access.allowed)return send(res,403,{error:'AUTH21_BUSINESS_DENIED'});
    return send(res,200,{ok:true,action:rule.action,readOnly:true,
     providers:['BINANCE','KRAKEN','OKX','GMX']});
   }
@@ -151,7 +150,7 @@ function openBusinessIngress({env,businessHandlers=null}={}){
     }
     const verified=business.verify({codec,proof,action:rule.action,
       ownerClientId:rule.owner?input.ownerClientId:null,bodyDigest:digest});
-    if(!verified.allowed||!replayLedger.consume(proof))return send(res,403,{error:'AUTH21_BUSINESS_DENIED'});
+    if(!verified.allowed)return send(res,403,{error:'AUTH21_BUSINESS_DENIED'});
     return send(res,200,persist(rule,input,verified));
    }catch(error){
     if(env.IATB_AUTH21_LOCAL_SNAPSHOT_TRIAL==='1')
