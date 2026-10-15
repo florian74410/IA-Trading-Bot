@@ -38,7 +38,10 @@ test('real service HTTP entrypoints invoke the isolated boundary before legacy h
  for(const [relative,proof] of specs){
   const source=fs.readFileSync(path.resolve(__dirname,relative),'utf8');
   const gate=source.indexOf(proof),server=source.indexOf('createServer(');
-  assert.ok(gate>server&&server>=0,relative);
+  if(relative.includes('Gateway/')){
+   const handler=source.indexOf('var handler=function(req,res){');
+   assert.ok(handler>=0&&gate>handler&&server>gate,relative);
+  }else assert.ok(gate>server&&server>=0,relative);
  }
 });
 
