@@ -1,12 +1,13 @@
 'use strict';
 /* Auth 2.1 P2.2: Core-LOCAL trial injection for fixture-only Core owners.
  * No HTTP endpoints, no credentials, no trading, and NEVER GEN-1.
- * This does not coordinate MarketData/Portfolio/Fundamental processes.
+ * Interprocess coordination is enabled only on explicit isolated DEBUG trial.
  */
 const fs=require('node:fs');
 const os=require('node:os');
 const path=require('node:path');
 const {SnapshotCoordinator,LocalSnapshotWriter}=require('./snapshot_coordinator');
+const {DurableSnapshotWriter}=require('./auth21_durable_snapshot_writer');
 const MARKER='.iatb-auth21-core-local-trial';
 const CONTENT='IATB_AUTH21_CORE_LOCAL_TRIAL_ONLY\n';
 const IDS=Object.freeze(['clients','settings','mosaics','annex-root']);
@@ -61,7 +62,7 @@ function createTrial(env){
  const coordinator=new SnapshotCoordinator({writerIds:[...IDS,...remotes],timeoutMs:3000});
  const gates=Object.create(null);
  for(const id of IDS){
-  const gate=new LocalSnapshotWriter(id);
+  const gate=remoteEnabled?new DurableSnapshotWriter(id,validated.root):new LocalSnapshotWriter(id);
   gates[id]=gate;
   coordinator.register(id,{
    prepare:epoch=>gate.prepare(epoch),
@@ -79,6 +80,37 @@ function createTrial(env){
    if(!raw||!/^[0-9]{4,5}$/.test(raw)||!Number.isSafeInteger(port)||port<1024||port>65535)
     throw Error('AUTH21_REMOTE_WRITER_PORT_REQUIRED:'+id);
    coordinator.register(id,client.participant(id,port));
+  }
+ }
+ if(remoteEnabled){
+  // Core must never reuse an epoch after a restart. Reconstruct from the
+  // durable acknowledgements of all local/remote writers, then require
+  // explicit ABORT of every held generation before another snapshot.
+  let maxEpoch=0;
+  const held=[];
+  for(const id of coordinator.writerIds){
+   const file=path.join(validated.root,'runtime','auth21-snapshot-'+id+'.json');
+   if(!fs.existsSync(file))continue;
+   const stat=fs.lstatSync(file);
+   if(!stat.isFile()||stat.isSymbolicLink()||(stat.mode&0o077)!==0)
+    throw Error('AUTH21_CORE_SNAPSHOT_JOURNAL_UNSAFE');
+   let value;
+   try{value=JSON.parse(fs.readFileSync(file,'utf8'));}catch(_){
+    throw Error('AUTH21_CORE_SNAPSHOT_JOURNAL_CORRUPT');
+   }
+   if(!value||value.writerId!==id||!Number.isSafeInteger(value.lastEpoch)||
+      value.lastEpoch<0||!(value.heldEpoch===null||
+       (Number.isSafeInteger(value.heldEpoch)&&value.heldEpoch===value.lastEpoch)))
+    throw Error('AUTH21_CORE_SNAPSHOT_JOURNAL_CORRUPT');
+   maxEpoch=Math.max(maxEpoch,value.lastEpoch);
+   if(value.heldEpoch!==null)held.push({id,epoch:value.heldEpoch});
+  }
+  coordinator.epoch=maxEpoch;
+  if(held.length){
+   const epochs=new Set(held.map(x=>x.epoch));
+   if(epochs.size!==1)throw Error('AUTH21_CORE_SNAPSHOT_INCONSISTENT_EPOCHS');
+   coordinator.pendingCleanup={epoch:held[0].epoch,failedIds:held.map(x=>x.id),abort:true};
+   coordinator.state='BLOCKED';
   }
  }
  return Object.freeze({
