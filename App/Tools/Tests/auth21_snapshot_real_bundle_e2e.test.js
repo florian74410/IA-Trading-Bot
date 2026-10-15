@@ -106,6 +106,18 @@ test('Core freezes three real Engines, captures encrypted WAL/JSONL, restores in
  const rejected=path.join(os.tmpdir(),'iatb-auth21-restore-'+crypto.randomBytes(9).toString('hex'));
  assert.throws(()=>restore({archive,transportKey:crypto.randomBytes(32),outputDir:rejected}),/P22_ARCHIVE_AUTH_FAILED/);
  assert.equal(fs.existsSync(rejected),false);
+ // Measure real HTTP barrier coordination latency, not synthetic callback latency.
+ const timings=[];
+ for(let i=0;i<16;i++){
+  const started=process.hrtime.bigint();
+  await coordinator.execute(()=>({ok:true}));
+  timings.push(Number(process.hrtime.bigint()-started)/1e6);
+ }
+ timings.sort((a,b)=>a-b);
+ const p95=timings[Math.ceil(.95*timings.length)-1];
+ const p99=timings[Math.ceil(.99*timings.length)-1];
+ console.log('# P22_LIVE_ENGINE_BARRIER_LATENCY_MS '+JSON.stringify({samples:timings.length,p95,p99,max:timings.at(-1)}));
+ assert.ok(Number.isFinite(p95)&&Number.isFinite(p99)&&p99>=p95);
  // A genuine Engine crash after all PREPARE ACKs MUST NOT yield a successful
  // backup. Core keeps the entire coordinator BLOCKED for operator recovery.
  const trading=children[SPEC.findIndex(x=>x[0]==='trading')];
