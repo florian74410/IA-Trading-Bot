@@ -38,9 +38,10 @@ function census(root){
   }
  }
  walk(app);
- const uncovered=seen.filter(x=>!x.reviewed||!x.containsSnapshotGate);
+ const uncovered=seen.filter(x=>!x.reviewed||!x.containsSnapshotGate).map(x=>({...x,priority:x.kinds.includes('filesystem')?'potential-write':x.kinds.includes('sqlite')?'sql-call':'process-only'}));
  return {scanned:seen.length,reviewed:seen.filter(x=>x.reviewed&&x.containsSnapshotGate).length,
   uncovered:uncovered.sort((a,b)=>a.file.localeCompare(b.file)),
+  priorities:Object.fromEntries(['potential-write','sql-call','process-only'].map(k=>[k,uncovered.filter(x=>x.priority===k).length])),
   coverageComplete:uncovered.length===0,
   warning:'Syntactic census only; dynamic writers, scripts and non-JS paths need manual validation'};
 }
