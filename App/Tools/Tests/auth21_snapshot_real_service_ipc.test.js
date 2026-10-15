@@ -10,7 +10,8 @@ const APP=path.resolve(__dirname,'../..');
 const SPEC=[
  ['portfolio','Portfolio/Engine/portfolio_service.js','IATB_PORTFOLIO_PORT'],
  ['marketdata','MarketData/market_data_service.js','IATB_MARKET_DATA_PORT'],
- ['fundamental','Fundamental/Engine/fundamental_service.js','IATB_FUNDAMENTAL_PORT']
+ ['fundamental','Fundamental/Engine/fundamental_service.js','IATB_FUNDAMENTAL_PORT'],
+ ['trading','services/trading-engine/trading_service.js','IATB_TRADING_ENGINE_PORT']
 ];
 async function unusedPort(){const s=net.createServer();s.listen(0,'127.0.0.1');await once(s,'listening');const p=s.address().port;await new Promise(r=>s.close(r));return p;}
 function request(port,method,target,headers={},body=''){return new Promise((resolve,reject)=>{
