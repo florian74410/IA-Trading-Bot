@@ -27,7 +27,7 @@ const REMAINING_RISKS=Object.freeze([
  'SnapshotGate is injected only into the isolated DEBUG runtime; normal runtime remains uncoordinated',
  'Remaining unregistered writable auxiliary services and administrative scripts require conservative triage',
  'Unreviewed startup/update/restart scripts and unlisted Annexes are not covered',
- 'Crash/recovery, generation proof, latency and complete inter-Engine tests deferred to Phase 6'
+ 'Crash/recovery and encrypted fixture restore have CI evidence; coverage of unregistered writers and in-service operations is not yet proven'
 ]);
 
 function inspectWriters(sourceRoot){
