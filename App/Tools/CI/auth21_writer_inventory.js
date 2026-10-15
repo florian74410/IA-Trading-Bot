@@ -24,8 +24,8 @@ const WRITERS=Object.freeze([
 
 const REMAINING_RISKS=Object.freeze([
  'Runtime Core/Shared/paths.js still performs eager initialization on NORMAL imports',
- 'No snapshotGate injected in active runtime constructors',
- 'Real SQLite and JSONL writers in independent processes not coordinated',
+ 'SnapshotGate is injected only into the isolated DEBUG runtime; normal runtime remains uncoordinated',
+ 'Remaining unregistered writable auxiliary services and administrative scripts require conservative triage',
  'Unreviewed startup/update/restart scripts and unlisted Annexes are not covered',
  'Crash/recovery, generation proof, latency and complete inter-Engine tests deferred to Phase 6'
 ]);
@@ -45,7 +45,7 @@ function inspectWriters(sourceRoot){
  const legacyPaths=fs.readFileSync(path.join(root,'Core','Shared','paths.js'),'utf8');
  for(const marker of [
   'IATB_PATHS_PREFLIGHT_READONLY','assertStartupWritable()',
-  'if(!PREFLIGHT_READONLY){ensureAppRuntimeDirs();',
+  'if(!PREFLIGHT_READONLY&&!SNAPSHOT_FROZEN_STARTUP){ensureAppRuntimeDirs();',
   'ensureInternalServiceRuntimeKey();ensureCommunicationProtocolRuntimeKey();'
  ]){
   if(!legacyPaths.includes(marker))throw Error('AUTH21_PATHS_PREFLIGHT_GUARD_MISSING');
