@@ -301,6 +301,13 @@ function uiRead(action,args){
   return o.data!==undefined?o.data:o;
  })});
 }
+function safeGlobalVolume(g){
+ var v=number(g&&g.totalVolume24hUsd),cap=number(g&&g.marketCapUsd);
+ return v!=null&&v>=0&&cap!=null&&cap>0&&v<=cap*1000?v:null;
+}
+function validGlobalHistory(h){
+ return ((h&&h.items)||[]).filter(function(x){return x&&x.cefi&&safeGlobalVolume(x.cefi.global)!=null;});
+}
 function historyValues(h,family,pathName){
  var rows=(h&&h.items)||[],out=[],parts=String(pathName||'').split('.');
  rows.forEach(function(x){
@@ -326,19 +333,19 @@ function applyFinancialSnapshot(s,cefiHistory,defiHistory,oi,liq,dexLiquidity){
   var assets=(c.assets||[]).filter(function(x){return x&&x.volume24hUsd!=null&&isFinite(+x.volume24hUsd)&&+x.volume24hUsd>0}).slice(0,8),
       maxAsset=Math.max.apply(Math,assets.map(function(x){return+x.volume24hUsd||0}).concat([1]));
   state.cefi.assets=assets.map(function(x){return[x.symbol||x.name,money(x.volume24hUsd),scaled(x.volume24hUsd,maxAsset)]});
-  var cv=historyValues(cefiHistory,'CEFI','global.totalVolume24hUsd'),
+  var globalVolume=safeGlobalVolume(c.global),cv=historyValues({items:validGlobalHistory(cefiHistory)},'CEFI','global.totalVolume24hUsd'),
       spotSeries=historySeries(cefiHistory,'CEFI','spotVolume24hUsd');
   if(exAvailable){var ts=+c.observedAt||+s.timestamp||Date.now(),last=spotSeries[spotSeries.length-1];if(!last||last.timestamp!==ts)spotSeries.push({timestamp:ts,valueUsd:exTotal});}
   state.cefi.volumeHistory=spotSeries;
   var currentSeries=cexSeriesRange(spotSeries,state.cefi.volumeRange||'24H'),spotHist=currentSeries.map(function(x){return+x.valueUsd});
   var partial=c.partial===true||!exAvailable||!assets.length,partialNote=(c.errors&&c.errors.length)?' · '+String(c.errors[0]).slice(0,54):'';
   setKpi('cefiVolume24',exAvailable?money(exTotal):'N/D',exAvailable?trend(spotHist):'Indisponible',exAvailable?'CoinGecko · échantillon des exchanges CEX suivis':'CoinGecko · données exchanges indisponibles'+partialNote);
-  setKpi('cefiSpot24',money(c.global&&c.global.totalVolume24hUsd),trend(cv),'CoinGecko · volume global du marché crypto');
+  setKpi('cefiSpot24',globalVolume==null?'N/D':money(globalVolume),globalVolume==null?'Indisponible':trend(cv),globalVolume==null?'CoinGecko · volume mondial incohérent ou indisponible':'CoinGecko · volume global du marché crypto');
   var donut=q('.cefiDonut b');if(donut)donut.textContent=exAvailable?money(exTotal):'N/D';
   var fresh=meta.freshness&&meta.freshness.cefi,age=fresh&&fresh.observedAt?Math.max(0,Date.now()-fresh.observedAt):null;
   state.cefi.health=[
    ['Market cap',money(c.global&&c.global.marketCapUsd),'good'],
-   ['Volume marché 24h',money(c.global&&c.global.totalVolume24hUsd),'good'],
+   ['Volume marché 24h',globalVolume==null?'N/D':money(globalVolume),globalVolume==null?'warn':'good'],
    ['Provider',partial?'CoinGecko · partiel':'CoinGecko',partial?'warn':'good'],
    ['Fraîcheur',age==null?'--':Math.round(age/1000)+' s',age!=null&&fresh&&age<=fresh.ttlMs?'good':'warn']
   ];
