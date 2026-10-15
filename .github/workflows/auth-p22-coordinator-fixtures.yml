@@ -79,6 +79,8 @@ on:
       - 'App/Core/Clients/auth21_engine_ingress.js'
       - 'App/Core/Clients/auth21_engine_business_ingress.js'
       - 'App/Core/Clients/auth21_business_actions.js'
+      - 'App/Core/Clients/auth21_durable_business_replay.js'
+      - 'App/Tools/Tests/auth21_durable_business_replay.test.js'
       - 'App/Tools/Tests/auth21_business_actions.test.js'
       - 'App/Tools/Tests/auth21_multi_engine_business_e2e.test.js'
       - 'App/Tools/Tests/auth21_core_business_sqlite_sessions.test.js'
@@ -386,6 +388,8 @@ jobs:
         run: node --test App/Tools/Tests/auth21_browser_core_tls_integration.test.js App/Tools/Tests/auth21_gateway_tls_browser_e2e.test.js
       - name: Real SQLite session Argon2 ADMIN business revocation integration
         run: node --test App/Tools/Tests/auth21_core_business_sqlite_sessions.test.js
+      - name: Durable HMAC business proof replay across Engine restarts
+        run: node --test App/Tools/Tests/auth21_durable_business_replay.test.js
       - name: Five real Engine business actions with scoped ADMIN and USER ownership
         run: node --test App/Tools/Tests/auth21_multi_engine_business_e2e.test.js
       - name: Real Engine processes reject unauthorized HTTP CP1 Upgrade and CONNECT
