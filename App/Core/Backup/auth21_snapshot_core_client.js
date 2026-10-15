@@ -6,7 +6,7 @@ const http=require('node:http'),crypto=require('node:crypto');
 const {preflightEnv}=require('./auth21_core_local_trial_wiring');
 const {loadTrialSecret}=require('../Clients/auth21_ipc_keyfile');
 const {proofCodec}=require('../Clients/auth21_ipc_proof');
-const ENGINES=new Set(['portfolio','marketdata','fundamental','trading','indicators']);
+const ENGINES=new Set(['portfolio','marketdata','fundamental','trading','indicators','strategy']);
 const COMMANDS=new Set(['prepare','release','abort']);
 function createSnapshotCoreClient({env,root,timeoutMs=3000}={}){
  if(!env||env.IATB_AUTH21_SNAPSHOT_IPC_TRIAL!=='1'||
