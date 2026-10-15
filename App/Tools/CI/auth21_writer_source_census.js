@@ -5,6 +5,7 @@
  */
 const fs=require('node:fs'),path=require('node:path');
 const {WRITERS}=require('./auth21_writer_inventory');
+const {classify}=require('./auth21_writer_triage');
 const OMIT=new Set(['node_modules','.runtime','.git','Data','Logs','Tests','CI','fixtures','dist','vendor']);
 const PATTERNS=[
  ['filesystem',/\b(?:fs|fsp|fsPromises|promises)\.(?:writeFile|appendFile|rename|copyFile|rm|unlink|truncate|mkdir|open|createWriteStream|cp|rmdir)(?:Sync)?\s*\(/g],
@@ -38,9 +39,10 @@ function census(root){
   }
  }
  walk(app);
- const uncovered=seen.filter(x=>!x.reviewed||!x.containsSnapshotGate).map(x=>({...x,priority:x.kinds.includes('filesystem')?'potential-write':x.kinds.includes('sqlite')?'sql-call':'process-only'}));
+ const uncovered=seen.filter(x=>!x.reviewed||!x.containsSnapshotGate).map(x=>({...x,group:classify(x.file),priority:x.kinds.includes('filesystem')?'potential-write':x.kinds.includes('sqlite')?'sql-call':'process-only'}));
  return {scanned:seen.length,reviewed:seen.filter(x=>x.reviewed&&x.containsSnapshotGate).length,
   alreadyReviewedTotal:WRITERS.length,
+  untriaged:uncovered.filter(x=>!x.group),
   uncovered:uncovered.sort((a,b)=>a.file.localeCompare(b.file)),
   priorities:Object.fromEntries(['potential-write','sql-call','process-only'].map(k=>[k,uncovered.filter(x=>x.priority===k).length])),
   coverageComplete:uncovered.length===0,
