@@ -152,6 +152,34 @@ test('Core freezes three real Engines, captures encrypted WAL/JSONL, restores in
  const rejected=path.join(os.tmpdir(),'iatb-auth21-restore-'+crypto.randomBytes(9).toString('hex'));
  assert.throws(()=>restore({archive,transportKey:crypto.randomBytes(32),outputDir:rejected}),/P22_ARCHIVE_AUTH_FAILED/);
  assert.equal(fs.existsSync(rejected),false);
+ // Full backup and restore p95/p99 includes actual SQLite serialization,
+ // JSONL, Annexes, original synthetic client key, AEAD and scratch restore.
+ const fullTimes=[];
+ for(let i=0;i<20;i++){
+  const begin=process.hrtime.bigint();
+  const encrypted=await coordinator.execute(({epoch})=>capture({
+   env,root,resources,transportKey,coordinator,epoch
+  }));
+  const out=path.join(os.tmpdir(),'iatb-auth21-restore-'+crypto.randomBytes(9).toString('hex'));
+  try{const done=restore({archive:encrypted,transportKey,outputDir:out});
+   assert.equal(done.files.length,resources.length);
+  }finally{fs.rmSync(out,{recursive:true,force:true});}
+  fullTimes.push(Number(process.hrtime.bigint()-begin)/1e6);
+ }
+ fullTimes.sort((a,b)=>a-b);
+ const fullP95=fullTimes[Math.ceil(fullTimes.length*.95)-1];
+ const fullP99=fullTimes[Math.ceil(fullTimes.length*.99)-1];
+ console.log('# P22_FULL_BACKUP_RESTORE_LATENCY_MS '+JSON.stringify({
+  samples:fullTimes.length,p95:fullP95,p99:fullP99,max:fullTimes.at(-1)
+ }));
+ assert.ok(fullP95>0&&fullP99>=fullP95);
+ // Simulated interruption inside a real quiesced capture must ABORT all
+ // 10 participants and return the coordinator to IDLE without an archive.
+ await assert.rejects(coordinator.execute(({epoch})=>{
+  capture({env,root,resources,transportKey,coordinator,epoch});
+  throw Error('P22_CAPTURE_INTERRUPTED');
+ }),/P22_CAPTURE_INTERRUPTED/);
+ assert.equal(coordinator.state,'IDLE');
  // Measure real HTTP barrier coordination latency, not synthetic callback latency.
  const timings=[];
  for(let i=0;i<16;i++){
