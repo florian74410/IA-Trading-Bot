@@ -108,8 +108,8 @@ test('real four Engine business actions honor roles, ownership and deny all old 
   if(data.ownerClientId)assert.equal(saved.ownerClientId,'CLBob');
   assert.equal((await call(uiPort,'POST',route,body,GUEST)).status,403);
  }
- for(const route of ['/auth21/business/marketdata/settings','/auth21/business/fundamental/feed']){
-  assert.equal((await call(uiPort,'POST',route,JSON.stringify({refreshMs:15000}),USER)).status===200,false);
+ for(const [route,data] of steps.slice(0,2)){
+  assert.equal((await call(uiPort,'POST',route,JSON.stringify(data),USER)).status,403);
  }
  for(const route of ['/auth21/business/portfolio/preference','/auth21/business/strategy/preference']){
   const bad=JSON.stringify({ownerClientId:'CLAlice',key:'chart.zoom',value:'x'});
