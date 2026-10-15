@@ -5,7 +5,7 @@
 const fs=require('node:fs');
 const path=require('node:path');
 const {verify}=require('./auth21_business_capability');
-function createWriter({root,codec}={}){
+function createWriter({root,codec,onVerified=null}={}){
  if(!root||!codec||typeof codec.verify!=='function')throw Error('AUTH21_FIXTURE_CONFIG_REQUIRED');
  const resolved=fs.realpathSync(root);
  const stat=fs.lstatSync(resolved);
@@ -21,6 +21,7 @@ function createWriter({root,codec}={}){
  function write({proof,settings,bodyDigest}={}){
   const access=verify({codec,proof,action:'indicator.settings.set',bodyDigest});
   if(!access.allowed)return {ok:false,error:'FORBIDDEN'};
+  if(onVerified&&!onVerified(proof))return {ok:false,error:'REPLAY_DENIED'};
   if(!settings||Object.keys(settings).sort().join(',')!=='enabled,refreshMs'||
     typeof settings.enabled!=='boolean'||!Number.isSafeInteger(settings.refreshMs)||
     settings.refreshMs<1000||settings.refreshMs>60000)return {ok:false,error:'INVALID_SETTINGS'};
