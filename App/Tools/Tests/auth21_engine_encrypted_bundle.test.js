@@ -97,3 +97,17 @@ test('mid-restore integrity failure rolls back every already-written file',async
  assert.throws(()=>restore({archive:Buffer.from(JSON.stringify(envelope)),transportKey:f.key,outputDir:dest}),/P22_RESTORE_DIGEST_FAILED/);
  assert.equal(fs.existsSync(dest),false,'partial plaintext files must not survive a failed restore');
 });
+
+test('Portfolio usage accounting JSONL is included with SQLite bundle',async t=>{
+ const f=fixture(t),relative='App/.runtime/accounting/usage_ledger.jsonl';
+ const file=path.join(f.root,relative);
+ fs.mkdirSync(path.dirname(file),{recursive:true,mode:0o700});
+ fs.writeFileSync(file,JSON.stringify({schema:'iatb.cost/1-alpha',total_tokens:7})+'\n',{mode:0o600});
+ f.resources.push(relative);
+ const archive=await f.coordinator.execute(({epoch})=>capture({...f,coordinator:f.coordinator,transportKey:f.key,epoch}));
+ const out=path.join(os.tmpdir(),'iatb-auth21-restore-'+crypto.randomBytes(8).toString('hex'));
+ t.after(()=>fs.rmSync(out,{recursive:true,force:true}));
+ const result=restore({archive,transportKey:f.key,outputDir:out});
+ assert.equal(result.files.length,4);
+ assert.equal(JSON.parse(fs.readFileSync(path.join(out,relative),'utf8')).total_tokens,7);
+});
