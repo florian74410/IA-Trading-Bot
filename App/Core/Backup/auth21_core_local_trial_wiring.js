@@ -57,7 +57,7 @@ function preflightEnv(env){
 function createTrial(env){
  const validated=preflightEnv(env);
  const remoteEnabled=env.IATB_AUTH21_SNAPSHOT_IPC_TRIAL==='1';
- const remotes=remoteEnabled?['portfolio','marketdata','fundamental','trading']:[];
+ const remotes=remoteEnabled?['portfolio','marketdata','fundamental','trading','indicators']:[];
  const coordinator=new SnapshotCoordinator({writerIds:[...IDS,...remotes],timeoutMs:3000});
  const gates=Object.create(null);
  for(const id of IDS){
@@ -71,7 +71,8 @@ function createTrial(env){
  }
  if(remoteEnabled){
   const portKeys={portfolio:'IATB_PORTFOLIO_PORT',marketdata:'IATB_MARKET_DATA_PORT',
-   fundamental:'IATB_FUNDAMENTAL_PORT',trading:'IATB_TRADING_ENGINE_PORT'};
+   fundamental:'IATB_FUNDAMENTAL_PORT',trading:'IATB_TRADING_ENGINE_PORT',
+   indicators:'IATB_INDICATOR_PORT'};
   const client=require('./auth21_snapshot_core_client').createSnapshotCoreClient({env,root:validated.root});
   for(const id of remotes){
    const raw=env[portKeys[id]],port=Number(raw);
