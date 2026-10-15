@@ -155,6 +155,9 @@ class LocalSnapshotWriter {
   }
 
   release(epoch) {
+    // A persisted RELEASE may lose its HTTP ACK. Retrying the exact last
+    // generation must be safe; any older/future generation remains denied.
+    if(this.heldEpoch===null&&this.lastEpoch===epoch)return;
     if (this.heldEpoch !== epoch) throw new Error('SNAPSHOT_EPOCH_MISMATCH');
     this.heldEpoch = null;
   }
