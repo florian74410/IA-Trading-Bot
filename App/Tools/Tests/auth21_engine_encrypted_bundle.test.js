@@ -72,6 +72,6 @@ test('incomplete quorum cannot capture an Engine store',async t=>{
  const incomplete=new SnapshotCoordinator({writerIds:['portfolio']});
  const gate=new LocalSnapshotWriter('portfolio');
  incomplete.register('portfolio',{prepare:e=>gate.prepare(e),release:e=>gate.release(e),abort:e=>gate.abort(e)});
- await assert.rejects(incomplete.execute(({epoch})=>capture({...f,coordinator:incomplete,epoch})),/P22_WRITER_ACK_MISSING/);
+ await assert.rejects(incomplete.execute(({epoch})=>capture({...f,transportKey:f.key,coordinator:incomplete,epoch})),/P22_WRITER_ACK_MISSING/);
  assert.equal(incomplete.state,'IDLE');
 });
