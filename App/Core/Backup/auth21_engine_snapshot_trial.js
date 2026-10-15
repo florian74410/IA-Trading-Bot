@@ -5,7 +5,7 @@
  */
 const path=require('node:path');
 const {preflightEnv}=require('./auth21_core_local_trial_wiring');
-const {LocalSnapshotWriter}=require('./snapshot_coordinator');
+const {DurableSnapshotWriter}=require('./auth21_durable_snapshot_writer');
 const ISSUED=new Map();
 const ENGINES=new Set(['portfolio','marketdata','fundamental','trading']);
 function openEngineSnapshotTrial({env=process.env,engine}={}){
@@ -34,7 +34,7 @@ function openEngineSnapshotTrial({env=process.env,engine}={}){
  }
  const key=engine+':'+root;
  if(ISSUED.has(key))return ISSUED.get(key);
- const gate=new LocalSnapshotWriter(engine);
+ const gate=new DurableSnapshotWriter(engine,root);
  const trial=Object.freeze({engine,root,gate,
   // No remotely accessible coordinator. This module intentionally cannot
   // signal PREPARE/RELEASE without a future authenticated Core connection.
