@@ -75,7 +75,7 @@ function createTrial(env){
   const client=require('./auth21_snapshot_core_client').createSnapshotCoreClient({env,root:validated.root});
   for(const id of remotes){
    const raw=env[portKeys[id]],port=Number(raw);
-   if(!raw||!/^\\d{4,5}$/.test(raw)||!Number.isSafeInteger(port)||port<1024||port>65535)
+   if(!raw||!/^[0-9]{4,5}$/.test(raw)||!Number.isSafeInteger(port)||port<1024||port>65535)
     throw Error('AUTH21_REMOTE_WRITER_PORT_REQUIRED:'+id);
    coordinator.register(id,client.participant(id,port));
   }
