@@ -3,7 +3,39 @@ var fs=require('fs'),path=require('path'),os=require('os'),crypto=require('crypt
 // Auth 2.1 offline preflight ONLY. Legacy imports still initialize by default.
 // This flag is intentionally not an activation path for the running server.
 var PREFLIGHT_READONLY=(process.env.IATB_PATHS_PREFLIGHT_READONLY==='1');
-function assertStartupWritable(){if(PREFLIGHT_READONLY)throw new Error('IATB_PATHS_PREFLIGHT_READONLY');}
+function checkFrozenSnapshotStartup(){
+ if(process.env.IATB_AUTH21_LOCAL_SNAPSHOT_TRIAL!=='1'||
+    process.env.IATB_AUTH21_SNAPSHOT_IPC_TRIAL!=='1')return false;
+ const configured=process.env.IATB_AUTH21_LOCAL_TRIAL_ROOT;
+ if(!configured||!path.isAbsolute(configured))throw Error('AUTH21_STARTUP_TRIAL_ROOT_INVALID');
+ const root=path.resolve(configured),temp=fs.realpathSync(os.tmpdir());
+ if(!root.startsWith(temp+path.sep)||
+    !path.basename(root).startsWith('iatb-auth21-core-runtime-')||
+    fs.realpathSync(root)!==root)throw Error('AUTH21_STARTUP_TRIAL_ROOT_INVALID');
+ const dir=path.join(root,'runtime');
+ if(!fs.existsSync(dir))return false;
+ const names=fs.readdirSync(dir).filter(n=>/^auth21-snapshot-[a-z0-9._-]+\\.json$/i.test(n));
+ for(const name of names){
+  const file=path.join(dir,name),st=fs.lstatSync(file);
+  if(!st.isFile()||st.isSymbolicLink()||(st.mode&0o077)!==0)
+   throw Error('AUTH21_STARTUP_SNAPSHOT_JOURNAL_UNSAFE');
+  let state;
+  try{state=JSON.parse(fs.readFileSync(file,'utf8'));}
+  catch(_){throw Error('AUTH21_STARTUP_SNAPSHOT_JOURNAL_INVALID');}
+  const id=name.slice('auth21-snapshot-'.length,-'.json'.length);
+  if(!state||state.writerId!==id||!Number.isSafeInteger(state.lastEpoch)||
+     state.lastEpoch<0||!(state.heldEpoch===null||
+       (Number.isSafeInteger(state.heldEpoch)&&state.heldEpoch===state.lastEpoch)))
+   throw Error('AUTH21_STARTUP_SNAPSHOT_JOURNAL_INVALID');
+  if(state.heldEpoch!==null)return true;
+ }
+ return false;
+}
+var SNAPSHOT_FROZEN_STARTUP=checkFrozenSnapshotStartup();
+function assertStartupWritable(){
+ if(PREFLIGHT_READONLY)throw Error('IATB_PATHS_PREFLIGHT_READONLY');
+ if(SNAPSHOT_FROZEN_STARTUP)throw Error('AUTH21_FROZEN_STARTUP_READ_ONLY');
+}
 
 var ROOT=path.resolve(__dirname,'../..');
 var NODE_RUNTIME=path.join(ROOT,'NodeRuntime');
@@ -65,7 +97,7 @@ function ensureRuntimeSecret(target,legacy,errorCode,compatibilityLink){
 }
 function ensureInternalServiceRuntimeKey(){return ensureRuntimeSecret(RUNTIME_SECRET_FILES.internalServiceKey,null,'INTERNAL_SERVICE_KEY_UNAVAILABLE',false);}
 function ensureCommunicationProtocolRuntimeKey(){return ensureRuntimeSecret(RUNTIME_SECRET_FILES.communicationProtocolKey,null,'CP_SECRET_UNAVAILABLE',false);}
-if(!PREFLIGHT_READONLY){ensureAppRuntimeDirs();ensureUpdateRuntimeDirs();ensureInternalServiceRuntimeKey();ensureCommunicationProtocolRuntimeKey();}
+if(!PREFLIGHT_READONLY&&!SNAPSHOT_FROZEN_STARTUP){ensureAppRuntimeDirs();ensureUpdateRuntimeDirs();ensureInternalServiceRuntimeKey();ensureCommunicationProtocolRuntimeKey();}
 module.exports={
   preflightReadOnly:PREFLIGHT_READONLY,
   ROOT:ROOT,NodeRuntime:NODE_RUNTIME,AppRuntime:APP_RUNTIME_DIRS,RuntimeLogs:RUNTIME_LOG_FILES,RuntimeState:RUNTIME_STATE_FILES,RuntimeLauncher:RUNTIME_LAUNCHER_FILES,RuntimeUpdates:RUNTIME_UPDATE_DIRS,RuntimeSecrets:RUNTIME_SECRET_FILES,Defaults:DEFAULT_CONFIG,PersistentData:PERSISTENT_DATA,ensureAppRuntimeDirs:ensureAppRuntimeDirs,ensureUpdateRuntimeDirs:ensureUpdateRuntimeDirs,ensureInternalServiceRuntimeKey:ensureInternalServiceRuntimeKey,ensureCommunicationProtocolRuntimeKey:ensureCommunicationProtocolRuntimeKey,
