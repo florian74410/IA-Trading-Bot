@@ -22,10 +22,20 @@ function validate(rule,input){
  if(rule.action==='marketdata.settings.set')
   return fields==='refreshMs'&&Number.isSafeInteger(input.refreshMs)&&
    input.refreshMs>=3000&&input.refreshMs<=3600000;
- if(rule.action==='fundamental.feed.create')
-  return fields==='feedUrl'&&typeof input.feedUrl==='string'&&
-   input.feedUrl.length>=12&&input.feedUrl.length<=240&&
-   /^https:\/\/[a-z0-9.-]+\/[a-z0-9/_?.=%&-]*$/i.test(input.feedUrl);
+ if(rule.action==='fundamental.feed.create'){
+  if(fields!=='feedUrl'||typeof input.feedUrl!=='string'||
+     input.feedUrl.length<12||input.feedUrl.length>240||
+     !/^https:\/\/[a-z0-9.-]+\/[a-z0-9/_?.=%&-]*$/i.test(input.feedUrl))return false;
+  let u;
+  try{u=new URL(input.feedUrl);}catch(_){return false;}
+  const host=u.hostname.toLowerCase();
+  if(u.username||u.password||u.port||u.hash||!host.includes('.')||
+     host==='localhost'||host.endsWith('.localhost')||
+     host.endsWith('.local')||host.endsWith('.internal')||
+     /^\\d+\\.\\d+\\.\\d+\\.\\d+$/.test(host)||
+     host.startsWith('0x')||host.includes('..'))return false;
+  return true;
+ }
  if(rule.owner)
   return fields==='key,ownerClientId,value'&&
     typeof input.ownerClientId==='string'&&/^CL[A-Za-z0-9_-]{1,64}$/.test(input.ownerClientId)&&
