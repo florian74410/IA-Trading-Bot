@@ -7,3 +7,62 @@ html.iatb-trading-workspace #chartArea .cvToolbar .iatbMarketPicker{flex:0 0 aut
 html.iatb-trading-workspace #chartArea .cvToolbar .iatbMarketPickerButton{flex:0 0 auto;white-space:nowrap}
 html.iatb-trading-workspace #chartArea .cvToolbar>button{white-space:nowrap}
 html.iatb-trading-workspace #chartArea .cvToolbar #wsState{flex:1 1 250px;min-width:0;overflow:hidden;text-overflow:ellipsis}
+
+
+/* v2.1.1 — drawing toolbar polish; behavior and tool identifiers unchanged. */
+#chartArea .iatbDrawDock{
+  gap:5px;
+  padding:7px 6px;
+  left:10px;
+  top:60px;
+  background:linear-gradient(180deg,rgba(12,31,46,.98),rgba(6,20,31,.97));
+  border:1px solid #325d73;
+  border-radius:12px;
+  box-shadow:0 12px 30px rgba(0,0,0,.42),inset 0 1px 0 rgba(157,221,251,.08);
+  scrollbar-width:thin;
+  backdrop-filter:blur(8px);
+}
+#chartArea .iatbDrawDock button{
+  display:grid;
+  place-items:center;
+  width:34px;
+  height:34px;
+  flex:none;
+  padding:0;
+  border:1px solid transparent;
+  border-radius:8px;
+  background:transparent;
+  color:#b3d2e3;
+  font:600 18px/1 system-ui,sans-serif;
+  transition:background .14s ease,border-color .14s ease,color .14s ease;
+}
+#chartArea .iatbDrawDock button:hover{
+  background:#173a50;
+  border-color:#386a85;
+  color:#eefbff;
+}
+#chartArea .iatbDrawDock button[aria-pressed="true"]{
+  background:#144a61;
+  border-color:#3cc5da;
+  color:#b4faff;
+  box-shadow:inset 3px 0 0 #46dbe9;
+}
+#chartArea .iatbDrawDock button:focus-visible{
+  outline:2px solid #6fe5ff;
+  outline-offset:2px;
+}
+@media(max-width:600px){
+  #chartArea .iatbDrawDock{left:5px;top:56px;padding:5px;gap:3px}
+  #chartArea .iatbDrawDock button{width:31px;height:31px}
+}
+@media(prefers-reduced-motion:reduce){
+  #chartArea .iatbDrawDock button{transition:none}
+}
+/* Keep native-popover pair/exchange menu above chart drawing canvas. */
+#chartArea .iatbMarketPickerPopover:popover-open{
+  z-index:2147483647;
+  overflow:auto;
+  box-sizing:border-box;
+}
+
+#chartArea .iatbMarketPickerPopover:popover-open{margin:0;inset:auto;}

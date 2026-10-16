@@ -142,3 +142,35 @@ test('integrated DEBUG preserves overlay counts and dock visibility through clea
   await p.evaluate(function(){return IATBIndicatorUI.configure([])});await p.waitForFunction(function(){return !document.querySelector('#indicatorDock').classList.contains('active')});assert.equal(await p.locator('#indicatorDock').getAttribute('data-overlay-count'),'0');assert(!(await p.locator('#indicatorDock').isVisible()));assert.deepStrictEqual(c.errors,[]);
  }finally{await p.close();}
 });
+
+test('v2.1.1 pair selector remains above chart and supports selection',async function(){
+ var c=await pageWith(),p=c.page;
+ try{
+  await p.locator('#iatbPairPickerButton').click();
+  var pop=p.locator('#iatbMarketPickerPopover');
+  await pop.waitFor({state:'visible'});
+  assert.equal(await pop.evaluate(function(el){return el.matches(':popover-open')}),true);
+  var layer=await pop.evaluate(function(el){
+   var r=el.getBoundingClientRect(),x=r.left+Math.min(30,r.width/2),y=r.top+Math.min(15,r.height/2);
+   return{top:document.elementFromPoint(x,y)===el||el.contains(document.elementFromPoint(x,y)),fixed:getComputedStyle(el).position==='fixed'};
+  });
+  assert.equal(layer.fixed,true,'popover should not be clipped by chart');
+  assert.equal(layer.top,true,'popover should own the hit-tested position');
+  await pop.locator('[role=option]').filter({hasText:'ETH/USD'}).first().click();
+  assert.equal(await p.locator('#symbol').inputValue(),'ETHUSD');
+  assert.equal(await pop.isVisible(),false);
+  assert.deepStrictEqual(c.errors,[]);
+ }finally{await p.close();}
+});
+test('v2.1.1 drawing tool polish preserves accessible buttons and states',async function(){
+ var c=await pageWith(),p=c.page;
+ try{
+  var dock=p.locator('.iatbDrawDock');
+  assert.equal(await dock.locator('button').count(),14);
+  var trend=dock.locator('[data-tool=trend]');
+  await trend.click();
+  assert.equal(await trend.getAttribute('aria-pressed'),'true');
+  assert.equal(await dock.locator('[data-tool=cursor]').getAttribute('aria-pressed'),'false');
+  assert.deepStrictEqual(c.errors,[]);
+ }finally{await p.close();}
+});
