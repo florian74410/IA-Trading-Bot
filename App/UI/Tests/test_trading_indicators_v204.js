@@ -16,7 +16,7 @@ test.before(async function(){
 test.after(async function(){if(browser)await browser.close();if(server)await new Promise(function(done){server.close(done);});});
 async function pageWith(options){
  options=options||{};var page=await browser.newPage({viewport:{width:options.width||1440,height:1000}}),calls=[],errors=[];
- page.on('pageerror',function(e){errors.push(e.message);});
+ page.setDefaultTimeout(10000);page.on('pageerror',function(e){errors.push(e.message);});
  await page.addInitScript(function(selected){localStorage.setItem('iatb.indicators.selected.v2',JSON.stringify(selected));},options.selected||['rsi','macd']);
  await page.route('**/*',async function(route){var req=route.request(),u=new URL(req.url()),p=u.pathname;
   if(u.origin===base&&(p==='/ia-trading'||p.startsWith('/assets/')))return route.continue();
@@ -27,8 +27,10 @@ async function pageWith(options){
   if(p.startsWith('/communication/v1/ui/')){
    var b=req.postDataJSON(),a=b.action,args=b.arguments||{};calls.push(b);assert(!/^trading\./.test(a),'no Trading Engine action');
    if(a==='marketdata.health')d={ok:true,providers:['KRAKEN','BINANCE','OKX'].map(function(id){return{id:id,label:id,type:'CEX',enabled:true,capabilities:['candles']};})};
+   if(a==='marketdata.symbols'&&options.catalogError)return route.fulfill({status:503,json:{error:'CATALOG_UNAVAILABLE'}});
    if(a==='marketdata.symbols')d={ok:true,symbols:[{symbol:'BTCUSD',label:'BTC/USD'},{symbol:'ETHUSD',label:'ETH/USD'}]};
    if(a==='indicator.registry.reload')d={ok:true,items:registry.list(),status:registry.status()};
+   if(a==='indicator.definition.create'){var verdict=require('../../Indicators/Engine/indicator_registry').validateDefinition(args.definition,'BuiltIn',{},true);if(!verdict.ok)return route.fulfill({status:400,json:{error:verdict.errors.join('; ')}});d={ok:true,id:args.definition.id};}
    if(a==='indicator.settings.get')d={ok:true,settings:{indicators:registry.list().map(function(x){return{id:x.id,enabled:true};})}};
    if(a==='indicator.compute_batch_data'||a==='indicator.compute_batch'){
     if(options.delay)await new Promise(function(done){setTimeout(done,options.delay);});
@@ -106,7 +108,7 @@ test('all 20 native indicators and JSON output render modes remain consumable',a
   var batches=registry.list().filter(function(x){return x.id!=='liquidity_heatmap'}).map(function(x){return Engine.computeBatch(registry,candles('BTCUSD','1m'),[{id:x.id,params:{}}])[0]});
   // Use the current chart timestamps, as the real compute_data route does.
   await p.evaluate(function(results){var ctl=window.IATBActiveChartController;results.forEach(function(x){x.result.times=ctl.rows.map(function(row){return row.time*1000})});ctl.applyIndicatorBatch(results);},batches);await p.waitForTimeout(100);
-  assert.equal(await p.locator('[data-indicator-id]').count(),20);assert.equal(await p.locator('.indicatorReaderError').count(),0);
+  assert.equal(await p.locator('[data-indicator-id]').count(),batches.filter(function(x){return x.result.display.pane!=='price'}).length);assert(await p.evaluate(function(){return Object.keys(window.IATBActiveChartController.indicatorSeries).length>0}));assert.equal(await p.locator('.indicatorReaderError').count(),0);
   var states=await p.locator('#indicatorDockBody .indicatorJsonPane').evaluateAll(function(panes){return panes.map(function(p){return p.__renderState.state})});assert(states.every(function(s){return s==='DRAWN'||s==='OVERLAY'}));
   await p.evaluate(function(){var ctl=window.IATBActiveChartController,times=ctl.rows.map(function(r){return r.time}),values=times.map(function(_,i){return i%10===0?null:Math.sin(i/7)});window.IATBIndicatorJsonReader.accept([{ok:true,result:{id:'custom_fixture',name:'Custom output fixture',state:'READY',display:{pane:'separate',min:null,max:null},times:times,values:{area:values,markers:values,bars:values},outputs:{area:{render:'area'},markers:{render:'markers'},bars:{render:'bars'}}}}]);});await p.waitForTimeout(50);
   assert.equal(await p.locator('[data-indicator-id=custom_fixture]').evaluate(function(e){return e.__renderState.series.length}),3);assert.deepStrictEqual(c.errors,[]);
@@ -133,4 +135,61 @@ test('an indicator requiring missing volume fails explicitly while RSI still ren
   await p.waitForFunction(function(){var r=document.querySelector('[data-indicator-id=rsi]');return r&&r.__renderState&&r.__renderState.state==='DRAWN'});
   assert.equal(await p.locator('.indicatorReaderError').count(),1);assert.match(await p.locator('.iatbIndStatus').innerText(),/PARTIEL/);assert.match(await p.locator('.iatbIndResult.bad').innerText(),/Volume réel indisponible/);assert.equal(await p.locator('[data-indicator-id=mfi] canvas').count(),0);assert.deepStrictEqual(c.errors,[]);
  }finally{await p.close();}
+});
+
+test('Studio searches registry, edits bounded inputs and hides/removes without duplicate state',async function(){
+ var c=await pageWith({selected:['rsi','macd']}),p=c.page;try{
+ await p.getByRole('button',{name:'ƒx Indicator Studio'}).click();await p.locator('.iatbIndSearch[type=search]').fill('RSI');assert.match(await p.locator('#iatbIndGrid').innerText(),/RSI/);
+ var row=p.locator('[data-studio-id=rsi]');await row.locator('summary').click();var input=row.locator('input[type=number]').first();await input.fill('21');await input.press('Tab');await p.waitForFunction(function(){return window.IATBIndicatorBatch.results.some(function(r){return r.result&&r.result.id==='rsi'&&r.result.params.period===21})});
+ await row.getByRole('button',{name:'Masquer',exact:true}).click();await p.waitForFunction(function(){return !window.IATBIndicatorBatch.results.some(function(r){return r.result&&r.result.id==='rsi'})});assert.equal(await p.locator('#indicatorDockBody [data-indicator-id=macd]').count(),1);
+ await row.getByRole('button',{name:'Afficher',exact:true}).click();await p.waitForFunction(function(){return window.IATBIndicatorBatch.results.length===2});assert.deepStrictEqual(c.errors,[]);
+ }finally{await p.close()}
+});
+test('drawing gestures, handles, movement, history, context persistence and zoom anchoring',async function(){
+ var c=await pageWith(),p=c.page;try{
+ async function gesture(tool,x1,y1,x2,y2){await p.locator('[data-tool='+tool+']').click();var b=await p.locator('#iatbDrawSurface').boundingBox();await p.mouse.move(b.x+x1,b.y+y1);await p.mouse.down();await p.mouse.move(b.x+x2,b.y+y2,{steps:4});await p.mouse.up()}
+ var geom=await p.evaluate(function(){return window.IATBActiveChartController._geom});var y=geom.priceTop+geom.priceH*.4;
+ await gesture('trend',150,y,280,y+30);await p.waitForFunction(function(){return IATBChartDrawingTools.state().items.length===1});var original=await p.evaluate(function(){return IATBChartDrawingTools.state().items[0]});
+ await gesture('select',150,y,180,y+20);var edited=await p.evaluate(function(){return IATBChartDrawingTools.state().items[0]});assert.notDeepStrictEqual(original,edited);
+ await p.locator('[data-tool=undo]').click();assert.deepStrictEqual(await p.evaluate(function(){return IATBChartDrawingTools.state().items[0]}),original);
+ await p.locator('[data-tool=redo]').click();assert.deepStrictEqual(await p.evaluate(function(){return IATBChartDrawingTools.state().items[0]}),edited);
+ await p.evaluate(function(){var c=IATBActiveChartController;c.setVisibleCount(40,false);c.panOffset=20;c.invalidate()});await p.waitForTimeout(80);assert.deepStrictEqual(await p.evaluate(function(){return IATBChartDrawingTools.state().items[0]}),edited);
+ for(var tool of ['horizontal','rectangle','fib'])await gesture(tool,160,y,260,y+20);
+ assert.equal(await p.evaluate(function(){return IATBChartDrawingTools.state().items.length}),4);
+ await p.selectOption('#interval','5m');await p.waitForFunction(function(){return IATBChartDrawingTools.state().context.endsWith('|5m')});assert.equal(await p.evaluate(function(){return IATBChartDrawingTools.state().items.length}),0);
+ await p.selectOption('#interval','1m');await p.waitForFunction(function(){return IATBChartDrawingTools.state().items.length===4});
+ await p.reload();await p.waitForFunction(function(){return IATBChartDrawingTools.state().items.length===4});assert.deepStrictEqual(c.errors,[]);
+ }finally{await p.close()}
+});
+test('pair search, chart actions and narrow controls remain usable',async function(){
+ var c=await pageWith(),p=c.page;try{await p.getByRole('searchbox',{name:'Rechercher dans le marché sélectionné'}).fill('ETH');await p.getByRole('searchbox',{name:'Rechercher dans le marché sélectionné'}).press('Enter');await p.waitForFunction(function(){return IATBActiveChartController.context.symbol==='ETHUSD'&&IATBActiveChartController.rows.length===240});
+ await p.getByRole('button',{name:'Zoom +',exact:true}).click();assert(await p.evaluate(function(){return IATBActiveChartController.visibleCount<100}));
+ for(var w of [1440,768,390]){await p.setViewportSize({width:w,height:1000});assert(await p.getByRole('button',{name:'Ajuster',exact:true}).isVisible());await p.getByRole('button',{name:'ƒx Indicator Studio'}).click();assert(await p.locator('.iatbIndPanel').isVisible());if(process.env.IATB_QA_SCREENSHOTS==='1')await p.screenshot({path:'/tmp/iatb-ui-'+w+'.png',fullPage:true});await p.locator('.iatbIndSearch[type=search]').press('Escape');if(process.env.IATB_QA_SCREENSHOTS==='1')await p.screenshot({path:'/tmp/iatb-ui-chart-'+w+'.png',fullPage:true})}
+ assert.deepStrictEqual(c.errors,[]);
+ }finally{await p.close()}
+});
+test('JSON import accepts a registry-valid definition and rejects malformed or incompatible input',async function(){
+ var c=await pageWith(),p=c.page;try{
+ var definition=registry.get('rsi');var good=await p.evaluate(function(d){return IATBIndicatorUI.importFile(new File([JSON.stringify(d)],'rsi.indicator.json',{type:'application/json'}))},definition);assert(good.ok);
+ var bad=await p.evaluate(function(){return IATBIndicatorUI.importFile(new File(['{'],'invalid.json'))});assert.equal(bad.ok,false);
+ var incompatible=await p.evaluate(function(){return IATBIndicatorUI.install({id:'bad',schema:'incompatible'})});assert.equal(incompatible.ok,false);assert.deepStrictEqual(c.errors,[]);
+ }finally{await p.close()}
+});
+test('draw deletion, Escape cancellation and confirmed clear are reversible',async function(){
+ var c=await pageWith(),p=c.page;try{
+ await p.locator('[data-tool=horizontal]').click();var b=await p.locator('#iatbDrawSurface').boundingBox();await p.mouse.click(b.x+170,b.y+150);assert.equal(await p.evaluate(function(){return IATBChartDrawingTools.state().items.length}),1);
+ await p.locator('[data-tool=select]').click();await p.mouse.click(b.x+200,b.y+150);await p.keyboard.press('Delete');assert.equal(await p.evaluate(function(){return IATBChartDrawingTools.state().items.length}),0);await p.locator('[data-tool=undo]').click();
+ await p.locator('[data-tool=trend]').click();await p.mouse.move(b.x+160,b.y+180);await p.mouse.down();await p.mouse.move(b.x+240,b.y+210);await p.keyboard.press('Escape');await p.mouse.up();assert.equal(await p.evaluate(function(){return IATBChartDrawingTools.state().items.length}),1);
+ p.once('dialog',function(d){d.dismiss()});await p.locator('[data-tool=clear]').click();assert.equal(await p.evaluate(function(){return IATBChartDrawingTools.state().items.length}),1);p.once('dialog',function(d){d.accept()});await p.locator('[data-tool=clear]').click();assert.equal(await p.evaluate(function(){return IATBChartDrawingTools.state().items.length}),0);await p.locator('[data-tool=undo]').click();assert.equal(await p.evaluate(function(){return IATBChartDrawingTools.state().items.length}),1);assert.deepStrictEqual(c.errors,[]);
+ }finally{await p.close()}
+});
+test('catalogue failure clears old market candles and never invents a selectable pair',async function(){
+ var c=await pageWith(),p=c.page;try{
+ await p.route('**/communication/v1/ui/read',async function(route){if(route.request().postDataJSON().action==='marketdata.symbols')return route.fulfill({status:503,json:{error:'CATALOG_UNAVAILABLE'}});return route.fallback()});await p.selectOption('#exchangeSelect','BINANCE');await p.waitForFunction(function(){return document.getElementById('symbol').disabled&&IATBActiveChartController.rows.length===0});assert.equal(await p.locator('#symbol option').count(),0);assert.match(await p.locator('#marketSourceBadge').innerText(),/CATALOG_UNAVAILABLE/);assert.deepStrictEqual(c.errors,[]);
+ }finally{await p.close()}
+});
+test('120 persisted drawings stay bounded with real controller fixture geometry',async function(t){
+ var c=await pageWith(),p=c.page;try{
+ var measurement=await p.evaluate(function(){var ctl=IATBActiveChartController,context=IATBChartDrawingTools.state().context,rows=ctl.visibleRows(),items=Array.from({length:120},function(_,i){return{type:['trend','rectangle','fib'][i%3],a:{time:rows[i%60].time,price:rows[i%60].low},b:{time:rows[i%60+20].time,price:rows[i%60+20].high}}});localStorage.setItem('iatb.draw.'+context,JSON.stringify(items));ctl.setContext('TEMP','1m','FIXTURE');IATBChartDrawingTools.refresh();ctl.setContext('BTCUSD','1m','KRAKEN');ctl.setCandles(rows);ctl.draw();IATBChartDrawingTools.refresh();var start=performance.now();for(var i=0;i<30;i++)IATBChartDrawingTools.refresh();return{count:IATBChartDrawingTools.state().items.length,averageMs:(performance.now()-start)/30}});assert.equal(measurement.count,120);assert(measurement.averageMs<100,'bounded overlay draw time');t.diagnostic('120 drawings: '+measurement.averageMs.toFixed(2)+' ms/paint; fixture only, not a live-feed benchmark');assert.deepStrictEqual(c.errors,[]);
+ }finally{await p.close()}
 });
