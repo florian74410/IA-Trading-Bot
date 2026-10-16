@@ -9,4 +9,4 @@ Optional `display.visual.layers` drives rendering:
 - Null/warmup gaps remain gaps. No data or future Ichimoku timestamps are fabricated.
 - The contract remains limited to whitelisted rendering primitives; do not evaluate JSON as code.
 
-Status: development branch only, not deployed to GEN-1. The package is not production-validated until Firefox end-to-end tests and compatibility checks succeed.
+21 built-in indicators carry V2 graphical metadata.\n\nStatus: development branch only, not deployed to GEN-1. The package is not production-validated until Firefox end-to-end tests and compatibility checks succeed.

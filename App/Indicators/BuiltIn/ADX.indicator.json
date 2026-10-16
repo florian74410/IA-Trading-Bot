@@ -2,7 +2,7 @@
   "schema": "iatb.indicator.v1",
   "id": "adx",
   "name": "Average Directional Index",
-  "version": "1.0",
+  "version": "2.1",
   "category": "trend",
   "inputs": {
     "high": {
@@ -40,17 +40,29 @@
     "adx": {
       "type": "number",
       "strategy": true,
-      "chart": true
+      "chart": true,
+      "visual": {
+        "color": "#4db7ef",
+        "width": 2
+      }
     },
     "plus_di": {
       "type": "number",
       "strategy": true,
-      "chart": true
+      "chart": true,
+      "visual": {
+        "color": "#fcaf57",
+        "width": 2
+      }
     },
     "minus_di": {
       "type": "number",
       "strategy": true,
-      "chart": true
+      "chart": true,
+      "visual": {
+        "color": "#b38cff",
+        "width": 2
+      }
     }
   },
   "strategy": {
@@ -68,6 +80,19 @@
   "display": {
     "pane": "separate",
     "min": 0,
-    "max": 100
+    "max": 100,
+    "visual": {
+      "layers": [],
+      "levels": [
+        {
+          "value": 20,
+          "color": "#71849f"
+        },
+        {
+          "value": 25,
+          "color": "#f6b25c"
+        }
+      ]
+    }
   }
 }

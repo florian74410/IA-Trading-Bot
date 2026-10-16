@@ -2,7 +2,7 @@
   "schema": "iatb.indicator.v1",
   "id": "stochastic_rsi",
   "name": "Stochastic RSI",
-  "version": "1.0",
+  "version": "2.1",
   "category": "momentum",
   "inputs": {
     "source": {
@@ -47,12 +47,20 @@
     "k": {
       "type": "number",
       "strategy": true,
-      "chart": true
+      "chart": true,
+      "visual": {
+        "color": "#4db7ef",
+        "width": 2
+      }
     },
     "d": {
       "type": "number",
       "strategy": true,
-      "chart": true
+      "chart": true,
+      "visual": {
+        "color": "#fcaf57",
+        "width": 2
+      }
     }
   },
   "strategy": {
@@ -70,6 +78,19 @@
   "display": {
     "pane": "separate",
     "min": 0,
-    "max": 100
+    "max": 100,
+    "visual": {
+      "layers": [],
+      "levels": [
+        {
+          "value": 20,
+          "color": "#b38cff"
+        },
+        {
+          "value": 80,
+          "color": "#b38cff"
+        }
+      ]
+    }
   }
 }

@@ -13,7 +13,7 @@
  Reader.prototype.accept=function(results,controller){this.batch=Array.isArray(results)?results.slice():[];this.controller=controller||global.IATBActiveChartController||null;this.render()};
  Reader.prototype.render=function(){
   if(!this.host)return;var self=this;this.host.replaceChildren();
-  if(!this.batch.length){this.host.appendChild(node('div','indicatorReaderEmpty','Aucun indicateur affiché · sélectionner avec ƒx Indicateurs ou importer un .indicator.json.'));if(this.state)this.state.textContent='Lecteur JSON · prêt';return;}
+  if(!this.batch.length){if(this.host.parentNode&&this.host.parentNode.id==='indicatorDock')this.host.parentNode.classList.remove('active');if(this.state)this.state.textContent='Lecteur JSON · prêt';return;}
   this.batch.forEach(function(item,i){
    if(!item||!item.ok||!item.result){self.host.appendChild(node('div','indicatorReaderError',(item&&item.id||'Indicateur')+' · '+(item&&item.error||'Résultat invalide')));return;}
    var r=item.result;if(r.display&&r.display.pane==='price'){return;}var pane=node('section','indicatorPane indicatorJsonPane');pane.dataset.indicatorId=r.id||('indicator-'+i);
@@ -29,7 +29,7 @@
     pane.__indicator={result:r,keys:Object.keys(r.values||{}).filter(function(k){return Array.isArray(r.values[k])&&!(r.outputs&&r.outputs[k]&&r.outputs[k].chart===false)})};
    }
    self.host.appendChild(pane);
-  });this.schedule();
+  });if(this.host.parentNode&&this.host.parentNode.id==='indicatorDock')this.host.parentNode.classList.toggle('active',!!this.host.querySelector('.indicatorJsonPane, .indicatorReaderError'));this.schedule();
  };
  Reader.prototype.drawAll=function(controller){
   if(controller&&this.controller&&controller!==this.controller)return;if(!this.host)return;
