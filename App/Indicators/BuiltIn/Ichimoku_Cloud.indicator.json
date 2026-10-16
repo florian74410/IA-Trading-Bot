@@ -2,7 +2,7 @@
   "schema": "iatb.indicator.v1",
   "id": "ichimoku_cloud",
   "name": "Ichimoku Cloud",
-  "version": "1.0",
+  "version": "2.1",
   "category": "trend",
   "inputs": {
     "high": {
@@ -58,27 +58,47 @@
     "conversion": {
       "type": "number",
       "strategy": true,
-      "chart": true
+      "chart": true,
+      "visual": {
+        "color": "#23b9fa",
+        "width": 2
+      }
     },
     "base": {
       "type": "number",
       "strategy": true,
-      "chart": true
+      "chart": true,
+      "visual": {
+        "color": "#f79543",
+        "width": 2
+      }
     },
     "span_a": {
       "type": "number",
       "strategy": true,
-      "chart": true
+      "chart": true,
+      "visual": {
+        "color": "#16c784",
+        "width": 2
+      }
     },
     "span_b": {
       "type": "number",
       "strategy": true,
-      "chart": true
+      "chart": true,
+      "visual": {
+        "color": "#ea3943",
+        "width": 2
+      }
     },
     "lagging": {
       "type": "number",
       "strategy": true,
-      "chart": true
+      "chart": true,
+      "visual": {
+        "color": "#ad8afb",
+        "width": 2
+      }
     }
   },
   "strategy": {
@@ -96,6 +116,18 @@
   "display": {
     "pane": "price",
     "min": null,
-    "max": null
+    "max": null,
+    "visual": {
+      "layers": [
+        {
+          "type": "cloud",
+          "upper": "span_a",
+          "lower": "span_b",
+          "bullColor": "#16c784",
+          "bearColor": "#ea3943",
+          "opacity": 0.2
+        }
+      ]
+    }
   }
 }

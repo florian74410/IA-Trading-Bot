@@ -2,7 +2,7 @@
   "schema": "iatb.indicator.v1",
   "id": "williams_r",
   "name": "Williams %R",
-  "version": "1.0",
+  "version": "2.1",
   "category": "momentum",
   "inputs": {
     "high": {
@@ -40,7 +40,11 @@
     "value": {
       "type": "number",
       "strategy": true,
-      "chart": true
+      "chart": true,
+      "visual": {
+        "color": "#4db7ef",
+        "width": 2
+      }
     }
   },
   "strategy": {
@@ -58,6 +62,33 @@
   "display": {
     "pane": "separate",
     "min": -100,
-    "max": 0
+    "max": 0,
+    "visual": {
+      "layers": [],
+      "levels": [
+        {
+          "value": -80,
+          "color": "#b38cff"
+        },
+        {
+          "value": -20,
+          "color": "#b38cff"
+        }
+      ],
+      "zones": [
+        {
+          "min": -100,
+          "max": -80,
+          "color": "#a36dff",
+          "opacity": 0.11
+        },
+        {
+          "min": -20,
+          "max": 0,
+          "color": "#a36dff",
+          "opacity": 0.11
+        }
+      ]
+    }
   }
 }

@@ -2,7 +2,7 @@
   "schema": "iatb.indicator.v1",
   "id": "macd",
   "name": "Moving Average Convergence Divergence",
-  "version": "1.0",
+  "version": "2.1",
   "category": "momentum",
   "inputs": {
     "source": {
@@ -42,19 +42,33 @@
       "type": "number",
       "strategy": true,
       "chart": true,
-      "render": "line"
+      "render": "line",
+      "visual": {
+        "color": "#43bff7",
+        "width": 2
+      }
     },
     "signal": {
       "type": "number",
       "strategy": true,
       "chart": true,
-      "render": "line"
+      "render": "line",
+      "visual": {
+        "color": "#ffa658",
+        "width": 2
+      }
     },
     "histogram": {
       "type": "number",
       "strategy": true,
       "chart": true,
-      "render": "histogram"
+      "render": "histogram",
+      "visual": {
+        "color": "#22c997",
+        "width": 1.8,
+        "positiveColor": "#22c997",
+        "negativeColor": "#ee6479"
+      }
     }
   },
   "strategy": {
@@ -72,6 +86,14 @@
   "display": {
     "pane": "separate",
     "min": null,
-    "max": null
+    "max": null,
+    "visual": {
+      "levels": [
+        {
+          "value": 0,
+          "color": "#637c90"
+        }
+      ]
+    }
   }
 }

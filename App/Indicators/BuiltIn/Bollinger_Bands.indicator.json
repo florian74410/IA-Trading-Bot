@@ -2,7 +2,7 @@
   "schema": "iatb.indicator.v1",
   "id": "bollinger_bands",
   "name": "Bollinger Bands",
-  "version": "1.0",
+  "version": "2.1",
   "category": "volatility",
   "inputs": {
     "source": {
@@ -23,7 +23,7 @@
     },
     "stddev": {
       "type": "number",
-      "default": 2.0,
+      "default": 2,
       "min": 0.1,
       "max": 10
     }
@@ -35,17 +35,29 @@
     "upper": {
       "type": "number",
       "strategy": true,
-      "chart": true
+      "chart": true,
+      "visual": {
+        "color": "#58baf7",
+        "width": 2
+      }
     },
     "middle": {
       "type": "number",
       "strategy": true,
-      "chart": true
+      "chart": true,
+      "visual": {
+        "color": "#d4bdff",
+        "width": 2
+      }
     },
     "lower": {
       "type": "number",
       "strategy": true,
-      "chart": true
+      "chart": true,
+      "visual": {
+        "color": "#58baf7",
+        "width": 2
+      }
     }
   },
   "strategy": {
@@ -63,6 +75,18 @@
   "display": {
     "pane": "price",
     "min": null,
-    "max": null
+    "max": null,
+    "visual": {
+      "layers": [
+        {
+          "type": "band",
+          "upper": "upper",
+          "lower": "lower",
+          "bullColor": "#45c8ff",
+          "bearColor": "#45c8ff",
+          "opacity": 0.13
+        }
+      ]
+    }
   }
 }

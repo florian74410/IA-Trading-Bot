@@ -1,0 +1,36 @@
+name: Indicator Visual Renderer V2.1
+on:
+  push:
+    branches: [feature/indicator-visual-renderer-v2.1]
+  pull_request:
+    paths:
+      - 'App/Indicators/**'
+      - 'App/Frontend/JS/indicator*'
+      - 'App/Frontend/JS/chart_controller_native_v1.2.js'
+      - 'App/UI/Tests/test_indicator_visual_v2.js'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  indicator-visual:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: App/package-lock.json
+      - name: Install runtime dependencies
+        run: npm ci --omit=dev --no-audit --no-fund
+        working-directory: App
+      - name: Validate V2 visual renderer
+        run: node --test App/UI/Tests/test_indicator_visual_v2.js
+      - name: Verify indicator core computations
+        run: |
+          node App/Indicators/Tests/test_indicator_engine.js
+          node App/Indicators/Tests/test_indicator_settings_v1.js
+          node App/Indicators/Tests/test_indicator_complete_v2.js
