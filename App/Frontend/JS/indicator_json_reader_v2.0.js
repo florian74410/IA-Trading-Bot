@@ -13,10 +13,16 @@
  Reader.prototype.accept=function(results,controller){this.batch=Array.isArray(results)?results.slice():[];this.controller=controller||global.IATBActiveChartController||null;this.render()};
  Reader.prototype.render=function(){
   if(!this.host)return;var self=this;this.host.replaceChildren();
-  if(!this.batch.length){this.host.appendChild(node('div','indicatorReaderEmpty','Aucun indicateur affiché · sélectionner avec ƒx Indicateurs ou importer un .indicator.json.'));if(this.state)this.state.textContent='Lecteur JSON · prêt';return;}
+  var dock=this.host.closest?this.host.closest('#indicatorDock'):null;
+  var overlays=0,external=0,errors=0;
+  // Indicator Renderer V2 owns pane metadata. Only oscillators receive a lower
+  // canvas; price overlays are represented inside the main ChartViewer legend.
   this.batch.forEach(function(item,i){
-   if(!item||!item.ok||!item.result){self.host.appendChild(node('div','indicatorReaderError',(item&&item.id||'Indicateur')+' · '+(item&&item.error||'Résultat invalide')));return;}
-   var r=item.result,pane=node('section','indicatorPane indicatorJsonPane');pane.dataset.indicatorId=r.id||('indicator-'+i);
+   if(!item||!item.ok||!item.result){errors++;self.host.appendChild(node('div','indicatorReaderError',(item&&item.id||'Indicateur')+' · '+(item&&item.error||'Résultat invalide')));return;}
+   var r=item.result,isOverlay=!!(r.display&&(r.display.pane==='price'||r.display.render==='zones'));
+   if(isOverlay){overlays++;return;}
+   external++;
+   var pane=node('section','indicatorPane indicatorJsonPane');pane.dataset.indicatorId=r.id||('indicator-'+i);
    pane.appendChild(node('div','indicatorPaneTitle',(r.name||r.id)+' · '+(r.state||'INCONNU')));
    var latest=Object.keys(r.latest||{}).filter(function(k){return !(r.outputs&&r.outputs[k]&&r.outputs[k].chart===false)}).map(function(k){return k+' '+fmt(r.latest[k])}).join(' · ');
    pane.appendChild(node('div','indicatorReaderLatest',latest||'--'));
@@ -29,7 +35,10 @@
     pane.__indicator={result:r,keys:Object.keys(r.values||{}).filter(function(k){return Array.isArray(r.values[k])&&!(r.outputs&&r.outputs[k]&&r.outputs[k].chart===false)})};
    }
    self.host.appendChild(pane);
-  });this.schedule();
+  });
+  if(dock){dock.classList.toggle('iatbHasExternalIndicatorPane',external>0||errors>0);dock.setAttribute('data-overlay-count',String(overlays));}
+  if(this.state)this.state.textContent=external+' panneau(x) · '+overlays+' sur graphique · '+errors+' erreur(s)';
+  this.schedule();
  };
  Reader.prototype.drawAll=function(controller){
   if(controller&&this.controller&&controller!==this.controller)return;if(!this.host)return;
