@@ -1,3 +1,10 @@
+# IA-TB v2.0.4 DEBUG — Indicateurs Trading IA
+
+- Rétablit le dock réellement présent dans la page et supprime les coupures de hauteur ; corrige l’exception `this.series` du renderer natif et le bouton Restaurer.
+- Un seul lecteur des panneaux JSON, batch appliqué une fois ; oscillateurs synchronisés aux timestamps/fenêtres des bougies, histogramme MACD et superpositions de prix sans faux zéros de chauffe.
+- Contexte exchange/paire/timeframe, réponses tardives écartées, demandes concurrentes regroupées et sélection retirée respectée ; pas de calcul technique dans le navigateur.
+- Métadonnées applicatives alignées sur 2.0.4 ; correctifs CeFi/DeFi déjà publiés conservés. Tests et procédure manuelle GEN-1 : `Documentation/INDICATORS_DEBUG_2.0.4.md`. Aucun déploiement automatique ni démarrage Trading.
+
 # IA-TB v2.0.2.1 DEBUG — Hotfix volume mondial CoinGecko
 
 - Anomalie confirmée à la source : CoinGecko /global a retourné total_volume.usd ≈ 1e21 USD pour une capitalisation ≈ 2.8e12 USD.

@@ -291,3 +291,22 @@ html.iatb-dashboard-v186-final.iatb-trading-workspace:not(.iatb-secondary-page-a
     height:100%!important;
   }
 }
+
+/* DEBUG 2.0.4: use the actual dock; no replacement #iatbIndicatorDock is created. */
+html.iatb-trading-workspace:not(.iatb-secondary-page-active) #chartArea>#indicatorDock.active{
+ display:flex!important;flex-direction:column!important;flex:0 0 220px!important;
+ width:100%!important;height:220px!important;min-height:220px!important;max-height:220px!important;overflow:hidden!important;
+}
+html.iatb-trading-workspace #indicatorDock .indicatorDockHead{flex:0 0 auto;min-height:34px;height:auto;flex-wrap:wrap;padding:5px 10px;gap:5px}
+html.iatb-trading-workspace #indicatorDockBody{display:block!important;flex:1 1 auto!important;min-height:0!important;max-height:none!important;overflow-y:auto!important;overflow-x:hidden!important;padding:7px!important}
+html.iatb-trading-workspace #indicatorDockBody .indicatorPane{width:100%!important;min-width:0!important;height:150px!important;min-height:150px!important}
+html.iatb-trading-workspace #indicatorDock .indicatorReaderLatest{top:auto;bottom:3px;right:8px;max-width:95%}
+html.iatb-trading-workspace #indicatorDock .indicatorReaderOverlay small{white-space:normal;overflow-wrap:anywhere}
+/* Earlier dashboard height caps must include the dock instead of clipping it. */
+html.iatb-trading-workspace.iatb-dashboard-v186-final:not(.iatb-secondary-page-active) .iatbCenterColumn>#chartArea[data-mosaic-id="chart"]{
+ height:auto!important;min-height:0!important;max-height:none!important;flex:0 0 auto!important;
+}
+html.iatb-trading-workspace.ia-chart-focus-mode #chartArea #chartBox{
+ flex:1 1 auto!important;height:auto!important;min-height:120px!important;max-height:none!important;
+}
+html.iatb-trading-workspace.ia-chart-focus-mode #chartArea .controls>#chartRestoreBtn{display:inline-flex!important}

@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "application": "IA-Trading-Bot",
-  "version": "2.0.2.1",
+  "version": "2.0.4",
   "status": "DEBUG",
   "source_version": "2.0.0",
   "entrypoint": "Core/Server/server.js",
