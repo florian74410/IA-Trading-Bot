@@ -268,7 +268,7 @@ html,body{background:radial-gradient(circle at 50% -20%,#1a2228 0,#090c0f 45%,#0
 <link rel="stylesheet" href="/assets/companion_v1.0.css"><link rel="stylesheet" href="/assets/global_navigation_v2.0.css?v=2013"><script defer src="/assets/global_navigation_v2.0.js?v=2018"></script></head><body>
 <div id="app" class="app"><div class="macbar"><div class="macdots"><span class="dotmac dotred"></span><span class="dotmac dotyellow"></span><span class="dotmac dotgreen"></span></div><span class="menuItem"><span id="networkDot" class="statusDot"></span>Réseau <strong id="networkState">--</strong></span><span class="menuItem"><span id="apiDot" class="statusDot"></span>OpenAI <strong id="apiState">--</strong></span><span class="menuItem"><span id="gmxDot" class="statusDot"></span>GMX <strong id="gmxState">--</strong></span><span class="menuItem"><span id="marketDataDot" class="statusDot"></span>Market Data <strong id="marketDataState">--</strong></span><span id="walletItem" class="menuItem action" title="Ouvrir le détail du wallet"><span id="walletDot" class="statusDot"></span>Wallet <strong id="walletState">Déconnecté</strong></span><span id="addressItem" class="menuItem copyable" title="Cliquer pour copier l'adresse publique">Adresse <strong id="walletAddress">--</strong></span><span class="menuItem menuBalance">Solde <strong id="balanceEUR">€ --</strong></span><span class="menuItem menuBalance"><strong id="balanceUSD">$ --</strong></span><span class="menuSep"></span><span id="mem" class="menuItem">RAM --</span><span id="topVersion" class="menuItem">v…</span></div><div class="top"><span id="mode" class="tag">MULTI EXCHANGE</span><span id="aiExecMode" class="tag">PREPARE ONLY</span><span id="gmxMode" class="tag gmxBadge">GMX · ARBITRUM</span><div class="navActions"><button id="tradingPageBtn" class="navBtn active" type="button">Trading IA</button><button id="chartViewerBtn" class="navBtn" type="button">📈 Chart Viewer</button><button id="portfolioBtn" class="navBtn" type="button">📊 Portfolio</button><button id="fundamentalBtn" class="navBtn" type="button">🧭 Fondamental</button><button id="settingsBtn" class="navBtn">⚙ Settings</button><button id="strategyBtn" class="navBtn">🧠 Stratégies</button><button id="updatesBtn" class="navBtn hide" type="button" aria-hidden="true" tabindex="-1">↻ Mises à jour</button><button id="walletConnect" class="navBtn">Wallet</button><button id="adminBtn" class="navBtn hide" type="button">🛠 ADMIN</button></div></div><div id="walletMenu" class="walletMenu hide"><h3>Trust Wallet Extension</h3><div class="walletRow"><span>État</span><strong id="wmStatus">Déconnecté</strong></div><div class="walletRow"><span>Réseau</span><strong id="wmNetwork">--</strong></div><div class="walletRow"><span>Adresse</span><strong id="wmAddress">--</strong></div><div class="walletRow"><span>ETH</span><strong id="wmEth">--</strong></div><div class="walletRow"><span>USDC</span><strong id="wmUsdc">--</strong></div><div class="walletRow"><span>Estimation</span><strong id="wmTotal">--</strong></div><div class="walletActions"><button id="walletRefresh" class="btn" type="button">Actualiser</button><button id="walletArbitrum" class="btn" type="button">Arbitrum One</button><button id="walletClose" class="btn" type="button">Fermer</button></div><div class="walletNote">La clé privée et la seed restent dans Trust Wallet. Le solde affiché ici additionne ETH + USDC détectés sur Arbitrum One.</div></div>
 <div class="body" data-mosaic-root><div class="left"><div class="chat chatPrimary" data-mosaic-id="chat"><div class="panelTitle">Chat IA central <span id="aiState" class="muted" style="margin-left:auto">verification...</span></div><div id="msgs" class="msgs"><div class="msg ai">Tu peux piloter le module Trading IA depuis ce Chat IA : graphique multi-exchange, paire, timeframe, Mosaïque, stratégies, wallet, données CEX/DEX et mises à jour. Exemple : « affiche LINK/USD en 5 min », « prépare un LONG GMX », « démarre la stratégie », « actualise tout ».</div></div><div class="aiHint">Le Chat IA est le poste de commande central. IA-TB <span class="runtimeVersionInline">v…</span> reçoit les marchés depuis Market Data : Kraken, Binance, OKX, Bybit, GMX et Hyperliquid. Les providers publics restent en lecture marché ; l’exécution passe séparément par Trading Engine, Firewall et Risk. Les secrets, mots de passe et retraits/transferts restent hors de son contrôle.</div><form id="chatForm" class="chatForm"><input id="chatInput" placeholder="Demande une action au Trading IA..." autocomplete="off"><button class="btn">Envoyer</button></form></div></div>
-<div class="right"><div id="chartArea" data-mosaic-id="chart" style="flex:1;min-height:0;display:flex;flex-direction:column"><div class="controls"><select id="exchangeSelect" title="Exchange"><option value="KRAKEN">Kraken</option><option value="BINANCE">Binance</option><option value="OKX">OKX</option><option value="BYBIT">Bybit</option><option value="GMX">GMX</option><option value="HYPERLIQUID">Hyperliquid</option></select><select id="symbol"><option value="BTCUSD">BTC/USD</option><option value="ETHUSD">ETH/USD</option><option value="SOLUSD">SOL/USD</option></select><select id="interval"><option>1m</option><option>5m</option><option>15m</option><option>1h</option><option>4h</option><option>1d</option></select><select id="visible"><option value="100" selected>100 bougies</option><option value="150">150 bougies</option><option value="200">200 bougies</option><option value="300">300 bougies</option><option value="500">500 bougies</option></select><div class="chartTools"><label title="Niveaux de support/résistance"><input id="levels" type="checkbox">S/R</label></div><button id="chartFocusBtn" class="navBtn chartFocusBtn" type="button">⛶ Agrandir</button><button id="chartRestoreBtn" class="navBtn chartRestoreBtn" type="button">↙ Réduire</button><span id="marketSourceBadge" class="tag">MARKET DATA</span><span id="wsState" class="status">Connexion...</span><span id="price" class="price">--</span></div>
+<div class="right"><div id="chartArea" data-mosaic-id="chart" style="flex:1;min-height:0;display:flex;flex-direction:column"><div class="controls"><div class="iatbMarketPicker" id="iatbMarketPicker" aria-label="Sélection du marché et de la paire"><span class="iatbMarketPickerCoin" id="iatbMarketCoin" aria-hidden="true">₿</span><button class="iatbMarketPickerButton iatbMarketPairButton" id="iatbPairPickerButton" type="button" aria-haspopup="listbox" aria-expanded="false" title="Choisir la paire"><span class="iatbMarketPickerMain" id="iatbPairPickerLabel">BTC/USD</span><span class="iatbMarketChevron" aria-hidden="true">⌄</span></button><span class="iatbMarketPickerSeparator"></span><span class="iatbMarketLiveDot" aria-hidden="true"></span><button class="iatbMarketPickerButton iatbMarketExchangeButton" id="iatbExchangePickerButton" type="button" aria-haspopup="listbox" aria-expanded="false" title="Choisir le marché"><span class="iatbMarketPickerExchange" id="iatbExchangePickerLabel">Kraken</span><span class="iatbMarketChevron" aria-hidden="true">⌄</span></button><select id="exchangeSelect" title="Exchange"><option value="KRAKEN">Kraken</option><option value="BINANCE">Binance</option><option value="OKX">OKX</option><option value="BYBIT">Bybit</option><option value="GMX">GMX</option><option value="HYPERLIQUID">Hyperliquid</option></select><select id="symbol"><option value="BTCUSD">BTC/USD</option><option value="ETHUSD">ETH/USD</option><option value="SOLUSD">SOL/USD</option></select><div id="iatbMarketPickerPopover" class="iatbMarketPickerPopover" hidden role="group" aria-label="Choix du marché"><input id="iatbMarketPickerSearch" type="search" placeholder="Rechercher une paire ou un marché…" autocomplete="off" aria-label="Rechercher"><div id="iatbMarketPickerList" class="iatbMarketPickerList" role="listbox"></div></div></div><select id="interval"><option>1m</option><option>5m</option><option>15m</option><option>1h</option><option>4h</option><option>1d</option></select><select id="visible"><option value="100" selected>100 bougies</option><option value="150">150 bougies</option><option value="200">200 bougies</option><option value="300">300 bougies</option><option value="500">500 bougies</option></select><div class="chartTools"><label title="Niveaux de support/résistance"><input id="levels" type="checkbox">S/R</label></div><button id="chartFocusBtn" class="navBtn chartFocusBtn" type="button">⛶ Agrandir</button><button id="chartRestoreBtn" class="navBtn chartRestoreBtn" type="button">↙ Réduire</button><span id="marketSourceBadge" class="tag">MARKET DATA</span><span id="wsState" class="status">Connexion...</span><span id="price" class="price">--</span></div>
 <div id="chartBox" class="chart" data-chart-host><div id="iaChartHost" class="tvChart iaChartHost" data-chart-canvas></div><div id="ohlc" class="marketState">BTC/USD · O -- H -- L -- C --</div><span class="tvAttribution">Moteur Graphique IA-TB</span></div>
 <div id="indicatorDock" class="indicatorDock active" data-indicator-reader="universal" aria-label="Lecteur universel d indicateurs JSON"><div class="indicatorDockHead">LECTEUR D’INDICATEURS .JSON <span id="indicatorDockState">Lecteur JSON · prêt</span></div><div id="indicatorDockBody" class="indicatorDockBody"><div class="indicatorReaderEmpty">Sélectionne un indicateur avec ƒx Indicateurs ou ajoute un .indicator.json Custom.</div></div></div>
 </div><div id="dynamicBottomRight" class="dynamicBottomRight" data-mosaic-id="modules"><div class="moduleEmpty">Modules Bas‑Droite · configure-les dans Settings → Modulation.</div></div></div></div></div><div id="settingsPage" class="settingsPage hide"><div class="settingsInner"><div class="settingsHead"><div><h2>Settings</h2><div class="muted">Paramètres locaux · Crypto Chart Viewer IA Trader <span class="runtimeVersionInline">v…</span></div></div><button id="settingsClose" class="btn">Retour au trading</button></div><div class="profileBar"><label>Fichier de paramètres<select id="settingsProfileSelect"></select></label><label>Nouveau fichier<input id="settingsProfileName" placeholder="Ex: BureauAppSettings.dat"></label><button id="settingsProfileLoad" class="btn secondary" type="button">Charger</button><button id="settingsProfileSaveAs" class="btn" type="button">Enregistrer sous</button></div><div class="settingsTabs"><button id="tabGeneral" class="navBtn active" type="button">Page 1 · Général</button><button id="tabModulation" class="navBtn" type="button">Page 2 · Modulation</button><button id="tabPower" class="navBtn" type="button">Page 3 · Puissance IA & tokens</button><button id="tabEngines" class="navBtn" type="button">Page 4 · Engines & Communication</button></div><div id="settingsPage1" class="settingsTabPage"><div class="settingsGrid">
@@ -349,7 +349,106 @@ html,body{background:radial-gradient(circle at 50% -20%,#1a2228 0,#090c0f 45%,#0
 
 <div id="updatesPage" class="hide" aria-hidden="true"></div>
 
+
+<style>
+/* Trading IA 2.0.4: unified TradingView-inspired pair/market switcher in IA-TB cyan palette */
+#chartArea .iatbMarketPicker{display:flex;align-items:center;position:relative;flex:0 1 auto;min-width:185px;max-width:min(100%,440px);height:37px;background:linear-gradient(180deg,#102535,#091b29);border:1px solid #24506a;border-radius:9px;box-shadow:inset 0 1px #ffffff0a,0 2px 7px #0003}
+#chartArea .iatbMarketPickerCoin{display:grid;place-items:center;min-width:29px;height:29px;margin-left:5px;border-radius:50%;background:linear-gradient(155deg,#e6a636,#ca7d10);color:white;font-size:16px;font-weight:700;box-shadow:0 0 0 1px #ffffff18}
+#chartArea .iatbMarketPickerButton{display:flex!important;align-items:center;gap:6px;min-width:0;height:33px;border:0!important;border-radius:6px!important;background:transparent!important;box-shadow:none!important;padding:0 8px!important;color:#e1f0f9!important;cursor:pointer;white-space:nowrap}
+#chartArea .iatbMarketPickerButton:hover,#chartArea .iatbMarketPickerButton[aria-expanded=true]{background:#17435b!important;color:#fff!important}
+#chartArea .iatbMarketPickerMain{font-weight:700;letter-spacing:.2px;font-size:13px;overflow:hidden;text-overflow:ellipsis}
+#chartArea .iatbMarketPickerExchange{font-weight:600;font-size:12px;color:#a9cada;overflow:hidden;text-overflow:ellipsis}
+#chartArea .iatbMarketChevron{font-size:16px;line-height:1;color:#75a9bc}
+#chartArea .iatbMarketPickerSeparator{height:19px;width:1px;flex:none;background:#284d61;margin:0 1px}
+#chartArea .iatbMarketLiveDot{height:7px;width:7px;flex:none;border:1px solid #5cece3;border-radius:50%;background:#1bc0c2;box-shadow:0 0 6px #1bc0c27a;margin:0 4px 0 8px}
+#chartArea .iatbMarketPicker select{position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important;left:0;top:0;padding:0!important}
+#chartArea .iatbMarketPickerPopover{position:absolute;left:0;top:calc(100% + 7px);z-index:80;width:max(265px,100%);max-width:min(88vw,390px);padding:8px;background:#091a29;border:1px solid #2b6177;border-radius:11px;box-shadow:0 15px 35px #0009}
+#chartArea .iatbMarketPickerPopover[hidden]{display:none!important}
+#chartArea .iatbMarketPickerPopover input{display:block;width:100%;height:34px;padding:7px 10px;border-radius:7px;background:#071521;color:#ebf6ff;border:1px solid #27536e;outline:none}
+#chartArea .iatbMarketPickerPopover input:focus{border-color:#18b9de;box-shadow:0 0 0 2px #18b9de22}
+#chartArea .iatbMarketPickerList{max-height:260px;overflow-y:auto;scrollbar-color:#28526b #0b1c2b;margin-top:6px;display:flex;flex-direction:column;gap:3px}
+#chartArea .iatbMarketPickerList button{display:flex!important;align-items:center;justify-content:space-between;width:100%;min-height:33px;text-align:left;padding:6px 9px!important;border-radius:6px!important;border:1px solid transparent!important;background:transparent!important;color:#d4ebf7!important;cursor:pointer}
+#chartArea .iatbMarketPickerList button:hover,#chartArea .iatbMarketPickerList button[aria-selected=true]{background:#10364a!important;border-color:#1c5e75!important}
+#chartArea .iatbMarketPickerList button[aria-selected=true]::after{content:'✓';color:#29dbd1}
+#chartArea .iatbMarketPickerButton:focus-visible,#chartArea .iatbMarketPickerList button:focus-visible{outline:2px solid #27bfdc!important;outline-offset:1px}
+@media(max-width:780px){#chartArea .iatbMarketPicker{min-width:155px}#chartArea .iatbMarketPickerMain{font-size:12px}#chartArea .iatbMarketExchangeButton{max-width:118px}}
+</style>
+
 <script src="/assets/chart_controller_native_v1.2.js?v=2040"></script>
+
+<script>
+/* Keep exchangeSelect and symbol as the real single source of truth:
+   feed/data loaders continue to observe their native change events. */
+(function(){'use strict';
+ function init(){
+  var host=document.getElementById('iatbMarketPicker');
+  if(!host)return;
+  var market=document.getElementById('exchangeSelect'),pair=document.getElementById('symbol');
+  var marketButton=document.getElementById('iatbExchangePickerButton');
+  var pairButton=document.getElementById('iatbPairPickerButton');
+  var marketLabel=document.getElementById('iatbExchangePickerLabel');
+  var pairLabel=document.getElementById('iatbPairPickerLabel');
+  var coin=document.getElementById('iatbMarketCoin');
+  var pop=document.getElementById('iatbMarketPickerPopover');
+  var search=document.getElementById('iatbMarketPickerSearch');
+  var list=document.getElementById('iatbMarketPickerList');
+  var openFor=null;
+  function label(select){
+   if(!select)return'--';var selected=select.options[select.selectedIndex];
+   return(selected&&selected.textContent||select.value||'--').trim();
+  }
+  function sync(){
+   marketLabel.textContent=label(market);pairLabel.textContent=label(pair);
+   var symbol=String(pair.value||'').toUpperCase();
+   coin.textContent=symbol.indexOf('BTC')===0?'₿':symbol.indexOf('ETH')===0?'Ξ':symbol.indexOf('SOL')===0?'◎':'◈';
+   coin.style.background=symbol.indexOf('BTC')===0?'linear-gradient(155deg,#e6a636,#ca7d10)':symbol.indexOf('ETH')===0?'linear-gradient(155deg,#697ec1,#3c5079)':'linear-gradient(155deg,#157f92,#0e506e)';
+   if(openFor)render();
+  }
+  function close(){
+   openFor=null;pop.hidden=true;marketButton.setAttribute('aria-expanded','false');
+   pairButton.setAttribute('aria-expanded','false');
+  }
+  function render(){
+   var select=openFor==='pair'?pair:market,needle=search.value.trim().toLowerCase();
+   list.replaceChildren();
+   if(!select)return;
+   var count=0;
+   Array.prototype.forEach.call(select.options,function(opt){
+    if(opt.disabled||!String(opt.value||''))return;
+    var caption=String(opt.textContent||opt.value).trim();
+    if(needle&&caption.toLowerCase().indexOf(needle)<0&&String(opt.value).toLowerCase().indexOf(needle)<0)return;
+    if(count++>=300)return;
+    var button=document.createElement('button');button.type='button';
+    button.setAttribute('role','option');button.setAttribute('aria-selected',String(select.value===opt.value));
+    button.textContent=caption;
+    button.addEventListener('click',function(){
+     if(select.value!==opt.value){select.value=opt.value;select.dispatchEvent(new Event('change',{bubbles:true}))}
+     sync();close();
+    });list.appendChild(button);
+   });
+   if(count===0){var empty=document.createElement('div');empty.textContent='Aucun résultat';empty.style.cssText='padding:12px;color:#8baabb';list.appendChild(empty)}
+  }
+  function open(kind){
+   if(openFor===kind){close();return}
+   openFor=kind;pop.hidden=false;search.value='';
+   pairButton.setAttribute('aria-expanded',String(kind==='pair'));
+   marketButton.setAttribute('aria-expanded',String(kind==='market'));
+   render();search.focus();
+  }
+  pairButton.addEventListener('click',function(){open('pair')});
+  marketButton.addEventListener('click',function(){open('market')});
+  search.addEventListener('input',render);
+  search.addEventListener('keydown',function(e){if(e.key==='Escape'){close();(openFor==='pair'?pairButton:marketButton).focus()}if(e.key==='Enter'){var first=list.querySelector('button');if(first)first.click()}});
+  document.addEventListener('pointerdown',function(e){if(!host.contains(e.target))close()});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&openFor)close()});
+  market.addEventListener('change',sync);pair.addEventListener('change',sync);
+  if(window.MutationObserver){var observer=new MutationObserver(sync);observer.observe(market,{childList:true,subtree:true,attributes:true,attributeFilter:['selected','disabled']});observer.observe(pair,{childList:true,subtree:true,attributes:true,attributeFilter:['selected','disabled']})}
+  sync();
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+</script>
+
 
 <style>
 /* IA-TB · Chart drawing dock · remains within the existing application palette */
