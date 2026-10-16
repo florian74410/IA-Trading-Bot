@@ -1,0 +1,12 @@
+{
+  "version": "0.1.0",
+  "host": "127.0.0.1",
+  "port": 8765,
+  "workspace": "./workspace",
+  "permissions": {
+    "read": true,
+    "dev": true,
+    "write": false,
+    "system": false
+  }
+}
