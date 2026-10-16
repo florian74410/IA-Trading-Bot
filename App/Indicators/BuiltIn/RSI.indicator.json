@@ -66,6 +66,20 @@
           "value": 70,
           "color": "#aa8dff"
         }
+      ],
+      "zones": [
+        {
+          "min": 0,
+          "max": 30,
+          "color": "#a36dff",
+          "opacity": 0.1
+        },
+        {
+          "min": 70,
+          "max": 100,
+          "color": "#a36dff",
+          "opacity": 0.1
+        }
       ]
     }
   }
