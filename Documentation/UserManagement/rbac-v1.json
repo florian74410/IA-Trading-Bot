@@ -68,7 +68,7 @@
       ],
       "data_class": "OWNER",
       "effects": "encrypted preference/secret writes; own reads",
-      "guard": "live session, Origin+CSRF for mutation, current password for secrets; GUEST browser-state is empty"
+      "guard": "live session, Origin+CSRF for mutation, current password for secrets; GUEST browser-state is empty; public generic preferences limited to ui/chart/preferences namespaces, reserved business scopes only through validated domain actions"
     },
     {
       "id": "Legacy self routes",

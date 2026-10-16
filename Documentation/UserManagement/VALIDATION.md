@@ -118,3 +118,35 @@ La sonde Docker est étendue aux neuf pages métier avec identité Alice inject�
 sans présence de Bob ; ceci prouve le rendu authentifié des pages, pas chaque
 interaction métier de leurs contrôleurs JavaScript. GUEST est refusé sur Bank,
 Keys et Portfolio ; son Profil reste accessible.
+
+## Recette fonctionnelle étendue des fournisseurs fictifs
+
+La recette Docker possède désormais un preload QA strictement limité aux racines
+fictives marquées. Il simule uniquement le transport Binance exchangeInfo/klines
+et une réponse OpenAI structurée connue. Les adapters, le budget HTTP, le
+normalizer, le Firewall et les calculs Indicator/Strategy restent réels.
+Aucun endpoint de production n'active ce preload ; le compose ordinaire et les
+entrypoints normaux ne changent pas. Le réseau de qualification reste interne.
+
+Le test natif démarre les vrais processus MarketData et Firewall en mode
+authentifié, reçoit les chandelles via le transport fictif, puis vérifie leur
+validation par la protection Data avant le cache. Le preload refuse une racine
+réelle, une autre destination et un credential IA non fictif.
+
+La sonde Docker ajoute les parcours suivants (résultat CI du nouveau commit à
+contrôler avant de les compter comme réussis) :
+
+- Catalogue de paires et chandelles via Gateway/Core/Router/MarketData/Firewall.
+- RSI, MACD et Custom privé calculés avec ces chandelles par Indicator Engine.
+- Refus du Custom d'Alice pour Bob ; évaluation Strategy personnelle limitée à
+  une intention, sans appel de Trading Engine.
+- Lecture des historiques Portfolio attribués par la CLI avant le démarrage,
+  toujours absents chez Bob et conservés après redémarrage.
+- Gateway/Core/Supervisor/Core/OpenAI fictif : deux credentials personnels,
+  deux réponses distinctes, et aucun événement de coût d'Alice chez Bob.
+
+Le quota général de bridge borne aussi les opérations de compilation et lectures
+qui n'avaient pas de lane spécifique. Les refresh forcés restent refusés.
+L'API générique de préférences ne peut plus écrire les scopes métier réservés
+(indicateurs et actions navigateur notamment) : elle ne remplace pas leurs
+validateurs et capacités dédiés. Tests HTTP de refus et de quota exécutés.

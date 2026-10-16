@@ -15,7 +15,7 @@ x-runtime: &runtime
     - ${IATB_QA_ROOT:?}/annexes:/fixture/annexes:rw
     - ${IATB_QA_ROOT:?}/updates:/fixture/updates:rw
     - ${IATB_QA_ROOT:?}/tls:/fixture/tls:ro
-  environment:
+  environment: &auth21-env
     IATB_DATA_ROOT: /fixture/data
     IATB_RUNTIME_ROOT: /fixture/runtime
     IATB_STATE_ROOT: /fixture/state
@@ -41,7 +41,10 @@ services:
     networks: [isolated]
   core:
     <<: *runtime
-    command: ["node", "Core/Server/server.js"]
+    command: ["node", "--require", "./Tools/CI/auth21_provider_fixture_transport.js", "Core/Server/server.js"]
+    environment:
+      <<: *auth21-env
+      IATB_QA_AI_FIXTURE: "1"
     network_mode: service:router
     depends_on: [router]
   ui:
@@ -61,7 +64,10 @@ services:
     depends_on: [router]
   marketdata:
     <<: *runtime
-    command: ["node", "MarketData/market_data_service.js"]
+    command: ["node", "--require", "./Tools/CI/auth21_provider_fixture_transport.js", "MarketData/market_data_service.js"]
+    environment:
+      <<: *auth21-env
+      IATB_QA_MARKET_FIXTURE: "1"
     network_mode: service:router
     depends_on: [router]
   indicator:

@@ -68,8 +68,8 @@ function createHandler({sessions,origin,secret,bridge=null,aiTransport=null,pers
    if(p==='/auth21/browser-state'&&req.method==='PUT'){const b=await read(req);if(Object.keys(b).join(',')!=='state'||!b.state||typeof b.state!=='object'||Array.isArray(b.state))throw Error('INVALID_REQUEST');sessions.setBrowserState(token,b.state);return reply(res,200,{ok:true});}
    if(p==='/auth21/preferences'){
     if(principal.role==='GUEST')throw Error('FORBIDDEN');
-    if(req.method==='GET')return reply(res,200,{value:sessions.getPreference(token,u.searchParams.get('scope'),u.searchParams.get('key'))});
-    const b=await read(req);if(Object.keys(b).some(k=>!['scope','key','value'].includes(k)))throw Error('INVALID_REQUEST');
+    if(req.method==='GET'){if(!['ui','chart','preferences'].includes(u.searchParams.get('scope')))throw Error('FORBIDDEN');return reply(res,200,{value:sessions.getPreference(token,u.searchParams.get('scope'),u.searchParams.get('key'))});}
+    const b=await read(req);if(Object.keys(b).some(k=>!['scope','key','value'].includes(k)))throw Error('INVALID_REQUEST');if(!['ui','chart','preferences'].includes(b.scope))throw Error('FORBIDDEN');
     if(req.method==='PUT'){sessions.setPreference(token,b.scope,b.key,b.value);return reply(res,200,{ok:true});}
     if(req.method==='DELETE')return reply(res,200,{ok:true,deleted:sessions.deletePreference(token,b.scope,b.key)});
    }

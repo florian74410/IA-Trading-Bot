@@ -25,6 +25,7 @@ test('real TLS HTTP handler: cookie, origin, CSRF, spoofed ownership, CLI-only a
  assert.equal((await call('/auth21/me','GET',null,headers)).data.client.clientId,f.admin.clientId);
  assert.equal((await call('/auth21/preferences','PUT',{scope:'ui',key:'theme',value:'dark'},{Cookie:headers.Cookie})).status,403);
  assert.equal((await call('/auth21/preferences','PUT',{scope:'ui',key:'theme',value:'dark'},headers)).status,200);
+ for(const scope of ['indicators','browser_actions','configuration'])assert.equal((await call('/auth21/preferences','PUT',{scope,key:'definitions',value:'{}'},headers)).status,403);
  assert.equal((await call('/auth21/preferences?scope=ui&key=theme','GET',null,headers)).data.value,'dark');
  assert.equal((await call('/api/settings/apis','POST',{openaiApiKey:'FICTIONAL_KEY'},headers)).status,428);
  assert.equal((await call('/api/settings/apis','POST',{openaiApiKey:'FICTIONAL_KEY',password:PASSWORD},headers)).status,200);
@@ -89,6 +90,7 @@ test('actual Core and Gateway processes authenticate over pinned TLS, isolate la
  }
  const adminLogin=await call('/auth21/login','POST',{email:'admin@example.invalid',password:PASSWORD}),adminHeaders={Cookie:adminLogin.cookie.split(';')[0],'X-IATB-CSRF':adminLogin.data.csrfToken};assert.equal((await call('/api/admin/cache/clear','POST',{target:'invalid'},adminHeaders)).status,428);assert.equal((await call('/api/admin/cache/clear','POST',{target:'invalid',password:'wrong',confirmed:true},adminHeaders)).status,401);assert.equal((await call('/api/admin/cache/clear','POST',{target:'invalid',password:PASSWORD,confirmed:true},adminHeaders)).status,400);
  assert.equal((await call('/ui-api/session','GET',null,{...hb,'X-IATB-UI-Role':'ADMIN','X-IATB-Client-Id':a.data.clientId})).data.role,'USER');
+ const bridgeQuota=crypto.createHash('sha256').update('bridge:'+a.data.clientId).digest('hex');f.db.prepare('INSERT OR REPLACE INTO um_login_attempts VALUES(?,?,?)').run(bridgeQuota,300,Math.floor(Date.now()/1000)+300);assert.equal((await cp('indicator.registry.status',{})).status,429);f.db.prepare('DELETE FROM um_login_attempts WHERE key=?').run(bridgeQuota);
  f.manager.changeRole(f.login.token,a.data.clientId,'GUEST');assert.equal((await call('/auth21/me','GET',null,ha)).status,401);assert.equal((await call('/auth21/me','GET',null,hb)).status,200);
  const guest=await call('/auth21/login','POST',{email:'alice@example.invalid',password:PASSWORD}),hg={Cookie:guest.cookie.split(';')[0],'X-IATB-CSRF':guest.data.csrfToken};assert.equal(guest.data.role,'GUEST');assert.equal((await call('/api/settings','GET',null,hg)).status,200);assert.equal((await cp('indicator.compute_batch_data',{symbol:'BTCUSD',timeframe:'1m',candles:rows,requests:[{id:'rsi'}]},hg)).status,403);assert.equal((await cp('marketdata.symbols',{source:'BINANCE'},hg)).status,403);assert.equal((await call('/ui-data/market/candles?symbol=BTCUSD','GET',null,hg)).status,403);assert(!(await cp('indicator.registry.status',{},hg)).data.data.items.some(x=>x.id==='private_test'));
  assert.equal((await call('/auth21/logout','POST',{},hg)).status,200);assert.equal((await call('/api/settings','GET',null,hg)).status,401);
