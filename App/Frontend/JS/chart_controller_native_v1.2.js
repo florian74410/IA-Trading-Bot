@@ -75,6 +75,62 @@
  IATBChartController.prototype.clearSystem=function(){var self=this;Object.keys(this.priceLines).forEach(function(k){if(k.indexOf('sys:')===0)delete self.priceLines[k]});Object.keys(this.series).forEach(function(k){if(k.indexOf('sys:')===0)delete self.series[k]});this.invalidate()};
  IATBChartController.prototype.applyVisualPlan=function(plan){plan=plan||{};if(plan.replace!==false)this.clearAnalysis();var self=this;(Array.isArray(plan.levels)?plan.levels.slice(0,40):[]).forEach(function(x,i){self.setLevel(x.id||('ai:'+i),x.price,x.title||x.id||('Niveau '+(i+1)),x.options||{})});(Array.isArray(plan.lines)?plan.lines.slice(0,16):[]).forEach(function(x,i){if(Array.isArray(x.data))self.setLine(x.id||('ai-line:'+i),x.data,x.title||x.id,Number.isInteger(x.pane)?x.pane:0,x.options||{})});this.markers=Array.isArray(plan.markers)?plan.markers.slice(0,500):[];if(plan.fit!==false)this.fitContent();this.invalidate()};
  IATBChartController.prototype.handleCommand=function(c){c=c||{};var t=String(c.type||'');if(!ALLOWED[t])throw new Error('Commande graphique refusee: '+t);if(t==='chart.fit'){this.fitContent();return{ok:true}}if(t==='chart.clear_analysis'){this.clearAnalysis();return{ok:true}}if(t==='chart.set_symbol'){this.container.dispatchEvent(evt('ia-tb:chart-symbol-request',{symbol:txt(c.symbol,'symbol',30).toUpperCase()}));return{ok:true}}if(t==='chart.set_timeframe'){this.container.dispatchEvent(evt('ia-tb:chart-timeframe-request',{timeframe:txt(c.timeframe,'timeframe',12)}));return{ok:true}}if(t==='chart.add_level'){this.setLevel(c.id||'ai:level',c.price,c.title||'IA',c.options||{});return{ok:true}}if(t==='chart.remove_level'){this.removeLevel(c.id);return{ok:true}}if(t==='chart.apply_visual_plan'){this.applyVisualPlan(c.plan||{});return{ok:true}}if(t==='chart.focus'){this.setFocus(true);return{ok:true}}if(t==='chart.restore'){this.setFocus(false);return{ok:true}}};
+ IATBChartController.prototype.drawTradingLegend=function(ctx,w,rows){
+  if(!rows||!rows.length||w<170)return;
+  var index=this.hoverIndex>=0&&this.hoverIndex<rows.length?this.hoverIndex:rows.length-1;
+  var candle=rows[index],previous=index>0?rows[index-1]:null;
+  var up=candle.close>=candle.open,delta=previous?candle.close-previous.close:candle.close-candle.open;
+  var percent=previous&&previous.close?delta/previous.close*100:0;
+  var symbol=String(this.context.symbol||'MARKET').toUpperCase().slice(0,25);
+  var tf=String(this.context.timeframe||'').slice(0,10);
+  var exchange=String(this.context.source||'').toUpperCase().slice(0,18);
+  var priceColor=up?'#25c996':'#f05d6c',x=10;
+  var maxX=Math.max(100,w-76),y0=24;
+  var bands=[];
+  var indicators=this.indicatorBatch||[],self=this;
+  indicators.forEach(function(entry){
+   if(!entry||!entry.ok||!entry.result||bands.length>=5)return;
+   var r=entry.result,vals=r.values||{},items=[],keys=Object.keys(vals);
+   if(r.display&&r.display.pane&&r.display.pane!=='price')return;
+   keys.forEach(function(k){
+    if(items.length>=5||(r.outputs&&r.outputs[k]&&r.outputs[k].chart===false))return;
+    var serie=self.series['ind:'+r.id+':'+k],data=serie&&serie.data||[];
+    var value=null;
+    for(var i=data.length-1;i>=0;i--)if(data[i].time<=candle.time&&data[i].value!=null&&isFinite(+data[i].value)){value=+data[i].value;break}
+    if(value==null)return;
+    items.push({value:value,color:serie&&serie.options&&serie.options.color||palette(items.length),name:k});
+   });
+   if(items.length)bands.push({name:String(r.name||r.id||'Indicateur').slice(0,32),items:items});
+  });
+  // The glassy, dark readout remains inside the chart. It does not create
+  // a false oscillator pane for overlays such as Ichimoku, SMA or VWAP.
+  var lineHeight=19,legendHeight=39+bands.length*lineHeight;
+  ctx.save();
+  var bg=ctx.createLinearGradient(0,0,Math.min(w,650),0);
+  bg.addColorStop(0,'rgba(7,11,16,.95)');bg.addColorStop(1,'rgba(7,11,16,.04)');
+  ctx.fillStyle=bg;ctx.fillRect(0,0,w,legendHeight);
+  ctx.font='600 12px system-ui, sans-serif';ctx.fillStyle='#f0f4f8';
+  var title=symbol+(tf?' · '+tf:'')+(exchange?' · '+exchange:'');
+  if(ctx.measureText(title).width>maxX-5&&title.length>15)title=title.slice(0,Math.max(10,Math.floor(maxX/8)))+'…';
+  ctx.fillText(title,x,y0);
+  x+=ctx.measureText(title).width+13;
+  ctx.font='11px ui-monospace, SFMono-Regular, Menlo, monospace';
+  var tokens=[['O '+fmt(candle.open),'#9baebc'],['H '+fmt(candle.high),'#24bfa0'],['L '+fmt(candle.low),'#f26d78'],['C '+fmt(candle.close),priceColor],[(delta>=0?'+':'')+fmt(delta)+' ('+(percent>=0?'+':'')+percent.toFixed(2)+'%)',priceColor]];
+  tokens.forEach(function(t){var width=ctx.measureText(t[0]).width+13;if(x+width>maxX)return;ctx.fillStyle=t[1];ctx.fillText(t[0],x,y0);x+=width});
+  ctx.font='11px system-ui, sans-serif';
+  bands.forEach(function(b,i){
+   var y=43+i*lineHeight,x=11;
+   ctx.fillStyle='#bac7d2';ctx.fillText(b.name,x,y);x+=ctx.measureText(b.name).width+10;
+   ctx.font='11px ui-monospace, SFMono-Regular, Menlo, monospace';
+   b.items.forEach(function(p){
+    var value=fmt(p.value),width=ctx.measureText(value).width+13;
+    if(x+width>maxX)return;
+    ctx.fillStyle=p.color;ctx.fillText(value,x,y);x+=width;
+   });
+   ctx.font='11px system-ui, sans-serif';
+  });
+  ctx.restore();
+ };
  IATBChartController.prototype.draw=function(){var cv=this.canvas,ctx=this.ctx,w=this.container.clientWidth||1,h=this.container.clientHeight||1,d=Math.min(global.devicePixelRatio||1,2),pw=Math.max(1,Math.round(w*d)),ph=Math.max(1,Math.round(h*d));if(cv.width!==pw||cv.height!==ph){cv.width=pw;cv.height=ph}ctx.setTransform(d,0,0,d,0,0);ctx.clearRect(0,0,w,h);ctx.fillStyle='#070b10';ctx.fillRect(0,0,w,h);var rows=this.visibleRows();this.lastRenderStats.width=w;this.lastRenderStats.height=h;this.lastRenderStats.visible=rows.length;this.lastRenderStats.rendered=0;this.lastRenderStats.at=Date.now();if(rows.length<1)return;var L=8,R=68,T=10,B=22,cw=Math.max(10,w-L-R),timeIndex={},i;for(i=0;i<rows.length;i++)timeIndex[rows[i].time]=i;
   var paneKeys=[],paneMap={};Object.keys(this.series).forEach(function(id){var s=this.series[id];if(!s||id==='price'||s.pane===0)return;var k=s.paneKey||('pane:'+id);if(!paneMap[k]){paneMap[k]={key:k,series:[],min:null,max:null};paneKeys.push(k)}paneMap[k].series.push(s);if(s.scaleMin!=null)paneMap[k].min=s.scaleMin;if(s.scaleMax!=null)paneMap[k].max=s.scaleMax},this);var usable=Math.max(80,h-T-B),paneCount=paneKeys.length,sepH=paneCount?Math.min(90,Math.max(58,usable*.2)):0,priceH=Math.max(70,usable-sepH*paneCount-(paneCount?5*paneCount:0)),priceTop=T,lo=Infinity,hi=-Infinity;for(i=0;i<rows.length;i++){lo=Math.min(lo,rows[i].low);hi=Math.max(hi,rows[i].high)}/* Price scale is anchored to visible candles. Overlays/levels may extend it only when they remain near the visible market range; a zero/default/bad indicator must never flatten BTC into the top edge. */var candleLo=lo,candleHi=hi,candleRange=Math.max(candleHi-candleLo,Math.max(Math.abs(candleHi),1)*.002),guardLo=candleLo-candleRange*6,guardHi=candleHi+candleRange*6;Object.keys(this.priceLines).forEach(function(k){var p=+this.priceLines[k].price;if(isFinite(p)&&p>=guardLo&&p<=guardHi){lo=Math.min(lo,p);hi=Math.max(hi,p)}},this);Object.keys(this.series).forEach(function(k){var s=this.series[k];if(!s||s.pane!==0||!Array.isArray(s.data))return;for(var q=0;q<s.data.length;q++)if(timeIndex[s.data[q].time]!=null&&s.data[q].value!=null&&isFinite(+s.data[q].value)){var v=+s.data[q].value;if(v>=guardLo&&v<=guardHi){lo=Math.min(lo,v);hi=Math.max(hi,v)}}},this);var rg=hi-lo||candleRange||1;lo-=rg*.08;hi+=rg*.08;rg=hi-lo||1;/* TradingView-like vertical price scale: autoscale fills the available pane, while user scale/offset can expand, compress or move the price range. */var mid=(hi+lo)/2+this.priceOffset*rg,scaled=Math.max(candleRange*.08,rg*this.priceScale);lo=mid-scaled/2;hi=mid+scaled/2;rg=hi-lo||1;this._geom={L:L,R:R,T:T,B:B,cw:cw,priceTop:priceTop,priceH:priceH,lo:lo,hi:hi};function y(v){return priceTop+(hi-v)/rg*priceH}function xx(idx){return L+(idx+.5)*(cw/Math.max(1,rows.length))}ctx.font='10px Menlo,monospace';ctx.lineWidth=1;for(i=0;i<5;i++){var gy=priceTop+priceH*i/4;ctx.strokeStyle='#182631';ctx.beginPath();ctx.moveTo(L,gy+.5);ctx.lineTo(L+cw,gy+.5);ctx.stroke();ctx.fillStyle='#75899a';ctx.fillText(fmt(hi-rg*i/4),w-R+5,gy+3)}
   for(i=0;i<this.liquidityZones.length;i++){var z=this.liquidityZones[i]||{},a=+(z.low!=null?z.low:(z.priceLow!=null?z.priceLow:(z.min!=null?z.min:z.price))),b=+(z.high!=null?z.high:(z.priceHigh!=null?z.priceHigh:(z.max!=null?z.max:z.price)));if(!isFinite(a)||!isFinite(b))continue;var zy1=y(Math.max(a,b)),zy2=y(Math.min(a,b)),side=String(z.side||z.direction||'').toUpperCase(),strength=isFinite(+z.strength)?Math.max(0,Math.min(1,+z.strength)):0.55;ctx.fillStyle=side==='SHORT'?'rgba(228,93,107,'+(0.10+strength*.12)+')':side==='LONG'?'rgba(64,201,138,'+(0.10+strength*.12)+')':'rgba(90,169,230,'+(0.10+strength*.12)+')';ctx.fillRect(L,zy1,cw,Math.max(3,zy2-zy1));ctx.strokeStyle=side==='SHORT'?'rgba(228,93,107,.72)':side==='LONG'?'rgba(64,201,138,.72)':'rgba(90,169,230,.72)';ctx.beginPath();ctx.moveTo(L,zy1+.5);ctx.lineTo(L+cw,zy1+.5);ctx.stroke();ctx.fillStyle='#9fb0bd';ctx.font='9px Menlo,monospace';ctx.fillText('LIQ '+(side||'ZONE'),L+5,Math.max(priceTop+10,zy1-3))}
@@ -88,6 +144,7 @@
   if(this.crosshair){var cx=clamp(this.crosshair.x,L,L+cw),cy=clamp(this.crosshair.y,T,Math.max(T,h-B));ctx.save();ctx.strokeStyle='#607484';ctx.lineWidth=1;ctx.setLineDash([3,3]);ctx.beginPath();ctx.moveTo(cx,T);ctx.lineTo(cx,h-B);ctx.moveTo(L,cy);ctx.lineTo(L+cw,cy);ctx.stroke();ctx.restore();var hr=this.visibleRows(),hi2=this.hoverIndex;if(hi2>=0&&hi2<hr.length){var hx=xx(hi2),hc=hr[hi2];ctx.save();ctx.strokeStyle='#9db0bf';ctx.setLineDash([2,2]);ctx.beginPath();ctx.moveTo(hx,T);ctx.lineTo(hx,h-B);ctx.stroke();ctx.restore();this.updateReadout(hc)}}
   this.lastRenderStats.rendered=rows.length;
   if(global.IATBIndicatorJsonReader)global.IATBIndicatorJsonReader.drawAll(this);
+  this.drawTradingLegend(ctx,w,rows);
  };
  global.IATBChartController=IATBChartController;
 })(window);
