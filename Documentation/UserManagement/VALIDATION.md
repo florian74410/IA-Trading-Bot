@@ -21,7 +21,18 @@ Les deux skips concernent les parcours CLI positifs sur terminal réel avec UID
 non-root (ancien Auth21 et nouvelle CLI). Le conteneur ne mappe que UID 0 ;
 `chown` vers un UID non-root échoue EINVAL. Les assertions injectées sur les
 commandes et les tests natifs des magasins ADMIN passent, mais ne remplacent pas
-ce test OS. Le test PTY positif reste exécutable sur un hôte Linux adapté.
+ce test OS. Il a ensuite été exécuté avec succès sur GitHub Actions Linux :
+les deux tests PTY y passent, sans skip.
+
+Run CI : https://github.com/florian74410/IA-Trading-Bot/actions/runs/38903457563
+(commit `71fb5c0cf05944c76028988f06e1c04220a0484b`). Les logs ont été lus :
+469 tests Core réussis, 6 suites Indicator réussies, 20 tests UI réussis,
+0 échec et 0 ignoré. Les workflows Core legacy gate, Chart Workspace et
+Indicator Visual Renderer passent également sur ce commit.
+
+Une correction ultérieure active le mode terminal sans écho avant d'afficher
+l'invite et évite de suivre les liens symboliques lors de la préparation d'un
+fixture POSIX root ; rerun ciblé local : 11 réussis, 0 échec, 1 ignoré local.
 
 ## Preuves spécifiques
 

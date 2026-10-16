@@ -204,7 +204,8 @@ wallet existante est requise ; un runtime authentifié ne la régénère jamais.
   L'intégration multiutilisateur complète de toutes les pages reste à terminer.
 - Pas de qualification du snapshot expérimental avec les nouveaux writers.
 - Le test positif CLI avec UID non-root réel ne peut pas s'exécuter dans un
-  conteneur qui ne mappe que l'UID 0 ; la suite indique ce skip explicitement.
+  conteneur qui ne mappe que l'UID 0 ; la suite indique ce skip explicitement. Les deux parcours PTY ont ensuite
+  été exécutés et réussis sur GitHub Actions Linux, sans skip (voir VALIDATION).
 - Aucun test ni modification de la stack Docker GEN-1. Aucun trading réel.
 
 Le refus d'une route démontre son confinement, pas sa migration fonctionnelle.
