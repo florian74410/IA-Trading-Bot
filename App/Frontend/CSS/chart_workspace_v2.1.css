@@ -1,0 +1,136 @@
+/* IA-TB · Chart drawing dock · remains within the existing application palette */
+#chartBox {
+  position: relative;
+}
+.iatbDrawDock {
+  position: absolute;
+  z-index: 18;
+  left: 9px;
+  top: 74px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 5px;
+  background: rgba(8, 19, 29, 0.91);
+  border: 1px solid #20435a;
+  border-radius: 9px;
+  box-shadow: 0 6px 18px #0007;
+  backdrop-filter: blur(10px);
+}
+.iatbDrawDock button {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: #9fb7c8;
+  cursor: pointer;
+  font-size: 17px;
+  padding: 0;
+}
+.iatbDrawDock button:hover {
+  color: #e8f6ff;
+  background: #143448;
+}
+.iatbDrawDock button[aria-pressed="true"] {
+  color: #53d8d0;
+  background: #103d4c;
+  border-color: #247b88;
+}
+.iatbDrawDock .iatbDrawRule {
+  height: 1px;
+  background: #234254;
+  margin: 3px;
+}
+#iatbDrawSurface {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 14;
+  pointer-events: none;
+  touch-action: none;
+}
+.iatbDrawDock button:focus-visible {
+  outline: 2px solid #50c4db;
+  outline-offset: 1px;
+}
+
+.controls {
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px !important;
+  background: #0c1722;
+  border-bottom: 1px solid #254052;
+}
+.controls select,
+.controls input,
+.controls button {
+  min-height: 30px;
+  max-width: 100%;
+  border-radius: 5px;
+}
+.iatbPairSearch {
+  width: 140px;
+  background: #09121a;
+  color: #d8e3ec;
+  border: 1px solid #314758;
+  padding: 5px;
+}
+.iatbIndSearch {
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 8px;
+  padding: 8px;
+  background: #09121a;
+  color: #d8e3ec;
+  border: 1px solid #314758;
+}
+.iatbIndItem {
+  flex-wrap: wrap;
+}
+.iatbIndItem small {
+  width: 100%;
+  color: #91a5b7;
+}
+.iatbIndItem button {
+  background: #142938;
+  color: #d8e3ec;
+  border: 1px solid #314758;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.iatbIndItem input[type="number"] {
+  width: 70px;
+}
+.iatbIndGrid {
+  grid-template-columns: 1fr !important;
+}
+@media (max-width: 600px) {
+  .iatbDrawDock {
+    left: 2px;
+    top: 40px;
+    gap: 1px;
+  }
+  .iatbDrawDock button {
+    width: 26px;
+    height: 26px;
+  }
+  .controls #symbol {
+    max-width: 140px;
+  }
+  .iatbIndPanel {
+    top: 10px !important;
+    max-height: calc(100vh - 20px) !important;
+  }
+}
+/* Override the inherited one-line toolbar so status and Studio remain reachable. */
+html.iatb-trading-workspace #chartArea > .controls {
+  flex-wrap: wrap !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+  white-space: normal !important;
+}
