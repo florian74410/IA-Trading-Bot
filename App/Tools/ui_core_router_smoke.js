@@ -1,4 +1,7 @@
 'use strict';
+// Auth21 P2.2: disallow independent maintenance while snapshot is held.
+if(process.env.IATB_AUTH21_LOCAL_SNAPSHOT_TRIAL==='1'&&process.env.IATB_AUTH21_SNAPSHOT_IPC_TRIAL==='1')throw Error('AUTH21_MAINTENANCE_BLOCKED_DURING_SNAPSHOT');
+
 // Ephemeral UI + Core + Router diagnostic. Run ONLY inside Docker --network none,
 // with read-only image and tmpfs /tmp. No trading engines, no persistent mounts.
 const assert=require('node:assert/strict');

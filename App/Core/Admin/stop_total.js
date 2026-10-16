@@ -1,4 +1,7 @@
 'use strict';
+// P2.2: no launcher/restart/stop side effects during isolated snapshot trials.
+if(process.env.IATB_AUTH21_LOCAL_SNAPSHOT_TRIAL==='1'&&process.env.IATB_AUTH21_SNAPSHOT_IPC_TRIAL==='1')
+ throw Error('AUTH21_OPERATOR_SCRIPT_DISABLED_DURING_SNAPSHOT_TRIAL');
 /* IA-TB — Total Stop Helper.
    Action fixe uniquement: laisse le Core répondre puis arrête les processus IA-TB
    connus via stop.command. Aucun module d'optimisation système n'est impliqué.

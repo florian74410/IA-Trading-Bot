@@ -180,8 +180,9 @@ function registrationDescriptor(){return{
   version:VERSION,schemaVersion:'risk.analysis/1.0',capabilities:CAPABILITIES,events:EVENTS
 };}
 
-var srv=http.createServer(function(req,res){
+var srv=require('../../Core/Clients/auth21_engine_ingress').createServer(function(req,res){
   var u=new URL(req.url,'http://'+HOST+':'+PORT);
+  if(require('../../Core/Clients/auth21_service_boundary').decision(process.env,'engine',req.method,u.pathname).intercept)return json(res,404,{error:'NOT_FOUND'});
   if(req.method==='GET'&&u.pathname==='/health')return json(res,200,{
     ok:true,service:'IA-TB Risk Engine',engine:'risk',version:VERSION,
     protocol:'CP/1',analyticalOnly:true,pid:process.pid,host:HOST,port:PORT,

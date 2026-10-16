@@ -1,4 +1,7 @@
 'use strict';
+// Auth21 P2.2: independent maintenance tools must not bypass a held global snapshot.
+if(process.env.IATB_AUTH21_LOCAL_SNAPSHOT_TRIAL==='1'&&process.env.IATB_AUTH21_SNAPSHOT_IPC_TRIAL==='1')throw Error('AUTH21_MAINTENANCE_BLOCKED_DURING_SNAPSHOT');
+
 /* Offline, non-destructive DEBUG storage preflight. No engines or network. */
 const assert=require('node:assert/strict');
 const fs=require('node:fs');

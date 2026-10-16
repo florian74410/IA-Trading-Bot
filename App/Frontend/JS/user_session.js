@@ -1,0 +1,13 @@
+'use strict';
+(function(){
+ var el=document.getElementById('iatb-session');if(!el)return;
+ var session=JSON.parse(el.textContent),nativeFetch=window.fetch.bind(window),state=session.state||{},timer;
+ // Private browser preferences are loaded from Core for this authenticated user.
+ // Never inherit the previous visitor's origin-wide localStorage.
+ function persist(){clearTimeout(timer);if(session.role==='GUEST')return;timer=setTimeout(function(){nativeFetch('/auth21/browser-state',{method:'PUT',headers:{'Content-Type':'application/json','X-IATB-CSRF':session.csrfToken},body:JSON.stringify({state:state})}).then(function(r){if(!r.ok)console.error('Préférences utilisateur non enregistrées',r.status);}).catch(function(){console.error('Préférences utilisateur indisponibles');});},250);}
+ var storage={getItem:function(k){return Object.hasOwn(state,k)?String(state[k]):null;},setItem:function(k,v){state[k]=String(v);persist();},removeItem:function(k){delete state[k];persist();},clear:function(){state={};persist();},key:function(i){return Object.keys(state)[i]||null;},get length(){return Object.keys(state).length;}};
+ Object.defineProperty(window,'localStorage',{value:storage});Object.defineProperty(window,'sessionStorage',{value:storage});
+ window.IATBSession=Object.freeze({authenticated:true,role:session.role,clientId:session.client.clientId});
+ window.fetch=function(input,options){var req=new Request(input,options),url=new URL(req.url,location.href),headers=new Headers(req.headers);if(url.origin===location.origin&&!['GET','HEAD'].includes(req.method))headers.set('X-IATB-CSRF',session.csrfToken);return nativeFetch(new Request(req,{headers:headers})).then(function(r){if(url.origin===location.origin&&r.status===401)location.replace('/login');return r;});};
+ document.addEventListener('DOMContentLoaded',function(){var b=document.createElement('button');b.type='button';b.textContent='Déconnexion';b.onclick=async function(){var r=await window.fetch('/auth21/logout',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});if(r.ok){state={};location.replace('/login');}};var host=document.querySelector('#view-profile .profileActions')||document.querySelector('header')||document.body;host.appendChild(b);});
+})();

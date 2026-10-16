@@ -28,8 +28,9 @@ function renderProfile(client,settings){
 function loadProfile(){return Promise.all([api('/api/client/me'),api('/api/settings')]).then(function(a){state.profile=a[0].client||{};state.legacy=a[1]||state.legacy||{};renderProfile(state.profile,state.legacy);return state.profile}).catch(function(e){if($('profileMsg'))$('profileMsg').textContent='Profil indisponible : '+e.message})}
 function saveProfile(){
  var btn=$('saveProfile'),msg=$('profileMsg'),body={firstName:$('profileFirstName').value.trim(),lastName:$('profileLastName').value.trim(),email:$('profileEmail').value.trim(),username:$('profileUsername').value.trim()},lang=$('profileLanguage').value;
+ if(window.IATBSession){delete body.username;body.password=$('profileCurrentPassword').value;$('profileCurrentPassword').value='';}
  if(btn)btn.disabled=true;if(msg){msg.classList.remove('ok');msg.textContent='Enregistrement…'}
- return api('/api/profile',{method:'POST',body:body}).then(function(){return api('/api/settings/language',{method:'POST',body:{language:lang}})}).then(function(){if(msg){msg.classList.add('ok');msg.textContent='✓ Profile enregistré.'}return loadProfile()}).catch(function(e){if(msg){msg.classList.remove('ok');msg.textContent='Erreur : '+e.message}}).then(function(){if(btn)btn.disabled=false});
+ return api('/api/profile',{method:'POST',body:body}).then(function(result){if(result.reauthenticationRequired){location.replace('/login');throw Error('Nouvelle connexion nécessaire');}return api('/api/settings/language',{method:'POST',body:{language:lang}})}).then(function(){if(msg){msg.classList.add('ok');msg.textContent='✓ Profile enregistré.'}return loadProfile()}).catch(function(e){if(msg){msg.classList.remove('ok');msg.textContent='Erreur : '+e.message}}).then(function(){if(btn)btn.disabled=false});
 }
 function bindProfile(){var b=$('saveProfile');if(b)b.onclick=saveProfile}
 function apiMsg(kind,msg,ok){var e=$(kind+'ApiMsg');if(e){e.textContent=msg;e.classList.toggle('ok',!!ok)}}

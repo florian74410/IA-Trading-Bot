@@ -6,14 +6,14 @@ function Store(o){
  o=o||{};this.native=null;
  this.retentionDays=Math.max(7,Math.min(365,+o.retentionDays||90));
  this.file=path.resolve(o.file||process.env.IATB_API_TELEMETRY_DB||path.join(process.env.IATB_DATA_ROOT||path.join(os.homedir(),'IA-TB-UserData-Server'),'Shared Data','MarketData','api_telemetry.db'));
- this.ready=false;this.lastError='';this.lastPruneAt=0;this.init();
+ this.ready=false;this.lastError='';this.lastPruneAt=0;this.snapshotGate=o.snapshotGate||null;if(this.snapshotGate&&typeof this.snapshotGate.assertWritable!=='function')throw new Error('SNAPSHOT_GATE_INVALID');if(this.snapshotGate)this.snapshotGate.assertWritable();this.init();
 }
-Store.prototype.run=function(sql,read){
+Store.prototype.run=function(sql,read){if(this.snapshotGate)this.snapshotGate.assertWritable();
  if(!this.native)this.native=new SqliteCompat(this.file,{timeoutMs:5000});
  return this.native.run(sql,read);
 };
-Store.prototype.close=function(){if(this.native){this.native.close();this.native=null;}};
-Store.prototype.init=function(){try{
+Store.prototype.close=function(){if(this.snapshotGate)this.snapshotGate.assertWritable();if(this.native){this.native.close();this.native=null;}};
+Store.prototype.init=function(){if(this.snapshotGate)this.snapshotGate.assertWritable();try{
  this.run("PRAGMA journal_mode=WAL; PRAGMA busy_timeout=5000;"+
  " CREATE TABLE IF NOT EXISTS api_calls(id INTEGER PRIMARY KEY AUTOINCREMENT,request_id TEXT,timestamp INTEGER NOT NULL,completed_at INTEGER,provider TEXT,host TEXT,method TEXT,path TEXT,dataset TEXT,phase TEXT,status_code INTEGER,ok INTEGER,latency_ms INTEGER,response_bytes INTEGER,cost REAL,priority TEXT,freshness TEXT,criticality TEXT,cache_opportunity INTEGER,dedup_opportunity INTEGER,budget_short_allow INTEGER,budget_long_allow INTEGER,error_code TEXT,meta_json TEXT);"+
  " CREATE INDEX IF NOT EXISTS idx_api_calls_ts ON api_calls(timestamp);"+
@@ -23,7 +23,7 @@ Store.prototype.init=function(){try{
  this.ready=true;this.prune(true);
  }catch(e){this.ready=false;this.lastError=e.message;}
 };
-Store.prototype.save=function(x){
+Store.prototype.save=function(x){if(this.snapshotGate)this.snapshotGate.assertWritable();
  if(!this.ready||!x)return false;
  try{
   this.run("INSERT INTO api_calls(request_id,timestamp,completed_at,provider,host,method,path,dataset,phase,status_code,ok,latency_ms,response_bytes,cost,priority,freshness,criticality,cache_opportunity,dedup_opportunity,budget_short_allow,budget_long_allow,error_code,meta_json) VALUES("+[
@@ -32,11 +32,11 @@ Store.prototype.save=function(x){
   this.lastError='';this.prune(false);return true;
  }catch(e){this.lastError=e.message;return false;}
 };
-Store.prototype.prune=function(force){
+Store.prototype.prune=function(force){if(this.snapshotGate)this.snapshotGate.assertWritable();
  if(!this.ready)return;if(!force&&Date.now()-this.lastPruneAt<3600000)return;
  try{var cut=Date.now()-this.retentionDays*86400000;this.run('DELETE FROM api_calls WHERE timestamp < '+Math.round(cut)+'; DELETE FROM stream_events WHERE timestamp < '+Math.round(cut)+';');this.lastPruneAt=Date.now();this.lastError='';}catch(e){this.lastError=e.message;}
 };
-Store.prototype.saveStream=function(x){
+Store.prototype.saveStream=function(x){if(this.snapshotGate)this.snapshotGate.assertWritable();
  if(!this.ready||!x)return false;
  try{this.run("INSERT INTO stream_events(timestamp,provider,event_type,state,connections,reconnects,subscriptions,messages,last_message_at,last_heartbeat_at,error_code,meta_json) VALUES("+[
   Math.round(+x.timestamp||Date.now()),q(String(x.provider||'UNKNOWN').toUpperCase()),q(String(x.eventType||'STATUS').toUpperCase()),q(String(x.state||'').toUpperCase()),
@@ -45,7 +45,7 @@ Store.prototype.saveStream=function(x){
   q(x.errorCode||''),q(JSON.stringify(x.meta||{}))
  ].join(',')+");");this.lastError='';this.prune(false);return true;}catch(e){this.lastError=e.message;return false;}
 };
-Store.prototype.streamHistory=function(o){
+Store.prototype.streamHistory=function(o){if(this.snapshotGate)this.snapshotGate.assertWritable();
  o=o||{};if(!this.ready)return{ok:false,error:'STREAM_TELEMETRY_SQL_UNAVAILABLE',items:[]};
  var provider=String(o.provider||'').toUpperCase(),since=Math.max(0,+o.since||0),limit=Math.max(1,Math.min(10000,+o.limit||500)),where=[];
  if(provider)where.push('provider='+q(provider));if(since)where.push('timestamp>='+Math.round(since));
@@ -54,14 +54,14 @@ Store.prototype.streamHistory=function(o){
   return{ok:true,schema:'marketdata.stream.telemetry.history/1.0',items:items,count:items.length,retentionDays:this.retentionDays};
  }catch(e){this.lastError=e.message;return{ok:false,error:e.message,items:[]};}
 };
-Store.prototype.streamSummary=function(o){
+Store.prototype.streamSummary=function(o){if(this.snapshotGate)this.snapshotGate.assertWritable();
  o=o||{};if(!this.ready)return{ok:false,error:'STREAM_TELEMETRY_SQL_UNAVAILABLE',providers:[]};var since=Math.max(0,+o.since||Date.now()-86400000);
  try{var raw=this.run("SELECT provider,COUNT(*),MAX(messages),MAX(reconnects),MAX(subscriptions),MAX(last_message_at),MAX(last_heartbeat_at),SUM(CASE WHEN event_type='ERROR' OR state='ERROR' OR state='DEGRADED' THEN 1 ELSE 0 END) FROM stream_events WHERE timestamp>="+Math.round(since)+" GROUP BY provider ORDER BY provider;",true).trim(),rows=[];
   if(raw)raw.split(/\r?\n/).filter(Boolean).forEach(function(line){var a=line.split('\t');rows.push({provider:a[0],samples:+a[1]||0,messages:+a[2]||0,reconnects:+a[3]||0,subscriptions:+a[4]||0,lastMessageAt:+a[5]||null,lastHeartbeatAt:+a[6]||null,errorSamples:+a[7]||0});});
   return{ok:true,schema:'marketdata.stream.telemetry.summary/1.0',since:since,providers:rows};
  }catch(e){this.lastError=e.message;return{ok:false,error:e.message,providers:[]};}
 };
-Store.prototype.history=function(o){
+Store.prototype.history=function(o){if(this.snapshotGate)this.snapshotGate.assertWritable();
  o=o||{};if(!this.ready)return{ok:false,error:'API_TELEMETRY_SQL_UNAVAILABLE',items:[]};
  var provider=String(o.provider||'').toUpperCase(),dataset=String(o.dataset||'').toUpperCase(),phase=String(o.phase||'HTTP_END').toUpperCase(),since=Math.max(0,+o.since||0),limit=Math.max(1,Math.min(10000,+o.limit||500)),where=[];
  if(provider)where.push('provider='+q(provider));if(dataset)where.push('dataset='+q(dataset));if(phase)where.push('phase='+q(phase));if(since)where.push('timestamp>='+Math.round(since));
@@ -70,7 +70,7 @@ Store.prototype.history=function(o){
   return{ok:true,schema:'marketdata.api.telemetry.history/1.0',items:items,count:items.length,retentionDays:this.retentionDays};
  }catch(e){this.lastError=e.message;return{ok:false,error:e.message,items:[]};}
 };
-Store.prototype.summary=function(o){
+Store.prototype.summary=function(o){if(this.snapshotGate)this.snapshotGate.assertWritable();
  o=o||{};if(!this.ready)return{ok:false,error:'API_TELEMETRY_SQL_UNAVAILABLE',providers:[]};
  var since=Math.max(0,+o.since||Date.now()-86400000),where="phase='HTTP_END' AND timestamp>="+Math.round(since);
  try{var raw=this.run("SELECT provider,COUNT(*),SUM(CASE WHEN ok=1 THEN 1 ELSE 0 END),SUM(CASE WHEN ok=0 THEN 1 ELSE 0 END),ROUND(AVG(latency_ms),1),SUM(COALESCE(response_bytes,0)),SUM(COALESCE(cost,0)) FROM api_calls WHERE "+where+" GROUP BY provider ORDER BY COUNT(*) DESC;",true).trim(),rows=[];
@@ -78,7 +78,7 @@ Store.prototype.summary=function(o){
   return{ok:true,schema:'marketdata.api.telemetry.summary/1.0',since:since,providers:rows};
  }catch(e){this.lastError=e.message;return{ok:false,error:e.message,providers:[]};}
 };
-Store.prototype.purgeManual=function(o){
+Store.prototype.purgeManual=function(o){if(this.snapshotGate)this.snapshotGate.assertWritable();
  o=o||{};if(String(o.confirm||'')!=='PURGE')return{ok:false,error:'PURGE_CONFIRMATION_REQUIRED'};
  if(!this.ready)return{ok:false,error:'API_TELEMETRY_SQL_UNAVAILABLE'};
  var target=String(o.target||'ALL').toUpperCase(),before=+o.before||0,where=before?' WHERE timestamp < '+Math.round(before):'',parts=[];
@@ -89,7 +89,7 @@ Store.prototype.purgeManual=function(o){
  catch(e){this.lastError=e.message;return{ok:false,error:e.message};}
 };
 // Reuse persistent HTTP telemetry: failed attempts count, duplicate phases do not.
-Store.prototype.coingeckoUsage=function(){
+Store.prototype.coingeckoUsage=function(){if(this.snapshotGate)this.snapshotGate.assertWritable();
  if(!this.ready||this.lastError||this.retentionDays<30)return{ok:false,error:'COINGECKO_QUOTA_HISTORY_UNAVAILABLE'};
  try{
   var now=Date.now(),r=this.run("SELECT COUNT(DISTINCT CASE WHEN phase='HTTP_START' THEN request_id END),COUNT(DISTINCT CASE WHEN phase='HTTP_START' AND timestamp>="+(now-60000)+" THEN request_id END) FROM api_calls WHERE provider='COINGECKO' AND timestamp>="+(now-2592000000)+";",true).trim().split('\t');
@@ -98,7 +98,7 @@ Store.prototype.coingeckoUsage=function(){
   return{ok:true,monthUsed:+r[0]||0,minuteUsed:+r[1]||0,cooldownUntil:until,windowMs:2592000000,scope:'THIS_MARKET_DATA_TELEMETRY_NOT_SHARED_IP_OR_ACCOUNT'};
  }catch(e){return{ok:false,error:e.message};}
 };
-Store.prototype.status=function(){
+Store.prototype.status=function(){if(this.snapshotGate)this.snapshotGate.assertWritable();
  var count=0,oldest=null,newest=null,providers=0,streamEvents=0,streamProviders=0;if(this.ready)try{
   var r=this.run('SELECT COUNT(*),MIN(timestamp),MAX(timestamp) FROM api_calls;',true).trim().split('\t');count=+r[0]||0;oldest=+r[1]||null;newest=+r[2]||null;providers=+(this.run("SELECT COUNT(DISTINCT provider) FROM api_calls WHERE provider<>'';",true).trim())||0;streamEvents=+(this.run('SELECT COUNT(*) FROM stream_events;',true).trim())||0;streamProviders=+(this.run("SELECT COUNT(DISTINCT provider) FROM stream_events WHERE provider<>'';",true).trim())||0;
  }catch(e){this.lastError=e.message;}

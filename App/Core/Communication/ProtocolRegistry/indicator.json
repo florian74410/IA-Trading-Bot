@@ -295,6 +295,20 @@
         "arguments": {
           "allowed": []
         }
+      },
+      {
+        "name": "indicator.user.compute",
+        "arguments": {
+          "allowed": [
+            "payload",
+            "proof"
+          ],
+          "required": [
+            "payload",
+            "proof"
+          ]
+        },
+        "description": "Core authorized per-user indicator computation with current-session revalidation."
       }
     ],
     "dataTypes": [
