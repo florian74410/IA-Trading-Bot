@@ -350,6 +350,109 @@ html,body{background:radial-gradient(circle at 50% -20%,#1a2228 0,#090c0f 45%,#0
 <div id="updatesPage" class="hide" aria-hidden="true"></div>
 
 <script src="/assets/chart_controller_native_v1.2.js?v=2040"></script>
+
+<style>
+/* IA-TB · Chart drawing dock · remains within the existing application palette */
+#chartBox{position:relative}
+.iatbDrawDock{position:absolute;z-index:18;left:9px;top:74px;display:flex;flex-direction:column;gap:4px;padding:5px;background:rgba(8,19,29,.91);border:1px solid #20435a;border-radius:9px;box-shadow:0 6px 18px #0007;backdrop-filter:blur(10px)}
+.iatbDrawDock button{width:32px;height:32px;display:grid;place-items:center;border:1px solid transparent;border-radius:6px;background:transparent;color:#9fb7c8;cursor:pointer;font-size:17px;padding:0}
+.iatbDrawDock button:hover{color:#e8f6ff;background:#143448}.iatbDrawDock button[aria-pressed=true]{color:#53d8d0;background:#103d4c;border-color:#247b88}
+.iatbDrawDock .iatbDrawRule{height:1px;background:#234254;margin:3px}
+#iatbDrawSurface{position:absolute;inset:0;width:100%;height:100%;z-index:14;pointer-events:none;touch-action:none}
+.iatbDrawDock button:focus-visible{outline:2px solid #50c4db;outline-offset:1px}
+</style>
+<script>
+(function(){'use strict';
+ function boot(){
+  var host=document.getElementById('chartBox'),graph=document.getElementById('iaChartHost');
+  if(!host||!graph||host.querySelector('.iatbDrawDock'))return;
+  var dock=document.createElement('div');dock.className='iatbDrawDock';dock.setAttribute('aria-label','Outils de dessin du graphique');
+  var definitions=[['cursor','↖','Curseur / navigation'],['trend','╱','Ligne de tendance'],['horizontal','━','Ligne horizontale'],['rectangle','▭','Rectangle'],['fib','≋','Retracement de Fibonacci'],['undo','↶','Annuler le dernier dessin'],['clear','⌫','Effacer les dessins']];
+  var overlay=document.createElement('canvas');overlay.id='iatbDrawSurface';overlay.setAttribute('aria-label','Surface de dessin graphique');
+  host.appendChild(overlay);host.appendChild(dock);
+  var ctx=overlay.getContext('2d'),mode='cursor',items=[],start=null,preview=null,activeContext='';
+  definitions.forEach(function(def,i){
+   if(i===5){var divider=document.createElement('div');divider.className='iatbDrawRule';dock.appendChild(divider)}
+   var btn=document.createElement('button');btn.type='button';btn.dataset.tool=def[0];btn.textContent=def[1];btn.title=def[2];btn.setAttribute('aria-label',def[2]);btn.setAttribute('aria-pressed',def[0]==='cursor'?'true':'false');dock.appendChild(btn);
+   btn.addEventListener('click',function(e){e.stopPropagation();
+    if(def[0]==='undo'){items.pop();start=null;preview=null;paint();return}
+    if(def[0]==='clear'){items=[];start=null;preview=null;paint();return}
+    mode=def[0];start=null;preview=null;
+    overlay.style.pointerEvents=mode==='cursor'?'none':'auto';
+    overlay.style.cursor=mode==='cursor'?'default':'crosshair';
+    [].forEach.call(dock.querySelectorAll('button[data-tool]'),function(b){b.setAttribute('aria-pressed',b.dataset.tool===mode?'true':'false')});
+    paint();
+   });
+  });
+  function controller(){return window.IATBActiveChartController}
+  function getKey(){
+   var chart=controller(),c=chart&&chart.context||{};
+   return[c.source||'',c.symbol||'',c.timeframe||''].join('|');
+  }
+  function geometry(){var chart=controller(),g=chart&&chart._geom,rows=chart&&chart.visibleRows&&chart.visibleRows();return g&&rows&&rows.length?{g:g,rows:rows}:null}
+  function point(event){
+   var rect=overlay.getBoundingClientRect(),x=event.clientX-rect.left,y=event.clientY-rect.top,layout=geometry();
+   if(!layout)return null;
+   var g=layout.g,rows=layout.rows;
+   if(x<g.L||x>g.L+g.cw||y<g.priceTop||y>g.priceTop+g.priceH)return null;
+   var idx=Math.min(rows.length-1,Math.max(0,Math.floor((x-g.L)/g.cw*rows.length)));
+   return{time:rows[idx].time,price:g.hi-(y-g.priceTop)/g.priceH*(g.hi-g.lo)};
+  }
+  function xy(p,layout){
+   var g=layout.g,rows=layout.rows,idx=-1;
+   for(var i=0;i<rows.length;i++){if(rows[i].time===p.time){idx=i;break}}
+   if(idx<0)return null;
+   return{x:g.L+(idx+.5)*g.cw/rows.length,y:g.priceTop+(g.hi-p.price)/(g.hi-g.lo)*g.priceH};
+  }
+  function drawItem(item,layout){
+   var a=xy(item.a,layout),b=xy(item.b,layout);if(!a||!b)return;
+   var g=layout.g;
+   ctx.save();ctx.strokeStyle='#40c9d2';ctx.fillStyle='rgba(64,201,210,.10)';ctx.lineWidth=1.6;
+   if(item.type==='horizontal'){ctx.beginPath();ctx.moveTo(g.L,a.y);ctx.lineTo(g.L+g.cw,a.y);ctx.stroke()}
+   else if(item.type==='rectangle'){ctx.fillRect(a.x,a.y,b.x-a.x,b.y-a.y);ctx.strokeRect(a.x,a.y,b.x-a.x,b.y-a.y)}
+   else if(item.type==='fib'){
+    var levels=[0,.236,.382,.5,.618,.786,1];
+    levels.forEach(function(r){var y=a.y+(b.y-a.y)*r;ctx.globalAlpha=r===.5?1:.72;ctx.beginPath();ctx.moveTo(Math.min(a.x,b.x),y);ctx.lineTo(g.L+g.cw,y);ctx.stroke();ctx.font='10px Menlo,monospace';ctx.fillStyle='#7fdce4';ctx.fillText((r*100).toFixed(1)+'%',Math.min(g.L+g.cw-50,Math.max(a.x,b.x)+5),y-3)});
+   }else{ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke()}
+   ctx.restore();
+  }
+  function paint(){
+   var d=Math.min(window.devicePixelRatio||1,2),w=host.clientWidth,h=host.clientHeight;
+   if(w<2||h<2)return;
+   if(overlay.width!==Math.round(w*d)||overlay.height!==Math.round(h*d)){overlay.width=Math.round(w*d);overlay.height=Math.round(h*d)}
+   ctx.setTransform(d,0,0,d,0,0);ctx.clearRect(0,0,w,h);
+   var next=getKey();if(next!==activeContext){items=[];start=null;preview=null;activeContext=next}
+   var layout=geometry();if(!layout)return;
+   ctx.save();ctx.beginPath();ctx.rect(layout.g.L,layout.g.priceTop,layout.g.cw,layout.g.priceH);ctx.clip();
+   items.forEach(function(item){drawItem(item,layout)});
+   if(start&&preview)drawItem({type:mode,a:start,b:preview},layout);
+   ctx.restore();
+  }
+  overlay.addEventListener('pointerdown',function(e){
+   if(e.button!==0||mode==='cursor')return;
+   var p=point(e);if(!p)return;
+   start=p;preview=p;overlay.setPointerCapture(e.pointerId);e.preventDefault();
+  });
+  overlay.addEventListener('pointermove',function(e){if(!start)return;preview=point(e)||preview;paint()});
+  overlay.addEventListener('pointerup',function(e){
+   if(!start)return;var end=point(e)||preview||start;
+   if(end){items.push({type:mode,a:start,b:end});if(items.length>120)items.shift()}
+   start=null;preview=null;paint();
+   if(overlay.hasPointerCapture(e.pointerId))overlay.releasePointerCapture(e.pointerId);
+  });
+  overlay.addEventListener('pointercancel',function(){start=null;preview=null;paint()});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&mode!=='cursor'){var button=dock.querySelector('[data-tool=cursor]');if(button)button.click()}});
+  if(window.ResizeObserver)new ResizeObserver(paint).observe(host);
+  window.addEventListener('resize',paint);
+  host.addEventListener('ia-tb:chart-hover',paint);
+  host.addEventListener('ia-tb:chart-candles-loaded',paint);
+  window.IATBChartDrawingTools={refresh:paint};
+  paint();
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
+})();
+</script>
+
 <script src="/assets/indicator_ui_v2.0.js?v=2040"></script><script src="/assets/indicator_json_reader_v2.0.js?v=2040"></script>
 <script src="/assets/mosaic_controller_v2.9.js"></script>
 <script src="/assets/custom_mosaic_v1.0.js"></script>
