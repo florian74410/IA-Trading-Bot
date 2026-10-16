@@ -43,8 +43,9 @@
  Reader.prototype.drawAll=function(controller){
   if(controller&&this.controller&&controller!==this.controller)return;if(!this.host)return;
   var self=this,drawn=0,overlays=0,waiting=0;
+  this.batch.forEach(function(item){var r=item&&item.result;if(item&&item.ok&&r&&r.display&&(r.display.pane==='price'||r.display.render==='zones'))overlays++});
   this.host.querySelectorAll('.indicatorJsonPane').forEach(function(pane){var r=self.drawPane(pane);if(r==='DRAWN')drawn++;else if(r==='OVERLAY')overlays++;else waiting++});
-  if(this.state)this.state.textContent=drawn+' tracé'+(drawn>1?'s':'')+' · '+overlays+' superposé'+(overlays>1?'s':'')+' · '+waiting+' sans tracé · '+self.host.querySelectorAll('.indicatorReaderError').length+' erreur(s)';
+  if(this.state)this.state.textContent=drawn+' tracé'+(drawn>1?'s':'')+' · '+overlays+' superposé'+(overlays>1?'s':'')+' · '+waiting+' en attente · '+self.host.querySelectorAll('.indicatorReaderError').length+' erreur(s)';
  };
  Reader.prototype.drawPane=function(pane){
   var meta=pane.__indicator;if(!meta)return'EMPTY';var r=meta.result,c=this.controller,rows=c&&c.visibleRows?c.visibleRows():[],g=c&&c._geom;
