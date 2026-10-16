@@ -2,7 +2,7 @@
   "schema": "iatb.indicator.v1",
   "id": "vwma",
   "name": "Volume Weighted Moving Average",
-  "version": "1.0",
+  "version": "2.1",
   "category": "volume",
   "inputs": {
     "source": {
@@ -36,7 +36,11 @@
     "value": {
       "type": "number",
       "strategy": true,
-      "chart": true
+      "chart": true,
+      "visual": {
+        "color": "#4db7ef",
+        "width": 2
+      }
     }
   },
   "strategy": {
@@ -54,6 +58,9 @@
   "display": {
     "pane": "price",
     "min": null,
-    "max": null
+    "max": null,
+    "visual": {
+      "layers": []
+    }
   }
 }

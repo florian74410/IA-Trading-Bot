@@ -2,7 +2,7 @@
   "schema": "iatb.indicator.v1",
   "id": "liquidity_heatmap",
   "name": "Liquidity HeatMap",
-  "version": "1.0",
+  "version": "2.1",
   "category": "liquidity",
   "inputs": {
     "strength": {
@@ -26,7 +26,11 @@
     "strength": {
       "type": "number",
       "strategy": true,
-      "chart": false
+      "chart": false,
+      "visual": {
+        "color": "#4db7ef",
+        "width": 2
+      }
     }
   },
   "strategy": {
@@ -40,6 +44,9 @@
   "display": {
     "pane": "price",
     "render": "zones",
-    "mode": "ESTIMATED"
+    "mode": "ESTIMATED",
+    "visual": {
+      "layers": []
+    }
   }
 }

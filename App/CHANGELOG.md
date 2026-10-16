@@ -1,3 +1,9 @@
+# IA-TB v2.1.0 DEVELOPMENT — Indicator Visual Renderer V2
+
+- Déclarations graphiques sûres pour 21 indicateurs natifs; nuages Ichimoku et bandes Bollinger; niveaux RSI/MACD; couleurs/traits/histogrammes; suppression du faux panneau inférieur pour les overlays.
+- Aucun changement de calcul Indicator Engine, permissions Router, Firewall, Trading Engine ni stockage persistant.
+- Branche de développement uniquement : tests réels Firefox/GEN-1 et QA complète encore à réaliser. Ne pas déployer en production.
+
 # IA-TB v2.0.4 DEBUG — Indicateurs Trading IA
 
 - Rétablit le dock réellement présent dans la page et supprime les coupures de hauteur ; corrige l’exception `this.series` du renderer natif et le bouton Restaurer.

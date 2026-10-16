@@ -1,0 +1,40 @@
+name: Chart workspace V2.1
+on:
+  pull_request:
+    paths:
+      - 'App/Frontend/**'
+      - 'App/UI/Tests/**'
+      - '.github/workflows/chart-workspace-v21.yml'
+      - 'Tools/Deploy/**'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  workspace:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: App/package-lock.json
+      - run: npm ci --prefix App --omit=dev --no-audit --no-fund
+      - name: Install browser QA outside runtime dependencies
+        run: |
+          npm install --prefix "$RUNNER_TEMP/workspace-qa" --no-audit --no-fund playwright@1.62.1
+          "$RUNNER_TEMP/workspace-qa/node_modules/.bin/playwright" install --with-deps firefox
+          echo "NODE_PATH=$RUNNER_TEMP/workspace-qa/node_modules" >> "$GITHUB_ENV"
+      - name: Browser and V2 contract regressions
+        run: node --test App/UI/Tests/test_chart_drawing_contract_v21.js App/UI/Tests/test_chart_workspace_v21.js App/UI/Tests/test_trading_indicators_v204.js App/UI/Tests/test_indicator_visual_v2.js
+      - name: Indicator calculation regressions
+        run: |
+          node App/Indicators/Tests/test_indicator_engine.js
+          node App/Indicators/Tests/test_indicator_settings_v1.js
+          node App/Indicators/Tests/test_indicator_complete_v2.js
+          node App/Indicators/Tests/test_indicator_ir_v2.js
+          node App/Indicators/Tests/test_indicator_language_v2.js
+          node App/Indicators/Tests/test_indicator_analysis_v1.js
+      - name: Read-only deployment inventory tests
+        run: python3 -m unittest discover -s Tools/Deploy -p 'test_*.py'

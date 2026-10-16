@@ -2,7 +2,7 @@
   "schema": "iatb.indicator.v1",
   "id": "vwap",
   "name": "Volume Weighted Average Price",
-  "version": "1.0",
+  "version": "2.1",
   "category": "volume",
   "inputs": {
     "high": {
@@ -51,7 +51,11 @@
     "value": {
       "type": "number",
       "strategy": true,
-      "chart": true
+      "chart": true,
+      "visual": {
+        "color": "#4db7ef",
+        "width": 2
+      }
     }
   },
   "strategy": {
@@ -69,7 +73,10 @@
   "display": {
     "pane": "price",
     "min": null,
-    "max": null
+    "max": null,
+    "visual": {
+      "layers": []
+    }
   },
   "notes": {
     "anchorSemantics": "session/day = UTC day; week = UTC Monday week; month = UTC calendar month"

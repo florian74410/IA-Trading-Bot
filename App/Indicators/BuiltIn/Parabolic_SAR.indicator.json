@@ -2,7 +2,7 @@
   "schema": "iatb.indicator.v1",
   "id": "parabolic_sar",
   "name": "Parabolic SAR",
-  "version": "1.0",
+  "version": "2.1",
   "category": "trend",
   "inputs": {
     "high": {
@@ -39,12 +39,22 @@
     "value": {
       "type": "number",
       "strategy": true,
-      "chart": true
+      "chart": true,
+      "visual": {
+        "color": "#4db7ef",
+        "width": 2
+      },
+      "render": "points"
     },
     "direction": {
       "type": "number",
       "strategy": true,
-      "chart": false
+      "chart": false,
+      "visual": {
+        "color": "#fcaf57",
+        "width": 2
+      },
+      "render": "points"
     }
   },
   "strategy": {
@@ -62,6 +72,9 @@
   "display": {
     "pane": "price",
     "min": null,
-    "max": null
+    "max": null,
+    "visual": {
+      "layers": []
+    }
   }
 }

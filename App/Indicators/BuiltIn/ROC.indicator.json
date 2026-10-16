@@ -2,7 +2,7 @@
   "schema": "iatb.indicator.v1",
   "id": "roc",
   "name": "Rate of Change",
-  "version": "1.0",
+  "version": "2.1",
   "category": "momentum",
   "inputs": {
     "source": {
@@ -29,7 +29,11 @@
     "value": {
       "type": "number",
       "strategy": true,
-      "chart": true
+      "chart": true,
+      "visual": {
+        "color": "#4db7ef",
+        "width": 2
+      }
     }
   },
   "strategy": {
@@ -47,6 +51,15 @@
   "display": {
     "pane": "separate",
     "min": null,
-    "max": null
+    "max": null,
+    "visual": {
+      "layers": [],
+      "levels": [
+        {
+          "value": 0,
+          "color": "#71849f"
+        }
+      ]
+    }
   }
 }
