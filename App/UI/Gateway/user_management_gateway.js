@@ -25,12 +25,14 @@ function create({root,corePort,pages,findAsset}){
   try{
    const u=new URL(req.url,config.origin),p=u.pathname;
    if(!req.socket.encrypted){res.writeHead(403);return res.end();}
+   if(p==='/ui-health'&&req.method==='GET'){res.writeHead(200,{'Content-Type':'application/json','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});return res.end(JSON.stringify({ok:true,name:'IA-TB UI Service',authentication:'Auth21',version:'2.1.1',pid:process.pid}));}
    if(p==='/login'&&req.method==='GET')return file(res,'Frontend/Pages/login.html');
    if(p.startsWith('/assets/')&&['GET','HEAD'].includes(req.method)){const a=findAsset(p.slice(8));if(a)return file(res,a);res.writeHead(404);return res.end();}
    if(p.startsWith('/auth21/internal/')||p.startsWith('/api/internal/')){res.writeHead(403);return res.end();}
    if(p.startsWith('/api/')||p.startsWith('/auth21/')||p==='/ui-api/session'||p==='/ui-data/market/candles'||['/communication/v1/ui/read','/communication/v1/ui/write','/communication/v1/client/ack'].includes(p))return upstream(req,res,req.url);
    if(pages[p]&&['GET','HEAD'].includes(req.method)){
     const me=await core(req,'/auth21/me');if(me.status!==200){res.writeHead(303,{Location:'/login','Cache-Control':'no-store'});return res.end();}
+    if(me.data.role==='GUEST'&&/^\/(bank|keys|portfolio)(?:\/|$)/.test(p)){res.writeHead(403);return res.end();}
     if(p.startsWith('/admin')&&me.data.role!=='ADMIN'){res.writeHead(403);return res.end();}
     const [csrf,state]=await Promise.all([core(req,'/auth21/csrf'),core(req,'/auth21/browser-state')]);
     if(csrf.status!==200||state.status!==200)throw Error('SESSION_UNAVAILABLE');

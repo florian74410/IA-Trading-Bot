@@ -99,3 +99,22 @@ Décisions explicites encore nécessaires pour accepter une limitation :
 exécution Trading/transferts/swaps, ancien test Apple Mail sous Linux, REMOTE_LLM.
 Les capacités non migrées restent refusées. Aucun refus n'est présenté comme
 fonctionnalité livrée. La PR reste en brouillon et n'est pas prête à intégrer.
+
+## Correction des sondes et import des définitions
+
+Le run Docker du commit f149eca4 a révélé une route `/ui-health` absente du
+Gateway authentifié. La sonde TLS opérateur est restaurée, avec test HTTP réel.
+Le workflow Chart a aussi observé une assertion immédiate avant l'apparition du
+modèle Studio. Le test attend désormais le même élément visible avant son
+assertion ; 31 tests UI passent en rerun local, sans modification du Renderer.
+
+L'import CLI des définitions Indicator Custom, Strategy V1/V2 et Mosaïque réutilise
+les validateurs canoniques. Le test positif traverse `run()` avec authentification
+ADMIN et confirmations, vérifie l'usage par Alice et l'absence pour Bob ainsi que
+le refus d'une seconde attribution. Il ne remplace pas les tests existants de
+TTY réel non-root. Les fichiers source restent octet pour octet identiques.
+
+La sonde Docker est étendue aux neuf pages métier avec identité Alice injectée
+sans présence de Bob ; ceci prouve le rendu authentifié des pages, pas chaque
+interaction métier de leurs contrôleurs JavaScript. GUEST est refusé sur Bank,
+Keys et Portfolio ; son Profil reste accessible.

@@ -217,9 +217,22 @@ une revendication d'attribution dans la même transaction que la copie. Un confl
 ou une interruption annule la copie ; ne jamais supprimer la revendication pour
 forcer un second propriétaire. Un import ne fusionne pas des données existantes.
 
-Les JSON Custom Indicator et Strategy restent réimportables par leur propriétaire
-via leurs interfaces validées ; l'attribution automatique des fichiers globaux et
-la conversion complète des anciens dashboards ne sont pas qualifiées.
+Les fichiers JSON/JSON dans .dat Custom Indicator, Strategy V1/V2 et Mosaïque
+sont attribuables individuellement via la même CLI :
+
+```sh
+export IATB_LEGACY_DEFINITION=/chemin/prive/definition.json
+node App/CLI/users.js import-legacy-definition CL_COMPTE_CIBLE
+# Le terminal demande INDICATOR, STRATEGY ou MOSAIC.
+```
+
+La CLI réutilise les validateurs canoniques sans modifier leurs calculs. Elle
+refuse les collisions et IDs BuiltIn, préserve le fichier source, et revendique
+son attribution dans la même transaction que la copie privée. Les définitions
+Indicator sont chiffrées dans clients.sqlite ; Strategy et Mosaïque utilisent
+IATB_USER_DB comme les dispatchers propriétaires. Les Settings du dashboard
+s'importent séparément par leur scope/clé. Aucun fichier arbitraire n'est exécuté
+ni automatiquement adopté. Seuls les formats canoniques validés sont convertis.
 
 ## Paramètres et services authentifiés
 
@@ -246,8 +259,9 @@ TLS épinglé en mode authentifié.
 - Le test email historique dépend d'Apple Mail et n'est pas migré vers Linux/SMTP.
   Il reste refusé. Sa suppression ou son remplacement nécessite une décision explicite.
 - REMOTE_LLM et les destinations RPC hors allowlist nécessitent un choix opérateur.
-- Les stratégies, définitions Custom et dashboards globaux ne sont pas automatiquement
-  attribués ; la migration de tous leurs formats historiques reste à qualifier.
+- Les historiques ne sont jamais automatiquement attribués. Les imports explicites
+  des formats canoniques sont qualifiés sur fixtures ; une installation réelle
+  exige un inventaire opérateur et ne fait pas partie de cette recette.
 - La recette complète de chaque écran métier et de tous les échanges privés entre
   Engines n'est pas achevée. Les pages peuvent encore présenter des commandes refusées.
 - Pas de qualification du snapshot expérimental avec les nouveaux writers.

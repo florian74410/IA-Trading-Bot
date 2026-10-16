@@ -1,10 +1,11 @@
 'use strict';
 const Core=require('./strategy_v2_core'),Stats=require('./strategy_stats_v2'),Settings=require('../../Core/Settings/sqlite_settings_store'),evaluate=require('./evaluate_strategy');
+function initialState(){return {definitions:[],state:{mode:'RUNNING',startedAt:Date.now(),lastEvaluation:null,lastSignal:null},stats:{schema:1,evaluations:0,signals:0,holds:0,errors:0,last_evaluation_at:null,last_signal_at:null,by_strategy:{}},events:[]};}
 function dispatch({root}){
  const storage=new Settings(root);
  return function(principal,action,args){
   const scope='strategy_owner:'+principal.clientId,key='state';
-  const data=storage.get(scope,key,{definitions:[],state:{mode:'RUNNING',startedAt:Date.now(),lastEvaluation:null,lastSignal:null},stats:{schema:1,evaluations:0,signals:0,holds:0,errors:0,last_evaluation_at:null,last_signal_at:null,by_strategy:{}},events:[]});
+  const data=storage.get(scope,key,initialState());
   const persist=()=>storage.set(scope,key,data),stats=Object.create(Stats.prototype);stats.state=data.stats;stats.save=()=>{data.stats=stats.state;persist();};
   const registry={items:data.definitions,select(opt){const ids=opt.strategy_ids;return this.items.filter(s=>s.enabled!==false&&(!ids||ids.includes(s.strategy_id))&&s.symbol===opt.symbol&&s.timeframe===opt.timeframe);},snapshot(){return {count:this.items.length,items:this.items.map(s=>({strategy_id:s.strategy_id,name:s.name,version:s.version,symbol:s.symbol,timeframe:s.timeframe,enabled:s.enabled!==false,weight:s.weight??1,file:null,source_format:'V2'})),errors:[]};}};
   const health=()=>({ok:true,service:'IA-TB Strategy Engine v2',mode:data.state.mode,execution:'INTENTION_ONLY',strategies:data.definitions.length,lastEvaluation:data.state.lastEvaluation,lastSignal:data.state.lastSignal});
@@ -26,4 +27,4 @@ function dispatch({root}){
   throw Error('OWNER_OPERATION_DENIED');
  };
 }
-module.exports={dispatch};
+module.exports={dispatch,initialState};
