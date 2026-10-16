@@ -64,3 +64,5 @@ html.iatb-trading-workspace #chartArea .cvToolbar #wsState{flex:1 1 250px;min-wi
   overflow:auto;
   box-sizing:border-box;
 }
+
+#chartArea .iatbMarketPickerPopover:popover-open{margin:0;inset:auto;}
