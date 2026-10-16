@@ -21,8 +21,8 @@ async function pageWith(options){
  await page.route('**/*',async function(route){var req=route.request(),u=new URL(req.url()),p=u.pathname;
   if(u.origin===base&&(p==='/ia-trading'||p.startsWith('/assets/')))return route.continue();
   assert.equal(u.origin,base,'no external requests in QA');var d={ok:true,items:[],events:[],strategies:[],instances:[],logs:[]};
-  if(p==='/api/status')d={ok:true,version:'2.0.4',role:'USER',defaultMarketSource:'KRAKEN',defaultSymbol:'BTCUSD',defaultInterval:'1m',candles:240,memoryMB:64,openai:false};
-  if(p==='/api/health')d={ok:true,version:'2.0.4'};
+  if(p==='/api/status')d={ok:true,version:'2.1.0',role:'USER',defaultMarketSource:'KRAKEN',defaultSymbol:'BTCUSD',defaultInterval:'1m',candles:240,memoryMB:64,openai:false};
+  if(p==='/api/health')d={ok:true,version:'2.1.0'};
   if(p==='/ui-data/market/candles'){var sym=u.searchParams.get('symbol'),tf=u.searchParams.get('interval');var marketRows=candles(sym,tf);if(options.noVolume)marketRows.forEach(function(row){row[5]=null});d={ok:true,candles:marketRows,provider:u.searchParams.get('exchange'),timeframe:tf,timeframeValidated:true};}
   if(p.startsWith('/communication/v1/ui/')){
    var b=req.postDataJSON(),a=b.action,args=b.arguments||{};calls.push(b);assert(!/^trading\./.test(a),'no Trading Engine action');
@@ -49,7 +49,7 @@ test('computed RSI/MACD are visible below the real Trading chart',async function
   var layout=await p.evaluate(function(){var dock=document.querySelector('#indicatorDock'),area=document.querySelector('#chartArea'),body=document.querySelector('#indicatorDockBody');return{height:dock.clientHeight,clipped:dock.getBoundingClientRect().bottom>area.getBoundingClientRect().bottom+1,scroll:body.scrollHeight>body.clientHeight};});assert(layout.height>=218);assert.equal(layout.clipped,false,'entire dock must be inside the chart area');assert(layout.scroll,'multiple panes remain reachable by scrolling');
   await p.waitForFunction(function(){return document.querySelector('[data-indicator-id=macd]').__renderState&&document.querySelector('[data-indicator-id=macd]').__renderState.state==='DRAWN'});
   assert.equal(await p.locator('#indicatorDockBody [data-indicator-id]').count(),2);assert.deepStrictEqual(c.errors,[]);
-  var macd=await p.locator('[data-indicator-id=macd]').evaluate(function(el){var state=el.__renderState,data=el.querySelector('canvas').getContext('2d').getImageData(0,0,el.querySelector('canvas').width,el.querySelector('canvas').height).data,n=0;for(var i=0;i<data.length;i+=4)if(data[i]>180&&data[i+1]>150&&data[i+2]<130)n++;return{histogram:state.series.find(function(s){return s.key==='histogram'}).render,pixels:n,min:state.min,max:state.max};});assert.equal(macd.histogram,'histogram');assert(macd.pixels>30,'actual histogram pixels, not only a READY label');assert(macd.min<=0&&macd.max>=0);
+  var macd=await p.locator('[data-indicator-id=macd]').evaluate(function(el){var state=el.__renderState,data=el.querySelector('canvas').getContext('2d').getImageData(0,0,el.querySelector('canvas').width,el.querySelector('canvas').height).data,n=0;for(var i=0;i<data.length;i+=4)if((data[i]>200&&data[i+1]<130&&data[i+2]>90)||(data[i]<80&&data[i+1]>150&&data[i+2]>100))n++;return{histogram:state.series.find(function(s){return s.key==='histogram'}).render,pixels:n,min:state.min,max:state.max};});assert.equal(macd.histogram,'histogram');assert(macd.pixels>30,'actual histogram pixels, not only a READY label');assert(macd.min<=0&&macd.max>=0);
   if(process.env.IATB_INDICATOR_SCREENSHOT)await p.locator('#chartArea').screenshot({path:process.env.IATB_INDICATOR_SCREENSHOT});
  }finally{await p.close();}
 });
@@ -57,7 +57,7 @@ test('computed RSI/MACD are visible below the real Trading chart',async function
  test('price overlays retain warm-up gaps, draw on candles and do not create duplicate oscillator charts',async function(){
  var c=await pageWith({selected:['ema','parabolic_sar','bollinger_bands']}),p=c.page;try{
   await p.waitForFunction(function(){return Object.keys(window.IATBActiveChartController.indicatorSeries).length===5});
-  var state=await p.evaluate(function(){var ctl=window.IATBActiveChartController,cv=ctl.canvas,pixels=cv.getContext('2d').getImageData(0,0,cv.width,cv.height).data,n=0;for(var i=0;i<pixels.length;i+=4)if(Math.abs(pixels[i]-90)<8&&Math.abs(pixels[i+1]-169)<8&&Math.abs(pixels[i+2]-230)<8)n++;return{points:ctl.indicatorSeries['ind:parabolic_sar:value'].options.render,warm:ctl.indicatorSeries['ind:ema:value'].data.slice(0,19).map(function(p){return p.value}),pricePixels:n,rendered:ctl.getRenderState().rendered};});
+  var state=await p.evaluate(function(){var ctl=window.IATBActiveChartController,cv=ctl.canvas,pixels=cv.getContext('2d').getImageData(0,0,cv.width,cv.height).data,n=0;for(var i=0;i<pixels.length;i+=4)if(Math.abs(pixels[i]-77)<8&&Math.abs(pixels[i+1]-183)<8&&Math.abs(pixels[i+2]-239)<8)n++;return{points:ctl.indicatorSeries['ind:parabolic_sar:value'].options.render,warm:ctl.indicatorSeries['ind:ema:value'].data.slice(0,19).map(function(p){return p.value}),pricePixels:n,rendered:ctl.getRenderState().rendered};});
   assert.equal(state.points,'points');assert(state.warm.every(function(x){return x===null}));assert(state.pricePixels>30);assert.equal(state.rendered,100);assert.equal(await p.locator('#indicatorDockBody canvas').count(),0);assert.deepStrictEqual(c.errors,[]);
  }finally{await p.close();}
 });
@@ -71,7 +71,7 @@ test('computed RSI/MACD are visible below the real Trading chart',async function
    assert.equal(aligned.from,aligned.first);assert.equal(aligned.to,aligned.last);assert.equal(aligned.width,aligned.main);assert(Math.abs(aligned.offset)<1);assert(aligned.count>0);assert(await p.locator('#indicatorDock').isVisible());
    assert(await p.evaluate(function(){return document.querySelector('#indicatorDock').getBoundingClientRect().bottom<=document.querySelector('#chartArea').getBoundingClientRect().bottom+1;}),'dock clipped at '+width);
   }
-  await p.setViewportSize({width:1440,height:1000});var before=c.calls.filter(function(x){return x.action==='indicator.compute_batch_data'}).length;await p.selectOption('#visible','150');await p.waitForTimeout(400);assert.equal(c.calls.filter(function(x){return x.action==='indicator.compute_batch_data'}).length,before,'a visible-window change reuses the computed batch');
+  await p.setViewportSize({width:1440,height:1000});var before=c.calls.filter(function(x){return x.action==='indicator.compute_batch_data'}).length;await p.getByRole('button',{name:'Paramètres d’affichage',exact:true}).click();await p.selectOption('#visible','150');await p.waitForTimeout(400);assert.equal(c.calls.filter(function(x){return x.action==='indicator.compute_batch_data'}).length,before,'a visible-window change reuses the computed batch');
   await p.evaluate(function(){window.IATBActiveChartController.setVisibleCount(60,false)});await p.waitForTimeout(80);assert.equal(await p.locator('[data-indicator-id=rsi]').evaluate(function(e){return e.__renderState.series[0].points.length}),60);assert.deepStrictEqual(c.errors,[]);
  }finally{await p.close();}
 });
@@ -106,7 +106,7 @@ test('all 20 native indicators and JSON output render modes remain consumable',a
   var batches=registry.list().filter(function(x){return x.id!=='liquidity_heatmap'}).map(function(x){return Engine.computeBatch(registry,candles('BTCUSD','1m'),[{id:x.id,params:{}}])[0]});
   // Use the current chart timestamps, as the real compute_data route does.
   await p.evaluate(function(results){var ctl=window.IATBActiveChartController;results.forEach(function(x){x.result.times=ctl.rows.map(function(row){return row.time*1000})});ctl.applyIndicatorBatch(results);},batches);await p.waitForTimeout(100);
-  assert.equal(await p.locator('[data-indicator-id]').count(),20);assert.equal(await p.locator('.indicatorReaderError').count(),0);
+  assert.equal(await p.locator('[data-indicator-id]').count(),batches.filter(function(x){return x.result.display.pane!=='price'}).length);assert.equal(await p.evaluate(function(){return IATBActiveChartController.indicatorBatch.length}),20);assert.equal(await p.locator('.indicatorReaderError').count(),0);
   var states=await p.locator('#indicatorDockBody .indicatorJsonPane').evaluateAll(function(panes){return panes.map(function(p){return p.__renderState.state})});assert(states.every(function(s){return s==='DRAWN'||s==='OVERLAY'}));
   await p.evaluate(function(){var ctl=window.IATBActiveChartController,times=ctl.rows.map(function(r){return r.time}),values=times.map(function(_,i){return i%10===0?null:Math.sin(i/7)});window.IATBIndicatorJsonReader.accept([{ok:true,result:{id:'custom_fixture',name:'Custom output fixture',state:'READY',display:{pane:'separate',min:null,max:null},times:times,values:{area:values,markers:values,bars:values},outputs:{area:{render:'area'},markers:{render:'markers'},bars:{render:'bars'}}}}]);});await p.waitForTimeout(50);
   assert.equal(await p.locator('[data-indicator-id=custom_fixture]').evaluate(function(e){return e.__renderState.series.length}),3);assert.deepStrictEqual(c.errors,[]);
