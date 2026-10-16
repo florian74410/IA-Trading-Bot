@@ -134,3 +134,12 @@ html.iatb-trading-workspace #chartArea > .controls {
   overflow: visible !important;
   white-space: normal !important;
 }
+html.iatb-trading-workspace:not(.iatb-secondary-page-active) #chartArea > .controls {
+  flex: 0 0 auto !important;
+  flex-wrap: wrap !important;
+  height: auto !important;
+  min-height: 40px !important;
+  max-height: none !important;
+  overflow: visible !important;
+  white-space: normal !important;
+}
