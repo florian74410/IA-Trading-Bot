@@ -13,7 +13,13 @@ function response(url){
  }
  throw Error('QA_MARKET_ENDPOINT_DENIED');
 }
-function openaiResponse(raw,headers){const body=JSON.parse(raw),auth=Object.entries(headers).find(([k])=>k.toLowerCase()==='authorization')?.[1],owner=auth==='Bearer FICTIONAL_OPENAI_ALICE'?'ALICE':auth==='Bearer FICTIONAL_OPENAI_BOB'?'BOB':null;if(!owner||body.store!==false||body.text?.format?.type!=='json_schema'||Object.keys(body.text.format.schema?.properties||{}).join(',')!=='message')throw Error('QA_AI_REQUEST_NOT_SCRIPTED');return {output_text:JSON.stringify({message:'FICTIONAL_'+owner+'_RESPONSE'}),usage:{input_tokens:1,output_tokens:2,total_tokens:3}};}
+function openaiResponse(raw,headers){
+ const body=JSON.parse(raw),auth=Object.entries(headers).find(([k])=>k.toLowerCase()==='authorization')?.[1],owner=auth==='Bearer FICTIONAL_OPENAI_ALICE'?'ALICE':auth==='Bearer FICTIONAL_OPENAI_BOB'?'BOB':null,format=body.text?.format;if(!owner||body.store!==false||format?.type!=='json_schema')throw Error('QA_AI_REQUEST_NOT_SCRIPTED');const message='FICTIONAL_'+owner+'_RESPONSE';let result;
+ if(Object.keys(format.schema?.properties||{}).join(',')==='message')result={message};
+ else if(format.name==='trading_control_v2_multi_exchange')result={message,chart:{symbol:'',interval:'',visible:100,indicators:'',replaceIndicators:false,showLevels:'keep',reset:false},actions:[],gmxAction:'none',gmxDraft:''};
+ else if(format.name==='iatb_chart_viewer_v32')result={message,chartSymbol:'',chartInterval:'',strategyTitle:'',strategySummary:'',entry:'',exit:'',risk:'',pineScript:''};
+ else throw Error('QA_AI_REQUEST_NOT_SCRIPTED');return {output_text:JSON.stringify(result),usage:{input_tokens:1,output_tokens:2,total_tokens:3}};
+}
 function install(env=process.env){
  const data=env.IATB_DATA_ROOT,root=data&&path.dirname(data);if((env.IATB_QA_MARKET_FIXTURE==='1')===(env.IATB_QA_AI_FIXTURE==='1')||!root||(root!=='/fixture'&&!/^iatb-auth21-docker-/.test(path.basename(root)))||data!==path.join(root,'data')||fs.realpathSync(data)!==data||fs.readFileSync(path.join(data,'FICTIONAL_FIXTURE_ONLY'),'utf8')!==MARKER)throw Error('QA_FICTIONAL_INSTALLATION_REQUIRED');
  const original=https.request;

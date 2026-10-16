@@ -19,6 +19,7 @@ x-runtime: &runtime
     IATB_DATA_ROOT: /fixture/data
     IATB_RUNTIME_ROOT: /fixture/runtime
     IATB_STATE_ROOT: /fixture/state
+    IATB_MARKET_SETTINGS: /fixture/runtime/config/market_data_settings.json
     IATB_ANNEX_ROOT: /fixture/annexes
     IATB_UPDATES_ROOT: /fixture/updates
     IATB_DEPLOYMENT_MODE: AUTHENTICATED

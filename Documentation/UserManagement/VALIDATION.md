@@ -150,3 +150,28 @@ qui n'avaient pas de lane spécifique. Les refresh forcés restent refusés.
 L'API générique de préférences ne peut plus écrire les scopes métier réservés
 (indicateurs et actions navigateur notamment) : elle ne remplace pas leurs
 validateurs et capacités dédiés. Tests HTTP de refus et de quota exécutés.
+
+## Rétablissement des commandes techniques ADMIN
+
+Les commandes globales MarketData et Fundamental sont inventoriées explicitement
+par `operator_policy.js`. Les lectures techniques exigent ADMIN ; les écritures
+exigent en plus le mot de passe courant et une confirmation. Core émet une
+capacité liée à l'action, aux arguments et au hash de session. Le destinataire
+vérifie la signature puis revalide la session active auprès de Core avant d'appeler
+le handler existant avec les arguments autorisés par le registre CP/1.
+Les appels natifs de ces commandes avec la seule clé machine sont refusés en mode
+authentifié. Ce canal ne permet aucune administration HTTP des comptes.
+
+Les lectures métier publiques conservent leurs arguments exacts : Core n'ajoute
+plus `force:false` aux commandes qui ne l'acceptent pas (catalogue des paires,
+health, etc.). Les refresh forcés restent réservés aux commandes ADMIN dédiées.
+Les métadonnées Fundamental exposées à USER retirent credentials, headers,
+userinfo et paramètres sensibles des URLs. La validation des sources rejette
+également les adresses IPv6 locales littérales et les URLs avec userinfo ; ceci
+ne constitue pas une preuve de protection contre toute résolution DNS ou
+redirection malveillante.
+
+La sonde Docker étendue ajoute les contrôles ADMIN ci-dessus et les trois chats
+historiques avec transport IA fictif : elle exige une réponse Supervisor plutôt
+qu'un fallback local. Ces nouvelles assertions restent à qualifier en CI avant
+de déclarer cette extension réussie. Aucun ordre réel n'est exécuté.

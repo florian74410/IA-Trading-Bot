@@ -21,12 +21,12 @@ function createHandler({sessions,origin,secret,bridge=null,aiTransport=null,pers
    if(p==='/auth21/internal/authorize-admin'&&req.method==='POST'&&bridge){
     const CP=require('../../Communication/communication_protocol_v1');if(req.socket.encrypted!==true||!CP.verifyToken('',String(req.headers['x-iatb-cp-token']||'')))return reply(res,403,{error:'FORBIDDEN'});const b=await read(req),grant=b.grant;if(!grant||!require('./admin_capability').PATHS.has(grant.route))return reply(res,403,{error:'FORBIDDEN'});const verified=bridge.codec.verify(b.proof,{audience:'firewall',operation:'admin.write',method:'POST',ownerClientId:grant.clientId,action:'firewall.admin.'+grant.route.split('/').pop(),bodyDigest:CP.hashData(grant)}),active=sessions.verifyHashedSession(grant.sessionHash);return reply(res,verified&&active&&verified.role==='ADMIN'&&active.role==='ADMIN'&&verified.clientId===active.clientId?200:403,{ok:!!verified&&!!active});
    }
-   if(p==='/auth21/internal/authorize-owner'&&req.method==='POST'&&bridge){
+   if(['/auth21/internal/authorize-owner','/auth21/internal/authorize-operator'].includes(p)&&req.method==='POST'&&bridge){
     if(req.socket.encrypted!==true||!require('../../Communication/communication_protocol_v1').verifyToken('',String(req.headers['x-iatb-cp-token']||'')))return reply(res,403,{error:'FORBIDDEN'});
-    const b=await read(req),data=b.payload||{},operation=require('./owner_policy').permission(b.engine,data.action);
+    const b=await read(req),data=b.payload||{},operator=p.endsWith('authorize-operator'),operation=require(operator?'./operator_policy':'./owner_policy').permission(b.engine,data.action);
     if(!operation)return reply(res,403,{error:'FORBIDDEN'});
-    const grant=bridge.codec.verify(b.proof,{audience:b.engine,operation,method:'POST',ownerClientId:data.clientId,action:b.engine+'.user.request',bodyDigest:require('../../Communication/communication_protocol_v1').hashData(data)}),active=sessions.verifyHashedSession(data.sessionHash);
-    const ok=!!(grant&&active&&grant.clientId===active.clientId&&grant.role===active.role&&['ADMIN','USER'].includes(active.role));return reply(res,ok?200:403,{ok});
+    const grant=bridge.codec.verify(b.proof,{audience:b.engine,operation,method:'POST',ownerClientId:data.clientId,action:b.engine+(operator?'.operator.request':'.user.request'),bodyDigest:require('../../Communication/communication_protocol_v1').hashData(data)}),active=sessions.verifyHashedSession(data.sessionHash);
+    const ok=!!(grant&&active&&grant.clientId===active.clientId&&grant.role===active.role&&(operator?['ADMIN']:['ADMIN','USER']).includes(active.role));return reply(res,ok?200:403,{ok});
    }
    if(p==='/auth21/internal/authorize-compute'&&req.method==='POST'&&bridge){
     if(req.socket.encrypted!==true||!require('../../Communication/communication_protocol_v1').verifyToken(require('../../Shared/paths').ROOT,String(req.headers['x-iatb-cp-token']||'')))return reply(res,403,{error:'FORBIDDEN'});
@@ -50,7 +50,7 @@ function createHandler({sessions,origin,secret,bridge=null,aiTransport=null,pers
    if(!['GET','HEAD'].includes(req.method)&&!cookies.validate(req,token)){sessions.audit(principal.clientId,'CSRF_REJECTED','DENIED');return reply(res,403,{error:'CSRF_FORBIDDEN'});}
    if(u.search&&!['/auth21/preferences'].includes(p)&&[...u.searchParams.keys()].some(k=>/client|owner|role|user/i.test(k)))return reply(res,400,{error:'IDENTITY_INPUT_FORBIDDEN'});
    if(p==='/communication/v1/client/ack'&&req.method==='POST')return reply(res,200,{ok:true,ack:sessions.acknowledgeBrowserAction(token,await read(req))});
-   if(['/communication/v1/ui/read','/communication/v1/ui/write'].includes(p)&&req.method==='POST'&&bridge){const data=await bridge.bridge(token,await read(req));return reply(res,200,{protocol:'CP/1',status:'OK',data});}
+   if(['/communication/v1/ui/read','/communication/v1/ui/write'].includes(p)&&req.method==='POST'&&bridge){const input=await read(req),operation=require('./operator_policy').permission(input.target,input.action);let operatorAuthorized=false;if(operation){if(principal.role!=='ADMIN')throw Error('FORBIDDEN');if(operation==='admin.write'){if(typeof input.password!=='string')return reply(res,428,{error:'REAUTH_REQUIRED',action:require('./operator_policy').label(input.action),confirmationRequired:true});await sessions.reauthenticate(token,input.password);if(input.confirmed!==true)throw Error('FORBIDDEN');operatorAuthorized=true;}delete input.password;delete input.confirmed;}const data=await bridge.bridge(token,input,{operatorAuthorized});return reply(res,200,{protocol:'CP/1',status:'OK',data});}
    if(p==='/ui-data/market/candles'&&req.method==='GET'&&bridge){if(principal.role==='GUEST')throw Error('FORBIDDEN');if(!sessions.attempt(crypto.createHash('sha256').update('candles:'+principal.clientId).digest('hex'),300))throw Error('AUTH_THROTTLED');const data=await bridge.rpc('marketdata','marketdata.candles',{symbol:u.searchParams.get('symbol'),timeframe:u.searchParams.get('interval')||'1m',source:u.searchParams.get('exchange'),limit:Math.min(1200,+u.searchParams.get('limit')||300),force:false});return reply(res,200,data);}
    if(['/auth21/me','/api/client/me','/api/profile','/ui-api/session'].includes(p)&&req.method==='GET')return reply(res,200,{ok:true,authenticated:true,authMode:'authenticated',role:principal.role,client:sessions.profile(token),permissions:{read:true,userWrite:principal.role!=='GUEST',adminWrite:principal.role==='ADMIN'}});
    if(principal.role==='GUEST'&&p==='/api/settings'&&req.method==='GET'){const client=sessions.profile(token);return reply(res,200,{ok:true,client,sessionUsername:client.username,sessionEmail:client.email,language:'fr',localAuthBypass:false,openaiConfigured:false,xConfigured:false,zeroxConfigured:false});}
@@ -93,7 +93,7 @@ function createHandler({sessions,origin,secret,bridge=null,aiTransport=null,pers
     if(p.startsWith('/api/security/wallets/')){if(typeof req.umBody.password!=='string')return reply(res,428,{error:'REAUTH_REQUIRED'});await sessions.reauthenticate(token,req.umBody.password);credentialClientId=principal.clientId;}
    }
    req.umPrincipal={...principal,auth21:true,localBypass:false};
-   return Context.run({...req.umPrincipal,token,credentialClientId},()=>next());
+   return Context.run({...req.umPrincipal,token,credentialClientId,operatorReauthenticated:adminRoute&&req.method==='POST'},()=>next());
   }catch(e){
    const code=['UNAUTHORIZED','INVALID_CREDENTIALS'].includes(e.message)?401:e.message==='AUTH_THROTTLED'?429:e.message==='NOT_FOUND'?404:e.code==='SQLITE_CONSTRAINT_UNIQUE'?409:/^AUTH21_PREFERENCE/.test(e.message)||['INVALID_REQUEST','IDENTITY_INPUT_FORBIDDEN'].includes(e.message)?400:403;
    return reply(res,code,{error:code===409?'IDENTITY_ALREADY_USED':code===403?'ACCESS_DENIED':e.message});

@@ -36,6 +36,9 @@ jobs:
           docker compose -f compose.auth21.qualification.yml stop
           docker compose -f compose.auth21.qualification.yml start
           docker compose -f compose.auth21.qualification.yml exec -T ui node Tools/CI/auth21_docker_probe.js restart
+      - name: Fictional service diagnostics on failure
+        if: failure()
+        run: docker compose -f compose.auth21.qualification.yml logs --no-color --tail 100
       - name: Stop disposable containers and retain fixture data
         if: always()
         run: docker compose -f compose.auth21.qualification.yml stop
