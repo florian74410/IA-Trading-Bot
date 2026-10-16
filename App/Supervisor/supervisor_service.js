@@ -4,12 +4,14 @@ var Adapter=require('../Core/Communication/component_cp1_adapter'),PATHS=require
 PATHS.ensureAppRuntimeDirs();
 var ROOT=PATHS.ROOT,HOST='127.0.0.1',PORT=+(process.env.IATB_SUPERVISOR_PORT||3000),ROUTER_PORT=+(process.env.ROUTER_PORT||8021),VERSION=BUILD.version;
 var LOG=path.join(ROOT,'.runtime','logs','supervisor.log'),core=new SupervisorCore(ROOT);
-var ACTIONS=['supervisor.health','supervisor.capabilities','supervisor.status','supervisor.calendar','supervisor.calendar.fed','supervisor.calendar.cme','supervisor.calendar.cme.expirations','supervisor.fedwatch','supervisor.reload','supervisor.extensions','supervisor.llm.health','supervisor.context','supervisor.analyze','supervisor.indicators','supervisor.indicator.language','supervisor.indicator.validate','supervisor.indicator.create','supervisor.indicator.definition','supervisor.indicators.compute','supervisor.risk.evaluate','supervisor.reason','supervisor.structured'];
+var ACTIONS=['supervisor.user.request','supervisor.health','supervisor.capabilities','supervisor.status','supervisor.calendar','supervisor.calendar.fed','supervisor.calendar.cme','supervisor.calendar.cme.expirations','supervisor.fedwatch','supervisor.reload','supervisor.extensions','supervisor.llm.health','supervisor.context','supervisor.analyze','supervisor.indicators','supervisor.indicator.language','supervisor.indicator.validate','supervisor.indicator.create','supervisor.indicator.definition','supervisor.indicators.compute','supervisor.risk.evaluate','supervisor.reason','supervisor.structured'];
 var EVENTS=['supervisor.reasoning.completed','supervisor.extension.loaded'];
 function log(tag,msg){try{fs.appendFileSync(LOG,'['+new Date().toISOString()+'] ['+tag+'] '+String(msg||'').replace(/[\r\n]+/g,' ').slice(0,1000)+'\n');}catch(e){}}
 function send(res,code,o){var b=Buffer.from(JSON.stringify(o));res.writeHead(code,{'Content-Type':'application/json; charset=utf-8','Content-Length':b.length,'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});res.end(b);}
 function health(){var s=core.status();return{ok:true,service:'IA-TB Supervisor',marker:'IA-TB Supervisor',version:VERSION,pid:process.pid,host:HOST,port:PORT,routerPort:ROUTER_PORT,protocol:'CP/1',role:'ORCHESTRATOR',execution:'INTENTION_ONLY',llm:s.llm,extensions:s.extensions.length,autonomousTrading:s.autonomousTrading,uptimeSec:s.uptimeSec};}
+var OWNER_REQUEST=require('../Core/Clients/UserManagement/owner_receiver').receiver({root:ROOT,engine:'supervisor',dispatch:require('./Core/owner_supervisor').dispatch({root:ROOT})});
 var adapter=new Adapter({root:ROOT,id:'supervisor',label:'IA Supervisor',port:PORT,routerPort:ROUTER_PORT,version:VERSION,schema:'supervisor.response/1.0',actions:ACTIONS,events:EVENTS,handlers:{
+ 'supervisor.user.request':function(a){return OWNER_REQUEST(a);},
  'supervisor.health':function(){return health();},
  'supervisor.capabilities':function(){return{ok:true,actions:ACTIONS,events:EVENTS,execution:'INTENTION_ONLY'};},
  'supervisor.status':function(){return core.status();},

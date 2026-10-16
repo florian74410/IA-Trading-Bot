@@ -27,8 +27,9 @@ async function migrate(db,{backupFile,keyFile,confirm}={}){
     CREATE TABLE IF NOT EXISTS um_migration_claims(kind TEXT PRIMARY KEY,client_id TEXT NOT NULL REFERENCES clients(client_id));
     INSERT OR IGNORE INTO client_schema_migrations VALUES(4,'user_management_v1',datetime('now'));`);
   }).immediate();
+  db.transaction(()=>{db.prepare('UPDATE client_sessions SET revoked_at=? WHERE revoked_at IS NULL AND permissions_version<>3').run(Math.floor(Date.now()/1000));db.prepare("INSERT OR IGNORE INTO client_schema_migrations VALUES(5,'user_management_owner_policy_v3',datetime('now'))").run();}).immediate();
   if(db.pragma('integrity_check',{simple:true})!=='ok')throw Error('MIGRATION_INTEGRITY_FAILED');
-  return {version:4,backupFile,originalKeyPreserved:true};
+  return {version:5,backupFile,originalKeyPreserved:true};
  }catch(e){throw Object.assign(Error('MIGRATION_FAILED_RESTORE_BACKUP_OFFLINE'),{cause:e});}
 }
 module.exports={migrate};

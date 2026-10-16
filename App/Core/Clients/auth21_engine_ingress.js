@@ -27,7 +27,7 @@ function createServer(handler, env = process.env, options = {}) {
     if (authenticated) {
       const pathname=String(req.url).split('?')[0];
       if(req.method==='GET'&&pathname==='/health')return handler(req,res);
-      if(req.method==='POST'&&pathname==='/cp/v1'&&require('../Communication/communication_protocol_v1').verifyToken('',String(req.headers['x-iatb-cp-token']||'')))return handler(req,res);
+      if(req.method==='POST'&&(pathname==='/cp/v1'||(options.machinePostPaths||[]).includes(pathname))&&require('../Communication/communication_protocol_v1').verifyToken('',String(req.headers['x-iatb-cp-token']||'')))return handler(req,res);
       res.writeHead(403,{'Content-Type':'application/json','Cache-Control':'no-store'});return res.end('{"error":"AUTH21_ENGINE_OPERATION_DENIED"}');
     }
     if (!isolated) return handler(req, res);

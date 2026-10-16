@@ -10,7 +10,7 @@ function receiver({root,engine,dispatch,env=process.env}){
   const raw=JSON.stringify({engine,payload,proof:envelope.proof});
   await new Promise((resolve,reject)=>{const q=https.request({host:'127.0.0.1',port:+env.CORE_PUBLIC_PORT||8001,servername:'localhost',ca:fs.readFileSync(env.IATB_AUTH_TLS_CERT),rejectUnauthorized:true,path:'/auth21/internal/authorize-owner',method:'POST',timeout:5000,headers:{'Content-Type':'application/json','Content-Length':Buffer.byteLength(raw),'X-IATB-CP-Token':CP.ensureSecret(root)}},res=>{res.resume();res.on('end',()=>res.statusCode===200?resolve():reject(Error('OWNER_SESSION_REVOKED')));});q.on('error',reject);q.on('timeout',()=>q.destroy(Error('OWNER_CORE_UNAVAILABLE')));q.end(raw);});
   // The only identity reaching business code is from the verified capability.
-  return dispatch(principal,payload.action,payload.args);
+  return dispatch(principal,payload.action,payload.args,payload);
  };
 }
 module.exports={receiver};

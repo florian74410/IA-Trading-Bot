@@ -4,14 +4,20 @@ const {ADMIN_ONLY}=require('./admin_routes');
 const {createBrowserSession}=require('../auth21_browser_cookie'),Context=require('./context');
 function reply(res,status,data,headers={}){if(res.writableEnded)return;res.writeHead(status,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff',...headers});res.end(JSON.stringify(data));}
 function read(req){return new Promise((resolve,reject)=>{let size=0,parts=[];req.on('data',b=>{size+=b.length;if(size<=524288)parts.push(b);});req.once('error',reject);req.once('end',()=>{try{if(size>524288||!/^application\/json(?:;|$)/i.test(req.headers['content-type']||''))throw Error();const b=JSON.parse(Buffer.concat(parts).toString());if(!b||typeof b!=='object'||Array.isArray(b))throw Error();resolve(b);}catch(_){reject(Error('INVALID_REQUEST'));}});});}
-const LEGACY_SELF_READ=new Set(['/api/mosaics','/api/mosaics/runtime','/api/chart-viewer/status','/api/credits/usage','/api/token-usage','/api/status','/api/settings','/api/settings/app-profiles','/api/security/wallets','/api/security/wallets/networks','/api/security/wallets/next-id','/api/security/wallets/export','/api/notifications','/api/notifications/settings','/api/transfers/history','/api/swap-bridge/history']);
-const LEGACY_SELF_WRITE=new Set(['/api/credits/pricing','/api/mosaics/create','/api/mosaics/delete','/api/settings/modulation','/api/app-settings/select','/api/notifications/test','/api/security/wallets/remove','/api/security/wallets/remove-key','/api/settings/language','/api/settings/general','/api/settings/profile/select','/api/settings/profile/save','/api/settings/power','/api/settings/ai','/api/settings/portfolio','/api/notifications/settings','/api/notifications/read','/api/security/wallets/create','/api/security/wallets/import','/api/security/wallets/reveal','/api/security/wallets/archive','/api/security/wallets/remove-secret']);
-function createHandler({sessions,origin,secret,bridge=null,readiness=()=>true}={}){
+const LEGACY_SELF_READ=new Set(['/api/bank/vaults','/api/transfers/status','/api/transfers/assets','/api/onchain/status','/api/onchain/identity','/api/onchain/wallet','/api/onchain/history','/api/onchain/tx','/api/swap-bridge/status','/api/mosaics','/api/mosaics/runtime','/api/chart-viewer/status','/api/credits/usage','/api/token-usage','/api/status','/api/settings','/api/settings/app-profiles','/api/security/wallets','/api/security/wallets/networks','/api/security/wallets/next-id','/api/security/wallets/export','/api/notifications','/api/notifications/settings','/api/transfers/history','/api/swap-bridge/history']);
+const LEGACY_SELF_WRITE=new Set(['/api/settings/test-openai','/api/transfers/preview','/api/swap-bridge/quote','/api/swap-bridge/prepare','/api/settings/test-zerox','/api/chat','/api/companion/chat','/api/chart-viewer/chat','/api/credits/pricing','/api/mosaics/create','/api/mosaics/delete','/api/settings/modulation','/api/app-settings/select','/api/notifications/test','/api/security/wallets/remove','/api/security/wallets/remove-key','/api/settings/language','/api/settings/general','/api/settings/profile/select','/api/settings/profile/save','/api/settings/power','/api/settings/ai','/api/settings/portfolio','/api/notifications/settings','/api/notifications/read','/api/security/wallets/create','/api/security/wallets/import','/api/security/wallets/reveal','/api/security/wallets/archive','/api/security/wallets/remove-secret']);
+function createHandler({sessions,origin,secret,bridge=null,aiTransport=null,readiness=()=>true}={}){
  const cookies=createBrowserSession({secret,origin});
  return async function handle(req,res,next){
   const u=new URL(req.url,'https://localhost'),p=u.pathname,token=cookies.parse(req);
   try{
    if(!readiness())return reply(res,503,{error:'AUTH_UNAVAILABLE'});
+   if(p==='/auth21/internal/ai-responses'&&req.method==='POST'&&bridge&&aiTransport){
+    if(req.socket.encrypted!==true||!require('../../Communication/communication_protocol_v1').verifyToken('',String(req.headers['x-iatb-cp-token']||'')))return reply(res,403,{error:'FORBIDDEN'});
+    const b=await read(req),gateway=b.delegation?.gateway,grant=gateway&&bridge.codec.verify(b.delegation.proof,{audience:'ai_gateway',operation:'self.write',method:'POST',ownerClientId:gateway.clientId,action:'ai_gateway.owner.responses',bodyDigest:require('../../Communication/communication_protocol_v1').hashData(gateway)}),active=gateway&&sessions.verifyHashedSession(gateway.sessionHash);
+    if(!grant||!active||grant.clientId!==active.clientId||grant.role!==active.role||active.role==='GUEST')return reply(res,403,{error:'FORBIDDEN'});
+    return reply(res,200,await aiTransport(gateway,b.payload));
+   }
    if(p==='/auth21/internal/authorize-owner'&&req.method==='POST'&&bridge){
     if(req.socket.encrypted!==true||!require('../../Communication/communication_protocol_v1').verifyToken('',String(req.headers['x-iatb-cp-token']||'')))return reply(res,403,{error:'FORBIDDEN'});
     const b=await read(req),data=b.payload||{},operation=require('./owner_policy').permission(b.engine,data.action);
@@ -40,6 +46,7 @@ function createHandler({sessions,origin,secret,bridge=null,readiness=()=>true}={
    sessions.touch(token);
    if(!['GET','HEAD'].includes(req.method)&&!cookies.validate(req,token)){sessions.audit(principal.clientId,'CSRF_REJECTED','DENIED');return reply(res,403,{error:'CSRF_FORBIDDEN'});}
    if(u.search&&!['/auth21/preferences'].includes(p)&&[...u.searchParams.keys()].some(k=>/client|owner|role|user/i.test(k)))return reply(res,400,{error:'IDENTITY_INPUT_FORBIDDEN'});
+   if(p==='/communication/v1/client/ack'&&req.method==='POST')return reply(res,200,{ok:true,ack:sessions.acknowledgeBrowserAction(token,await read(req))});
    if(['/communication/v1/ui/read','/communication/v1/ui/write'].includes(p)&&req.method==='POST'&&bridge){const data=await bridge.bridge(token,await read(req));return reply(res,200,{protocol:'CP/1',status:'OK',data});}
    if(p==='/ui-data/market/candles'&&req.method==='GET'&&bridge){if(principal.role==='GUEST')throw Error('FORBIDDEN');if(!sessions.attempt(crypto.createHash('sha256').update('candles:'+principal.clientId).digest('hex'),300))throw Error('AUTH_THROTTLED');const data=await bridge.rpc('marketdata','marketdata.candles',{symbol:u.searchParams.get('symbol'),timeframe:u.searchParams.get('interval')||'1m',source:u.searchParams.get('exchange'),limit:Math.min(1200,+u.searchParams.get('limit')||300),force:false});return reply(res,200,data);}
    if(['/auth21/me','/api/client/me','/api/profile','/ui-api/session'].includes(p)&&req.method==='GET')return reply(res,200,{ok:true,authenticated:true,authMode:'authenticated',role:principal.role,client:sessions.profile(token),permissions:{read:true,userWrite:principal.role!=='GUEST',adminWrite:principal.role==='ADMIN'}});
@@ -63,12 +70,16 @@ function createHandler({sessions,origin,secret,bridge=null,readiness=()=>true}={
     if(req.method==='PUT'){sessions.setPreference(token,b.scope,b.key,b.value);return reply(res,200,{ok:true});}
     if(req.method==='DELETE')return reply(res,200,{ok:true,deleted:sessions.deletePreference(token,b.scope,b.key)});
    }
+   if(p==='/api/settings/apis/clear'&&req.method==='POST'){
+    const b=await read(req);if(Object.keys(b).some(k=>!['name','password'].includes(k))||!['OPENAI_API_KEY','ANTHROPIC_API_KEY','X_BEARER_TOKEN','ZEROX_API_KEY'].includes(b.name))throw Error('INVALID_REQUEST');if(typeof b.password!=='string')return reply(res,428,{error:'REAUTH_REQUIRED'});await sessions.reauthenticate(token,b.password);sessions.setSecrets(token,{[b.name]:'__CLEAR__'});return reply(res,200,{ok:true});
+   }
    if(p==='/api/settings/apis'&&req.method==='POST'){
-    const b=await read(req);await sessions.reauthenticate(token,b.password);const values={};for(const [k,v] of Object.entries(b)){const map={openaiApiKey:'OPENAI_API_KEY',xBearerToken:'X_BEARER_TOKEN',zeroxApiKey:'ZEROX_API_KEY'};if(map[k])values[map[k]]=v;else if(k!=='password')throw Error('INVALID_REQUEST');}sessions.setSecrets(token,values);return reply(res,200,{ok:true});
+    const b=await read(req);if(typeof b.password!=='string')return reply(res,428,{error:'REAUTH_REQUIRED'});await sessions.reauthenticate(token,b.password);const values={};for(const [k,v] of Object.entries(b)){const map={openaiApiKey:'OPENAI_API_KEY',xBearerToken:'X_BEARER_TOKEN',zeroxApiKey:'ZEROX_API_KEY'};if(map[k])values[map[k]]=v;else if(k!=='password')throw Error('INVALID_REQUEST');}sessions.setSecrets(token,values);return reply(res,200,{ok:true});
    }
    const adminRoute=ADMIN_ONLY.has(req.method+' '+p);
    if(adminRoute&&principal.role!=='ADMIN'){sessions.audit(principal.clientId,'ADMIN_ACCESS_DENIED','DENIED');return reply(res,403,{error:'ACCESS_DENIED'});}
    if(!adminRoute&&((principal.role==='GUEST'&&!(req.method==='GET'&&['/api/status','/api/settings'].includes(p)))||!((req.method==='GET'&&LEGACY_SELF_READ.has(p))||(req.method==='POST'&&LEGACY_SELF_WRITE.has(p))))){sessions.audit(principal.clientId,'ACCESS_DENIED','DENIED');return reply(res,403,{error:'ACCESS_DENIED'});}
+   if(/^\/api\/(onchain|transfers|swap-bridge)\//.test(p)&&!sessions.attempt(crypto.createHash('sha256').update('bank-read:'+principal.clientId).digest('hex'),100))throw Error('AUTH_THROTTLED');
    if(!next)return reply(res,404,{error:'NOT_FOUND'});
    let credentialClientId=null;
    if(req.method==='POST'){
@@ -76,7 +87,7 @@ function createHandler({sessions,origin,secret,bridge=null,readiness=()=>true}={
     function forged(x){return x&&typeof x==='object'&&Object.entries(x).some(([k,v])=>/^(clientId|ownerClientId|userId|role|securityVersion)$/i.test(k)||forged(v));}
     if(forged(req.umBody))throw Error('IDENTITY_INPUT_FORBIDDEN');
     if(adminRoute){if(typeof req.umBody.password!=='string')return reply(res,428,{error:'REAUTH_REQUIRED'});await sessions.reauthenticate(token,req.umBody.password);if(req.umBody.confirmed!==true)return reply(res,400,{error:'CONFIRMATION_REQUIRED'});sessions.audit(principal.clientId,'ADMIN_OPERATION_REQUESTED');}
-    if(p.startsWith('/api/security/wallets/')){await sessions.reauthenticate(token,req.umBody.password);credentialClientId=principal.clientId;}
+    if(p.startsWith('/api/security/wallets/')){if(typeof req.umBody.password!=='string')return reply(res,428,{error:'REAUTH_REQUIRED'});await sessions.reauthenticate(token,req.umBody.password);credentialClientId=principal.clientId;}
    }
    req.umPrincipal={...principal,auth21:true,localBypass:false};
    return Context.run({...req.umPrincipal,token,credentialClientId},()=>next());

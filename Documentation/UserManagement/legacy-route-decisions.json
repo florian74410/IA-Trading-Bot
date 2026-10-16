@@ -35,8 +35,8 @@
       "method": "GET",
       "path": "/api/bank/vaults",
       "classification": "MIGRATE",
-      "reason": "Coffres historiques : attribution explicite et aucune adoption automatique par un nouvel utilisateur.",
-      "implementation": "PENDING",
+      "reason": "Catalogue partagé limité aux contrats ACTIVE publiés ; aucune stratégie privée ni wallet historique adopté.",
+      "implementation": "IMPLEMENTED_RECIPE_IN_PROGRESS",
       "acceptance": "REQUIRES_QUALIFICATION",
       "decision_source": null
     },
@@ -387,7 +387,7 @@
       "path": "/api/settings/apis/clear",
       "classification": "MIGRATE",
       "reason": "Secret privé : chiffrement par propriétaire, mot de passe courant, jamais de valeur globale en fallback.",
-      "implementation": "PENDING",
+      "implementation": "IMPLEMENTED_RECIPE_IN_PROGRESS",
       "acceptance": "REQUIRES_QUALIFICATION",
       "decision_source": null
     },
@@ -396,7 +396,7 @@
       "path": "/api/settings/test-openai",
       "classification": "MIGRATE",
       "reason": "Tester uniquement les credentials du propriétaire ; quotas et audit du coût fournisseur.",
-      "implementation": "PENDING",
+      "implementation": "IMPLEMENTED_RECIPE_IN_PROGRESS",
       "acceptance": "REQUIRES_QUALIFICATION",
       "decision_source": null
     },
@@ -405,7 +405,7 @@
       "path": "/api/settings/test-zerox",
       "classification": "MIGRATE",
       "reason": "Tester uniquement les credentials du propriétaire ; quotas et audit du coût fournisseur.",
-      "implementation": "PENDING",
+      "implementation": "IMPLEMENTED_RECIPE_IN_PROGRESS",
       "acceptance": "REQUIRES_QUALIFICATION",
       "decision_source": null
     },
@@ -450,7 +450,7 @@
       "path": "/api/transfers/status",
       "classification": "MIGRATE",
       "reason": "Préparation/lecture privée : session, ownership wallet, accès chaîne borné ; aucune exécution réelle.",
-      "implementation": "PENDING",
+      "implementation": "IMPLEMENTED_RECIPE_IN_PROGRESS",
       "acceptance": "REQUIRES_QUALIFICATION",
       "decision_source": null
     },
@@ -459,7 +459,7 @@
       "path": "/api/transfers/assets",
       "classification": "MIGRATE",
       "reason": "Préparation/lecture privée : session, ownership wallet, accès chaîne borné ; aucune exécution réelle.",
-      "implementation": "PENDING",
+      "implementation": "IMPLEMENTED_RECIPE_IN_PROGRESS",
       "acceptance": "REQUIRES_QUALIFICATION",
       "decision_source": null
     },
@@ -468,7 +468,7 @@
       "path": "/api/transfers/preview",
       "classification": "MIGRATE",
       "reason": "Préparation/lecture privée : session, ownership wallet, accès chaîne borné ; aucune exécution réelle.",
-      "implementation": "PENDING",
+      "implementation": "IMPLEMENTED_RECIPE_IN_PROGRESS",
       "acceptance": "REQUIRES_QUALIFICATION",
       "decision_source": null
     },
@@ -486,7 +486,7 @@
       "path": "/api/onchain/status",
       "classification": "MIGRATE",
       "reason": "Lecture de chaîne : wallet du propriétaire et quota fournisseur ; aucun identifiant navigateur faisant autorité.",
-      "implementation": "PENDING",
+      "implementation": "IMPLEMENTED_RECIPE_IN_PROGRESS",
       "acceptance": "REQUIRES_QUALIFICATION",
       "decision_source": null
     },
@@ -495,7 +495,7 @@
       "path": "/api/onchain/identity",
       "classification": "MIGRATE",
       "reason": "Lecture de chaîne : wallet du propriétaire et quota fournisseur ; aucun identifiant navigateur faisant autorité.",
-      "implementation": "PENDING",
+      "implementation": "IMPLEMENTED_RECIPE_IN_PROGRESS",
       "acceptance": "REQUIRES_QUALIFICATION",
       "decision_source": null
     },
@@ -504,7 +504,7 @@
       "path": "/api/onchain/wallet",
       "classification": "MIGRATE",
       "reason": "Lecture de chaîne : wallet du propriétaire et quota fournisseur ; aucun identifiant navigateur faisant autorité.",
-      "implementation": "PENDING",
+      "implementation": "IMPLEMENTED_RECIPE_IN_PROGRESS",
       "acceptance": "REQUIRES_QUALIFICATION",
       "decision_source": null
     },
@@ -513,7 +513,7 @@
       "path": "/api/onchain/history",
       "classification": "MIGRATE",
       "reason": "Lecture de chaîne : wallet du propriétaire et quota fournisseur ; aucun identifiant navigateur faisant autorité.",
-      "implementation": "PENDING",
+      "implementation": "IMPLEMENTED_RECIPE_IN_PROGRESS",
       "acceptance": "REQUIRES_QUALIFICATION",
       "decision_source": null
     },
@@ -522,7 +522,7 @@
       "path": "/api/onchain/tx",
       "classification": "MIGRATE",
       "reason": "Lecture de chaîne : wallet du propriétaire et quota fournisseur ; aucun identifiant navigateur faisant autorité.",
-      "implementation": "PENDING",
+      "implementation": "IMPLEMENTED_RECIPE_IN_PROGRESS",
       "acceptance": "REQUIRES_QUALIFICATION",
       "decision_source": null
     },
@@ -531,7 +531,7 @@
       "path": "/api/swap-bridge/status",
       "classification": "MIGRATE",
       "reason": "Préparation/lecture privée : session, ownership wallet et aucune signature/exécution réelle.",
-      "implementation": "PENDING",
+      "implementation": "IMPLEMENTED_RECIPE_IN_PROGRESS",
       "acceptance": "REQUIRES_QUALIFICATION",
       "decision_source": null
     },
@@ -540,7 +540,7 @@
       "path": "/api/swap-bridge/quote",
       "classification": "MIGRATE",
       "reason": "Préparation/lecture privée : session, ownership wallet et aucune signature/exécution réelle.",
-      "implementation": "PENDING",
+      "implementation": "IMPLEMENTED_RECIPE_IN_PROGRESS",
       "acceptance": "REQUIRES_QUALIFICATION",
       "decision_source": null
     },
@@ -549,7 +549,7 @@
       "path": "/api/swap-bridge/prepare",
       "classification": "MIGRATE",
       "reason": "Préparation/lecture privée : session, ownership wallet et aucune signature/exécution réelle.",
-      "implementation": "PENDING",
+      "implementation": "IMPLEMENTED_RECIPE_IN_PROGRESS",
       "acceptance": "REQUIRES_QUALIFICATION",
       "decision_source": null
     },
@@ -657,7 +657,7 @@
       "path": "/api/chart-viewer/chat",
       "classification": "MIGRATE",
       "reason": "Conversation et secrets IA privés : capacité signée, quotas et ledger du propriétaire.",
-      "implementation": "PENDING",
+      "implementation": "IMPLEMENTED_RECIPE_IN_PROGRESS",
       "acceptance": "REQUIRES_QUALIFICATION",
       "decision_source": null
     },
@@ -666,7 +666,7 @@
       "path": "/api/companion/chat",
       "classification": "MIGRATE",
       "reason": "Conversation et secrets IA privés : même chaîne de contrôle Auth21 et isolation de l’historique.",
-      "implementation": "PENDING",
+      "implementation": "IMPLEMENTED_RECIPE_IN_PROGRESS",
       "acceptance": "REQUIRES_QUALIFICATION",
       "decision_source": null
     },
@@ -675,7 +675,7 @@
       "path": "/api/chat",
       "classification": "MIGRATE",
       "reason": "Conversation IA privée : identité serveur, réauthentification des secrets et isolation des coûts.",
-      "implementation": "PENDING",
+      "implementation": "IMPLEMENTED_RECIPE_IN_PROGRESS",
       "acceptance": "REQUIRES_QUALIFICATION",
       "decision_source": null
     }

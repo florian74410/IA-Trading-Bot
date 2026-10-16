@@ -88,3 +88,40 @@ Les 75 routes refusées ne sont pas des fonctionnalités métier migrées. Voir
 `../USER_MANAGEMENT_V1.md` et `route-inventory.json`. La PR reste en brouillon.
 Aucune installation, migration, sauvegarde de données réelles, connexion GEN-1,
 fusion de PR ou opération de trading n'a été exécutée.
+
+## Qualification complémentaire de la PR #12 — en cours
+
+Le commit `82c46480bbd532e1b99471dd4bc3f7088c6f78da` ajoute le classement
+exhaustif des 75 routes dans `legacy-route-decisions.json`, les Mosaïques privées,
+les capacités propriétaires Strategy/Portfolio, les tests natifs de crash SQLite,
+et une recette Docker isolée à 13 services. Les quatre workflows existants ont
+réussi sur ce commit. Le premier workflow Docker a construit l'image et démarré
+13 conteneurs, puis échoué sur la sonde Router utilisant `/health` au lieu de
+`/router-health-internal`. Ce passage ne constitue pas une recette Docker réussie.
+
+Le passage local complet suivant a exécuté 477 tests Core (475 réussis, deux
+skips locaux PTY), six suites Indicator et 20 tests UI : aucun échec.
+Les ajouts ultérieurs secrets API/clear, test OpenAI personnel et signature
+MarketData → Firewall ont été testés séparément ; la recette complète doit être
+relancée sur le commit qui les contient.
+
+La politique propriétaire ajoute une migration additive v5 et
+`permissions_version=3`. La migration v4 originale est conservée. Les sessions
+émises sous l'ancienne politique sont révoquées ; les identités, clés originales,
+hash de mots de passe et données historiques restent conservés. Les tests de
+SIGKILL avant/pendant v4, reprise vers v5 et restauration de la sauvegarde native
+ont réussi sur copies fictives isolées.
+
+Le transport IA propriétaire utilise la clé personnelle déchiffrée uniquement
+par Core, une délégation signée et une revalidation de session. L'URL OpenAI est
+fixe ; aucun fallback vers les secrets globaux. Les tests utilisent un transport
+simulé et deux clés fictives distinctes : aucune preuve d'appel facturé à un
+fournisseur réel n'est revendiquée.
+
+Blocages encore ouverts : paramètres RPC personnalisés sûrs, test X personnel,
+paramètres Supervisor/REMOTE_LLM, attribution CLI explicite des historiques
+privés globaux existants, recette métier complète des flux inter-Engines et
+recette Docker avec arrêt/redémarrage réussie. Les refus d'exécution de transfert
+et de swap restent soumis à une décision explicite ; leur classification de
+sécurité n'est pas une acceptation fonctionnelle. Cette livraison reste impropre
+à une mise en service complète tant que ces points ne sont pas levés ou décidés.

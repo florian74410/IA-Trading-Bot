@@ -1,5 +1,6 @@
 'use strict';
 const policies=Object.freeze({
+ supervisor:{read:['health','status','capabilities'],write:['reason','structured']},
  strategy:{read:['health','capabilities','catalog','stats','state'],write:['validate','evaluate','dry_run','reload','pause','resume','reset_stats','definition.save','definition.delete']},
  portfolio:{read:['health','overview','settings.get','positions','position.health','trades','trade.detail','balances','history','statistics','events'],write:['settings.set','snapshot']}
 });

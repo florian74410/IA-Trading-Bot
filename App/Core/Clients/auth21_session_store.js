@@ -56,7 +56,7 @@ function sameAccount(before,after){
 }
 
 class Auth21SessionStore {
- constructor({db,clientCrypto,snapshotGate,nowSeconds,idleLockSeconds=0}={}){
+ constructor({db,clientCrypto,snapshotGate,nowSeconds,idleLockSeconds=0,permissionsVersion=null}={}){
   if(!db||typeof db.prepare!=='function'||typeof db.transaction!=='function'||
      typeof db.pragma!=='function')throw Error('AUTH21_DB_REQUIRED');
   if(!clientCrypto||typeof clientCrypto.seal!=='function'||
@@ -64,6 +64,9 @@ class Auth21SessionStore {
   if(snapshotGate&&typeof snapshotGate.assertWritable!=='function')throw Error('SNAPSHOT_GATE_INVALID');
   if(nowSeconds&&typeof nowSeconds!=='function')throw Error('AUTH21_CLOCK_INVALID');
   if(!Number.isSafeInteger(idleLockSeconds)||idleLockSeconds<0||idleLockSeconds>3600)throw Error('AUTH21_IDLE_LOCK_INVALID');
+  if(permissionsVersion!==null&&(!Number.isSafeInteger(permissionsVersion)||permissionsVersion<1))throw Error('AUTH21_PERMISSIONS_VERSION_INVALID');
+  this.permissionsVersion=permissionsVersion;
+  if(permissionsVersion!==null&&!db.pragma('table_info(client_sessions)').some(c=>c.name==='permissions_version'))throw Error('AUTH21_PERMISSIONS_SCHEMA_REQUIRED');
   this.idleLockSeconds=idleLockSeconds;
   this.db=db;this.clientCrypto=clientCrypto;
   this.snapshotGate=snapshotGate||null;
@@ -137,6 +140,7 @@ class Auth21SessionStore {
     '(session_hash,client_id,issued_at,expires_at,security_version,auth_protocol_version,last_seen_at)',
     'VALUES(?,?,?,?,?,1,?)'
    ].join(' ')).run(digest,clientId,now,now+ttlSeconds,current.securityVersion,now);
+   if(this.permissionsVersion!==null)this.db.prepare('UPDATE client_sessions SET permissions_version=? WHERE session_hash=?').run(this.permissionsVersion,digest);
    this._audit(clientId,'SESSION_ISSUED');
    return {token,clientId,role:current.role,expiresAt:now+ttlSeconds};
   }).immediate();

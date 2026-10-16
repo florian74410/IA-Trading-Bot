@@ -15,7 +15,7 @@ function active(env){
 function decision(env,service,method,path){
  if(env?.IATB_AUTH_MODE==='authenticated'&&service==='router'){
   // Public UI bridges cannot bypass Core's authenticated capability issuer.
-  return {intercept:!((method==='POST'&&['/communication/v1/request','/communication/v1/register','/communication/v1/event'].includes(path))||(method==='GET'&&['/health','/router-health'].includes(path))),forwardToCore:false};
+  return {intercept:!((method==='POST'&&['/communication/v1/request','/communication/v1/register','/communication/v1/event'].includes(path))||(method==='GET'&&['/router-health-internal','/router-health'].includes(path))),forwardToCore:false};
  }
  if(!active(env))return {intercept:false};
  if(service==='gateway'&&env.IATB_AUTH21_BUSINESS_TRIAL==='1'&&

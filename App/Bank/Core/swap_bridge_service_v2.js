@@ -75,13 +75,14 @@ function SwapBridgeService(opts){
  opts=opts||{};this.walletService=opts.walletService;this.getSecret=opts.getSecret||function(){return''};this.notify=opts.notify||function(){};this.log=opts.log||function(){};
  this.getFeeRecipient=opts.getFeeRecipient||function(){return''};this.getRpc=opts.getRpc||function(){return''};this.cache=Object.create(null);this.feeBps=100;this.feeRate=.01;this.quoteTtlMs=45000;
 }
-SwapBridgeService.prototype._apiKey=function(sess){return String(this.getSecret(sess,'ZEROX_API_KEY')||process.env.ZEROX_API_KEY||'').trim()};
+SwapBridgeService.prototype._apiKey=function(sess){return String(this.getSecret(sess,'ZEROX_API_KEY')||(sess&&sess.auth21?'':process.env.ZEROX_API_KEY)||'').trim()};
 SwapBridgeService.prototype._feeRecipient=function(){return String(this.getFeeRecipient()||process.env.IATB_FEE_RECIPIENT||'').trim()};
 SwapBridgeService.prototype._rpc=function(network){var n=NETWORKS[network];return n?String(this.getRpc(network)||process.env[n.rpcEnv]||'').trim():''};
 SwapBridgeService.prototype.status=function(sess){
 
-SwapBridgeService.prototype.testProvider=function(sess,cb){var key=this._apiKey(sess);if(!key)return cb(new Error('ZEROX_API_KEY_MISSING'));var started=Date.now();getJSON('https://api.0x.org/cross-chain/sources',{'0x-api-key':key,'0x-version':'v2','Accept':'application/json'},function(e,o){if(e)return cb(e);var count=Array.isArray(o)?o.length:(o&&Array.isArray(o.sources)?o.sources.length:0);cb(null,{ok:true,provider:'0x Cross-Chain',latencyMs:Date.now()-started,sources:count,raw:o});},15000);}; var signer=false;try{var ep=require('ethers');signer=!!(ep&&ep.Wallet&&ep.providers&&ep.providers.JsonRpcProvider)}catch(e){}return{ok:true,engine:'SWAP_BRIDGE_V2',provider:'0x Cross-Chain',feeBps:this.feeBps,feePercent:1,apiConfigured:!!this._apiKey(sess),feeRecipientConfigured:validEvm(this._feeRecipient()),internalSignerReady:signer,rpc:Object.keys(NETWORKS).reduce(function(o,k){o[k]=!!String(this._rpc(k)||'').trim();return o}.bind(this),{})};
+ var signer=false;try{var ep=require('ethers');signer=!!(ep&&ep.Wallet&&ep.providers&&ep.providers.JsonRpcProvider)}catch(e){}return{ok:true,engine:'SWAP_BRIDGE_V2',provider:'0x Cross-Chain',feeBps:this.feeBps,feePercent:1,apiConfigured:!!this._apiKey(sess),feeRecipientConfigured:validEvm(this._feeRecipient()),internalSignerReady:signer,rpc:Object.keys(NETWORKS).reduce(function(o,k){o[k]=!!String(this._rpc(k)||'').trim();return o}.bind(this),{})};
 };
+SwapBridgeService.prototype.testProvider=function(sess,cb){var key=this._apiKey(sess);if(!key)return cb(new Error('ZEROX_API_KEY_MISSING'));var started=Date.now();getJSON('https://api.0x.org/cross-chain/sources',{'0x-api-key':key,'0x-version':'v2','Accept':'application/json'},function(e,o){if(e)return cb(e);var count=Array.isArray(o)?o.length:(o&&Array.isArray(o.sources)?o.sources.length:0);cb(null,{ok:true,provider:'0x Cross-Chain',latencyMs:Date.now()-started,sources:count,raw:o});},15000);};
 SwapBridgeService.prototype._context=function(sess,input){
  input=input||{};var sourceNetwork=String(input.sourceNetwork||'').toLowerCase(),destNetwork=String(input.destNetwork||'').toLowerCase(),sn=NETWORKS[sourceNetwork],dn=NETWORKS[destNetwork];
  if(!sn||!dn)throw new Error('NETWORK_NOT_SUPPORTED_YET');
@@ -118,7 +119,7 @@ SwapBridgeService.prototype.quote=function(sess,input,cb){
        rank={};
    [bestOutput,cheapest,fastest].forEach(function(arr){arr.forEach(function(id,i){rank[id]=(rank[id]||0)+i})});
    var recommended=routes.slice().sort(function(a,b){return(rank[a.id]||0)-(rank[b.id]||0)}).map(function(x){return x.id});
-   routes.forEach(function(r){self.cache[r.id]={ts:Date.now(),ctx:ctx,route:r,zid:o.zid||'',originChainId:o.originChainId||ctx.sn.chainId,destinationChainId:o.destinationChainId||ctx.dn.chainId};});
+   routes.forEach(function(r){self.cache[r.id]={ownerClientId:sess&&sess.auth21?self.walletService.clientService.resolveSession(sess).clientId:null,ts:Date.now(),ctx:ctx,route:r,zid:o.zid||'',originChainId:o.originChainId||ctx.sn.chainId,destinationChainId:o.destinationChainId||ctx.dn.chainId};});
    cb(null,{ok:true,engine:'SWAP_BRIDGE_V2',fee:{percent:1,bps:self.feeBps,recipient:feeRecipient,nominalAmount:decimal(ctx.nominalFeeRaw,ctx.sell.decimals,6),symbol:ctx.sellSymbol},preflight:{addressValid:true,sourceAddress:ctx.sourceAddress,destinationAddress:ctx.destAddress,rpcConfigured:!!rpcUrl,nativeBalanceRaw:nativeBalance===null?null:nativeBalance.toString()},routes:routes,ranking:{recommended:recommended,bestOutput:bestOutput,cheapest:cheapest,fastest:fastest},expiresInMs:self.quoteTtlMs});
   }
   if(!rpcUrl)return build(null);
@@ -126,7 +127,7 @@ SwapBridgeService.prototype.quote=function(sess,input,cb){
  },15000);
 };
 SwapBridgeService.prototype.prepare=function(sess,input){
- input=input||{};var id=String(input.routeId||input.quoteId||''),x=this.cache[id];if(!x)throw new Error('QUOTE_NOT_FOUND');if(Date.now()-x.ts>this.quoteTtlMs){delete this.cache[id];throw new Error('QUOTE_EXPIRED')}
+ input=input||{};var id=String(input.routeId||input.quoteId||''),x=this.cache[id];if(!x||sess&&sess.auth21&&x.ownerClientId!==this.walletService.clientService.resolveSession(sess).clientId)throw new Error('QUOTE_NOT_FOUND');if(Date.now()-x.ts>this.quoteTtlMs){delete this.cache[id];throw new Error('QUOTE_EXPIRED')}
  var r=x.route,ctx=x.ctx;if(!r.tokenEnough)throw new Error('INSUFFICIENT_TOKEN_BALANCE');if(!r.gasVerified)throw new Error('GAS_NOT_VERIFIED');if(!r.gasEnough)throw new Error('INSUFFICIENT_GAS_BALANCE');if(!r.iatbFeeApplied)throw new Error('IATB_FEE_NOT_APPLIED');if(r.simulationIncomplete)throw new Error('SIMULATION_INCOMPLETE');
  var approval=null;if(r.needsAllowance&&r.allowance&&validEvm(r.allowance.spender))approval={to:ctx.sell.addresses[ctx.sourceNetwork],data:approvalData(r.allowance.spender,ctx.amountRaw),value:'0',chainId:ctx.sn.chainId,spender:r.allowance.spender,amount:ctx.amountRaw.toString()};
  var signerReady=false;try{var ep=require('ethers');signerReady=!!(ep&&ep.Wallet&&ep.providers&&ep.providers.JsonRpcProvider)}catch(e){}

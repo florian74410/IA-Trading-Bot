@@ -28,7 +28,7 @@ function create({root,corePort,pages,findAsset}){
    if(p==='/login'&&req.method==='GET')return file(res,'Frontend/Pages/login.html');
    if(p.startsWith('/assets/')&&['GET','HEAD'].includes(req.method)){const a=findAsset(p.slice(8));if(a)return file(res,a);res.writeHead(404);return res.end();}
    if(p.startsWith('/auth21/internal/')||p.startsWith('/api/internal/')){res.writeHead(403);return res.end();}
-   if(p.startsWith('/api/')||p.startsWith('/auth21/')||p==='/ui-api/session'||p==='/ui-data/market/candles'||['/communication/v1/ui/read','/communication/v1/ui/write'].includes(p))return upstream(req,res,req.url);
+   if(p.startsWith('/api/')||p.startsWith('/auth21/')||p==='/ui-api/session'||p==='/ui-data/market/candles'||['/communication/v1/ui/read','/communication/v1/ui/write','/communication/v1/client/ack'].includes(p))return upstream(req,res,req.url);
    if(pages[p]&&['GET','HEAD'].includes(req.method)){
     const me=await core(req,'/auth21/me');if(me.status!==200){res.writeHead(303,{Location:'/login','Cache-Control':'no-store'});return res.end();}
     if(p.startsWith('/admin')&&me.data.role!=='ADMIN'){res.writeHead(403);return res.end();}
