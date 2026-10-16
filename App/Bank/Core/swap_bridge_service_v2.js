@@ -77,7 +77,7 @@ function SwapBridgeService(opts){
 }
 SwapBridgeService.prototype._apiKey=function(sess){return String(this.getSecret(sess,'ZEROX_API_KEY')||(sess&&sess.auth21?'':process.env.ZEROX_API_KEY)||'').trim()};
 SwapBridgeService.prototype._feeRecipient=function(){return String(this.getFeeRecipient()||process.env.IATB_FEE_RECIPIENT||'').trim()};
-SwapBridgeService.prototype._rpc=function(network){var n=NETWORKS[network];return n?String(this.getRpc(network)||process.env[n.rpcEnv]||'').trim():''};
+SwapBridgeService.prototype._rpc=function(network){var n=NETWORKS[network];return n?String(this.getRpc(network)||(process.env.IATB_AUTH_MODE==='authenticated'?'':process.env[n.rpcEnv])||'').trim():''};
 SwapBridgeService.prototype.status=function(sess){
 
  var signer=false;try{var ep=require('ethers');signer=!!(ep&&ep.Wallet&&ep.providers&&ep.providers.JsonRpcProvider)}catch(e){}return{ok:true,engine:'SWAP_BRIDGE_V2',provider:'0x Cross-Chain',feeBps:this.feeBps,feePercent:1,apiConfigured:!!this._apiKey(sess),feeRecipientConfigured:validEvm(this._feeRecipient()),internalSignerReady:signer,rpc:Object.keys(NETWORKS).reduce(function(o,k){o[k]=!!String(this._rpc(k)||'').trim();return o}.bind(this),{})};

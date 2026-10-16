@@ -319,12 +319,12 @@
     {
       "method": "POST",
       "path": "/api/settings/test-x",
-      "policy": "denied-in-authenticated-mode"
+      "policy": "authenticated-owner-context"
     },
     {
       "method": "POST",
       "path": "/api/settings/supervisor/brains",
-      "policy": "denied-in-authenticated-mode"
+      "policy": "authenticated-owner-context"
     },
     {
       "method": "POST",

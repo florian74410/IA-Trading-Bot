@@ -1,127 +1,101 @@
-# Validation exécutée — 2026-10-16
+# User Management V1 — preuves de qualification
 
-Référence stable : `43863e817b45c0821de3928d585cfc58f55ce9c5`.
-Node 22.23.3 ; dépendances installées depuis le lockfile ; SQLite natif et Argon2 natif.
+Base stable : `43863e817b45c0821de3928d585cfc58f55ce9c5`.
+Environnement : Node 22, SQLite et Argon2 natifs, Firefox/Playwright.
+Comptes, clés et données fictifs uniquement. Aucun accès GEN-1, déploiement,
+Trading Engine démarré, appel fournisseur facturé ni ordre réel.
 
-## Suites
+## Preuves GitHub vérifiées sur a9d61354
 
-Commande : `IATB_FIREFOX_CONTAINER=1 bash App/Tools/CI/test_user_management_v1.sh`.
+Les logs des jobs ont été lus, au-delà du seul statut vert.
 
-| Périmètre | Réussis | Échecs | Ignorés |
+| Suite | Réussis | Échecs | Ignorés |
 |---|---:|---:|---:|
-| `App/Tools/Tests/*.test.js` : Core, Auth21, stockage, sessions, CLI, intégration | 467 | 0 | 2 |
-| Six suites Indicator hors smoke exigeant un fournisseur de marché actif | 6 | 0 | 0 |
-| UI : Visual Renderer V2, drawing contract, Chart Workspace V2.1 | 20 | 0 | 0 |
+| Core, Auth21, CLI, stockage, intégration | 478 | 0 | 0 |
+| Six suites Indicator | 6 | 0 | 0 |
+| UI, Chart Workspace, Renderer V2 | 20 | 0 | 0 |
 
-Rerun ciblé après extension de la vérification des routes et des derniers
-contrôles : `IATB_BROWSER_QA=1 node --test App/Tools/Tests/user_management_v1.test.js`.
-Résultat : 11 réussis, 0 échec, 1 ignoré (inclus dans les deux ignorés ci-dessus).
+[Run User Management](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38909148982).
+Les workflows Core legacy gate, Chart Workspace et Indicator Visual Renderer
+sont également verts sur ce commit. Les tests de terminal réel non-root ont
+réussi sur le runner Linux GitHub.
 
-Les deux skips concernent les parcours CLI positifs sur terminal réel avec UID
-non-root (ancien Auth21 et nouvelle CLI). Le conteneur ne mappe que UID 0 ;
-`chown` vers un UID non-root échoue EINVAL. Les assertions injectées sur les
-commandes et les tests natifs des magasins ADMIN passent, mais ne remplacent pas
-ce test OS. Il a ensuite été exécuté avec succès sur GitHub Actions Linux :
-les deux tests PTY y passent, sans skip.
+[Recette Docker à 13 services](https://github.com/florian74410/IA-Trading-Bot/actions/runs/38909149157) :
+construction de l'image, lancement des 13 conteneurs, sondes des services,
+TLS avec certificat épinglé, socket UI, connexion Alice/Bob, isolation des
+réglages/Mosaïques et lectures Strategy/Portfolio, arrêt et redémarrage sans
+suppression des données, contrôle de persistance, déconnexion. Les deux sondes
+avant/après redémarrage rapportent `services:13`, `ownerIsolation:true`,
+`tradingStarted:false`, `network:internal-only`, `data:fictional`.
+Cette recette ne couvre pas encore tous les parcours métier de chaque écran.
+Le premier échec de sonde Router a été corrigé ; il n'est pas compté comme succès.
 
-Run CI : https://github.com/florian74410/IA-Trading-Bot/actions/runs/38903457563
-(commit `71fb5c0cf05944c76028988f06e1c04220a0484b`). Les logs ont été lus :
-469 tests Core réussis, 6 suites Indicator réussies, 20 tests UI réussis,
-0 échec et 0 ignoré. Les workflows Core legacy gate, Chart Workspace et
-Indicator Visual Renderer passent également sur ce commit.
+## Complément de finalisation
 
-Une correction ultérieure active le mode terminal sans écho avant d'afficher
-l'invite et évite de suivre les liens symboliques lors de la préparation d'un
-fixture POSIX root ; rerun ciblé local : 11 réussis, 0 échec, 1 ignoré local.
+Commande complète :
 
-## Preuves spécifiques
+```sh
+IATB_FIREFOX_CONTAINER=1 bash App/Tools/CI/test_user_management_v1.sh
+node Tools/CI/verify_rbac_registry.js
+node App/Tools/CI/user_management_route_inventory.js
+```
 
-- Import du schéma sur une base existante avec sauvegarde SQLite, conservation
-  de la clé client, refus de créer un second premier ADMIN et protection SQL
-  du dernier ADMIN actif.
-- Mots de passe Argon2, login email réel, pas de token brut dans les tables,
-  throttling persistant, révocation par désactivation/reset/changement de mot
-  de passe/email et expiration auditée.
-- Alice/Bob : préférences, secrets et sessions séparés ; révocation d'une session
-  étrangère refusée ; GUEST sans écriture métier.
-- HTTPS réel : cookie HttpOnly/Secure/SameSite, refus HTTP, Origin et CSRF,
-  absence de route web d'administration, headers/identifiants falsifiés refusés.
-- Processus réels Core + Gateway + Router + Indicator, ports temporaires ;
-  préférences de langue distinctes, indicateur Custom visible et calculable
-  uniquement par son propriétaire. Revalidation de session à Core avant calcul.
-- Firefox : login, ouverture du Profil existant, sessions actives, modification
-  du nom avec le mot de passe actuel ; aucune erreur JavaScript sur ce parcours.
-- Les routes Core inventoriées sont sondées sans session ; les 75 routes
-  classées refusées sont aussi sondées avec une session USER.
-- Coffre RSA réel généré dans un fixture : mauvais mot de passe sans écriture,
-  import attribué une fois, refus d'attribution à Bob, préservation après reset
-  et fichier source inchangé octet pour octet.
-- Aucun diff de la base stable pour `indicator_engine.js`, les JSON BuiltIn,
-  les fichiers `indicator_visual*` et `chart_workspace_v2.1.js`.
+Le passage local complémentaire exécute 482 tests Core (480 réussis, deux
+skips locaux de terminal non-root), six suites Indicator et 20 tests UI.
+Le test additionnel de refus du fallback RPC opérateur passe séparément.
+La CI doit requalifier le commit publié correspondant ; le dernier statut
+est lié dans la PR. Les deux skips locaux ne sont pas transformés en succès.
 
-## Échecs rencontrés, corrigés et exclusions
+Un premier passage a détecté l'absence du nouveau writer CLI dans l'inventaire
+statique. Le fichier est désormais explicitement classé hors snapshot expérimental,
+sans prétendre qu'il est coordonné par ce dernier. Les assertions d'inventaire
+restent actives. Le contrôle RBAC statique passe : 212 déclarations,
+130 routes littérales contrôlées, 63 actions UI read et 19 write.
 
-Une première exécution trop large incluait `test_indicator_cp1_v2.js`, smoke
-ancien qui exige un Router et un provider OHLCV démarrés : il échouait lorsque
-ces services étaient absents. Il n'est pas compté comme réussi ni inclus dans
-la commande autonome. Le nouveau test d'intégration utilise de vrais processus
-Router/Indicator et des chandelles fictives explicitement fournies ; il ne prouve
-pas une collecte de marché externe.
+Ajouts couverts par des tests natifs :
 
-Les méthodes MarketData ajoutées en 2.1.1 n'étaient pas toutes dans l'inventaire
-snapshot Auth21. Les points d'entrée ont reçu le même garde snapshot et les
-assertions d'inventaire ont été étendues. Le calcul métier n'a pas été changé.
-Un fixture multi-Engine allouait parfois deux fois le même port temporaire :
-le sélecteur évite désormais les doublons de sa propre liste.
-Un champ `undefined` dans la nouvelle réponse de calcul provoquait un désaccord
-de hash CP/1 après sérialisation JSON : le champ optionnel vaut maintenant null.
+- Réauthentification des secrets, effacement personnel, refus de faux propriétaire.
+- Fenêtre Firefox de réauthentification : saisie du mot de passe, requête reprise,
+  succès de l'effacement et fermeture de la fenêtre, sans erreur JavaScript.
+- RPC privé Alice absent pour Bob, rejet localhost/IP/HTTP/origine non approuvée,
+  aucune sauvegarde partielle des secrets en cas d'entrée invalide.
+- Supervisor personnel MOCK et refus explicite d'un REMOTE_LLM non qualifié.
+- Import Portfolio des événements/balances/snapshots/trades/réglages vers un seul
+  propriétaire, sauvegarde native incluant WAL, source inchangée, conflit et
+  interruption annulant la copie.
+- Import Settings chiffré par propriétaire et revendication d'attribution unique.
+- Attribution wallet : même clé originale et mêmes enveloppes de secrets,
+  déchiffrement par Alice et aucune lecture de wallet par Bob.
+- Firewall machine : token et HMAC du corps obligatoires ; un secret machine
+  seul ne permet pas d'arrêter une protection. Une capacité ADMIN liée au corps,
+  au chemin et à une session vivante est désormais requise. La recette Docker
+  étendue vérifie le refus machine et l'arrêt/redémarrage de la seule protection
+  Data avec un ADMIN fictif. Elle doit réussir sur le nouveau commit.
 
-Le contrôle `node Tools/CI/verify_rbac_registry.js` passe : 128 routes explicites,
-63 actions UI read et 19 write. Les cinq actions 2.1.1 absentes du registre
-Auth21 historique sont désormais classées. La politique par propriétaire est
-déclarée séparément dans `rbac-v1.json`, version de permissions 2 ; cette
-déclaration n'est pas une approbation de déploiement.
+## Migrations, crash et restauration
 
-## Ce qui reste non qualifié
+Schémas v3 et v4 conservés, migration additive v5 pour `permissions_version=3`.
+Les anciennes sessions sont révoquées, les identifiants/empreintes PBKDF2,
+chiffrements d'identité et clés originales sont conservés. Tests natifs SIGKILL
+entre v3/v4 et au milieu de v4 : reprise vers v5, intégrité, sauvegarde de la
+version initiale, restauration dans un nouveau fichier, déchiffrement avec la
+même clé et conservation d'un marqueur historique. Une mauvaise clé est refusée
+avant sauvegarde ou modification du schéma.
 
-Les 75 routes refusées ne sont pas des fonctionnalités métier migrées. Voir
-`../USER_MANAGEMENT_V1.md` et `route-inventory.json`. La PR reste en brouillon.
-Aucune installation, migration, sauvegarde de données réelles, connexion GEN-1,
-fusion de PR ou opération de trading n'a été exécutée.
+Les imports exigent des writers arrêtés et ne remplacent pas une sauvegarde
+cohérente de la stack. Un rollback garde les données récentes séparées pour
+réconciliation ; aucune suppression de volume ni restauration sur base ouverte.
 
-## Qualification complémentaire de la PR #12 — en cours
+## Limites de preuve et blocages
 
-Le commit `82c46480bbd532e1b99471dd4bc3f7088c6f78da` ajoute le classement
-exhaustif des 75 routes dans `legacy-route-decisions.json`, les Mosaïques privées,
-les capacités propriétaires Strategy/Portfolio, les tests natifs de crash SQLite,
-et une recette Docker isolée à 13 services. Les quatre workflows existants ont
-réussi sur ce commit. Le premier workflow Docker a construit l'image et démarré
-13 conteneurs, puis échoué sur la sonde Router utilisant `/health` au lieu de
-`/router-health-internal`. Ce passage ne constitue pas une recette Docker réussie.
+Les 75 routes initialement refusées sont classées individuellement dans
+`legacy-route-decisions.json` : leur classification n'est pas une acceptation.
+La validation de chaque écran métier, de tous les échanges privés inter-Engines,
+des formats historiques de stratégies/Custom/dashboards et de la chaîne complète
+d'exécution reste inachevée. Les tests IA utilisent des réponses fictives : ils
+ne prouvent pas une disponibilité ou une facturation réelles du fournisseur.
 
-Le passage local complet suivant a exécuté 477 tests Core (475 réussis, deux
-skips locaux PTY), six suites Indicator et 20 tests UI : aucun échec.
-Les ajouts ultérieurs secrets API/clear, test OpenAI personnel et signature
-MarketData → Firewall ont été testés séparément ; la recette complète doit être
-relancée sur le commit qui les contient.
-
-La politique propriétaire ajoute une migration additive v5 et
-`permissions_version=3`. La migration v4 originale est conservée. Les sessions
-émises sous l'ancienne politique sont révoquées ; les identités, clés originales,
-hash de mots de passe et données historiques restent conservés. Les tests de
-SIGKILL avant/pendant v4, reprise vers v5 et restauration de la sauvegarde native
-ont réussi sur copies fictives isolées.
-
-Le transport IA propriétaire utilise la clé personnelle déchiffrée uniquement
-par Core, une délégation signée et une revalidation de session. L'URL OpenAI est
-fixe ; aucun fallback vers les secrets globaux. Les tests utilisent un transport
-simulé et deux clés fictives distinctes : aucune preuve d'appel facturé à un
-fournisseur réel n'est revendiquée.
-
-Blocages encore ouverts : paramètres RPC personnalisés sûrs, test X personnel,
-paramètres Supervisor/REMOTE_LLM, attribution CLI explicite des historiques
-privés globaux existants, recette métier complète des flux inter-Engines et
-recette Docker avec arrêt/redémarrage réussie. Les refus d'exécution de transfert
-et de swap restent soumis à une décision explicite ; leur classification de
-sécurité n'est pas une acceptation fonctionnelle. Cette livraison reste impropre
-à une mise en service complète tant que ces points ne sont pas levés ou décidés.
+Décisions explicites encore nécessaires pour accepter une limitation :
+exécution Trading/transferts/swaps, ancien test Apple Mail sous Linux, REMOTE_LLM.
+Les capacités non migrées restent refusées. Aucun refus n'est présenté comme
+fonctionnalité livrée. La PR reste en brouillon et n'est pas prête à intégrer.

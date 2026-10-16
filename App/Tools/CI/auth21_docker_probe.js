@@ -9,6 +9,11 @@ async function main(){
  assert(fs.statSync('/fixture/runtime/ssh-ui.sock').isSocket());assert.equal((await api('/api/settings')).status,401);
  async function login(name){const r=await api('/auth21/login',{method:'POST',body:{email:name+'@example.invalid',password}});assert.equal(r.status,200);return {Cookie:r.cookie.split(';')[0],'X-IATB-CSRF':r.data.csrfToken};}
  const a=await login('alice'),b=await login('bobby');
+ const admin=await login('admin'),status=await api('/api/admin/status',{headers:admin});assert.equal(status.status,200);assert(status.data.services.find(s=>s.id==='ui').online,'UI_PINNED_TLS_PROBE');
+ const CP=require('../../Core/Communication/communication_protocol_v1'),crypto=require('node:crypto'),machineBody={thread:'data'},machineToken=CP.ensureSecret(''),machineHeaders={'X-IATB-CP-Token':machineToken,'X-IATB-CP-Signature':crypto.createHmac('sha256',machineToken).update(JSON.stringify(machineBody)).digest('hex')};
+ assert.equal((await request(8017,'/api/thread/stop',{method:'POST',body:machineBody,headers:machineHeaders})).data.error,'ADMIN_CAPABILITY_REQUIRED');
+ for(const op of ['stop','restart']){const control=await api('/api/admin/firewall/thread/'+op,{method:'POST',body:{service:'data',password,confirmed:true},headers:admin});assert.equal(control.status,200,'ADMIN_FIREWALL_'+op+':'+JSON.stringify(control.data));}
+
  if(process.argv[2]==='restart'){assert((await api('/api/mosaics',{headers:a})).data.items.some(x=>x.moduleId==='moz:alice-only'));assert((await api('/auth21/sessions',{headers:b})).data.items.length>=2);}
  assert.equal((await api('/api/settings/language',{method:'POST',body:{language:'en'},headers:a})).status,200);assert.equal((await api('/api/settings',{headers:b})).data.language,'fr');
  assert.equal((await api('/api/mosaics/create',{method:'POST',body:{definition:{id:'alice-only',title:'Alice',items:[{source:'literal.text',value:'ALICE_ONLY'}]}},headers:a})).status,200);assert.equal((await api('/api/mosaics',{headers:b})).data.items.length,0);

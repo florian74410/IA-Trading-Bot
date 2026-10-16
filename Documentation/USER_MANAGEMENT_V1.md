@@ -72,14 +72,14 @@ node App/CLI/users.js create-first-admin
 La migration contrôle SQLite et le déchiffrement des identités avec la clé
 d'origine. Elle produit une sauvegarde SQLite via l'API backup (WAL inclus), en
 0600 dès la création, avant tout changement. Elle ajoute le schéma Auth21 v3 et
-les tables V1 v4 ; convertit SUPERADMIN en ADMIN sans changer les identifiants,
+les tables V1 v4 et la migration additive de politique v5 ; convertit SUPERADMIN en ADMIN sans changer les identifiants,
 les empreintes de mots de passe ni les identités chiffrées. PBKDF2 historique
 reste vérifiable ; les nouveaux mots de passe sont Argon2id (64 MiB, 3 passes).
 La migration invalide les anciennes sessions expérimentales et introduit la
-version de permissions 2, contrôlée à chaque résolution de session.
+version de permissions 3, contrôlée à chaque résolution de session.
 Aucune migration n'est lancée automatiquement par le runtime authentifié.
 En cas d'échec intermédiaire, conserver la sauvegarde et restaurer hors ligne :
-la migration complète v3+v4 n'est pas une unique transaction SQL.
+la migration complète v3+v4+v5 n'est pas une unique transaction SQL.
 
 Le bootstrap est refusé dès qu'un ADMIN actif existe. Il demande l'identité et
 le mot de passe sur le terminal puis `CREATE FIRST ADMIN`. Aucun ADMIN par défaut.
@@ -189,27 +189,73 @@ Wallets : accès par identifiant de session, réglages chiffrés dans l'espace p
 aucune adoption automatique d'un wallet global par le premier utilisateur. La clé
 wallet existante est requise ; un runtime authentifié ne la régénère jamais.
 
+## Données historiques : attribution explicite hors ligne
+
+Arrêter les writers avant chaque import. La CLI exige le propriétaire OS non-root,
+un TTY réel, une authentification ADMIN, un compte cible actif non-GUEST et deux
+confirmations, dont `IMPORT LEGACY OWNER`. Aucun propriétaire n'est déduit du
+navigateur ni choisi automatiquement.
+
+```sh
+# Chemins absolus existants, fichiers privés 0600, aucune donnée GEN-1 en recette.
+export IATB_PORTFOLIO_DB=/chemin/prive/portfolio.db
+node App/CLI/users.js import-legacy-portfolio CL_COMPTE_CIBLE
+export IATB_USER_DB=/chemin/prive/user_data.db
+node App/CLI/users.js import-legacy-setting CL_COMPTE_CIBLE
+```
+
+Portfolio copie les cinq tables historiques vers les tables du propriétaire,
+uniquement si elles sont vides. Settings demande le scope et la clé exacts :
+`app_profile`, `app_selection`, `configuration`, `swap_bridge`, `bank_transfer`,
+`bank_wallets`, `notifications`, `credits` ou `token_usage`. Une ligne source est
+attribuable à un seul compte. Le contenu copié est chiffré pour les Settings ;
+la source est conservée. Pour `bank_wallets`, la copie est rangée sous
+`wallets:client:<compte>`, les enveloppes sont vérifiées avec la clé originale
+`Security/wallet_master.key` et restent inchangées. Aucun secret n'est régénéré.
+Chaque commande produit d'abord une sauvegarde SQLite native privée et conserve
+une revendication d'attribution dans la même transaction que la copie. Un conflit
+ou une interruption annule la copie ; ne jamais supprimer la revendication pour
+forcer un second propriétaire. Un import ne fusionne pas des données existantes.
+
+Les JSON Custom Indicator et Strategy restent réimportables par leur propriétaire
+via leurs interfaces validées ; l'attribution automatique des fichiers globaux et
+la conversion complète des anciens dashboards ne sont pas qualifiées.
+
+## Paramètres et services authentifiés
+
+Les champs API existants sont acceptés, y compris feeRecipient et RPC. Les RPC
+personnels exigent HTTPS et une origine approuvée côté serveur : origines
+PublicNode prévues par `settings_policy.js`, complétées par
+`IATB_AUTH_RPC_ORIGINS` (origines séparées par des virgules, configuration opérateur).
+Aucun domaine arbitraire fourni par le navigateur n'est accepté. Les chemins et
+clés RPC sont chiffrés dans les réglages privés. Effacer une clé API exige le
+mot de passe courant, y compris via la fenêtre de réauthentification de l'UI.
+
+Les tests OpenAI/X/0x utilisent le secret personnel ; OpenAI passe par une
+capacité Supervisor signée et Core conserve la clé. Les appels externes facturés
+ne sont pas exécutés dans la recette fictive. Les réglages Supervisor MOCK et
+OPENAI_API sont privés. REMOTE_LLM n'est pas ouvert sans décision sur les
+origines réseau et les credentials. Les sondes Core/UI utilisent le certificat
+TLS épinglé en mode authentifié.
+
 ## Limites qui bloquent une qualification globale de la mission
 
-- Stratégies, exécution, ordres, historiques métier globaux, supervision et
-  administration technique non migrés : routes refusées en mode authentifié.
-  Aucun modèle de propriété fictif n'est substitué aux Engines existants.
-- Les anciens wallets, dashboards, stratégies et réglages globaux ne sont pas
-  automatiquement attribués. Leur conservation est acquise ; leur migration vers
-  un propriétaire explicite doit être qualifiée séparément.
-- La passerelle IA interne historique reste refusée : aucun accès inter-utilisateur
-  au coffre du dernier utilisateur connecté. L'utilisation métier des secrets par
-  tous les Engines n'est pas qualifiée dans ce mode.
-- Les pages peuvent encore présenter des commandes legacy qui répondent 403.
-  L'intégration multiutilisateur complète de toutes les pages reste à terminer.
+- L'exécution réelle de Trading/transferts/swaps reste interdite. Les prévisualisations
+  et historiques privés ne valent pas validation d'une chaîne d'exécution complète.
+  Une décision explicite reste requise pour accepter cette restriction fonctionnelle.
+- Le test email historique dépend d'Apple Mail et n'est pas migré vers Linux/SMTP.
+  Il reste refusé. Sa suppression ou son remplacement nécessite une décision explicite.
+- REMOTE_LLM et les destinations RPC hors allowlist nécessitent un choix opérateur.
+- Les stratégies, définitions Custom et dashboards globaux ne sont pas automatiquement
+  attribués ; la migration de tous leurs formats historiques reste à qualifier.
+- La recette complète de chaque écran métier et de tous les échanges privés entre
+  Engines n'est pas achevée. Les pages peuvent encore présenter des commandes refusées.
 - Pas de qualification du snapshot expérimental avec les nouveaux writers.
-- Le test positif CLI avec UID non-root réel ne peut pas s'exécuter dans un
-  conteneur qui ne mappe que l'UID 0 ; la suite indique ce skip explicitement. Les deux parcours PTY ont ensuite
-  été exécutés et réussis sur GitHub Actions Linux, sans skip (voir VALIDATION).
-- Aucun test ni modification de la stack Docker GEN-1. Aucun trading réel.
+- La recette Docker à 13 services, TLS, socket UI, isolation et redémarrage a réussi
+  sur `a9d61354`. Elle n'a accédé à aucune stack GEN-1 ni donnée réelle.
 
 Le refus d'une route démontre son confinement, pas sa migration fonctionnelle.
-La PR doit rester en brouillon tant que ces limites empêchent la recette demandée.
+La PR reste en brouillon tant que les blocages ne sont pas levés ou explicitement décidés.
 
 ## Tests et preuves
 

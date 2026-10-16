@@ -414,7 +414,7 @@
       "path": "/api/settings/test-x",
       "classification": "MIGRATE",
       "reason": "Tester uniquement les credentials du propriétaire ; quotas et audit du coût fournisseur.",
-      "implementation": "PENDING",
+      "implementation": "IMPLEMENTED_RECIPE_IN_PROGRESS",
       "acceptance": "REQUIRES_QUALIFICATION",
       "decision_source": null
     },
@@ -422,8 +422,8 @@
       "method": "POST",
       "path": "/api/settings/supervisor/brains",
       "classification": "MIGRATE",
-      "reason": "Configuration IA personnelle : stockage privé et contexte signé lors des appels inter-Engines.",
-      "implementation": "PENDING",
+      "reason": "Réglages privés MOCK/OPENAI_API et fallback privé ; REMOTE_LLM requiert une décision explicite sur ses destinations et credentials.",
+      "implementation": "IMPLEMENTED_RECIPE_IN_PROGRESS",
       "acceptance": "REQUIRES_QUALIFICATION",
       "decision_source": null
     },

@@ -15,7 +15,8 @@ const GROUPS=Object.freeze({
   // coordinator: authenticated mode rejects every *_TRIAL activation flag.
   // CLI migration requires an explicit offline operator confirmation.
   'Core/Clients/UserManagement/cli.js','Core/Clients/UserManagement/migration.js',
-  'Core/Clients/UserManagement/store.js','Core/Clients/UserManagement/legacy_vault.js'
+  'Core/Clients/UserManagement/store.js','Core/Clients/UserManagement/legacy_vault.js',
+  'Core/Clients/UserManagement/legacy_data.js'
  ],
  'operator-control-outside-snapshot':[
   // Empty persistent lock inode only; kernel lease excludes Core/CLI writers.
