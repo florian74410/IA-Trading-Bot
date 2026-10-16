@@ -5,7 +5,9 @@ const vm=require('node:vm');
 const path=require('node:path');
 const registry=require('../../Indicators/Engine/indicator_registry');
 const root=path.resolve(__dirname,'../..');
-for(const name of ['Ichimoku_Cloud','Bollinger_Bands','MACD','RSI']){
+const nativeNames=fs.readdirSync(path.join(root,'Indicators/BuiltIn')).filter(x=>x.endsWith('.indicator.json')).map(x=>x.slice(0,-'.indicator.json'.length));
+assert.equal(nativeNames.length,21,'all 21 native definitions must be covered');
+for(const name of nativeNames){
  const def=JSON.parse(fs.readFileSync(path.join(root,'Indicators/BuiltIn',name+'.indicator.json'),'utf8'));
  const validity=registry.validateDefinition(def,'BuiltIn',null,false);
  assert.equal(validity.ok,true,name+': '+validity.errors.join('; '));
