@@ -44,162 +44,162 @@
     {
       "method": "GET",
       "path": "/api/admin/bank/vaults",
-      "policy": "denied-in-authenticated-mode"
+      "policy": "authenticated-admin-context"
     },
     {
       "method": "POST",
       "path": "/api/admin/bank/vaults",
-      "policy": "denied-in-authenticated-mode"
+      "policy": "authenticated-admin-context"
     },
     {
       "method": "GET",
       "path": "/api/admin/session",
-      "policy": "denied-in-authenticated-mode"
+      "policy": "authenticated-admin-context"
     },
     {
       "method": "GET",
       "path": "/api/admin/status",
-      "policy": "denied-in-authenticated-mode"
+      "policy": "authenticated-admin-context"
     },
     {
       "method": "GET",
       "path": "/api/admin/console/catalog",
-      "policy": "denied-in-authenticated-mode"
+      "policy": "authenticated-admin-context"
     },
     {
       "method": "POST",
       "path": "/api/admin/console/execute",
-      "policy": "denied-in-authenticated-mode"
+      "policy": "authenticated-admin-context"
     },
     {
       "method": "GET",
       "path": "/api/admin/logs",
-      "policy": "denied-in-authenticated-mode"
+      "policy": "authenticated-admin-context"
     },
     {
       "method": "POST",
       "path": "/api/admin/logs/clear",
-      "policy": "denied-in-authenticated-mode"
+      "policy": "authenticated-admin-context"
     },
     {
       "method": "POST",
       "path": "/api/admin/service/restart",
-      "policy": "denied-in-authenticated-mode"
+      "policy": "authenticated-admin-context"
     },
     {
       "method": "POST",
       "path": "/api/admin/process/toggle",
-      "policy": "denied-in-authenticated-mode"
+      "policy": "authenticated-admin-context"
     },
     {
       "method": "POST",
       "path": "/api/admin/firewall/thread/stop",
-      "policy": "denied-in-authenticated-mode"
+      "policy": "authenticated-admin-context"
     },
     {
       "method": "POST",
       "path": "/api/admin/firewall/thread/restart",
-      "policy": "denied-in-authenticated-mode"
+      "policy": "authenticated-admin-context"
     },
     {
       "method": "POST",
       "path": "/api/admin/firewall/toggle",
-      "policy": "denied-in-authenticated-mode"
+      "policy": "authenticated-admin-context"
     },
     {
       "method": "POST",
       "path": "/api/admin/indicators/reload",
-      "policy": "denied-in-authenticated-mode"
+      "policy": "authenticated-admin-context"
     },
     {
       "method": "POST",
       "path": "/api/admin/cache/clear",
-      "policy": "denied-in-authenticated-mode"
+      "policy": "authenticated-admin-context"
     },
     {
       "method": "POST",
       "path": "/api/admin/core/restart",
-      "policy": "denied-in-authenticated-mode"
+      "policy": "authenticated-admin-context"
     },
     {
       "method": "POST",
       "path": "/api/admin/system/restart",
-      "policy": "denied-in-authenticated-mode"
+      "policy": "authenticated-admin-context"
     },
     {
       "method": "POST",
       "path": "/api/admin/system/stop-total",
-      "policy": "denied-in-authenticated-mode"
+      "policy": "authenticated-admin-context"
     },
     {
       "method": "POST",
       "path": "/api/shutdown",
-      "policy": "denied-in-authenticated-mode"
+      "policy": "authenticated-admin-context"
     },
     {
       "method": "GET",
       "path": "/api/updates",
-      "policy": "denied-in-authenticated-mode"
+      "policy": "authenticated-admin-context"
     },
     {
       "method": "POST",
       "path": "/api/updates/upload",
-      "policy": "denied-in-authenticated-mode"
+      "policy": "authenticated-admin-context"
     },
     {
       "method": "POST",
       "path": "/api/updates/fetch",
-      "policy": "denied-in-authenticated-mode"
+      "policy": "authenticated-admin-context"
     },
     {
       "method": "POST",
       "path": "/api/updates/install",
-      "policy": "denied-in-authenticated-mode"
+      "policy": "authenticated-admin-context"
     },
     {
       "method": "GET",
       "path": "/api/ai-updates/settings",
-      "policy": "denied-in-authenticated-mode"
+      "policy": "authenticated-admin-context"
     },
     {
       "method": "POST",
       "path": "/api/ai-updates/settings",
-      "policy": "denied-in-authenticated-mode"
+      "policy": "authenticated-admin-context"
     },
     {
       "method": "GET",
       "path": "/api/ai-updates",
-      "policy": "denied-in-authenticated-mode"
+      "policy": "authenticated-admin-context"
     },
     {
       "method": "GET",
       "path": "/api/ai-updates/package",
-      "policy": "denied-in-authenticated-mode"
+      "policy": "authenticated-admin-context"
     },
     {
       "method": "POST",
       "path": "/api/ai-updates/execute",
-      "policy": "denied-in-authenticated-mode"
+      "policy": "authenticated-admin-context"
     },
     {
       "method": "GET",
       "path": "/api/mosaics",
-      "policy": "denied-in-authenticated-mode"
+      "policy": "authenticated-owner-context"
     },
     {
       "method": "GET",
       "path": "/api/mosaics/runtime",
-      "policy": "denied-in-authenticated-mode"
+      "policy": "authenticated-owner-context"
     },
     {
       "method": "POST",
       "path": "/api/mosaics/create",
-      "policy": "denied-in-authenticated-mode"
+      "policy": "authenticated-owner-context"
     },
     {
       "method": "POST",
       "path": "/api/mosaics/delete",
-      "policy": "denied-in-authenticated-mode"
+      "policy": "authenticated-owner-context"
     },
     {
       "method": "POST",
@@ -254,7 +254,7 @@
     {
       "method": "POST",
       "path": "/api/security/wallets/remove-key",
-      "policy": "denied-in-authenticated-mode"
+      "policy": "authenticated-owner-context"
     },
     {
       "method": "GET",
@@ -269,7 +269,7 @@
     {
       "method": "POST",
       "path": "/api/security/wallets/remove",
-      "policy": "denied-in-authenticated-mode"
+      "policy": "authenticated-owner-context"
     },
     {
       "method": "GET",
@@ -279,7 +279,7 @@
     {
       "method": "GET",
       "path": "/api/logs",
-      "policy": "denied-in-authenticated-mode"
+      "policy": "authenticated-admin-context"
     },
     {
       "method": "GET",
@@ -344,12 +344,12 @@
     {
       "method": "POST",
       "path": "/api/settings/modulation",
-      "policy": "denied-in-authenticated-mode"
+      "policy": "authenticated-owner-context"
     },
     {
       "method": "POST",
       "path": "/api/app-settings/select",
-      "policy": "denied-in-authenticated-mode"
+      "policy": "authenticated-owner-context"
     },
     {
       "method": "GET",
@@ -454,7 +454,7 @@
     {
       "method": "POST",
       "path": "/api/notifications/test",
-      "policy": "denied-in-authenticated-mode"
+      "policy": "authenticated-owner-context"
     },
     {
       "method": "POST",
@@ -464,17 +464,17 @@
     {
       "method": "GET",
       "path": "/api/credits/usage",
-      "policy": "denied-in-authenticated-mode"
+      "policy": "authenticated-owner-context"
     },
     {
       "method": "POST",
       "path": "/api/credits/pricing",
-      "policy": "denied-in-authenticated-mode"
+      "policy": "authenticated-owner-context"
     },
     {
       "method": "GET",
       "path": "/api/token-usage",
-      "policy": "denied-in-authenticated-mode"
+      "policy": "authenticated-owner-context"
     },
     {
       "method": "POST",
@@ -484,12 +484,12 @@
     {
       "method": "POST",
       "path": "/api/session/change-password",
-      "policy": "denied-in-authenticated-mode"
+      "policy": "Auth21 handler"
     },
     {
       "method": "POST",
       "path": "/api/session/change-email",
-      "policy": "denied-in-authenticated-mode"
+      "policy": "Auth21 handler"
     },
     {
       "method": "POST",
@@ -499,7 +499,7 @@
     {
       "method": "GET",
       "path": "/api/chart-viewer/status",
-      "policy": "denied-in-authenticated-mode"
+      "policy": "authenticated-owner-context"
     },
     {
       "method": "POST",

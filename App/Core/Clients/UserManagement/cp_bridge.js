@@ -17,6 +17,8 @@ function createBridge({root,sessions,routerPort}){
   let {target,action}=input,a=input.arguments||{};
   if(!a||typeof a!=='object'||Array.isArray(a))throw Error('INVALID_REQUEST');
   const expected=action.split('.')[0];if(target!==expected)throw Error('FORBIDDEN');
+  const ownerOperation=require('./owner_policy').permission(target,action);
+  if(ownerOperation){if(principal.role==='GUEST')throw Error('FORBIDDEN');const payload={clientId:principal.clientId,sessionHash:require('node:crypto').createHash('sha256').update(Buffer.from(token,'base64url')).digest('hex'),action,args:a};const proof=codec.issue({principal,audience:target,operation:ownerOperation,method:'POST',ownerClientId:principal.clientId,action:target+'.user.request',bodyDigest:CP.hashData(payload)});return rpc(target,target+'.user.request',{payload,proof});}
   if(PUBLIC.has(action)){if(principal.role==='GUEST'&&!GUEST_READ.has(action))throw Error('FORBIDDEN');if(a.force===true||a.refresh===true)throw Error('FORBIDDEN');if(!sessions.attempt(require('node:crypto').createHash('sha256').update('rpc:'+principal.clientId).digest('hex'),300))throw Error('AUTH_THROTTLED');return rpc(target,action,{...a,force:false});}
   if(target!=='indicator')throw Error('FORBIDDEN');
   let defs=principal.role==='GUEST'?{}:JSON.parse(sessions.getPreference(token,'indicators','definitions')||'{}');
