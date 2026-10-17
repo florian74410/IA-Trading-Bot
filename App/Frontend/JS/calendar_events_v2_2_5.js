@@ -59,6 +59,40 @@
       return ad < bd ? -1 : ad > bd ? 1 : a.id.localeCompare(b.id);
     });
   }
+  /* Shared read-only adapter for the actual FED/CME provider calendar shape.
+   * Calendar entries lacking an authoritative time remain date-only and are not
+   * placed on the exact trading-candle timeline.
+   */
+  function whenFromLocalDate(date,label){
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(String(date||'')))return null;
+    var m=String(label||'').match(/\b(\d{1,2}):(\d{2})\s*(UTC|GMT|Z|ET|EST|EDT|CT|CST|CDT)\b/i);
+    if(!m||+m[1]>23)return null;
+    var base=Date.parse(date+'T'+m[1].padStart(2,'0')+':'+m[2]+':00Z'),zone=m[3].toUpperCase();
+    if(['UTC','GMT','Z'].indexOf(zone)>=0)return new Date(base).toISOString();
+    var tz=/^E/.test(zone)?'America/New_York':'America/Chicago';
+    try{
+      var formatter=new Intl.DateTimeFormat('en-US',{timeZone:tz,timeZoneName:'shortOffset',hour:'2-digit'});
+      var offset=(formatter.formatToParts(new Date(base)).find(function(p){return p.type==='timeZoneName'})||{}).value||'';
+      var match=offset.match(/^GMT([+-])(\d{1,2})(?::(\d\d))?$/);
+      if(!match)return null;
+      var delta=(match[1]==='+'?1:-1)*(+match[2]*60+(+match[3]||0));
+      return new Date(base-delta*60000).toISOString();
+    }catch(_){return null}
+  }
+  function fromCalendars(cal){
+    cal=cal||{};var all=[];
+    [['FED',cal.fed],['CME',cal.cme],['CME',cal.cmeExpirations]].forEach(function(pair){
+      var source=pair[0],items=pair[1]&&pair[1].events||[];
+      items.forEach(function(x,i){
+        if(!x||typeof x!=='object')return;
+        var date=x.date||null,time=x.startAtUtc||x.start_at_utc||x.dateTime||x.starts_at||whenFromLocalDate(date,x.timeLabel||x.time||'');
+        var id=x.sourceId||x.id||x.eventId||[date,x.title||x.label||x.name||x.event||'',i].join(':');
+        var e=normalize({source:source,id:id,title:x.title||x.label||x.name||x.event||'Événement économique',startAtUtc:time,date:date,category:x.category,importance:x.importance||x.impact,forecast:x.forecast??x.expected,actual:x.actual??x.real,previous:x.previous,unit:x.unit,country:x.country,countryCode:x.countryCode||x.country_code,officialUrl:x.officialUrl||x.url},source);
+        if(e)all.push(e);
+      });
+    });
+    return mergeFeeds([{source:'FED',events:all.filter(function(e){return e.source==='FED'})},{source:'CME',events:all.filter(function(e){return e.source==='CME'})}]);
+  }
   function dayKey(e, timeZone) {
     if (!e) return null;
     if (e.allDay) return e.localDate;
@@ -103,5 +137,5 @@
     };
   }
   return {normalize:normalize,mergeFeeds:mergeFeeds,dayKey:dayKey,filter:filter,
-    chartMarkers:chartMarkers,optionsFromSettings:optionsFromSettings};
+    chartMarkers:chartMarkers,optionsFromSettings:optionsFromSettings,fromCalendars:fromCalendars,whenFromLocalDate:whenFromLocalDate};
 });
