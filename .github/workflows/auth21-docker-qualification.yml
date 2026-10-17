@@ -1,0 +1,44 @@
+name: Auth21 isolated 13-service qualification
+on:
+  pull_request:
+    branches: ['release/v2.1.1-gen1']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  fictional-stack:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci --prefix App --omit=dev --no-audit --no-fund
+      - name: Prepare fresh fictional installation
+        run: |
+          echo "IATB_QA_ROOT=$RUNNER_TEMP/iatb-auth21-docker-${GITHUB_RUN_ID}" >> "$GITHUB_ENV"
+          echo "IATB_QA_UID=$(id -u)" >> "$GITHUB_ENV"
+          echo "IATB_QA_GID=$(id -g)" >> "$GITHUB_ENV"
+          node App/Tools/CI/auth21_docker_fixture.js "$RUNNER_TEMP/iatb-auth21-docker-${GITHUB_RUN_ID}"
+      - name: Check compose and build
+        run: |
+          docker compose -f compose.auth21.qualification.yml config --quiet
+          docker compose -f compose.auth21.qualification.yml build router
+      - name: Boot only the 13 non-trading services
+        run: |
+          docker compose -f compose.auth21.qualification.yml up -d
+          test "$(docker compose -f compose.auth21.qualification.yml ps --status running --quiet | wc -l)" -eq 13
+      - name: Real TLS and owner-isolation probe
+        run: docker compose -f compose.auth21.qualification.yml exec -T ui node Tools/CI/auth21_docker_probe.js
+      - name: Stop and restart without deleting persistent data
+        run: |
+          docker compose -f compose.auth21.qualification.yml stop
+          docker compose -f compose.auth21.qualification.yml start
+          docker compose -f compose.auth21.qualification.yml exec -T ui node Tools/CI/auth21_docker_probe.js restart
+      - name: Fictional service diagnostics on failure
+        if: failure()
+        run: docker compose -f compose.auth21.qualification.yml logs --no-color --tail 100
+      - name: Stop disposable containers and retain fixture data
+        if: always()
+        run: docker compose -f compose.auth21.qualification.yml stop

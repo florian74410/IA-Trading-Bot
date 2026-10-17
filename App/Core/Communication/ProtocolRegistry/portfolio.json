@@ -193,6 +193,20 @@
             "id"
           ]
         }
+      },
+      {
+        "name": "portfolio.user.request",
+        "arguments": {
+          "allowed": [
+            "payload",
+            "proof"
+          ],
+          "required": [
+            "payload",
+            "proof"
+          ]
+        },
+        "description": "Core-bound owner capability with live session revalidation; no browser identity authority"
       }
     ],
     "dataTypes": [

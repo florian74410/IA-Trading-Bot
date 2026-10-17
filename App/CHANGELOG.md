@@ -1,3 +1,13 @@
+# 2.2.0 — User Management V1, livraison TEST
+
+- Sessions Auth21, CLI ADMIN et isolation des espaces privés ; imports hors ligne.
+- Qualification des 75 frontières de routes et des parcours inter-moteurs fictifs.
+- Protection des métadonnées fournisseurs camelCase ; refus précoce GUEST des clés API.
+- Versions runtime/UI harmonisées ; Compose authentifié de recette GEN-1.
+- Publication conditionnée aux tests sans échec/skip et au redémarrage Docker 13 services.
+- Préversion : exécution financière, REMOTE_LLM, email et snapshots à chaud indisponibles.
+- Procédure de migration et retour arrière : Documentation/GEN1_TEST_2.2.0.md dans le dépôt.
+
 # IA-TB v2.1.0 DEVELOPMENT — Indicator Visual Renderer V2
 
 - Déclarations graphiques sûres pour 21 indicateurs natifs; nuages Ichimoku et bandes Bollinger; niveaux RSI/MACD; couleurs/traits/histogrammes; suppression du faux panneau inférieur pour les overlays.

@@ -659,6 +659,16 @@
           ]
         },
         "description": "Translate one Fundamental raw item using the Fundamental-owned translation service."
+      },
+      {
+        "name": "fundamental.operator.request",
+        "arguments": {
+          "allowed": [
+            "payload",
+            "proof"
+          ]
+        },
+        "description": "Authenticated Core ADMIN capability; exact operator action, payload, owner and current ADMIN session verified before effects. Never a human UI authority."
       }
     ],
     "dataTypes": [

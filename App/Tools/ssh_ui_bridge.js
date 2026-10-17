@@ -1,4 +1,7 @@
 'use strict';
+// Auth21 P2.2: independent maintenance tools must not bypass a held global snapshot.
+if(process.env.IATB_AUTH21_LOCAL_SNAPSHOT_TRIAL==='1'&&process.env.IATB_AUTH21_SNAPSHOT_IPC_TRIAL==='1')throw Error('AUTH21_MAINTENANCE_BLOCKED_DURING_SNAPSHOT');
+
 // Private SSH-only UI bridge: host Unix socket -> Docker loopback UI.
 // No TCP listener, no Docker published ports, no access to external networks.
 const fs=require('node:fs'),net=require('node:net'),path=require('node:path');

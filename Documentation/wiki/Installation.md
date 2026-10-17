@@ -1,3 +1,5 @@
+> Version actuelle : **2.2.1 (TEST)**. Voir [la release et les changements](Release-2.2.1.md). La production GEN-1 reste à déployer et à valider.
+
 # 📦 Installation et démarrage — V2.0 DEBUG
 
 > **🟢 En simple : IA-TB embarque son propre Node.js 16.20.2 pour rester compatible avec le Mac Intel cible. `start.command` prépare le runtime, démarre les services dans un ordre contrôlé, vérifie leur santé puis ouvre l’interface sur le port 8000.**

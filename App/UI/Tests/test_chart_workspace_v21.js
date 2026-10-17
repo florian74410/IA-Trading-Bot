@@ -70,7 +70,7 @@ test('Studio searches/categories, activation, model create/rename/load/update/de
   await p.getByLabel('Activer Ichimoku Cloud',{exact:true}).check();await p.waitForFunction(function(){return IATBIndicatorUI.state().selected.includes('ichimoku_cloud')});await p.getByLabel('Rechercher un indicateur',{exact:true}).fill('');await p.getByLabel('Catégorie',{exact:true}).selectOption('momentum');assert((await p.locator('.cvIndicatorRow').count())>1);
   await p.getByRole('button',{name:'Mes modèles',exact:true}).click();await p.getByLabel('Nom du modèle',{exact:true}).fill('Cloud et momentum');await p.getByRole('button',{name:'Enregistrer le modèle',exact:true}).click();await p.getByLabel('Renommer Cloud et momentum',{exact:true}).fill('Mon modèle');await p.getByLabel('Renommer Cloud et momentum',{exact:true}).dispatchEvent('change');await p.getByRole('button',{name:'Mettre à jour',exact:true}).click();
   await p.getByRole('button',{name:'Indicateurs',exact:true}).click();await p.getByRole('button',{name:'Tout désactiver',exact:true}).click();await p.waitForFunction(function(){return IATBIndicatorUI.state().selected.length===0});await p.getByRole('button',{name:'Mes modèles',exact:true}).click();await p.getByRole('button',{name:'Charger',exact:true}).click();await p.waitForFunction(function(){return IATBIndicatorUI.state().selected.includes('ichimoku_cloud')});
-  await p.getByRole('button',{name:'Fermer',exact:true}).click();await p.reload();await p.waitForFunction(function(){return window.IATBChartWorkspace&&IATBIndicatorUI.state().selected.includes('ichimoku_cloud')});await openStudio(p);await p.getByRole('button',{name:'Mes modèles',exact:true}).click();assert.equal(await p.getByLabel('Renommer Mon modèle',{exact:true}).count(),1);await p.getByRole('button',{name:'Supprimer',exact:true}).click();assert.equal(await p.locator('.cvModelRow').count(),0);assert.deepStrictEqual(c.errors,[]);
+  await p.getByRole('button',{name:'Fermer',exact:true}).click();await p.reload();await p.waitForFunction(function(){return window.IATBChartWorkspace&&IATBIndicatorUI.state().selected.includes('ichimoku_cloud')});await openStudio(p);await p.getByRole('button',{name:'Mes modèles',exact:true}).click();await p.getByLabel('Renommer Mon modèle',{exact:true}).waitFor({state:'visible'});assert.equal(await p.getByLabel('Renommer Mon modèle',{exact:true}).count(),1);await p.getByRole('button',{name:'Supprimer',exact:true}).click();assert.equal(await p.locator('.cvModelRow').count(),0);assert.deepStrictEqual(c.errors,[]);
  }finally{await p.close();}
 });
 test('Studio decorates V2 metadata without recomputation or modifying engine outputs',async function(){
@@ -110,7 +110,7 @@ test('drawing anchors survive zoom/pan/timeframe and source changes with explici
 });
  test('responsive workspace, actual pointer wheel, focus and handler cleanup preserve the renderer',async function(){
  var c=await pageWith({selected:['ichimoku_cloud','macd','rsi','bollinger_bands','supertrend']}),p=c.page;try{for(var w of [1440,1024,768,390]){await p.setViewportSize({width:w,height:1000});await openStudio(p);assert(await p.locator('#indicatorStudio').isVisible());assert(await p.locator('#indicatorStudio').evaluate(function(d){return d.getBoundingClientRect().width<=innerWidth}));await p.keyboard.press('Escape');assert(!(await p.locator('#indicatorStudio').isVisible()));}
-  await p.setViewportSize({width:1440,height:1000});var box=await p.locator('#iaChartHost').boundingBox();await p.mouse.move(box.x+box.width/2,box.y+250);var before=await p.evaluate(function(){return IATBActiveChartController.visibleCount});await p.mouse.wheel(0,-100);await p.waitForTimeout(80);assert((await p.evaluate(function(){return IATBActiveChartController.visibleCount}))<before);
+  await p.setViewportSize({width:1440,height:1000});await p.waitForFunction(function(){var c=window.IATBActiveChartController,g=c&&c._geom;return !!(g&&g.cw>100&&g.priceH>100)});var plot=await p.evaluate(function(){var c=IATBActiveChartController,g=c._geom,r=c.canvas.getBoundingClientRect();return{x:r.left+g.L+g.cw/2,y:r.top+g.priceTop+g.priceH/2}});await p.mouse.move(plot.x,plot.y);var before=await p.evaluate(function(){return IATBActiveChartController.visibleCount});await p.mouse.wheel(0,-100);await p.waitForFunction(function(n){return IATBActiveChartController.visibleCount<n},before,{timeout:3000});
   await p.locator('#chartFocusBtn').click();assert(await p.locator('#chartRestoreBtn').isVisible());await p.locator('#chartRestoreBtn').click();await p.evaluate(function(){var w=IATBChartWorkspace,c=w.controller;w.destroy();window.qaClean={canvas:document.querySelectorAll('#iatbDrawSurface').length,dock:document.querySelectorAll('.iatbDrawDock').length,renderer:!!window.IATBIndicatorVisualV2};c.invalidate()});assert.deepStrictEqual(await p.evaluate(function(){return qaClean}),{canvas:0,dock:0,renderer:true});assert.deepStrictEqual(c.errors,[]);
  }finally{await p.close();}
 });
@@ -132,5 +132,45 @@ test('workspace visual inspection captures use local fixtures only',async functi
 test('navigation away and back preserves drawings and does not duplicate handlers',async function(){
  var c=await pageWith(),p=c.page;try{
   await drag(p,'trend',.3,.6,.65,.3);var original=(await items(p))[0];await p.locator('a[href="/settings"]').first().click();await p.waitForURL('**/settings');await p.keyboard.press('Delete');await p.getByRole('link',{name:'Trading IA',exact:true}).click();await p.waitForFunction(function(){return window.IATBChartWorkspace&&IATBChartDrawings.instance.items.length===1});assert.equal(await p.locator('#indicatorStudioButton').count(),1);assert.equal(await p.locator('#iatbDrawSurface').count(),1);assert.deepStrictEqual((await items(p))[0].points,original.points);await drag(p,'horizontal',.3,.6,.65,.3);assert.equal((await items(p)).length,2);assert.deepStrictEqual(c.errors,[]);
+ }finally{await p.close();}
+});
+
+test('integrated DEBUG preserves overlay counts and dock visibility through clear/reselect',async function(){
+ var c=await pageWith({selected:['ichimoku_cloud','bollinger_bands']}),p=c.page;try{
+  await p.waitForFunction(function(){return document.querySelector('#indicatorDock').dataset.overlayCount==='2'});assert(!(await p.locator('#indicatorDock').isVisible()));
+  await p.evaluate(function(){return IATBIndicatorUI.configure(['ichimoku_cloud','rsi'])});await p.waitForFunction(function(){return document.querySelector('#indicatorDock').dataset.overlayCount==='1'&&document.querySelector('[data-indicator-id=rsi]')});assert(await p.locator('#indicatorDock').isVisible());
+  await p.evaluate(function(){return IATBIndicatorUI.configure([])});await p.waitForFunction(function(){return !document.querySelector('#indicatorDock').classList.contains('active')});assert.equal(await p.locator('#indicatorDock').getAttribute('data-overlay-count'),'0');assert(!(await p.locator('#indicatorDock').isVisible()));assert.deepStrictEqual(c.errors,[]);
+ }finally{await p.close();}
+});
+
+test('v2.1.1 pair selector remains above chart and supports selection',async function(){
+ var c=await pageWith(),p=c.page;
+ try{
+  await p.locator('#iatbPairPickerButton').click();
+  var pop=p.locator('#iatbMarketPickerPopover');
+  await pop.waitFor({state:'visible'});
+  assert.equal(await pop.evaluate(function(el){return el.matches(':popover-open')}),true);
+  var layer=await pop.evaluate(function(el){
+   var r=el.getBoundingClientRect(),x=r.left+Math.min(30,r.width/2),y=r.top+Math.min(15,r.height/2);
+   return{top:document.elementFromPoint(x,y)===el||el.contains(document.elementFromPoint(x,y)),fixed:getComputedStyle(el).position==='fixed'};
+  });
+  assert.equal(layer.fixed,true,'popover should not be clipped by chart');
+  assert.equal(layer.top,true,'popover should own the hit-tested position');
+  await pop.locator('[role=option]').filter({hasText:'ETH/USD'}).first().click();
+  assert.equal(await p.locator('#symbol').inputValue(),'ETHUSD');
+  assert.equal(await pop.isVisible(),false);
+  assert.deepStrictEqual(c.errors,[]);
+ }finally{await p.close();}
+});
+test('v2.1.1 drawing tool polish preserves accessible buttons and states',async function(){
+ var c=await pageWith(),p=c.page;
+ try{
+  var dock=p.locator('.iatbDrawDock');
+  assert.equal(await dock.locator('button').count(),14);
+  var trend=dock.locator('[data-tool=trend]');
+  await trend.click();
+  assert.equal(await trend.getAttribute('aria-pressed'),'true');
+  assert.equal(await dock.locator('[data-tool=cursor]').getAttribute('aria-pressed'),'false');
+  assert.deepStrictEqual(c.errors,[]);
  }finally{await p.close();}
 });

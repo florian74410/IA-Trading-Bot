@@ -1,0 +1,33 @@
+name: User Management V1 verification
+on:
+  pull_request:
+    branches: ['release/v2.1.1-gen1']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  security-and-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: App/package-lock.json
+      - run: npm ci --prefix App --omit=dev --no-audit --no-fund
+      - name: Install isolated browser QA
+        run: |
+          npm install --prefix "$RUNNER_TEMP/user-qa" --no-audit --no-fund playwright@1.62.1
+          "$RUNNER_TEMP/user-qa/node_modules/.bin/playwright" install --with-deps firefox
+          echo "NODE_PATH=$RUNNER_TEMP/user-qa/node_modules" >> "$GITHUB_ENV"
+      - run: node Tools/CI/verify_rbac_registry.js
+      - run: bash App/Tools/CI/test_user_management_v1.sh
+      - name: Route inventory
+        run: node App/Tools/CI/user_management_route_inventory.js > "$RUNNER_TEMP/user-management-routes.json"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: user-management-route-inventory
+          path: ${{ runner.temp }}/user-management-routes.json
+          retention-days: 14

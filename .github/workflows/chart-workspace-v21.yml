@@ -5,6 +5,7 @@ on:
       - 'App/Frontend/**'
       - 'App/UI/Tests/**'
       - '.github/workflows/chart-workspace-v21.yml'
+      - 'Tools/Deploy/**'
   workflow_dispatch:
 permissions:
   contents: read
@@ -35,3 +36,5 @@ jobs:
           node App/Indicators/Tests/test_indicator_ir_v2.js
           node App/Indicators/Tests/test_indicator_language_v2.js
           node App/Indicators/Tests/test_indicator_analysis_v1.js
+      - name: Read-only deployment inventory tests
+        run: python3 -m unittest discover -s Tools/Deploy -p 'test_*.py'

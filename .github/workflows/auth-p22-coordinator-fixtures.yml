@@ -1,0 +1,448 @@
+name: Auth P2.2 Coordinator Fixture Tests
+
+on:
+  push:
+    branches:
+      - feature/debug-2.1-auth-design
+    paths:
+      - 'App/Core/Backup/snapshot_coordinator.js'
+      - 'App/Core/Backup/auth21_frozen_recovery_service.js'
+      - 'App/Tools/Tests/auth21_paths_frozen_runtime.test.js'
+      - 'App/Tools/Tests/auth21_core_durable_recovery.test.js'
+      - 'App/Tools/CLI/auth21-recover-snapshot.js'
+      - 'App/Indicators/Engine/indicator_registry.js'
+      - 'App/Indicators/Engine/indicator_settings.js'
+      - 'App/Strategy/Engine/strategy_stats_v2.js'
+      - 'App/Core/Shared/paths.js'
+      - 'App/Core/Server/server.js'
+      - 'App/Tools/CI/auth21_legacy_core_route_audit.js'
+      - 'App/Tools/Tests/auth21_legacy_core_route_audit.test.js'
+      - 'App/Core/Backup/auth21_core_local_trial_wiring.js'
+      - 'App/Core/Updates/update_manager_v1.0.js'
+      - 'App/Core/Updates/ai_update_builder_v1.0.js'
+      - 'App/Tools/Tests/auth21_core_updates_read_only_trial.test.js'
+      - 'App/Tools/Tests/auth21_core_local_trial_wiring.test.js'
+      - 'App/Tools/CI/auth21_engine_encrypted_bundle.js'
+      - 'App/Tools/Tests/auth21_snapshot_real_bundle_e2e.test.js'
+      - 'App/MarketData/Config/market_data_settings.js'
+      - 'App/Tools/Tests/auth21_market_settings_snapshot_gate.test.js'
+      - 'App/Tools/Tests/auth21_paths_startup_preflight.test.js'
+      - 'App/Tools/CI/auth21_writer_inventory.js'
+      - 'App/Tools/Tests/auth21_writer_inventory.test.js'
+      - 'App/Tools/Tests/snapshot_coordinator.test.js'
+      - 'App/Tools/Tests/core_snapshot_writers.test.js'
+      - 'App/Core/Clients/client_repository.js'
+      - 'App/Core/Settings/sqlite_settings_store.js'
+      - 'App/Portfolio/Engine/portfolio_store.js'
+      - 'App/Tools/Tests/portfolio_snapshot_writer.test.js'
+      - 'App/Fundamental/Engine/database_core.js'
+      - 'App/Tools/Tests/fundamental_snapshot_writer.test.js'
+      - 'App/Fundamental/Engine/database.js'
+      - 'App/Tools/Tests/fundamental_legacy_snapshot_bridge.test.js'
+      - 'App/MarketData/Registry/market_registry.js'
+      - 'App/MarketData/Storage/api_telemetry_store.js'
+      - 'App/MarketData/Storage/microstructure_store.js'
+      - 'App/Tools/Tests/marketdata_snapshot_writers.test.js'
+      - 'App/MarketData/Financial/financial_store.js'
+      - 'App/Tools/Tests/financial_jsonl_snapshot_writer.test.js'
+      - 'App/services/trading-engine/history-store.js'
+      - 'App/Core/Services/usage_ledger_v1.js'
+      - 'App/Tools/Tests/trading_usage_jsonl_snapshot_writers.test.js'
+      - 'App/Core/Mosaics/mosaic_store_v1.0.js'
+      - 'App/Tools/Tests/mosaic_snapshot_writer.test.js'
+      - 'App/Core/Clients/client_crypto.js'
+      - 'App/Tools/Tests/client_master_key_safety.test.js'
+      - 'App/Tools/CI/auth21_key_restore_trial.js'
+      - 'App/Tools/Tests/auth21_key_restore_trial.test.js'
+      - 'App/Tools/CI/auth21_encrypted_snapshot_trial.js'
+      - 'App/Tools/Tests/auth21_encrypted_snapshot_trial.test.js'
+      - 'App/Tools/CI/auth21_multi_resource_snapshot_trial.js'
+      - 'App/Tools/Tests/auth21_multi_resource_snapshot_trial.test.js'
+      - 'App/Core/Clients/auth21_proposed_migrations/003_auth21_schema_v3.sql'
+      - 'App/Tools/CI/test_auth21_schema_v3_proposal.py'
+      - 'App/Tools/CI/auth21_v3_migration_trial.js'
+      - 'App/Tools/CI/auth21_credential_upgrade_trial.js'
+      - 'App/Tools/Tests/auth21_v3_migration_trial.test.js'
+      - 'App/Core/Clients/password_hasher_v2.js'
+      - 'App/Core/Clients/auth21_session_store.js'
+      - 'App/Tools/Tests/auth21_session_store.test.js'
+      - 'App/Core/Clients/auth21_http_boundary.js'
+      - 'App/Core/Clients/auth21_browser_cookie.js'
+      - 'App/Core/Clients/auth21_rbac_guard.js'
+      - 'App/Core/Clients/auth21_ipc_proof.js'
+      - 'App/Core/Clients/auth21_ipc_boundary.js'
+      - 'App/Core/Clients/auth21_ipc_keyfile.js'
+      - 'App/Core/Clients/auth21_ipc_probe.js'
+      - 'App/Tools/Tests/auth21_ipc_probe.test.js'
+      - 'App/Tools/Tests/auth21_ipc_keyfile.test.js'
+      - 'App/Tools/Tests/auth21_ipc_boundary.test.js'
+      - 'App/Tools/Tests/auth21_ipc_proof.test.js'
+      - 'App/Core/Clients/auth21_service_boundary.js'
+      - 'App/Core/Clients/auth21_engine_ingress.js'
+      - 'App/Core/Clients/auth21_engine_business_ingress.js'
+      - 'App/Core/Clients/auth21_business_actions.js'
+      - 'App/Indicators/Engine/indicator_settings.js'
+      - 'App/Core/Clients/auth21_durable_business_replay.js'
+      - 'App/Tools/Tests/auth21_durable_business_replay.test.js'
+      - 'App/Tools/Tests/auth21_business_actions.test.js'
+      - 'App/Tools/Tests/auth21_multi_engine_business_e2e.test.js'
+      - 'App/Tools/Tests/auth21_core_business_sqlite_sessions.test.js'
+      - 'App/Tools/Tests/auth21_browser_core_tls_integration.test.js'
+      - 'App/Tools/Tests/auth21_gateway_tls_browser_e2e.test.js'
+      - 'App/Frontend/JS/auth21_ui.js'
+      - 'App/Frontend/CSS/auth21_ui.css'
+      - 'App/Frontend/Pages/auth21.html'
+      - 'App/Core/Clients/auth21_browser_cookie.js'
+      - 'App/Core/Clients/auth21_core_business_http.js'
+      - 'App/Core/Clients/auth21_router_business_forward.js'
+      - 'App/Tools/Tests/auth21_real_indicator_business_ingress.test.js'
+      - 'App/Tools/Tests/auth21_real_indicator_business_process.test.js'
+      - 'App/Tools/Tests/auth21_full_browser_real_core_engine_e2e.test.js'
+      - 'App/Tools/Tests/auth21_real_engines_ingress.test.js'
+      - 'App/Indicators/Engine/indicator_service.js'
+      - 'App/Fundamental/Engine/fundamental_service.js'
+      - 'App/Liquidity/Engine/liquidity_service.js'
+      - 'App/MarketData/market_data_service.js'
+      - 'App/Strategy/Engine/strategy_service.js'
+      - 'App/Supervisor/supervisor_service.js'
+      - 'App/Core/Firewall/firewall_service.js'
+      - 'App/Tools/Tests/auth21_service_boundary.test.js'
+      - 'App/UI/Gateway/ui_service.js'
+      - 'App/Core/Router/router.js'
+      - 'App/services/trading-engine/trading_service.js'
+      - 'App/Portfolio/Engine/portfolio_service.js'
+      - 'App/Risk/Engine/risk_service.js'
+      - 'App/Tools/Tests/auth21_rbac_guard.test.js'
+      - 'App/Core/Clients/auth21_core_route_gate.js'
+      - 'App/Tools/Tests/auth21_http_boundary.test.js'
+      - 'App/Core/Clients/auth21_admin_store.js'
+      - 'App/Core/Clients/auth21_local_operator.js'
+      - 'App/Core/Clients/auth21_admin_cli_dispatch.js'
+      - 'App/Tools/CLI/iatb-users.js'
+      - 'App/package.json'
+      - 'App/package-lock.json'
+      - 'App/Tools/Tests/auth21_admin_store.test.js'
+      - 'App/Core/Clients/auth21_first_admin_trial.js'
+      - 'App/Tools/Tests/auth21_first_admin_trial.test.js'
+      - '.github/workflows/auth-p22-coordinator-fixtures.yml'
+  pull_request:
+    branches:
+      - debug
+      - fix/v2.0.1-debug
+      - feature/debug-2.1-auth-design
+    paths:
+      - 'App/Core/Backup/snapshot_coordinator.js'
+      - 'App/Core/Backup/auth21_frozen_recovery_service.js'
+      - 'App/Tools/Tests/auth21_paths_frozen_runtime.test.js'
+      - 'App/Tools/Tests/auth21_core_durable_recovery.test.js'
+      - 'App/Tools/CLI/auth21-recover-snapshot.js'
+      - 'App/Indicators/Engine/indicator_registry.js'
+      - 'App/Indicators/Engine/indicator_settings.js'
+      - 'App/Strategy/Engine/strategy_stats_v2.js'
+      - 'App/Core/Shared/paths.js'
+      - 'App/Core/Server/server.js'
+      - 'App/Core/Backup/auth21_core_local_trial_wiring.js'
+      - 'App/Core/Updates/update_manager_v1.0.js'
+      - 'App/Core/Updates/ai_update_builder_v1.0.js'
+      - 'App/Tools/Tests/auth21_core_updates_read_only_trial.test.js'
+      - 'App/Tools/Tests/auth21_core_local_trial_wiring.test.js'
+      - 'App/Tools/CI/auth21_engine_encrypted_bundle.js'
+      - 'App/Tools/Tests/auth21_snapshot_real_bundle_e2e.test.js'
+      - 'App/MarketData/Config/market_data_settings.js'
+      - 'App/Tools/Tests/auth21_market_settings_snapshot_gate.test.js'
+      - 'App/Tools/Tests/auth21_paths_startup_preflight.test.js'
+      - 'App/Tools/CI/auth21_writer_inventory.js'
+      - 'App/Tools/Tests/auth21_writer_inventory.test.js'
+      - 'App/Tools/Tests/snapshot_coordinator.test.js'
+      - 'App/Tools/Tests/core_snapshot_writers.test.js'
+      - 'App/Core/Clients/client_repository.js'
+      - 'App/Core/Settings/sqlite_settings_store.js'
+      - 'App/Portfolio/Engine/portfolio_store.js'
+      - 'App/Tools/Tests/portfolio_snapshot_writer.test.js'
+      - 'App/Fundamental/Engine/database_core.js'
+      - 'App/Tools/Tests/fundamental_snapshot_writer.test.js'
+      - 'App/Fundamental/Engine/database.js'
+      - 'App/Tools/Tests/fundamental_legacy_snapshot_bridge.test.js'
+      - 'App/MarketData/Registry/market_registry.js'
+      - 'App/MarketData/Storage/api_telemetry_store.js'
+      - 'App/MarketData/Storage/microstructure_store.js'
+      - 'App/Tools/Tests/marketdata_snapshot_writers.test.js'
+      - 'App/MarketData/Financial/financial_store.js'
+      - 'App/Tools/Tests/financial_jsonl_snapshot_writer.test.js'
+      - 'App/services/trading-engine/history-store.js'
+      - 'App/Core/Services/usage_ledger_v1.js'
+      - 'App/Tools/Tests/trading_usage_jsonl_snapshot_writers.test.js'
+      - 'App/Core/Mosaics/mosaic_store_v1.0.js'
+      - 'App/Tools/Tests/mosaic_snapshot_writer.test.js'
+      - 'App/Core/Clients/client_crypto.js'
+      - 'App/Tools/Tests/client_master_key_safety.test.js'
+      - 'App/Tools/CI/auth21_key_restore_trial.js'
+      - 'App/Tools/Tests/auth21_key_restore_trial.test.js'
+      - 'App/Tools/CI/auth21_encrypted_snapshot_trial.js'
+      - 'App/Tools/Tests/auth21_encrypted_snapshot_trial.test.js'
+      - 'App/Tools/CI/auth21_multi_resource_snapshot_trial.js'
+      - 'App/Tools/Tests/auth21_multi_resource_snapshot_trial.test.js'
+      - 'App/Core/Clients/auth21_proposed_migrations/003_auth21_schema_v3.sql'
+      - 'App/Tools/CI/test_auth21_schema_v3_proposal.py'
+      - 'App/Tools/CI/auth21_v3_migration_trial.js'
+      - 'App/Tools/CI/auth21_credential_upgrade_trial.js'
+      - 'App/Tools/Tests/auth21_v3_migration_trial.test.js'
+      - 'App/Core/Clients/password_hasher_v2.js'
+      - 'App/Core/Clients/auth21_session_store.js'
+      - 'App/Tools/Tests/auth21_session_store.test.js'
+      - 'App/Core/Clients/auth21_http_boundary.js'
+      - 'App/Core/Clients/auth21_browser_cookie.js'
+      - 'App/Core/Clients/auth21_rbac_guard.js'
+      - 'App/Core/Clients/auth21_ipc_proof.js'
+      - 'App/Core/Clients/auth21_ipc_boundary.js'
+      - 'App/Core/Clients/auth21_ipc_keyfile.js'
+      - 'App/Core/Clients/auth21_ipc_probe.js'
+      - 'App/Tools/Tests/auth21_ipc_probe.test.js'
+      - 'App/Tools/Tests/auth21_ipc_keyfile.test.js'
+      - 'App/Tools/Tests/auth21_ipc_boundary.test.js'
+      - 'App/Tools/Tests/auth21_ipc_proof.test.js'
+      - 'App/Core/Clients/auth21_service_boundary.js'
+      - 'App/Core/Clients/auth21_engine_ingress.js'
+      - 'App/Core/Clients/auth21_engine_business_ingress.js'
+      - 'App/Core/Clients/auth21_business_actions.js'
+      - 'App/Tools/Tests/auth21_business_actions.test.js'
+      - 'App/Tools/Tests/auth21_multi_engine_business_e2e.test.js'
+      - 'App/Tools/Tests/auth21_core_business_sqlite_sessions.test.js'
+      - 'App/Tools/Tests/auth21_browser_core_tls_integration.test.js'
+      - 'App/Core/Clients/auth21_core_business_http.js'
+      - 'App/Core/Clients/auth21_router_business_forward.js'
+      - 'App/Tools/Tests/auth21_real_indicator_business_ingress.test.js'
+      - 'App/Tools/Tests/auth21_real_engines_ingress.test.js'
+      - 'App/Indicators/Engine/indicator_service.js'
+      - 'App/Fundamental/Engine/fundamental_service.js'
+      - 'App/Liquidity/Engine/liquidity_service.js'
+      - 'App/MarketData/market_data_service.js'
+      - 'App/Strategy/Engine/strategy_service.js'
+      - 'App/Supervisor/supervisor_service.js'
+      - 'App/Core/Firewall/firewall_service.js'
+      - 'App/Tools/Tests/auth21_service_boundary.test.js'
+      - 'App/UI/Gateway/ui_service.js'
+      - 'App/Core/Router/router.js'
+      - 'App/services/trading-engine/trading_service.js'
+      - 'App/Portfolio/Engine/portfolio_service.js'
+      - 'App/Risk/Engine/risk_service.js'
+      - 'App/Tools/Tests/auth21_rbac_guard.test.js'
+      - 'App/Tools/Tests/auth21_http_boundary.test.js'
+      - 'App/Core/Clients/auth21_admin_store.js'
+      - 'App/Core/Clients/auth21_local_operator.js'
+      - 'App/Core/Clients/auth21_admin_cli_dispatch.js'
+      - 'App/Tools/CLI/iatb-users.js'
+      - 'App/package.json'
+      - 'App/package-lock.json'
+      - 'App/Tools/Tests/auth21_admin_store.test.js'
+      - 'App/Core/Clients/auth21_first_admin_trial.js'
+      - 'App/Tools/Tests/auth21_first_admin_trial.test.js'
+      - '.github/workflows/auth-p22-coordinator-fixtures.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  isolated-coordinator-tests:
+    name: P2.2 isolated coordinator - no services or real data
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax check
+        run: |
+          node --check App/Core/Backup/snapshot_coordinator.js
+          node --check App/Core/Backup/auth21_engine_snapshot_trial.js
+          node --check App/Core/Backup/auth21_durable_snapshot_writer.js
+          node --check App/Core/Backup/auth21_frozen_recovery_service.js
+          node --check App/Tools/Tests/auth21_paths_frozen_runtime.test.js
+          node --check App/Tools/Tests/auth21_core_durable_recovery.test.js
+          node --check App/Tools/CLI/auth21-recover-snapshot.js
+          node --check App/Tools/CI/auth21_writer_source_census.js
+          node --check App/Tools/Tests/auth21_writer_source_census.test.js
+          node --check App/Tools/Tests/auth21_core_direct_writer_guard.test.js
+          node --check App/Tools/Tests/auth21_market_settings_snapshot_gate.test.js
+          node --check App/MarketData/Config/market_data_settings.js
+          node --check App/Tools/Tests/auth21_durable_snapshot_writer.test.js
+          node --check App/Portfolio/Engine/portfolio_service.js
+          node --check App/Tools/Tests/auth21_portfolio_real_gate.test.js
+          node --check App/MarketData/market_data_service.js
+          node --check App/Tools/Tests/auth21_marketdata_real_gate.test.js
+          node --check App/Fundamental/Engine/fundamental_service.js
+          node --check App/Tools/Tests/auth21_fundamental_real_gate.test.js
+          node --check App/Core/Backup/auth21_snapshot_control.js
+          node --check App/Core/Backup/auth21_snapshot_core_client.js
+          node --check App/Tools/Tests/auth21_snapshot_real_service_ipc.test.js
+          node --check App/Tools/CI/auth21_engine_encrypted_bundle.js
+          node --check App/Tools/Tests/auth21_engine_encrypted_bundle.test.js
+          node --check App/Tools/Tests/auth21_snapshot_real_bundle_e2e.test.js
+          node --check App/Core/Clients/auth21_engine_ingress.js
+          node --check App/Core/Shared/paths.js
+          node --check App/Core/Server/server.js
+          node --check App/Core/Backup/auth21_core_local_trial_wiring.js
+          node --check App/Core/Updates/update_manager_v1.0.js
+          node --check App/Core/Updates/ai_update_builder_v1.0.js
+          node --check App/Tools/Tests/auth21_core_updates_read_only_trial.test.js
+          node --check App/Tools/Tests/auth21_core_local_trial_wiring.test.js
+          node --check App/Tools/Tests/auth21_paths_startup_preflight.test.js
+          node --check App/Tools/CI/auth21_writer_inventory.js
+          node --check App/Tools/Tests/auth21_writer_inventory.test.js
+          node --check App/Tools/Tests/snapshot_coordinator.test.js
+          node --check App/Tools/Tests/auth21_snapshot_recovery.test.js
+          node --check App/Tools/Tests/core_snapshot_writers.test.js
+          node --check App/Core/Clients/client_repository.js
+          node --check App/Core/Settings/sqlite_settings_store.js
+          node --check App/Portfolio/Engine/portfolio_store.js
+          node --check App/Tools/Tests/portfolio_snapshot_writer.test.js
+          node --check App/Fundamental/Engine/database_core.js
+          node --check App/Tools/Tests/fundamental_snapshot_writer.test.js
+          node --check App/Fundamental/Engine/database.js
+          node --check App/Tools/Tests/fundamental_legacy_snapshot_bridge.test.js
+          node --check App/MarketData/Registry/market_registry.js
+          node --check App/MarketData/Storage/api_telemetry_store.js
+          node --check App/MarketData/Storage/microstructure_store.js
+          node --check App/Tools/Tests/marketdata_snapshot_writers.test.js
+          node --check App/MarketData/Financial/financial_store.js
+          node --check App/Tools/Tests/financial_jsonl_snapshot_writer.test.js
+          node --check App/services/trading-engine/history-store.js
+          node --check App/Core/Services/usage_ledger_v1.js
+          node --check App/Tools/Tests/trading_usage_jsonl_snapshot_writers.test.js
+          node --check App/Core/Mosaics/mosaic_store_v1.0.js
+          node --check App/Tools/Tests/mosaic_snapshot_writer.test.js
+          node --check App/Core/Clients/client_crypto.js
+          node --check App/Tools/Tests/client_master_key_safety.test.js
+          node --check App/Tools/CI/auth21_key_restore_trial.js
+          node --check App/Tools/Tests/auth21_key_restore_trial.test.js
+          node --check App/Tools/CI/auth21_encrypted_snapshot_trial.js
+          node --check App/Tools/Tests/auth21_encrypted_snapshot_trial.test.js
+          node --check App/Tools/CI/auth21_multi_resource_snapshot_trial.js
+          node --check App/Tools/Tests/auth21_multi_resource_snapshot_trial.test.js
+          node --check App/Tools/CI/auth21_v3_migration_trial.js
+          node --check App/Tools/CI/auth21_credential_upgrade_trial.js
+          node --check App/Tools/Tests/auth21_v3_migration_trial.test.js
+          node --check App/Core/Clients/auth21_session_store.js
+          node --check App/Tools/Tests/auth21_session_store.test.js
+          node --check App/Core/Clients/auth21_http_boundary.js
+          node --check App/Core/Clients/auth21_browser_cookie.js
+          node --check App/Core/Clients/auth21_rbac_guard.js
+          node --check App/Core/Clients/auth21_ipc_proof.js
+          node --check App/Core/Clients/auth21_ipc_boundary.js
+          node --check App/Core/Clients/auth21_ipc_keyfile.js
+          node --check App/Core/Clients/auth21_ipc_probe.js
+          node --check App/Tools/Tests/auth21_ipc_probe.test.js
+          node --check App/Tools/Tests/auth21_ipc_keyfile.test.js
+          node --check App/Tools/Tests/auth21_ipc_boundary.test.js
+          node --check App/Tools/Tests/auth21_ipc_proof.test.js
+          node --check App/Tools/Tests/auth21_business_write_lockdown.test.js
+          node --check App/Core/Clients/auth21_business_capability.js
+          node --check App/Tools/Tests/auth21_business_capability.test.js
+          node --check App/Tools/Tests/auth21_indicator_write_flow.test.js
+          node --check App/Core/Clients/auth21_indicator_fixture_writer.js
+          node --check App/Tools/Tests/auth21_indicator_persistent_fixture.test.js
+          node --check App/Tools/Tests/auth21_four_process_http.test.js
+          node --check App/Tools/Tests/auth21_four_process_worker.js
+          node --check App/Core/Clients/auth21_core_business_issuer.js
+          node --check App/Tools/Tests/auth21_core_business_issuer.test.js
+          node --check App/Tools/Tests/auth21_body_digest.test.js
+          node --check App/Core/Clients/auth21_engine_guard.js
+          node --check App/Tools/Tests/auth21_all_engines_guard.test.js
+          node --check App/Core/Clients/auth21_router_service_read.js
+          node --check App/Tools/Tests/auth21_router_real_ingress.test.js
+          node --check App/UI/Gateway/ui_service.js
+          node --check App/Tools/Tests/auth21_network_upgrade_lockdown.test.js
+          node --check App/Tools/CI/auth21_phase2_readiness.js
+          node --check App/Tools/Tests/auth21_phase2_readiness.test.js
+          node --check App/Core/Router/router.js
+          node --check App/Core/Clients/auth21_service_boundary.js
+          node --check App/Tools/Tests/auth21_service_boundary.test.js
+          node --check App/UI/Gateway/ui_service.js
+          node --check App/Core/Router/router.js
+          node --check App/services/trading-engine/trading_service.js
+          node --check App/Portfolio/Engine/portfolio_service.js
+          node --check App/Risk/Engine/risk_service.js
+          node --check App/Tools/Tests/auth21_rbac_guard.test.js
+          node --check App/Core/Clients/auth21_core_route_gate.js
+          node --check App/Tools/CI/auth21_legacy_core_route_audit.js
+          node --check App/Tools/Tests/auth21_legacy_core_route_audit.test.js
+          node --check App/Tools/Tests/auth21_http_boundary.test.js
+          node --check App/Core/Clients/auth21_admin_store.js
+          node --check App/Core/Clients/auth21_local_operator.js
+          node --check App/Core/Clients/auth21_admin_cli_dispatch.js
+          node --check App/Tools/CLI/iatb-users.js
+          node --check App/Tools/Tests/auth21_admin_store.test.js
+          node --check App/Core/Clients/auth21_first_admin_trial.js
+          node --check App/Tools/Tests/auth21_first_admin_trial.test.js
+      - name: Legacy Core route coverage and fail-closed regression
+        run: node --test App/Tools/Tests/auth21_legacy_core_route_audit.test.js
+      - name: Isolated ACK and failure-handling fixtures
+        run: node --test App/Tools/Tests/auth21_core_durable_recovery.test.js App/Tools/Tests/auth21_paths_frozen_runtime.test.js App/Tools/Tests/auth21_market_settings_snapshot_gate.test.js App/Tools/Tests/auth21_core_direct_writer_guard.test.js App/Tools/Tests/auth21_writer_source_census.test.js App/Tools/Tests/snapshot_coordinator.test.js App/Tools/Tests/auth21_snapshot_recovery.test.js App/Tools/Tests/auth21_durable_snapshot_writer.test.js App/Tools/Tests/auth21_portfolio_real_gate.test.js App/Tools/Tests/auth21_marketdata_real_gate.test.js App/Tools/Tests/auth21_fundamental_real_gate.test.js App/Tools/Tests/core_snapshot_writers.test.js App/Tools/Tests/portfolio_snapshot_writer.test.js App/Tools/Tests/fundamental_snapshot_writer.test.js App/Tools/Tests/fundamental_legacy_snapshot_bridge.test.js App/Tools/Tests/marketdata_snapshot_writers.test.js App/Tools/Tests/financial_jsonl_snapshot_writer.test.js App/Tools/Tests/trading_usage_jsonl_snapshot_writers.test.js App/Tools/Tests/mosaic_snapshot_writer.test.js App/Tools/Tests/client_master_key_safety.test.js
+      - name: Core-issued Indicator business proof integration (sandbox only)
+        run: node --test App/Tools/Tests/auth21_business_actions.test.js App/Tools/Tests/auth21_real_indicator_business_ingress.test.js
+      - name: Startup paths read-only preflight and reviewed writer inventory
+        run: node --test App/Tools/Tests/auth21_paths_startup_preflight.test.js App/Tools/Tests/auth21_writer_inventory.test.js App/Tools/Tests/auth21_core_local_trial_wiring.test.js App/Tools/Tests/auth21_core_updates_read_only_trial.test.js
+      - name: Auth v3 offline SQLite schema fixtures (no live databases)
+        run: python3 App/Tools/CI/test_auth21_schema_v3_proposal.py
+      - name: Verify production npm lockfile and native Argon2 with Node 22
+        run: |
+          npm --prefix App ci --no-audit --no-fund
+          node -e "const p=require('./App/package.json');const lock=require('./App/package-lock.json');if(p.dependencies.argon2!=='0.45.1'||lock.packages[''].dependencies.argon2!=='0.45.1'||lock.packages['node_modules/argon2'].version!=='0.45.1')process.exit(1);if(typeof require('./App/node_modules/argon2').hash!=='function')process.exit(2)"
+      - name: Actual HTTPS cookie session and CSRF security boundary
+        run: node --test App/Tools/Tests/auth21_browser_core_tls_integration.test.js App/Tools/Tests/auth21_gateway_tls_browser_e2e.test.js
+      - name: Real SQLite session Argon2 ADMIN business revocation integration
+        run: node --test App/Tools/Tests/auth21_core_business_sqlite_sessions.test.js
+      - name: Durable HMAC business proof replay across Engine restarts
+        run: node --test App/Tools/Tests/auth21_durable_business_replay.test.js
+      - name: Real Indicator Engine guarded SQLite settings over Gateway Core Router
+        run: node --test App/Tools/Tests/auth21_real_indicator_business_process.test.js
+      - name: Full native browser to real Core account and Engine over HTTPS
+        run: node --test App/Tools/Tests/auth21_full_browser_real_core_engine_e2e.test.js
+      - name: Five real Engine business actions with scoped ADMIN and USER ownership
+        run: node --test App/Tools/Tests/auth21_multi_engine_business_e2e.test.js
+      - name: Real Engine processes reject unauthorized HTTP CP1 Upgrade and CONNECT
+        run: node --test App/Tools/Tests/auth21_real_engines_ingress.test.js
+      - name: Signed snapshot IPC for three real Engine processes
+        run: node --test App/Tools/Tests/auth21_snapshot_real_service_ipc.test.js
+      - name: Argon2id 64 MiB 3-pass calibration on CI runner (not GEN-1)
+        run: |
+          node - <<'NODE'
+          const {performance}=require('node:perf_hooks');
+          const argon2=require('./App/node_modules/argon2');
+          (async()=>{
+            const ms=[];
+            for(let i=0;i<3;i++){
+              const start=performance.now();
+              const digest=await argon2.hash('BENCHMARK_ONLY_NOT_A_SECRET',{type:argon2.argon2id,memoryCost:65536,timeCost:3,parallelism:1,hashLength:32});
+              if(!await argon2.verify(digest,'BENCHMARK_ONLY_NOT_A_SECRET'))throw Error('ARGON2_CALIBRATION_VERIFY_FAILED');
+              ms.push(Math.round(performance.now()-start));
+            }
+            console.log(JSON.stringify({profile:'CI_UBUNTU_NODE22_NOT_GEN1',iterations:3,memoryMiB:64,passes:3,parallelism:1,durationsMs:ms,maxRssMiB:Math.round(process.resourceUsage().maxRSS/1024)}));
+          })().catch(e=>{console.error(e.message);process.exitCode=1});
+          NODE
+      - name: Install SQLite and Argon2 into runner temp directory
+        run: npm --prefix "$RUNNER_TEMP/iatb-auth-v3" install --no-save --no-package-lock --no-audit --no-fund better-sqlite3@12.4.1 argon2@0.45.1
+      - name: Verify native v3 migration and credential CAS on fixtures
+        run: NODE_PATH="$RUNNER_TEMP/iatb-auth-v3/node_modules" node --test App/Tools/Tests/auth21_v3_migration_trial.test.js
+      - name: Auth v3 session, revocation and encrypted preference fixtures
+        run: NODE_PATH="$RUNNER_TEMP/iatb-auth-v3/node_modules" node --test App/Tools/Tests/auth21_session_store.test.js
+      - name: Auth21 isolated HTTP bearer boundary negative tests
+        run: node --test App/Tools/Tests/auth21_http_boundary.test.js App/Tools/Tests/auth21_browser_ui.test.js App/Tools/Tests/auth21_rbac_guard.test.js App/Tools/Tests/auth21_service_boundary.test.js App/Tools/Tests/auth21_ipc_proof.test.js App/Tools/Tests/auth21_ipc_boundary.test.js App/Tools/Tests/auth21_ipc_keyfile.test.js App/Tools/Tests/auth21_ipc_probe.test.js App/Tools/Tests/auth21_business_write_lockdown.test.js App/Tools/Tests/auth21_business_capability.test.js App/Tools/Tests/auth21_indicator_write_flow.test.js App/Tools/Tests/auth21_indicator_persistent_fixture.test.js App/Tools/Tests/auth21_four_process_http.test.js App/Tools/Tests/auth21_core_business_issuer.test.js App/Tools/Tests/auth21_body_digest.test.js App/Tools/Tests/auth21_all_engines_guard.test.js App/Tools/Tests/auth21_router_real_ingress.test.js App/Tools/Tests/auth21_network_upgrade_lockdown.test.js App/Tools/Tests/auth21_phase2_readiness.test.js
+      - name: P2.2 encrypted real SQLite WAL and JSONL restore with quorum
+        run: NODE_PATH=\"$RUNNER_TEMP/iatb-auth-v3/node_modules\" node --test App/Tools/Tests/auth21_engine_encrypted_bundle.test.js
+      - name: P2.2 genuine cross-process encrypted backup and scratch restore
+        run: NODE_PATH=\"$RUNNER_TEMP/iatb-auth-v3/node_modules\" node --test App/Tools/Tests/auth21_snapshot_real_bundle_e2e.test.js
+      - name: Auth v3 ADMIN persistence, last-admin guard and local-CLI fixtures
+        run: NODE_PATH="$RUNNER_TEMP/iatb-auth-v3/node_modules" node --test App/Tools/Tests/auth21_admin_store.test.js App/Tools/Tests/auth21_local_owner_lock.test.js
+      - name: Auth 2.1 first ADMIN consent, backup and legacy DEBUG preflight fixtures
+        run: NODE_PATH="$RUNNER_TEMP/iatb-auth-v3/node_modules" node --test App/Tools/Tests/auth21_first_admin_trial.test.js
+      - name: Auth client master-key and WAL backup restore compatibility fixtures
+        run: NODE_PATH="$RUNNER_TEMP/iatb-auth-v3/node_modules" node --test App/Tools/Tests/auth21_key_restore_trial.test.js
+      - name: Auth encrypted client snapshot and coordinated restore fixtures
+        run: NODE_PATH="$RUNNER_TEMP/iatb-auth-v3/node_modules" node --test App/Tools/Tests/auth21_encrypted_snapshot_trial.test.js
+      - name: Encrypted Clients Settings Portfolio and Annexes fixture snapshot
+        run: NODE_PATH="$RUNNER_TEMP/iatb-auth-v3/node_modules" node --test App/Tools/Tests/auth21_multi_resource_snapshot_trial.test.js

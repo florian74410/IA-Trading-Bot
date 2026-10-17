@@ -1,3 +1,7 @@
+> **IA-TB 2.2.1 — dernière version publiée, recette GEN-1 (TEST).**
+> [Release](Documentation/RELEASE_2.2.1.md) · [Déploiement sur copie](Documentation/GEN1_TEST_2.2.1.md) · [Wiki](Documentation/wiki/Home.md)
+> Aucune promotion de production, aucun démarrage du Trading Engine.
+
 # IA-Trading-Bot (IA-TB)
 
 Application modulaire de trading crypto : CEX/DEX, Market Data, Chart Viewer, Indicator Engine, Strategy Engine, Fundamental Engine, gestion centralisée des API et Update Manager versionné.

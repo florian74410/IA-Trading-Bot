@@ -1,0 +1,50 @@
+name: Auth P2.1 Storage Fixture Tests
+
+on:
+  push:
+    branches:
+      - feature/debug-2.1-auth-design
+    paths:
+      - 'Tools/CI/auth_storage_preflight.py'
+      - 'Tools/CI/fixture_aead_bundle.js'
+      - 'Tools/CI/test_auth_storage_preflight.py'
+      - 'App/Core/Clients/migrations/*.sql'
+      - '.github/workflows/auth-p21-storage-fixtures.yml'
+  pull_request:
+    branches:
+      - debug
+      - fix/v2.0.1-debug
+      - feature/debug-2.1-auth-design
+    paths:
+      - 'Tools/CI/auth_storage_preflight.py'
+      - 'Tools/CI/fixture_aead_bundle.js'
+      - 'Tools/CI/test_auth_storage_preflight.py'
+      - 'App/Core/Clients/migrations/*.sql'
+      - '.github/workflows/auth-p21-storage-fixtures.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  fixture-storage-tests:
+    name: P2.1 SQLite fixtures — readonly preflight and rollback
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Node 22 (ClientCrypto compatibility fixture only)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check syntax without executing runtime modules
+        run: python -m py_compile Tools/CI/auth_storage_preflight.py Tools/CI/test_auth_storage_preflight.py
+      - name: Check fixture encryption helper syntax
+        run: node --check Tools/CI/fixture_aead_bundle.js
+      - name: Run isolated SQLite fixture tests only
+        run: python -W error::ResourceWarning -m unittest discover -s Tools/CI -p 'test_auth_storage_preflight.py' -v

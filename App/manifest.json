@@ -1,9 +1,9 @@
 {
   "schema": 1,
   "application": "IA-Trading-Bot",
-  "version": "2.1.0",
-  "status": "DEBUG",
-  "source_version": "2.0.0",
+  "version": "2.2.1",
+  "status": "TEST",
+  "source_version": "2.2.0",
   "entrypoint": "Core/Server/server.js",
   "update_artifact": "Any .zip filename using IA-TB update manifest format",
   "ui_entrypoint": "UI/Gateway/ui_service.js",

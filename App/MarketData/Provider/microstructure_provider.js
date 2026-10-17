@@ -1,7 +1,7 @@
 'use strict';
 var request=require('./http_json');
 
-function num(v){v=+v;return isFinite(v)?v:null;}
+function num(v){if(v==null||typeof v==='boolean'||typeof v==='string'&&!v.trim())return null;v=+v;return isFinite(v)?v:null;}
 function clean(s){return String(s||'').toUpperCase().replace(/[^A-Z0-9]/g,'');}
 function baseCoin(s){s=clean(s);var q=['USDT','USDC','USD','EUR','BTC','ETH'];for(var i=0;i<q.length;i++)if(s.length>q[i].length&&s.slice(-q[i].length)===q[i])return s.slice(0,-q[i].length);return s;}
 function binanceSymbol(s){s=clean(s);if(/USDT$/.test(s))return s;if(/USD$/.test(s))return s.slice(0,-3)+'USDT';return s;}

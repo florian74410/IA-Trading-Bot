@@ -1,5 +1,5 @@
 'use strict';
-var http=require('http');
+var http=require('http'),crypto=require('crypto');
 
 function Client(o){
  o=o||{};
@@ -9,7 +9,8 @@ function Client(o){
 }
 Client.prototype.inspect=function(message,cb){
  var body=Buffer.from(JSON.stringify({message:message,meta:{payloadBytes:Buffer.byteLength(JSON.stringify(message),'utf8')}}));
- var q=http.request({host:this.host,port:this.port,path:'/api/data/inspect',method:'POST',timeout:this.timeout,headers:{
+ var auth={};if(process.env.IATB_AUTH_MODE==='authenticated'){var CP=require('../../Core/Communication/communication_protocol_v1'),token=CP.ensureSecret('');auth={'X-IATB-CP-Token':token,'X-IATB-CP-Signature':crypto.createHmac('sha256',token).update(body).digest('hex')};}
+ var q=http.request({host:this.host,port:this.port,path:'/api/data/inspect',method:'POST',timeout:this.timeout,headers:{...auth,
   'Content-Type':'application/json','Accept':'application/json','Content-Length':body.length
  }},function(r){var a=[],n=0;r.on('data',function(c){n+=c.length;if(n<=1024*1024)a.push(c)});r.on('end',function(){
   var o;try{o=JSON.parse(Buffer.concat(a).toString('utf8')||'{}')}catch(e){return cb(new Error('DATA_FIREWALL_JSON_INVALID'))}
