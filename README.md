@@ -24,9 +24,9 @@
 
 <div align="center">
 
-<img src="Assets/app_architecture.jpg" alt="Architecture modulaire IA-Trading-Bot" width="88%" />
+<img src="Assets/readme_hero_v22.svg" alt="IA-Trading-Bot v2.2 TEST — présentation des marchés, du graphique et du système Auth21" width="100%" />
 
-*Illustration architecturale du projet — le fonctionnement effectif et les disponibilités sont décrits ci-dessous.*
+*IA-TB v2.2.0 TEST — vue de présentation illustrative ; les cours affichés sont fictifs.*
 
 </div>
 
