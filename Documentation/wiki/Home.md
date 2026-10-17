@@ -1,4 +1,26 @@
-# 🧠 IA-TB — Wiki V2.0 DEBUG
+# 📚 IA-TB — Wiki officiel | Guide v2.2.0
+
+> 🧪 **Version 2.2.0 : préversion de recette.** La publication GitHub ne signifie pas que GEN-1 tourne déjà sur 2.2.0. La production stable antérieure est **v2.1.1**. Ce guide est basé sur la release [v2.2.0](https://github.com/florian74410/IA-Trading-Bot/releases/tag/v2.2.0).
+
+## 🚀 Commencer ici
+
+| Votre objectif | Page à lire |
+|---|---|
+| 👋 Découvrir l'application et se connecter | **[Guide de démarrage v2.2](V2.2-Guide-de-demarrage.md)** |
+| 🔐 Comprendre les comptes ADMIN, USER, GUEST et les sessions | **[Auth21 et User Management](V2.2-Comptes-et-roles.md)** |
+| 🏗️ Comprendre les 13 services et les Engines | **[Architecture et moteurs v2.2](V2.2-Architecture-et-moteurs.md)** |
+| 🧪 Savoir ce qui marche, ce qui reste interdit et comment tester | **[Recette GEN-1 et limites](V2.2-Recette-et-limites.md)** |
+| 🛠️ Procédure technique officielle pour la stack de test | [Recette GEN-1 v2.2.0](../GEN1_TEST_2.2.0.md) |
+
+**Comment lire ce wiki ?** Chaque page commence par une explication simple et conserve les termes techniques avec leur définition. Les diagrammes Mermaid sont affichables par GitHub et les tableaux synthétisent les rôles et services.
+
+### Autres chapitres existants
+
+Les pages historiques ci-dessous documentent surtout les architectures **DEBUG v2.0 / v2.1**. Elles restent utiles pour comprendre les moteurs, mais leurs chemins, ports et comportements ne doivent pas être considérés comme les consignes de déploiement v2.2.0.
+
+---
+
+# 📜 Documentation historique — IA-TB V2.0 DEBUG
 
 > **🟢 En simple : IA-TB est une application de trading crypto modulaire. Elle sépare la collecte des données, l’analyse technique, l’analyse fondamentale, les stratégies, le risque, l’exécution des ordres, le portefeuille et la Banque afin qu’un seul module ne puisse pas tout faire sans contrôle.**
 
