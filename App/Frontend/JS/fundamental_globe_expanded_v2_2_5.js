@@ -46,8 +46,8 @@ function mount(host,options){
  function render(){
   nav.replaceChildren();['TOP'].concat(CATEGORIES).forEach(function(c){nav.append(button(c,function(){category=c;selected=null;render();},category===c));});
   ['today','week','month'].forEach(function(p){nav.append(button({today:"Aujourd'hui",week:'Semaine',month:'Mois'}[p],function(){period=p;selected=null;render();},period===p));});
-  var visible=filter(events,{category:category,period:period},options.now),stats=summary(visible);
-  left.replaceChildren(el(doc,'h3','','Événements'),el(doc,'div','iatb-ge-total',stats.events+' événements'));
+  var visible=filter(events,{category:category,period:period},options.now),stats=summary(filter(events,{category:'TOP',period:period},options.now));
+  left.replaceChildren(el(doc,'h3','','Événements'),el(doc,'div','iatb-ge-total',visible.length+' affichés · '+stats.events+' dans la période'));
   CATEGORIES.forEach(function(c){var row=el(doc,'div','iatb-ge-stat');row.append(el(doc,'span','',c),el(doc,'strong','',stats.byCategory[c]));left.append(row);});
   left.append(el(doc,'h3','','Couverture géographique'),el(doc,'p','',stats.countries+' pays · '+stats.pins+' repères géolocalisés'));
   right.replaceChildren(el(doc,'h3','','Derniers événements'));
