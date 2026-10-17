@@ -66,3 +66,14 @@ html.iatb-trading-workspace #chartArea .cvToolbar #wsState{flex:1 1 250px;min-wi
 }
 
 #chartArea .iatbMarketPickerPopover:popover-open{margin:0;inset:auto;}
+
+/* v2.2.4: stable chart selection bar without vertical scrollbar on hover */
+html.iatb-trading-workspace #chartArea>.controls.cvToolbar{
+ box-sizing:border-box!important;height:auto!important;min-height:56px!important;
+ max-height:none!important;display:flex!important;align-items:center!important;
+ align-content:center!important;gap:7px!important;padding:8px 10px!important;
+ margin:5px 7px 8px!important;overflow-x:auto!important;overflow-y:hidden!important;
+ scrollbar-width:none!important;scrollbar-gutter:auto!important;
+}
+html.iatb-trading-workspace #chartArea>.controls.cvToolbar::-webkit-scrollbar{display:none!important}
+html.iatb-trading-workspace #chartArea>.controls.cvToolbar>*{flex-shrink:0;min-height:32px}
