@@ -91,7 +91,7 @@
         if(e)all.push(e);
       });
     });
-    return mergeFeeds([{source:'FED',events:all.filter(function(e){return e.source==='FED'})},{source:'CME',events:all.filter(function(e){return e.source==='CME'})}]);
+    var ids=new Map();all.forEach(function(e){ids.set(e.id,e)});return Array.from(ids.values()).sort(function(a,b){var t=a.startAtUtc||a.localDate,u=b.startAtUtc||b.localDate;return t<u?-1:t>u?1:a.id.localeCompare(b.id)});
   }
   function dayKey(e, timeZone) {
     if (!e) return null;
