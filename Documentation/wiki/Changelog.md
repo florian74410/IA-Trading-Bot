@@ -1,3 +1,5 @@
+> Version actuelle : **2.2.1 (TEST)**. Voir [la release et les changements](Release-2.2.1.md). La production GEN-1 reste à déployer et à valider.
+
 # 🧾 Changelog fonctionnel du Wiki
 
 > **🟢 En simple : cette page résume les évolutions visibles dans le code. Elle ne déclare pas V2.0 STABLE ; la branche documentée reste DEBUG.**

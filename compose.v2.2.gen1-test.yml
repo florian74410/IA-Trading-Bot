@@ -2,7 +2,7 @@
 # No published TCP ports, default accounts, fixture provider or Trading Engine.
 name: iatb-v22-gen1-test
 x-runtime: &runtime
-  image: iatb:2.2.0
+  image: iatb:2.2.1
   user: "${IATB_UID:?}:${IATB_GID:?}"
   read_only: true
   restart: "no"
@@ -28,7 +28,7 @@ x-runtime: &runtime
     IATB_AUTH_ORIGIN: ${IATB_AUTH_ORIGIN:?Set the HTTPS browser origin}
     IATB_AUTH_TLS_CERT: /iatb/v22/tls/cert.pem
     IATB_AUTH_TLS_KEY: /iatb/v22/tls/key.pem
-    IATB_RELEASE_VERSION: "2.2.0"
+    IATB_RELEASE_VERSION: "2.2.1"
     IATB_AUTH_RPC_ORIGINS: ${IATB_AUTH_RPC_ORIGINS:-}
     IATB_DEBUG_BOOTSTRAP: "0"
     IATB_TRADING_LIVE: "0"

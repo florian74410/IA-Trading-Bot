@@ -1,4 +1,6 @@
-### 🧠 IA-TB V2.0 DEBUG
+### IA-TB 2.2.1
+
+- [Dernière version : 2.2.1](Release-2.2.1.md)
 
 - [🏠 Accueil](Home.md)
 - [🚦 État fonctionnel V2.0](Etat-V2.0-DEBUG.md)

@@ -1,8 +1,8 @@
-# 🧠 IA-TB — Wiki V2.0 DEBUG
+# IA-TB — Wiki 2.2.1
 
 > **🟢 En simple : IA-TB est une application de trading crypto modulaire. Elle sépare la collecte des données, l’analyse technique, l’analyse fondamentale, les stratégies, le risque, l’exécution des ordres, le portefeuille et la Banque afin qu’un seul module ne puisse pas tout faire sans contrôle.**
 
-Le build documenté ici est **`builds/IA-TB_Build_v2.0_DEBUG`** de la branche **`debug`**. Cette documentation décrit le fonctionnement observé dans le code, les manifests du Process Registry et les contrats CP/1 actuels.
+La version la plus récente est **2.2.1**, tag **v2.2.1**, branche **release/v2.2-gen1**, sources dans **App/**. Statut applicatif : **TEST**, recette GEN-1 en attente. Voir [Version 2.2.1](Release-2.2.1.md). Les pages conservant une référence V2.0 DEBUG sont historiques et ne constituent pas une validation 2.2.1.
 
 ---
 
