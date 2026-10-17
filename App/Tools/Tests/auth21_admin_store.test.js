@@ -533,3 +533,19 @@ test('native offline CLI uses real non-root TTY, Unicode input and shared runtim
   assert.equal(db.prepare('SELECT COUNT(*) AS n FROM client_sessions WHERE revoked_at IS NULL').get().n,0);
  }finally{db.close();}
 });
+
+test('native ADMIN can create neutral profiles and update identity with collisions and session revocation',async t=>{
+ const f=setup(t);seed(f,'CL000001','ADMIN');const {sessions,adminStore}=await ready(f);
+ const actor=await token(sessions,'CL000001');
+ const created=await adminStore.createAccount(actor,{...NEW_ACCOUNT,firstName:'',lastName:''});
+ const logged=await sessions.loginWithPassword(created.clientId,NEW_ACCOUNT.password);assert.ok(logged);
+ assert.equal(adminStore.updateIdentity(actor,created.clientId,{firstName:'Alice',lastName:'',username:'RENAMED',email:'renamed@fixture.invalid'}).changed,true);
+ assert.equal(sessions.verifySession(logged.token),null);
+ const row=f.db.prepare('SELECT email_enc,first_name_enc FROM clients WHERE client_id=?').get(created.clientId);
+ assert.equal(f.clientCrypto.open(row.email_enc),'renamed@fixture.invalid');assert.equal(f.clientCrypto.open(row.first_name_enc),'Alice');
+ await adminStore.createAccount(actor,{...NEW_ACCOUNT,username:'OTHER',email:'other@fixture.invalid'});
+ assert.throws(()=>adminStore.updateIdentity(actor,created.clientId,{email:'other@fixture.invalid'}),/EMAIL_TAKEN/);
+ assert.throws(()=>adminStore.updateIdentity(actor,created.clientId,{username:'OTHER'}),/USERNAME_TAKEN/);
+ assert.throws(()=>adminStore.updateIdentity(actor,created.clientId,{role:'ADMIN'}),/FIELDS_INVALID/);
+ assert.throws(()=>adminStore.updateIdentity('invalid',created.clientId,{firstName:'Nope'}),/FORBIDDEN/);
+});
