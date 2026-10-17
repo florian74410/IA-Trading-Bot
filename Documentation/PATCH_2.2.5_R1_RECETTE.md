@@ -15,7 +15,7 @@ Les captures sont fournies dans la conversation et ne doivent pas devenir des do
 - Tests : localisation indicative versus inconnue, valeurs de prévision nulles au sens numérique (0) préservées.
 
 ## Bloquants restant à résoudre
-- Auth21 : Gateway et Router bloquent les écritures legacy sous Auth21 ; en mode authenticated l'ingress Engine refuse aussi les endpoints business. Ne supprimer aucune frontière de sécurité. Créer une permission serveur d'actualisation fondée sur la session vérifiée, protection CSRF, preuve action/body et validation côté Engine ; autoriser ADMIN et USER, interdire GUEST et anonyme.
+- Auth21 : la voie authentifiée UserManagement/Core a été modifiée pour les actions exactes `fundamental.collect` et `fundamental.fedwatch.refresh`. Elle vérifie session, CSRF, rôle ADMIN/USER, arguments bornés, preuve interservices signée liée à l'action et revérification de session dans le moteur. Les actions destructives restent `admin.write` avec confirmation. **Recette intégration obligatoire** pour confirmer que les dialogues ne s'affichent plus et que GUEST/anonyme sont refusés. La passerelle legacy directe reste bloquée.
 - Globe : recette réelle de placement des points et validation du comportement au survol sans clipping.
 - Calendriers : recette Firefox desktop/mobile, parsers CME PARSE_EMPTY et DYNAMIC_PAGE_NO_ROWS, événements date-only et disponibilité réelle.
 - Trading IA : vérification du chargement de la barre d'état et absence de doublons.
