@@ -52,3 +52,7 @@ Ne pas créer un endpoint nommé ou supposer ces noms comme existants avant audi
 - [ ] Exécuter recette navigateur et tests de non-régression avant fusion ou déploiement.
 
 **Ne pas confondre spécification ajoutée à la PR avec correctif runtime fonctionnel.**
+
+## UX transverse — États des boutons Actualiser / Synchroniser
+
+Tous les boutons d'actualisation ou de synchronisation applicatifs doivent suivre un modèle de statut uniforme : `Actualiser` (repos), `Actualisation…` (en cours), `À jour` (réussite) et `Erreur` (échec). Pour les boutons initialement nommés `Synchroniser`, conserver le terme métier au repos lorsque nécessaire, mais utiliser les mêmes quatre états visuels et la même concision. Aucun nombre de résultats ni texte de diagnostic long dans la barre de boutons. Les résultats détaillés restent dans diagnostics, logs ou panneaux secondaires. Composant partagé amorcé : `App/Frontend/JS/sync_button_state_v2_2_5.js` ; raccordement aux vues et recette restant à faire.
