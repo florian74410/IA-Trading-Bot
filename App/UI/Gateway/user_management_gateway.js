@@ -50,7 +50,7 @@ function create({root,corePort,pages,findAsset}){
    if(p.startsWith('/api/')||p.startsWith('/auth21/')||p==='/ui-api/session'||p==='/ui-data/market/candles'||['/communication/v1/ui/read','/communication/v1/ui/write','/communication/v1/client/ack'].includes(p))return upstream(req,res,req.url);
    if(pages[p]&&['GET','HEAD'].includes(req.method)){
     const me=await core(req,'/auth21/me');if(me.status!==200){res.writeHead(303,{Location:'/login','Cache-Control':'no-store'});return res.end();}
-    if(me.data.role==='GUEST'&&/^\/(bank|keys|portfolio)(?:\/|$)/.test(p)){res.writeHead(403);return res.end();}
+    if(me.data.role==='GUEST'&&/^\/(bank|keys|portfolio|settings)(?:\/|$)/.test(p)){res.writeHead(403);return res.end();}
     if(p.startsWith('/admin')&&me.data.role!=='ADMIN'){res.writeHead(403);return res.end();}
     const [csrf,state]=await Promise.all([core(req,'/auth21/csrf'),core(req,'/auth21/browser-state')]);
     if(csrf.status!==200||state.status!==200)throw Error('SESSION_UNAVAILABLE');
