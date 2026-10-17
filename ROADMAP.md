@@ -4,6 +4,27 @@
 
 # 🗺️ ROADMAP — IA Trading Bot
 
+## 🔜 Fundamental Engine — pipeline News structuré avant Supervisor (R&D / version ultérieure)
+
+**Statut : conception à valider ; aucun remplacement des flux actifs dans v2.2.4.**
+Faire tourner ce pipeline **en parallèle** de la collecte existante (shadow mode), mesurer la concordance et la qualité, puis brancher progressivement le Supervisor uniquement après validation. Le contrat historique et les catégories consommées actuellement restent inchangés.
+
+- [ ] **1. Normalisation à l’ingestion :** produire un événement canonique `id, source, title, summary, url, published_at, symbols, geography, language, raw_category, confidence`, conserver un pointeur vers l’original ; prendre en compte dates manquantes et fuseaux.
+- [ ] **2. Déduplication et regroupement :** URL canonique, hash titre/résumé, similarité textuelle légère et fenêtre temporelle ; constituer un *news cluster* avec article leader et sources secondaires, sans perdre les sources.
+- [ ] **3. Catégorisation multithème :** `MACRO, CRYPTO, DEFI, REGULATION, SECURITY, MARKET_STRUCTURE, ADOPTION, PROJECT, EXCHANGE`. Attribution multi-étiquette, preuves/règles et catégorie `UNCLASSIFIED` si confiance insuffisante.
+- [ ] **4. Scoring transparent :** impact marché, confiance, portée géographique, horizon `INTRADAY/SHORT/MEDIUM`, urgence `LOW/MEDIUM/HIGH/CRITICAL`, portée `ASSET/SECTOR/GLOBAL` ; neutralité par défaut, aucune inférence de direction de prix sans justification.
+- [ ] **5. Contrat Supervisor versionné :** `fundamental_event` + `cluster_summary` + `category` + `impact_score` + `watchlist_targets` + `risk_flags`, schéma validé, compatibilité descendante et journal d’explicabilité.
+- [ ] **6. Déploiement progressif sans LLM lourd :** niveau 1 règles par source/mots-clés/tags/symboles/pays ; niveau 2 score/confiance/regroupement/extraction ; niveau 3 export structuré vers Supervisor sous feature flag, désactivé tant que non validé.
+- [ ] **7. Validation :** corpus de news labellisées, taux de faux regroupements, précision/rappel par catégorie, couverture des sources et latence/coût CPU ; comparaison en shadow mode et rollback immédiat.
+
+### Globe Fundamental — suivi v2.2.4
+
+- [ ] Recette du globe compact léger (continents stylisés, rotation fluide, filtres Jour/Semaine/Mois, exclusion des événements sans timestamp fiable, réglage suivant préférences d’animation).
+- [ ] Vérifier rendu par rapport au globe plein écran, consommation CPU, responsive, interaction et non-régression des autres composants Fundamental.
+- [ ] Amélioration graphique future optionnelle : pays / côtes plus détaillés avec données géographiques locales simplifiées, sans texture lourde ni dépendance réseau obligatoire.
+
+
+
 Cette feuille de route est la référence officielle du développement du projet.
 
 ## Règles de suivi
