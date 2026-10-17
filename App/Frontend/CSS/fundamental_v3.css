@@ -480,3 +480,14 @@ body.iatb-global-nav-ready .earthRadarModal{
 #cockpit .overviewIndicatorPanel>small{display:block;padding:0 12px 11px;color:#65879c}
 @media(max-width:1100px){#cockpit .marketVisual{grid-template-columns:1fr 1fr;gap:8px;padding:8px}#cockpit .globeStage{max-height:230px}#cockpit .overviewMarketFacts{gap:3px}#cockpit .overviewMarketFacts strong{font-size:14px}}
 @media(max-width:730px){#cockpit .marketVisual{grid-template-columns:1fr}#cockpit .globeStage{max-height:280px}#cockpit .globePeriodBar{justify-content:center}#cockpit .overviewMarketFacts strong{font-size:17px}}
+
+/* v2.2.5 — compact realistic WebGL globe, fallback canvas is kept intact */
+#cockpit .globeStage{position:relative;isolation:isolate;overflow:hidden;border-radius:50%;min-width:0;min-height:200px}
+#fundamentalGlobeWebGL{position:absolute;inset:0;z-index:2;pointer-events:none;opacity:0;transition:opacity .2s ease}
+#fundamentalGlobeWebGL.ready{opacity:1;pointer-events:auto}
+#fundamentalGlobeWebGL canvas{display:block!important;max-width:100%!important;max-height:100%!important;cursor:grab}
+#fundamentalGlobeWebGL canvas:active{cursor:grabbing}
+#cockpit .globeStage>.globeLegend{position:absolute;z-index:4;pointer-events:none}
+@media(max-width:900px){#cockpit .globeStage{min-height:190px}}
+/* Unified expanded Globe has priority below shared navigation and above global health footer. */
+.iatb-ge-overlay{z-index:90!important}
