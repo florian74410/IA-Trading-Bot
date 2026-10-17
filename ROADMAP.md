@@ -4,6 +4,24 @@
 
 # 🗺️ ROADMAP — IA Trading Bot
 
+## IA-TB v2.2.5 — Correctif unifié (PR #18 ; développement terminé, recette GEN-1 en attente)
+
+**Branche de livraison :** `feature/v2.2.5-calendar-events-chart`. **Périmètre :** Vue d'ensemble Fundamental, globe compact réaliste et globe agrandi, événements économiques FED/CME, marqueurs sur Trading IA, paramètres de visibilité. `v2.2.4` reste déployée ; ni Trading Engine ni trading réel n'est activé.
+
+- [x] Reprise de la maquette Vue d'ensemble Fundamental (radar compact, résumé du marché, KPIs réels sans déplacer le catalogue des news hors de « News & Événements »).
+- [x] Globe miniature avec rendu WebGL Earth Blue Marble, navigation et pauses hors écran ; maintien du canvas fallback.
+- [x] Partage des données réelles issues de `fundamental.news.search` entre le globe miniature et l'agrandi ; normalisation défensive, catégories, coordonnées et dates.
+- [x] Globe agrandi 3 colonnes avec filtres catégorie / Jour-Semaine-Mois, marqueurs plus grands, liste / sélection d'événements, légende et zoom.
+- [x] Calendrier FED/CME unifié ; drapeaux, prévision / réel / précédent si disponibles ; conservation des dates sans heure sans positionnement trompeur sur le graphique.
+- [x] Marqueurs temporels du graphique Trading IA, activés par défaut, réglables dans Fundamental / paramètres utilisateur.
+- [x] Vérification syntaxique Node et tests de contrats GitHub Actions : qualification v2.2.5 + Chart Workspace + Indicateurs.
+- [ ] Recette Firefox/Linux **sur GEN-1 DEBUG** : comparer au visuel validé, vérifier les filtres avec événements réels, la réactivité du globe miniature, le chargement des textures, les marqueurs graphiques, les permissions Auth21, la performance WebGL et les différentes résolutions.
+- [ ] Déploiement contrôlé sur GEN-1 DEBUG, puis promotion éventuelle après recette réussie. Production inchangée.
+
+**Sécurité :** aucun nouvel appel d'exécution de trading ; conserver `IATB_TRADING_LIVE=0` et `IATB_TRADING_ENGINE_ENABLED=0` en DEBUG. Pas de publication stable avant recette en navigateur.
+
+
+
 ## 🛠️ Correctif unifié IA-TB v2.2.5 — PR #18 (code candidat, pas encore déployé)
 
 **Référence unique :** [PR #18](https://github.com/florian74410/IA-Trading-Bot/pull/18), branche `feature/v2.2.5-calendar-events-chart`. Ne pas fusionner tant que les recettes GEN-1 DEBUG/Firefox ne sont pas validées. Trading Engine désactivé, aucune opération live.
