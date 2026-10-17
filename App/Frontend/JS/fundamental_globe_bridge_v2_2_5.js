@@ -12,10 +12,10 @@ function category(x){
  if(['CRYPTO','DEFI','MACRO','REGULATION','SECURITY'].includes(value))return value;
  var txt=[value,x.title,x.headline,x.summary].join(' ').toUpperCase();
  if(/SECURITY|EXPLOIT|HACK|ATTACK|VULNERAB|BREACH/.test(txt))return'SECURITY';
- if(/REGUL|MICA|\\bSEC\\b|CFTC|COMPLIANCE/.test(txt))return'REGULATION';
+ if(/REGUL|MICA|\bSEC\b|CFTC|COMPLIANCE/.test(txt))return'REGULATION';
  if(/DEFI|DEX|LENDING|STAKING/.test(txt))return'DEFI';
  if(/MACRO|FED|FOMC|ECB|INFLATION|CPI|INTEREST RATE|MONETARY/.test(txt))return'MACRO';
- if(/CRYPTO|BITCOIN|ETHEREUM|BLOCKCHAIN|ETF|BTC|\\bETH\\b/.test(txt))return'CRYPTO';
+ if(/CRYPTO|BITCOIN|ETHEREUM|BLOCKCHAIN|ETF|BTC|\bETH\b/.test(txt))return'CRYPTO';
  return'OTHER';
 }
 function timestamp(x){
