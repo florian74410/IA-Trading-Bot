@@ -383,3 +383,11 @@
 #view-profile .profileSecuritySection .ghost{background:#0a2436;color:#bfeaff;border:1px solid #276d95;border-radius:7px;padding:9px 12px}
 #view-profile .profileSecuritySection .ghost:hover{border-color:#39cfff;background:#0c344d}
 @media(max-width:850px){#view-profile .profilePasswordGrid{grid-template-columns:1fr}#view-profile .profileSecurityHistory{grid-template-columns:1fr}}
+
+/* v2.2.4: password controls aligned regardless of secondary helper text */
+#view-profile .profileSecurityHistory[hidden]{display:none!important}
+#view-profile .profilePasswordGrid{align-items:end}
+#view-profile .profilePasswordGrid>label{display:grid;grid-template-rows:minmax(32px,auto) 42px;align-content:end;gap:7px}
+#view-profile .profilePasswordGrid>label>small{display:block;font-size:10px;line-height:1.4}
+#view-profile .profilePasswordGrid>label>input{height:42px;min-height:42px;margin:0}
+@media(max-width:850px){#view-profile .profilePasswordGrid>label{grid-template-rows:auto 42px}}
