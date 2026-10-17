@@ -56,3 +56,19 @@ Ne pas créer un endpoint nommé ou supposer ces noms comme existants avant audi
 ## UX transverse — États des boutons Actualiser / Synchroniser
 
 Tous les boutons d'actualisation ou de synchronisation applicatifs doivent suivre un modèle de statut uniforme : `Actualiser` (repos), `Actualisation…` (en cours), `À jour` (réussite) et `Erreur` (échec). Pour les boutons initialement nommés `Synchroniser`, conserver le terme métier au repos lorsque nécessaire, mais utiliser les mêmes quatre états visuels et la même concision. Aucun nombre de résultats ni texte de diagnostic long dans la barre de boutons. Les résultats détaillés restent dans diagnostics, logs ou panneaux secondaires. Composant partagé amorcé : `App/Frontend/JS/sync_button_state_v2_2_5.js` ; raccordement aux vues et recette restant à faire.
+
+## Source v2.2.5 — état du composant transversal
+
+Implémentation committée : `App/Frontend/JS/sync_button_state_v2_2_5.js` ; tests : `tests/sync_button_state_v2_2_5.test.cjs`.
+
+Exemple d'intégration à **un bouton existant** après import du script, sans remplacer sa logique API :
+
+```js
+const handle = IATBSyncButtonState.bind(
+  document.getElementById('actualiser'),
+  () => refreshNewsViaExistingAuthenticatedCoreRoute()
+);
+// Au démontage de la vue : handle.destroy();
+```
+
+Le composant ne lance aucun appel réseau lui-même, ne modifie aucune permission et ne règle pas à lui seul la demande de mot de passe : ce raccordement dépend de l'audit des handlers et routes en place. État : **code partagé committé, branchements réels restants, tests non exécutés**.
