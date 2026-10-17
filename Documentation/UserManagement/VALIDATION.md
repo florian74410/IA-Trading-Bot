@@ -1,3 +1,43 @@
+# Qualification de la livraison TEST 2.2.0
+
+La preuve de publication est le `qualification.json` joint à la release, qui
+référence le commit et le run GitHub exacts. Le workflow de release exige zéro
+échec et zéro test ignoré avant de créer le tag et la préversion.
+
+Complément local sur le code 2.2 : **490 tests Core (488 réussis, deux tests PTY
+ignorés dans le conteneur), six suites Indicator et 20 tests UI réussis**. Aucun
+échec. Trois tests Python d’inventaire passent. Le contrôle RBAC statique passe
+(212 déclarations, 130 routes littérales, 63 actions read et 19 write).
+
+La nouvelle matrice parcourt les 75 routes historiques avec de vraies sessions
+et TLS : anonymes refusés, frontières ADMIN/USER/GUEST, mot de passe et confirmation
+ADMIN, contexte propriétaire et révocation. Sa délégation métier est une sonde :
+**elle ne qualifie pas les effets métier de toutes ces routes**.
+
+Le parcours local à 12 processus non-trading passe avant/après redémarrage avec
+transports fournisseurs fictifs : bougies/Firewall/Indicator, Custom privé,
+Strategy, Portfolio importé, deux propriétaires IA, trois chats, test OpenAI
+personnel, notifications privées et commandes ADMIN. La sandbox locale interdit
+la création du socket Unix du bridge SSH ; le contrôle local ne le compte pas
+comme succès. La recette Docker CI conserve l’assertion des 13 services et du
+socket, sans suppression ni affaiblissement.
+
+Les métadonnées camelCase et les messages d’erreur fournisseurs ont un test de
+non-divulgation. Le refus précoce GUEST des écritures de clés API est couvert.
+L’inventaire Python est vérifié sans modification d’octets ni création de fichiers,
+avec refus des WAL non checkpointés et des clés liées symboliquement.
+
+Périmètre livré et limites : [RELEASE_2.2.0.md](../RELEASE_2.2.0.md).
+Recette GEN-1 : [GEN1_TEST_2.2.0.md](../GEN1_TEST_2.2.0.md).
+Aucune donnée réelle, aucun déploiement GEN-1 et aucun ordre réel.
+
+---
+
+# Historique des preuves avant la préparation 2.2
+
+Les mentions de brouillon, comptes de tests et attentes CI ci-dessous décrivent
+les anciens commits. Elles ne remplacent pas la preuve liée au commit publié.
+
 # User Management V1 — preuves de qualification
 
 Base stable : `43863e817b45c0821de3928d585cfc58f55ce9c5`.

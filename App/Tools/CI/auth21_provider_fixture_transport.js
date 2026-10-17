@@ -16,6 +16,7 @@ function response(url){
 function openaiResponse(raw,headers){
  const body=JSON.parse(raw),auth=Object.entries(headers).find(([k])=>k.toLowerCase()==='authorization')?.[1],owner=auth==='Bearer FICTIONAL_OPENAI_ALICE'?'ALICE':auth==='Bearer FICTIONAL_OPENAI_BOB'?'BOB':null,format=body.text?.format;if(!owner||body.store!==false||format?.type!=='json_schema')throw Error('QA_AI_REQUEST_NOT_SCRIPTED');const message='FICTIONAL_'+owner+'_RESPONSE';let result;
  if(Object.keys(format.schema?.properties||{}).join(',')==='message')result={message};
+ else if(format.name==='iatb_owner_health'&&Object.keys(format.schema?.properties||{}).join(',')==='ok,message')result={ok:true,message};
  else if(format.name==='trading_control_v2_multi_exchange')result={message,chart:{symbol:'',interval:'',visible:100,indicators:'',replaceIndicators:false,showLevels:'keep',reset:false},actions:[],gmxAction:'none',gmxDraft:''};
  else if(format.name==='iatb_chart_viewer_v32')result={message,chartSymbol:'',chartInterval:'',strategyTitle:'',strategySummary:'',entry:'',exit:'',risk:'',pineScript:''};
  else throw Error('QA_AI_REQUEST_NOT_SCRIPTED');return {output_text:JSON.stringify(result),usage:{input_tokens:1,output_tokens:2,total_tokens:3}};

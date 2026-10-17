@@ -6,7 +6,8 @@ function request(port,route,{method='GET',body=null,headers={},tls=false}={}){re
 const api=(route,options)=>request(8000,route,{...options,tls:true});
 async function main(){
  for(const port of [8001,8021,8017,8013,8012,8014,8018,8019,8020,3000,8015]){let ok=false;for(let i=0;i<90;i++){try{const r=await request(port,port===8001?'/api/health':port===8021?'/router-health-internal':'/health',{tls:port===8001});if(r.status===200){ok=true;break;}}catch(_){}await new Promise(r=>setTimeout(r,500));}assert(ok,'SERVICE_HEALTH_FAILED_'+port);}
- assert(fs.statSync('/fixture/runtime/ssh-ui.sock').isSocket());assert.equal((await api('/api/settings')).status,401);
+ assert.equal((await api('/api/health')).data.version,require('../../Core/Shared/build_info').version);
+ assert(fs.statSync(require('node:path').join(process.env.IATB_RUNTIME_ROOT,'ssh-ui.sock')).isSocket());assert.equal((await api('/api/settings')).status,401);
  async function login(name){const r=await api('/auth21/login',{method:'POST',body:{email:name+'@example.invalid',password}});assert.equal(r.status,200);return {Cookie:r.cookie.split(';')[0],'X-IATB-CSRF':r.data.csrfToken};}
  const a=await login('alice'),b=await login('bobby');
  for(const route of ['/ia-trading','/chart-viewer','/strategy','/portfolio','/bank','/bank/keys','/fundamental','/statistiques','/settings']){const page=await api(route,{headers:a});assert.equal(page.status,200,'AUTH_PAGE_'+route);assert(page.text.includes('alice@example.invalid'));assert(!page.text.includes('bobby@example.invalid'));}
@@ -39,6 +40,17 @@ async function main(){
  for(const route of ['/api/chat','/api/companion/chat','/api/chart-viewer/chat']){const chat=await api(route,{method:'POST',body:{message:'Bonjour',state:{source:'BINANCE',symbol:'BTCUSDT',interval:'1m',visible:100,indicators:[]},candles:candles.data.candles,history:[]},headers:a});assert.equal(chat.status,200,route+':'+JSON.stringify(chat.data));assert.equal(chat.data.source,'supervisor');assert.equal(chat.data.command?.message||chat.data.message,'FICTIONAL_ALICE_RESPONSE');assert(!(chat.data.routerActions||[]).some(x=>/^trading\./.test(x.action)));}
  console.log('AUTH21_QA_STAGE portfolio-history');
  const historyA=await cp('portfolio','portfolio.events',{},a),historyB=await cp('portfolio','portfolio.events',{},b);assert(historyA.data.data.events.some(e=>e.event_id==='FICTIONAL_HISTORICAL_ALICE'));assert.equal(historyB.data.data.events.length,0);
+ console.log('AUTH21_QA_STAGE private-settings-and-notifications');
+ for(const route of ['/api/bank/vaults','/api/transfers/status','/api/transfers/assets?network=ethereum','/api/onchain/status','/api/swap-bridge/status','/api/chart-viewer/status','/api/token-usage'])assert.equal((await api(route,{headers:a})).status,200,route);
+ const bobNotifications=(await api('/api/notifications',{headers:b})).data.items.length;
+ assert.equal((await api('/api/notifications/test',{method:'POST',body:{},headers:a})).status,200);
+ assert((await api('/api/notifications',{headers:a})).data.items.some(item=>item.title==='Test IA-TB'));
+ assert.equal((await api('/api/notifications',{headers:b})).data.items.length,bobNotifications);
+ const bobUsage=(await api('/api/credits/usage',{headers:b})).data.events.length;
+ const health=await api('/api/settings/test-openai',{method:'POST',body:{},headers:a});assert.equal(health.status,200,JSON.stringify(health.data));assert.equal(health.data.ownerScoped,true);
+ assert.equal((await api('/api/credits/usage',{headers:b})).data.events.length,bobUsage);
+ assert.equal((await api('/api/credits/pricing',{method:'POST',body:{openai:{model:'gpt-5.6',input:1,output:2},eurPerUsd:0.9},headers:a})).status,200);
+ const capabilities=await api('/auth21/capabilities',{headers:a});assert.equal(capabilities.status,200);assert.equal(capabilities.data.execution.enabled,false);assert.equal(capabilities.data.infrastructureAdministration,false);
  assert.equal((await api('/api/settings/language',{method:'POST',body:{language:'fr',clientId:'CLVictim'},headers:a})).status,400);
  assert.equal((await api('/auth21/logout',{method:'POST',body:{},headers:a})).status,200);assert.equal((await api('/api/settings',{headers:a})).status,401);
  console.log(JSON.stringify({ok:true,services:13,sshSocket:true,authenticated:true,ownerIsolation:true,marketFirewallIndicator:true,ownerStrategy:true,ownerHistoricalPortfolio:true,ownerAi:true,authenticatedChats:true,adminOperatorControls:true,adminFirewallControl:true,tradingStarted:false,network:'internal-only',data:'fictional'}));

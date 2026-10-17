@@ -1,11 +1,12 @@
-# User Management V1 — Auth21 sur IA-TB 2.1.1
+# User Management V1 — Auth21 sur IA-TB 2.2.0
 
 ## Référence et état de qualification
 
 Base : `release/v2.1.1-gen1`, `43863e817b45c0821de3928d585cfc58f55ce9c5`.
 Travaux Auth21 importés depuis `feature/debug-2.1-auth-design`,
-`85383cd617bb29b1e2804078f4ef92fab5c881d3`. Branche dédiée :
-`feature/user-management-v1`. Aucun déploiement GEN-1 ni fusion vers RELEASE.
+`85383cd617bb29b1e2804078f4ef92fab5c881d3`. Branche de développement : `feature/user-management-v1`. Livraison TEST sur
+`release/v2.2-gen1` après qualification ; aucun déploiement GEN-1.
+Voir [les notes 2.2.0](RELEASE_2.2.0.md) et [la procédure de recette](GEN1_TEST_2.2.0.md).
 
 Cette livraison ajoute un mode authentifié réel, une CLI sur la base existante,
 la connexion email et la sécurité du compte dans le Profil existant. Elle ne
@@ -251,7 +252,7 @@ OPENAI_API sont privés. REMOTE_LLM n'est pas ouvert sans décision sur les
 origines réseau et les credentials. Les sondes Core/UI utilisent le certificat
 TLS épinglé en mode authentifié.
 
-## Limites qui bloquent une qualification globale de la mission
+## Limites fonctionnelles conservées dans la livraison TEST 2.2
 
 - L'exécution réelle de Trading/transferts/swaps reste interdite. Les prévisualisations
   et historiques privés ne valent pas validation d'une chaîne d'exécution complète.
@@ -269,7 +270,9 @@ TLS épinglé en mode authentifié.
   sur `a9d61354`. Elle n'a accédé à aucune stack GEN-1 ni donnée réelle.
 
 Le refus d'une route démontre son confinement, pas sa migration fonctionnelle.
-La PR reste en brouillon tant que les blocages ne sont pas levés ou explicitement décidés.
+La livraison TEST ne vaut pas acceptation de ces restrictions en production.
+La recette GEN-1 et une qualification des fonctions encore indisponibles restent
+nécessaires avant une promotion stable. Voir RELEASE_2.2.0.md pour l’état courant.
 
 ## Tests et preuves
 

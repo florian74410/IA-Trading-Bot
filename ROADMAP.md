@@ -1,3 +1,7 @@
+> Livraison TEST 2.2.0 : comptes, sessions et isolation User Management V1.
+> Recette GEN-1 et promotion stable en attente ; les restrictions fonctionnelles
+> sont explicites dans [RELEASE_2.2.0](Documentation/RELEASE_2.2.0.md).
+
 # 🗺️ ROADMAP — IA Trading Bot
 
 Cette feuille de route est la référence officielle du développement du projet.

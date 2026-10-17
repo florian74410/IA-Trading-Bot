@@ -35,7 +35,7 @@ function createHandler({sessions,origin,secret,bridge=null,aiTransport=null,pers
     return reply(res,grant&&active&&grant.clientId===active.clientId&&grant.role===active.role?200:403,{ok:!!grant&&!!active});
    }
    if(!cookies.originAllowed(req))return reply(res,403,{error:'ORIGIN_FORBIDDEN'});
-   if(p==='/api/health'&&req.method==='GET')return reply(res,200,{ok:true,authentication:'Auth21',version:'2.1.1'});
+   if(p==='/api/health'&&req.method==='GET')return reply(res,200,{ok:true,authentication:'Auth21',version:require('../../Shared/build_info').version});
    if(['/auth21/login','/api/login'].includes(p)&&req.method==='POST'){
     const b=await read(req);if(u.search||Object.keys(b).sort().join(',')!=='email,password'||typeof b.password!=='string'||b.password.length>1024)return reply(res,400,{error:'INVALID_REQUEST'});
     const login=await sessions.loginEmail(b.email,b.password,req.socket.remoteAddress||'local');
@@ -47,6 +47,7 @@ function createHandler({sessions,origin,secret,bridge=null,aiTransport=null,pers
    const principal=token&&sessions.verifySession(token);
    if(!principal){if(p==='/api/bootstrap')return reply(res,200,{authenticated:false,localBypass:false});return reply(res,401,{error:'AUTH_REQUIRED'});}
    sessions.touch(token);
+   if(p==='/auth21/capabilities'&&req.method==='GET')return reply(res,200,require('./capabilities').describe(principal.role));
    if(!['GET','HEAD'].includes(req.method)&&!cookies.validate(req,token)){sessions.audit(principal.clientId,'CSRF_REJECTED','DENIED');return reply(res,403,{error:'CSRF_FORBIDDEN'});}
    if(u.search&&!['/auth21/preferences'].includes(p)&&[...u.searchParams.keys()].some(k=>/client|owner|role|user/i.test(k)))return reply(res,400,{error:'IDENTITY_INPUT_FORBIDDEN'});
    if(p==='/communication/v1/client/ack'&&req.method==='POST')return reply(res,200,{ok:true,ack:sessions.acknowledgeBrowserAction(token,await read(req))});
@@ -74,9 +75,11 @@ function createHandler({sessions,origin,secret,bridge=null,aiTransport=null,pers
     if(req.method==='DELETE')return reply(res,200,{ok:true,deleted:sessions.deletePreference(token,b.scope,b.key)});
    }
    if(p==='/api/settings/apis/clear'&&req.method==='POST'){
+    if(principal.role==='GUEST')throw Error('FORBIDDEN');
     const b=await read(req);if(Object.keys(b).some(k=>!['name','password'].includes(k))||!['OPENAI_API_KEY','ANTHROPIC_API_KEY','X_BEARER_TOKEN','ZEROX_API_KEY'].includes(b.name))throw Error('INVALID_REQUEST');if(typeof b.password!=='string')return reply(res,428,{error:'REAUTH_REQUIRED'});await sessions.reauthenticate(token,b.password);sessions.setSecrets(token,{[b.name]:'__CLEAR__'});return reply(res,200,{ok:true});
    }
    if(p==='/api/settings/apis'&&req.method==='POST'){
+    if(principal.role==='GUEST')throw Error('FORBIDDEN');
     const b=await read(req);if(typeof b.password!=='string')return reply(res,428,{error:'REAUTH_REQUIRED'});await sessions.reauthenticate(token,b.password);const validated=require('./settings_policy').validate(b);if(Object.keys(validated.settings).length&&!personalSettings)throw Error('INVALID_REQUEST');sessions.setSecrets(token,validated.secrets);if(personalSettings)personalSettings(token,validated.settings);return reply(res,200,{ok:true});
    }
    const adminRoute=ADMIN_ONLY.has(req.method+' '+p);

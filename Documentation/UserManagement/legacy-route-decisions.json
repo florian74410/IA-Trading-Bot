@@ -685,5 +685,11 @@
     "ADMIN-ONLY": 29,
     "RETIRED": 3,
     "DENIED-SECURITY": 7
+  },
+  "qualification_2_2": {
+    "test": "App/Tools/Tests/user_management_route_matrix.test.js",
+    "coverage": "75 live-session TLS authorization boundaries; delegation probe, not exhaustive business acceptance",
+    "business_acceptance": "NOT_CLAIMED_BY_BOUNDARY_TEST",
+    "release_scope": "Documentation/RELEASE_2.2.0.md"
   }
 }

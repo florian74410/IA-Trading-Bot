@@ -25,7 +25,7 @@ function create({root,corePort,pages,findAsset}){
   try{
    const u=new URL(req.url,config.origin),p=u.pathname;
    if(!req.socket.encrypted){res.writeHead(403);return res.end();}
-   if(p==='/ui-health'&&req.method==='GET'){res.writeHead(200,{'Content-Type':'application/json','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});return res.end(JSON.stringify({ok:true,name:'IA-TB UI Service',authentication:'Auth21',version:'2.1.1',pid:process.pid}));}
+   if(p==='/ui-health'&&req.method==='GET'){res.writeHead(200,{'Content-Type':'application/json','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});return res.end(JSON.stringify({ok:true,name:'IA-TB UI Service',authentication:'Auth21',version:require('../../Core/Shared/build_info').version,pid:process.pid}));}
    if(p==='/login'&&req.method==='GET')return file(res,'Frontend/Pages/login.html');
    if(p.startsWith('/assets/')&&['GET','HEAD'].includes(req.method)){const a=findAsset(p.slice(8));if(a)return file(res,a);res.writeHead(404);return res.end();}
    if(p.startsWith('/auth21/internal/')||p.startsWith('/api/internal/')){res.writeHead(403);return res.end();}
