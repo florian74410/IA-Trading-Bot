@@ -391,3 +391,10 @@
 #view-profile .profilePasswordGrid>label>small{display:block;font-size:10px;line-height:1.4}
 #view-profile .profilePasswordGrid>label>input{height:42px;min-height:42px;margin:0}
 @media(max-width:850px){#view-profile .profilePasswordGrid>label{grid-template-rows:auto 42px}}
+
+/* v2.2.5 — Fundamental economic markers preferences */
+.fundEconomicPrefs{display:grid;gap:8px;margin:14px 0;padding:13px 15px;border:1px solid #1b678c;border-radius:10px;background:#071e30}
+.fundEconomicPrefs h3{margin:0;font-size:14px;color:#d6f3ff}
+.fundEconomicPrefs p{margin:0 0 4px;font-size:11px;color:#94bfd7}
+.fundEconomicPrefs label{display:flex;align-items:center;gap:9px;font-size:12px;color:#b1d8ed}
+.fundEconomicPrefs input[type="checkbox"]{accent-color:#20bdeb;width:15px;height:15px}

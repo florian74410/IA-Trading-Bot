@@ -4,6 +4,54 @@
 
 # 🗺️ ROADMAP — IA Trading Bot
 
+## IA-TB v2.2.5 — Correctif unifié (PR #18 ; développement terminé, recette GEN-1 en attente)
+
+**Branche de livraison :** `feature/v2.2.5-calendar-events-chart`. **Périmètre :** Vue d'ensemble Fundamental, globe compact réaliste et globe agrandi, événements économiques FED/CME, marqueurs sur Trading IA, paramètres de visibilité. `v2.2.4` reste déployée ; ni Trading Engine ni trading réel n'est activé.
+
+- [x] Reprise de la maquette Vue d'ensemble Fundamental (radar compact, résumé du marché, KPIs réels sans déplacer le catalogue des news hors de « News & Événements »).
+- [x] Globe miniature avec rendu WebGL Earth Blue Marble, navigation et pauses hors écran ; maintien du canvas fallback.
+- [x] Partage des données réelles issues de `fundamental.news.search` entre le globe miniature et l'agrandi ; normalisation défensive, catégories, coordonnées et dates.
+- [x] Globe agrandi 3 colonnes avec filtres catégorie / Jour-Semaine-Mois, marqueurs plus grands, liste / sélection d'événements, légende et zoom.
+- [x] Calendrier FED/CME unifié ; drapeaux, prévision / réel / précédent si disponibles ; conservation des dates sans heure sans positionnement trompeur sur le graphique.
+- [x] Marqueurs temporels du graphique Trading IA, activés par défaut, réglables dans Fundamental / paramètres utilisateur.
+- [x] Vérification syntaxique Node et tests de contrats GitHub Actions : qualification v2.2.5 + Chart Workspace + Indicateurs.
+- [ ] Recette Firefox/Linux **sur GEN-1 DEBUG** : comparer au visuel validé, vérifier les filtres avec événements réels, la réactivité du globe miniature, le chargement des textures, les marqueurs graphiques, les permissions Auth21, la performance WebGL et les différentes résolutions.
+- [ ] Déploiement contrôlé sur GEN-1 DEBUG, puis promotion éventuelle après recette réussie. Production inchangée.
+
+**Sécurité :** aucun nouvel appel d'exécution de trading ; conserver `IATB_TRADING_LIVE=0` et `IATB_TRADING_ENGINE_ENABLED=0` en DEBUG. Pas de publication stable avant recette en navigateur.
+
+
+
+### Lot C — Actualisation manuelle News & Événements (demande validée)
+
+- [ ] Rendre « Actualiser » accessible à tous les rôles authentifiés sans demander de mot de passe supplémentaire.
+- [ ] Réutiliser les collecteurs existants pour récupérer les nouvelles news et événements manquants.
+- [ ] Conserver les publications déjà enregistrées ; insérer de manière idempotente et enrichir sans écrasement les résultats réels/prévisions quand ils arrivent.
+- [ ] Préserver Auth21/Router CP1, throttling, audit et permissions administratives sensibles.
+- [ ] Afficher progression, dernière synchro, ajouts, mises à jour et erreurs partielles ; conserver la liste existante lors d'échecs.
+- [ ] Tester tous les rôles, multiutilisateurs, doublons, rafraîchissements concurrents et régressions.
+
+Référence : [spécification Lot C — Actualiser](Documentation/PATCH_2.2.5_MANUAL_NEWS_REFRESH.md).
+
+## 🛠️ Correctif unifié IA-TB v2.2.5 — PR #18 (code candidat, pas encore déployé)
+
+**Référence unique :** [PR #18](https://github.com/florian74410/IA-Trading-Bot/pull/18), branche `feature/v2.2.5-calendar-events-chart`. Ne pas fusionner tant que les recettes GEN-1 DEBUG/Firefox ne sont pas validées. Trading Engine désactivé, aucune opération live.
+
+- [x] Reprise de la refonte de **Fundamental → Vue d'ensemble** (radar compact, état du marché, indicateurs réels) dans la PR unique, sans déplacer la consultation des news hors de News & Événements.
+- [x] **Globe miniature réaliste WebGL** : réutilisation du rendu Earth/texture de la vue agrandie, miniature adaptative, rotation fluide, pause hors écran et secours Canvas.
+- [x] Même flux de **vraies publications Fundamental** pour les deux globes ; géolocalisation explicite ou centroïde de région clairement inférée ; aucun point géographique aléatoire.
+- [x] **Globe agrandi** : composant 3 colonnes existant PR #18 branché au bouton d'ouverture, rendu WebGL, marqueurs plus grands, clic point → fiche, zoom/recentrage, catégories et périodes réellement filtrées.
+- [x] **Calendrier FED/CME unifié** en amont des vues détaillées préexistantes, filtres par source, dates, drapeaux, Prévu/Réel/Précédent si les données sont présentes.
+- [x] **Événements sur le Trading IA** : adaptateur FED/CME réutilisé, marqueurs informatifs sur l'axe du graphique natif, aucune modification de stratégie, d'ordre ou de Trading Engine.
+- [x] **Paramètres → Fundamental** : bascules affichage économique par défaut activé, FED/CME, drapeaux et valeurs ; préférences locales persistantes dans le navigateur.
+- [x] Tests automatisés des contrats globe/calendrier/raccordements et syntaxe JS, workflow CI `v225-unified-qualification.yml` ajouté.
+- [ ] **Recette Firefox / Linux GEN-1 DEBUG** : rendu miniature/plein écran, 1280×800, filtres/catégories, géolocalisation, performances WebGL et fallback, marqueurs sur différentes unités de temps et conservation d'Auth21.
+- [ ] **Promotion et déploiement** seulement après validation sur TEST isolé avec `IATB_TRADING_LIVE=0`, `IATB_TRADING_ENGINE_ENABLED=0` et sauvegardes préservées.
+
+**Hors de ce correctif :** l'enrichissement IA des news par classement/déduplication/scoring reste un chantier de ROADMAP distinct, pour ne pas déstabiliser Fundamental et Supervisor.
+
+
+
 ## 🔜 Fundamental Engine — pipeline News structuré avant Supervisor (R&D / version ultérieure)
 
 **Statut : conception à valider ; aucun remplacement des flux actifs dans v2.2.4.**
@@ -614,3 +662,10 @@ Au début d'une session de développement :
 6. Ne clôturer la version qu'une fois toute la section de validation terminée.
 
 Ainsi, GitHub reste la source de vérité permettant de reprendre le développement sans perdre l'état d'avancement du projet.
+
+### Règle UX transversale v2.2.5 — boutons Actualiser/Synchroniser
+
+- [ ] Uniformiser tous les boutons Actualiser et Synchroniser dans les pages IA-TB : `Actualiser` → `Actualisation…` → `À jour` ou `Erreur`.
+- [ ] Employer le composant partagé `App/Frontend/JS/sync_button_state_v2_2_5.js` ou son contrat sur les gestionnaires existants, avec tests et sans casser les demandes réseau.
+- [ ] Aucun compteur d'événements/news ni message volumineux dans la barre du bouton ; détails éventuels uniquement dans diagnostics/logs.
+- [ ] Conserver protections de session, permissions et anti-requêtes concurrentes, sans retirer l'autorisation spéciale d'actions administratives distinctes.

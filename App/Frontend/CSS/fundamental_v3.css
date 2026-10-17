@@ -451,3 +451,64 @@ body.iatb-global-nav-ready .earthRadarModal{
 .globePeriodBar button{padding:6px 14px;border:1px solid #225776;border-radius:16px;background:#071c2b;color:#a0c8df;cursor:pointer;font:inherit}
 .globePeriodBar button:hover,.globePeriodBar button.active{border-color:#29b8f4;background:#0a3854;color:#e2f7ff;box-shadow:0 0 12px #00aaff20}
 .globePeriodBar button:focus-visible{outline:2px solid #4ccaff;outline-offset:2px}
+
+/* v2.2.5 — Vue d'ensemble compact radar, retaining the existing Fundamental layout */
+#cockpit .marketPanel{border-color:#1785b5;box-shadow:inset 0 1px #2ed7ff19,0 0 18px #009fff0b}
+#cockpit .marketPanel .panelHead{padding:13px 15px;min-height:46px}
+#cockpit .overviewExpand{width:34px;height:34px;border:1px solid #459ef2;border-radius:8px;color:#c9ecff;background:#102642;box-shadow:0 0 12px #1777ff55;font-size:22px}
+#cockpit .radarToolbar{gap:6px;padding:10px 12px 3px;flex-wrap:wrap}
+#cockpit .radarFilter,#cockpit .globePeriodBar button{transition:background .2s,border-color .2s,box-shadow .2s}
+#cockpit .globePeriodBar{justify-content:flex-end;padding:3px 12px 5px;min-height:32px}
+#cockpit .marketVisual{display:grid;grid-template-columns:minmax(190px,1.03fr) minmax(180px,.97fr);gap:12px;align-items:center;padding:8px 16px 18px;overflow:hidden}
+#cockpit .globeStage{width:min(100%,300px);aspect-ratio:1;max-height:300px;margin:0 auto;overflow:hidden;border-radius:50%;filter:drop-shadow(0 0 16px #008bce40)}
+#cockpit .globeStage canvas{width:100%!important;height:100%!important;object-fit:contain}
+#cockpit .globeLegend{font-size:9px}
+#cockpit .marketRead{min-width:0;display:flex;flex-direction:column;gap:11px}
+#cockpit .marketRead>strong{font-size:clamp(19px,2vw,29px);letter-spacing:.6px;color:#b4d6ff}
+#cockpit .overviewMarketFacts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:10px 0;border-bottom:1px solid #1b4565}
+#cockpit .overviewMarketFacts>div{min-width:0;display:flex;flex-direction:column;gap:6px;border-right:1px solid #1b4565;padding-right:7px}
+#cockpit .overviewMarketFacts>div:last-child{border-right:0}
+#cockpit .overviewMarketFacts span{color:#82adca;font-size:9px}
+#cockpit .overviewMarketFacts strong{color:#d3eeff;font-size:17px}
+#cockpit .overviewMarketNote{font-size:10px;line-height:1.4;color:#8bb3cb}
+#cockpit .overviewIndicatorPanel{min-width:0}
+#cockpit .overviewIndicatorPanel>.panelHead{margin-bottom:10px}
+#cockpit .overviewIndicatorGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:0 10px 10px}
+#cockpit .overviewIndicatorGrid>div{display:flex;flex-direction:column;gap:5px;padding:12px 13px;border:1px solid #194664;border-radius:8px;background:linear-gradient(130deg,#09243a,#061421)}
+#cockpit .overviewIndicatorGrid span{font-size:10px;color:#96b8cf}
+#cockpit .overviewIndicatorGrid strong{font-size:21px;color:#d0f0ff}
+#cockpit .overviewIndicatorPanel>small{display:block;padding:0 12px 11px;color:#65879c}
+@media(max-width:1100px){#cockpit .marketVisual{grid-template-columns:1fr 1fr;gap:8px;padding:8px}#cockpit .globeStage{max-height:230px}#cockpit .overviewMarketFacts{gap:3px}#cockpit .overviewMarketFacts strong{font-size:14px}}
+@media(max-width:730px){#cockpit .marketVisual{grid-template-columns:1fr}#cockpit .globeStage{max-height:280px}#cockpit .globePeriodBar{justify-content:center}#cockpit .overviewMarketFacts strong{font-size:17px}}
+
+/* v2.2.5 — compact realistic WebGL globe, fallback canvas is kept intact */
+#cockpit .globeStage{position:relative;isolation:isolate;overflow:hidden;border-radius:50%;min-width:0;min-height:200px}
+#fundamentalGlobeWebGL{position:absolute;inset:0;z-index:2;pointer-events:none;opacity:0;transition:opacity .2s ease}
+#fundamentalGlobeWebGL.ready{opacity:1;pointer-events:auto}
+#fundamentalGlobeWebGL canvas{display:block!important;max-width:100%!important;max-height:100%!important;cursor:grab}
+#fundamentalGlobeWebGL canvas:active{cursor:grabbing}
+#cockpit .globeStage>.globeLegend{position:absolute;z-index:4;pointer-events:none}
+@media(max-width:900px){#cockpit .globeStage{min-height:190px}}
+/* Unified expanded Globe has priority below shared navigation and above global health footer. */
+.iatb-ge-overlay{z-index:90!important}
+
+/* v2.2.5 unified calendar above existing FED/CME source-specific detail panes */
+.calendarUnified{margin:14px 0 18px;border:1px solid #17658d;background:#061b2e;border-radius:11px;overflow:hidden}
+.calendarUnifiedHead{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:12px 16px;border-bottom:1px solid #17445e;color:#c4eafa}
+.calendarUnifiedHead>div{display:flex;flex-wrap:wrap;gap:6px}
+.calendarUnifiedHead button{background:#08243a;border:1px solid #1c6385;color:#8bc4e4;border-radius:14px;padding:6px 12px;cursor:pointer}
+.calendarUnifiedHead button.active{color:#e1faff;background:#0b4562;border-color:#23b9ef;box-shadow:0 0 10px #10bde53b}
+.calendarUnifiedEvents{max-height:420px;overflow-y:auto;scrollbar-color:#23738e #041c2b}
+.calendarUnifiedRow{display:grid;grid-template-columns:48px 26px minmax(180px,1fr) minmax(135px,.8fr);align-items:center;gap:11px;padding:11px 15px;border-bottom:1px solid #123b54;color:#d0ecfc}
+.calendarUnifiedRow:last-child{border-bottom:0}
+.calendarUnifiedSource{font-size:10px;padding:5px;text-align:center;border-radius:7px;border:1px solid #287caa;color:#8cd9fc}
+.calendarUnifiedSource.cme{border-color:#99702c;color:#f9ca78}
+.calendarUnifiedFlag{font-size:17px}
+.calendarUnifiedRow strong{display:block;font-size:12px;line-height:1.4}
+.calendarUnifiedRow small{display:block;color:#89b0c9;font-size:10px;margin-top:3px}
+.calendarUnifiedValues{display:flex;flex-wrap:wrap;gap:5px}
+.calendarUnifiedValues span{font-size:10px;padding:4px 7px;border-radius:6px;color:#c4eeff;border:1px solid #165273;background:#092841}
+@media(max-width:760px){.calendarUnifiedHead{flex-wrap:wrap}.calendarUnifiedRow{grid-template-columns:40px 22px minmax(0,1fr)}.calendarUnifiedValues{grid-column:3}}
+/* Persistent personal chart event switches in Fundamental settings */
+.fundEconomicPrefs{display:grid;gap:7px;margin:14px 0;padding:12px 14px;border:1px solid #1e668b;border-radius:10px;background:#062039}
+.fundEconomicPrefs h3{margin:0;font-size:14px}.fundEconomicPrefs p{font-size:11px;color:#99c6dd;margin:0 0 4px}.fundEconomicPrefs label{display:flex;align-items:center;gap:9px;font-size:12px}
