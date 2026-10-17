@@ -59,6 +59,7 @@ function mount(host,options){
  }
  function keydown(e){if(e.key==='Escape'){e.preventDefault();destroy();}if(e.key==='Tab'){var f=overlay.querySelectorAll('button');if(!f.length)return;var first=f[0],last=f[f.length-1];if(e.shiftKey&&doc.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&doc.activeElement===last){e.preventDefault();first.focus();}}}
  function destroy(){doc.removeEventListener('keydown',keydown);if(typeof renderCleanup==='function')renderCleanup();overlay.remove();if(previousFocus&&typeof previousFocus.focus==='function')previousFocus.focus();if(typeof options.onClose==='function')options.onClose();}
+ var controls=el(doc,'div','iatb-ge-zoom');controls.append(button('+',function(){if(typeof options.onZoom==='function')options.onZoom(-1)},false),button('−',function(){if(typeof options.onZoom==='function')options.onZoom(1)},false),button('◎',function(){if(typeof options.onReset==='function')options.onReset()},false));center.append(controls);
  close.addEventListener('click',destroy);doc.addEventListener('keydown',keydown);
  if(typeof options.renderGlobe==='function')renderCleanup=options.renderGlobe(slot)||null;
  render();close.focus();
