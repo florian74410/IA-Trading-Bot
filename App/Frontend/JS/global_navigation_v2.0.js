@@ -24,12 +24,15 @@ function ensureGlobalSidebar(){
  }
 }
 function resolveAdminVisibility(){
+ var settingsLink=document.querySelector('#iatb-global-nav a[href="/settings"]');
+ if(settingsLink)settingsLink.style.display='none';
  var a=document.getElementById('iatb-admin-link');if(!a)return;
  a.style.display='none';
  fetch('/api/bootstrap',{cache:'no-store'}).then(function(r){if(!r.ok)throw new Error('BOOTSTRAP_'+r.status);return r.json()}).then(function(o){
   var role=String(o&&o.role||'').toUpperCase();
   if(role==='ADMIN'||role==='SUPERADMIN')a.style.display='inline-flex';
- }).catch(function(){a.style.display='none'});
+  if(settingsLink&&role!=='GUEST')settingsLink.style.display='';
+ }).catch(function(){a.style.display='none';if(settingsLink)settingsLink.style.display='none'});
 }
 
 function mount(){if(document.getElementById('iatb-global-nav'))return;ensureGlobalSidebar();var active=current(),n=document.createElement('header');n.id='iatb-global-nav';n.setAttribute('role','banner');n.innerHTML='<div class="iatb-nav-frame"><a class="iatb-nav-brand" href="/ia-trading" aria-label="IA-TB"><img src="/assets/ia_tb_logo_v1.7.2.png" alt="IA-TB" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'block\'"><span class="iatb-nav-brand-fallback" style="display:none">IA-TB</span></a><nav class="iatb-nav-links" aria-label="Navigation principale">'+routes.map(function(x){return'<a class="iatb-nav-link '+(x[0]===active?'active':'')+'" href="'+x[0]+'"><span class="iatb-nav-icon">'+iconSvg(x[2])+'</span><span class="iatb-nav-label">'+x[1]+'</span></a>'}).join('')+'</nav><div class="iatb-nav-actions"><a id="iatb-admin-link" class="iatb-nav-action" href="/admin" style="display:none">♙ ADMIN</a><span class="iatb-nav-status" title="IA-TB"><i></i></span></div></div>';document.body.insertBefore(n,document.body.firstChild);var spacer=document.createElement('div');spacer.id='iatb-global-nav-spacer';spacer.setAttribute('aria-hidden','true');n.parentNode.insertBefore(spacer,n.nextSibling);document.body.classList.add('iatb-global-nav-ready');var legacyTop=document.querySelector('body>.app>.top');if(legacyTop)legacyTop.style.display='none';resolveAdminVisibility();n.querySelectorAll('.iatb-nav-link').forEach(function(a){a.addEventListener('click',function(e){var target=a.getAttribute('href');if(!target)return;e.preventDefault();e.stopPropagation();location.assign(target)},true)})}
