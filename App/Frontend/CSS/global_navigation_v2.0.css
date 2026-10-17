@@ -35,3 +35,6 @@ body.iatb-global-nav-ready{background:#040d17}
 
 /* v2.0 DEBUG — eighth primary tab: Statistiques */
 @media(max-width:1280px) and (min-width:821px){.iatb-nav-frame{grid-template-columns:145px minmax(0,1fr) 185px}.iatb-nav-label{font-size:9px}.iatb-nav-link{gap:4px}.iatb-nav-actions{padding:0 7px}.iatb-nav-action{padding:0 9px}}
+
+/* v2.2.4: guest navigation automatically fills the former Settings slot */
+#iatb-global-nav .iatb-nav-links:has(>a[href="/settings"][style*="none"]){grid-template-columns:repeat(7,minmax(68px,1fr))}
