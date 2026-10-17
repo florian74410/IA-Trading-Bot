@@ -40,7 +40,7 @@ function ensureServiceFooter(){
  if(!document.querySelector('link[data-iatb-service-footer]')){
   var l=document.createElement('link');l.rel='stylesheet';l.href='/assets/global_service_footer_v2.2.4.css';l.setAttribute('data-iatb-service-footer','1');document.head.appendChild(l);
  }
- if(location.pathname==='/ia-trading')return;
+ // The same live health footer is required on Trading IA and Fundamental.
  if(!document.querySelector('script[data-iatb-service-footer]')){
   var js=document.createElement('script');js.src='/assets/global_service_footer_v2.2.4.js';js.setAttribute('data-iatb-service-footer','1');document.head.appendChild(js);
  }
