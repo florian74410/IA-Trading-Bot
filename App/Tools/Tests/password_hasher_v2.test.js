@@ -95,8 +95,12 @@ test('malformed Argon2 PHC and unbounded memory cost never reach native verify',
  }
 });
 test('new password creation enforces minimum length and max byte length',async ()=>{
- for(const bad of ['','too-short','x'.repeat(1025)]){
+ for(const bad of ['','short','123456789','x'.repeat(1025)]){
   await assert.rejects(()=>Kdf.hashNewPassword(bad),/AUTH_PASSWORD_LENGTH_INVALID/);
+ }
+ for(const good of ['1234567890','x'.repeat(64),'x'.repeat(128)]){
+  const hash=await Kdf.hashNewPassword(good);
+  assert.equal((await Kdf.verifyAccountPassword(current(hash),good)).verified,true);
  }
  assert.equal((await Kdf.verifyAccountPassword(legacy(),'x'.repeat(1025))).verified,false);
 });
