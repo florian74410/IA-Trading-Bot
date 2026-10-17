@@ -1,6 +1,6 @@
 'use strict';
 // Authenticated UI has exactly one authority: Core's live server-side session.
-const fs=require('node:fs'),path=require('node:path'),https=require('node:https');
+const fs=require('node:fs'),path=require('node:path'),https=require('node:https'),http=require('node:http');
 const {configuration,tls}=require('../../Core/Clients/UserManagement/config');
 function create({root,corePort,pages,findAsset}){
  const config=configuration();if(!config.enabled)return null;
@@ -26,6 +26,24 @@ function create({root,corePort,pages,findAsset}){
    const u=new URL(req.url,config.origin),p=u.pathname;
    if(!req.socket.encrypted){res.writeHead(403);return res.end();}
    if(p==='/ui-health'&&req.method==='GET'){res.writeHead(200,{'Content-Type':'application/json','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});return res.end(JSON.stringify({ok:true,name:'IA-TB UI Service',authentication:'Auth21',version:require('../../Core/Shared/build_info').version,pid:process.pid}));}
+   // Auth21 2.2.3: authenticated and sanitized operational states (no internal IP/port leakage).
+   if((p==='/router-health'||p==='/route-health')&&req.method==='GET'){
+    const me=await core(req,'/auth21/me');
+    if(me.status!==200){res.writeHead(401,{'Content-Type':'application/json','Cache-Control':'no-store'});return res.end('{"error":"AUTH_REQUIRED"}');}
+    return new Promise(resolve=>{
+     const names=['core','router','firewall','indicators','marketData','liquidity','fundamental','risk','trading','portfolio','strategy','supervisor'];
+     const q=http.get({host:'127.0.0.1',port:Number(process.env.ROUTER_PORT)||8021,path:'/router-health',timeout:3000},r=>{
+      let size=0,parts=[];r.on('data',b=>{size+=b.length;if(size>65536)q.destroy();else parts.push(b);});
+      r.on('end',()=>{let payload;try{payload=JSON.parse(Buffer.concat(parts).toString());}catch(_){payload=null;}
+       const ok=r.statusCode===200&&payload&&payload.router===true&&payload.ok===true;
+       const deps={};for(const name of names)deps[name]={ok:!!(ok&&payload.dependencies&&payload.dependencies[name]&&payload.dependencies[name].ok===true)};
+       res.writeHead(ok?200:503,{'Content-Type':'application/json','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});
+       res.end(JSON.stringify({ok:!!ok,router:!!ok,dependencies:deps}));resolve();
+      });
+     });q.on('error',()=>{if(!res.headersSent){res.writeHead(503,{'Content-Type':'application/json'});res.end('{"error":"ROUTER_HEALTH_UNAVAILABLE"}');}resolve();});
+     q.on('timeout',()=>q.destroy());
+    });
+   }
    if(p==='/login'&&req.method==='GET')return file(res,'Frontend/Pages/login.html');
    if(p.startsWith('/assets/')&&['GET','HEAD'].includes(req.method)){const a=findAsset(p.slice(8));if(a)return file(res,a);res.writeHead(404);return res.end();}
    if(p.startsWith('/auth21/internal/')||p.startsWith('/api/internal/')){res.writeHead(403);return res.end();}
