@@ -76,12 +76,13 @@ function createHandler({sessions,origin,secret,bridge=null,aiTransport=null,pers
    }
    if(p==='/api/settings/apis/clear'&&req.method==='POST'){
     if(principal.role==='GUEST')throw Error('FORBIDDEN');
-    const b=await read(req);if(Object.keys(b).some(k=>!['name','password'].includes(k))||!['OPENAI_API_KEY','ANTHROPIC_API_KEY','X_BEARER_TOKEN','ZEROX_API_KEY'].includes(b.name))throw Error('INVALID_REQUEST');if(typeof b.password!=='string')return reply(res,428,{error:'REAUTH_REQUIRED'});await sessions.reauthenticate(token,b.password);sessions.setSecrets(token,{[b.name]:'__CLEAR__'});return reply(res,200,{ok:true});
+    const b=await read(req);if(Object.keys(b).some(k=>!['name','password'].includes(k))||!['OPENAI_API_KEY','ANTHROPIC_API_KEY','X_BEARER_TOKEN','ZEROX_API_KEY'].includes(b.name))throw Error('INVALID_REQUEST');if(b.name==='ZEROX_API_KEY'&&principal.role!=='ADMIN')return reply(res,403,{error:'ACCESS_DENIED'});if(typeof b.password!=='string')return reply(res,428,{error:'REAUTH_REQUIRED'});await sessions.reauthenticate(token,b.password);sessions.setSecrets(token,{[b.name]:'__CLEAR__'});return reply(res,200,{ok:true});
    }
    if(p==='/api/settings/apis'&&req.method==='POST'){
     if(principal.role==='GUEST')throw Error('FORBIDDEN');
-    const b=await read(req);if(typeof b.password!=='string')return reply(res,428,{error:'REAUTH_REQUIRED'});await sessions.reauthenticate(token,b.password);const validated=require('./settings_policy').validate(b);if(Object.keys(validated.settings).length&&!personalSettings)throw Error('INVALID_REQUEST');sessions.setSecrets(token,validated.secrets);if(personalSettings)personalSettings(token,validated.settings);return reply(res,200,{ok:true});
+    const b=await read(req);if(principal.role!=='ADMIN'&&['zeroxApiKey','iatbFeeRecipient','swapBridgeRpc'].some(k=>Object.hasOwn(b,k)))return reply(res,403,{error:'ACCESS_DENIED'});if(typeof b.password!=='string')return reply(res,428,{error:'REAUTH_REQUIRED'});await sessions.reauthenticate(token,b.password);const validated=require('./settings_policy').validate(b);if(Object.keys(validated.settings).length&&!personalSettings)throw Error('INVALID_REQUEST');sessions.setSecrets(token,validated.secrets);if(personalSettings)personalSettings(token,validated.settings);return reply(res,200,{ok:true});
    }
+   if(p==='/api/settings/test-zerox'&&req.method==='POST'&&principal.role!=='ADMIN')return reply(res,403,{error:'ACCESS_DENIED'});
    const adminRoute=ADMIN_ONLY.has(req.method+' '+p);
    if(adminRoute&&principal.role!=='ADMIN'){sessions.audit(principal.clientId,'ADMIN_ACCESS_DENIED','DENIED');return reply(res,403,{error:'ACCESS_DENIED'});}
    if(!adminRoute&&((principal.role==='GUEST'&&!(req.method==='GET'&&['/api/status','/api/settings'].includes(p)))||!((req.method==='GET'&&LEGACY_SELF_READ.has(p))||(req.method==='POST'&&LEGACY_SELF_WRITE.has(p))))){sessions.audit(principal.clientId,'ACCESS_DENIED','DENIED');return reply(res,403,{error:'ACCESS_DENIED'});}
