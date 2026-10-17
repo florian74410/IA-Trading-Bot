@@ -9,3 +9,6 @@ body.iatb-global-service-footer{padding-bottom:66px!important}
 .iatbGlobalServiceFooter .iatbSvcDot.ok{background:#24d788;box-shadow:0 0 7px #24d78899}
 .iatbGlobalServiceFooter .iatbSvcDot.bad{background:#e45b67}
 @media(max-width:800px){.iatbGlobalServiceFooter .iatbSvcTitle{flex-basis:76px;font-size:8px}.iatbGlobalServiceFooter .iatbSvc{flex-basis:88px;min-width:88px;font-size:8px}}
+
+/* Portfolio legacy footer is replaced by the shared status bar; avoid duplicates. */
+body.iatb-global-service-footer .portfolioApp>.statusBar{display:none!important}
