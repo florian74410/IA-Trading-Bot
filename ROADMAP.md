@@ -22,6 +22,17 @@
 
 
 
+### Lot C — Actualisation manuelle News & Événements (demande validée)
+
+- [ ] Rendre « Actualiser » accessible à tous les rôles authentifiés sans demander de mot de passe supplémentaire.
+- [ ] Réutiliser les collecteurs existants pour récupérer les nouvelles news et événements manquants.
+- [ ] Conserver les publications déjà enregistrées ; insérer de manière idempotente et enrichir sans écrasement les résultats réels/prévisions quand ils arrivent.
+- [ ] Préserver Auth21/Router CP1, throttling, audit et permissions administratives sensibles.
+- [ ] Afficher progression, dernière synchro, ajouts, mises à jour et erreurs partielles ; conserver la liste existante lors d'échecs.
+- [ ] Tester tous les rôles, multiutilisateurs, doublons, rafraîchissements concurrents et régressions.
+
+Référence : [spécification Lot C — Actualiser](Documentation/PATCH_2.2.5_MANUAL_NEWS_REFRESH.md).
+
 ## 🛠️ Correctif unifié IA-TB v2.2.5 — PR #18 (code candidat, pas encore déployé)
 
 **Référence unique :** [PR #18](https://github.com/florian74410/IA-Trading-Bot/pull/18), branche `feature/v2.2.5-calendar-events-chart`. Ne pas fusionner tant que les recettes GEN-1 DEBUG/Firefox ne sont pas validées. Trading Engine désactivé, aucune opération live.
