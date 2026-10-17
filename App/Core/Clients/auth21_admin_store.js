@@ -87,8 +87,8 @@ class Auth21AdminStore {
  async createAccount(adminToken,{firstName,lastName,email,username,password,role}={}){
   this._admin(adminToken);
   if(!ROLES.has(role))throw Error('AUTH21_ROLE_INVALID');
-  if(typeof firstName!=='string'||!firstName.trim()||firstName.length>80||
-     typeof lastName!=='string'||!lastName.trim()||lastName.length>80||
+  if(typeof firstName!=='string'||firstName.length>80||
+     typeof lastName!=='string'||lastName.length>80||
      typeof email!=='string'||email.length>254||!/^\S+@\S+\.\S+$/.test(email)||
      typeof username!=='string'||!/^[A-Za-z0-9._-]{3,64}$/.test(username))
    throw Error('AUTH21_ACCOUNT_IDENTITY_INVALID');
@@ -113,6 +113,27 @@ class Auth21AdminStore {
     .run(id,actor.clientId,now);
    return {clientId:id,role,created:true};
   }).immediate();
+ }
+ /** Local ADMIN identity update: no HTTP route, secrets or direct XFCE SQL. */
+ updateIdentity(adminToken,targetClientId,input={}){
+  const allowed=['firstName','lastName','email','username'];
+  if(!input||typeof input!=='object'||Array.isArray(input)||!Object.keys(input).length||Object.keys(input).some(k=>!allowed.includes(k)))throw Error('AUTH21_IDENTITY_FIELDS_INVALID');
+  for(const k of Object.keys(input))if(typeof input[k]!=='string'||/[\x00-\x1f]/.test(input[k]))throw Error('AUTH21_IDENTITY_INVALID');
+  const clean={...input};
+  for(const k of ['firstName','lastName'])if(k in clean){clean[k]=clean[k].trim();if(clean[k].length>80)throw Error('AUTH21_IDENTITY_INVALID');}
+  if('email' in clean){clean.email=clean.email.trim().toLowerCase();if(clean.email.length>254||!/^\S+@\S+\.\S+$/.test(clean.email))throw Error('AUTH21_IDENTITY_INVALID');}
+  if('username' in clean){clean.username=clean.username.toUpperCase();if(!/^[A-Z0-9._-]{3,64}$/.test(clean.username))throw Error('AUTH21_IDENTITY_INVALID');}
+  return this._run(adminToken,targetClientId,'ADMIN_IDENTITY_CHANGED',(target)=>{
+   const cipher=this.sessions.clientCrypto;
+   if('email' in clean&&this.db.prepare('SELECT 1 FROM clients WHERE email_hash=? AND client_id<>?').get(cipher.lookupHash(clean.email),targetClientId))throw Error('AUTH21_ACCOUNT_EMAIL_TAKEN');
+   if('username' in clean&&this.db.prepare('SELECT 1 FROM client_accounts WHERE username_hash=? AND client_id<>?').get(cipher.lookupHash('username:'+clean.username),targetClientId))throw Error('AUTH21_ACCOUNT_USERNAME_TAKEN');
+   for(const [key,column] of [['firstName','first_name_enc'],['lastName','last_name_enc'],['email','email_enc']])if(key in clean)this.db.prepare('UPDATE clients SET '+column+'=? WHERE client_id=?').run(cipher.seal(clean[key]),targetClientId);
+   if('email' in clean)this.db.prepare('UPDATE clients SET email_hash=? WHERE client_id=?').run(cipher.lookupHash(clean.email),targetClientId);
+   if('username' in clean)this.db.prepare('UPDATE client_accounts SET username_enc=?,username_hash=?,updated_at=datetime(\'now\') WHERE client_id=?').run(cipher.seal(clean.username),cipher.lookupHash('username:'+clean.username),targetClientId);
+   this.db.prepare('UPDATE clients SET security_version=security_version+1,updated_at=datetime(\'now\') WHERE client_id=?').run(targetClientId);
+   this.db.prepare('UPDATE client_sessions SET revoked_at=COALESCE(revoked_at,?) WHERE client_id=? AND revoked_at IS NULL').run(this.sessions._now(),targetClientId);
+   return {changed:true,reauthenticationRequired:true};
+  });
  }
  audit(adminToken,{afterId=0,limit=100}={}){
   this._admin(adminToken);

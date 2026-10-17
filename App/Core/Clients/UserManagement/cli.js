@@ -2,7 +2,7 @@
 const fs=require('node:fs'),path=require('node:path'),Database=require('better-sqlite3');
 const {Auth21AdminStore}=require('../auth21_admin_store'),{UserStore}=require('./store');
 const ClientCrypto=require('../client_crypto'),{migrate}=require('./migration');
-const HELP=`IA-TB users — administration locale Auth21\nusage: node App/CLI/users.js <help|migrate|create-first-admin|list|show|create|set-role|enable|disable|reset-password|revoke-sessions|import-legacy-vault|import-legacy-portfolio|import-legacy-setting|import-legacy-definition|audit> [clientId] [ADMIN|USER|GUEST]\nIATB_DATA_ROOT désigne la racine existante. Mots de passe demandés sur TTY, jamais en argument.\nMigration exige arrêt des writers et sauvegarde ; aucun changement automatique au démarrage.\n`;
+const HELP=`IA-TB users — administration locale Auth21\nusage: node App/CLI/users.js <help|migrate|create-first-admin|list|show|create|modify-profile|set-role|enable|disable|reset-password|revoke-sessions|import-legacy-vault|import-legacy-portfolio|import-legacy-setting|import-legacy-definition|audit> [clientId] [ADMIN|USER|GUEST]\nIATB_DATA_ROOT désigne la racine existante. Mots de passe demandés sur TTY, jamais en argument.\nMigration exige arrêt des writers et sauvegarde ; aucun changement automatique au démarrage.\n`;
 async function promptSecret(label){
  const input=process.stdin;if(!input.isTTY||!input.setRawMode)throw Error('LOCAL_TTY_REQUIRED');
  return new Promise((resolve,reject)=>{let value='';const decoder=new (require('node:string_decoder').StringDecoder)('utf8');const raw=input.isRaw;input.setRawMode(true);process.stdout.write(label+': ');function done(err){input.off('data',data);input.setRawMode(!!raw);input.pause();process.stdout.write('\n');err?reject(err):resolve(value);}function data(buf){for(const ch of decoder.write(buf)){if(ch==='\u0003'||ch==='\u0004')return done(Error('CANCELLED'));if(ch==='\r'||ch==='\n')return done();if(ch==='\u007f'||ch==='\b')value=Array.from(value).slice(0,-1).join('');else if(ch.codePointAt(0)<32||value.length>=1024)return done(Error('INPUT_INVALID'));else value+=ch;}}input.on('data',data);input.resume();});
@@ -17,7 +17,7 @@ function localOperator(files){
 async function run(argv,{env=process.env,prompt=promptSecret,check=localOperator}={}){
  const [verb,...args]=argv;
  if(verb==='help'||!verb)return {help:HELP};
- const arity={migrate:0,'create-first-admin':0,list:0,show:1,create:0,'set-role':2,enable:1,disable:1,'reset-password':1,'revoke-sessions':1,'import-legacy-vault':1,'import-legacy-portfolio':1,'import-legacy-setting':1,'import-legacy-definition':1,audit:0};
+ const arity={migrate:0,'create-first-admin':0,list:0,show:1,create:0,'set-role':2,enable:1,disable:1,'modify-profile':1,'reset-password':1,'revoke-sessions':1,'import-legacy-vault':1,'import-legacy-portfolio':1,'import-legacy-setting':1,'import-legacy-definition':1,audit:0};
  if(!Object.hasOwn(arity,verb)||args.length!==arity[verb]||args.some(x=>typeof x!=='string'||x.length>64)||args[0]&&!/^CL[A-Za-z0-9_-]{1,64}$/.test(args[0]))throw Error('CLI_ARGUMENT_INVALID');
  if(verb==='set-role'&&!['ADMIN','USER','GUEST'].includes(args[1]))throw Error('CLI_ROLE_INVALID');
  const f=paths(env);check(f);
@@ -32,7 +32,7 @@ async function run(argv,{env=process.env,prompt=promptSecret,check=localOperator
    if(db.prepare("SELECT COUNT(*) AS n FROM client_accounts a JOIN clients c ON a.client_id=c.client_id WHERE role='ADMIN' AND enabled=1 AND c.status='ACTIVE'").get().n)throw Error('ADMIN_ALREADY_EXISTS');
    const firstName=await prompt('Prénom'),lastName=await prompt('Nom'),email=await prompt('Email'),username=await prompt('Identifiant CLI'),password=await prompt('Nouveau mot de passe');if(password!==await prompt('Confirmer mot de passe'))throw Error('PASSWORD_MISMATCH');
    const hash=await require('../password_hasher_v2').hashNewPassword(password),id='CL'+require('node:crypto').randomBytes(12).toString('hex').toUpperCase(),now=new Date().toISOString();
-   if(!require('./store').identity(email)||!firstName||firstName.length>80||lastName.length>80||!/^[A-Za-z0-9._-]{3,64}$/.test(username))throw Error('IDENTITY_INVALID');
+   if(!require('./store').identity(email)||firstName.length>80||lastName.length>80||!/^[A-Za-z0-9._-]{3,64}$/.test(username))throw Error('IDENTITY_INVALID');
    if(await prompt('Confirmer CREATE FIRST ADMIN')!=='CREATE FIRST ADMIN')throw Error('CONFIRMATION_REQUIRED');
    return db.transaction(()=>{check(f);if(db.prepare("SELECT 1 FROM client_accounts a JOIN clients c USING(client_id) WHERE a.role='ADMIN' AND a.enabled=1 AND c.status='ACTIVE'").get())throw Error('ADMIN_ALREADY_EXISTS');db.prepare("INSERT INTO clients VALUES(?,?,?,?,?,?,'ACTIVE',1,?,?)").run(id,cipher.externalHash('um:'+id),cipher.seal(firstName),cipher.seal(lastName),cipher.seal(email.trim().toLowerCase()),cipher.lookupHash(email.trim().toLowerCase()),now,now);db.prepare("INSERT INTO client_accounts(client_id,username_enc,username_hash,password_salt,password_hash,password_iterations,role,enabled,created_at,updated_at,password_algo,password_params_json) VALUES(?,?,?,'',?,0,'ADMIN',1,?,?,'ARGON2ID','{}')").run(id,cipher.seal(username.toUpperCase()),cipher.lookupHash('username:'+username.toUpperCase()),hash,now,now);sessions.audit(id,'FIRST_ADMIN_CREATED');return {clientId:id,role:'ADMIN'};}).immediate();
   }
@@ -52,6 +52,7 @@ async function run(argv,{env=process.env,prompt=promptSecret,check=localOperator
    const result=await require('./legacy_data')[verb==='import-legacy-definition'?'importDefinition':verb==='import-legacy-portfolio'?'importPortfolio':'importSetting'](options);sessions.audit(args[0],'LEGACY_OWNER_DATA_IMPORTED');return result;
   }
   if(verb==='import-legacy-vault'){const p=await prompt('Mot de passe original du coffre global');const result=await require('./legacy_vault').importVault({db,cipher,actor:()=>{check(f);if(!sessions.verifySession(login.token)||sessions.verifySession(login.token).role!=='ADMIN')throw Error('ADMIN_AUTH_REQUIRED');},target:args[0],file:env.IATB_LEGACY_VAULT,password:p});sessions.audit(args[0],'LEGACY_VAULT_IMPORTED');return result;}
+  if(verb==='modify-profile'){const info={};for(const field of ['firstName','lastName','email','username'])info[field]=await prompt(field);return manager.updateIdentity(login.token,args[0],info);}
   if(verb==='set-role')return manager.changeRole(login.token,args[0],args[1]);
   if(verb==='enable'||verb==='disable')return manager.setEnabled(login.token,args[0],verb==='enable');
   if(verb==='revoke-sessions'){if(!manager.listAccounts(login.token).some(x=>x.clientId===args[0]))throw Error('NOT_FOUND');const n=sessions.revokeAllFor(args[0]);sessions.audit(args[0],'ADMIN_SESSIONS_REVOKED');return {revoked:n};}
