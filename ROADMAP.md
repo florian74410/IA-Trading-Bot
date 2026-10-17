@@ -662,3 +662,10 @@ Au début d'une session de développement :
 6. Ne clôturer la version qu'une fois toute la section de validation terminée.
 
 Ainsi, GitHub reste la source de vérité permettant de reprendre le développement sans perdre l'état d'avancement du projet.
+
+### Règle UX transversale v2.2.5 — boutons Actualiser/Synchroniser
+
+- [ ] Uniformiser tous les boutons Actualiser et Synchroniser dans les pages IA-TB : `Actualiser` → `Actualisation…` → `À jour` ou `Erreur`.
+- [ ] Employer le composant partagé `App/Frontend/JS/sync_button_state_v2_2_5.js` ou son contrat sur les gestionnaires existants, avec tests et sans casser les demandes réseau.
+- [ ] Aucun compteur d'événements/news ni message volumineux dans la barre du bouton ; détails éventuels uniquement dans diagnostics/logs.
+- [ ] Conserver protections de session, permissions et anti-requêtes concurrentes, sans retirer l'autorisation spéciale d'actions administratives distinctes.
