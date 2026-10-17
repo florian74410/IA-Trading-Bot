@@ -82,5 +82,6 @@ test('Fundamental collector refresh uses the shared single-flight button and avo
  assert.ok(page.indexOf('sync_button_state_v2_2_5.js')<page.indexOf('fundamental_controller_v3.js'));
  assert.match(controller,/IATBSyncButtonState\.bind\(b,collect/);
  assert.match(controller,/cpWrite\('fundamental\.collect',\{all:true\}\)/);
- assert.doesNotMatch(controller,/function collect\(\)[\s\S]*?function bindCollectButton\(\)[\s\S]*?fundamental\.news\.purge/);
+ const collectBody=controller.split('function collect(){')[1].split('function bindCollectButton(){')[0];
+ assert.doesNotMatch(collectBody,/fundamental\.news\.purge/);
 });
