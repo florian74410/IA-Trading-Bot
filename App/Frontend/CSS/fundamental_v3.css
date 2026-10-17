@@ -444,3 +444,10 @@ body.iatb-global-nav-ready .earthRadarModal{
  max-height:100%!important;
  min-height:0!important;
 }
+
+/* v2.2.4 lightweight globe time filters, integrated in the Fundamental card */
+.globePeriodBar{display:flex;align-items:center;justify-content:center;gap:7px;flex-wrap:wrap;padding:10px 12px 3px;color:#86b9d4;font-size:11px}
+.globePeriodBar>span{margin-right:9px;letter-spacing:.2px}
+.globePeriodBar button{padding:6px 14px;border:1px solid #225776;border-radius:16px;background:#071c2b;color:#a0c8df;cursor:pointer;font:inherit}
+.globePeriodBar button:hover,.globePeriodBar button.active{border-color:#29b8f4;background:#0a3854;color:#e2f7ff;box-shadow:0 0 12px #00aaff20}
+.globePeriodBar button:focus-visible{outline:2px solid #4ccaff;outline-offset:2px}
