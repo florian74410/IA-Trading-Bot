@@ -20,3 +20,7 @@
 .iatb-ge-detail p{line-height:1.5;color:#a9cfe7}
 .iatb-ge-detail small{display:block;color:#83adc8}
 .iatb-ge-source{display:inline-block;margin-top:9px;padding:7px 11px;color:#c6f5ff;border:1px solid #1786b3;border-radius:7px;text-decoration:none}
+
+.iatb-ge-zoom{position:absolute;right:15px;bottom:36px;display:grid;gap:3px;z-index:4}
+.iatb-ge-globe{position:relative}
+.iatb-ge-zoom button{font-size:19px;min-width:40px;padding:5px;border-radius:7px;background:rgba(3,28,48,.9)}
