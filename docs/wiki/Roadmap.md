@@ -70,3 +70,12 @@ Une fonctionnalité n'est pas considérée validée parce que son code ou sa doc
 ## Passage v2.x
 
 Le passage de `v1.x` à `v2.x` reste réservé à la phase suivant la période de test/développement et la stabilisation locale.
+
+## Correctif futur v2.2.5 — conception planifiée
+
+- **Calendriers FED/CME :** décision validée pour un **calendrier unifié** avec filtres sources et catégories, vue mensuelle, agenda chronologique, fiche d'événement et gestion correcte des fuseaux horaires. Les collecteurs et leurs contrats existants doivent rester fonctionnels.
+- **Globe des événements :** continents réalistes en miniature, marqueurs agrandis en plein écran et filtres des types d'événements réparés.
+- **Statut :** planifié, non implémenté/non validé ; ne présume pas de la version actuellement déployée.
+- [Spécification technique détaillée du calendrier v2.2.5](../../docs/specs/IA-TB_v2.2.5_FED_CME_CALENDAR.md)
+
+Le suivi des cases à cocher et de la recette reste centralisé dans [ROADMAP.md](../../ROADMAP.md).
