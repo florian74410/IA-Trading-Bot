@@ -24,3 +24,13 @@
 .iatb-ge-zoom{position:absolute;right:15px;bottom:36px;display:grid;gap:3px;z-index:4}
 .iatb-ge-globe{position:relative}
 .iatb-ge-zoom button{font-size:19px;min-width:40px;padding:5px;border-radius:7px;background:rgba(3,28,48,.9)}
+
+/* R1: square close control, independent of generic dialog button padding. */
+.iatb-globe-expanded .iatb-ge-close{flex:0 0 40px;box-sizing:border-box;width:40px!important;height:40px!important;min-width:40px!important;min-height:40px!important;max-width:40px!important;max-height:40px!important;display:grid;place-items:center;padding:0!important;line-height:1!important;font-size:23px!important;border-radius:9px!important;aspect-ratio:1/1}
+
+/* R1: scannable, source-labelled real news events. */
+.iatb-ge-news .iatb-ge-event{background:#061d30;border:1px solid #15526e;border-radius:10px;padding:12px 14px;line-height:1.45}
+.iatb-ge-news .iatb-ge-event strong{font-size:13px;line-height:1.4;color:#e0f5ff}
+.iatb-ge-news .iatb-ge-event .iatb-ge-event-domain{display:block;color:#28d0ff;font-weight:650;letter-spacing:.04em;text-transform:uppercase;font-size:10px}
+.iatb-ge-news .iatb-ge-event:hover{background:#09304b;border-color:#00caff}
+.iatb-ge-renderer-status{min-height:1.4em;margin:0;padding:4px 8px;font-size:11px}

@@ -512,3 +512,38 @@ body.iatb-global-nav-ready .earthRadarModal{
 /* Persistent personal chart event switches in Fundamental settings */
 .fundEconomicPrefs{display:grid;gap:7px;margin:14px 0;padding:12px 14px;border:1px solid #1e668b;border-radius:10px;background:#062039}
 .fundEconomicPrefs h3{margin:0;font-size:14px}.fundEconomicPrefs p{font-size:11px;color:#99c6dd;margin:0 0 4px}.fundEconomicPrefs label{display:flex;align-items:center;gap:9px;font-size:12px}
+
+
+/* v2.2.5-R1: unified economic calendar, using real FED/CME provider data. */
+#macroCalendarPanel .calendarUnified{background:#061a2b;border:1px solid #14557c;border-radius:12px;margin:12px 0;overflow:hidden}
+#macroCalendarPanel .calendarUnifiedHead{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 18px;background:#071e32;border-bottom:1px solid #16445d}
+#macroCalendarPanel .calendarUnifiedHead strong{font-size:16px;letter-spacing:.02em}
+#macroCalendarPanel .calendarUnifiedHead button{border:1px solid #245574;border-radius:8px;background:#071a2b;color:#a6def5;padding:8px 15px;cursor:pointer}
+#macroCalendarPanel .calendarUnifiedHead button.active{background:#07568c;border-color:#11bfff;color:#fff}
+.iatb-cal-workspace{display:grid;grid-template-columns:minmax(265px,43%) minmax(0,57%);gap:12px;padding:12px}
+.iatb-cal-month,.iatb-cal-agenda{min-width:0;background:#041a2b;border:1px solid #16577c;border-radius:11px;padding:13px}
+.iatb-cal-month-head{display:flex;gap:8px;align-items:center;margin-bottom:12px}
+.iatb-cal-month-head h3{font-size:16px;flex:1;margin:0 3px;color:#e5f5ff;text-align:center}
+.iatb-cal-month-head button{background:#06243a;border:1px solid #26709a;color:#c4eaff;border-radius:7px;min-height:32px;min-width:34px;cursor:pointer}
+.iatb-cal-month-head button:last-child{padding:0 8px}
+.iatb-cal-weekdays,.iatb-cal-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
+.iatb-cal-weekdays{margin-bottom:7px;text-align:center;color:#80b5d0;font-size:11px}
+.iatb-cal-day{min-width:0;aspect-ratio:1.12/1;background:#041729!important;border:1px solid #154867!important;border-radius:8px!important;color:#b9d9ed!important;cursor:pointer;text-align:left;padding:8px!important;display:flex;flex-direction:column;justify-content:space-between;transition:box-shadow .14s,border-color .14s}
+.iatb-cal-day.selected{background:#074879!important;border-color:#00cfff!important;box-shadow:inset 0 0 14px #008fe277,0 0 10px #00bbff44}
+.iatb-cal-day.today b{color:#29d4ff}
+.iatb-cal-day:hover{border-color:#2faff5!important}
+.iatb-cal-dots{display:flex;gap:4px;align-items:center}.iatb-cal-dots i{display:inline-block;width:7px;height:7px;border-radius:50%;background:#0caaff;box-shadow:0 0 6px #19baff77}.iatb-cal-dots i.cme{background:#f6ad3d;box-shadow:0 0 6px #f6ad3d77}
+.iatb-cal-key{display:flex;gap:12px;flex-wrap:wrap;padding-top:14px;color:#9ccde6;font-size:11px}
+.iatb-cal-key span:first-child{color:#1fc1ff}.iatb-cal-key span:nth-child(2){color:#ffb955}
+.iatb-cal-agenda h3{font-size:16px;margin:0 0 11px}.iatb-cal-agenda h3 small{font-size:11px;color:#7acbf5;margin-left:9px;font-weight:500}
+.iatb-cal-table{overflow-x:auto;border:1px solid #144a6a;border-radius:8px}
+.iatb-cal-column-head,.iatb-cal-row{display:grid;grid-template-columns:55px 35px minmax(150px,1fr) 48px repeat(3,64px) 60px;gap:6px;align-items:center;min-width:610px;padding:10px 8px}
+.iatb-cal-column-head{background:#08243a;color:#89beda;font-size:10px}
+.iatb-cal-row{width:100%;text-align:left;color:#cee8f7;background:#041a2a!important;border:0!important;border-top:1px solid #133a53!important;border-radius:0!important;font-size:11px;cursor:pointer}
+.iatb-cal-row:hover,.iatb-cal-row.chosen{background:#082d4b!important;outline:1px solid #0ba5fa}
+.iatb-cal-row strong{font-size:11px;line-height:1.4;overflow-wrap:anywhere}.iatb-cal-row em{font-size:10px;font-style:normal;color:#92afc1}.iatb-cal-row em.impact-high{color:#ff7b7d}.iatb-cal-row em.impact-medium{color:#ffc25b}.iatb-cal-row em.impact-low{color:#67c7ff}
+.iatb-cal-detail{margin-top:12px;background:#072039;border:1px solid #176193;border-radius:10px;padding:13px;color:#b8def4}
+.iatb-cal-detail strong{font-size:13px;color:#e7f5ff}.iatb-cal-detail small{display:block;font-size:11px;color:#8fbedb;margin-top:5px}.iatb-cal-detail p{color:#a9c9da;line-height:1.5}.iatb-cal-detail a{color:#48cfff}
+.iatb-cal-values{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}.iatb-cal-values span{background:#061a2c;border:1px solid #21506c;border-radius:7px;padding:8px;font-size:11px}.iatb-cal-values b{display:block;margin-top:3px;color:#e9f5ff;font-size:15px}
+@media(max-width:1150px){.iatb-cal-workspace{grid-template-columns:1fr}.iatb-cal-column-head,.iatb-cal-row{min-width:670px}}
+@media(max-width:650px){#macroCalendarPanel .calendarUnifiedHead{flex-wrap:wrap}.iatb-cal-month-head h3{font-size:13px}.iatb-cal-day{padding:5px!important}.iatb-cal-values{grid-template-columns:1fr}}
