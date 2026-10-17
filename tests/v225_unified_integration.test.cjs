@@ -85,3 +85,30 @@ test('Fundamental collector refresh uses the shared single-flight button and avo
  const collectBody=controller.split('function collect(){')[1].split('function bindCollectButton(){')[0];
  assert.doesNotMatch(collectBody,/fundamental\.news\.purge/);
 });
+
+test('R1: UI layout, calendar detail, refreshed FedWatch and trading service strip contracts',()=>{
+ const nav=read('App/Frontend/JS/global_navigation_v2.0.js');
+ const globecss=read('App/Frontend/CSS/fundamental_globe_expanded_v2_2_5.css');
+ const page=read('App/Frontend/JS/fundamental_controller_v3.js');
+ const bridge=read('App/Frontend/JS/fundamental_globe_bridge_v2_2_5.js');
+ assert.doesNotMatch(nav,/iatb-nav-status" title="IA-TB"/);
+ assert.doesNotMatch(nav,/if\(location\.pathname==='\/ia-trading'\)return/);
+ assert.match(globecss,/iatb-ge-close\{flex:0 0 40px/);
+ assert.match(page,/iatb-cal-workspace/);
+ assert.match(page,/IATBSyncButtonState\.bind\(fb/);
+ const geolocated=require('../App/Frontend/JS/fundamental_globe_bridge_v2_2_5.js').adapt({id:'country-only',title:'Economic release',published_at:'2026-10-17T12:00:00Z',countryCode:'US'},0);
+ assert.equal(geolocated.locationQuality,'REGION');
+ assert.match(bridge,/onPointHover/);
+});
+test('R1: refresh allows non-GUEST proof but leaves destructive operator operations privileged',()=>{
+ const operator=require('../App/Core/Clients/UserManagement/operator_policy');
+ assert.equal(operator.permission('fundamental','fundamental.collect'),'shared.write');
+ assert.equal(operator.permission('fundamental','fundamental.fedwatch.refresh'),'shared.write');
+ assert.equal(operator.permission('fundamental','fundamental.news.purge'),'admin.write');
+ assert.equal(operator.permission('fundamental','fundamental.feed.delete'),'admin.write');
+ const controller=read('App/Frontend/JS/user_session.js');
+ assert.match(controller,/REAUTH_REQUIRED/);
+ const bridge=read('App/Core/Clients/UserManagement/cp_bridge.js');
+ assert.match(bridge,/operatorPermission==='shared.write'/);
+ assert.match(bridge,/principal.role==='GUEST'/);
+});
