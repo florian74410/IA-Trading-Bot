@@ -73,3 +73,14 @@ test('Fundamental bridge classifies securely, resolves grounded regions and refu
  assert.equal(row.countryCode,'US');
  assert.equal(bridge.adapt({id:'bad',title:'Undated event'},1),null);
 });
+
+
+test('Fundamental collector refresh uses the shared single-flight button and avoids destructive purge',()=>{
+ const page=read('App/Frontend/Pages/fundamental_v3.html');
+ const controller=read('App/Frontend/JS/fundamental_controller_v3.js');
+ assert.ok(page.includes('/assets/sync_button_state_v2_2_5.js?v=225'));
+ assert.ok(page.indexOf('sync_button_state_v2_2_5.js')<page.indexOf('fundamental_controller_v3.js'));
+ assert.match(controller,/IATBSyncButtonState\.bind\(b,collect/);
+ assert.match(controller,/cpWrite\('fundamental\.collect',\{all:true\}\)/);
+ assert.doesNotMatch(controller,/function collect\(\)[\s\S]*?function bindCollectButton\(\)[\s\S]*?fundamental\.news\.purge/);
+});
