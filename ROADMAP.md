@@ -291,6 +291,35 @@ Les éléments ci-dessous ne font pas partie de la v1.8.2 finalisée. Ils consti
 
 ---
 
+## 🗓️ v2.2.5 — Correctif planifié : Fundamental V3 et Globe des événements
+
+**Statut : PLANIFIÉ — périmètre produit confirmé ; aucun développement ou test de cette section n'est encore déclaré terminé.**  
+**Référence technique : [Calendrier FED/CME unifié](docs/specs/IA-TB_v2.2.5_FED_CME_CALENDAR.md).**
+
+### Lot A — Calendrier FED/CME unifié (décision validée)
+
+- [ ] Préserver collecteurs, intégrations, endpoints, permissions, synchronisation et provenance FED/CME existants.
+- [ ] Auditer les contrats et composants réels de la branche cible.
+- [ ] Créer un adaptateur non destructif pour normaliser et fusionner les événements sans en inventer.
+- [ ] Remplacer les deux vues par un calendrier économique mensuel unifié + agenda du jour + détails de l'événement.
+- [ ] Rendre fonctionnels filtres Tous/FED/CME et catégories, navigation, sélection des jours et fuseau horaire.
+- [ ] Gérer les événements all-day, heures d'été/hiver, états vides/partiels/erreurs et accessibilité.
+- [ ] Valider les tests UI, intégration, régression FED/CME et packaging sur le navigateur cible.
+
+### Lot B — Globe des événements (demande antérieure maintenue)
+
+- [ ] Améliorer le globe miniature avec continents et géographie réalistes, lisibles au format compact.
+- [ ] Agrandir et rendre plus visibles les points d'événements sur le globe plein écran.
+- [ ] Corriger la sélection et le filtrage par type d'événement sur le globe.
+- [ ] Préserver les autres fonctions satisfaisantes du globe, sans régression de performances.
+
+### Clôture
+
+- [ ] Mettre à jour Wiki, CHANGELOG (uniquement pour les travaux réellement livrés) et packaging.
+- [ ] Vérifier les critères de recette et valider explicitement la v2.2.5 avant toute annonce STABLE.
+
+---
+
 ## 📌 Convention de reprise du développement
 
 Au début d'une session de développement :
