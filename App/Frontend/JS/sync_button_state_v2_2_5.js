@@ -16,7 +16,7 @@ function create(run,onChange){
    pending=Promise.resolve().then(run).then(function(result){
     if(result&&(result.ok===false||result.status==='error'||result.status==='failed'))throw new Error('SYNC_FAILED');
     set('success');return result;
-   },function(error){set('error');throw error;}).finally(function(){pending=null;});
+   }).catch(function(error){set('error');throw error;}).finally(function(){pending=null;});
    return pending;
   },
   reset:function(){if(!pending)set('idle');}
