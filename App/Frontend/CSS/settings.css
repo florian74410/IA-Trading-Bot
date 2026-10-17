@@ -358,3 +358,28 @@
 
 /* Indicator editor actions v2 */
 .indicatorSectionLogo{display:inline-grid;place-items:center;width:23px;height:23px;margin-right:5px;border:1px solid #28769c;border-radius:7px;background:linear-gradient(145deg,#0b2a3b,#071722);color:#36d3ff;font:700 19px/1 monospace;vertical-align:-3px;box-shadow:inset 0 0 10px rgba(35,194,255,.08)}.indicatorMark{font:700 20px/1 monospace;color:#45ccff}.indicatorMark.custom{color:#54e6a5;border-color:#237457}.indicatorEditorActions{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;padding:10px 12px;align-items:center}.indicatorEditorActions .indicatorAction{box-sizing:border-box;width:100%;height:36px;min-width:0;padding:0 8px;border-radius:7px;font-size:11px;font-weight:700;white-space:nowrap}.indicatorEditorActions #saveIndicator{box-shadow:0 0 14px rgba(24,167,236,.13)}@media(max-width:1180px){.indicatorEditorActions{grid-template-columns:1fr 1fr}.indicatorEditorActions .indicatorAction{height:34px}}@media(max-width:720px){.indicatorEditorActions{grid-template-columns:1fr 1fr}}
+
+/* v2.2.3 — unified Auth21 profile and security */
+#view-profile .profileSettingsGrid{display:block;max-width:1180px;margin:0 auto}
+#view-profile .profileFormCard{width:100%;margin:0}
+#view-profile .profileIdentityCard{display:none}
+#view-profile .profileSecuritySection{border-top:1px solid #23475d;padding:20px 16px 16px;background:linear-gradient(180deg,#091b2a,#071722)}
+#view-profile .profileSecuritySection[hidden],#view-api #zeroxAdminCard[hidden]{display:none!important}
+#view-profile .profileSecuritySection h3{margin:0 0 8px;color:#dff6ff;font-size:15px}
+#view-profile .profileSectionIntro{margin:0 0 15px;color:#8eb3ca;font-size:12px}
+#view-profile .profilePasswordGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+#view-profile .profilePasswordGrid label,#view-profile #profileReauth{display:flex;flex-direction:column;gap:8px;min-width:0;color:#a8c9de;font-size:12px}
+#view-profile .profilePasswordGrid label small{color:#58c5f7}
+#view-profile .profilePasswordGrid input,#view-profile #profileCurrentPassword{width:100%;min-width:0;min-height:40px;background:#061522;color:#eefaff;border:1px solid #286084;border-radius:8px;padding:10px 12px;outline:none}
+#view-profile .profilePasswordGrid input:focus-visible,#view-profile #profileCurrentPassword:focus-visible{border-color:#35d0ff;box-shadow:0 0 0 3px #11baff2a}
+#view-profile #profileReauth{padding:10px 16px 16px}
+#view-profile .profileSecurityActions{display:flex;justify-content:flex-end;align-items:center;gap:15px;margin-top:14px}
+#view-profile #securityMessage{margin-right:auto;color:#ffb4ad}
+#view-profile .profileSecurityHistory{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:24px;border-top:1px solid #1b3b50;padding-top:18px}
+#view-profile .profileSecurityHistory>div{min-width:0}
+#view-profile .profileSecurityHistory ul{padding-left:19px;max-height:220px;overflow-y:auto;color:#b7d2e1;line-height:1.6;font-size:12px;overflow-wrap:anywhere}
+#view-profile .profileSecurityButtons{display:flex;flex-wrap:wrap;gap:8px}
+#view-profile .profileSecuritySection button{font:inherit;cursor:pointer}
+#view-profile .profileSecuritySection .ghost{background:#0a2436;color:#bfeaff;border:1px solid #276d95;border-radius:7px;padding:9px 12px}
+#view-profile .profileSecuritySection .ghost:hover{border-color:#39cfff;background:#0c344d}
+@media(max-width:850px){#view-profile .profilePasswordGrid{grid-template-columns:1fr}#view-profile .profileSecurityHistory{grid-template-columns:1fr}}
