@@ -57,6 +57,7 @@ function createHandler({sessions,origin,secret,bridge=null,aiTransport=null,pers
    if(principal.role==='GUEST'&&p==='/api/settings'&&req.method==='GET'){const client=sessions.profile(token);return reply(res,200,{ok:true,client,sessionUsername:client.username,sessionEmail:client.email,language:'fr',localAuthBypass:false,openaiConfigured:false,xConfigured:false,zeroxConfigured:false});}
    if(p==='/api/bootstrap'&&req.method==='GET')return reply(res,200,{authenticated:true,role:principal.role,clientId:principal.clientId,localBypass:false});
    if(p==='/auth21/csrf'&&req.method==='GET')return reply(res,200,{csrfToken:cookies.csrf(token)});
+   if(['/auth21/sessions','/auth21/audit','/auth21/sessions/revoke'].includes(p)&&principal.role!=='ADMIN')return reply(res,403,{error:'ACCESS_DENIED'});
    if(p==='/auth21/sessions'&&req.method==='GET')return reply(res,200,{items:sessions.sessionsFor(token)});
    if(p==='/auth21/audit'&&req.method==='GET')return reply(res,200,{items:sessions.recent(token)});
    if(['/auth21/logout','/api/logout'].includes(p)&&req.method==='POST'){sessions.revokeSession(token);sessions.audit(principal.clientId,'LOGOUT');return reply(res,200,{ok:true},{'Set-Cookie':cookies.expire});}
