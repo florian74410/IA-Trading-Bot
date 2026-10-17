@@ -36,6 +36,7 @@
       startAtUtc: instant, localDate: instant ? null : dateOnly,
       allDay: !instant,
       category: cleanText(input.category) || null,
+      country:cleanText(input.country)||null,countryCode:cleanText(input.countryCode).toUpperCase()||null,
       importance: imp, description: cleanText(input.description) || null,
       officialUrl: safeUrl(input.officialUrl || input.url),
       previous: input.previous == null ? null : input.previous,
@@ -86,7 +87,7 @@
       return !!e.startAtUtc && (!options.highMediumOnly || e.importance === 'HIGH' || e.importance === 'MEDIUM');
     }).map(function (e) {
       return {id:e.id,time:Math.floor(Date.parse(e.startAtUtc)/1000),source:e.source,
-        label:e.title,country:cleanText(e.country)||null,importance:e.importance,
+        label:e.title,country:cleanText(e.country)||null,countryCode:cleanText(e.countryCode)||null,importance:e.importance,
         forecast:e.forecast,actual:e.actual,previous:e.previous,unit:e.unit};
     });
   }
