@@ -35,7 +35,7 @@ function flag(cc){if(!cc||!/^[A-Z]{2}$/.test(cc))return '🌐';return String.fro
 function el(doc,tag,cls,txt){var n=doc.createElement(tag);if(cls)n.className=cls;if(txt!==undefined)n.textContent=String(txt);return n;}
 function mount(host,options){
  if(!host||!host.ownerDocument)throw Error('GLOBE_HOST_REQUIRED');
- options=options||{};var doc=host.ownerDocument,events=unique(options.events),period='today',category='TOP',selected=null;
+ options=options||{};var doc=host.ownerDocument,events=unique(options.events),period=['today','week','month'].includes(options.initialPeriod)?options.initialPeriod:'today',category=['TOP'].concat(CATEGORIES).includes(options.initialCategory)?options.initialCategory:'TOP',selected=null;
  var overlay=el(doc,'section','iatb-globe-expanded');overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-label','Terre · News géolocalisées');
  var header=el(doc,'header','iatb-ge-head'),heading=el(doc,'div','iatb-ge-heading'),close=el(doc,'button','iatb-ge-close','×');close.type='button';close.setAttribute('aria-label','Fermer le globe agrandi');
  heading.append(el(doc,'small','','GLOBAL FUNDAMENTAL RADAR'),el(doc,'h2','','Terre · News géolocalisées'));header.append(heading,close);
