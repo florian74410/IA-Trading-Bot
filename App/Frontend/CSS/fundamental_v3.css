@@ -422,3 +422,11 @@ body[data-fund-view="source-manager"] .feedsSection{margin-top:10px}
 
 body[data-fund-view="console"] .consolePage{margin-top:0}
 body[data-fund-view="console"] .consolePageHead{margin-top:0}
+
+/* v2.2.4: keep compact fundamental globe and controls within their card */
+.marketPanel{position:relative;min-width:0;overflow:hidden}
+.marketPanel .panelHead{position:relative;z-index:2}
+.marketPanel .radarToolbar{position:relative;z-index:2;min-height:36px;box-sizing:border-box}
+.marketPanel .marketVisual{position:relative;min-height:0;overflow:hidden;padding:12px 14px 18px}
+.marketPanel .globeStage{position:relative;isolation:isolate;max-width:100%;overflow:hidden}
+.marketPanel .globeStage canvas{max-width:100%;display:block}
