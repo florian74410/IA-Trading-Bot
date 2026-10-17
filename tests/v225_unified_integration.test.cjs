@@ -56,3 +56,20 @@ test('page wiring preserves separate News area and shares data across both globe
  assert.match(settings,/data-econ-setting="showValues"/);
  assert.match(chart,/setEconomicMarkers/);
 });
+
+test('Fundamental bridge classifies securely, resolves grounded regions and refuses invalid dates',()=>{
+ const bridge=require('../App/Frontend/JS/fundamental_globe_bridge_v2_2_5.js');
+ assert.equal(bridge.category({category:'SECURITY',title:'SEC approves exchange reporting'}),'SECURITY');
+ assert.equal(bridge.category({category:'REGULATION',title:'Crypto exchange compliance'}),'REGULATION');
+ assert.equal(bridge.category({title:'Major protocol exploit affecting DeFi lending'}),'SECURITY');
+ assert.equal(bridge.locate({title:'New Fed regulation from Washington'}).cc,'US');
+ assert.equal(bridge.locate({title:'BCE décision à Bruxelles'}).cc,'EU');
+ assert.equal(bridge.locate({title:'Random crypto asset without a location'}).pos,null);
+ assert.equal(bridge.timestamp({timestamp:1e30}),null);
+ const row=bridge.adapt({id:'news1',title:'FED decision in Washington',category:'MACRO',published_at:'2026-10-17T18:00:00Z',country_code:'US'},0);
+ assert.equal(row.category,'MACRO');
+ assert.equal(row.latitude,39.8);
+ assert.equal(row.longitude,-98.6);
+ assert.equal(row.countryCode,'US');
+ assert.equal(bridge.adapt({id:'bad',title:'Undated event'},1),null);
+});
