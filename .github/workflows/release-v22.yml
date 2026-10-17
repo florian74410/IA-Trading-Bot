@@ -1,0 +1,117 @@
+name: IA-TB 2.2 qualification and publication
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review, edited]
+    branches: ['release/v2.2-gen1']
+  push:
+    branches: ['release/v2.2-gen1']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: release-v22-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  verification:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: App/package-lock.json
+      - run: npm ci --prefix App --omit=dev --no-audit --no-fund
+      - name: Install isolated browser QA
+        run: |
+          npm install --prefix "$RUNNER_TEMP/user-qa" --no-audit --no-fund playwright@1.62.1
+          "$RUNNER_TEMP/user-qa/node_modules/.bin/playwright" install --with-deps firefox
+          echo "NODE_PATH=$RUNNER_TEMP/user-qa/node_modules" >> "$GITHUB_ENV"
+      - run: node Tools/CI/verify_rbac_registry.js
+      - name: Full security and browser regression with no skipped tests
+        run: |
+          set -o pipefail
+          bash App/Tools/CI/test_user_management_v1.sh | tee "$RUNNER_TEMP/v22-tests.log"
+          if grep -Eq '^# skipped [1-9][0-9]*$' "$RUNNER_TEMP/v22-tests.log"; then exit 1; fi
+      - run: python3 -m unittest discover -s Tools/Deploy -p 'test_user_management_inventory.py'
+      - name: Release metadata and authenticated Compose
+        env:
+          IATB_UID: '1001'
+          IATB_GID: '1001'
+          IATB_V22_ROOT: /tmp/iatb-v22-config-review
+          IATB_AUTH_ORIGIN: https://localhost:8000
+        run: |
+          docker compose -f compose.v2.2.gen1-test.yml config --format json > "$RUNNER_TEMP/v22-compose.json"
+          node Tools/CI/verify_v22_release.js "$RUNNER_TEMP/v22-compose.json"
+          node App/Tools/CI/user_management_route_inventory.js > "$RUNNER_TEMP/v22-route-inventory.json"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v22-verification-evidence
+          path: |
+            ${{ runner.temp }}/v22-tests.log
+            ${{ runner.temp }}/v22-route-inventory.json
+  fictional-stack:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci --prefix App --omit=dev --no-audit --no-fund
+      - name: Prepare fresh fictional installation
+        run: |
+          echo "IATB_QA_ROOT=$RUNNER_TEMP/iatb-auth21-docker-${GITHUB_RUN_ID}" >> "$GITHUB_ENV"
+          echo "IATB_QA_UID=$(id -u)" >> "$GITHUB_ENV"
+          echo "IATB_QA_GID=$(id -g)" >> "$GITHUB_ENV"
+          node App/Tools/CI/auth21_docker_fixture.js "$RUNNER_TEMP/iatb-auth21-docker-${GITHUB_RUN_ID}"
+      - name: Check compose and build
+        run: |
+          docker compose -f compose.auth21.qualification.yml config --quiet
+          docker compose -f compose.auth21.qualification.yml build router
+      - name: Boot only the 13 non-trading services
+        run: |
+          docker compose -f compose.auth21.qualification.yml up -d
+          test "$(docker compose -f compose.auth21.qualification.yml ps --status running --quiet | wc -l)" -eq 13
+      - name: Real TLS and owner-isolation probe
+        run: docker compose -f compose.auth21.qualification.yml exec -T ui node Tools/CI/auth21_docker_probe.js
+      - name: Stop and restart without deleting persistent data
+        run: |
+          docker compose -f compose.auth21.qualification.yml stop
+          docker compose -f compose.auth21.qualification.yml start
+          docker compose -f compose.auth21.qualification.yml exec -T ui node Tools/CI/auth21_docker_probe.js restart
+      - name: Fictional service diagnostics on failure
+        if: failure()
+        run: docker compose -f compose.auth21.qualification.yml logs --no-color --tail 100
+      - name: Stop disposable containers and retain fixture data
+        if: always()
+        run: docker compose -f compose.auth21.qualification.yml stop
+  publish:
+    needs: [verification, fictional-stack]
+    if: github.ref == 'refs/heads/release/v2.2-gen1'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build versioned source archive and receipt
+        run: |
+          mkdir -p dist
+          git archive --format=zip --prefix=IA-Trading-Bot-2.2.0/ -o dist/IA-Trading-Bot-2.2.0-source.zip HEAD App Documentation Infrastructure Tools compose.v2.2.gen1-test.yml README.md ROADMAP.md
+          python3 - <<'PYCODE'
+          import json, os
+          from pathlib import Path
+          Path('dist/qualification.json').write_text(json.dumps({'version':'2.2.0','status':'GEN1_TEST_PENDING','sourceCommit':os.environ['GITHUB_SHA'],'workflowRun':os.environ['GITHUB_SERVER_URL']+'/'+os.environ['GITHUB_REPOSITORY']+'/actions/runs/'+os.environ['GITHUB_RUN_ID'],'verified':['security-and-browser-no-skips','offline-inventory','authenticated-compose','13-services-before-after-restart'],'liveTrading':False},indent=2)+'\n')
+          PYCODE
+          (cd dist && sha256sum IA-Trading-Bot-2.2.0-source.zip qualification.json > SHA256SUMS)
+      - name: Publish 2.2 for GEN-1 acceptance, preserving existing releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view v2.2.0 >/dev/null 2>&1; then
+            echo 'v2.2.0 already exists; refusing to overwrite a published release.'
+            exit 1
+          fi
+          gh release create v2.2.0 dist/IA-Trading-Bot-2.2.0-source.zip dist/qualification.json dist/SHA256SUMS --target "$GITHUB_SHA" --prerelease --title 'IA-TB 2.2.0 — recette GEN-1' --notes-file Documentation/RELEASE_2.2.0.md

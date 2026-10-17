@@ -14,10 +14,16 @@ function ClientRepository(opts){
   this.dbPath=path.resolve(opts.dbPath);
   this.native=null;
   this.migrationsDir=path.resolve(opts.migrationsDir);
+  // P2.2 opt-in. No writer is registered in the active server yet.
+  this.snapshotGate=opts.snapshotGate||null;
+  if(this.snapshotGate&&typeof this.snapshotGate.assertWritable!=='function')throw new Error('SNAPSHOT_GATE_INVALID');
   this.ready=false;this.lastError=null;this.schemaVersion=0;
   this.init();
 }
 ClientRepository.prototype.run=function(sql,read){
+  // Even read-labelled SQL may initialize SQLite (or conceal a write).
+  // Conservatively block all SQL while a coordinated snapshot is held.
+  if(this.snapshotGate)this.snapshotGate.assertWritable();
   if(!this.native){
     var dir=path.dirname(this.dbPath);
     fs.mkdirSync(dir,{recursive:true,mode:448});
@@ -27,6 +33,8 @@ ClientRepository.prototype.run=function(sql,read){
   return this.native.run(sql,read);
 };
 ClientRepository.prototype.close=function(){
+  // Closing SQLite can checkpoint WAL, so it is also gated.
+  if(this.snapshotGate)this.snapshotGate.assertWritable();
   if(this.native){this.native.close();this.native=null;}
 };
 ClientRepository.prototype.init=function(){

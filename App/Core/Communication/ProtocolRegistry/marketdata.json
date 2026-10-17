@@ -424,6 +424,16 @@
           ]
         },
         "description": "Resolve asset metadata and network transferability through CoinGecko metadata."
+      },
+      {
+        "name": "marketdata.operator.request",
+        "arguments": {
+          "allowed": [
+            "payload",
+            "proof"
+          ]
+        },
+        "description": "Authenticated Core ADMIN capability; exact operator action, payload, owner and current ADMIN session verified before effects. Never a human UI authority."
       }
     ],
     "dataTypes": [

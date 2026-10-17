@@ -253,6 +253,20 @@
         "arguments": {
           "allowed": []
         }
+      },
+      {
+        "name": "supervisor.user.request",
+        "arguments": {
+          "allowed": [
+            "payload",
+            "proof"
+          ],
+          "required": [
+            "payload",
+            "proof"
+          ]
+        },
+        "description": "Owner-scoped reasoning and status; session revalidated; credentials remain inside Core"
       }
     ],
     "dataTypes": [

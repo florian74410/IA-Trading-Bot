@@ -1,0 +1,20 @@
+# IA-TB Auth 2.1 — security-sensitive code and permissions require repository-owner review.
+# CODEOWNERS alone does not enforce approvals: branch protection/ruleset must be enabled.
+# Owner handle corresponds to repository owner; confirm team/backup reviewer later.
+# Specific paths take priority over earlier broad matches.
+
+/Documentation/Architecture/AUTH_DEBUG_2.1_RBAC* @florian74410
+/Documentation/Architecture/AUTH_DEBUG_2.1_VERSION* @florian74410
+/Documentation/Security/AUTH_DEBUG_2.1_RBAC* @florian74410
+/Documentation/Architecture/AUTH_DEBUG_2.1_TRUST_BOUNDARIES.md @florian74410
+/Documentation/Security/AUTH_ENDPOINT_INVENTORY_v1.json @florian74410
+/Tools/CI/ @florian74410
+/.github/workflows/ @florian74410
+/.github/CODEOWNERS @florian74410
+/App/Core/Admin/ @florian74410
+/App/Core/Clients/ @florian74410
+/App/Core/Server/server.js @florian74410
+/App/Core/Router/router.js @florian74410
+/App/Core/Communication/ @florian74410
+/App/UI/Gateway/ @florian74410
+/App/UI/Permissions/ @florian74410

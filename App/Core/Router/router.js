@@ -166,6 +166,10 @@ var UI_WRITE_ACTIONS={
  }
 };
 function communicationUiWrite(req,res){
+ // No legacy UI role/headers may confer Auth21 business-write authority.
+ // Reject until the Core can issue a signed proof bound to this exact action.
+ if(require('../Clients/auth21_service_boundary').active(process.env))
+  return sendJson(res,403,{ok:false,error:'AUTH21_BUSINESS_WRITE_PROOF_REQUIRED'});
  readJsonBody(req,262144,function(e,b){
   if(e)return sendJson(res,400,{ok:false,error:e.message});
   b=b&&typeof b==='object'?b:{};
@@ -192,7 +196,7 @@ function proxyError(res,label,err){if(res.headersSent){try{res.end();}catch(e){}
 function copyHeaders(src){var h={};Object.keys(src||{}).forEach(function(k){if(k.toLowerCase()==='host'||k.toLowerCase()==='connection')return;h[k]=src[k];});return h;}
 function responseHeaders(h){var out={};Object.keys(h||{}).forEach(function(k){var l=k.toLowerCase();if(l==='connection'||l==='transfer-encoding'||l==='content-length')return;out[k]=h[k];});return out;}
 function proxy(req,res,targetHost,targetPort,targetPath,opts){opts=opts||{};var headers=copyHeaders(req.headers);headers.host=targetHost+':'+targetPort;var p=http.request({host:targetHost,port:targetPort,path:targetPath,method:req.method,headers:headers,timeout:15000},function(pr){var rh=responseHeaders(pr.headers);res.writeHead(pr.statusCode||200,rh);pr.pipe(res);});p.on('timeout',function(){p.destroy(new Error('timeout'));});p.on('error',function(e){proxyError(res,opts.label||'Service',e);});req.pipe(p);}
-function probe(port,pathname,cb){var done=false,req=http.get({host:'127.0.0.1',port:port,path:pathname,timeout:1000},function(r){r.resume();r.on('end',function(){if(done)return;done=true;cb(null,r.statusCode);});});req.on('timeout',function(){req.destroy();});req.on('error',function(e){if(done)return;done=true;cb(e);});}
+function probe(port,pathname,cb){var done=false,tls=process.env.IATB_AUTH_MODE==='authenticated'&&port===CORE_PORT,req=(tls?require('https'):http).get({host:'127.0.0.1',port:port,path:pathname,timeout:1000,...(tls?{servername:'localhost',ca:fs.readFileSync(process.env.IATB_AUTH_TLS_CERT)}:{})},function(r){r.resume();r.on('end',function(){if(done)return;done=true;cb(null,r.statusCode);});});req.on('timeout',function(){req.destroy();});req.on('error',function(e){if(done)return;done=true;cb(e);});}
 function routerHealth(res){
  var specs=[['core',CORE_PORT,'/api/health'],['router',PORT,'/router-health-internal'],['firewall',FIREWALL_PORT,'/health'],['indicators',INDICATOR_PORT,'/health'],['marketData',MARKET_DATA_PORT,'/health'],['liquidity',LIQUIDITY_PORT,'/health'],['fundamental',FUNDAMENTAL_PORT,'/health'],['risk',RISK_PORT,'/health'],['trading',TRADING_ENGINE_PORT,'/health'],['portfolio',PORTFOLIO_PORT,'/health'],['strategy',STRATEGY_PORT,'/health'],['supervisor',SUPERVISOR_PORT,'/health']],out={},left=specs.length,finished=false;
  function finish(){if(finished)return;finished=true;sendJson(res,200,{ok:true,router:true,version:BUILD.version,communicationProtocol:'CP/1',pid:process.pid,host:HOST,port:PORT,core:out.core||{ok:false,port:CORE_PORT,status:0,error:'pending'},indicators:out.indicators||{ok:false,port:INDICATOR_PORT,status:0,error:'pending'},marketData:out.marketData||{ok:false,port:MARKET_DATA_PORT,status:0,error:'pending'},liquidity:out.liquidity||{ok:false,port:LIQUIDITY_PORT,status:0,error:'pending'},fundamental:out.fundamental||{ok:false,port:FUNDAMENTAL_PORT,status:0,error:'pending'},trading:out.trading||{ok:false,port:TRADING_ENGINE_PORT,status:0,error:'pending'},strategy:out.strategy||{ok:false,port:STRATEGY_PORT,status:0,error:'pending'},risk:out.risk||{ok:false,port:RISK_PORT,status:0,error:'pending'},portfolio:out.portfolio||{ok:false,port:PORTFOLIO_PORT,status:0,error:'pending'},supervisor:out.supervisor||{ok:false,port:SUPERVISOR_PORT,status:0,error:'pending'},firewall:out.firewall||{ok:false,port:FIREWALL_PORT,status:0,error:'pending'},dependencies:out});}
@@ -200,7 +204,20 @@ function routerHealth(res){
  setTimeout(finish,850);
 }
 
+var AUTH21_IPC_ROUTER_PROBE=process.env.IATB_AUTH21_IPC_PROBE_TRIAL==='1'?require('../Clients/auth21_ipc_probe').createRouterProbe({env:process.env,root:process.env.IATB_AUTH21_LOCAL_TRIAL_ROOT}):null;
+var AUTH21_IPC_ROUTER_READ=process.env.IATB_AUTH21_IPC_PROBE_TRIAL==='1'?require('../Clients/auth21_ipc_probe').createRouterReadOnlyCapabilities({env:process.env,root:process.env.IATB_AUTH21_LOCAL_TRIAL_ROOT}):null;
+var AUTH21_ROUTER_GUARDED_READ=process.env.IATB_AUTH21_IPC_PROBE_TRIAL==='1'?require('../Clients/auth21_router_service_read').createRouterRead({env:process.env,root:process.env.IATB_AUTH21_LOCAL_TRIAL_ROOT}):null;
+var AUTH21_BUSINESS_FORWARD=process.env.IATB_AUTH21_BUSINESS_TRIAL==='1'?
+ require('../Clients/auth21_router_business_forward').createForward({env:process.env,ports:{indicators:INDICATOR_PORT,marketdata:MARKET_DATA_PORT,
+ fundamental:FUNDAMENTAL_PORT,portfolio:PORTFOLIO_PORT,strategy:STRATEGY_PORT}}):null;
 var server=http.createServer(function(req,res){var u=new URL(req.url,'http://'+HOST+':'+PORT),p=u.pathname;
+ var auth21Boundary=require('../Clients/auth21_service_boundary').decision(process.env,'router',req.method,p);
+ if(auth21Boundary.intercept&&
+ require('../Clients/auth21_business_actions').contract(p)&&AUTH21_BUSINESS_FORWARD)return AUTH21_BUSINESS_FORWARD(req,res);
+ if(auth21Boundary.intercept&&p==='/auth21/ipc/probe'&&AUTH21_IPC_ROUTER_PROBE)return AUTH21_IPC_ROUTER_PROBE(req,res);
+ if(auth21Boundary.intercept&&p==='/auth21/ipc/capabilities'&&AUTH21_IPC_ROUTER_READ)return AUTH21_IPC_ROUTER_READ(req,res);
+ if(auth21Boundary.intercept&&p==='/auth21/ipc/router-read'&&AUTH21_ROUTER_GUARDED_READ)return AUTH21_ROUTER_GUARDED_READ(req,res);
+ if(auth21Boundary.intercept)return sendJson(res,404,{error:'NOT_FOUND'});
  if(p==='/router-health-internal')return sendJson(res,200,{ok:true,router:true,pid:process.pid,port:PORT,version:BUILD.version});
  if(p==='/router-health')return routerHealth(res);
  if(req.method==='GET'&&p==='/communication-health')return COMM.health(function(e,o){if(e)return sendJson(res,503,{ok:false,error:e.message});sendJson(res,200,o);});
@@ -219,6 +236,13 @@ var server=http.createServer(function(req,res){var u=new URL(req.url,'http://'+H
  if(req.method==='GET'&&p==='/communication/v1/runtime')return communicationRuntime(req,res);
  if(req.method==='GET'&&p==='/market-data/candles')return proxy(req,res,MARKET_DATA_HOST,MARKET_DATA_PORT,'/candles'+u.search,{label:'Market Data Candles · firewall validated at ingestion'});
  return proxy(req,res,CORE_HOST,CORE_PORT,u.pathname+u.search,{label:'IA-TB Core'});
+});
+server.on('upgrade',function(req,socket){
+ if(process.env.IATB_AUTH_MODE==='authenticated'||require("../Clients/auth21_service_boundary").active(process.env)){
+  try{socket.end('HTTP/1.1 403 Forbidden\r\nConnection: close\r\n\r\n');}catch(_){socket.destroy();}
+  return;
+ }
+ socket.destroy();
 });
 server.on('error',function(e){console.error('IA-TB Router bind error:',e&&e.message||e);process.exit(13);});server.listen(PORT,HOST,function(){console.log('IA-TB Communication Router v'+BUILD.version+' : http://'+HOST+':'+PORT);
 console.log('Communication Protocol: CP/1 (canal Supervisor authentifie)');console.log('Core interne      : http://'+CORE_HOST+':'+CORE_PORT);console.log('Market Data       : http://'+MARKET_DATA_HOST+':'+MARKET_DATA_PORT);

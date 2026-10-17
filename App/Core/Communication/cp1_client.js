@@ -60,6 +60,7 @@ Client.prototype.planClientAction=function(action,args,meta,cb){this.routerPost(
 Client.prototype.ackClientAction=function(ack,cb){this.routerPost('/communication/v1/client/ack',ack||{},cb);};
 
 Client.prototype.requestMessage=function(message,cb){
+ if(process.env.IATB_AUTH_MODE==='authenticated'&&message&&require('../Clients/UserManagement/operator_policy').permission(message.target,message.action)){try{var context=require('../Clients/UserManagement/context').current(),grant=require('../Clients/UserManagement/operator_capability').envelope({root:this.root,engine:message.target,action:message.action,args:message.arguments||{},principal:context,token:context&&context.token,authorized:!!(context&&context.operatorReauthenticated)});message=Object.assign({},message,{action:message.target+'.operator.request',arguments:grant});}catch(e){return cb(e);}}
  this._post('/communication/v1/request',message,{},function(e,o){if(e)return cb(e);cb(null,o&&o.data!==undefined?o.data:o,o);});
 };
 Client.prototype.request=function(target,action,args,detail,cb){

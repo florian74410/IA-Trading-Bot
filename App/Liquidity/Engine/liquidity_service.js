@@ -77,7 +77,7 @@ var cpAdapter=new CPAdapter({root:APP_ROOT,id:'liquidity',label:'Liquidity Engin
  'liquidity.cache.clear':function(){zoneCache.clear();rawCache.clear();analysisCache.clear();return{ok:true,cache:{zones:zoneCache.stats(),raw:rawCache.stats(),analysis:analysisCache.stats()}};}
 }});
 
-var srv=http.createServer(function(req,res){
+var srv=require('../../Core/Clients/auth21_engine_ingress').createServer(function(req,res){
  if(cpAdapter.handle(req,res))return;var u=new URL(req.url,'http://'+HOST+':'+PORT),p=u.pathname;
  if(req.method==='GET'&&p==='/health')return send(res,200,liquidityHealth());
  send(res,404,{ok:false,error:'NOT_FOUND'});
