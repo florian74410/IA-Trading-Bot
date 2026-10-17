@@ -8,16 +8,16 @@ function timestamp(x){var d=x.published_at||x.publishedAt||x.collected_at||x.tim
 function safeId(x,i){return String(x.id==null?'NEWS_'+i:x.id)}
 function coordinates(x){var lat=x.latitude??x.lat??x.geo?.latitude,lon=x.longitude??x.lon??x.geo?.longitude;if(lat==null||lon==null||lat===''||lon==='')return null;lat=Number(lat);lon=Number(lon);return Number.isFinite(lat)&&Number.isFinite(lon)&&Math.abs(lat)<=90&&Math.abs(lon)<=180?{latitude:lat,longitude:lon}:null}
 var REGIONS=[
- {re:/\\b(?:UNITED STATES|USA|U\\.S\\.A\\.|WASHINGTON|FEDERAL RESERVE|FOMC|SECURITIES AND EXCHANGE COMMISSION|\\bSEC\\b)\\b/i,cc:'US',country:'États-Unis',lat:39.8,lon:-98.6},
- {re:/\\b(?:FRANCE|PARIS|AMF FRANCE)\\b/i,cc:'FR',country:'France',lat:46.2,lon:2.2},
- {re:/\\b(?:GERMANY|ALLEMAGNE|FRANKFURT|BERLIN)\\b/i,cc:'DE',country:'Allemagne',lat:51.1,lon:10.4},
- {re:/\\b(?:EUROPEAN UNION|EUROPEAN CENTRAL BANK|\\bECB\\b|\\bBCE\\b|\\bMICA\\b|BRUSSELS)\\b/i,cc:'EU',country:'Union européenne',lat:50.8,lon:4.35},
- {re:/\\b(?:UNITED KINGDOM|BRITAIN|LONDON|BANK OF ENGLAND|\\bBOE\\b)\\b/i,cc:'GB',country:'Royaume-Uni',lat:54,lon:-2},
- {re:/\\b(?:JAPAN|TOKYO|BANK OF JAPAN|\\bBOJ\\b)\\b/i,cc:'JP',country:'Japon',lat:36.2,lon:138.2},
- {re:/\\b(?:CHINA|BEIJING|\\bPBOC\\b)\\b/i,cc:'CN',country:'Chine',lat:35.9,lon:104.2},
- {re:/\\b(?:SINGAPORE|SINGAPOUR)\\b/i,cc:'SG',country:'Singapour',lat:1.35,lon:103.82},
- {re:/\\b(?:AUSTRALIA|AUSTRALIE|SYDNEY)\\b/i,cc:'AU',country:'Australie',lat:-25.3,lon:133.8},
- {re:/\\b(?:SWITZERLAND|SUISSE|ZURICH)\\b/i,cc:'CH',country:'Suisse',lat:46.8,lon:8.2}
+ {re:/\b(?:UNITED STATES|USA|U\.S\.A\.|WASHINGTON|FEDERAL RESERVE|FOMC|SECURITIES AND EXCHANGE COMMISSION|\bSEC\b)\b/i,cc:'US',country:'États-Unis',lat:39.8,lon:-98.6},
+ {re:/\b(?:FRANCE|PARIS|AMF FRANCE)\b/i,cc:'FR',country:'France',lat:46.2,lon:2.2},
+ {re:/\b(?:GERMANY|ALLEMAGNE|FRANKFURT|BERLIN)\b/i,cc:'DE',country:'Allemagne',lat:51.1,lon:10.4},
+ {re:/\b(?:EUROPEAN UNION|EUROPEAN CENTRAL BANK|\bECB\b|\bBCE\b|\bMICA\b|BRUSSELS)\b/i,cc:'EU',country:'Union européenne',lat:50.8,lon:4.35},
+ {re:/\b(?:UNITED KINGDOM|BRITAIN|LONDON|BANK OF ENGLAND|\bBOE\b)\b/i,cc:'GB',country:'Royaume-Uni',lat:54,lon:-2},
+ {re:/\b(?:JAPAN|TOKYO|BANK OF JAPAN|\bBOJ\b)\b/i,cc:'JP',country:'Japon',lat:36.2,lon:138.2},
+ {re:/\b(?:CHINA|BEIJING|\bPBOC\b)\b/i,cc:'CN',country:'Chine',lat:35.9,lon:104.2},
+ {re:/\b(?:SINGAPORE|SINGAPOUR)\b/i,cc:'SG',country:'Singapour',lat:1.35,lon:103.82},
+ {re:/\b(?:AUSTRALIA|AUSTRALIE|SYDNEY)\b/i,cc:'AU',country:'Australie',lat:-25.3,lon:133.8},
+ {re:/\b(?:SWITZERLAND|SUISSE|ZURICH)\b/i,cc:'CH',country:'Suisse',lat:46.8,lon:8.2}
 ];
 function locate(x){var explicit=coordinates(x);if(explicit)return{pos:explicit,quality:'EXACT',country:String(x.country||x.country_name||''),cc:String(x.country_code||x.countryCode||'').toUpperCase()};var text=[x.location,x.country,x.country_name,x.city,x.title].filter(Boolean).join(' ');for(var i=0;i<REGIONS.length;i++)if(REGIONS[i].re.test(text)){var g=REGIONS[i];return{pos:{latitude:g.lat,longitude:g.lon},quality:'REGION',country:g.country,cc:g.cc}}return{pos:null,quality:'UNKNOWN',country:'',cc:''}}
 function adapt(x,i){var when=timestamp(x);if(!when)return null;var geo=locate(x),loc=geo.pos,country=geo.country,cc=geo.cc;return{id:safeId(x,i),title:String(x.title||x.headline||'Publication fondamentale'),summary:String(x.summary||''),category:category(x),publishedAt:when,latitude:loc?loc.latitude:null,longitude:loc?loc.longitude:null,country:country,countryCode:/^[A-Z]{2}$/.test(cc)?cc:null,locationQuality:geo.quality,city:String(x.city||''),source:String(x.source_name||x.source||''),url:String(x.url||x.link||''),raw:x};}
