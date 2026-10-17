@@ -1,6 +1,6 @@
 # IA-TB v2.2.5 — Synchronisation manuelle News & Événements
 
-**État : spécification du lot C ; implémentation non validée.**
+**État : bouton Fundamental raccordé au module d’état partagé ; vérifications backend Auth21/permissions et recette multi-rôles encore requises.**
 **PR commune : #18 — feature/v2.2.5-calendar-events-chart.**
 
 ## Comportement attendu
@@ -46,7 +46,7 @@ Ne pas créer un endpoint nommé ou supposer ces noms comme existants avant audi
 - [ ] Distinguer le refresh de consultation de la synchronisation ou maintenance admin.
 - [ ] Implémenter autorisation « authenticated read+refresh » de façon explicite, testée pour tous les rôles autorisés.
 - [ ] Modifier le backend pour une fusion incrémentale atomique et idempotente, sans effacement ni écrasement de données plus récentes.
-- [ ] Corriger le bouton, états en cours/terminé/partiel/erreur et restitution des compteurs.
+- [x] Raccorder le bouton Fundamental existant au contrôleur d’état partagé (Actualiser / Actualisation… / À jour / Erreur), sans purge et avec single-flight. Les comptes détaillés restent dans le panneau de notification.\n- [ ] Valider le résultat partiel, la gestion de tous les rôles authentifiés et la synchronisation FED/CME côté serveur.
 - [ ] Tester deux clics simultanés, 2 utilisateurs, quota, expiry session et protections Auth21/CP1.
 - [ ] Tester refresh FED + CME + News : données existantes préservées ; doublons non créés ; prévision/réel mis à jour en présence de données officielles.
 - [ ] Exécuter recette navigateur et tests de non-régression avant fusion ou déploiement.
