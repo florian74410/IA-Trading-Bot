@@ -87,7 +87,7 @@
         if(!x||typeof x!=='object')return;
         var date=x.date||null,time=x.startAtUtc||x.start_at_utc||x.dateTime||x.starts_at||whenFromLocalDate(date,x.timeLabel||x.time||'');
         var id=x.sourceId||x.id||x.eventId||[date,x.title||x.label||x.name||x.event||'',i].join(':');
-        var e=normalize({source:source,id:id,title:x.title||x.label||x.name||x.event||'Événement économique',startAtUtc:time,date:date,category:x.category,importance:x.importance||x.impact,forecast:x.forecast??x.expected,actual:x.actual??x.real,previous:x.previous,unit:x.unit,country:x.country,countryCode:x.countryCode||x.country_code||(source==='FED'?'US':null),officialUrl:x.officialUrl||x.url},source);
+        var e=normalize({source:source,id:id,title:x.title||x.label||x.name||x.event||'Événement économique',startAtUtc:time,date:date,category:x.category,importance:x.importance||x.impact,forecast:x.forecast??x.expected,actual:x.actual??x.real,previous:x.previous,unit:x.unit,country:x.country,countryCode:x.countryCode||x.country_code||(source==='FED'?'US':null),description:x.description||x.details||x.summary,officialUrl:x.officialUrl||x.url},source);
         if(e)all.push(e);
       });
     });
