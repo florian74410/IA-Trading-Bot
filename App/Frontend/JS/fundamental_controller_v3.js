@@ -207,7 +207,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
    This observer does not fetch news and never supplies fabricated market numbers. */
 (function(){
  function init(){
-  var pairs={overviewSources:'dashSources',overviewNews:'dashNews',overviewAlerts:'dashAlerts',overviewTotalSources:'dashSources',overviewFeeds:'dashFeeds',overviewEvents:'dashEvents',overviewConfidence:'aiConfidenceTop'};
+  var pairs={overviewSources:'dashSources',overviewNews:'dashNews',overviewAlerts:'dashErrors',overviewTotalSources:'dashSources',overviewFeeds:'dashFeeds',overviewEvents:'dashEvents',overviewConfidence:'aiConfidenceTop'};
   var roots=[],pending=false;
   function sync(){pending=false;Object.keys(pairs).forEach(function(dst){var a=document.getElementById(pairs[dst]),b=document.getElementById(dst);if(!a||!b)return;var value=(a.textContent||'').trim();if(dst==='overviewConfidence'){var found=value.match(/\\d+\\s*%/);value=found?found[0]:'--';}if(b.textContent!==value)b.textContent=value||'--';});}
   Object.keys(pairs).forEach(function(dst){var node=document.getElementById(pairs[dst]);if(!node||roots.includes(node))return;roots.push(node);new MutationObserver(function(){if(!pending){pending=true;queueMicrotask(sync);}}).observe(node,{childList:true,characterData:true,subtree:true});});
