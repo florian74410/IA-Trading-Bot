@@ -8,3 +8,9 @@
 .iatb-ge-globe{display:flex;flex-direction:column;min-width:0;min-height:0;align-items:stretch}.iatb-ge-renderer{flex:1;min-height:220px;position:relative}.iatb-ge-renderer canvas,.iatb-ge-renderer svg{max-width:100%}.iatb-ge-renderer-status{color:#68a4be;text-align:center}.iatb-ge-legend{display:flex;flex-wrap:wrap;justify-content:center;gap:14px;padding:10px}.iatb-ge-event{display:flex;flex-direction:column;text-align:left;width:100%;gap:5px;margin:6px 0}.iatb-ge-event span{font-size:12px;color:#a5cfe6}.iatb-ge-event small{font-size:11px;color:#73a4c5}.iatb-ge-selected{border-color:#00cfff!important}.iatb-ge-empty{color:#72a9c2}
 @media(max-width:950px){.iatb-ge-body{grid-template-columns:1fr;overflow-y:auto}.iatb-ge-renderer{min-height:320px}.iatb-ge-stats,.iatb-ge-news{overflow:visible}.iatb-globe-expanded{inset:1vh 1vw}}
 @media(prefers-reduced-motion:reduce){.iatb-globe-expanded *{animation:none!important;transition:none!important}}
+
+/* Fixed IA-TB chrome remains visible while exploring the enlarged globe. */
+.iatb-globe-expanded{inset:calc(var(--iatb-nav-h,68px) + 14px) 1.5vw 62px!important;max-height:calc(100dvh - var(--iatb-nav-h,68px) - 82px)!important;z-index:94!important}
+.iatb-ge-renderer{overflow:hidden;border-radius:12px;isolation:isolate;background:radial-gradient(circle at center,#071d36 0%,#03111f 73%)}
+.iatb-ge-renderer canvas{display:block;max-height:100%;object-fit:contain}
+@media(max-width:950px){.iatb-globe-expanded{inset:calc(var(--iatb-nav-h,68px) + 10px) 1vw 59px!important;max-height:calc(100dvh - var(--iatb-nav-h,68px) - 69px)!important}}
