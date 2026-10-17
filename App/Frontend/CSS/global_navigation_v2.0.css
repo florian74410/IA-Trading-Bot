@@ -38,3 +38,6 @@ body.iatb-global-nav-ready{background:#040d17}
 
 /* v2.2.4: guest navigation automatically fills the former Settings slot */
 #iatb-global-nav .iatb-nav-links:has(>a[href="/settings"][style*="none"]){grid-template-columns:repeat(7,minmax(68px,1fr))}
+
+/* R1: reserve stable room for sign-out and ADMIN buttons; no redundant beacon. */
+@media(min-width:821px){.iatb-nav-frame{grid-template-columns:minmax(135px,13%) minmax(0,1fr) minmax(230px,max-content)!important}.iatb-nav-actions{min-width:230px;gap:8px;padding:0 11px;flex-wrap:nowrap}.iatb-nav-actions .iatb-nav-action{flex:0 0 auto;min-width:max-content;padding-inline:12px;font-size:11px}.iatb-nav-links{min-width:0}.iatb-nav-label{font-size:clamp(9px,.83vw,12px)}}
