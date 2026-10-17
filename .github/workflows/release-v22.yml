@@ -1,6 +1,7 @@
 name: IA-TB 2.2 qualification and publication
 on:
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review, edited]
     branches: ['release/v2.2-gen1']
   push:
     branches: ['release/v2.2-gen1']
