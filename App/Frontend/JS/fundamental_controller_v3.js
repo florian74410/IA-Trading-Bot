@@ -97,21 +97,27 @@ function renderCalendarEventList(hostId,month,events){
  var host=$(hostId);if(!host)return;var ym=calIso(month.getFullYear(),month.getMonth(),1).slice(0,7),rows=(events||[]).filter(function(e){return String(e.date||'').slice(0,7)===ym}).sort(function(a,b){return String(a.date).localeCompare(String(b.date))}).slice(0,8);
  host.innerHTML=rows.length?rows.map(function(e){var day=new Date(e.date+'T12:00:00Z').toLocaleDateString(LANG==='fr'?'fr-FR':'en-US',{day:'2-digit',month:'short'}),meta=e.calendar==='CME_EXPIRATIONS'?[(e.globexCode||''),(e.contract||''),(e.assetClass||'')].filter(Boolean).join(' · '):[(e.timeLabel||''),(e.country||'')].filter(Boolean).join(' · ');return'<div class="calendarEvent '+calClass(e)+'"><span class="calendarEventIcon">'+calIcon(e)+'</span><div><b>'+esc(day+' · '+calEventText(e))+'</b><small>'+esc(meta||e.source||'')+'</small></div><em>'+esc(e.impact||'')+'</em></div>'}).join(''):'<div class="calendarNoEvent">Aucun événement pour ce mois.</div>';
 }
-var IATB_UNIFIED_SOURCE='ALL';
+var IATB_UNIFIED_SOURCE='ALL',IATB_CAL_SELECTED='',IATB_CAL_EVENT='',IATB_CAL_MONTH=new Date(new Date().getFullYear(),new Date().getMonth(),1),IATB_CAL_ROWS=[];
+function calValue(v,unit){return v==null||v===''?'—':String(v)+(unit||'')}
 function renderUnifiedCalendar(cal){
  var host=$('calendarUnifiedEvents'),api=window.IATBCalendarEvents;if(!host||!api)return;
- var rows=api.fromCalendars(cal),now=Date.now()-86400000;
- rows=rows.filter(function(e){return IATB_UNIFIED_SOURCE==='ALL'||e.source===IATB_UNIFIED_SOURCE})
-   .filter(function(e){return new Date(e.startAtUtc||e.localDate+'T23:59:59Z').getTime()>=now}).slice(0,12);
- host.innerHTML=rows.length?rows.map(function(e){
-  var date=e.startAtUtc?dt(e.startAtUtc):String(e.localDate||'--')+' · heure à confirmer';
-  var flag=e.countryCode&&/^[A-Z]{2}$/.test(e.countryCode)?String.fromCodePoint(e.countryCode.charCodeAt(0)+127397,e.countryCode.charCodeAt(1)+127397):(e.source==='FED'?'🇺🇸':'🌐');
-  var data=[];
-  if(e.forecast!=null)data.push('Prévu : '+e.forecast+(e.unit||''));
-  if(e.actual!=null)data.push('Réel : '+e.actual+(e.unit||''));
-  if(e.previous!=null)data.push('Précédent : '+e.previous+(e.unit||''));
-  return '<article class="calendarUnifiedRow"><span class="calendarUnifiedSource '+(e.source==='FED'?'fed':'cme')+'">'+esc(e.source)+'</span><span class="calendarUnifiedFlag">'+flag+'</span><div><strong>'+esc(e.title)+'</strong><small>'+esc(date)+'</small></div><div class="calendarUnifiedValues">'+(data.length?data.map(function(z){return '<span>'+esc(z)+'</span>'}).join(''):'<small>Aucune valeur publiée</small>')+'</div></article>';
- }).join(''):'<div class="calendarNoEvent">Aucun événement prévu dans la période disponible.</div>';
+ var rows=api.fromCalendars(cal),zone='Europe/Paris';IATB_CAL_ROWS=rows;
+ var month=IATB_CAL_MONTH,y=month.getFullYear(),m=month.getMonth(),prefix=calIso(y,m,1).slice(0,7),today=new Date(),todayIso=calIso(today.getFullYear(),today.getMonth(),today.getDate());
+ var filtered=rows.filter(function(e){return IATB_UNIFIED_SOURCE==='ALL'||e.source===IATB_UNIFIED_SOURCE});
+ var day=IATB_CAL_SELECTED||todayIso,dayRows=filtered.filter(function(e){return api.dayKey(e,zone)===day});
+ if(!dayRows.length&&!IATB_CAL_SELECTED)dayRows=filtered.filter(function(e){return api.dayKey(e,zone)>=todayIso}).slice(0,12);
+ var days=new Date(y,m+1,0).getDate(),offset=(new Date(y,m,1).getDay()+6)%7;
+ var calendar='<div class="iatb-cal-weekdays">'+['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'].map(function(n){return'<span>'+n+'</span>'}).join('')+'</div><div class="iatb-cal-days">';
+ for(var i=0;i<offset;i++)calendar+='<span class="iatb-cal-pad"></span>';
+ for(var d=1;d<=days;d++){
+  var iso=calIso(y,m,d),daily=filtered.filter(function(e){return api.dayKey(e,zone)===iso}),classes='iatb-cal-day'+(iso===day?' selected':'')+(iso===todayIso?' today':'');
+  calendar+='<button type="button" class="'+classes+'" data-unified-day="'+iso+'" aria-pressed="'+(iso===day?'true':'false')+'"><b>'+d+'</b><span class="iatb-cal-dots">'+daily.slice(0,4).map(function(e){return'<i class="'+(e.source==='FED'?'fed':'cme')+'"></i>'}).join('')+'</span></button>';
+ }calendar+='</div><div class="iatb-cal-key"><span>● FED</span><span>● CME</span><span>Heures : Europe/Paris</span></div>';
+ var dateTitle=new Date(day+'T12:00:00Z').toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
+ var agenda=dayRows.map(function(e,i){var flag=e.countryCode&&/^[A-Z]{2}$/.test(e.countryCode)?String.fromCodePoint(e.countryCode.charCodeAt(0)+127397,e.countryCode.charCodeAt(1)+127397):'🌐',when=e.startAtUtc?new Date(e.startAtUtc).toLocaleTimeString('fr-FR',{timeZone:zone,hour:'2-digit',minute:'2-digit'}):'Heure inconnue',id=String(e.id),impact=e.importance||'INCONNU';return'<button type="button" class="iatb-cal-row'+(id===IATB_CAL_EVENT?' chosen':'')+'" data-unified-event="'+esc(id)+'"><time>'+esc(when)+'</time><span>'+flag+'</span><strong>'+esc(e.title)+'</strong><span>'+esc(e.source)+'</span><span>'+esc(calValue(e.forecast,e.unit))+'</span><span>'+esc(calValue(e.actual,e.unit))+'</span><span>'+esc(calValue(e.previous,e.unit))+'</span><em class="impact-'+esc(impact.toLowerCase())+'">'+esc(impact)+'</em></button>'}).join('');
+ var chosen=rows.find(function(e){return e.id===IATB_CAL_EVENT})||dayRows[0]||null;
+ var detail=chosen?'<section class="iatb-cal-detail"><div><strong>'+esc(chosen.title)+'</strong><small>'+esc(chosen.country||chosen.countryCode||'Zone non précisée')+' · '+esc(chosen.source)+' · '+esc(chosen.startAtUtc?dt(chosen.startAtUtc):'Heure non publiée')+'</small></div><div class="iatb-cal-values"><span>Prévision <b>'+esc(calValue(chosen.forecast,chosen.unit))+'</b></span><span>Réel <b>'+esc(calValue(chosen.actual,chosen.unit))+'</b></span><span>Précédent <b>'+esc(calValue(chosen.previous,chosen.unit))+'</b></span></div>'+(chosen.description?'<p>'+esc(chosen.description)+'</p>':'')+(chosen.officialUrl?'<a href="'+esc(chosen.officialUrl)+'" target="_blank" rel="noopener noreferrer">Source officielle ↗</a>':'')+'</section>':'<div class="iatb-cal-detail">Aucun détail disponible pour la sélection.</div>';
+ host.innerHTML='<div class="iatb-cal-workspace"><section class="iatb-cal-month"><div class="iatb-cal-month-head"><button type="button" data-unified-nav="-1" aria-label="Mois précédent">‹</button><h3>'+esc(calMonthLabel(month))+'</h3><button type="button" data-unified-nav="1" aria-label="Mois suivant">›</button><button type="button" data-unified-today="1">Aujourd’hui</button></div>'+calendar+'</section><section class="iatb-cal-agenda"><h3>Événements · '+esc(dateTitle)+' <small>'+dayRows.length+' événement(s)</small></h3><div class="iatb-cal-table"><div class="iatb-cal-column-head"><span>Heure</span><span>Pays</span><span>Événement</span><span>Source</span><span>Prévu</span><span>Réel</span><span>Précédent</span><span>Impact</span></div>'+(agenda||'<div class="calendarNoEvent">Aucune donnée publiée pour cette sélection.</div>')+'</div>'+detail+'</section></div>';
 }
 function renderCalendars(){
  var d=CALENDAR_DATA||{},cal=d.calendars||{},fed=(cal.fed&&cal.fed.events)||[],cmeEconomic=(cal.cme&&cal.cme.events)||[],exp=(cal.cmeExpirations&&cal.cmeExpirations.events)||[],cme=filterCmeEvents(cmeEconomic.concat(exp));
@@ -131,6 +137,10 @@ function bindCalendars(){
  var panel=$('macroCalendarPanel');if(!panel)return;
  panel.addEventListener('click',function(e){
   var b=e.target.closest?e.target.closest('button'):e.target;if(!b)return;
+  var period=b.getAttribute('data-unified-nav');if(period){IATB_CAL_MONTH=new Date(IATB_CAL_MONTH.getFullYear(),IATB_CAL_MONTH.getMonth()+(+period),1);IATB_CAL_SELECTED='';IATB_CAL_EVENT='';renderCalendars();return;}
+  if(b.hasAttribute('data-unified-today')){IATB_CAL_MONTH=new Date(new Date().getFullYear(),new Date().getMonth(),1);IATB_CAL_SELECTED='';IATB_CAL_EVENT='';renderCalendars();return;}
+  var day=b.getAttribute('data-unified-day');if(day){IATB_CAL_SELECTED=day;IATB_CAL_EVENT='';renderCalendars();return;}
+  var eid=b.getAttribute('data-unified-event');if(eid){IATB_CAL_EVENT=eid;renderCalendars();return;}
   var unified=b.getAttribute('data-unified-source');if(unified){IATB_UNIFIED_SOURCE=unified;panel.querySelectorAll('[data-unified-source]').forEach(function(x){x.classList.toggle('active',x===b)});renderCalendars();return;}
   var nav=b.getAttribute('data-cal-nav');if(nav){var p=nav.split(':'),delta=+p[1]||0;if(p[0]==='fed')CALENDAR_FED_MONTH=new Date(CALENDAR_FED_MONTH.getFullYear(),CALENDAR_FED_MONTH.getMonth()+delta,1);else CALENDAR_CME_MONTH=new Date(CALENDAR_CME_MONTH.getFullYear(),CALENDAR_CME_MONTH.getMonth()+delta,1);renderCalendars();return;}
   var fil=b.getAttribute('data-cme-filter');if(fil){CME_CAL_FILTER=fil;var xs=panel.querySelectorAll('[data-cme-filter]');for(var i=0;i<xs.length;i++)xs[i].classList.toggle('active',xs[i]===b);renderCalendars();}
