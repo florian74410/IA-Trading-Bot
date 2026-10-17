@@ -38,7 +38,7 @@ function safePassword(password) {
 }
 
 function canCreatePassword(password) {
-  return safePassword(password) && password.length >= 16;
+  return safePassword(password) && password.length >= 10;
 }
 
 function algorithmOf(account) {
