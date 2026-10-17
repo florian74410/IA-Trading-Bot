@@ -5,8 +5,25 @@ var raw=[],mini=null,expanded=null,miniHost=null,miniVisible=true,selectedMini='
 var COLORS={CRYPTO:'#ff932b',DEFI:'#b75cff',MACRO:'#18d6a2',REGULATION:'#fbc84a',SECURITY:'#ff586c',OTHER:'#65bfe7'};
 function safe(v){return String(v==null?'':v).replace(/[&<>"']/g,function(k){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[k]})}
 function pointInfo(p){return '<div style="background:#061d2c;border:1px solid #1787b7;border-radius:7px;padding:7px 10px;color:#daf3ff;font:12px sans-serif"><b>'+safe(p.title||p.category||'News')+'</b><div>'+safe(p.country||'')+(p.locationQuality==='REGION'?' · position indicative':'')+'</div></div>'}
-function category(x){var value=String(x.category||x.content_class||x.domain||'').toUpperCase(),txt=[value,x.title,x.summary].join(' ').toUpperCase();if(/REGUL|MICA|SEC\b|CFTC|COMPLIANCE/.test(txt))return'REGULATION';if(/SECURITY|EXPLOIT|HACK|ATTACK|VULNERAB/.test(txt))return'SECURITY';if(/DEFI|DEX|LENDING|STAKING/.test(txt))return'DEFI';if(/MACRO|FED|FOMC|ECB|INFLATION|CPI|INTEREST RATE|MONETARY/.test(txt))return'MACRO';if(/CRYPTO|BITCOIN|ETHEREUM|BLOCKCHAIN|ETF|BTC|ETH\b/.test(txt))return'CRYPTO';return'OTHER'}
-function timestamp(x){var d=x.published_at||x.publishedAt||x.collected_at||x.timestamp||null;if(typeof d==='number')return new Date(d<1e11?d*1000:d).toISOString();if(!d)return null;var date=new Date(d);return Number.isFinite(date.getTime())?date.toISOString():null}
+function category(x){
+ var value=String(x.category||x.content_class||x.domain||'').toUpperCase().trim();
+ var aliases={REGLEMENTATION:'REGULATION',REGULATORY:'REGULATION',SECURITE:'SECURITY',MONETARY:'MACRO'};
+ value=aliases[value]||value;
+ if(['CRYPTO','DEFI','MACRO','REGULATION','SECURITY'].includes(value))return value;
+ var txt=[value,x.title,x.headline,x.summary].join(' ').toUpperCase();
+ if(/SECURITY|EXPLOIT|HACK|ATTACK|VULNERAB|BREACH/.test(txt))return'SECURITY';
+ if(/REGUL|MICA|\\bSEC\\b|CFTC|COMPLIANCE/.test(txt))return'REGULATION';
+ if(/DEFI|DEX|LENDING|STAKING/.test(txt))return'DEFI';
+ if(/MACRO|FED|FOMC|ECB|INFLATION|CPI|INTEREST RATE|MONETARY/.test(txt))return'MACRO';
+ if(/CRYPTO|BITCOIN|ETHEREUM|BLOCKCHAIN|ETF|BTC|\\bETH\\b/.test(txt))return'CRYPTO';
+ return'OTHER';
+}
+function timestamp(x){
+ var d=x.published_at??x.publishedAt??x.collected_at??x.timestamp;
+ if(d==null||d==='')return null;
+ var date=typeof d==='number'?new Date(d<1e11?d*1000:d):new Date(d);
+ return Number.isFinite(date.getTime())?date.toISOString():null;
+}
 function safeId(x,i){return String(x.id==null?'NEWS_'+i:x.id)}
 function coordinates(x){var lat=x.latitude??x.lat??x.geo?.latitude,lon=x.longitude??x.lon??x.geo?.longitude;if(lat==null||lon==null||lat===''||lon==='')return null;lat=Number(lat);lon=Number(lon);return Number.isFinite(lat)&&Number.isFinite(lon)&&Math.abs(lat)<=90&&Math.abs(lon)<=180?{latitude:lat,longitude:lon}:null}
 var REGIONS=[
@@ -35,5 +52,6 @@ function initExpanded(){var open=document.getElementById('openEarthRadar');if(!o
  },true);
 }
 function setup(){initMini();initExpanded();var stage=document.querySelector('.marketPanel .globeStage'),expand=document.getElementById('openEarthRadar');if(stage&&expand)stage.addEventListener('dblclick',function(e){e.preventDefault();e.stopImmediatePropagation();expand.click();},true);document.querySelectorAll('[data-radar-domain]').forEach(function(b){b.addEventListener('click',function(){selectedMini=b.getAttribute('data-radar-domain')||'ALL';drawMini()})});document.querySelectorAll('[data-globe-period]').forEach(function(b){b.addEventListener('click',function(){periodMini=b.getAttribute('data-globe-period')||'WEEK';drawMini()})});window.addEventListener('iatb-fundamental-news',function(e){raw=e.detail?.items||[];drawMini();if(!mini&&window.FundamentalGlobe){var fallback=visible().filter(function(x){return x.latitude!=null&&x.longitude!=null}).map(function(x){return {timestamp:x.publishedAt,event:x.category,data:{latitude:x.latitude,longitude:x.longitude,category:x.category,title:x.title,message:x.title,source:x.source,country:x.country,url:x.url}}});window.FundamentalGlobe.setEvents(fallback)}if(expanded)expanded.updateEvents(events());});}
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',setup);else setup();
+if(typeof module==='object'&&module.exports){module.exports={adapt:adapt,category:category,locate:locate,timestamp:timestamp};}
+if(typeof document!=='undefined'){if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',setup);else setup();}
 })();
