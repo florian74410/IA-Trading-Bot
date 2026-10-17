@@ -1,3 +1,5 @@
+> Version actuelle : **2.2.1 (TEST)**. Voir [la release et les changements](Release-2.2.1.md). La production GEN-1 reste à déployer et à valider.
+
 # 🏷️ Versionnage et releases
 
 > **🟢 En simple : le projet ne considère pas une version terminée parce que le code compile. Il faut aligner code, tests, patch, changelog, GitHub et Wiki.**

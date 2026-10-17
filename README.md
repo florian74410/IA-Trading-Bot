@@ -1,5 +1,5 @@
-> **IA-TB 2.2.0 — recette GEN-1** : User Management V1 est livré en préversion TEST.
-> Voir [les notes](Documentation/RELEASE_2.2.0.md) et [la procédure de migration sur copie](Documentation/GEN1_TEST_2.2.0.md).
+> **IA-TB 2.2.1 — dernière version publiée, recette GEN-1 (TEST).**
+> [Release](Documentation/RELEASE_2.2.1.md) · [Déploiement sur copie](Documentation/GEN1_TEST_2.2.1.md) · [Wiki](Documentation/wiki/Home.md)
 > Aucune promotion de production, aucun démarrage du Trading Engine.
 
 # IA-Trading-Bot (IA-TB)
