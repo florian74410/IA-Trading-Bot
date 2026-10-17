@@ -4,6 +4,25 @@
 
 # 🗺️ ROADMAP — IA Trading Bot
 
+## 🛠️ Correctif unifié IA-TB v2.2.5 — PR #18 (code candidat, pas encore déployé)
+
+**Référence unique :** [PR #18](https://github.com/florian74410/IA-Trading-Bot/pull/18), branche `feature/v2.2.5-calendar-events-chart`. Ne pas fusionner tant que les recettes GEN-1 DEBUG/Firefox ne sont pas validées. Trading Engine désactivé, aucune opération live.
+
+- [x] Reprise de la refonte de **Fundamental → Vue d'ensemble** (radar compact, état du marché, indicateurs réels) dans la PR unique, sans déplacer la consultation des news hors de News & Événements.
+- [x] **Globe miniature réaliste WebGL** : réutilisation du rendu Earth/texture de la vue agrandie, miniature adaptative, rotation fluide, pause hors écran et secours Canvas.
+- [x] Même flux de **vraies publications Fundamental** pour les deux globes ; géolocalisation explicite ou centroïde de région clairement inférée ; aucun point géographique aléatoire.
+- [x] **Globe agrandi** : composant 3 colonnes existant PR #18 branché au bouton d'ouverture, rendu WebGL, marqueurs plus grands, clic point → fiche, zoom/recentrage, catégories et périodes réellement filtrées.
+- [x] **Calendrier FED/CME unifié** en amont des vues détaillées préexistantes, filtres par source, dates, drapeaux, Prévu/Réel/Précédent si les données sont présentes.
+- [x] **Événements sur le Trading IA** : adaptateur FED/CME réutilisé, marqueurs informatifs sur l'axe du graphique natif, aucune modification de stratégie, d'ordre ou de Trading Engine.
+- [x] **Paramètres → Fundamental** : bascules affichage économique par défaut activé, FED/CME, drapeaux et valeurs ; préférences locales persistantes dans le navigateur.
+- [x] Tests automatisés des contrats globe/calendrier/raccordements et syntaxe JS, workflow CI `v225-unified-qualification.yml` ajouté.
+- [ ] **Recette Firefox / Linux GEN-1 DEBUG** : rendu miniature/plein écran, 1280×800, filtres/catégories, géolocalisation, performances WebGL et fallback, marqueurs sur différentes unités de temps et conservation d'Auth21.
+- [ ] **Promotion et déploiement** seulement après validation sur TEST isolé avec `IATB_TRADING_LIVE=0`, `IATB_TRADING_ENGINE_ENABLED=0` et sauvegardes préservées.
+
+**Hors de ce correctif :** l'enrichissement IA des news par classement/déduplication/scoring reste un chantier de ROADMAP distinct, pour ne pas déstabiliser Fundamental et Supervisor.
+
+
+
 ## 🔜 Fundamental Engine — pipeline News structuré avant Supervisor (R&D / version ultérieure)
 
 **Statut : conception à valider ; aucun remplacement des flux actifs dans v2.2.4.**
