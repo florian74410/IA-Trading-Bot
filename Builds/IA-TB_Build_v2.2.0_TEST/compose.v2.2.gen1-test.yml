@@ -1,0 +1,108 @@
+# IA-TB 2.2 authenticated GEN-1 acceptance stack. Use a private COPY of data.
+# No published TCP ports, default accounts, fixture provider or Trading Engine.
+name: iatb-v22-gen1-test
+x-runtime: &runtime
+  image: iatb:2.2.0
+  user: "${IATB_UID:?}:${IATB_GID:?}"
+  read_only: true
+  restart: "no"
+  cap_drop: [ALL]
+  security_opt: ["no-new-privileges:true"]
+  tmpfs: [/tmp]
+  volumes:
+    - ${IATB_V22_ROOT:?Set an absolute private test root}/data:/iatb/v22/data:rw
+    - ${IATB_V22_ROOT:?Set an absolute private test root}/runtime:/iatb/v22/runtime:rw
+    - ${IATB_V22_ROOT:?Set an absolute private test root}/state:/iatb/v22/state:rw
+    - ${IATB_V22_ROOT:?Set an absolute private test root}/annexes:/iatb/v22/annexes:rw
+    - ${IATB_V22_ROOT:?Set an absolute private test root}/updates:/iatb/v22/updates:rw
+    - ${IATB_V22_ROOT:?Set an absolute private test root}/tls:/iatb/v22/tls:ro
+  environment: &auth21-env
+    IATB_DATA_ROOT: /iatb/v22/data
+    IATB_RUNTIME_ROOT: /iatb/v22/runtime
+    IATB_STATE_ROOT: /iatb/v22/state
+    IATB_MARKET_SETTINGS: /iatb/v22/runtime/config/market_data_settings.json
+    IATB_ANNEX_ROOT: /iatb/v22/annexes
+    IATB_UPDATES_ROOT: /iatb/v22/updates
+    IATB_DEPLOYMENT_MODE: AUTHENTICATED
+    IATB_AUTH_MODE: authenticated
+    IATB_AUTH_ORIGIN: ${IATB_AUTH_ORIGIN:?Set the HTTPS browser origin}
+    IATB_AUTH_TLS_CERT: /iatb/v22/tls/cert.pem
+    IATB_AUTH_TLS_KEY: /iatb/v22/tls/key.pem
+    IATB_RELEASE_VERSION: "2.2.0"
+    IATB_AUTH_RPC_ORIGINS: ${IATB_AUTH_RPC_ORIGINS:-}
+    IATB_DEBUG_BOOTSTRAP: "0"
+    IATB_TRADING_LIVE: "0"
+    IATB_TRADING_ENGINE_ENABLED: "0"
+    IATB_MARKETDATA_OFFLINE_DIAGNOSTIC: "0"
+    IATB_FIREWALL_ENABLED: "1"
+services:
+  router:
+    <<: *runtime
+    command: ["node", "Core/Router/router.js"]
+    build:
+      context: ./App
+      dockerfile: Dockerfile.app
+    networks: [providers]
+  core:
+    <<: *runtime
+    command: ["node", "Core/Server/server.js"]
+    network_mode: service:router
+    depends_on: [router]
+  ui:
+    <<: *runtime
+    command: ["node", "UI/Gateway/ui_service.js"]
+    network_mode: service:router
+    depends_on: [router]
+  ssh-ui-bridge:
+    <<: *runtime
+    command: ["node", "Tools/ssh_ui_bridge.js"]
+    network_mode: service:router
+    depends_on: [router]
+  firewall:
+    <<: *runtime
+    command: ["node", "Core/Firewall/firewall_service.js"]
+    network_mode: service:router
+    depends_on: [router]
+  marketdata:
+    <<: *runtime
+    command: ["node", "MarketData/market_data_service.js"]
+    network_mode: service:router
+    depends_on: [router]
+  indicator:
+    <<: *runtime
+    command: ["node", "Indicators/Engine/indicator_service.js"]
+    network_mode: service:router
+    depends_on: [router]
+  liquidity:
+    <<: *runtime
+    command: ["node", "Liquidity/Engine/liquidity_service.js"]
+    network_mode: service:router
+    depends_on: [router]
+  strategy:
+    <<: *runtime
+    command: ["node", "Strategy/Engine/strategy_service.js"]
+    network_mode: service:router
+    depends_on: [router]
+  risk:
+    <<: *runtime
+    command: ["node", "Risk/Engine/risk_service.js"]
+    network_mode: service:router
+    depends_on: [router]
+  portfolio:
+    <<: *runtime
+    command: ["node", "Portfolio/Engine/portfolio_service.js"]
+    network_mode: service:router
+    depends_on: [router]
+  supervisor:
+    <<: *runtime
+    command: ["node", "Supervisor/supervisor_service.js"]
+    network_mode: service:router
+    depends_on: [router]
+  fundamental:
+    <<: *runtime
+    command: ["node", "Fundamental/Engine/fundamental_service.js"]
+    network_mode: service:router
+    depends_on: [router]
+networks:
+  providers:
+    driver: bridge

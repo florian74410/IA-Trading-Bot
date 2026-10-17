@@ -1,0 +1,26 @@
+{
+  "schema": "iatb.build.manifest/1",
+  "name": "IA-TB_Build_v2.2.0_TEST",
+  "version": "2.2.0",
+  "channel": "TEST",
+  "sourceTag": "v2.2.0",
+  "sourceCommit": "1a315da19e3b3fd90391255c48ab2948d9d21d0f",
+  "appSource": "tag:v2.2.0/App",
+  "toolsSource": "tag:v2.2.0/Tools",
+  "documentationSource": "tag:v2.2.0/Documentation",
+  "compose": "compose.v2.2.gen1-test.yml",
+  "expectedDockerServices": 13,
+  "dockerImageTagOnBuild": "iatb:2.2.0",
+  "tradingLive": false,
+  "gen1Deployed": false,
+  "dockerImageBuiltByPackaging": false,
+  "archiveSourceUrl": "https://github.com/florian74410/IA-Trading-Bot/releases/download/v2.2.0/IA-Trading-Bot-2.2.0-source.zip",
+  "sourceZipSHA256": "fb6c1e5ee0098f3e7c7c413c2471315ac99e5703d7b01af64c7023ef524090e6",
+  "limitations": [
+    "Trading LIVE",
+    "signed transfers",
+    "REMOTE_LLM",
+    "email sending",
+    "hot snapshots"
+  ]
+}
