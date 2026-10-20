@@ -239,6 +239,11 @@ function adminConsoleCatalog(cb){
  communicationInternal('GET','/communication/v1/registry',null,function(e,reg){
   if(e)return cb(null,{ok:true,protocol:'CP/1',registryVersion:'2.0',targets:[ADMIN_CONSOLE.routerTarget(),ADMIN_CONSOLE.serverTarget(),ADMIN_CONSOLE.debugTarget()],routerOnline:false,routerHealth:{error:e.message},console:CP1_CONSOLE_ENGINE.catalog()});
   communicationInternal('GET','/communication-health',null,function(he,health){
+   // Authenticated Core: the Router's public local health is the source of truth for availability.
+   // /communication-health is a legacy CP diagnostic and can fail even when Router is live.
+   if(he){var rq=http.get({hostname:'127.0.0.1',port:+(process.env.ROUTER_PORT||8021),path:'/router-health',timeout:1500},function(rs){var buf='',size=0;rs.on('data',function(b){size+=b.length;if(size>65536){rq.destroy();return;}buf+=b;});rs.on('end',function(){var check=null;try{check=JSON.parse(buf);}catch(_){}if(rs.statusCode===200&&check&&check.ok===true&&check.router===true){he=null;health={engines:[],router:true,ok:true};}finishCatalog();});});rq.on('error',function(){finishCatalog();});rq.on('timeout',function(){rq.destroy();});return;}
+   finishCatalog();
+   function finishCatalog(){
    var objects=reg&&Array.isArray(reg.objects)?reg.objects:[],targets=[ADMIN_CONSOLE.routerTarget(),ADMIN_CONSOLE.serverTarget(),ADMIN_CONSOLE.debugTarget()];
    objects.forEach(function(o){
     if(!o||o.id==='router')return;
@@ -248,6 +253,7 @@ function adminConsoleCatalog(cb){
    var live={};((health&&health.engines)||[]).forEach(function(x){live[x.id]={online:!!x.online,latencyMs:+x.latencyMs||0,port:x.port||0};});
    targets.forEach(function(t){if(t.id==='router')t.runtime={online:!he,latencyMs:0,port:+(process.env.ROUTER_PORT||8021)};else if(t.id==='server')t.runtime={online:true,latencyMs:0,port:PORT};else if(t.id==='debug')t.runtime={online:true,latencyMs:0,port:0};else t.runtime=live[t.id]||{online:false,latencyMs:0,port:0};});
    cb(null,{ok:true,protocol:'CP/1',registryVersion:reg&&reg.version||'2.0',targets:targets,routerOnline:!he,routerHealth:he?{error:he.message}:health,console:CP1_CONSOLE_ENGINE.catalog()});
+   }
   });
  });
 }
