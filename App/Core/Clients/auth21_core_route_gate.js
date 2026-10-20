@@ -10,12 +10,13 @@ function deny(res,status,error){
   'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});
  res.end(JSON.stringify({error}));
 }
-function createIsolatedCoreGate({sessions,browserSessions=null,allowedBrowserOrigin=null,ipcCodec=null,coreBusiness=null}={}){
+function createIsolatedCoreGate({sessions,browserSessions=null,allowedBrowserOrigin=null,ipcCodec=null,coreBusiness=null,tradingAdminBridge=null}={}){
  const auth=createAuth21HttpHandler({sessions,browserSessions,allowedBrowserOrigin,ipcCodec});
  return async function isolatedCoreGate(req,res){
   let pathname;
   try{pathname=new URL(req.url,'http://localhost').pathname}
   catch(_){deny(res,404,'NOT_FOUND');return}
+  if(pathname==='/auth21/admin/trading/command'&&tradingAdminBridge)return tradingAdminBridge(req,res);
   if(require('./auth21_business_actions').contract(pathname)&&coreBusiness)
    return coreBusiness(req,res);
   // Auth boundary rechecks path, query string, method and bearer itself.
@@ -75,7 +76,9 @@ function openCoreAuthTrial({root,clientCrypto,snapshotGate,env,browserSessions=n
   const coreBusiness=businessIssuer&&runtimeEnv.IATB_AUTH21_BUSINESS_TRIAL==='1'?
    require('./auth21_core_business_http').createCoreBusinessHttp({sessions,codec:ipcCodec,
     routerPort:Number(runtimeEnv.ROUTER_PORT),env:runtimeEnv,browserSessions}):null;
-  return {handler:createIsolatedCoreGate({sessions,browserSessions,allowedBrowserOrigin,ipcCodec,coreBusiness}),businessIssuer,close(){db.close()}};
+  const tradingAdminBridge=runtimeEnv.IATB_AUTH21_TRADING_ADMIN_BRIDGE==='1'?
+   require('./auth21_trading_admin_bridge').createTradingAdminBridge({sessions,env:runtimeEnv,browserSessions,port:Number(runtimeEnv.IATB_FIREWALL_PORT||8017)}):null;
+  return {handler:createIsolatedCoreGate({sessions,browserSessions,allowedBrowserOrigin,ipcCodec,coreBusiness,tradingAdminBridge}),businessIssuer,close(){db.close()}};
  }catch(error){db.close();throw error}
 }
 module.exports={createIsolatedCoreGate,openCoreAuthTrial};
