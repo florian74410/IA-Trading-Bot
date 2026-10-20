@@ -6,7 +6,7 @@ function reply(res,status,data,headers={}){if(res.writableEnded)return;res.write
 function read(req){return new Promise((resolve,reject)=>{let size=0,parts=[];req.on('data',b=>{size+=b.length;if(size<=524288)parts.push(b);});req.once('error',reject);req.once('end',()=>{try{if(size>524288||!/^application\/json(?:;|$)/i.test(req.headers['content-type']||''))throw Error();const b=JSON.parse(Buffer.concat(parts).toString());if(!b||typeof b!=='object'||Array.isArray(b))throw Error();resolve(b);}catch(_){reject(Error('INVALID_REQUEST'));}});});}
 const LEGACY_SELF_READ=new Set(['/api/bank/vaults','/api/transfers/status','/api/transfers/assets','/api/onchain/status','/api/onchain/identity','/api/onchain/wallet','/api/onchain/history','/api/onchain/tx','/api/swap-bridge/status','/api/mosaics','/api/mosaics/runtime','/api/chart-viewer/status','/api/credits/usage','/api/token-usage','/api/status','/api/settings','/api/settings/app-profiles','/api/security/wallets','/api/security/wallets/networks','/api/security/wallets/next-id','/api/security/wallets/export','/api/notifications','/api/notifications/settings','/api/transfers/history','/api/swap-bridge/history']);
 const LEGACY_SELF_WRITE=new Set(['/api/settings/supervisor/brains','/api/settings/test-x','/api/settings/test-openai','/api/transfers/preview','/api/swap-bridge/quote','/api/swap-bridge/prepare','/api/settings/test-zerox','/api/chat','/api/companion/chat','/api/chart-viewer/chat','/api/credits/pricing','/api/mosaics/create','/api/mosaics/delete','/api/settings/modulation','/api/app-settings/select','/api/notifications/test','/api/security/wallets/remove','/api/security/wallets/remove-key','/api/settings/language','/api/settings/general','/api/settings/profile/select','/api/settings/profile/save','/api/settings/power','/api/settings/ai','/api/settings/portfolio','/api/notifications/settings','/api/notifications/read','/api/security/wallets/create','/api/security/wallets/import','/api/security/wallets/reveal','/api/security/wallets/archive','/api/security/wallets/remove-secret']);
-function createHandler({sessions,origin,secret,bridge=null,aiTransport=null,personalSettings=null,readiness=()=>true}={}){
+function createHandler({sessions,origin,secret,bridge=null,aiTransport=null,personalSettings=null,tradingAdmin=null,readiness=()=>true}={}){
  const cookies=createBrowserSession({secret,origin});
  return async function handle(req,res,next){
   const u=new URL(req.url,'https://localhost'),p=u.pathname,token=cookies.parse(req);
@@ -47,6 +47,16 @@ function createHandler({sessions,origin,secret,bridge=null,aiTransport=null,pers
    const principal=token&&sessions.verifySession(token);
    if(!principal){if(p==='/api/bootstrap')return reply(res,200,{authenticated:false,localBypass:false});return reply(res,401,{error:'AUTH_REQUIRED'});}
    sessions.touch(token);
+   if(p==='/auth21/admin/trading/command'){
+    if(req.method!=='POST')return reply(res,405,{error:'METHOD_NOT_ALLOWED'});
+    if(!tradingAdmin)return reply(res,404,{error:'NOT_FOUND'});
+    if(principal.role!=='ADMIN')return reply(res,403,{error:'ACCESS_DENIED'});
+    // The existing cookie-origin and CSRF checks below are reproduced here before dispatch.
+    if(!cookies.validate(req,token))return reply(res,403,{error:'CSRF_FORBIDDEN'});
+    const input=await read(req);
+    const result=await tradingAdmin({token,payload:input});
+    return reply(res,result.status,result.body);
+   }
    if(p==='/auth21/capabilities'&&req.method==='GET')return reply(res,200,require('./capabilities').describe(principal.role));
    if(!['GET','HEAD'].includes(req.method)&&!cookies.validate(req,token)){sessions.audit(principal.clientId,'CSRF_REJECTED','DENIED');return reply(res,403,{error:'CSRF_FORBIDDEN'});}
    if(u.search&&!['/auth21/preferences'].includes(p)&&[...u.searchParams.keys()].some(k=>/client|owner|role|user/i.test(k)))return reply(res,400,{error:'IDENTITY_INPUT_FORBIDDEN'});
