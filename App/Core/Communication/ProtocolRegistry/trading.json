@@ -158,6 +158,24 @@
             "symbol"
           ]
         }
+      },
+      {
+        "name": "trading.admin.command",
+        "arguments": {
+          "allowed": [
+            "command",
+            "command_id",
+            "timestamp",
+            "confirmed"
+          ],
+          "required": [
+            "command",
+            "command_id",
+            "timestamp",
+            "confirmed"
+          ]
+        },
+        "description": "ADMIN maintenance contract; P3 fail-closed until Auth21-bound ADMIN authorization and P4/P5 handlers are enabled. Never authorize using CP1 machine token alone."
       }
     ],
     "dataTypes": [
