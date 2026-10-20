@@ -50,4 +50,33 @@ function createTradingAdminBridge({sessions,env=process.env,browserSessions=null
   });
  };
 }
-module.exports={createTradingAdminBridge};
+
+function createAuthenticatedDispatcher({sessions,env=process.env,port=8017}={}){
+ if(!sessions||typeof sessions.verifySession!=='function'||env.IATB_AUTH21_TRADING_ADMIN_BRIDGE!=='1')return null;
+ const codec=proofCodec({secret:loadTradingAdminKey({env})});
+ return async function dispatch({token,payload}={}){
+  const principal=token&&sessions.verifySession(token);
+  if(!principal||principal.role!=='ADMIN')return {status:403,body:{error:'ADMIN_PERMISSION_DENIED'}};
+  if(!payload||typeof payload!=='object'||Array.isArray(payload)||
+   Object.keys(payload).sort().join(',')!=='command,command_id,confirmed,timestamp')
+   return {status:400,body:{error:'ARGUMENTS_INVALID'}};
+  const proof=issueTradingAdminProof({sessions,token,codec,payload});
+  if(!proof)return {status:403,body:{error:'ADMIN_PERMISSION_DENIED'}};
+  const msg=CP.makeRequest('trading','trading.admin.command',{...payload,proof},'summary'),raw=Buffer.from(JSON.stringify(msg));
+  let machine;try{machine=CP.ensureSecret('');}catch(_){return {status:503,body:{error:'CP_SECRET_UNAVAILABLE'}};}
+  const signature=crypto.createHmac('sha256',machine).update(raw).digest('hex');
+  return await new Promise(resolve=>{
+    const q=http.request({hostname:'127.0.0.1',port,path:'/cp/v1',method:'POST',timeout:5000,agent:false,headers:{
+     'Content-Type':'application/json','Content-Length':raw.length,'X-IATB-CP-Token':machine,'X-IATB-FW-Signature':signature
+    }},response=>{
+      let n=0,parts=[];response.on('data',chunk=>{n+=chunk.length;if(n>32768){q.destroy();return;}parts.push(chunk);});
+      response.on('end',()=>{try{const out=JSON.parse(Buffer.concat(parts).toString('utf8'));resolve({status:[200,400,403,409,503].includes(response.statusCode)?response.statusCode:502,body:out});}catch(_){resolve({status:502,body:{error:'FIREWALL_RESPONSE_INVALID'}});}});
+    });
+    q.on('timeout',()=>q.destroy(Error('TIMEOUT')));
+    q.on('error',()=>resolve({status:502,body:{error:'TRADING_ADMIN_FIREWALL_UNAVAILABLE'}}));
+    q.end(raw);
+  });
+ };
+}
+
+module.exports={createTradingAdminBridge,createAuthenticatedDispatcher};
