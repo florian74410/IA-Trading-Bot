@@ -1,5 +1,21 @@
 # IA-TB v2.3 — Trading Engine 2.0 / Runtime & Health
 
+## Suivi P3 — Commandes ADMIN (2026-10-20)
+
+**P3 partiellement implémentée ; ne pas annoncer la commande de maintenance opérationnelle.**
+
+- [x] Contrôleur indépendant `trading_admin_controller_v2.js`, sans route publique/CP1, avec liste blanche `STATUS`, `START`, `RESTART`, `DRAINING_STOP`, `EMERGENCY_STOP`.
+- [x] Refus par défaut en absence d'un vérificateur de principal Auth21 ; un jeton de service CP/1, un header ou un champ `role` fournis par l'appelant ne valent pas identité ADMIN.
+- [x] Contrôles de commande : identifiant, horodatage récent, confirmation explicite ; transitions non implémentées donc **aucune exécution ni liquidation**.
+- [x] Test unitaire `tests/test_trading_admin_controller_v2.js` créé ; exécution différée selon consigne.
+- [ ] Raccorder à une vérification **réelle** Auth21 côté Core, avec permission d'opération et principal vérifié avant émission d'une capacité bornée à l'action, au compte et à une courte durée.
+- [ ] Définir le contrat CP/1 Routeur/Firewall et les autorisations dans ProtocolRegistry, puis brancher le contrôleur en refus par défaut.
+- [ ] Ajouter journal durable des actions ADMIN, protection anti-rejeu persistante, idempotence sous concurrence, audit sans données sensibles.
+- [ ] Activer les comportements `START/RESTART` uniquement après réconciliation confirmée (P4-P5 et test d'intégration).
+- [ ] P4 et P5 restent seuls responsables de l'exécution des séquences d'arrêt.
+
+**Pourquoi ce choix :** l'ingress Auth21 existant autorise certains messages machine par jeton CP/1 mais ne fournit pas au Trading Engine la preuve d'un rôle ADMIN vérifié. Connecter maintenant un arrêt ou un redémarrage à cette authentification machine créerait une faille de privilèges. 
+
 ## Suivi P2 — Health Monitor CP/1 (2026-10-20)
 
 **P2 code intégré, tests écrits, exécution différée selon décision du projet.**
