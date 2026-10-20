@@ -1,5 +1,21 @@
 # IA-TB v2.3 — Trading Engine 2.0 / Runtime & Health
 
+## P3.1 et P3.2 — Implémentation du 20 octobre 2026
+
+- [x] Point d'entrée `POST /auth21/admin/trading/command` monté dans le Core Auth21 isolé avec activation explicite `IATB_AUTH21_TRADING_ADMIN_BRIDGE=1`.
+- [x] Contrôle de session via `sessions.verifySession`, permission `admin.write`, CSRF pour le mode cookie, origine contrôlée, aucune confiance aux rôles envoyés dans la requête.
+- [x] Création côté Core d'une preuve Auth21 signée et liée aux paramètres exacts puis relais CP/1 vers le Firewall local (8017). Aucune clé secrète transmise au navigateur.
+- [x] Nouveau `auth21_trading_key_provider.js` : clé IPC **pré-provisionnée** de 32 octets, chemin absolu `IATB_AUTH21_TRADING_IPC_KEY_FILE`, propriétaire local et permissions 0600 ; refus si absente ou invalide. Pas de génération automatique.
+- [x] Vérificateur Engine et Firewall reconfigurés pour cette clé dédiée ; registres anti-rejeu propres aux deux processus préservés.
+- [x] Tests unitaires isolés exécutés sur Node v22.16.0 : émetteur avec session simulée, refus USER, confirmation manquante ou timestamp périmé ; fournisseur de clé, permissions, longueur. **PASS pour ces tests limités**.
+- [x] Test de contrat complet ajouté `tests/test_trading_admin_bridge_key_v2.js` ; **non exécuté** sur un checkout intégral.
+- [ ] La route n'est montée que par `openCoreAuthTrial` dans le mode Auth21 Core isolé actuel ; **non raccordée au mode authentifié normal GEN-1**.
+- [ ] Tester le flux vrai Core/Router/Firewall/Engine avec sessions, clés provisionnées, CSRF et signature CP/1, worker actif, payload et déploiement Mac local.
+- [ ] P3.3 : vérifier refus ADMIN lors de Firewall bypass, capacité expirée, coupure de service, preuve JTI rejouée, collisions et restart.
+- [ ] `START`, `DRAINING_STOP`, `EMERGENCY_STOP` ne produisent toujours aucune transition : P4/P5 et recette requises.
+
+**Cette réalisation est un début concret du pont Auth21 et du fournisseur de clés, pas une garantie de compatibilité immédiate avec la configuration Mac ou VPS. Aucun déploiement n'a été réalisé.**
+
 ## P3 — Émission Core et contrôle Firewall (code intégré, recette non effectuée)
 
 - [x] `Core/Clients/auth21_trading_admin_issuer.js` : émet une preuve HMAC courte durée **uniquement depuis une session vérifiée par `sessions.verifySession`** avec permission `admin.write`, portée `trading.admin.command` et empreinte du payload. Les rôles déclarés par le client ne sont pas acceptés.
