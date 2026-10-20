@@ -1,5 +1,19 @@
 # IA-TB v2.3 — Trading Engine 2.0 / Runtime & Health
 
+## Suivi P2 — Health Monitor CP/1 (2026-10-20)
+
+**P2 code intégré, tests écrits, exécution différée selon décision du projet.**
+
+- [x] `trading_health_monitor_v2.js` avec métriques instantanées (requêtes en cours, compteurs, latence de traitement, uptime, dernière exécution, dernière erreur anonymisée).
+- [x] État runtime P1, activation service et LIVE, état de persistance JSONL ; SQLite `NOT_INTEGRATED` jusqu'à fusion de la branche Logs.
+- [x] Disponibilité des brokers et nombres d'ordres exposés comme **inconnus / non vérifiés** plutôt que simulés ; CP/1 indiqué configuré mais disponibilité distante non vérifiée.
+- [x] Intégration au `GET /health` et à l'action `trading.health` CP/1 existants (aucune nouvelle permission créée).
+- [x] Tests unitaires ajoutés sous `tests/test_trading_health_monitor_v2.js`.
+- [ ] Tester localement le contrat et vérifier compatibilité des consommateurs existants de `trading.health`.
+- [ ] P3 : définir et autoriser l'endpoint ADMIN de diagnostic avancé avec Auth21 au backend ; ne jamais dévoiler de secrets API, noms de comptes utilisateurs ou informations sensibles dans le Health ordinaire.
+- [ ] En phase d'intégration, brancher comptage des ordres et tests actifs non destructifs de connectivité via les services habilités ; éviter les contrôles réseau synchrones à chaque requête Health.
+- [ ] L'état SQL, les logs formatés, les commandes ADMIN et les commandes d'arrêt sont hors périmètre P2.
+
 ## Suivi de réalisation — P1 (2026-10-20)
 
 **P1 — code présent sur la branche, tests automatisés écrits mais non exécutés. Ne pas déployer.**
