@@ -6,12 +6,9 @@ const crypto=require('node:crypto');
 const {proofCodec}=require('../../Core/Clients/auth21_ipc_proof');
 const {authorizeInterprocess}=require('../../Core/Clients/auth21_rbac_guard');
 function createVerifier({env=process.env,replayStore}={}){
- const {preflightEnv}=require('../../Core/Backup/auth21_core_local_trial_wiring');
- const {loadTrialSecret}=require('../../Core/Clients/auth21_ipc_keyfile');
- const {active}=require('../../Core/Clients/auth21_service_boundary');
- if(!active(env)||env.IATB_AUTH21_IPC_PROBE_TRIAL!=='1')return null;
- const {root}=preflightEnv(env);
- const secret=loadTrialSecret({env,root});
+ const {loadTradingAdminKey}=require('../../Core/Clients/auth21_trading_key_provider');
+ if(!env.IATB_AUTH21_TRADING_IPC_KEY_FILE)return null;
+ const secret=loadTradingAdminKey({env});
  const codec=proofCodec({secret,replayStore});
  return async function(context){
    const payload=context&&context.payload;
