@@ -1,3 +1,12 @@
+## P3.1 — Route native du Core authentifié normal (2026-10-20)
+
+- [x] Réutilisation de `UserManagement/runtime.js` : son `UserStore.sessions.verifySession` est le gestionnaire effectif lorsque `UM_CONFIG.enabled` (Core authentifié normal).
+- [x] `UserManagement/http.js` expose, sous feature flag `IATB_AUTH21_TRADING_ADMIN_BRIDGE=1`, le seul endpoint `POST /auth21/admin/trading/command`. La session cookie Auth21, origine autorisée, contrôles CSRF existants et rôle `ADMIN` sont obligatoires. `USER` et `GUEST` sont refusés.
+- [x] `auth21_trading_admin_bridge.js` possède maintenant `createAuthenticatedDispatcher` : émet la preuve sur le serveur Core via l'émetteur existant, puis transmet la commande à Firewall CP/1. Aucun champ de rôle, cookie ni jeton IPC venant du navigateur n'est accepté comme autorité.
+- [x] En mode non configuré, route absente ; clé IPC pré-provisionnée nécessaire si activation ; aucun changement de session, de migration de DB, des autres routes ou des autres services.
+- [ ] Valider localement le dispatch avec la vraie configuration Auth21 et la connexion au Firewall, ainsi que le comportement USER/GUEST, CSRF, rejouage et indisponibilité de service. Aucun ordre LIVE autorisé.
+- [ ] Ce pont routé n'active ni `START` ni `EMERGENCY_STOP` tant que les handlers P4/P5 ne sont pas codés.
+
 # IA-TB v2.3 — Trading Engine 2.0 / Runtime & Health
 
 ## P3.1 et P3.2 — Implémentation du 20 octobre 2026
