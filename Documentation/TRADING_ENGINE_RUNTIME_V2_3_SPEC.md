@@ -1,5 +1,18 @@
 # IA-TB v2.3 — Trading Engine 2.0 / Runtime & Health
 
+## P3 — Contrat CP/1, Firewall et anti-rejeu persistant (étape intermédiaire)
+
+- [x] Contrat `trading.admin.command` décrit dans `App/Core/Communication/ProtocolRegistry/trading.json` avec `command`, `command_id`, `timestamp`, `confirmed`.
+- [x] Firewall refuse l'action avec le code `ADMIN_AUTH21_BOUND_CAPABILITY_REQUIRED`, y compris en mode `OBSERVATION` ; impossible de contourner en désactivant la whitelist.
+- [x] Trading Engine reconnaît l'action mais la refuse lui-même via `validateArgs`, avant tout changement d'état.
+- [x] Module `trading_admin_ledger_v2.js` : SQLite WAL et `synchronous=FULL`, `command_id` UNIQUE, décision horodatée, empreinte de l'identité ADMIN (sans jeton brut), détection de replay après redémarrage.
+- [x] `TradingAdminController` utilise le ledger uniquement après une vérification ADMIN indépendante ; en absence de ledger ou de vérificateur, refus par défaut. Les opérations sont toujours `COMMAND_IMPLEMENTATION_PENDING`.
+- [x] Test ajouté : `node App/services/trading-engine/tests/test_trading_admin_p3_security.js`. Exécution à programmer pour la recette ; dépend de `better-sqlite3`.
+- [ ] Raccorder la vérification de permission Auth21 depuis Core au Trading Engine, sans déduire les droits du simple jeton machine CP/1.
+- [ ] Unifier le point d'entrée réel du ledger et la capacité Auth21 ; pour l'instant le controller n'est **pas** instancié par le service. Pas de commande administrative opérationnelle.
+- [ ] Ajouter sérialisation stricte des interventions, rétention du journal, confirmation persistante et revue de sécurité ; P4/P5 développeront les séquences.
+- [ ] Tests locaux d'intégration Router/Firewall/Engine, restart et charge concurrente avant tout déploiement.
+
 ## Suivi P3 — Commandes ADMIN (2026-10-20)
 
 **P3 partiellement implémentée ; ne pas annoncer la commande de maintenance opérationnelle.**
