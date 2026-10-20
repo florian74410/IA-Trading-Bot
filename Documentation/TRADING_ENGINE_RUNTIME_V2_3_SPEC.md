@@ -1,5 +1,22 @@
 # IA-TB v2.3 — Trading Engine 2.0 / Runtime & Health
 
+## Suivi de réalisation — P1 (2026-10-20)
+
+**P1 — code présent sur la branche, tests automatisés écrits mais non exécutés. Ne pas déployer.**
+
+- [x] Module `trading_runtime_state_v2.js`, persistance JSON atomique (temp + rename) dans le User Data séparé.
+- [x] États persistés `STOPPED`, `STARTING`, `RUNNING`, `DRAINING`, `DRAINING_BLOCKED`, `RECONCILING`, `EMERGENCY_HALTED`, `DEGRADED`, `ERROR`.
+- [x] Défaut sécurisé : première installation en `STOPPED` avec reprise ADMIN requise ; redémarrage inattendu d'un état actif vers `ERROR` sans reprise implicite.
+- [x] Intégration de la barrière runtime dans `trading_service.js` pour les actions mutantes et ajout d'un snapshot dans le health existant. Lecture CP/1 conservée.
+- [x] Interception des signaux de fermeture pour enregistrer le verrou d'arrêt local ; cette interception **n'annule pas et ne clôture aucune position**.
+- [x] Script de test du store et des redémarrages : `node App/services/trading-engine/tests/test_trading_runtime_state_v2.js`.
+- [ ] Exécuter les tests en local et analyser l'intégration au gestionnaire de processus, avec crash/permissions/arrêt et redémarrage du conteneur.
+- [ ] Valider la durabilité forte (fsync fichier/répertoire), les écritures simultanées et les droits d'accès avant déploiement.
+- [ ] P2 Health avancé et P3 commandes ADMIN nécessaires avant tout passage en `RUNNING`. Ne pas activer le LIVE.
+
+**Attention :** P1 ne constitue ni une liquidation `DRAINING_STOP`, ni un `EMERGENCY_STOP` opérationnel. Les états existent en tant que modèle, pas comme séquences de maintenance exposées. Les signaux système n'imitent pas `DRAINING_STOP`. La version R1 déployée est inchangée.
+
+
 **Statut : spécification validée, implémentation et tests locaux à venir.** Branche `feature/v2.3-runtime-trading-engine-2.0`, créée directement depuis v2.2.5-R1 (`39e78e76`). Aucun déploiement VPS, trading LIVE désactivé.
 
 ## Ordre de réalisation (impératif)
