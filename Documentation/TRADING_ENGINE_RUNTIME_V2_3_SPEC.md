@@ -1,5 +1,20 @@
 # IA-TB v2.3 — Trading Engine 2.0 / Runtime & Health
 
+## Complément P3 — raccordement dans le service et preuve Auth21
+
+- [x] `trading_service.js` instancie réellement `AdminCommandLedger` dans `trading_admin_actions.db` au même répertoire persistant que `trading_runtime_state.json`, puis construit le contrôleur ADMIN.
+- [x] `trading_auth21_admin_v2.js` utilise le **codec de preuve signé Auth21 existant** et le `auth21_rbac_guard` : audience `trading`, opération `admin.write`, méthode `POST`, action `trading.admin.command` et empreinte canonique CP/1 des paramètres.
+- [x] Le contrat `trading.admin.command` prévoit le champ `proof`, sans faire confiance à un champ `role` du navigateur ni à la seule authentification machine.
+- [x] Le dispatch Trading Engine appelle le contrôleur, après vérification du token machine, de la signature du Firewall et de la preuve Auth21. Le journal est réellement attaché, et non plus un module isolé.
+- [x] Test de preuve, refus des non-ADMIN et anti-rejeu : `tests/test_trading_admin_auth21_binding_v2.js` (**écrit, non exécuté**).
+- [ ] Le codec actuel ne se charge qu'en environnement **Auth21 trial local** disposant de la clé IPC propriétaire ; en environnement non configuré, le vérificateur reste absent et la commande refuse.
+- [ ] Relier le Core Auth21 et son `verifySession` à l'**émission de preuves** depuis une session ADMIN réelle, avec CSRF, confirmation explicite et politique d'action. Aucun émetteur public n'est activé par cette étape.
+- [ ] Remplacer le refus systématique du Firewall par une vérification d'une **capacité authentifiée, courte durée et spécifique**, avec anti-rejeu durable avant routage ; aujourd'hui le Firewall **rejette encore toutes les commandes ADMIN**.
+- [ ] Préparer le déploiement du même canal de preuve hors du mode trial avec secrets correctement provisionnés et permissions minimales ; ni contournement via headers ni activation implicite.
+- [ ] Qualifier intégration complète Auth21/Core → Router → Firewall → Trading Engine et erreurs disque/concurrence ; **aucune commande START/STOP n'est fonctionnelle**.
+
+**Sécurité :** la preuve cryptographique signée est bien vérifiée par le module raccordé au service, mais l'autorisation bout-en-bout depuis la session utilisateur n'est pas encore achevée. Ne pas annoncer une liaison Auth21 utilisateur complète.
+
 ## P3 — Contrat CP/1, Firewall et anti-rejeu persistant (étape intermédiaire)
 
 - [x] Contrat `trading.admin.command` décrit dans `App/Core/Communication/ProtocolRegistry/trading.json` avec `command`, `command_id`, `timestamp`, `confirmed`.
