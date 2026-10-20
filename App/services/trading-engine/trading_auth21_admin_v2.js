@@ -17,10 +17,10 @@ function createVerifier({env=process.env,replayStore}={}){
    const payload=context&&context.payload;
    const proof=context&&context.proof;
    if(!payload||typeof payload!=='object'||typeof proof!=='string')return null;
-   const operation=payload.command==='STATUS'?'admin.read':'admin.write';
+   const operation='admin.write'; // CP/1 maintenance route is POST, including STATUS.
    const action='trading.admin.command';
    const bodyDigest=require('../../Core/Communication/communication_protocol_v1').hashData(payload);
-   const access=authorizeInterprocess({codec,proof,audience:'trading',operation,method:operation==='admin.read'?'GET':'POST',action,bodyDigest});
+   const access=authorizeInterprocess({codec,proof,audience:'trading',operation,method:'POST',action,bodyDigest});
    return access.allowed?{verified:true,role:access.role,subject:access.clientId}:null;
  };
 }
