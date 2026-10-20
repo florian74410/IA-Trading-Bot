@@ -29,6 +29,7 @@
 - [🧠 Strategy Engine v2](Strategy-Engine.md)
 - [🛡️ Risk Engine](Risk-Engine.md)
 - [⚡ Trading Engine](Trading-Engine.md)
+- [🔁 Trading automatisé — architecture cible](Trading-Automatise.md)
 - [📊 Portfolio Engine](Portfolio.md)
 
 ### 🏦 Banque
