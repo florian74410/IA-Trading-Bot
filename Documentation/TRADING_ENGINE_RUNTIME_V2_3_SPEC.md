@@ -1,5 +1,19 @@
 # IA-TB v2.3 — Trading Engine 2.0 / Runtime & Health
 
+## P3 — Émission Core et contrôle Firewall (code intégré, recette non effectuée)
+
+- [x] `Core/Clients/auth21_trading_admin_issuer.js` : émet une preuve HMAC courte durée **uniquement depuis une session vérifiée par `sessions.verifySession`** avec permission `admin.write`, portée `trading.admin.command` et empreinte du payload. Les rôles déclarés par le client ne sont pas acceptés.
+- [x] `Core/Clients/auth21_trading_replay_v2.js` : stockage SQLite indépendant des JTI de preuve pour **Firewall** et **Trading Engine** afin que la vérification par le premier ne consomme pas la preuve au second.
+- [x] Firewall Coordinator : vérifie la signature et la preuve Auth21 avant inspection du worker ; le worker rejette les appels non certifiés même en mode observation ; refus absolu de maintenance en mode Firewall bypass.
+- [x] Engine : conserve sa propre vérification Auth21, signature de forwarding et journal des commandes.
+- [x] Tests de principe ajoutés : `test_trading_admin_core_firewall_v2.js` (non exécuté).
+- [ ] **Raccordement du point d'entrée Core/Gateway à une session navigateur ADMIN réelle** : l'émetteur est une fonction serveur, pas encore une route utilisateur disponible. Prévoir contrôle CSRF, confirmation UI, permissions d'action et émission depuis un Core authentifié.
+- [ ] **Rendre disponible la preuve dans le mode Auth21 réellement déployé** : le vérificateur actuel emploie `loadTrialSecret`, limité au mode d'essai local. Ce mode d'isolation Auth21 refuse par ailleurs l'ingress CP/1 ordinaire. L'ensemble du chemin n'est donc **pas encore validé bout-en-bout**.
+- [ ] Vérifier les tests et l'intégration réelle (worker threads, Router, Firewall, Engine), la topologie des clés IPC et les chemins persistants multiutilisateurs.
+- [ ] Ajouter des garde-fous sur la durée de session et les capacités d'opération avant d'activer START/STOP ; P4/P5 restent désactivées.
+
+**Ne pas déclarer P3 terminée ni autoriser de maintenance en production avant ces raccordements et tests.** Le VPS v2.2.5-R1 n'a pas été modifié.
+
 ## Complément P3 — raccordement dans le service et preuve Auth21
 
 - [x] `trading_service.js` instancie réellement `AdminCommandLedger` dans `trading_admin_actions.db` au même répertoire persistant que `trading_runtime_state.json`, puis construit le contrôleur ADMIN.
