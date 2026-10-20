@@ -4,6 +4,31 @@
 
 # 🗺️ ROADMAP — IA Trading Bot
 
+## IA-TB v2.3 — Trading Engine 2.0 (développement local, non livré)
+
+**Branche :** `feature/v2.3-trading-engine-2.0`. Base documentaire et code issus de R1 ; pas de déploiement VPS. Le Trading Engine LIVE demeure désactivé.
+
+### Lot 1 — Journaux Trading Engine V2 : JSONL + SQLite WAL
+
+- [x] Créer `trading_logs_v2.js` et base locale `trading_logs.db` SQLite WAL ; écriture parallèle en conservant `trading_history.jsonl` et la méthode legacy `list()`.
+- [x] Ajouter une lecture SQLite filtrable ainsi qu'un formatter d'événements utilisable par une future UI.
+- [x] Ajouter un test automatisé de coexistence JSONL/SQLite, persistance après réouverture et formatage (test ajouté, **exécution locale à confirmer**).
+- [ ] Exécuter la qualification Node locale et contrôler l'emplacement persistant du journal dans le contexte runtime ; vérifier les permissions, les erreurs disque et la reprise après interruption.
+- [ ] Garantir une convergence réparable si le JSONL est écrit et SQLite échoue ; importer les lignes historiques lors de la migration avec déduplication stable.
+- [ ] Vérifier masquage des secrets dans **les deux** sorties, gestion de rétention, redaction d'informations sensibles et isolation multiutilisateur.
+- [ ] Identifier toutes les dépendances JSONL (services, UI, scripts, exports, snapshots) ; basculer les consommateurs progressivement sur SQLite, avec tests de non-régression.
+- [ ] Supprimer le composant JSONL v1 **uniquement** quand plus aucune dépendance n'en a besoin et après validation de migration/récupération.
+
+### Lots suivants (non commencés)
+
+- [ ] Extensibilité adaptateurs brokers : conformité, capacités réelles.
+- [ ] `SecretProvider` vers coffre API à permissions minimales.
+- [ ] Service Trading Engine autonome, supervision et ADMIN uniquement.
+- [ ] Réconciliation/ordres partiels et idempotence persistante ; périmètres Risk/Firewall/Engine.
+- [ ] Chaîne commune Strategy/Direct AI selon documentation Trading automatisé.
+- [ ] Migration `snake_case` globale à une itération dédiée, après audit des références.
+
+
 ## Architecture Trading Engine — décisions de conception (2026-10-20, à réaliser lors d'une future itération)
 
 **Statut : décisions documentées uniquement, aucun changement runtime ; essais locaux avant intégration et VPS inchangé.**
