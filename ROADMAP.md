@@ -4,6 +4,20 @@
 
 # 🗺️ ROADMAP — IA Trading Bot
 
+## Architecture Trading Engine — décisions de conception (2026-10-20, à réaliser lors d'une future itération)
+
+**Statut : décisions documentées uniquement, aucun changement runtime ; essais locaux avant intégration et VPS inchangé.**
+
+- [ ] **Convention globale snake_case** : normaliser progressivement les noms de fichiers et dossiers du programme utilisant des tirets vers `_` lors d'une future itération ; inventorier et corriger tous les `require/import`, chemins, manifests, scripts, Compose, CI, tests et liens de documentation ; conserver les contrats/API externes inchangés. Réaliser la migration de manière atomique avec tests de non-régression et de déploiement local.
+- [ ] Trading Engine extensible : préserver l'architecture **déjà existante** par `exchange_adapters/<broker>/executor.js`, `capabilities.json`, catalogue `executor_catalog.json` et `registry.js` ; ajouter des tests contractuels obligatoires par broker (la contrainte de tests systématiques est nouvelle).
+- [ ] Journal d'exécution local V2 : faire évoluer le module `history-store.js` en nouveau module versionné `trading_logs_v2.js` (nom final à confirmer selon migration snake_case), remplacer/faire migrer le journal JSONL vers une DB **`trading_logs.db` SQLite WAL**, stocker événements bruts structurés, identifiants corrélés, transitions, erreurs et timestamps, et ajouter un **formatter** de lecture pour affichage lisible non brut. Garder le périmètre local au Trading Engine ; intégrations Portfolio et audit transverse à décider ultérieurement.
+- [ ] Intégrer le SecretProvider au coffre API existant via un accès minimal et borné par utilisateur, compte, exchange, opération et durée ; aucune clé dans CP/1 ou dans les journaux ; viser une implémentation légère et testable.
+- [ ] Trading Engine autonome, supervisé, désactivable/redémarrable exclusivement par ADMIN ; arrêt propre avec sauvegarde des états ; trading LIVE interdit tant que la qualification complète manque.
+- [ ] Fiabilité de l'exécution : suivi des exécutions partielles, confirmations, reprise et réconciliation broker, persistance des identifiants d'ordres et prévention des réémissions après timeout/redémarrage ; définir l'unique propriétaire du contrôle anti-double **ordre métier** pour éviter toute double analyse coûteuse, tout en maintenant au Firewall son filtre de sécurité CP/1 et en garantissant l'idempotence à l'exécution.
+- [ ] Chaîne de référence commune Strategy/Direct AI (futur) : **Supervisor → Router → Risk → Router → Trading Firewall → Trading Engine → Broker**, puis événements normalisés vers Portfolio. Aucun contournement de Risk ou Firewall. Voir [Trading automatisé](Documentation/wiki/Trading-Automatise.md).
+- [ ] GMX : reporter le signataire Wallet/EIP-712 et le suivi des transactions à l'itération WalletConnect/wallet ; aucun accès libre aux clés privées.
+
+
 ## IA-TB v2.2.5 — Correctif unifié (PR #18 ; développement terminé, recette GEN-1 en attente)
 
 **Branche de livraison :** `feature/v2.2.5-calendar-events-chart`. **Périmètre :** Vue d'ensemble Fundamental, globe compact réaliste et globe agrandi, événements économiques FED/CME, marqueurs sur Trading IA, paramètres de visibilité. `v2.2.4` reste déployée ; ni Trading Engine ni trading réel n'est activé.
