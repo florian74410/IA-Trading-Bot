@@ -4,7 +4,7 @@
    Mutating CP requests are accepted only when forwarded by the Trading Firewall.
 */
 var http=require('http'),path=require('path'),crypto=require('crypto');
-var CP=require('../../Core/Communication/communication_protocol_v1'),CPClient=require('../../Core/Communication/cp1_client'),Trading=require('./trading-engine'),Registry=require('./registry'),Http=require('./http-transport'),Secrets=require('./secret-provider'),History=require('./history-store'),BUILD=require('../../Core/Shared/build_info');
+var CP=require('../../Core/Communication/communication_protocol_v1'),CPClient=require('../../Core/Communication/cp1_client'),Trading=require('./trading-engine'),Registry=require('./registry'),Http=require('./http-transport'),Secrets=require('./secret-provider'),History=require('./trading_logs_v2').TradingLogsV2,BUILD=require('../../Core/Shared/build_info');
 var HOST='127.0.0.1',PORT=+(process.env.IATB_TRADING_ENGINE_PORT||8016),ROUTER_PORT=+(process.env.ROUTER_PORT||8021),VERSION=BUILD.version;
 var LIVE=String(process.env.IATB_TRADING_LIVE||'0')==='1',SERVICE_ENABLED=String(process.env.IATB_TRADING_ENGINE_ENABLED||'1')!=='0',ROOT=path.resolve(__dirname,'../..'),CP_CLIENT=new CPClient({root:path.resolve(__dirname,'../..'),routerPort:ROUTER_PORT,timeout:5000,maxBytes:1024*1024});
 var AUTH21_TRADING_SNAPSHOT=process.env.IATB_AUTH21_LOCAL_SNAPSHOT_TRIAL==='1'?require('../../Core/Backup/auth21_engine_snapshot_trial').openEngineSnapshotTrial({env:process.env,engine:'trading'}).gate:null;
