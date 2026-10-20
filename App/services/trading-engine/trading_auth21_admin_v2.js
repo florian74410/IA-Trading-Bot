@@ -19,7 +19,7 @@ function createVerifier({env=process.env,replayStore}={}){
    if(!payload||typeof payload!=='object'||typeof proof!=='string')return null;
    const operation=payload.command==='STATUS'?'admin.read':'admin.write';
    const action='trading.admin.command';
-   const bodyDigest=crypto.createHash('sha256').update(JSON.stringify(payload)).digest('hex');
+   const bodyDigest=require('../../Core/Communication/communication_protocol_v1').hashData(payload);
    const access=authorizeInterprocess({codec,proof,audience:'trading',operation,method:operation==='admin.read'?'GET':'POST',action,bodyDigest});
    return access.allowed?{verified:true,role:access.role,subject:access.clientId}:null;
  };
