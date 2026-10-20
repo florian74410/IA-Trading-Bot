@@ -18,5 +18,7 @@ assert.equal(receiver.verify(proof,{audience:'trading',operation:'admin.write',m
 const firewall=new TradingFirewall({getConfig:()=>({...defaults(),enabled:false,mode:'OBSERVATION'}),audit:()=>{}});
 const msg={action:'trading.admin.command',timestamp:Date.now(),request_id:'admin-001',arguments:{...payload,proof}};
 assert.equal(firewall.inspect(msg,{cpAuthenticated:true,signatureValid:true,adminProofVerified:false}).ok,false);
-assert.equal(firewall.inspect(msg,{cpAuthenticated:true,signatureValid:true,adminProofVerified:true}).ok,true);
+assert.equal(firewall.inspect(msg,{cpAuthenticated:true,signatureValid:true,adminProofVerified:true}).ok,false,'disabled firewall must deny');
+const active=new TradingFirewall({getConfig:()=>({...defaults(),enabled:true,mode:'OBSERVATION'}),audit:()=>{}});
+assert.equal(active.inspect(msg,{cpAuthenticated:true,signatureValid:true,adminProofVerified:true}).ok,true);
 console.log('PASS Core Auth21 issuer and Firewall guarded maintenance path');
