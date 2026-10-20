@@ -8,7 +8,7 @@ class TradingAdminController {
    if(!lifecycle||typeof lifecycle.snapshot!=='function')throw Error('LIFECYCLE_REQUIRED');
    this.lifecycle=lifecycle;this.verifyPrincipal=verifyPrincipal;this.now=now;
    this.journalFile=journalFile||path.join(path.dirname(lifecycle.file),'trading_admin_actions.jsonl');
-   this.seen=new Map();
+   this.ledger=arguments[0]&&arguments[0].ledger||null;
  }
  async command(input={},context={}){
    const command=String(input.command||'').toUpperCase();
@@ -27,6 +27,10 @@ class TradingAdminController {
    if(!Number.isSafeInteger(timestamp)||Math.abs(this.now()-timestamp)>60000)return {ok:false,error:'COMMAND_EXPIRED'};
    // P4/P5 and the Auth21 binding must precede any mutation of the lifecycle state.
    // We record no claim of execution at this stage.
+   if(!this.ledger)return {ok:false,error:'ADMIN_LEDGER_NOT_CONFIGURED'};
+   const fingerprint=crypto.createHash('sha256').update(JSON.stringify({command,id,timestamp,subject:String(identity.subject)})).digest('hex');
+   let record;try{record=this.ledger.record({command_id:id,command,actor:identity.subject,fingerprint,decision:'NOT_IMPLEMENTED',detail:'P3_SAFE_NOOP'});}catch(e){return {ok:false,error:'ADMIN_LEDGER_UNAVAILABLE'};}
+   if(!record.ok)return {ok:false,error:record.error};
    return {ok:false,error:'COMMAND_IMPLEMENTATION_PENDING',command};
  }
 }
