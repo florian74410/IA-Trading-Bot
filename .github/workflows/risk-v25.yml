@@ -1,9 +1,9 @@
 name: IA-TB 2.5 Risk R1 R2 targeted validation
 on:
   push:
-    branches: ['2.5', '2.5.1']
+    branches: ['2.5', '2.5.1', '2.5.2']
   pull_request:
-    branches: ['2.5', '2.5.1']
+    branches: ['2.5', '2.5.1', '2.5.2']
 permissions:
   contents: read
 jobs:

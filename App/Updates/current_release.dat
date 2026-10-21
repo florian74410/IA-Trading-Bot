@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "application": "IA-Trading-Bot",
-  "version": "2.5.1",
+  "version": "2.5.2",
   "server": "Core/Server/server.js",
   "ui": "UI/Gateway/ui_service.js",
   "uiPort": 8000,

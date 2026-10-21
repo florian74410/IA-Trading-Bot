@@ -1,4 +1,4 @@
-> **Consolidation en cours : `2.5.1` — 2.5.1 DEV**, issue de `2.5`. Aucun déploiement ni promotion stable. Voir [le rapport](../Consolidation/2.5.1-DEV.md).
+> **Consolidation en cours : `2.5.2` — 2.5.2 DEV**, issue de `2.5.1`. Aucun déploiement ni promotion stable. Voir [le rapport](../Consolidation/2.5.2-DEV.md).
 
 > **Branche de référence : `2.5` — 2.5.0 DEV.** Dérivée du nettoyage `2.4.2-R1`. Aucun déploiement GEN-1, aucune promotion stable. La recette Auth21 et les données R2 par utilisateur restent à valider.
 

@@ -1,3 +1,12 @@
+# Ancien Update Manager — archive fonctionnelle
+
+Les interfaces et services de création/installation de patchs décrits ci-dessous
+ont été retirés en **2.5.2 DEV**. Ce document décrit leur fonctionnement
+historique et ne constitue plus une procédure utilisable. Le launcher conserve
+ses fonctions indépendantes de récupération et ses historiques.
+
+---
+
 # ⬆️ Update Manager
 
 > **🟢 En simple : Update Manager empêche d’appliquer aveuglément un patch construit pour une autre version et protège les données utilisateur pendant la mise à jour.**

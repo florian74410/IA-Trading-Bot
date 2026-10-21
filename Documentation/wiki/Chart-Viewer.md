@@ -99,3 +99,15 @@ Le dashboard actuel prévoit notamment :
 - état des services.
 
 Les modules sont séparés des chandeliers afin de ne pas mélanger données de marché et données applicatives.
+
+## Consolidation 2.5.2 DEV
+
+La barre d’outils reste disponible en mode Agrandir, sous la navigation. Le
+bouton PNG et le bandeau Événements à venir sont supprimés. « 📅 Événements »
+affiche ou masque immédiatement les lignes et badges natifs ; la préférence
+Auth21 existante `chart/chartEconomicEvents` est enregistrée pour le compte.
+Les instants UTC exacts, couleurs FED/CME, fuseaux, regroupements, infobulles
+et coordonnées des dessins restent conservés. Les événements sans heure
+officielle ne reçoivent pas de ligne exacte.
+
+Le widget isolé `/chart-viewer` reste distinct : aucun accès à son DOM interne.

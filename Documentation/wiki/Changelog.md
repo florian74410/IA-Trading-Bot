@@ -1,3 +1,12 @@
+## 2.5.2 DEV — consolidation UI et pont ADMIN P3
+
+- Barre ChartViewer conservée en mode Agrandir, vérification responsive.
+- Capture PNG et bandeau Événements à venir retirés ; toggle de la préférence Auth21 existante.
+- Project Explorer et ancien générateur/installateur de patchs retirés côté UI/Core.
+- Préflight de clé IPC, diagnostic ADMIN réel attesté et journalisation durable de STATUS.
+- Mutations P4/P5 et LIVE toujours désactivés ; aucun déploiement ou classement stable.
+- [Rapport et recette](../Consolidation/2.5.2-DEV.md).
+
 ## 2.5.1 DEV — consolidation ChartViewer
 
 - Repères économiques UTC exacts, lignes pointillées translucides et badges interactifs : CME cyan, FED jaune-orangé, Finance Calendar distinct.

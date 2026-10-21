@@ -1,0 +1,10 @@
+{
+  "App/Core/Clients/UserManagement/runtime.js": {
+    "baseline": "c169a15d6d94db0d1830a49007cd97646f5306d03cee92915b5459918667019d",
+    "reviewed": "bdbb01311c309420c4db3e5a11ac3ccb39fe2ed658bba337f8dda15654ca673d"
+  },
+  "App/Core/Firewall/firewall_service.js": {
+    "baseline": "b0f4f447338d010f4222912b5006dbecf3d9642d25736891ef05b6d0f5f9d119",
+    "reviewed": "c30902cc8c966138260e0aeaebf026cc85b7d271e63b288bac07bb1117e8e30a"
+  }
+}

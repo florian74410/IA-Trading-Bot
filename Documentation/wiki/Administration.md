@@ -1,6 +1,6 @@
-# 🛠️ Administration — Manuel V2.0 DEBUG
+# 🛠️ Administration — 2.5.2 DEV
 
-> **🟢 En simple : Admin est le tableau de bord technique d’IA-TB. Il sert à voir les services, les logs, le Firewall, les diagnostics, les mises à jour et l’arborescence du projet. Ce n’est pas la page normale de trading.**
+> **🟢 En simple : Admin est le tableau de bord technique d’IA-TB. Il sert à voir les services, les logs, le Firewall, les diagnostics et le pont ADMIN P3. Ce n’est pas la page normale de trading.**
 
 > **Accès restreint.** Ne jamais placer de clé API, secret, passphrase, token, mot de passe ou private key dans un log ou une commande de diagnostic.
 
@@ -16,9 +16,7 @@ Sections actuelles :
 - Processus ;
 - Engines & Services ;
 - Maintenance ;
-- Diagnostics ;
-- Mises à jour ;
-- Project Explorer.
+- Diagnostics.
 
 L’ancienne navigation Admin a été conservée pour garder sa densité et ses raccourcis propres à l’exploitation.
 
@@ -110,24 +108,20 @@ Les routes `/firewall-admin/**` sont protégées par la permission ADMIN côté 
 
 ---
 
-## 🌲 Project Explorer
+## Maintenance et diagnostic P3
 
-**🟢 En simple : Admin peut explorer le projet en lecture sans donner au navigateur un accès arbitraire au disque.**
+Le bouton « Vérifier le pont ADMIN » soumet `STATUS` par la session Auth21
+ADMIN avec CSRF. `READY` exige la réponse attestée du Trading Engine après
+contrôle indépendant du Firewall et écriture dans le journal durable.
+La simple présence d’une clé ne produit jamais `READY`.
 
-Le UI Service expose :
-- arbre projet ;
-- preview de fichier ;
-- validation du chemin demandé.
+Les mutations START, RESTART, DRAINING_STOP et EMERGENCY_STOP restent
+`COMMAND_IMPLEMENTATION_PENDING` jusqu’à qualification P4/P5. LIVE reste à 0.
+Voir [les étapes et la recette P3](../Consolidation/2.5.2-DEV.md).
 
-L’objectif est le diagnostic, pas un éditeur de fichiers générique.
-
----
-
-## ⬆️ Update Manager
-
-**🟢 En simple : une mise à jour doit connaître sa version source et vérifier son intégrité avant d’être appliquée.**
-
-Admin intègre la vue Update Manager. Voir [Update Manager](Update-Manager.md) et [Versionnage](Versioning-and-Releases.md).
+Project Explorer, son arbre et son aperçu, ainsi que l’ancien générateur et
+installateur de patchs ont été retirés du front et du back. Les mécanismes
+indépendants de récupération du launcher et les historiques restent conservés.
 
 ---
 
@@ -154,6 +148,6 @@ Le démarrage crée `.runtime/logs` et remet en place les fichiers nécessaires.
 
 **🟢 En simple : lorsque l’authentification UI est active, Admin exige un rôle administratif.**
 
-Le UI Service autorise `/admin` et `/admin/vaults` uniquement avec rôle ADMIN/SUPERADMIN selon la configuration.
-
-Le build DEBUG local peut lancer l’UI avec authentification désactivée et un rôle de bypass SUPERADMIN. Ce mode est adapté au développement local, pas à une exposition publique.
+En mode Auth21 authentifié, `/admin` et ses opérations exigent une session
+ADMIN validée côté serveur. Aucun rôle fourni par le navigateur ni token
+machine CP/1 ne vaut identité ADMIN. Ne pas utiliser de bypass pour la recette.

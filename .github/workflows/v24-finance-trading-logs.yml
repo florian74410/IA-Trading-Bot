@@ -1,7 +1,7 @@
 name: IA-TB 2.4 source integrity and full integration
 on:
   push:
-    branches: [integration/v2.4-finance-calendar-trading-logs, feature/v2.4-finance-calendar, feature/v2.4.1-bank-calendar-cp1, 2.4.2-R1, '2.5', '2.5.1']
+    branches: [integration/v2.4-finance-calendar-trading-logs, feature/v2.4-finance-calendar, feature/v2.4.1-bank-calendar-cp1, 2.4.2-R1, '2.5', '2.5.1', '2.5.2']
   pull_request:
     branches: [feature/v2.4-finance-calendar]
 permissions:

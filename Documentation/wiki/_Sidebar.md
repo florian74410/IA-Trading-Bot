@@ -46,7 +46,7 @@
 ### 🛠️ Exploitation
 
 - [🛠️ Administration](Administration.md)
-- [⬆️ Update Manager](Update-Manager.md)
+- [Ancien Update Manager (historique)](Update-Manager.md)
 - [🏷️ Versions / Releases](Versioning-and-Releases.md)
 - [🧾 Changelog](Changelog.md)
 - [🩺 Dépannage](Troubleshooting.md)

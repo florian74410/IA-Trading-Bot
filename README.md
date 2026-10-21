@@ -1,7 +1,9 @@
-# IA-Trading-Bot — 2.4.2-R1 DEV
+# IA-Trading-Bot — 2.5.2 DEV
 
-Source de développement issue de la 2.4.1 validée. Cette révision nettoie la
-copie source sans promouvoir une release stable ni modifier GEN-1.
+Branche de consolidation `2.5.2` issue de `2.5.1`. Les nettoyages de
+`2.4.2-R1` sont conservés. Aucun déploiement GEN-1 ni promotion stable.
+
+[Correctifs, qualification et recette locale 2.5.2](Documentation/Consolidation/2.5.2-DEV.md).
 
 - [Bilan et plan du nettoyage](Documentation/Cleanup/2.4.2-R1/REVIEW.md)
 - [Inventaire fichier par fichier](Documentation/Cleanup/2.4.2-R1/INVENTORY.tsv)
