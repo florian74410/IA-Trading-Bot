@@ -13,6 +13,7 @@ var CP=require('../../Core/Communication/communication_protocol_v1');
 var CPClient=require('../../Core/Communication/cp1_client');
 var Risk=require('./risk_engine');
 var RiskGate=require('./risk_gate').RiskGate;
+var RM=require('./risk_management_modules_v2_5');
 var SettingsStore=require('../../Core/Settings/sqlite_settings_store');
 var BUILD=require('../../Core/Shared/build_info');
 
@@ -26,8 +27,8 @@ var SETTINGS_DB=new SettingsStore(APP_ROOT);
 var CP_CLIENT=new CPClient({root:APP_ROOT,routerPort:ROUTER_PORT,timeout:12000,maxBytes:4*1024*1024});
 var RISK_GATE=new RiskGate({secret:CP.ensureSecret(APP_ROOT),getSettings:riskSettings,ttlMs:30000});
 var DEFAULT_SETTINGS={enabled:true,defaultTimeframe:'1h',marketSamples:500,thresholds:{capitalRiskWarningPct:3,grossExposureWarningPct:100,leverageWarning:5,volatilityWarningPct:100,drawdownWarningPct:20,var95WarningPct:5},scoreWeights:{capitalAtRisk:8,grossExposure:0.20,leverage:5,volatility:0.20,drawdown:0.50}};
-function riskSettings(){var x=SETTINGS_DB.get('risk','settings',null)||{};var o=JSON.parse(JSON.stringify(DEFAULT_SETTINGS));Object.keys(x).forEach(function(k){if(k==='thresholds'||k==='scoreWeights')Object.assign(o[k],x[k]||{});else o[k]=x[k];});return o;}
-function saveRiskSettings(patch){var o=riskSettings();patch=patch||{};if(typeof patch.enabled==='boolean')o.enabled=patch.enabled;if(patch.defaultTimeframe)o.defaultTimeframe=String(patch.defaultTimeframe);if(+patch.marketSamples>=50&&+patch.marketSamples<=2000)o.marketSamples=Math.round(+patch.marketSamples);if(patch.thresholds)Object.keys(o.thresholds).forEach(function(k){if(isFinite(+patch.thresholds[k]))o.thresholds[k]=+patch.thresholds[k];});SETTINGS_DB.set('risk','settings',o);return o;}
+function riskSettings(){var x=SETTINGS_DB.get('risk','settings',null)||{};var o=JSON.parse(JSON.stringify(DEFAULT_SETTINGS));Object.keys(x).forEach(function(k){if(k==='thresholds'||k==='scoreWeights')Object.assign(o[k],x[k]||{});else o[k]=x[k];});o.management=RM.settings(o.management);return o;}
+function saveRiskSettings(patch){var o=riskSettings();patch=patch||{};if(typeof patch.enabled==='boolean')o.enabled=patch.enabled;if(patch.defaultTimeframe)o.defaultTimeframe=String(patch.defaultTimeframe);if(+patch.marketSamples>=50&&+patch.marketSamples<=2000)o.marketSamples=Math.round(+patch.marketSamples);if(patch.thresholds)Object.keys(o.thresholds).forEach(function(k){if(isFinite(+patch.thresholds[k]))o.thresholds[k]=+patch.thresholds[k];});if(patch.management&&typeof patch.management==='object'){var m=patch.management;var clean=RM.settings(o.management);if(typeof m.enabled==='boolean')clean.enabled=m.enabled;if(typeof m.autoSuggestions==='boolean')clean.autoSuggestions=m.autoSuggestions;if(Object.prototype.hasOwnProperty.call(RM.LEVELS,m.riskLevel))clean.riskLevel=m.riskLevel;['r1','r2'].forEach(function(k){if(m[k]&&typeof m[k]==='object')Object.keys(clean[k]).forEach(function(z){if(typeof m[k][z]==='boolean')clean[k][z]=m[k][z];});});o.management=clean;}SETTINGS_DB.set('risk','settings',o);return o;}
 
 var CAPABILITIES=[
   'risk.list_capabilities',
@@ -37,6 +38,8 @@ var CAPABILITIES=[
   'risk.snapshot',
   'risk.settings.get',
   'risk.settings.set',
+  'risk.r1.evaluate',
+  'risk.r2.snapshot',
   'risk.gate.evaluate',
   'risk.gate.verify'
 ];
@@ -137,6 +140,8 @@ function buildAnalysis(args,detail,cb){
 }
 function cpAction(m,cb){
   var a=m.arguments||{};
+  if(m.action==='risk.r1.evaluate')return cb(null,RM.r1(a.intent||{},a.account||{},riskSettings().management));
+  if(m.action==='risk.r2.snapshot')return cb(null,RM.r2(a.snapshot||{},riskSettings().management));
   if(m.action==='risk.gate.evaluate'){try{return cb(null,RISK_GATE.evaluate(a.intent||a));}catch(e){return cb(e);}}
   if(m.action==='risk.gate.verify'){try{return cb(null,RISK_GATE.verify(a.risk_approval_id,a.intent||{},a.consume===true));}catch(e){return cb(e);}}
   if(m.action==='risk.settings.get')return cb(null,{schema:'risk.settings/1.0',settings:riskSettings(),storage:SETTINGS_DB.status()});
