@@ -1,3 +1,19 @@
+## 🧪 État 2.4.0 DEV — avant recette locale
+
+> **🟢 En simple :** la nouvelle collecte JSON Finance Calendar et la journalisation Trading V2 sont intégrées et testées en CI, mais pas encore qualifiées dans un navigateur sur Macro.
+
+- [x] Finance Calendar : provider JSON, provenance/attribution, UI à liste défilante, conservation du calendrier FED.
+- [x] Trading Logs V2 : JSONL autoritaire, miroir SQLite WAL, rejeu borné et idempotent, expurgation des nouvelles écritures.
+- [x] PR #21 fusionnée dans `feature/v2.4-finance-calendar` ; **566 tests CI réussis** rapportés.
+- [ ] Vérifier l'accès réel à l'API Finance Calendar depuis Macro et la correspondance des dates et champs.
+- [ ] Vérifier Auth21 ADMIN, CP/1, Firewall, affichage, scroll et `health.executionLogs` sur `https://localhost:8000`.
+- [ ] Étendre la navigation temporelle et la pagination des événements au-delà de la fenêtre courante, après recette.
+- [ ] Promotion stable et déploiement VPS séparés, non autorisés à ce stade.
+
+Ce suivi Wiki est informatif : **le registre officiel reste [ROADMAP.md](https://github.com/florian74410/IA-Trading-Bot/blob/feature/v2.4-finance-calendar/ROADMAP.md)**.
+
+---
+
 # 🗺️ Roadmap — lecture V2.0 DEBUG
 
 > **🟢 En simple : la branche `debug` a dépassé plusieurs étapes encore décrites comme futures dans l’ancien Wiki. Strategy Engine v2 et IA Supervisor sont maintenant actifs ; Market Data V2 centralise CoinGecko/DeFiLlama ; la Banque est multi-chain. Cette page décrit les prochains écarts techniques observés sans remplacer le `ROADMAP.md` racine comme registre officiel de planification.**
