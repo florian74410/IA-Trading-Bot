@@ -121,7 +121,7 @@
    button.setAttribute('aria-label',group.events.map(function(e){return cal.details(e,self.timeZone)}).join('\n\n'));button.title=group.events.map(function(e){return e.label}).join(' · ');button.style.borderColor=cal.color(sources[0]);
    var width=Math.min(230,g.cw),left=clamp(x-8,g.L,g.L+g.cw-width),lane=laneEnds.findIndex(function(end){return end+5<left});
    if(lane<0)lane=laneEnds.indexOf(Math.min.apply(Math,laneEnds));laneEnds[lane]=left+width;
-   button.style.left=left+'px';button.style.top=(g.priceTop+3+lane*24)+'px';button.style.maxWidth=width+'px';button.style.zIndex=String(1+lane);
+   button.style.left=left+'px';button.style.top=(g.priceTop+28+lane*24)+'px';button.style.maxWidth=width+'px';button.style.zIndex=String(1+lane);
   });
   if(this.activeEconomicGroup){var active=groups.get(this.activeEconomicGroup);if(active)this.showEconomicTooltip(active);else this.hideEconomicTooltip()}
  };
