@@ -6,7 +6,6 @@
   <meta name="referrer" content="no-referrer">
   <title>IA-TB · Admin</title>
   <link rel="stylesheet" href="/assets/admin_v1.0.css">
-  <link rel="stylesheet" href="/assets/project_explorer_v2.0.css">
   
 
 <link rel="stylesheet" href="/assets/global_navigation_v2.0.css?v=2013"><script defer src="/assets/global_navigation_v2.0.js?v=3021"></script></head>
@@ -26,7 +25,6 @@
         <button class="sideLink" type="button" data-target="maintenance"><span class="sideIcon toolsIcon">⌁</span><span><b>Maintenance</b><small>Actions administrateur</small></span></button>
         <button class="sideLink" type="button" data-target="diagnostics"><span class="sideIcon diagIcon">⌁</span><span><b>Diagnostics</b><small>Santé de la machine</small></span></button>
         <button class="sideLink" type="button" data-target="updates"><span class="sideIcon updateIcon">⇩</span><span><b>Mises à jour</b><small>Update Manager</small></span></button>
-        <button class="sideLink" type="button" data-target="project-explorer"><span class="sideIcon projectIcon">⌘</span><span><b>Project Explorer</b><small>Arborescence v2.0 DEBUG</small></span></button>
       </nav>
 
       <div class="sideSectionLabel appLabel">APPLICATION</div>
@@ -158,22 +156,10 @@
           <div class="updateCard"><h3>✅ Installation</h3><div class="settingHint">Les clés API, utilisateur, paramètres, logs, stratégies et mosaïques sont protégés contre l’écrasement par un patch Core.</div><div id="updateProtected" class="settingHint updateProtected"></div><div class="updateRow"><label class="dangerConfirm"><input id="updateConfirm" type="checkbox"> J’autorise l’installation de l’archive vérifiée</label></div><button id="updateInstall" class="btn" type="button" disabled>Installer la mise à jour</button><div id="updateInstallMsg" class="result"></div></div>
         </div></div>
       </section>
-      <section id="project-explorer" class="dashSection anchorSection projectExplorerSection">
-        <div class="dashSectionHead"><div class="sectionIdentity"><span class="sectionIcon projectIcon">⌘</span><div><h2>Project Explorer</h2><p>Explorateur en lecture seule du build IA-TB v2.0 DEBUG</p></div></div><div class="headActions"><span id="projectExplorerCount" class="countBadge">—</span><button id="projectExplorerRefresh" class="btn small" type="button">Actualiser</button></div></div>
-        <div class="dashSectionBody projectExplorerBody">
-          <div class="projectExplorerToolbar"><input id="projectExplorerSearch" type="search" placeholder="Rechercher un fichier ou dossier…"><div id="projectExplorerFilters" class="projectTypeFilters"><button class="active" data-type="all">Tous</button><button data-type="javascript">JS</button><button data-type="json">JSON</button><button data-type="html">HTML</button><button data-type="css">CSS</button><button data-type="document">Docs</button><button data-type="script">Scripts</button><button data-type="data">Data</button><button data-type="archive">Archives</button></div></div>
-          <div class="projectExplorerLayout">
-            <div class="projectTreePane"><div class="projectPaneTitle">ARBORESCENCE <span>Build réel</span></div><div id="projectExplorerTree" class="projectTree"><div class="projectLoading">Chargement…</div></div></div>
-            <div class="projectPreviewPane"><div class="projectPaneTitle">FICHIER SÉLECTIONNÉ <span id="projectSelectedType">—</span></div><div id="projectFileMeta" class="projectFileMeta"><strong>Sélectionnez un fichier</strong><span>Son chemin, son type et un aperçu apparaîtront ici.</span></div><pre id="projectFilePreview" class="projectFilePreview">Aucun fichier sélectionné.</pre></div>
-          </div>
-          <div class="projectExplorerFoot">LECTURE SEULE · aucun fichier ne peut être modifié ou supprimé depuis cet explorateur.</div>
-        </div>
-      </section>
     </div>
   </main>
 </div>
 <script src="/assets/admin_controller_v1.0.js"></script>
 <script src="/assets/update_ui_v1.0.js"></script>
-<script src="/assets/project_explorer_v2.0.js"></script>
 </body>
 </html>
