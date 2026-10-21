@@ -145,3 +145,16 @@ flowchart LR
 **🟢 En simple : le vrai port Trading est 8016.**
 
 Une entrée de `ProtocolRegistry/trading.json` contient encore `8017`, qui est le port du Firewall. Le Process Registry et le service Trading utilisent **8016** ; cette valeur est retenue par le Wiki comme vérité runtime.
+
+
+---
+
+## 🧾 Trading Logs V2 — intégration 2.4.0 DEV
+
+> **🟢 En simple :** l'historique reste lisible dans son ancien format JSONL ; une base SQLite WAL en conserve une copie récupérable et exploitable plus tard, sans ouvrir un nouvel accès aux utilisateurs.
+
+Sur `feature/v2.4-finance-calendar`, la PR #21 intègre le miroir `trading_logs.db` en parallèle de `trading_history.jsonl` (toujours **autoritaire**). Les nouvelles écritures sont expurgées et réconciliables ; un échec SQLite ne supprime pas le JSONL. Rejeu idempotent, limite 64 Mio, séparation des espaces utilisateurs et respect des snapshots en lecture seule. Un état de dégradation est disponible dans `health.executionLogs`.
+
+**Sécurité :** protections ADMIN Auth21 et Risk/Firewall inchangées, aucune route SQLite globale ajoutée, pas de trading réel activé. Les journaux historiques ne sont pas réécrits automatiquement ; les valeurs sensibles cachées dans du texte libre ne peuvent être garanties comme masquées.
+
+**Validation :** 566 tests CI rapportés pour la PR #21 ; recette locale sur Macro et toute validation LIVE encore à effectuer. Voir [documentation technique](https://github.com/florian74410/IA-Trading-Bot/blob/feature/v2.4-finance-calendar/Documentation/TRADING_LOGS_V2_INTEGRATION_2.4.md).
