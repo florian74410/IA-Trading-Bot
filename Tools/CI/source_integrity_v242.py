@@ -18,7 +18,7 @@ def references(root,report):
                 missing.append({'file':name.relative_to(root).as_posix(),'unit':'asset','value':value})
     return sorted(missing,key=lambda x:tuple(x.values()))
 def main():
-    parser=argparse.ArgumentParser();parser.add_argument('audit');parser.add_argument('--capture-baseline');args=parser.parse_args()
+    parser=argparse.ArgumentParser();parser.add_argument('audit');parser.add_argument('--capture-baseline');parser.add_argument('--v25-risk',action='store_true');args=parser.parse_args()
     report=json.loads(pathlib.Path(args.audit).read_text())
     if args.capture_baseline:
         root=pathlib.Path(args.capture_baseline);print(json.dumps(references(root,report),indent=2));return
@@ -27,18 +27,25 @@ def main():
         p=ROOT/row['path']
         if row['decision']=='DELETE'and p.exists()and row['path']!='App/Updates/update_history.dat':errors.append('planned removal still exists: '+row['path'])
         if row['path'].startswith(('App/Core/Communication/ProtocolRegistry/','App/Core/Clients/migrations/','App/Fundamental/Database/','App/Strategy/Schemas/','App/Core/Clients/UserManagement/','App/Indicators/BuiltIn/','App/Core/Firewall/','App/Core/ProcessRegistry/manifests/')):
-            if not p.is_file()or hashlib.sha256(p.read_bytes()).hexdigest()!=row['sha256']:errors.append('protected contract changed: '+row['path'])
+            if not p.is_file():errors.append('protected contract missing: '+row['path']);continue
+            raw=p.read_bytes()
+            if args.v25_risk and row['path']=='App/Core/Clients/UserManagement/admin_routes.js':
+                # This exact 2.5-only addition is the sole authorized change to a frozen Auth21 contract.
+                additions=b'  "GET /api/admin/risk/settings",\\n  "POST /api/admin/risk/settings",\\n  "GET /api/admin/risk/status",\\n'
+                if raw.count(additions)!=1:errors.append('risk ADMIN-only routes not exact')
+                raw=raw.replace(additions,b'',1)
+            if hashlib.sha256(raw).hexdigest()!=row['sha256']:errors.append('protected contract changed: '+row['path'])
     for row in report['files']:
         if row['path'].endswith('.json'):
             try:json.loads((ROOT/row['path']).read_text())
             except Exception as error:errors.append('JSON invalid: '+row['path']+': '+str(error))
-    expected='2.4.2';app=ROOT/'App'
+    expected='2.5.0' if args.v25_risk else '2.4.2';app=ROOT/'App'
     for p in [app/'VERSION',app/'Frontend/Settings/VERSION']:
         if p.read_text().strip()!=expected:errors.append('version mismatch: '+str(p))
     for name in ['manifest.json','package.json','package-lock.json','Updates/current_release.dat']:
         obj=json.loads((app/name).read_text())
         if obj['version']!=expected:errors.append('version mismatch: '+name)
-    if json.loads((app/'manifest.json').read_text()).get('revision')!='R1':errors.append('revision mismatch')
+    if json.loads((app/'manifest.json').read_text()).get('revision')!=('R1-RISK' if args.v25_risk else 'R1'):errors.append('revision mismatch')
     for unit in report['units']:
         if unit['status']=='PARSE_ERROR'or unit.get('scopeError'):errors.append('parse/scope error: '+unit['file'])
     active=[x for x in report['unused']if x['file'].startswith('App/')and not re.search(r'/Tests?/',x['file'],re.I)and not x['file'].startswith('App/Tools/')]
