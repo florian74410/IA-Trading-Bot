@@ -1,6 +1,9 @@
-> Version actuelle : **2.2.1 (TEST)**. Voir [la release et les changements](Release-2.2.1.md). La production GEN-1 reste à déployer et à valider.
 
 # 🏷️ Versionnage et releases
+
+> **État de développement : 2.4.0 DEV** sur `feature/v2.4-finance-calendar` (PR #21 fusionnée, 566 tests CI rapportés). **Non déployée sur VPS / non promue stable.** Recette locale Auth21/TLS à effectuer.
+
+**Important :** les documents 2.2.1 et V2.0 DEBUG sont historiques ; le VPS v2.2.5-R1 reste indépendant. Source de vérité Wiki : `Documentation/wiki/` (voir [Wiki-Publishing](Wiki-Publishing.md)).
 
 > **🟢 En simple : le projet ne considère pas une version terminée parce que le code compile. Il faut aligner code, tests, patch, changelog, GitHub et Wiki.**
 
