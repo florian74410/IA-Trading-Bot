@@ -19,7 +19,7 @@
  function marketRead(action,args){return fetch('/communication/v1/ui/read',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({target:'marketdata',action:action,arguments:args||{}}),cache:'no-store'}).then(function(r){return r.json().then(function(o){if(!r.ok||o.error)throw new Error(o.error||('HTTP '+r.status));return o.data||{}})})}
  function walletNetworks(w){return (w&&w.networks||[]).filter(function(n){return NETS.indexOf(n)>=0})}
  function selectedWallet(){return S.wallets.filter(function(w){return String(w.id)===String(S.walletId)})[0]||null}
- function sourceAddress(){var w=selectedWallet(),a=(w&&w.accounts||[]).filter(function(x){return (x.networks||[]).indexOf(S.network)>=0})[0];return a&&a.address||''}
+
  function detectInternalAddress(addr){addr=String(addr||'');var exact=S.network==='bitcoin'||S.network==='solana';for(var i=0;i<S.wallets.length;i++){var w=S.wallets[i],ac=w.accounts||[];for(var j=0;j<ac.length;j++){var a=String(ac[j].address||'');if((exact?a===addr:a.toLowerCase()===addr.toLowerCase()))return{wallet:w,account:ac[j]}}}return null}
  function iconWallet(){return '<svg viewBox="0 0 24 24"><path d="M4 6.5h13.5A2.5 2.5 0 0 1 20 9v9H5a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h11v2.5"/><path d="M15.5 11.5H21v4h-5.5a2 2 0 0 1 0-4Z"/><path d="M8 11v5M5.5 13.5h5"/></svg>'}
  function iconSend(){return '<svg viewBox="0 0 24 24"><path d="M3 11.5 21 3l-6.5 18-3.2-7.2L3 11.5Z"/><path d="M11.3 13.8 21 3"/></svg>'}

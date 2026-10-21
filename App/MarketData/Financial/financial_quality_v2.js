@@ -3,7 +3,7 @@
    Pure validation: no provider calls, no mutation, no trading decisions. */
 function finite(v){return typeof v==='number'&&isFinite(v)}
 function money(v){return v==null||(finite(v)&&v>=0)}
-function pct(v){return v==null||(finite(v)&&v>=-100&&v<=100000)}
+
 // Conservative outlier guard for the single global 24h volume metric.
 // A daily traded volume >1000x total crypto market capitalization is structurally implausible.
 // Do not modify other CeFi metrics or erase historical raw snapshots.

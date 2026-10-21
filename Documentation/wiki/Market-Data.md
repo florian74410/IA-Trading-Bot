@@ -1,4 +1,4 @@
-> Version actuelle : **2.2.1 (TEST)**. Voir [la release et les changements](Release-2.2.1.md). La production GEN-1 reste à déployer et à valider.
+> Version actuelle : **2.2.1 (TEST)**. Voir [la release et les changements](https://github.com/florian74410/IA-Trading-Bot/blob/189e9c09f1549dd8f2f73bb62c62fc19d6f31d15/Documentation/wiki/Release-2.2.1.md). La production GEN-1 reste à déployer et à valider.
 
 # 📡 Market Data Collector V2.1
 

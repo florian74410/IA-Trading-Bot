@@ -16,7 +16,7 @@ function versionParts(v){var m=String(v||'').trim().match(/^v?(\d+)\.(\d+)(?:\.(
 function compareVersions(a,b){var x=versionParts(a),y=versionParts(b);if(!x||!y)return NaN;for(var i=0;i<3;i++){if(x[i]<y[i])return-1;if(x[i]>y[i])return 1;}return 0;}
 function listFilesRecursive(root,rel,out){out=out||[];rel=rel||'';var dir=path.join(root,rel);fs.readdirSync(dir).forEach(function(n){var r=rel?rel+'/'+n:n,p=path.join(root,r),st=fs.lstatSync(p);if(st.isSymbolicLink())throw new Error('Lien symbolique interdit dans le payload: '+r);if(st.isDirectory())listFilesRecursive(root,r,out);else if(st.isFile())out.push(r.replace(/\\/g,'/'));else throw new Error('Type de fichier interdit: '+r);});return out;}
 function totalSize(root,files){var n=0;files.forEach(function(r){n+=fs.statSync(path.join(root,r)).size;});return n;}
-function copyTree(srcRoot,dstRoot,files){files.forEach(function(r){copyFileAtomic(path.join(srcRoot,r),path.join(dstRoot,r));});}
+
 function protectedPath(rel){var r=String(rel||'').replace(/\\/g,'/');var protectedExact={
   'secrets_v2.dat':1,'user.dat':1,'config_v1.0.dat':1,'logs.dat':1,'ai_settings_v2.dat':1,
   'Updates/current_release.dat':1

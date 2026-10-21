@@ -1,8 +1,0 @@
-IA-TB v1.8.6 — IA Trading status/layout hotfix
-
-- Barre Etat des services compacte.
-- La barre basse est reservee dans la geometrie du viewport.
-- Colonne gauche (Chat IA) s'arrete au-dessus de la barre basse et ses messages scrollent independamment.
-- Colonne centrale (Chart + Modules) s'arrete au-dessus de la barre basse et scrolle independamment.
-- Colonne droite (Exchanges + Consensus) s'arrete au-dessus de la barre basse et scrolle independamment.
-- Navbar haute et status bar restent fixes.

@@ -1,4 +1,6 @@
 
+
+> **Source nettoyée : [2.4.2-R1 DEV](Nettoyage-2.4.2-R1.md)** sur la branche `2.4.2-R1`, issue de 2.4.1. Recette locale à suivre ; aucune promotion stable ou opération GEN-1.
 # 📦 Installation et démarrage — V2.0 DEBUG
 
 > **🟢 En simple : IA-TB embarque son propre Node.js 16.20.2 pour rester compatible avec le Mac Intel cible. `start.command` prépare le runtime, démarre les services dans un ordre contrôlé, vérifie leur santé puis ouvre l’interface sur le port 8000.**

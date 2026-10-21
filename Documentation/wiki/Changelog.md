@@ -1,5 +1,9 @@
 
 
+## 2.4.2-R1 DEV
+
+[Nettoyage de la source](Nettoyage-2.4.2-R1.md), conservation des contrats et qualification complète ; recette locale distincte.
+
 ## 2.4.1 DEV — candidate locale
 
 Voir [le correctif calendrier, Bank et CP/1](Correctif-2.4.1.md). Aucune promotion stable ni déploiement VPS.

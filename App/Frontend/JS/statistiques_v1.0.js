@@ -157,14 +157,7 @@ function renderAdoption(){
  if(host)host.innerHTML=svg;
 }
 
-function barChart(values,klass){
- values=(values||[]).filter(function(v){return v!=null&&v!==''&&isFinite(+v)&&+v>0}).map(Number);
- if(!values.length)return '<div class="financeChartEmpty"><b>Données CEX indisponibles</b><span>Aucun point de volume valide n\'est disponible pour cette période. Les valeurs absentes ne sont plus converties en faux zéros.</span></div>';
- var w=760,h=210,pad=22,max=Math.max.apply(Math,values.concat([1])),bw=Math.min(30,(w-pad*2)/values.length*.64),out='',grid='';
- for(var g=0;g<5;g++){var y=pad+g*((h-pad*2)/4);grid+='<line x1="'+pad+'" y1="'+y+'" x2="'+(w-pad)+'" y2="'+y+'"/>'}
- values.forEach(function(v,i){var step=(w-pad*2)/values.length,x=pad+i*step+step*.18,bh=(v/max)*(h-pad*2),y=h-pad-bh;out+='<rect x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+bh.toFixed(1)+'" rx="2"/>'});
- return '<svg viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="none"><g class="financeGrid">'+grid+'</g><g class="financeBars '+klass+'">'+out+'</g></svg>';
-}
+
 var FINANCE_COLORS=['#17b9e8','#2bd9aa','#7665f0','#d754d9','#42667b','#f0b74b'];
 function formatPct(v){v=+v;return isFinite(v)?v.toFixed(1).replace('.',',')+'%':'--'}
 function compactShares(items){items=(items||[]).filter(function(x){return x&&isFinite(+x[1])&&+x[1]>0}).sort(function(a,b){return+b[1]-+a[1]});if(items.length<=6)return items;var top=items.slice(0,5),other=items.slice(5).reduce(function(z,x){return z+(+x[1]||0)},0);if(other>0)top.push(['Autres',other]);return top}
@@ -228,8 +221,8 @@ function renderDefiVolume(){
  if(host)host.innerHTML=seriesChart(series,range);
  if(sub)sub.textContent=(useDaily?'Volume DEX journalier (USD)':'Volume DEX glissant sur 24 h (USD)')+' · observations sur '+range+' · DeFiLlama · '+series.length+' points';
 }
-function poolThumb(x,icon){var logo=x&&x.logo&&/^https:\/\//i.test(x.logo)?'<img src="'+esc(x.logo)+'" alt="" loading="lazy" referrerpolicy="no-referrer">':'';return'<span class="poolThumb">'+logo+'<i>'+esc(icon||String(x&&x.name||x&&x.project||'?').charAt(0).toUpperCase())+'</i></span>';}
-function leaderCard(label,icon,x,value,meta,scope){if(!x)return'<div class="poolLeaderCard empty"><span class="poolMetricTag">'+esc(label)+'</span><b>Donnée indisponible</b><small>En attente du provider</small></div>';var name=x.symbol||x.name||x.project||'Pool';return'<div class="poolLeaderCard"><div class="poolLeaderTop">'+poolThumb(x,icon)+'<div><span class="poolMetricTag">'+esc(label)+'</span><b>'+esc(name)+'</b><small>'+esc(meta||x.chain||x.project||'')+'</small></div></div><strong>'+esc(value)+'</strong><em>'+esc(scope||'POOL')+'</em></div>';}
+
+
 function parsePoolFeePct(p){var s=String(p&&p.poolMeta||''),m=s.match(/(?:fee(?:\s*tier)?[^0-9]*)?(\d+(?:[.,]\d+)?)\s*%/i);if(!m)return null;var v=+String(m[1]).replace(',','.');return isFinite(v)&&v>=0&&v<=10?v:null;}
 function sourcePool(x,src){return Object.assign({},x,{dataSource:src})}
 function buildLeaders(){

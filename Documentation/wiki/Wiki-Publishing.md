@@ -1,5 +1,7 @@
 # Publication du Wiki GitHub
 
+> **Source nettoyée : [2.4.2-R1 DEV](Nettoyage-2.4.2-R1.md)** sur la branche `2.4.2-R1`, issue de 2.4.1. Recette locale à suivre ; aucune promotion stable ou opération GEN-1.
+
 Les sources officielles du Wiki sont conservées dans `Documentation/wiki/` afin qu'elles soient versionnées avec le code et relisibles dans les pull requests.
 
 ## Wiki natif GitHub

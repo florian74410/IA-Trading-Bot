@@ -1,7 +1,7 @@
-name: IA-TB 2.4 Calendar Bank CP1 integration
+name: IA-TB 2.4 source integrity and full integration
 on:
   push:
-    branches: [integration/v2.4-finance-calendar-trading-logs, feature/v2.4-finance-calendar, feature/v2.4.1-bank-calendar-cp1]
+    branches: [integration/v2.4-finance-calendar-trading-logs, feature/v2.4-finance-calendar, feature/v2.4.1-bank-calendar-cp1, 2.4.2-R1]
   pull_request:
     branches: [feature/v2.4-finance-calendar]
 permissions:
@@ -18,8 +18,22 @@ jobs:
           cache: npm
           cache-dependency-path: App/package-lock.json
       - run: npm ci --prefix App --omit=dev --no-audit --no-fund
+      - name: Source, contracts, assets and version integrity
+        run: |
+          npm install --prefix "$RUNNER_TEMP/source-audit" --no-audit --no-fund acorn@8.19.0 eslint-scope@8.4.0
+          NODE_PATH="$RUNNER_TEMP/source-audit/node_modules" node Tools/CI/audit_source_v242.cjs . "$RUNNER_TEMP/source-audit.json"
+          python3 Tools/CI/source_integrity_v242.py "$RUNNER_TEMP/source-audit.json"
+          node App/Tools_validate_release_version.js
+          node Tools/CI/verify_rbac_registry.js --self-test
+          python3 -W error::ResourceWarning -m unittest discover -s Tools/CI -p 'test_auth_storage_preflight.py' -v
+          python3 -m unittest discover -s Tools/Deploy -p 'test_*.py' -v
       - name: Finance Calendar, lifecycle, ADMIN, logs and SQLite regressions
         run: node --test --test-concurrency=1 App/services/trading-engine/tests/*.js App/tests/*.js tests/calendar_events_v2_2_5.test.cjs App/Supervisor/Tests/test_supervisor_architecture.js
+      - name: Collector, Liquidity, Fundamental, Portfolio, Strategy and Risk fixtures
+        working-directory: App
+        run: |
+          mapfile -t tests < <(find MarketData/Tests -maxdepth 1 -name 'test_*.js' ! -name 'test_market_data_runtime_v2.js' ! -name 'test_market_liquidity_layer_v2.js' ! -name 'test_shadow_runtime_orchestrator_v1.js' | sort)
+          node --test --test-concurrency=1 "${tests[@]}" Liquidity/Tests/*.js Portfolio/Tests/test_portfolio_engine_v2.js Strategy/Tests/test_strategy_engine_v2.js Strategy/Tests/test_strategy_ui_router_readonly_v1.9.js Risk/Tests/*.js Bank/Tests/test_transfer_network_modules_v1.js Fundamental/Tests/test_fundamental_v3.js Fundamental/Tests/test_event_engine_mock_v3.js Fundamental/Tests/test_news_latest_v2_0_1.js Fundamental/Tests/test_synthesis_helper_v3.js
       - name: Real service snapshot and ingress regressions
         run: node --test --test-concurrency=1 App/Tools/Tests/trading_usage_jsonl_snapshot_writers.test.js App/Tools/Tests/auth21_snapshot_real_service_ipc.test.js App/Tools/Tests/auth21_real_engines_ingress.test.js
       - name: Install isolated browser QA

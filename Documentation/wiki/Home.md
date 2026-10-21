@@ -1,5 +1,7 @@
 # IA-TB — Wiki · 2.4.0 DEV
 
+> **Source nettoyée : [2.4.2-R1 DEV](Nettoyage-2.4.2-R1.md)** sur la branche `2.4.2-R1`, issue de 2.4.1. Recette locale à suivre ; aucune promotion stable ou opération GEN-1.
+
 > **Candidate suivante : [2.4.1 DEV](Correctif-2.4.1.md)** sur `feature/v2.4.1-bank-calendar-cp1`, pour recette locale ; la 2.4.0 et la production restent distinctes.
 
 > **🟢 En simple : IA-TB est une application de trading crypto modulaire. Elle sépare la collecte des données, l’analyse technique, l’analyse fondamentale, les stratégies, le risque, l’exécution des ordres, le portefeuille et la Banque afin qu’un seul module ne puisse pas tout faire sans contrôle.**

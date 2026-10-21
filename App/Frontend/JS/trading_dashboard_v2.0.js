@@ -13,7 +13,7 @@ function cleanPrice(v){v=String(v||'').trim();return v&&v!=='--'?v:'--'}
 function topUtilities(){var nav=q('.navActions');if(!nav||byId('iatbTopUtilities'))return;var u=el('div','iatbTopUtilities');u.id='iatbTopUtilities';u.innerHTML='<span class="iatbTopLive" title="Runtime actif"></span><span class="iatbTopUtility" title="Notifications">♢</span><span class="iatbTopUtility" title="État système">⚙</span>';nav.appendChild(u)}
 
 function marketMaster(){var n=el('section','iatbMarketMaster');n.id='iatbMarketMaster';n.innerHTML='<b>MARCHÉ DE RÉFÉRENCE</b><strong class="masterPair" id="tdMasterPair">--</strong><span class="masterProvider" id="tdMasterProvider">Market Data</span><small id="tdMasterTf">--</small>';return n}
-function indicatorDock(){return byId('indicatorDock')||null}
+
 var MODULE_GRID_KEY='iatb.trading.moduleGrid.v2',MODULE_GRID_COLS=5,MODULE_GRID_ROWS=3;
 function moduleCard(no,id,cls,body){
  return '<section class="iatbDashCard iatbGridModule '+(cls||'')+'" data-grid-id="'+id+'" data-grid-number="'+no+'" data-span-x="1" data-span-y="1" style="grid-column:span 1;grid-row:span 1">'
@@ -146,15 +146,7 @@ function bindExchangeSwitches(root){
 }
 
 function markDot(name,state){var x=document.querySelector('.iatbSvcDot[data-svc="'+name+'"]');if(x)x.className='iatbSvcDot '+(state||'')}
-function chatShell(chat,logoWrap){
-  var col=el('section','iatbChatColumn'),foot=el('div','iatbChatFooter');
-  /* v1.8.10: the shared top navigation already owns the IA-TB logo.
-     Do not move or duplicate the legacy logo inside the Supervisor rail. */
-  var title=chat.querySelector('.panelTitle');if(title&&title.firstChild)title.firstChild.nodeValue='CHAT IA SUPERVISOR ';
-  foot.innerHTML='<span>Les réponses IA ne constituent pas un conseil en investissement.</span><button class="iatbChatClear" type="button">⌫ Effacer</button>';
-  foot.querySelector('button').onclick=function(){var msgs=byId('msgs');if(!msgs)return;var keep=msgs.querySelector('.msg.ai');msgs.innerHTML='';if(keep)msgs.appendChild(keep.cloneNode(true))};
-  col.appendChild(chat);chat.appendChild(foot);return col;
-}
+
 function chartShell(chart){
   /* v1.8.10: remove the redundant chart header so the toolbar/chart starts
      directly at the top of the chart section. */
@@ -285,7 +277,7 @@ function health(){
   probeMarketProviders();
 }
 
-function syncIndicatorDock(){var state=byId('indicatorDockState');if(!state)return;var st=null;try{st=window.IATBIndicatorUI&&IATBIndicatorUI.state?IATBIndicatorUI.state():null}catch(e){}var n=st&&Array.isArray(st.selected)?st.selected.length:0;state.textContent=n?('Lecteur JSON · '+n+' actif'+(n>1?'s':'')):'Lecteur JSON · prêt'}
+
 function sync(){
   syncExchangeSelection();
   var p=q('#price'),sym=q('#symbol'),src=q('#marketSourceBadge'),ws=q('#wsState');

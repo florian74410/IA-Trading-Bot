@@ -6,7 +6,7 @@ Base : `release/v2.1.1-gen1`, `43863e817b45c0821de3928d585cfc58f55ce9c5`.
 Travaux Auth21 importés depuis `feature/debug-2.1-auth-design`,
 `85383cd617bb29b1e2804078f4ef92fab5c881d3`. Branche de développement : `feature/user-management-v1`. Livraison TEST sur
 `release/v2.2-gen1` après qualification ; aucun déploiement GEN-1.
-Voir [les notes 2.2.0](RELEASE_2.2.0.md) et [la procédure de recette](GEN1_TEST_2.2.0.md).
+Voir [les notes 2.2.0](https://github.com/florian74410/IA-Trading-Bot/blob/189e9c09f1549dd8f2f73bb62c62fc19d6f31d15/Documentation/RELEASE_2.2.0.md) et [la procédure de recette](https://github.com/florian74410/IA-Trading-Bot/blob/189e9c09f1549dd8f2f73bb62c62fc19d6f31d15/Documentation/GEN1_TEST_2.2.0.md).
 
 Cette livraison ajoute un mode authentifié réel, une CLI sur la base existante,
 la connexion email et la sécurité du compte dans le Profil existant. Elle ne

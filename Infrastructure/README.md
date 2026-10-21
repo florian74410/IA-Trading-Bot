@@ -1,14 +1,17 @@
-# IA-TB — Infrastructure GEN-1
+# IA-TB — environnements et déploiement
 
-Déploiement cible Contabo Debian 13, Docker Engine/Compose.
+`App/` contient la source 2.4.2-R1 ; les copies historiques des builds ont été
+retirées de cette branche. Les anciens états restent accessibles par Git.
+Les fichiers Compose génériques et la qualification Auth21 sont conservés ;
+le Compose de release 2.2.1 et son vérificateur hardcodé ne sont plus livrés ici.
 
-- App/ : copie de travail du build v2.0_DEBUG, arborescence interne conservée pour ne pas casser les chemins relatifs.
-- Builds/ : builds historiques conservés, inchangés.
-- Infrastructure/ : scripts et manifests de déploiement validés progressivement.
-- /opt/iatb/source/IA-Trading-Bot : clone Git sur GEN-1.
-- /opt/iatb/debug et /opt/iatb/release : instances séparées.
-- /var/lib/iatb/debug et /var/lib/iatb/release : états persistants hors Git.
+Cette branche est une candidate DEV de recette locale, pas une image déclarée
+prête pour la production. Le `Dockerfile` de préflight reste volontairement
+limité ; sa présence ne prouve pas un déploiement complet de l'application.
 
-IMPORTANT : App/ n'est pas encore refactorisée en App/Engines, App/Adapters et App/Shared : déplacements à réaliser après audit des chemins et tests de démarrage. Aucun conteneur prêt pour la production n'est déclaré.
+DEBUG et RELEASE doivent conserver des comptes, clés et volumes distincts.
+Les données persistantes restent hors Git. Aucun déploiement ni nettoyage des
+répertoires d'un VPS n'est effectué par le nettoyage de source.
 
-DEBUG et RELEASE ne doivent partager ni comptes, ni clés, ni volumes. Aucun trading réel dans DEBUG.
+Consulter `../Documentation/Cleanup/2.4.2-R1/RESULTS.md` pour les vérifications et
+le démarrage local Auth21 SAFE sur https://localhost:8000.

@@ -27,8 +27,8 @@ non-divulgation. Le refus précoce GUEST des écritures de clés API est couvert
 L’inventaire Python est vérifié sans modification d’octets ni création de fichiers,
 avec refus des WAL non checkpointés et des clés liées symboliquement.
 
-Périmètre livré et limites : [RELEASE_2.2.0.md](../RELEASE_2.2.0.md).
-Recette GEN-1 : [GEN1_TEST_2.2.0.md](../GEN1_TEST_2.2.0.md).
+Périmètre livré et limites : [RELEASE_2.2.0.md](https://github.com/florian74410/IA-Trading-Bot/blob/189e9c09f1549dd8f2f73bb62c62fc19d6f31d15/Documentation/RELEASE_2.2.0.md).
+Recette GEN-1 : [GEN1_TEST_2.2.0.md](https://github.com/florian74410/IA-Trading-Bot/blob/189e9c09f1549dd8f2f73bb62c62fc19d6f31d15/Documentation/GEN1_TEST_2.2.0.md).
 Aucune donnée réelle, aucun déploiement GEN-1 et aucun ordre réel.
 
 ---

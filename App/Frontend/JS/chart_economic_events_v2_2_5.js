@@ -4,7 +4,7 @@ var K='iatb-economic-markers-v225',done=false,last=[],loading=false;
 function key(){return K+':'+(root.IATBSession&&root.IATBSession.clientId||'local')}
 function read(){try{return JSON.parse(root.localStorage.getItem(key())||'{}')}catch(_){return {}}}
 function opts(){return root.IATBCalendarEvents.optionsFromSettings(read())}
-function normalize(e,source,i){if(!e||typeof e!=='object')return null;var when=e.startAtUtc||e.start_at_utc||e.dateTime||e.starts_at||null;var date=e.date;var tl=String(e.timeLabel||'');if(!when&&/^\d{4}-\d{2}-\d{2}$/.test(String(date||''))){var match=tl.match(/\b(\d{1,2}):(\d{2})\s*(UTC|GMT|Z)\b/i);if(match)when=date+'T'+match[1].padStart(2,'0')+':'+match[2]+':00Z'}return root.IATBCalendarEvents.normalize({id:e.id||e.eventId||e.sourceId||source+'-'+date+'-'+i,title:e.title||e.label||e.name||e.event||'Événement économique',source:source,date:date,startAtUtc:when,category:e.category||null,importance:e.impact||e.importance||null,forecast:e.forecast??e.expected??null,actual:e.actual??e.real??null,previous:e.previous??null,unit:e.unit||null,country:e.country||null,countryCode:e.countryCode||e.country_code||null},source)}
+
 function upcomingRail(markers,options){
  var area=document.getElementById('chartArea');if(!area)return;
  var rail=document.getElementById('iatbChartEconomicRail');if(!rail){rail=document.createElement('div');rail.id='iatbChartEconomicRail';rail.className='iatbChartEconomicRail';rail.setAttribute('aria-label','Prochains événements économiques');area.appendChild(rail);}

@@ -1,10 +1,10 @@
 'use strict';
-var http=require('http'),path=require('path'),CPClient=require('../../Core/Communication/cp1_client'),fail=0,pending=0,ROOT=path.resolve(__dirname,'../..'),cp=new CPClient({root:ROOT,routerPort:8021,timeout:12000,maxBytes:4*1024*1024});
+var BUILD=require('../../Core/Shared/build_info'),http=require('http'),path=require('path'),CPClient=require('../../Core/Communication/cp1_client'),fail=0,pending=0,ROOT=path.resolve(__dirname,'../..'),cp=new CPClient({root:ROOT,routerPort:8021,timeout:12000,maxBytes:4*1024*1024});
 function get(port,p,cb){pending++;var q=http.get({host:'127.0.0.1',port:port,path:p,timeout:12000,headers:{Accept:'application/json'}},function(r){var a=[];r.on('data',function(c){a.push(c)});r.on('end',function(){pending--;var o;try{o=JSON.parse(Buffer.concat(a).toString('utf8')||'{}')}catch(e){return cb(new Error('JSON_INVALID '+port+p))}if((r.statusCode||500)>=400)return cb(new Error((o&&o.error)||('HTTP_'+r.statusCode)));cb(null,o)});});q.on('timeout',function(){q.destroy(new Error('TIMEOUT '+port+p))});q.on('error',function(e){pending--;cb(e)});}
 function request(target,action,args,cb){pending++;cp.request(target,action,args||{},'analysis',function(e,o){pending--;cb(e,o);});}
 function ok(v,m){console.log((v?'[OK]   ':'[FAIL] ')+m);if(!v)fail++;}
 function done(){setTimeout(function(){if(pending)return done();console.log('\nMarket Data Collector V2.0 runtime audit: '+(fail?'FAIL':'PASS')+' ('+fail+' error(s))');process.exitCode=fail?1:0;},30);}
-get(8013,'/health',function(e,o){ok(!e&&o&&o.ok&&String(o.version)==='2.0.0','Collector 8013 identifies as V2.0.0');});
+get(8013,'/health',function(e,o){ok(!e&&o&&o.ok&&String(o.version)===BUILD.version,'Collector 8013 matches current build '+BUILD.version);});
 request('marketdata','marketdata.audit',{},function(e,o){ok(!e&&o&&o.ok&&o.status!=='FAIL','Collector self-audit is PASS/WARN');ok(!e&&o&&o.routing&&o.routing.distribution==='ROUTER_CP1','Financial distribution is Router CP/1');});
 request('marketdata','marketdata.financial.snapshot',{force:true},function(e,o){
  ok(!e&&o&&o.cefi&&o.cefi.provider==='COINGECKO','CoinGecko CeFi snapshot collected');

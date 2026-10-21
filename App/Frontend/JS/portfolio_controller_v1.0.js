@@ -13,7 +13,7 @@ function short(v,l,r){v=String(v||'');l=l||8;r=r||6;return v.length>l+r+3?v.slic
 function assetOf(s){return String(s||'').replace(/(?:USDT|USDC|USD|EUR)$/i,'')||String(s||'--')}
 function when(ts){return ts?new Date(+ts).toLocaleString('fr-FR'):'--'}
 function duration(ms){ms=+ms||0;if(!ms)return'--';var s=Math.floor(ms/1000),m=Math.floor(s/60),h=Math.floor(m/60),d=Math.floor(h/24);if(d)return d+'j '+(h%24)+'h';if(h)return h+'h '+(m%60)+'m';if(m)return m+'m '+(s%60)+'s';return s+'s'}
-function healthClass(v){v=String(v||'UNKNOWN').toLowerCase();return healthBadge(v).replace('healthBadge ','')}
+
 function healthBadge(v){v=String(v||'UNKNOWN').toUpperCase();return 'healthBadge '+(v==='HEALTHY'?'healthy':v==='WATCH'?'watch':v==='WARNING'?'warning':v==='CRITICAL'?'critical':'')}
 
 function drawLine(rows){

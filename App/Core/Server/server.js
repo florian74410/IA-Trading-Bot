@@ -89,7 +89,7 @@ var COMMANDS=[
  {id:'fundamental_read',label:'Fondamental · lire sources / flux / publications / provenance',category:'READ'},
  {id:'gmx_draft',label:'GMX · préparer brouillon LONG / SHORT',category:'PREPARE'}
 ];
-var ACTION_TO_PERMISSION={};
+
 var POWER_METHODS=[
  {id:'reduce_market_data',label:'Ne pas envoyer toutes les données de marché à l’IA',help:'Envoie seulement les données les plus utiles à l’IA.'},
  {id:'reduce_reasoning',label:'Réduire l’effort de raisonnement',help:'Demande un effort de raisonnement plus faible.'},

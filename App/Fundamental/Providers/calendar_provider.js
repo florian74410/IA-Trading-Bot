@@ -1,11 +1,11 @@
 'use strict';
 /* IA-TB normalized calendars
    - FED: official FOMC meeting calendar from Federal Reserve
-   - CME: public Economic Release Calendar page
-   - CME Expirations: public Product Expiration Calendar (last trade, settlement, delivery, notice, position dates when exposed)
-   INFORMATION_ONLY. No authenticated/private CME endpoints are used.
+   - Finance Calendar: structured economic releases
+   - CME legacy parsers retained only for diagnostics; no live CME scraping
+   INFORMATION_ONLY. Expirations remain NOT_CONFIGURED.
 */
-var WEB=require('./web_provider'),FedWatch=require('./fedwatch_provider'),FinanceCalendar=require('./finance_calendar_provider_v2_4');
+var FedWatch=require('./fedwatch_provider'),FinanceCalendar=require('./finance_calendar_provider_v2_4');
 var CACHE_MS=10*60*1000,last={at:0,data:null};
 function strip(s){return String(s||'').replace(/<script[\s\S]*?<\/script>/gi,' ').replace(/<style[\s\S]*?<\/style>/gi,' ').replace(/<[^>]+>/g,' ').replace(/&nbsp;/gi,' ').replace(/&amp;/gi,'&').replace(/&#39;/g,"'").replace(/&quot;/gi,'"').replace(/\s+/g,' ').trim();}
 function uniq(a,keyFn){var seen={},out=[];(a||[]).forEach(function(x){var k=keyFn(x);if(!k||seen[k])return;seen[k]=1;out.push(x)});return out;}
@@ -83,31 +83,14 @@ function classifyEmptyHtml(html,kind,parseStatus){
    !/Matching Events for|Last Trade Date|Settlement Date/i.test(strip(raw)))return 'JS_RENDER_REQUIRED';
  return 'PARSE_INCOMPATIBLE';
 }
-function diagnostics(result){
- var at=new Date().toISOString();
- return Object.assign({fetchedAt:at,diagnostic:result.status,stale:false},result);
-}
 
-function collectCmeExpirations(cb){
- var url='https://www.cmegroup.com/tools-information/calendars/expiration-calendar.html';
- WEB._fetchUrl(url,function(e,html,transport){
-  if(e)return cb(null,diagnostics({ok:false,status:classifyFetchError(e),error:String(e.message||e).slice(0,180),transport:transport||null,events:[],url:url}));
-  var p=parseCmeExpirations(html),soft=p.status==='OK'||p.status==='NO_EVENTS_FOR_CURRENT_DATE'||p.status==='DYNAMIC_PAGE_NO_ROWS';
-  cb(null,diagnostics({ok:soft,status:p.status==='OK'?'OK':classifyEmptyHtml(html,'expiration',p.status),error:p.status==='PARSE_EMPTY'?'CME_EXPIRATION_PARSE_EMPTY':null,transport:transport||'web',events:p.events,pageDate:p.pageDate,url:url,capabilities:['LAST_TRADE','SETTLEMENT','DELIVERY','NOTICE','POSITION','HOLDING','FIRST_TRADE']}));
- });
-}
+
+
 function fedEvents(packet){
  var c=(packet&&packet.calendar)||[];
  return c.map(function(x){return{id:'FED:FOMC:'+x.date,calendar:'FED_FOMC',date:x.date,timeLabel:null,country:'United States',event:'FOMC Meeting / Rate Decision',impact:'HIGH',source:'Federal Reserve',url:'https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm'};});
 }
-function collectCme(cb){
- var url='https://www.cmegroup.com/education/events/economic-releases-calendar';
- WEB._fetchUrl(url,function(e,html,transport){
-  if(e)return cb(null,diagnostics({ok:false,status:classifyFetchError(e),error:String(e.message||e).slice(0,180),transport:transport||null,events:[],url:url}));
-  var p=parseCme(html),status=p.status==='OK'?'OK':classifyEmptyHtml(html,'economic',p.status);
-  cb(null,diagnostics({ok:status==='OK'||status==='NO_EVENTS',status:status,error:status==='PARSE_INCOMPATIBLE'?'CME_CALENDAR_PARSE_INCOMPATIBLE':null,transport:transport||'web',events:p.events,pageDate:p.pageDate,url:url}));
- });
-}
+
 
 exports.collect=function(cb){
  if(last.data&&Date.now()-last.at<CACHE_MS)return process.nextTick(function(){var d=Object.assign({},last.data,{cacheAgeMs:Date.now()-last.at});if(Date.now()-last.at>CACHE_MS/2)d.cacheStatus='STALE_DATA';cb(null,d)});

@@ -1,8 +1,0 @@
-Crypto Chart Viewer IA Trader v1.0 — Chart Viewer
-
-URL : http://localhost:8000/chart-viewer
-
-- TradingView Advanced Chart : affichage graphique.
-- Commandes simples : parseur local, 0 token OpenAI.
-- Commandes complexes : OpenAI, avec réponse analytique/Pine Script lorsque demandé.
-- Aucune capacité de signature ou d'exécution GMX depuis le Chart Viewer.

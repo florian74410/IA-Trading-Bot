@@ -42,8 +42,7 @@ assert(isFinite(m.oiToDepth100bps),'OI/depth stress ratio missing');
 var root=path.resolve(__dirname,'../..');
 [
  path.join(root,'Liquidity','Engine','liquidity_service.js'),
- path.join(root,'Liquidity','Provider','market_data_provider.js'),
- path.join(root,'Liquidity','Provider','realtime_liquidity_provider.js')
+ ...fs.readdirSync(path.join(root,'Liquidity','Provider')).filter(function(name){return /\.js$/.test(name)}).map(function(name){return path.join(root,'Liquidity','Provider',name)})
 ].forEach(function(file){
  var src=fs.readFileSync(file,'utf8');
  assert(!/require\(['"]https['"]\)/.test(src),'Liquidity Engine must not require https: '+file);

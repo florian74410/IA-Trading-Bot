@@ -1,8 +1,0 @@
-TradingBot Kraken Unified v1.0.3 STABLE
-Interface utilisateur unique : 127.0.0.1:8000
-GMX et Kraken sont sélectionnables depuis la même page Trading.
-Kraken reste isolé en interne sur 8011.
-/trading?exchange=GMX et /kraken ouvrent la même interface dans deux modes différents.
-
-Build v1.0.3 : correction ciblée de la normalisation OHLC Kraken dans router.js.
-Release UpdateManager conservée à 1.0 / server_v1.0.js afin de préparer la transition officielle 1.0 -> 1.1.
