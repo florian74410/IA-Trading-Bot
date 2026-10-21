@@ -67,19 +67,48 @@ function parseCmeExpirations(html){
  if(/Expiration Calendar/i.test(txt)&&/Settlement Date|Last Trade Date|Delivery Date/i.test(txt))return{events:[],status:'DYNAMIC_PAGE_NO_ROWS',pageDate:lastDate?lastDate.toISOString().slice(0,10):null};
  return{events:[],status:'PARSE_EMPTY',pageDate:null};
 }
+
+// Structured diagnostics: never confuse fetch/parser failures with a genuine empty calendar.
+function classifyFetchError(error){
+ var msg=String(error&&error.message||error||'');
+ if(/\\b(?:HTTP\\s*(?:401|403|407|429)|access denied|forbidden|captcha|rate.limit|challenge)\\b/i.test(msg))return 'HTTP_BLOCKED';
+ return 'UNAVAILABLE';
+}
+function classifyEmptyHtml(html,kind,parseStatus){
+ if(parseStatus==='NO_EVENTS_FOR_CURRENT_DATE')return 'NO_EVENTS';
+ var raw=String(html||'');
+ if(/captcha|challenge.platform|access denied|bot detection|verify you are human|unusual traffic/i.test(raw))return 'HTTP_BLOCKED';
+ // A page shell whose calendar rows are injected by client JS cannot be scraped as static HTML.
+ if(/(?:__NEXT_DATA__|__NUXT__|<script[^>]+(?:chunk|webpack|runtime|main)[^>]*>)/i.test(raw)&&
+   !/Matching Events for|Last Trade Date|Settlement Date/i.test(strip(raw)))return 'JS_RENDER_REQUIRED';
+ return 'PARSE_INCOMPATIBLE';
+}
+function diagnostics(result){
+ var at=new Date().toISOString();
+ return Object.assign({fetchedAt:at,diagnostic:result.status,stale:false},result);
+}
+
 function collectCmeExpirations(cb){
  var url='https://www.cmegroup.com/tools-information/calendars/expiration-calendar.html';
  WEB._fetchUrl(url,function(e,html,transport){
-  if(e)return cb(null,{ok:false,status:'UNAVAILABLE',error:String(e.message||e),transport:transport||null,events:[],url:url});
+  if(e)return cb(null,diagnostics({ok:false,status:classifyFetchError(e),error:String(e.message||e).slice(0,180),transport:transport||null,events:[],url:url}));
   var p=parseCmeExpirations(html),soft=p.status==='OK'||p.status==='NO_EVENTS_FOR_CURRENT_DATE'||p.status==='DYNAMIC_PAGE_NO_ROWS';
-  cb(null,{ok:soft,status:p.status,error:p.status==='PARSE_EMPTY'?'CME_EXPIRATION_PARSE_EMPTY':null,transport:transport||'web',events:p.events,pageDate:p.pageDate,url:url,capabilities:['LAST_TRADE','SETTLEMENT','DELIVERY','NOTICE','POSITION','HOLDING','FIRST_TRADE']});
+  cb(null,diagnostics({ok:soft,status:p.status==='OK'?'OK':classifyEmptyHtml(html,'expiration',p.status),error:p.status==='PARSE_EMPTY'?'CME_EXPIRATION_PARSE_EMPTY':null,transport:transport||'web',events:p.events,pageDate:p.pageDate,url:url,capabilities:['LAST_TRADE','SETTLEMENT','DELIVERY','NOTICE','POSITION','HOLDING','FIRST_TRADE']}));
  });
 }
 function fedEvents(packet){
  var c=(packet&&packet.calendar)||[];
  return c.map(function(x){return{id:'FED:FOMC:'+x.date,calendar:'FED_FOMC',date:x.date,timeLabel:null,country:'United States',event:'FOMC Meeting / Rate Decision',impact:'HIGH',source:'Federal Reserve',url:'https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm'};});
 }
-function collectCme(cb){var url='https://www.cmegroup.com/education/events/economic-releases-calendar';WEB._fetchUrl(url,function(e,html,transport){if(e)return cb(null,{ok:false,status:'UNAVAILABLE',error:String(e.message||e),transport:transport||null,events:[],url:url});var p=parseCme(html);cb(null,{ok:p.status==='OK'||p.status==='NO_EVENTS_FOR_CURRENT_DATE',status:p.status,error:p.status==='PARSE_EMPTY'?'CME_CALENDAR_PARSE_EMPTY':null,transport:transport||'web',events:p.events,pageDate:p.pageDate,url:url});});}
+function collectCme(cb){
+ var url='https://www.cmegroup.com/education/events/economic-releases-calendar';
+ WEB._fetchUrl(url,function(e,html,transport){
+  if(e)return cb(null,diagnostics({ok:false,status:classifyFetchError(e),error:String(e.message||e).slice(0,180),transport:transport||null,events:[],url:url}));
+  var p=parseCme(html),status=p.status==='OK'?'OK':classifyEmptyHtml(html,'economic',p.status);
+  cb(null,diagnostics({ok:status==='OK'||status==='NO_EVENTS',status:status,error:status==='PARSE_INCOMPATIBLE'?'CME_CALENDAR_PARSE_INCOMPATIBLE':null,transport:transport||'web',events:p.events,pageDate:p.pageDate,url:url}));
+ });
+}
+
 exports.collect=function(cb){
  if(last.data&&Date.now()-last.at<CACHE_MS)return process.nextTick(function(){cb(null,last.data)});
  var done=0,fed=null,cme=null,expirations=null;
@@ -95,3 +124,5 @@ exports.collect=function(cb){
 };
 exports.invalidate=function(){last={at:0,data:null}};
 exports._parseCme=parseCme;exports._parseCmeExpirations=parseCmeExpirations;
+
+exports._classifyFetchError=classifyFetchError;exports._classifyEmptyHtml=classifyEmptyHtml;
