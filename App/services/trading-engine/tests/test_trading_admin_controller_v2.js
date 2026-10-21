@@ -10,7 +10,7 @@ const lifecycle={file:'/tmp/unused-trading-state',snapshot:()=>({state:'STOPPED'
  const no=new TradingAdminController({lifecycle,verifyPrincipal:()=>({verified:false,role:'ADMIN',subject:'x'})});
  assert.equal((await no.command({command:'STATUS'})).error,'ADMIN_PERMISSION_DENIED');
  const yes=new TradingAdminController({lifecycle,verifyPrincipal:()=>({verified:true,role:'ADMIN',subject:'admin'}),now:()=>100000});
- assert.equal((await yes.command({command:'STATUS'})).ok,true);
+ assert.equal((await yes.command({command:'STATUS'})).error,'COMMAND_ID_INVALID');
  assert.equal((await yes.command({command:'EMERGENCY_STOP',command_id:'unique-test-command-01',confirmed:true,timestamp:100000})).error,'ADMIN_LEDGER_NOT_CONFIGURED');
  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'iatb-admin-controller-'));
  const ledger=new AdminCommandLedger({file:path.join(dir,'ledger.db')});

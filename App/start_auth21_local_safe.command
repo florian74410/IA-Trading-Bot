@@ -51,7 +51,13 @@ trap 'exit 143' TERM
 launch(){
  local name="$1" file="$2"
  case "$name" in
-  core|firewall|trading) "$NODE" "$file" >>"$PRIVATE/runtime/logs/$name.log" 2>&1 & ;;
+  core) "$NODE" "$file" >>"$PRIVATE/runtime/logs/$name.log" 2>&1 & ;;
+  firewall|trading)
+   if [[ "$IATB_AUTH21_TRADING_ADMIN_BRIDGE" == 1 ]]; then
+    "$NODE" "$file" >>"$PRIVATE/runtime/logs/$name.log" 2>&1 &
+   else
+    env -u IATB_AUTH21_TRADING_IPC_KEY_FILE -u IATB_AUTH21_TRADING_IPC_KEY_ROOT "$NODE" "$file" >>"$PRIVATE/runtime/logs/$name.log" 2>&1 &
+   fi ;;
   *) env -u IATB_AUTH21_TRADING_IPC_KEY_FILE -u IATB_AUTH21_TRADING_IPC_KEY_ROOT "$NODE" "$file" >>"$PRIVATE/runtime/logs/$name.log" 2>&1 & ;;
  esac
  PIDS+=("$!")

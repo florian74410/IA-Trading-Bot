@@ -6,7 +6,7 @@ function checkedKey({env=process.env}={}){
  function invalid(reason){const e=Error(reason);e.reason=reason;throw e;}
  if(!target)invalid('KEY_MISSING');
  if(typeof target!=='string'||!path.isAbsolute(target)||path.resolve(target)!==target)invalid('PATH_INVALID');
- const repo=path.resolve(__dirname,'../..'),relative=path.relative(repo,target);
+ const repo=path.resolve(__dirname,'../../..'),relative=path.relative(repo,target);
  if(relative===''||!relative.startsWith('..'+path.sep))invalid('PATH_IN_REPOSITORY');
  const root=env.IATB_AUTH21_TRADING_IPC_KEY_ROOT||(env.IATB_DATA_ROOT?path.join(env.IATB_DATA_ROOT,'Security'):null);
  if(root){if(!path.isAbsolute(root)||!(target.startsWith(path.resolve(root)+path.sep)))invalid('PATH_NOT_AUTHORIZED');}

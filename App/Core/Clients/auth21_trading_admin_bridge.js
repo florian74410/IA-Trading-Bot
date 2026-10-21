@@ -40,7 +40,7 @@ function createTradingAdminBridge({sessions,env=process.env,browserSessions=null
    const raw=Buffer.from(JSON.stringify(msg));
    const machine=CP.ensureSecret('');
    const signature=crypto.createHmac('sha256',machine).update(raw).digest('hex');
-   const request=http.request({hostname:'127.0.0.1',port,path:'/cp/v1',method:'POST',timeout:5000,agent:false,headers:{'Content-Type':'application/json','Content-Length':raw.length,'X-IATB-CP-Token':machine,'X-IATB-FW-Signature':signature}},upstream=>{
+   const request=http.request({hostname:'127.0.0.1',port,path:'/cp/v1',method:'POST',timeout:5000,agent:false,headers:{'Content-Type':'application/json','Content-Length':raw.length,'X-IATB-CP-Token':machine,'X-IATB-CP-Signature':signature,'X-IATB-FW-Signature':signature}},upstream=>{
      let bytes=0,arr=[];upstream.on('data',b=>{bytes+=b.length;if(bytes>32768){request.destroy();return;}arr.push(b);});
      upstream.on('end',()=>{let answer;try{answer=JSON.parse(Buffer.concat(arr).toString('utf8'));}catch(_){return send(res,502,{error:'FIREWALL_RESPONSE_INVALID'});}send(res,[200,400,403,409,503].includes(upstream.statusCode)?upstream.statusCode:502,answer);});
    });
@@ -66,18 +66,18 @@ function createAuthenticatedDispatcher({sessions,env=process.env,port=8017}={}){
   let secret;try{secret=loadTradingAdminKey({env});}catch(_){return {status:503,body:{error:'P3_KEY_CHANGED',bridge:diagnostic('KEY_INVALID','KEY_CHANGED')}};}
   const codec=proofCodec({secret}),proof=issueTradingAdminProof({sessions,token,codec,payload});
   if(!proof)return {status:403,body:{error:'ADMIN_PERMISSION_DENIED'}};
-  try{if(sessions.audit)sessions.audit(principal.clientId,'TRADING_ADMIN_REQUEST',payload.command);}catch(_){return {status:503,body:{error:'ADMIN_AUDIT_UNAVAILABLE'}};}
+  try{if(sessions.audit)sessions.audit(principal.clientId,'TRADING_ADMIN_REQUEST','OK');}catch(_){return {status:503,body:{error:'ADMIN_AUDIT_UNAVAILABLE'}};}
   const msg=CP.makeRequest('trading','trading.admin.command',{...payload,proof},'summary'),raw=Buffer.from(JSON.stringify(msg));
   let machine;try{machine=CP.ensureSecret('');}catch(_){return {status:503,body:{error:'CP_SECRET_UNAVAILABLE',bridge:diagnostic('AUTH_UNAVAILABLE','CP_SECRET_UNAVAILABLE')}};}
   const signature=crypto.createHmac('sha256',machine).update(raw).digest('hex');
   return await new Promise(resolve=>{
    const fail=(state,reason)=>resolve({status:503,body:{error:reason,bridge:diagnostic(state,reason)}});
-   const q=http.request({hostname:'127.0.0.1',port,path:'/cp/v1',method:'POST',timeout:5000,agent:false,headers:{'Content-Type':'application/json','Content-Length':raw.length,'X-IATB-CP-Token':machine,'X-IATB-FW-Signature':signature}},response=>{
+   const q=http.request({hostname:'127.0.0.1',port,path:'/cp/v1',method:'POST',timeout:5000,agent:false,headers:{'Content-Type':'application/json','Content-Length':raw.length,'X-IATB-CP-Token':machine,'X-IATB-CP-Signature':signature,'X-IATB-FW-Signature':signature}},response=>{
     let n=0,parts=[];response.on('data',chunk=>{n+=chunk.length;if(n>32768){q.destroy();return;}parts.push(chunk)});
     response.on('error',()=>fail('FIREWALL_UNAVAILABLE','FIREWALL_RESPONSE_INTERRUPTED'));
     response.on('end',()=>{
      let out;try{out=JSON.parse(Buffer.concat(parts).toString('utf8'));}catch(_){return fail('ERROR','FIREWALL_RESPONSE_INVALID');}
-     if(!out.p3Attestation)return fail('FIREWALL_UNAVAILABLE',out.error==='ADMIN_FIREWALL_BYPASS_DENIED'?'ADMIN_FIREWALL_BYPASS_DENIED':'P3_ATTESTATION_UNAVAILABLE');
+     if(!out.p3Attestation){const error=out.error||out.data&&out.data.error||out.data&&out.data.firewall&&out.data.firewall.code;return fail(error==='ADMIN_INTEGRATION_UNAVAILABLE'?'AUTH_UNAVAILABLE':'FIREWALL_UNAVAILABLE',typeof error==='string'&&/^[A-Z0-9_]{1,100}$/.test(error)?error:'P3_ATTESTATION_UNAVAILABLE');}
      if(!attestation.verify(secret,payload,out))return fail('KEY_INVALID','KEY_MISMATCH');
      const stage=out.p3Attestation.stage;delete out.p3Attestation;
      const ready=response.statusCode===200&&stage==='ENGINE'&&out.status==='OK'&&out.data&&out.data.ok===true&&out.data.security&&out.data.security.journalDurable===true;
