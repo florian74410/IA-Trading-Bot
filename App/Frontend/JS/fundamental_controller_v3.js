@@ -102,7 +102,7 @@ function renderUnifiedCalendar(cal){
  var host=$('calendarUnifiedEvents'),api=window.IATBCalendarEvents;if(!host||!api)return;
  var rows=api.fromCalendars(cal),zone='Europe/Paris';IATB_CAL_ROWS=rows;
  var month=IATB_CAL_MONTH,y=month.getFullYear(),m=month.getMonth(),prefix=calIso(y,m,1).slice(0,7),today=new Date(),todayIso=calIso(today.getFullYear(),today.getMonth(),today.getDate());
- var filtered=rows.filter(function(e){return IATB_UNIFIED_SOURCE==='ALL'||e.source===IATB_UNIFIED_SOURCE});
+ var filtered=api.filter(rows,{source:IATB_UNIFIED_SOURCE});
  var day=IATB_CAL_SELECTED||todayIso,dayRows=filtered.filter(function(e){return api.dayKey(e,zone)===day});
  if(!dayRows.length&&!IATB_CAL_SELECTED)dayRows=filtered.filter(function(e){return api.dayKey(e,zone)>=todayIso});
  var days=new Date(y,m+1,0).getDate(),offset=(new Date(y,m,1).getDay()+6)%7;
