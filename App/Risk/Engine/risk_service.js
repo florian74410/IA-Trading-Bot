@@ -172,7 +172,7 @@ function checkTradeIntent(raw,cb){
    if(cfg.r2.enabled){
     var r2=R2.analyze(snap,RiskPolicy.mergeLimits(cfg,'r2'));
     summary.r2={status:r2.status,alerts:r2.alerts};
-    if(r2.alerts.length||r2.status==='DEGRADED'||r2.modules.integrity&&r2.modules.integrity.status==='INSUFFICIENT_DATA')blocking=true;
+    if(r2.alerts.length||r2.status==='DEGRADED'||(r2.modules.equity&&r2.modules.equity.status==='INSUFFICIENT_DATA')||(r2.modules.margin&&r2.modules.margin.status==='INSUFFICIENT_DATA')||(r2.modules.integrity&&r2.modules.integrity.status==='INSUFFICIENT_DATA'))blocking=true;
    }
    // Never convert advisory-only analysis to a trade approval when required inputs are unverified.
    cb(null,RISK_GATE.evaluate(raw,{authorized:!blocking,summary:summary}));
@@ -251,6 +251,6 @@ srv.listen(PORT,HOST,function(){
   console.log('IA-TB Risk Engine v'+VERSION+' http://'+HOST+':'+PORT+' CP/1');
   registrationHandle=CP_CLIENT.maintainRegistration(registrationDescriptor(),{initialDelayMs:900});
 });
-var R2_TIMER=setInterval(function(){if(R2_INFLIGHT)return;R2_INFLIGHT=true;refreshR2(function(){R2_INFLIGHT=false;});},30000);if(R2_TIMER.unref)R2_TIMER.unref();
+var R2_LAST_POLL=0;var R2_TIMER=setInterval(function(){if(R2_INFLIGHT)return;var c=riskSettings();if(!c.enabled||!c.r2.enabled)return;var now=Date.now();if(now-R2_LAST_POLL<Math.max(10,Math.min(3600,+c.r2.monitorIntervalSec||30))*1000)return;R2_LAST_POLL=now;R2_INFLIGHT=true;refreshR2(function(){R2_INFLIGHT=false;});},10000);if(R2_TIMER.unref)R2_TIMER.unref();
 function stop(){clearInterval(R2_TIMER);if(registrationHandle)registrationHandle.stop();srv.close(function(){process.exit(0);});setTimeout(function(){process.exit(0);},1200);}
 process.on('SIGINT',stop);process.on('SIGTERM',stop);
