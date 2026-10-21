@@ -1,7 +1,7 @@
 {
   "name": "ia-tb-runtime",
   "private": true,
-  "version": "2.4.2",
+  "version": "2.5.0",
   "description": "IA-TB unified Node.js runtime",
   "engines": {
     "node": ">=22 <23"
