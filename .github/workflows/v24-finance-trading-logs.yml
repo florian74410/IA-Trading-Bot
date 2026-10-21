@@ -1,7 +1,7 @@
-name: IA-TB 2.4 Finance Calendar and Trading Logs integration
+name: IA-TB 2.4 Calendar Bank CP1 integration
 on:
   push:
-    branches: [integration/v2.4-finance-calendar-trading-logs, feature/v2.4-finance-calendar]
+    branches: [integration/v2.4-finance-calendar-trading-logs, feature/v2.4-finance-calendar, feature/v2.4.1-bank-calendar-cp1]
   pull_request:
     branches: [feature/v2.4-finance-calendar]
 permissions:
@@ -19,7 +19,7 @@ jobs:
           cache-dependency-path: App/package-lock.json
       - run: npm ci --prefix App --omit=dev --no-audit --no-fund
       - name: Finance Calendar, lifecycle, ADMIN, logs and SQLite regressions
-        run: node --test --test-concurrency=1 App/services/trading-engine/tests/*.js App/tests/*.js
+        run: node --test --test-concurrency=1 App/services/trading-engine/tests/*.js App/tests/*.js tests/calendar_events_v2_2_5.test.cjs App/Supervisor/Tests/test_supervisor_architecture.js
       - name: Real service snapshot and ingress regressions
         run: node --test --test-concurrency=1 App/Tools/Tests/trading_usage_jsonl_snapshot_writers.test.js App/Tools/Tests/auth21_snapshot_real_service_ipc.test.js App/Tools/Tests/auth21_real_engines_ingress.test.js
       - name: Install isolated browser QA
@@ -27,6 +27,8 @@ jobs:
           npm install --prefix "$RUNNER_TEMP/v24-browser" --no-audit --no-fund playwright@1.62.1
           "$RUNNER_TEMP/v24-browser/node_modules/.bin/playwright" install --with-deps firefox
           echo "NODE_PATH=$RUNNER_TEMP/v24-browser/node_modules" >> "$GITHUB_ENV"
+      - name: Responsive calendar, event lines and Bank browser regressions
+        run: node --test App/UI/Tests/test_v2_4_1_calendar_bank.js
       - name: Full Auth21 and ChartViewer browser regression without skipped tests
         run: |
           set -o pipefail

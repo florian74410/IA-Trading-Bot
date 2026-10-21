@@ -267,6 +267,28 @@
           ]
         },
         "description": "Owner-scoped reasoning and status; session revalidated; credentials remain inside Core"
+      },
+      {
+        "name": "supervisor.data.catalog",
+        "arguments": {
+          "allowed": []
+        },
+        "description": "Read-only normalized collector product catalogue."
+      },
+      {
+        "name": "supervisor.data.read",
+        "arguments": {
+          "allowed": [
+            "target",
+            "action",
+            "arguments"
+          ],
+          "required": [
+            "target",
+            "action"
+          ]
+        },
+        "description": "Bounded shared-data read through Router; no operator mutations or private portfolios."
       }
     ],
     "dataTypes": [

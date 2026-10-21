@@ -1,3 +1,11 @@
+## Candidate 2.4.1 DEV — recette locale
+
+Branche `feature/v2.4.1-bank-calendar-cp1` : calendrier responsive et traits
+d’événements, alignement Bank, fonctions Bank suspendues, données collectées
+accessibles à Supervisor via Router CP/1.
+[Portée et limites](Documentation/RELEASE_2.4.1_DEV.md). Pas de promotion stable
+ni de déploiement GEN-1 ; recette locale à suivre.
+
 ## IA-TB 2.4 — journalisation Trading V2 intégrée
 
 Le prototype séparé du 20 octobre est repris sur `feature/v2.4-finance-calendar`.

@@ -7,7 +7,7 @@
   if (root) root.IATBCalendarEvents = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this, function () {
   'use strict';
-  var SOURCES = ['FED', 'CME'];
+  var SOURCES = ['FED', 'CME', 'FINANCE_CALENDAR'];
   function validTime(s) {
     if (typeof s !== 'string' || !/(Z|[+-]\d\d:\d\d)$/.test(s)) return null;
     var n = Date.parse(s);
@@ -82,12 +82,13 @@
   function fromCalendars(cal){
     cal=cal||{};var all=[];
     [['FED',cal.fed],['CME',cal.cme],['CME',cal.cmeExpirations]].forEach(function(pair){
-      var source=pair[0],items=pair[1]&&pair[1].events||[];
+      var items=pair[1]&&pair[1].events||[];
       items.forEach(function(x,i){
         if(!x||typeof x!=='object')return;
+        var source=x.calendar==='FINANCE_CALENDAR'?'FINANCE_CALENDAR':pair[0];
         var date=x.date||null,time=x.startAtUtc||x.start_at_utc||x.dateTime||x.starts_at||whenFromLocalDate(date,x.timeLabel||x.time||'');
         var id=x.sourceId||x.id||x.eventId||[date,x.title||x.label||x.name||x.event||'',i].join(':');
-        var e=normalize({source:source,id:id,title:x.title||x.label||x.name||x.event||'Événement économique',startAtUtc:time,date:date,category:x.category,importance:x.importance||x.impact,forecast:x.forecast??x.expected,actual:x.actual??x.real,previous:x.previous,unit:x.unit,country:x.country,countryCode:x.countryCode||x.country_code||(source==='FED'?'US':null),description:x.description||x.details||x.summary,officialUrl:x.officialUrl||x.url},source);
+        var e=normalize({source:source,id:id,title:x.title||x.label||x.name||x.event||'Événement économique',startAtUtc:time,date:date,category:x.category,importance:x.importance||x.impact,forecast:x.forecast??x.consensus??x.expected,actual:x.actual??x.real,previous:x.previous??x.prior,unit:x.unit,country:x.country,countryCode:x.countryCode||x.country_code||(source==='FED'?'US':null),description:x.description||x.details||x.summary,officialUrl:x.officialUrl||x.sourceUrl||x.source_url||x.url},source);
         if(e)all.push(e);
       });
     });
@@ -109,7 +110,7 @@
     var source = cleanText(opts.source || 'ALL').toUpperCase();
     var category = cleanText(opts.category || '').toLowerCase();
     return (events || []).filter(function (e) {
-      return (source === 'ALL' || e.source === source) &&
+      return (source === 'ALL' || e.source === source || source === 'CME' && e.source === 'FINANCE_CALENDAR') &&
         (!category || (e.category || '').toLowerCase() === category) &&
         (!opts.day || dayKey(e, opts.timeZone) === opts.day);
     });

@@ -436,6 +436,7 @@ function shutdownServer(){if(shuttingDown)return;shuttingDown=true;log('SYSTEM',
 
 function route(req,res){if(UM_RUNTIME)return UM_RUNTIME.handler(req,res,function(){legacyRoute(req,res)});return legacyRoute(req,res);}
 function legacyRoute(req,res){var u=new URL(req.url,'http://'+HOST+':'+PORT),p=u.pathname;
+ if(require('../../Bank/Core/feature_policy_v2_4_1').blockedPath(p))return json(res,403,{ok:false,error:'BANK_FEATURE_SUSPENDED'});
  if(AUTH21_CORE_AUTH){AUTH21_CORE_AUTH.handler(req,res);return;}
  if(AI_GATEWAY_ADAPTER&&AI_GATEWAY_ADAPTER.handle(req,res))return;
  if(X_GATEWAY_ADAPTER&&X_GATEWAY_ADAPTER.handle(req,res))return;

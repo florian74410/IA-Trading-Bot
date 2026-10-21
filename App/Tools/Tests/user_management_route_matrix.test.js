@@ -21,7 +21,9 @@ test('every historical route enforces the ADMIN/USER/GUEST boundary with live TL
  for(const row of rows){
   const label=row.method+' '+row.path;
   assert.equal((await call(row)).status,401,label+' anonymous');
-  if(row.classification==='ADMIN-ONLY'){
+  if(require('../../Bank/Core/feature_policy_v2_4_1').blockedPath(row.path)){
+   for(const user of [f.login,a,b,g]){const result=await call(row,user);assert.equal(result.status,403,label);assert.equal(result.data.error,'BANK_FEATURE_SUSPENDED',label);}
+  }else if(row.classification==='ADMIN-ONLY'){
    for(const user of [a,b,g])assert.equal((await call(row,user)).status,403,label+' non-admin');
    if(row.method==='POST'){
     assert.equal((await call(row,f.login)).status,428,label+' must require reauthentication');

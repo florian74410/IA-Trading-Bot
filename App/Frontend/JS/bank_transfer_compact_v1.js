@@ -30,7 +30,7 @@
  }
  function coinButton(){
   var c=S.coin||{symbol:'--',name:'Choisir une crypto',image:''};
-  return '<button type="button" id="btcCoinPick" class="btcCoinPick" data-help="Cliquez pour ouvrir le catalogue CoinGecko. La crypto choisie est ensuite vérifiée sur le réseau du wallet.">'+(c.image?'<img src="'+esc(c.image)+'" alt="">':'<span class="btcCoinFallback">◈</span>')+'<span><b>'+esc(c.symbol||'--')+'</b><small>'+esc(c.name||'Choisir une crypto')+'</small></span><i>⌄</i></button>';
+  return '<button type="button" id="btcCoinPick" aria-labelledby="btcCryptoLabel" class="btcCoinPick" data-help="Cliquez pour ouvrir le catalogue CoinGecko. La crypto choisie est ensuite vérifiée sur le réseau du wallet.">'+(c.image?'<img src="'+esc(c.image)+'" alt="">':'<span class="btcCoinFallback">◈</span>')+'<span><b>'+esc(c.symbol||'--')+'</b><small>'+esc(c.name||'Choisir une crypto')+'</small></span><i>⌄</i></button>';
  }
  function networkBadge(){
   return '<div class="btcNetworkRow"><span>Réseau</span><button type="button" id="btcNetworkBtn" class="btcNetworkBtn" data-help="Le réseau est déterminé par le wallet source et la crypto choisie. Cliquez pour changer si plusieurs réseaux sont compatibles."><img src="'+esc(NETLOGO[S.network]||'')+'" alt=""><b>'+esc(NETLABEL[S.network]||S.network)+'</b><i>✓</i></button><span id="btcNetCheck" class="btcNetCheck">'+(S.preview&&S.preview.networkMatch?'Compatible':'À vérifier')+'</span></div>';
@@ -62,7 +62,7 @@
    '<label class="btcField" data-help="Choisissez le wallet IA-TB qui sera débité."><span>Wallet source</span><select id="btcWallet">'+ws+'</select></label>'+
    '<label class="btcField" data-help="Adresse publique du destinataire. IA-TB valide son format avant tout calcul de frais."><span>Adresse de réception</span><input id="btcAddress" autocomplete="off" spellcheck="false" placeholder="'+esc(S.network==='bitcoin'?'bc1… / 1… / 3…':S.network==='solana'?'Adresse Solana':'0x…')+'" value="'+esc(S.destinationAddress||'')+'"></label>'+
    networkBadge()+
-   '<div class="btcField"><span>Crypto</span>'+coinButton()+'</div>'+
+   '<div class="btcField btcCryptoField"><span id="btcCryptoLabel">Crypto</span>'+coinButton()+'</div>'+
    amountBox()+gasBox()+checks()+
    '<label class="btcHuman" data-help="Cette confirmation est obligatoire côté interface ET côté serveur avant la signature."><input id="btcHuman" type="checkbox" '+(S.human?'checked':'')+'><span>Je ne suis pas un robot</span></label>'+
    '<button class="wvPrimary btcSend" id="btcSend" data-help="Le transfert reste bloqué tant que adresse, réseau, solde, frais réseau et anti-robot ne sont pas validés." '+(!(S.preview&&S.preview.canTransfer&&S.human)||S.busy?'disabled':'')+'>Transférer</button>'+

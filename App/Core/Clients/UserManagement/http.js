@@ -47,6 +47,7 @@ function createHandler({sessions,origin,secret,bridge=null,aiTransport=null,pers
    const principal=token&&sessions.verifySession(token);
    if(!principal){if(p==='/api/bootstrap')return reply(res,200,{authenticated:false,localBypass:false});return reply(res,401,{error:'AUTH_REQUIRED'});}
    sessions.touch(token);
+   if(require('../../../Bank/Core/feature_policy_v2_4_1').blockedPath(p))return reply(res,403,{error:'BANK_FEATURE_SUSPENDED'});
    if(p==='/auth21/admin/trading/command'){
     if(req.method!=='POST')return reply(res,405,{error:'METHOD_NOT_ALLOWED'});
     if(!tradingAdmin)return reply(res,404,{error:'NOT_FOUND'});

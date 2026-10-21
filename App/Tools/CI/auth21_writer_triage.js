@@ -43,6 +43,7 @@ const GROUPS=Object.freeze({
   'services/trading-engine/tests/test_trading_admin_p3_security.js',
   'services/trading-engine/tests/test_trading_runtime_state_v2.js',
   'services/trading-engine/tests/test_trading_logs_v2.js',
+  'tests/test_v2_4_1_cp1_path.js', // isolated temporary CP key and audit fixture only
   'Core/Backup/auth21_core_local_trial_wiring.js',
   'Core/Backup/auth21_durable_snapshot_writer.js',
   'Core/Backup/auth21_snapshot_control.js','Core/Backup/snapshot_coordinator.js',

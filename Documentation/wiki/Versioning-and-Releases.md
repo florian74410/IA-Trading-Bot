@@ -1,4 +1,6 @@
 
+
+> **Candidate suivante : [2.4.1 DEV](Correctif-2.4.1.md)** sur `feature/v2.4.1-bank-calendar-cp1`, pour recette locale ; la 2.4.0 et la production restent distinctes.
 # 🏷️ Versionnage et releases
 
 > **État de développement : 2.4.0 DEV** sur `feature/v2.4-finance-calendar` (PR #21 fusionnée, 566 tests CI rapportés). **Non déployée sur VPS / non promue stable.** Recette locale Auth21/TLS à effectuer.

@@ -1,5 +1,7 @@
 ### IA-TB 2.4.0 DEV
 
+> **Candidate suivante : [2.4.1 DEV](Correctif-2.4.1.md)** sur `feature/v2.4.1-bank-calendar-cp1`, pour recette locale ; la 2.4.0 et la production restent distinctes.
+
 - [État de la branche DEV](Versioning-and-Releases.md)
 - [Historique release 2.2.1](Release-2.2.1.md)
 

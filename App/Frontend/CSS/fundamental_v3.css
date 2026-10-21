@@ -547,3 +547,17 @@ body.iatb-global-nav-ready .earthRadarModal{
 .iatb-cal-values{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}.iatb-cal-values span{background:#061a2c;border:1px solid #21506c;border-radius:7px;padding:8px;font-size:11px}.iatb-cal-values b{display:block;margin-top:3px;color:#e9f5ff;font-size:15px}
 @media(max-width:1150px){.iatb-cal-workspace{grid-template-columns:1fr}.iatb-cal-column-head,.iatb-cal-row{min-width:670px}}
 @media(max-width:650px){#macroCalendarPanel .calendarUnifiedHead{flex-wrap:wrap}.iatb-cal-month-head h3{font-size:13px}.iatb-cal-day{padding:5px!important}.iatb-cal-values{grid-template-columns:1fr}}
+
+/* 2.4.1: fit the panel rather than forcing an overflowing 670px agenda. */
+#macroCalendarPanel{container-type:inline-size;min-width:0}
+.iatb-cal-workspace{grid-template-columns:minmax(240px,.75fr) minmax(0,1.6fr);align-items:start}
+.iatb-cal-table{max-height:340px;overflow:auto;scrollbar-width:thin;scrollbar-color:#26709a #041a2b}
+.iatb-cal-column-head{position:sticky;top:0;z-index:1}
+.iatb-cal-column-head,.iatb-cal-row{box-sizing:border-box;min-width:0;grid-template-columns:48px 24px minmax(110px,1fr) 50px repeat(3,minmax(42px,.5fr)) 52px;gap:5px}
+.iatb-cal-row>*{min-width:0;overflow-wrap:anywhere}
+.iatb-cal-month-head{flex-wrap:wrap}.iatb-cal-month-head h3{min-width:100px}
+@container(max-width:1000px){.iatb-cal-workspace{grid-template-columns:1fr}}
+@container(max-width:650px){.iatb-cal-column-head{display:none}.iatb-cal-row{grid-template-columns:55px 26px minmax(0,1fr);gap:8px;padding:12px}.iatb-cal-row>strong{grid-column:3}.iatb-cal-row>span:nth-child(n+4),.iatb-cal-row>em{grid-column:auto;display:flex;flex-direction:column;gap:3px}.iatb-cal-row>[data-label]::before{content:attr(data-label);font-size:9px;color:#80b5d0}.iatb-cal-row>span:nth-child(4){grid-column:1/-1}.iatb-cal-row>em{grid-column:1/-1}.iatb-cal-values{grid-template-columns:repeat(3,minmax(0,1fr))}.iatb-cal-values b{font-size:12px;overflow-wrap:anywhere}}
+@media(max-width:650px){.iatb-cal-workspace{padding:8px;gap:8px}.iatb-cal-month,.iatb-cal-agenda{padding:9px}.iatb-cal-agenda h3{font-size:14px}.iatb-cal-agenda h3 small{display:block;margin:5px 0 0}.iatb-cal-detail{padding:9px}}
+
+#calendarUnifiedEvents{max-height:none;overflow:visible}

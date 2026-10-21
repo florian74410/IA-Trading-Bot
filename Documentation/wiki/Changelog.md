@@ -1,4 +1,8 @@
 
+
+## 2.4.1 DEV — candidate locale
+
+Voir [le correctif calendrier, Bank et CP/1](Correctif-2.4.1.md). Aucune promotion stable ni déploiement VPS.
 # 🧾 Changelog fonctionnel du Wiki
 
 > **État de développement : 2.4.0 DEV** sur `feature/v2.4-finance-calendar` (PR #21 fusionnée, 566 tests CI rapportés). **Non déployée sur VPS / non promue stable.** Recette locale Auth21/TLS à effectuer.
