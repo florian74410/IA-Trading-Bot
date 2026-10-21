@@ -1,4 +1,4 @@
-### IA-TB 2.4.0 DEV
+### IA-TB 2.5.0 DEV
 
 > **Source nettoyée : [2.4.2-R1 DEV](Nettoyage-2.4.2-R1.md)** sur la branche `2.4.2-R1`, issue de 2.4.1. Recette locale à suivre ; aucune promotion stable ou opération GEN-1.
 
@@ -32,7 +32,7 @@
 
 - [🤖 IA Supervisor](Supervisor-IA.md)
 - [🧠 Strategy Engine v2](Strategy-Engine.md)
-- [🛡️ Risk Engine](Risk-Engine.md)
+- [🛡️ Risk Engine R1/R2](Risk-Engine.md)
 - [⚡ Trading Engine](Trading-Engine.md)
 - [📊 Portfolio Engine](Portfolio.md)
 
