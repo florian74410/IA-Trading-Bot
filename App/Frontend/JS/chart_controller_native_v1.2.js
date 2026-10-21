@@ -98,7 +98,7 @@
  };
  IATBChartController.prototype.showEconomicTooltip=function(group){
   var cal=global.IATBCalendarEvents;if(!cal)return;this.activeEconomicGroup=group.key;var tip=this.economicTooltip;tip.textContent=group.events.map(function(e){return cal.details(e,this.timeZone)},this).join('\n\n');tip.hidden=false;
-  tip.style.left=clamp(group.x,8,Math.max(8,this.container.clientWidth-330))+'px';tip.style.top='92px';
+  tip.style.left=clamp(group.x,8,Math.max(8,this.container.clientWidth-tip.offsetWidth-8))+'px';tip.style.top=Math.max(8,Math.min(92,this.container.clientHeight-tip.offsetHeight-8))+'px';
   var button=this.economicButtons.get(group.key);if(button)button.setAttribute('aria-expanded','true');
  };
  IATBChartController.prototype.drawEconomicEvents=function(ctx){

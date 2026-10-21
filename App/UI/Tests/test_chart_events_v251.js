@@ -96,3 +96,22 @@ test('Firefox: empty/unavailable calendar gives no invented badges or lines',asy
 test('Firefox: touchscreen badge exposes all details and dismisses on Escape',async()=>{
  const {page:p}=await pageWith({touch:true});try{await p.waitForSelector('.iatbEconomicBadge');await p.locator('.iatbEconomicBadge').first().tap();assert.equal(await p.locator('.iatbEconomicTooltip').isVisible(),true);await p.keyboard.press('Escape');assert.equal(await p.locator('.iatbEconomicTooltip').isVisible(),false)}finally{await p.close()}
 });
+test('Firefox: event rail wraps inside its block and tooltip fits narrow hosts',async()=>{
+ const {page:p,errors}=await pageWith();try{
+  await p.waitForSelector('.iatbEconomicChip');
+  await p.evaluate(()=>{const rail=document.getElementById('iatbChartEconomicRail'),chip=rail.querySelector('button');for(let i=0;i<16;i++){const c=chip.cloneNode(true);c.textContent='FINANCE_CALENDAR · 23/10/2026 14:30 UTC+2 · libellé très long pour la vérification responsive';rail.appendChild(c)}});
+  for(const width of [1440,768,390,320]){
+   await p.setViewportSize({width,height:1000});
+   await p.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+   const state=await p.evaluate(()=>{
+    const rail=document.getElementById('iatbChartEconomicRail'),r=rail.getBoundingClientRect(),box=document.getElementById('chartBox').getBoundingClientRect();
+    const bounded=Array.from(rail.querySelectorAll('button')).every(e=>{const b=e.getBoundingClientRect();return b.left>=r.left&&b.right<=r.right+1});
+    const c=IATBActiveChartController;const g=c.economicGroups[0];if(g)c.showEconomicTooltip(g);
+    const t=c.economicTooltip.getBoundingClientRect(),h=c.container.getBoundingClientRect();
+    return{bounded,overflow:rail.scrollWidth-rail.clientWidth,separate:r.top>=box.bottom-1,tooltip:!g||t.left>=h.left&&t.right<=h.right+1&&t.top>=h.top&&t.bottom<=h.bottom+1};
+   });
+   assert.ok(state.bounded,JSON.stringify({width,...state}));assert.ok(state.overflow<=1,JSON.stringify({width,...state}));assert.ok(state.separate,JSON.stringify({width,...state}));assert.ok(state.tooltip,JSON.stringify({width,...state}));
+  }
+  assert.deepStrictEqual(errors,[]);
+ }finally{await p.close()}
+});

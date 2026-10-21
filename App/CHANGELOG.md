@@ -2,6 +2,8 @@
 
 ## 2.5.1 DEV — consolidation ChartViewer
 
+- Recette locale : bandeau économique en grille responsive dans le flux, texte repliable, défilement vertical et infobulles bornées au graphique. Test Firefox 320–1440 px.
+
 - Repères économiques UTC exacts, lignes pointillées translucides et badges interactifs : CME cyan, FED jaune-orangé, Finance Calendar distinct.
 - Détails complets au survol/focus/toucher, regroupement par instant, fuseau explicite, navigation future sans OHLCV fictif et préservation des Drawing Tools.
 - Tests UTC/DST et Firefox sur la vraie page ; qualification complète héritée activée sur `2.5.1`. Recette finale encore requise, aucune promotion stable.
