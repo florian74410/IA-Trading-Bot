@@ -61,7 +61,7 @@ test('toolbar uses canonical market/pair controls, shows supported chart types a
   assert.equal(await p.locator('#indicatorStudioButton').count(),1);assert.equal(await p.locator('.iatbIndPanel').count(),0);assert.equal(await p.locator('.iatbDrawDock').count(),1);assert.equal(await p.locator('#exchangeSelect').count(),1);assert.equal(await p.locator('#symbol').count(),1);
   assert.equal(await p.getByLabel('Type de graphique',{exact:true}).inputValue(),'candles');assert(await p.getByLabel('Type de graphique',{exact:true}).isDisabled());
   await p.selectOption('#interval','5m');await p.waitForFunction(function(){return IATBChartWorkspace.toolbar.controls.dataset.timeframe==='5m'});
-  var download=p.waitForEvent('download');await p.getByRole('button',{name:'Capture du graphique PNG',exact:true}).click();assert.match((await download).suggestedFilename(),/BTCUSD-5m.png/);
+  assert.equal(await p.getByRole('button',{name:'Capture du graphique PNG',exact:true}).count(),0);
   await p.getByRole('button',{name:'Paramètres d’affichage',exact:true}).click();assert(await p.getByRole('group',{name:'Paramètres d’affichage'}).isVisible());await p.keyboard.press('Escape');assert(!(await p.getByRole('group',{name:'Paramètres d’affichage'}).isVisible()));assert.deepStrictEqual(c.errors,[]);
  }finally{await p.close();}
 });
