@@ -52,3 +52,16 @@ test('P3 proof integrity, expiry, roles, durable replay across restart and journ
   assert.equal(lifecycle.snapshot().state,'STOPPED');
  }finally{store.close();if(ledger)ledger.close();fs.rmSync(root,{recursive:true,force:true})}
 });
+test('P3 configured dispatcher never confuses disabled or invalid configuration with READY',async()=>{
+ const {createAuthenticatedDispatcher}=require('../../../Core/Clients/auth21_trading_admin_bridge');
+ const sessions={verifySession:token=>token==='admin'?{clientId:'CLadmin',role:'ADMIN'}:{clientId:'CLuser',role:'USER'}},payload={command:'STATUS',command_id:crypto.randomUUID(),timestamp:Date.now(),confirmed:true};
+ const disabled=createAuthenticatedDispatcher({sessions,env:{}});
+ assert.equal((await disabled({token:'admin',payload})).body.bridge.state,'DISABLED');
+ assert.equal((await disabled({token:'user',payload})).status,403);
+ assert.equal((await disabled({token:'admin',payload:{...payload,role:'ADMIN'}})).status,400);
+ assert.equal((await disabled({token:'admin',payload:{...payload,command:'START'}})).status,503);
+ const missing=createAuthenticatedDispatcher({sessions,env:{IATB_AUTH21_TRADING_ADMIN_BRIDGE:'1'}});
+ assert.equal((await missing({token:'admin',payload})).body.bridge.state,'KEY_MISSING');
+ const rejected=createAuthenticatedDispatcher({sessions,env:{IATB_AUTH21_TRADING_ADMIN_REQUESTED:'1',IATB_AUTH21_TRADING_ADMIN_BRIDGE:'0'}});
+ assert.equal((await rejected({token:'admin',payload})).body.bridge.state,'KEY_MISSING');
+});

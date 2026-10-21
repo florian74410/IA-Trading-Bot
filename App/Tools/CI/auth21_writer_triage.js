@@ -19,6 +19,8 @@ const GROUPS=Object.freeze({
   'Core/Clients/UserManagement/legacy_data.js'
  ],
  'operator-control-outside-snapshot':[
+  // Read-only O_RDONLY key descriptor; syntactic fs.openSync candidate only.
+  'Core/Clients/auth21_trading_key_provider.js',
   // v2.3 runtime/replay/ADMIN state: exclusive-mode writers, not hot-snapshot qualified.
   'Core/Clients/auth21_trading_replay_v2.js',
   'services/trading-engine/trading_admin_ledger_v2.js',
@@ -35,6 +37,9 @@ const GROUPS=Object.freeze({
   'Tools/ui_core_router_smoke.js'
  ],
  'coordinator-and-auth-fixture':[
+  // Disposable keys/accounts/ledgers, no production writers.
+  'services/trading-engine/tests/test_trading_p3_multiprocess_v252.js',
+  'services/trading-engine/tests/test_trading_p3_qualification_v252.js',
   // Reviewed temporary-only fixtures; never production writers.
   'services/trading-engine/tests/test_trading_admin_auth21_binding_v2.js',
   'services/trading-engine/tests/test_trading_admin_bridge_key_v2.js',
