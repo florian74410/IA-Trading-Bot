@@ -31,7 +31,7 @@ def main():
             raw=p.read_bytes()
             if args.v25_risk and row['path']=='App/Core/Clients/UserManagement/admin_routes.js':
                 # This exact 2.5-only addition is the sole authorized change to a frozen Auth21 contract.
-                additions=b'  "GET /api/admin/risk/settings",\\n  "POST /api/admin/risk/settings",\\n  "GET /api/admin/risk/status",\\n'
+                additions=b'  "GET /api/admin/risk/settings",\n  "POST /api/admin/risk/settings",\n  "GET /api/admin/risk/status",\n'
                 if raw.count(additions)!=1:errors.append('risk ADMIN-only routes not exact')
                 raw=raw.replace(additions,b'',1)
             if hashlib.sha256(raw).hexdigest()!=row['sha256']:errors.append('protected contract changed: '+row['path'])
