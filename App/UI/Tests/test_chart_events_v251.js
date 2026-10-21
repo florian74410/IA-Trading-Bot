@@ -110,6 +110,7 @@ test('Firefox: event rail wraps inside its block and tooltip fits narrow hosts',
     const t=c.economicTooltip.getBoundingClientRect(),h=c.container.getBoundingClientRect();
     return{bounded,overflow:rail.scrollWidth-rail.clientWidth,separate:r.top>=box.bottom-1,tooltip:!g||t.left>=h.left&&t.right<=h.right+1&&t.top>=h.top&&t.bottom<=h.bottom+1};
    });
+   if(process.env.IATB_QA_ARTIFACTS){fs.mkdirSync(process.env.IATB_QA_ARTIFACTS,{recursive:true});await p.screenshot({path:path.join(process.env.IATB_QA_ARTIFACTS,'events-responsive-'+width+'-firefox.png'),fullPage:true});}
    assert.ok(state.bounded,JSON.stringify({width,...state}));assert.ok(state.overflow<=1,JSON.stringify({width,...state}));assert.ok(state.separate,JSON.stringify({width,...state}));assert.ok(state.tooltip,JSON.stringify({width,...state}));
   }
   assert.deepStrictEqual(errors,[]);
