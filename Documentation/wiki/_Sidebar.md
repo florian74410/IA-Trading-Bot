@@ -1,6 +1,7 @@
-### IA-TB 2.2.1
+### IA-TB 2.4.0 DEV
 
-- [Dernière version : 2.2.1](Release-2.2.1.md)
+- [État de la branche DEV](Versioning-and-Releases.md)
+- [Historique release 2.2.1](Release-2.2.1.md)
 
 - [🏠 Accueil](Home.md)
 - [🚦 État fonctionnel V2.0](Etat-V2.0-DEBUG.md)
