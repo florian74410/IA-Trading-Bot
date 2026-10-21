@@ -37,7 +37,7 @@ function collect(cb){
  if(pending){pending.push(cb);return;}pending=[cb];
  // Current month backfill + approximately 90-day forward view, including recent actuals.
  const now=new Date(),from=iso(new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),1)));
- const to=iso(new Date(Date.now()+83*86400000));
+ const to=iso(new Date(Date.now()+60*86400000));
  const url=BASE+'?from='+from+'&to='+to+'&limit=500&include=holidays';
  get(url,(err,payload)=>{
   let result=null;
