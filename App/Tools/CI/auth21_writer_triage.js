@@ -19,6 +19,10 @@ const GROUPS=Object.freeze({
   'Core/Clients/UserManagement/legacy_data.js'
  ],
  'operator-control-outside-snapshot':[
+  // v2.3 runtime/replay/ADMIN state: exclusive-mode writers, not hot-snapshot qualified.
+  'Core/Clients/auth21_trading_replay_v2.js',
+  'services/trading-engine/trading_admin_ledger_v2.js',
+  'services/trading-engine/trading_runtime_state_v2.js',
   // Empty persistent lock inode only; kernel lease excludes Core/CLI writers.
   'Core/Clients/auth21_local_owner_lock.js',
   'Core/Admin/admin_console.js','Core/Admin/CP1/parser.js','Core/Admin/log_reader.js',
@@ -32,6 +36,13 @@ const GROUPS=Object.freeze({
   'Tools/ui_core_router_smoke.js'
  ],
  'coordinator-and-auth-fixture':[
+  // Reviewed temporary-only fixtures; never production writers.
+  'services/trading-engine/tests/test_trading_admin_auth21_binding_v2.js',
+  'services/trading-engine/tests/test_trading_admin_bridge_key_v2.js',
+  'services/trading-engine/tests/test_trading_admin_controller_v2.js',
+  'services/trading-engine/tests/test_trading_admin_p3_security.js',
+  'services/trading-engine/tests/test_trading_runtime_state_v2.js',
+  'services/trading-engine/tests/test_trading_logs_v2.js',
   'Core/Backup/auth21_core_local_trial_wiring.js',
   'Core/Backup/auth21_durable_snapshot_writer.js',
   'Core/Backup/auth21_snapshot_control.js','Core/Backup/snapshot_coordinator.js',
@@ -52,6 +63,8 @@ const GROUPS=Object.freeze({
   'Frontend/JS/admin_controller_v1.0.js'
  ],
  'engine-and-telemetry':[
+  // JSONL + SQLite mirror; gate tested, global writer coverage still incomplete.
+  'services/trading-engine/trading_logs_v2.js',
   'Fundamental/Engine/bootstrap_sqlite.js','Fundamental/Engine/fundamental_service.js',
   'Fundamental/Engine/observability_v3.js','Fundamental/Engine/source_discovery.js',
   'Fundamental/Providers/calendar_provider.js','Fundamental/Providers/fedwatch_provider.js',

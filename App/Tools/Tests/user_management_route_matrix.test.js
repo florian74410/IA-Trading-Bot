@@ -30,6 +30,10 @@ test('every historical route enforces the ADMIN/USER/GUEST boundary with live TL
    }else assert.equal((await call(row,f.login)).status,200,label);
   }else if(['DENIED-SECURITY','RETIRED'].includes(row.classification)){
    for(const user of [f.login,a,b,g])assert.equal((await call(row,user)).status,403,label+' unavailable even to ADMIN');
+  }else if(row.path==='/api/settings/test-zerox'){
+   // Current runtime restricts this provider diagnostic to ADMIN. Keep the stronger guard.
+   for(const user of [a,b,g])assert.equal((await call(row,user)).status,403,label+' non-admin');
+   assert.equal((await call(row,f.login)).status,200,label+' ADMIN');
   }else if(row.path==='/api/session/test-email'){
    assert.equal((await call(row,a)).status,403,label+' old Apple Mail remains inaccessible');
   }else{
