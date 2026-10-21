@@ -28,7 +28,6 @@ const GROUPS=Object.freeze({
   'Core/Admin/admin_console.js','Core/Admin/CP1/parser.js','Core/Admin/log_reader.js',
   'Core/Admin/restart_all.js','Core/Admin/service_registry.js',
   'Core/Admin/stop_total.js','launcher.js',
-  'Core/Updates/ai_update_builder_v1.0.js','Core/Updates/update_manager_v1.0.js',
   'Tools/core_router_smoke.js','Tools/firewall_smoke.js','Tools/marketdata_smoke.js',
   'Tools/orchestrator_sqlite_smoke.js','Tools/persistence_volume_smoke.js',
   'Tools/router_smoke.js','Tools/sqlite_preflight.js','Tools/ssh_ui_bridge.js',

@@ -80,7 +80,6 @@ var NOTIF_CATALOG=[
 {id:'portfolio.alert',label:'Portfolio',severity:'WARNING',desc:'Variation, synchronisation ou anomalie portfolio.'},
 {id:'marketdata.status',label:'Market Data',severity:'WARNING',desc:'Source indisponible, données périmées ou rétablies.'},
 {id:'engine.status',label:'État des Engines',severity:'WARNING',desc:'Engine hors ligne, erreur ou retour en ligne.'},
-{id:'system.update',label:'Mises à jour',severity:'NOTICE',desc:'Build, installation ou redémarrage.'},
 {id:'system.error',label:'Erreur système',severity:'CRITICAL',desc:'Erreur importante du Core/Router.'}
 ];
 var notifSettings=null;

@@ -24,7 +24,6 @@
         <button class="sideLink" type="button" data-target="engines"><span class="sideIcon engineIcon">◉</span><span><b>Engines & Services</b><small>Moteurs et services</small></span></button>
         <button class="sideLink" type="button" data-target="maintenance"><span class="sideIcon toolsIcon">⌁</span><span><b>Maintenance</b><small>Actions administrateur</small></span></button>
         <button class="sideLink" type="button" data-target="diagnostics"><span class="sideIcon diagIcon">⌁</span><span><b>Diagnostics</b><small>Santé de la machine</small></span></button>
-        <button class="sideLink" type="button" data-target="updates"><span class="sideIcon updateIcon">⇩</span><span><b>Mises à jour</b><small>Update Manager</small></span></button>
       </nav>
 
       <div class="sideSectionLabel appLabel">APPLICATION</div>
@@ -128,38 +127,10 @@
         <div class="dashSectionHead"><div class="sectionIdentity"><span class="sectionIcon">⌁</span><div><h2>Diagnostics</h2><p>Santé système et ressources de la machine</p></div></div></div>
         <div class="dashSectionBody"><div id="system" class="systemGrid dashboardSystem"></div></div>
       </section>
-
-      <section id="updates" class="dashSection anchorSection adminUpdateSection">
-        <div class="dashSectionHead"><div class="sectionIdentity"><span class="sectionIcon">⇩</span><div><h2>Mises à jour</h2><p>Update Manager · accès ADMIN uniquement</p></div></div></div>
-        <div class="dashSectionBody adminUpdateMount"><div class="updateGrid settingsUpdateGrid">
-          <div class="updateCard wide">
-            <div class="updateCardTitle"><div><h3>🧾 Historique des mises à jour</h3><div class="settingHint">Les mises à jour installées sont conservées dans <code>Updates/update_history.dat</code>. Une sauvegarde est créée avant chaque remplacement.</div></div><button id="updateRefresh" class="navBtn" type="button">Actualiser</button></div>
-            <div class="updateOverflow updateHistoryScroll"><table class="updateHistory"><thead><tr><th>Date</th><th>Version</th><th>Source</th><th>État</th><th>Sauvegarde</th></tr></thead><tbody id="updateHistoryBody"><tr><td colspan="5" class="muted">Chargement…</td></tr></tbody></table></div>
-          </div>
-          <div class="updateCard wide">
-            <h3>📦 Déposer un patch IA-Trading-Bot</h3>
-            <div class="settingHint">Dépose <b>une archive de mise à jour .zip</b>. L’archive est contrôlée avant installation : application, version source, version cible, chemins et SHA‑256.</div>
-            <div id="updateDropZone" class="updateDropZone" tabindex="0" role="button" aria-label="Déposer ou sélectionner une archive de mise à jour .zip"><div class="updateDropIcon">⇩</div><strong>Glisse et dépose une archive .zip ici</strong><span>ou</span><button id="updateBrowse" class="btn secondary" type="button">Choisir l’archive</button><input id="updateFile" type="file" accept=".zip,application/zip" hidden><div id="updateDropName" class="tiny">Aucune archive sélectionnée.</div></div>
-            <div id="updateSourceMsg" class="result"></div>
-            <details class="updateRemoteBox"><summary>Installer depuis une adresse web (optionnel)</summary><div class="updateRow"><label><input id="updateRemote" type="checkbox"> Utiliser une URL</label></div><div class="updateRow"><input id="updateUrl" type="url" placeholder="https://exemple.tld/ma-mise-a-jour.zip" disabled><button id="updateVerify" class="btn secondary" type="button">Vérifier l’URL</button></div></details>
-          </div>
-          <div class="updateCard wide">
-            <h3>🤖 AI Update Builder</h3>
-            <div class="settingHint">Le Chat peut construire un patch dans <code>Updates/AI-Generated/</code>, le faire vérifier par le même UpdateManager puis, selon les autorisations ci-dessous, l’installer et demander au launcher superviseur de redémarrer IA-Trading-Bot.</div>
-            <div class="settingRow"><div><b>Autoriser la création</b><div class="settingHint">Le Chat peut générer et tester un patch, sans l’installer.</div></div><input id="aiUpdateAllowCreate" type="checkbox"></div>
-            <div class="settingRow"><div><b>Autoriser l’installation</b><div class="settingHint">Permet au Chat d’installer un patch qu’il vient de générer et vérifier.</div></div><input id="aiUpdateAllowInstall" type="checkbox"></div>
-            <div class="settingRow"><div><b>Autoriser le redémarrage automatique</b><div class="settingHint">Après redémarrage, un health-check valide la release ; en cas d’échec, rollback automatique.</div></div><input id="aiUpdateAllowRestart" type="checkbox"></div>
-            <div class="settingsActions"><button id="aiUpdateSave" class="btn" type="button">Enregistrer les droits de mise à jour IA</button><span id="aiUpdateSupervisor" class="tiny"></span></div><div id="aiUpdateMsg" class="result"></div>
-            <div class="updateOverflow updateBuildOverflow"><table class="updateHistory"><thead><tr><th>Date</th><th>Build IA</th><th>État</th><th>Résumé</th></tr></thead><tbody id="aiUpdateBuilds"><tr><td colspan="4" class="muted">Aucun build chargé.</td></tr></tbody></table></div>
-          </div>
-          <div class="updateCard"><h3>🔐 Compatibilité</h3><div class="settingRow"><div>Version installée</div><strong id="updateCurrentVersion">--</strong></div><div class="settingRow"><div>Version source exigée</div><strong id="updateFromVersion">--</strong></div><div class="settingRow"><div>Version cible</div><strong id="updateToVersion">--</strong></div><div class="settingRow"><div>Fichiers vérifiés</div><strong id="updateFileCount">--</strong></div><div id="updateManifest" class="manifestBox">Aucune archive vérifiée.</div></div>
-          <div class="updateCard"><h3>✅ Installation</h3><div class="settingHint">Les clés API, utilisateur, paramètres, logs, stratégies et mosaïques sont protégés contre l’écrasement par un patch Core.</div><div id="updateProtected" class="settingHint updateProtected"></div><div class="updateRow"><label class="dangerConfirm"><input id="updateConfirm" type="checkbox"> J’autorise l’installation de l’archive vérifiée</label></div><button id="updateInstall" class="btn" type="button" disabled>Installer la mise à jour</button><div id="updateInstallMsg" class="result"></div></div>
-        </div></div>
-      </section>
     </div>
   </main>
 </div>
 <script src="/assets/admin_controller_v1.0.js"></script>
-<script src="/assets/update_ui_v1.0.js"></script>
+
 </body>
 </html>
