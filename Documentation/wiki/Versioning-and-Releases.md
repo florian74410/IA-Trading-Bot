@@ -1,3 +1,5 @@
+> **Branche de développement en cours : `2.5` — 2.5.0 DEV.** Dérivée du nettoyage `2.4.2-R1`. Aucun déploiement GEN-1, aucune promotion stable. La recette Auth21 et les données R2 par utilisateur restent à valider.
+
 
 
 > **Source nettoyée : [2.4.2-R1 DEV](Nettoyage-2.4.2-R1.md)** sur la branche `2.4.2-R1`, issue de 2.4.1. Recette locale à suivre ; aucune promotion stable ou opération GEN-1.
