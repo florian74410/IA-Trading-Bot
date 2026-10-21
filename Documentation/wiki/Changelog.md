@@ -15,6 +15,12 @@ Voir [le correctif calendrier, Bank et CP/1](Correctif-2.4.1.md). Aucune promoti
 
 ---
 
+## 2.5.0 DEV — Risk Management R1/R2
+
+R1 : quatre calculs déterministes sur les ordres (notionnel, risque au stop, budget et quantité adaptée). R2 : surveillance locale des positions, alertes limitées aux changements et scénarios neutres, sans consommation OpenAI pour les cycles de calcul. Paramètres › Risk Manager : activation du moteur, profils et modules individuels, suivi R2. Le Supervisor lit les résultats via CP/1. Le Risk Gate refuse de nouvelles autorisations faute d'un capital de portefeuille vérifié ; aucune mise en production, aucun LIVE. Voir [Risk Engine](Risk-Engine.md).
+
+---
+
 ## 2.4.0 DEV — Finance Calendar + Trading Logs V2 (PR #21)
 
 **🟢 En simple :** nouveau calendrier économique JSON et historique Trading à double écriture, sans trading LIVE.
