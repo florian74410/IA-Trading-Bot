@@ -100,4 +100,35 @@ function renderCredits(){if(!creditData)return;var a=creditData.events||[],p=cre
 function loadCredits(){api('/api/credits/usage').then(function(d){creditData=d;renderCredits()}).catch(function(e){$('creditMsg').textContent=e.message})}
 function bindCredits(){$('creditsRefresh').onclick=loadCredits;$('creditPeriod').onchange=drawCredits;$('creditSave').onclick=function(){function rate(id){var v=$(id).value;return v===''?null:Number(v)}var p={openai:{model:$('creditOpenModel').value.trim(),input:rate('creditOpenIn'),output:rate('creditOpenOut')},eurPerUsd:rate('creditFx')};api('/api/credits/pricing',{method:'POST',body:p}).then(function(){loadCredits();$('creditMsg').textContent='✓ Tarifs indicatifs enregistrés'}).catch(function(e){$('creditMsg').textContent=e.message})}} 
 
-function binds(){$('saveCollector').onclick=saveCollectorGlobal;$('saveMarket').onclick=saveMarket;$('saveLimits').onclick=saveMarket;document.querySelectorAll('#providerTabs button').forEach(function(b){b.onclick=function(){switchProviderTab(b.dataset.providerTab)}});$('saveCg').onclick=saveCg;$('registrySearchBtn').onclick=registrySearch;$('registryQuery').onkeydown=function(e){if(e.key==='Enter')registrySearch()};$('refreshRegistry').onclick=function(){var b=$('refreshRegistry');if(b)b.disabled=true;cpWrite('marketdata','marketdata.registry.refresh',{}).then(function(r){if(r&&r.ok===false){renderRegistry({registry:r.registry||{},note:'Synchronisation non appliquée : '+(r.error||'Provider indisponible')});return null}return loadMarket()}).catch(function(e){renderRegistry({registry:(state.health&&state.health.registry)||{},note:'Synchronisation non appliquée : '+e.message})}).then(function(){if(b)b.disabled=false})};$('testProvider').onclick=function(){cpRead('marketdata','marketdata.provider.test',{provider:state.selected}).then(function(r){$('providerStateText').textContent='Connexion '+state.selected+' réussie · '+(r.latencyMs||0)+' ms'}).catch(function(e){$('providerStateText').textContent=e.message})};$('resetMarket').onclick=function(){if(confirm('Réinitialiser les réglages Market Data visibles ?')){state.market.refreshMs=15000;state.market.cacheTtlMs=20000;renderMarket()}};$('moreInfo').onclick=function(){$('helpText').textContent=INFO[state.selected];$('help').classList.remove('hide')}}function init(){nav();helps();binds();bindRegistryWorkspace();bindApi();bindProfile();bindSecurity();bindFundamental();bindIndicators();bindNotifications();bindCredits();loadSecurity();loadFundamental();loadIndicators();loadNotifications();loadCredits();renderVersions();loadLegacy();loadProfile();engineStrip();loadMarket();var q=new URL(location.href).searchParams.get('section'),v=sectionToView(q)||'overview';show(v,'replace')}document.addEventListener('DOMContentLoaded',init)})();
+function binds(){$('saveCollector').onclick=saveCollectorGlobal;$('saveMarket').onclick=saveMarket;$('saveLimits').onclick=saveMarket;document.querySelectorAll('#providerTabs button').forEach(function(b){b.onclick=function(){switchProviderTab(b.dataset.providerTab)}});$('saveCg').onclick=saveCg;$('registrySearchBtn').onclick=registrySearch;$('registryQuery').onkeydown=function(e){if(e.key==='Enter')registrySearch()};$('refreshRegistry').onclick=function(){var b=$('refreshRegistry');if(b)b.disabled=true;cpWrite('marketdata','marketdata.registry.refresh',{}).then(function(r){if(r&&r.ok===false){renderRegistry({registry:r.registry||{},note:'Synchronisation non appliquée : '+(r.error||'Provider indisponible')});return null}return loadMarket()}).catch(function(e){renderRegistry({registry:(state.health&&state.health.registry)||{},note:'Synchronisation non appliquée : '+e.message})}).then(function(){if(b)b.disabled=false})};$('testProvider').onclick=function(){cpRead('marketdata','marketdata.provider.test',{provider:state.selected}).then(function(r){$('providerStateText').textContent='Connexion '+state.selected+' réussie · '+(r.latencyMs||0)+' ms'}).catch(function(e){$('providerStateText').textContent=e.message})};$('resetMarket').onclick=function(){if(confirm('Réinitialiser les réglages Market Data visibles ?')){state.market.refreshMs=15000;state.market.cacheTtlMs=20000;renderMarket()}};$('moreInfo').onclick=function(){$('helpText').textContent=INFO[state.selected];$('help').classList.remove('hide')}}
+// Risk 2.5 settings: CP/1 only. Never grant permissions from the browser.
+var R25_R1={capital:'A — Capital et notionnel',stopLoss:'B — Risque au stop et coûts',riskBudget:'C — Budget de risque',resize:'D — Proposition de quantité'};
+var R25_R2={equity:'R2.1 — Capital / Equity',drawdown:'R2.2 — Drawdown',exposure:'R2.3 — Exposition',correlation:'R2.4 — Corrélation (non disponible)',margin:'R2.5 — Marge / Liquidation',stress:'R2.6 — Stress (non disponible)',stopBudget:'R2.7 — Risque aux stops',integrity:'R2.8 — Fraîcheur / intégrité'};
+function r25RenderModules(id,values,labels){
+ var el=$(id);if(!el)return;
+ el.innerHTML=Object.keys(labels).map(function(k){var disabled=k==='correlation'||k==='stress';return '<label style="display:flex;align-items:center;gap:12px;margin:7px 0"><input type="checkbox" data-risk-module="'+k+'" '+(values&&values[k]?'checked':'')+(disabled?' disabled':'')+'> '+labels[k]+'</label>'}).join('');
+}
+function r25Load(){
+ if(!$('r25Status'))return;
+ cpRead('risk','risk.settings.get',{}).then(function(d){
+  var x=d.settings||{};$('r25Enabled').checked=x.enabled!==false;
+  $('r25R1Enabled').checked=!!(x.r1&&x.r1.enabled);$('r25R2Enabled').checked=!!(x.r2&&x.r2.enabled);
+  $('r25Level').value=x.r1&&x.r1.level||'balanced';
+  r25RenderModules('r25R1Modules',x.r1&&x.r1.modules,R25_R1);
+  r25RenderModules('r25R2Modules',x.r2&&x.r2.modules,R25_R2);
+  $('r25Status').textContent=x.enabled===false?'DÉSACTIVÉ':'CONFIGURÉ';
+  $('r25Message').textContent='Paramètres reçus via Risk Engine CP/1';
+ }).catch(function(e){$('r25Status').textContent='INDISPONIBLE';$('r25Message').textContent='Lecture impossible : '+e.message;});
+}
+function r25Values(id){var out={};var host=$(id);if(host)host.querySelectorAll('input[data-risk-module]').forEach(function(el){if(!el.disabled)out[el.dataset.riskModule]=el.checked;});return out;}
+function r25Bind(){
+ if(!$('r25Save'))return;
+ $('r25Save').onclick=function(){
+  var b=$('r25Save');b.disabled=true;
+  var patch={enabled:$('r25Enabled').checked,r1:{enabled:$('r25R1Enabled').checked,level:$('r25Level').value,modules:r25Values('r25R1Modules')},r2:{enabled:$('r25R2Enabled').checked,modules:r25Values('r25R2Modules')}};
+  cpWrite('risk','risk.settings.set',patch).then(function(){r25Load();}).catch(function(e){$('r25Message').textContent='Enregistrement refusé : '+e.message;}).then(function(){b.disabled=false;});
+ };
+ $('r25Reload').onclick=r25Load;
+}
+
+function init(){r25Bind();r25Load();nav();helps();binds();bindRegistryWorkspace();bindApi();bindProfile();bindSecurity();bindFundamental();bindIndicators();bindNotifications();bindCredits();loadSecurity();loadFundamental();loadIndicators();loadNotifications();loadCredits();renderVersions();loadLegacy();loadProfile();engineStrip();loadMarket();var q=new URL(location.href).searchParams.get('section'),v=sectionToView(q)||'overview';show(v,'replace')}document.addEventListener('DOMContentLoaded',init)})();
