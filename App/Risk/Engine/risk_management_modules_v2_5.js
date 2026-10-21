@@ -20,10 +20,44 @@ function r2(snapshot,config){const c=settings(config),limits=LEVELS[c.riskLevel]
  if(!c.enabled)return{schema:'risk.r2/1.0',decision:'DISABLED',warnings:[],measurements:{},tokenCost:0};
  if(c.r2.equity){measurements.equity=equity; if(!(equity>0))missing.push('EQUITY_REQUIRED');}
  if(c.r2.drawdown){if(!(equity>0&&peak>0))missing.push('PEAK_EQUITY_REQUIRED');else{measurements.drawdownPct=round(Math.max(0,(peak-equity)/peak*100));if(measurements.drawdownPct>limits.drawdownPct)warnings.push('DRAWDOWN_LIMIT');}}
- if(c.r2.concentration){const gross=p.reduce((n,x)=>n+Math.abs(finite(x.notional)||0),0),largest=p.reduce((m,x)=>Math.max(m,Math.abs(finite(x.notional)||0)),0);if(!(equity>0))missing.push('EQUITY_REQUIRED');else{measurements.grossExposurePct=round(gross/equity*100);measurements.largestPositionPct=round(largest/equity*100);if(measurements.largestPositionPct>limits.concentrationPct)warnings.push('CONCENTRATION_LIMIT');}}
+ if(c.r2.concentration){const byAsset=Object.create(null),gross=p.reduce((n,x)=>{const amount=Math.abs(finite(x.notional)||0),asset=String(x.symbol||'UNSPECIFIED').toUpperCase();byAsset[asset]=(byAsset[asset]||0)+amount;return n+amount;},0),largest=Math.max(0,...Object.values(byAsset));if(!(equity>0))missing.push('EQUITY_REQUIRED');else{measurements.grossExposurePct=round(gross/equity*100);measurements.largestPositionPct=round(largest/equity*100);if(measurements.largestPositionPct>limits.concentrationPct)warnings.push('CONCENTRATION_LIMIT');}}
  if(c.r2.stopBudget){if(!(equity>0)||p.some(x=>finite(x.riskAtStop)===null))missing.push('POSITION_STOP_RISK_REQUIRED');else{measurements.stopBudgetPct=round(100*p.reduce((n,x)=>n+Math.max(0,finite(x.riskAtStop)),0)/equity);if(measurements.stopBudgetPct>limits.portfolioPct)warnings.push('PORTFOLIO_STOP_BUDGET_LIMIT');}}
- // Advanced modules deliberately require provider-verified metrics rather than invent values.
- for(const k of ['correlation','margin','volatility','freshness'])if(c.r2[k]){const x=s.metrics&&s.metrics[k];if(x&&x.ok===true&&Array.isArray(x.alerts))warnings.push(...x.alerts.map(y=>String(y).slice(0,80)));else missing.push(k.toUpperCase()+'_DATA_REQUIRED');}
+ // Deterministic metrics require a trusted, timestamped snapshot upstream.
+ const m=s.metrics||{};
+ function passed(k){return m[k]&&m[k].ok===true;}
+ function fallback(k){const x=m[k];if(x&&x.ok===true&&Array.isArray(x.alerts)){warnings.push(...x.alerts.map(y=>String(y).slice(0,80)));return true;}return false;}
+ if(c.r2.correlation){
+  const x=m.correlation,series=x&&x.returnsBySymbol||{},names=Object.keys(series);
+  let max=null,compared=0;
+  for(let i=0;i<names.length;i++)for(let j=i+1;j<names.length;j++){
+   const a=series[names[i]],b=series[names[j]];
+   if(!Array.isArray(a)||!Array.isArray(b)||a.length!==b.length||a.length<20||a.some(y=>finite(y)===null)||b.some(y=>finite(y)===null))continue;
+   const n=a.length,am=a.reduce((v,y)=>v+Number(y),0)/n,bm=b.reduce((v,y)=>v+Number(y),0)/n;
+   let xy=0,xx=0,yy=0;for(let t=0;t<n;t++){const u=Number(a[t])-am,v=Number(b[t])-bm;xy+=u*v;xx+=u*u;yy+=v*v;}
+   if(xx>0&&yy>0){const rho=xy/Math.sqrt(xx*yy);max=max===null?rho:Math.max(max,rho);compared++;}
+  }
+  if(compared){measurements.maxCorrelation=round(max);measurements.correlationPairs=compared;if(max>.85)warnings.push('CORRELATED_MARKET_EXPOSURE');}
+  else if(!fallback('correlation'))missing.push('CORRELATION_RETURNS_REQUIRED');
+ }
+ if(c.r2.margin){
+  const x=m.margin||{},maintenance=finite(x.maintenanceMargin),balance=finite(x.marginEquity);
+  if(maintenance!==null&&maintenance>0&&balance!==null){measurements.marginCoverage=round(balance/maintenance);if(balance/maintenance<1.25)warnings.push('MARGIN_COVERAGE_LOW');}
+  else if(!fallback('margin'))missing.push('MARGIN_EXCHANGE_DATA_REQUIRED');
+ }
+ if(c.r2.volatility){
+  const x=m.volatility||{},vals=x.dailyReturnsPct;
+  if(Array.isArray(vals)&&vals.length>=20&&vals.every(y=>finite(y)!==null)){
+   const n=vals.length,avg=vals.reduce((v,y)=>v+Number(y),0)/n;
+   const variance=vals.reduce((v,y)=>v+Math.pow(Number(y)-avg,2),0)/(n-1);
+   measurements.dailyVolatilityPct=round(Math.sqrt(variance));
+   // Informational metric: no risk limit is inferred from volatility alone.
+  }else if(!fallback('volatility'))missing.push('DAILY_VOLATILITY_SAMPLE_REQUIRED');
+ }
+ if(c.r2.freshness){
+  const x=m.freshness||{},stamp=finite(x.observedAtMs),age=stamp===null?null:Date.now()-stamp,limitMs=30000;
+  if(age!==null&&age>=0){measurements.dataAgeMs=Math.round(age);if(age>limitMs)warnings.push('PORTFOLIO_DATA_STALE');}
+  else if(!fallback('freshness'))missing.push('DATA_TIMESTAMP_REQUIRED');
+ }
  return{schema:'risk.r2/1.0',decision:missing.length?'DEGRADED':warnings.length?'LIMIT_EXCEEDED':'NORMAL',level:c.riskLevel,warnings:[...new Set(warnings)],missing:[...new Set(missing)],measurements,tokenCost:0,requiresSupervisorAttention:warnings.length>0};
 }
 module.exports={LEVELS,R1,R2,settings,r1,r2};
