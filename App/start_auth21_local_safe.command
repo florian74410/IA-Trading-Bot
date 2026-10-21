@@ -22,6 +22,7 @@ export IATB_DEPLOYMENT_MODE=AUTHENTICATED
 export IATB_AUTH_ORIGIN=https://localhost:8000
 export IATB_AUTH_TLS_CERT="$PRIVATE/tls/localhost.crt"
 export IATB_AUTH_TLS_KEY="$PRIVATE/tls/localhost.key"
+export IATB_RELEASE_VERSION="$(tr -d '[:space:]' < VERSION)"
 export IATB_TRADING_LIVE=0
 export IATB_AUTH21_TRADING_ADMIN_BRIDGE=0
 export IATB_DEBUG_MODE=0
