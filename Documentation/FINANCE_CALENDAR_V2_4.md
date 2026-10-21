@@ -32,3 +32,23 @@ curl -fsS 'https://www.financecalendar.com/wp-json/fc/v1/calendar?from=2026-10-2
 - Verify source licensing if terms change.
 
 API documentation: https://www.financecalendar.com/api/
+
+## État PR #21 et recette à effectuer
+
+La PR #21 est fusionnée sur `feature/v2.4-finance-calendar` et inclut Trading Logs V2, Auth21/Risk/Firewall conservés et corrections de tests. **566 tests en CI réussis**, sans échec ni test ignoré d'après le rapport de PR. **L'API Finance Calendar n'est pas pour autant validée en accès réel depuis Macro** et la recette de l'interface n'a pas encore eu lieu.
+
+Le calendrier ne garantit pas les événements d'un mois choisi hors fenêtre courante ; ce comportement doit être clairement identifié lors de la recette. Ne pas présenter des expirations CME ni des actualités CME comme disponibles via Finance Calendar. Source de données et attribution restent visibles dans le panneau Fundamental.
+
+Procédure locale (branche v2.4, Node 22, base Auth21/TLS privée préexistante) :
+
+```bash
+cd ~/IA-TB-v2.3-TEST
+git fetch origin
+git switch feature/v2.4-finance-calendar
+git pull --ff-only origin feature/v2.4-finance-calendar
+cd App
+node tests/test_finance_calendar_v2_4.js
+bash ./start_auth21_local_safe.command
+```
+
+Ouvrir `https://localhost:8000/fundamental`. Vérifier rôle ADMIN, remontées CP/1, liste défilante, attribution, dates/horaires, pays/impact/consensus/réel/précédent, statuts d'erreur et trading LIVE désactivé. **Ne pas envoyer sur GitHub les bases Auth21, clés, passphrases, tokens, WAL, logs privés ou archives de transfert.**
