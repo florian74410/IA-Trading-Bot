@@ -1,4 +1,3 @@
-> Version actuelle : **2.2.1 (TEST)**. Voir [la release et les changements](Release-2.2.1.md). La production GEN-1 reste à déployer et à valider.
 
 # 📦 Installation et démarrage — V2.0 DEBUG
 
@@ -147,3 +146,20 @@ Vérifier en priorité :
 - logs du service ;
 - accès réseau ;
 - configuration provider/RPC.
+
+
+---
+
+## 🧪 Recette locale 2.4.0 DEV — Linux XFCE
+
+> **🟢 En simple :** le lancement de développement Auth21 ne doit pas utiliser les anciens contournements DEBUG. **Cette procédure n'est pas une mise à jour du VPS ni une promotion stable.**
+
+La branche `feature/v2.4-finance-calendar` exige Node 22 et un espace de données privé déjà préparé avec les comptes Auth21, la clé utilisateur et le certificat localhost. Lancer depuis `App/` :
+
+```bash
+bash ./start_auth21_local_safe.command
+```
+
+La page attendue est `https://localhost:8000`. Le lanceur conserve `IATB_AUTH_MODE=authenticated`, TLS, `IATB_TRADING_LIVE=0` et refuse les ports déjà occupés. Les bases, clés et certificats demeurent hors Git ; ne jamais les copier dans le dépôt. Tester Finance Calendar dans Fundamental et les états des journaux Trading avant d'envisager toute promotion.
+
+**Note historique :** la procédure Node 16 ci-dessus décrit les anciens builds DEBUG, et non cette recette v2.4 DEV.
