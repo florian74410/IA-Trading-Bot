@@ -22,7 +22,7 @@ jobs:
         run: |
           npm install --prefix "$RUNNER_TEMP/source-audit" --no-audit --no-fund acorn@8.19.0 eslint-scope@8.4.0
           NODE_PATH="$RUNNER_TEMP/source-audit/node_modules" node Tools/CI/audit_source_v242.cjs . "$RUNNER_TEMP/source-audit.json"
-          python3 Tools/CI/source_integrity_v242.py "$RUNNER_TEMP/source-audit.json"
+          if [ "$GITHUB_REF_NAME" = "feature/v2.5-risk-management-r1-r2" ]; then python3 Tools/CI/source_integrity_v242.py "$RUNNER_TEMP/source-audit.json" --v25-risk; else python3 Tools/CI/source_integrity_v242.py "$RUNNER_TEMP/source-audit.json"; fi
           node App/Tools_validate_release_version.js
           node Tools/CI/verify_rbac_registry.js --self-test
           python3 -W error::ResourceWarning -m unittest discover -s Tools/CI -p 'test_auth_storage_preflight.py' -v
