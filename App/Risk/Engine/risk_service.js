@@ -146,7 +146,7 @@ function risk25PortfolioObservation(packet){
  var raw=packet&&packet.snapshot||packet||{},tradingOnly=raw.analysis_mode==='TRADING_ONLY';
  return {positions:Array.isArray(raw.positions)?raw.positions:[],equity:tradingOnly?null:raw.equity,
   peakEquity:tradingOnly?null:raw.peakEquity,
-  asOf:raw.timestamp?new Date(raw.timestamp).toISOString():raw.asOf||null,
+  asOf:Number.isFinite(Number(raw.timestamp))&&Number(raw.timestamp)>0&&Number.isFinite(new Date(Number(raw.timestamp)).getTime())?new Date(Number(raw.timestamp)).toISOString():raw.asOf||null,
   reconciled:!tradingOnly&&raw.reconciled===true,
   sourceMode:String(raw.analysis_mode||'UNKNOWN')};
 }
@@ -163,15 +163,17 @@ function r25Sample(cb){
 }
 function r25MonitorTick(){
  var cfg=riskSettings();if(!cfg.enabled||!cfg.r2||cfg.r2.enabled===false||R25_MONITOR.busy)return;
+ // Do not inspect or broadcast shared Portfolio state under Auth21 without an owner-scoped snapshot.
+ if(process.env.IATB_AUTH_MODE==='authenticated')return;
  R25_MONITOR.busy=true;
  r25Sample(function(err,data){R25_MONITOR.busy=false;
   if(err||!data||!data.supervisor||!data.supervisor.notify){R25_MONITOR.alertKey=null;return;}
   var codes=(data.alerts||[]).filter(function(x){return x.severity==='HIGH'||x.severity==='CRITICAL';}).map(function(x){return x.code;}).sort();
   var key=codes.join('|'),now=Date.now();
   if(!key)return;
-  if(key===R25_MONITOR.alertKey&&now-R25_MONITOR.lastPublishedAt<300000)return;
+  if(key===R25_MONITOR.alertKey)return;
   R25_MONITOR.alertKey=key;R25_MONITOR.lastPublishedAt=now;
-  CP_CLIENT.publish('risk','risk.r2.alert',{status:data.status,alerts:data.alerts,summary:data.summary||{},
+  CP_CLIENT.publish('risk','risk.r2.alert',{status:data.status,alerts:(data.alerts||[]).map(function(a){return{module:a.module,code:a.code,severity:a.severity};}),
    policy:data.policy,sampledAt:data.sampledAt,reviewOnly:true},{schema:'risk.r2.alert/1.0'},function(e){
    if(e)console.warn('Risk R2 event publish:',String(e.message||e).slice(0,120));
   });
