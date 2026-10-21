@@ -9,7 +9,7 @@ test('Risk settings render and ADMIN can persist modules via authenticated API',
  const current={enabled:true,riskLevel:'BALANCED',autoSuggestions:true,r1:{capital:true,stopLoss:true,budget:true,resize:true},r2:{equity:true,drawdown:true,concentration:true,correlation:true,margin:true,volatility:true,stopBudget:true,freshness:true}};
  try{
   await page.route('**/*',async route=>{
-   const req=route.request(),url=new URL(req.url),p=url.pathname;
+   const req=route.request();let url;try{url=new URL(req.url());}catch(_){return route.abort();}if(!/^https?:$/.test(url.protocol))return route.abort();const p=url.pathname;
    if(p==='/settings')return route.fulfill({status:200,contentType:'text/html',body:read('Frontend/Pages/settings.html')});
    if(p==='/assets/settings.js')return route.fulfill({contentType:'application/javascript',body:read('Frontend/JS/settings.js')});
    if(p==='/assets/settings.css')return route.fulfill({contentType:'text/css',body:read('Frontend/CSS/settings.css')});
