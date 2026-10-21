@@ -1,7 +1,7 @@
 <!doctype html>
 <html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>IA-TB · Fondamental</title><script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script><script src="https://unpkg.com/globe.gl@2.27.2/dist/globe.gl.min.js"></script><link rel="stylesheet" href="/assets/fundamental_v3.css?v=225"><link rel="stylesheet" href="/assets/fundamental_globe_expanded_v2_2_5.css?v=225">
-<link rel="stylesheet" href="/assets/companion_v1.0.css"><link rel="stylesheet" href="/assets/global_navigation_v2.0.css?v=2013"><script defer src="/assets/global_navigation_v2.0.js?v=3023"></script></head>
+<link rel="stylesheet" href="/assets/companion_v1.0.css"><link rel="stylesheet" href="/assets/global_navigation_v2.0.css?v=2013"><script defer src="/assets/global_navigation_v2.0.js?v=3023"></script><style id="iatbFinanceCalendarV24">.macroCalendarSplit{align-items:stretch}.macroCalendarSplit>.calendarPane{min-height:0}.macroCalendarSplit .calendarEventList{height:300px;max-height:300px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#3178a5 #071a29}.macroCalendarSplit .calendarEventList::-webkit-scrollbar{width:8px}.macroCalendarSplit .calendarEventList::-webkit-scrollbar-thumb{background:#3178a5;border-radius:6px}.macroCalendarSplit .calendarEventList::-webkit-scrollbar-track{background:#071a29}.cmePane footer a{color:#7dc8f3;text-decoration:underline}</style></head>
 <body>
 <div class="page">
   <header class="topbar">
@@ -112,8 +112,8 @@
 </section>
 <section class="macroCalendarPanel viewBlock overviewOnly" id="macroCalendarPanel">
   <div class="macroCalendarHead">
-    <div><span class="eyebrow">MACRO & DERIVATIVES CALENDARS</span><h2>Calendriers FED & CME</h2><p>Réunions FOMC, publications macro CME et échéances futures/options dans un calendrier unifié pour le Supervisor.</p></div>
-    <div class="macroCalendarLegend"><span><i class="fed"></i>FED</span><span><i class="cme"></i>CME Macro</span><span><i class="expiry"></i>CME Expiration</span></div>
+    <div><span class="eyebrow">MACRO & DERIVATIVES CALENDARS</span><h2>Calendriers FED & économie</h2><p>Réunions FOMC et événements économiques internationaux issus de Finance Calendar.</p></div>
+    <div class="macroCalendarLegend"><span><i class="fed"></i>FED</span><span><i class="cme"></i>Finance Calendar</span></div>
   </div>
   <div class="macroCalendarSplit">
     <article class="calendarPane fedPane">
@@ -127,16 +127,16 @@
     </article>
     <article class="calendarPane cmePane">
       <header class="calendarPaneHead">
-        <div class="calendarBrand"><span class="calendarLogo cmeLogo">CME</span><div><b>CME Group</b><small>Événements macro & expirations</small></div></div>
+        <div class="calendarBrand"><span class="calendarLogo cmeLogo">FC</span><div><b>Finance Calendar</b><small>Événements macro internationaux</small></div></div>
         <div class="calendarNav"><button type="button" data-cal-nav="cme:-1">‹</button><strong id="cmeCalendarMonth">--</strong><button type="button" data-cal-nav="cme:1">›</button></div>
       </header>
-      <div class="calendarFilters"><button type="button" class="active" data-cme-filter="ALL">Tout</button><button type="button" data-cme-filter="ECONOMIC">Macro</button><button type="button" data-cme-filter="EXPIRATION">Expirations</button></div>
+      
       <div id="cmeCalendarGrid" class="calendarMonthGrid"><div class="calendarLoading">Chargement…</div></div>
       <div id="cmeCalendarEvents" class="calendarEventList"></div>
-      <footer><span id="cmeCalendarStatus">CME · --</span><small id="cmeExpirationStatus">Expiration Calendar · --</small></footer>
+      <footer><span id="cmeCalendarStatus">CME · --</span><small id="cmeExpirationStatus">Échéances CME : non disponibles</small><a href="https://www.financecalendar.com" target="_blank" rel="noopener noreferrer">Données : Finance Calendar ↗</a></footer>
     </article>
   </div>
-  <div class="macroCalendarFoot"><span>🧠 Disponible au Supervisor via CP/1</span><small>Les échéances CME incluent Last Trade, Settlement, Delivery, Notice, Position et Holding lorsque la page publique les expose.</small></div>
+  <div class="macroCalendarFoot"><span>🧠 Disponible au Supervisor via CP/1</span><small>Finance Calendar fournit les publications économiques et décisions monétaires ; les échéances contractuelles CME nécessitent une autre source.</small></div>
 </section>
 
 
