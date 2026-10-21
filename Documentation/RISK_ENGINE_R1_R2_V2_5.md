@@ -48,3 +48,7 @@ Assertions sur notionnel, stop, frais, dimensionnement, refus des entrées manqu
 4. Faire le suivi R2 périodique côté moteur, avec déduplication des alertes et limitation des demandes LLM ; notifier uniquement changements importants.
 5. Ajouter un choix de scénarios neutres sur demande, jamais d'ordre de liquidation autonome.
 6. Recette Firefox Linux et tests bout en bout multiutilisateur/Auth21 + Trading Firewall.
+
+## Vérification des sources de capital (point bloquant pour l'exécution)
+
+L'implémentation actuelle `App/Portfolio/Engine/portfolio_engine.js` renvoie un snapshot avec `analysis_mode: 'TRADING_ONLY'`. Dans ce mode, son champ `equity` est calculé à partir des PnL de trading, **et non d'un solde total de compte validé**. Il ne doit donc pas servir à fixer automatiquement les budgets R1 ou les limites de drawdown R2. L'adaptateur doit exiger une `account_equity` confirmée par le compte/exchange autorisé, avec sa devise, sa fraîcheur et son périmètre utilisateur. En absence de cette donnée, l'évaluation doit rester dégradée/non exécutable. Les entrées `account.equity` et `snapshot.equity` des contrats CP/1 actuels sont **informatives et non fiables pour un ordre LIVE** tant que cet adaptateur n'est pas implémenté.
