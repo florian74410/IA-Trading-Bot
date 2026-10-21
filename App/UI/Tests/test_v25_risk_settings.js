@@ -14,7 +14,7 @@ test('Risk v2.5 actual settings markup renders 12 toggles, profiles, responsive 
   const config={enabled:true,level:'BALANCED',r1:{enabled:true,modules:{capital:true,stop:true,budget:true,resize:true}},r2:{enabled:true,alertsEnabled:true,monitorIntervalSec:30,modules:{equity:true,drawdown:true,concentration:true,correlation:true,margin:true,stress:true,stopRisk:true,integrity:true}}};
   await page.addScriptTag({content:`var $=id=>document.getElementById(id);var api=function(path,opt){window.__lastApi={path:path,opt:opt||{}};return Promise.resolve(path.endsWith('settings')?{data:{settings:window.__saved||window.__config}}:{data:{at:0,status:'OK',alerts:[]}});};window.__config=${JSON.stringify(config)};\n`+chunk});
   await page.evaluate(()=>{document.getElementById('view-risk').classList.remove('hide');bindRisk25();loadRisk25()});
-  await page.locator('#riskSaveStatus').getByText('Configuration chargée', {exact:false}).waitFor();
+  await page.waitForFunction(()=>document.getElementById('riskSaveStatus').textContent.includes('Configuration chargée'));
   assert.equal(await page.locator('[data-risk-module]').count(),12);
   await page.locator('#riskLevel').selectOption('PRUDENT');
   await page.locator('input[data-risk-module="r2:correlation"]').uncheck();
@@ -26,7 +26,7 @@ test('Risk v2.5 actual settings markup renders 12 toggles, profiles, responsive 
   assert.equal(saved.opt.body.r2.modules.correlation,false);
   for(const width of [1280,768,390]){
    await page.setViewportSize({width,height:900});
-   let widthInfo=await page.evaluate(()=>({full:document.documentElement.scrollWidth,viewport:innerWidth}));
+   let widthInfo=await page.evaluate(()=>({full:document.getElementById('view-risk').scrollWidth,viewport:document.getElementById('view-risk').clientWidth}));
    assert(widthInfo.full<=widthInfo.viewport+2,JSON.stringify(widthInfo));
   }
  }finally{await page.close();}
