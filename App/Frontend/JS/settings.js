@@ -110,7 +110,7 @@ function r25RenderModules(id,values,labels){
 }
 function r25Load(){
  if(!$('r25Status'))return;
- cpRead('risk','risk.settings.get',{}).then(function(d){
+ api('/api/admin/risk/settings').then(function(d){
   var x=d.settings||{};$('r25Enabled').checked=x.enabled!==false;
   $('r25R1Enabled').checked=!!(x.r1&&x.r1.enabled);$('r25R2Enabled').checked=!!(x.r2&&x.r2.enabled);
   $('r25Level').value=x.r1&&x.r1.level||'balanced';
@@ -126,7 +126,7 @@ function r25Bind(){
  $('r25Save').onclick=function(){
   var b=$('r25Save');b.disabled=true;
   var patch={enabled:$('r25Enabled').checked,r1:{enabled:$('r25R1Enabled').checked,level:$('r25Level').value,modules:r25Values('r25R1Modules')},r2:{enabled:$('r25R2Enabled').checked,modules:r25Values('r25R2Modules')}};
-  cpWrite('risk','risk.settings.set',patch).then(function(){r25Load();}).catch(function(e){$('r25Message').textContent='Enregistrement refusé : '+e.message;}).then(function(){b.disabled=false;});
+  api('/api/admin/risk/settings',{method:'POST',body:patch}).then(function(){r25Load();}).catch(function(e){$('r25Message').textContent='Enregistrement refusé : '+e.message;}).then(function(){b.disabled=false;});
  };
  $('r25Reload').onclick=r25Load;
 }
