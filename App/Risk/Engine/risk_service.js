@@ -153,7 +153,14 @@ function receiveR2(raw){
 }
 function refreshR2(cb){
  var cfg=riskSettings();if(!cfg.enabled||!cfg.r2.enabled)return cb(null,{schema:'risk.r2.monitor/1.0',status:'DISABLED',alerts:[]});
- requestPortfolio(function(e,d){if(e)return cb(null,{schema:'risk.r2.monitor/1.0',status:'UNAVAILABLE',alerts:[{code:'PORTFOLIO_UNAVAILABLE',severity:'CRITICAL'}]});
+ requestPortfolio(function(e,d){if(e){
+   var prev=R2_STATE.alerts.some(function(x){return x.code==='PORTFOLIO_UNAVAILABLE';}),at=new Date().toISOString();
+   var alert={module:'R2.8',metric:'integrity',code:'PORTFOLIO_UNAVAILABLE',severity:'CRITICAL'};
+   if(!prev&&cfg.r2.alertsEnabled)CP_CLIENT.publish('risk','risk.r2.limit_exceeded',{schema:'risk.r2.alert/1.0',module:alert.module,metric:alert.metric,code:alert.code,severity:alert.severity,at:at},{});
+   var unavailable={schema:'risk.r2.monitor/1.0',status:'UNAVAILABLE',asOf:at,alerts:[alert],scenarios:[],execution_eligible:false};
+   R2_STATE={last:unavailable,alerts:[alert],at:Date.now()};
+   return cb(null,unavailable);
+  }
   cb(null,receiveR2(d&&d.snapshot||d));});
 }
 function checkTradeIntent(raw,cb){
