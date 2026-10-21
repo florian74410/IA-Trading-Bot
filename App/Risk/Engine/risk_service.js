@@ -44,7 +44,7 @@ var CAPABILITIES=[
   'risk.r2.evaluate',
   'risk.r2.monitor'
 ];
-var EVENTS=[];
+var EVENTS=['risk.r2.alert'];
 
 function json(res,code,obj){
   var b=Buffer.from(JSON.stringify(obj));
@@ -139,11 +139,50 @@ function buildAnalysis(args,detail,cb){
     }
   );
 }
+
+// Portfolio v2.4 snapshot is TRADING_ONLY: its equity field is trading PnL,
+// NOT account equity. Never calculate portfolio risk percentages using this field.
+function risk25PortfolioObservation(packet){
+ var raw=packet&&packet.snapshot||packet||{},tradingOnly=raw.analysis_mode==='TRADING_ONLY';
+ return {positions:Array.isArray(raw.positions)?raw.positions:[],equity:tradingOnly?null:raw.equity,
+  peakEquity:tradingOnly?null:raw.peakEquity,
+  asOf:raw.timestamp?new Date(raw.timestamp).toISOString():raw.asOf||null,
+  reconciled:!tradingOnly&&raw.reconciled===true,
+  sourceMode:String(raw.analysis_mode||'UNKNOWN')};
+}
+var R25_MONITOR={last:null,lastPublishedAt:0,alertKey:null,busy:false,interval:null};
+function r25Sample(cb){
+ requestPortfolio(function(err,packet){
+  var data=err?{schema:'risk.r2.snapshot/1.0',status:'UNAVAILABLE',
+   alerts:[{module:'integrity',code:'PORTFOLIO_CP1_UNAVAILABLE',severity:'CRITICAL'}],
+   policy:{blockAdditionalRisk:true,autoLiquidation:false},supervisor:{notify:true,alertCount:1},executable:false}
+   :R2.evaluate(risk25PortfolioObservation(packet),riskSettings().r2);
+  data.sampledAt=new Date().toISOString();R25_MONITOR.last=data;
+  cb(null,data);
+ });
+}
+function r25MonitorTick(){
+ var cfg=riskSettings();if(!cfg.enabled||!cfg.r2||cfg.r2.enabled===false||R25_MONITOR.busy)return;
+ R25_MONITOR.busy=true;
+ r25Sample(function(err,data){R25_MONITOR.busy=false;
+  if(err||!data||!data.supervisor||!data.supervisor.notify){R25_MONITOR.alertKey=null;return;}
+  var codes=(data.alerts||[]).filter(function(x){return x.severity==='HIGH'||x.severity==='CRITICAL';}).map(function(x){return x.code;}).sort();
+  var key=codes.join('|'),now=Date.now();
+  if(!key)return;
+  if(key===R25_MONITOR.alertKey&&now-R25_MONITOR.lastPublishedAt<300000)return;
+  R25_MONITOR.alertKey=key;R25_MONITOR.lastPublishedAt=now;
+  CP_CLIENT.publish('risk','risk.r2.alert',{status:data.status,alerts:data.alerts,summary:data.summary||{},
+   policy:data.policy,sampledAt:data.sampledAt,reviewOnly:true},{schema:'risk.r2.alert/1.0'},function(e){
+   if(e)console.warn('Risk R2 event publish:',String(e.message||e).slice(0,120));
+  });
+ });
+}
+
 function cpAction(m,cb){
   var a=m.arguments||{};
   if(m.action==='risk.r1.evaluate')return cb(null,R1.evaluate(a.intent||{},riskSettings().r1,a.context||{}));
   if(m.action==='risk.r2.evaluate')return cb(null,R2.evaluate(a.snapshot||{},riskSettings().r2));
-  if(m.action==='risk.r2.monitor')return requestPortfolio(function(err,data){if(err)return cb(null,{schema:'risk.r2.snapshot/1.0',status:'UNAVAILABLE',alerts:[{module:'integrity',code:'PORTFOLIO_CP1_UNAVAILABLE',severity:'CRITICAL'}],policy:{blockAdditionalRisk:true,autoLiquidation:false},executable:false});return cb(null,R2.evaluate(data&&data.snapshot||data||{},riskSettings().r2));});
+  if(m.action==='risk.r2.monitor')return r25Sample(cb);
   if(m.action==='risk.gate.evaluate'){try{return cb(null,RISK_GATE.evaluate(a.intent||a));}catch(e){return cb(e);}}
   if(m.action==='risk.gate.verify'){try{return cb(null,RISK_GATE.verify(a.risk_approval_id,a.intent||{},a.consume===true));}catch(e){return cb(e);}}
   if(m.action==='risk.settings.get')return cb(null,{schema:'risk.settings/1.0',settings:riskSettings(),storage:SETTINGS_DB.status()});
@@ -203,6 +242,8 @@ var registrationHandle=null;
 srv.listen(PORT,HOST,function(){
   console.log('IA-TB Risk Engine v'+VERSION+' http://'+HOST+':'+PORT+' CP/1');
   registrationHandle=CP_CLIENT.maintainRegistration(registrationDescriptor(),{initialDelayMs:900});
+  R25_MONITOR.interval=setInterval(r25MonitorTick,30000);R25_MONITOR.interval.unref();
+  setTimeout(r25MonitorTick,5000).unref();
 });
-function stop(){if(registrationHandle)registrationHandle.stop();srv.close(function(){process.exit(0);});setTimeout(function(){process.exit(0);},1200);}
+function stop(){if(R25_MONITOR.interval)clearInterval(R25_MONITOR.interval);if(registrationHandle)registrationHandle.stop();srv.close(function(){process.exit(0);});setTimeout(function(){process.exit(0);},1200);}
 process.on('SIGINT',stop);process.on('SIGTERM',stop);
