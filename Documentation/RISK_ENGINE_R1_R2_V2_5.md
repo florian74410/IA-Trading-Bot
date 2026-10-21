@@ -19,7 +19,7 @@ Code : `App/Risk/Engine/risk_management_modules_v2_5.js`, JavaScript déterminis
 - `correlation`, `margin`, `volatility`, `freshness` : entrées de métriques vérifiées attendues d'autres moteurs ; **DEGRADED** si absentes, pas de calcul inventé.
 - Lors d'un dépassement, une liste compacte de codes d'alerte et `requiresSupervisorAttention` est renvoyée. Aucune notification LLM active tant que le scheduler sécurisé n'est pas raccordé.
 
-**Contrats CP/1** de Risk : `risk.r1.evaluate` avec `{intent,account}`, et `risk.r2.snapshot` avec `{snapshot}`. Les résultats sont des diagnostics `risk.r1/1.0` / `risk.r2/1.0` pour le Supervisor, **pas** des autorisations de trading. Pas de consommation API OpenAI.
+**Contrats CP/1** de Risk : `risk.r1.evaluate` avec `{intent,account}`, et `risk.r2.snapshot` avec `{snapshot}`. Les résultats sont des diagnostics `risk.r1/1.0` / `risk.r2/1.0` pour le Supervisor, **pas** des autorisations de trading. Pas de consommation API OpenAI. Le Supervisor expose aussi `supervisor.risk.r1.preview` et `supervisor.risk.r2.snapshot` pour consulter ces diagnostics via le Router. Ces actions ne sont pas utilisées automatiquement dans les intentions exécutables et ne créent aucune autorisation de trading.
 
 **Paramètres** : section dédiée Risk Engine 2.5, niveau très prudent/prudent/équilibré/dynamique/agressif, activation analytique générale, interrupteurs par module, choix de simulations. Persistance sous `risk.settings` existant, accessible via routes CP/1 authentifiées (droits d'écriture existants). Les plafonds sont provisoires et doivent être configurables selon profils et utilisateurs après validation multi-tenant.
 
@@ -38,7 +38,7 @@ Code : `App/Risk/Engine/risk_management_modules_v2_5.js`, JavaScript déterminis
 node App/Risk/Tests/test_risk_management_modules_v2_5.js
 ```
 
-Assertions sur notionnel, stop, frais, dimensionnement, refus des entrées manquantes, profils et détection de concentration. CI complète hérite de `v24-finance-trading-logs.yml` activée sur la branche v2.5. **Vérifier le statut CI avant toute déclaration de conformité.**
+Assertions sur notionnel, stop, frais, dimensionnement, refus des entrées manquantes, profils et détection de concentration. Tests de contrats de l'interface et des routes Supervisor dans `App/tests/test_risk_25_ui_cp1_contracts.js`. CI complète hérite de `v24-finance-trading-logs.yml` activée sur la branche v2.5. **Vérifier le statut CI avant toute déclaration de conformité.**
 
 ## Suite indispensable avant intégration exécutable
 
