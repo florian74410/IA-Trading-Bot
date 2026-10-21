@@ -125,5 +125,20 @@
 </div>
 </section>
 <section id="view-overview" class="view hide"><div class="titleRow"><div><h2>Vue d'ensemble</h2><p>État de la configuration IA-TB.</p></div></div><div id="overviewCards" class="overview"></div></section>
+<section id="view-risk" class="view hide">
+ <div class="titleRow"><div><h2>🛡 Risk Engine — R1 & R2</h2><p>Gestion quantitative locale du risque. Aucun appel OpenAI pour les calculs.</p></div><span class="profileBadge" id="r25Status">CHARGEMENT</span></div>
+ <section class="panel simple" style="margin-bottom:16px"><h3>Contrôle général</h3><label style="display:flex;align-items:center;gap:12px"><input id="r25Enabled" type="checkbox"> Activer Risk Engine</label>
+ <p>La désactivation ne contourne pas le Risk Gate, le Trading Firewall ni les interdictions LIVE.</p></section>
+ <section class="panel simple" style="margin-bottom:16px"><h3>R1 — Précontrôle des ordres</h3>
+ <label><input id="r25R1Enabled" type="checkbox"> Activer R1</label>
+ <label>Niveau de risque <select id="r25Level"><option value="conservative">Prudent — 0,5 %</option><option value="balanced">Équilibré — 1 %</option><option value="active">Dynamique — 1,5 %</option><option value="aggressive">Agressif — 2 %</option></select></label>
+ <div id="r25R1Modules" class="riskModuleControls"></div></section>
+ <section class="panel simple" style="margin-bottom:16px"><h3>R2 — Surveillance du portefeuille</h3>
+ <label><input id="r25R2Enabled" type="checkbox"> Activer R2</label>
+ <p>R2 fournit des indicateurs et des alertes compactes au Supervisor sur demande via CP/1. Aucune liquidation automatique.</p>
+ <div id="r25R2Modules" class="riskModuleControls"></div></section>
+ <section class="panel simple"><button class="primary" id="r25Save" type="button">Enregistrer les paramètres</button> <button class="ghost" id="r25Reload" type="button">Actualiser</button>
+ <p id="r25Message" role="status">Chargement des paramètres Risk Engine…</p></section>
+</section>
 <section id="view-generic" class="view hide"><div class="titleRow"><div><h2 id="genericTitle">Paramètres</h2><p id="genericText">Cette section réutilise les réglages existants d'IA-TB.</p></div></div><div id="legacyMount" class="panel simple"></div></section>
-</main></div><div id="help" class="help hide"><button id="helpClose">×</button><h3>ⓘ Aide</h3><p id="helpText"></p></div><script src="/assets/settings.js?v=2004"></script><script src="/assets/user_profile.js"></script><script src="/assets/companion_v1.0.js"></script><script src="/assets/calendar_events_v2_2_5.js?v=20401"></script><script src="/assets/chart_economic_events_v2_2_5.js?v=20401"></script></body></html>
+</main></div><div id="help" class="help hide"><button id="helpClose">×</button><h3>ⓘ Aide</h3><p id="helpText"></p></div><script src="/assets/settings.js?v=2500"></script><script src="/assets/user_profile.js"></script><script src="/assets/companion_v1.0.js"></script><script src="/assets/calendar_events_v2_2_5.js?v=20401"></script><script src="/assets/chart_economic_events_v2_2_5.js?v=20401"></script></body></html>
