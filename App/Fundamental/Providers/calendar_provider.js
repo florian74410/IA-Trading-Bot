@@ -5,7 +5,7 @@
    - CME Expirations: public Product Expiration Calendar (last trade, settlement, delivery, notice, position dates when exposed)
    INFORMATION_ONLY. No authenticated/private CME endpoints are used.
 */
-var WEB=require('./web_provider'),FedWatch=require('./fedwatch_provider');
+var WEB=require('./web_provider'),FedWatch=require('./fedwatch_provider'),FinanceCalendar=require('./finance_calendar_provider_v2_4');
 var CACHE_MS=10*60*1000,last={at:0,data:null};
 function strip(s){return String(s||'').replace(/<script[\s\S]*?<\/script>/gi,' ').replace(/<style[\s\S]*?<\/style>/gi,' ').replace(/<[^>]+>/g,' ').replace(/&nbsp;/gi,' ').replace(/&amp;/gi,'&').replace(/&#39;/g,"'").replace(/&quot;/gi,'"').replace(/\s+/g,' ').trim();}
 function uniq(a,keyFn){var seen={},out=[];(a||[]).forEach(function(x){var k=keyFn(x);if(!k||seen[k])return;seen[k]=1;out.push(x)});return out;}
@@ -119,8 +119,8 @@ exports.collect=function(cb){
   last={at:Date.now(),data:data};cb(null,data);
  }
  FedWatch.collect(function(e,p){fed=e?{ok:false,status:'UNAVAILABLE',error:String(e.message||e),events:[]}:{ok:true,status:'OK',events:fedEvents(p),url:'https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm'};finish();});
- collectCme(function(e,p){cme=e?{ok:false,status:'UNAVAILABLE',error:String(e.message||e),events:[]}:p;finish();});
- collectCmeExpirations(function(e,p){expirations=e?{ok:false,status:'UNAVAILABLE',error:String(e.message||e),events:[]}:p;finish();});
+ FinanceCalendar.collect(function(e,p){cme=e?{ok:false,status:'UNAVAILABLE',error:String(e.message||e),events:[]}:p;finish();});
+ expirations={ok:false,status:'NOT_CONFIGURED',events:[],source:'CME Group',message:'CME expiry dates require separately licensed reference data'};process.nextTick(finish);
 };
 exports.invalidate=function(){last={at:0,data:null}};
 exports._parseCme=parseCme;exports._parseCmeExpirations=parseCmeExpirations;
