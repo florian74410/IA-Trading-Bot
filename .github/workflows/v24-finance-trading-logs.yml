@@ -43,6 +43,8 @@ jobs:
           echo "NODE_PATH=$RUNNER_TEMP/v24-browser/node_modules" >> "$GITHUB_ENV"
       - name: Responsive calendar, event lines and Bank browser regressions
         run: node --test App/UI/Tests/test_v2_4_1_calendar_bank.js
+      - name: Risk R1/R2 settings UI on Firefox
+        run: node --test App/UI/Tests/test_v25_risk_settings.js
       - name: Full Auth21 and ChartViewer browser regression without skipped tests
         run: |
           set -o pipefail
