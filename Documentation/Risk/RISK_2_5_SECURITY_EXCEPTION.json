@@ -1,0 +1,16 @@
+{
+  "schema": "iatb.reviewed-contract-change/1.0",
+  "branch": "feature/v2.5-risk-engine-r1-r2",
+  "base": "2.4.2-R1",
+  "path": "App/Core/Clients/UserManagement/admin_routes.js",
+  "approvedGitBlobSha1": "d54318eb2bf72e72603e062c77f4387bfca086c0",
+  "purpose": "Two explicit ADMIN-only Risk settings operations. Preserve all preexisting roles and routes; no generic CP1 writes.",
+  "approvedRoutes": [
+    "GET /api/admin/risk/settings",
+    "POST /api/admin/risk/settings"
+  ],
+  "tests": [
+    "Tools/CI/verify_rbac_registry.js --self-test",
+    "App/tests/test_risk_25_ui_cp1_contracts.js"
+  ]
+}
