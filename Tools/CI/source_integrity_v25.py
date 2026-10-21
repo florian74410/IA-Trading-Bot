@@ -42,8 +42,9 @@ def main():
                     if any(sum(x.get('name')==k for x in modified['table']['dataTypes'])!=1 for k in new_types):raise ValueError('risk types missing')
                     modified['table']['commands']=[x for x in modified['table']['commands']if x['name'] not in new_commands]
                     modified['table']['dataTypes']=[x for x in modified['table']['dataTypes']if x['name'] not in new_types]
-                    original=(json.dumps(modified,indent=2,ensure_ascii=False)+'\\n').encode()
-                    if hashlib.sha256(original).hexdigest()!=row['sha256']:raise ValueError('original protected risk contract changed')
+                    baseline=(ROOT/'Tools/CI/baselines/risk_protocol_242.json').read_bytes()
+                    if hashlib.sha256(baseline).hexdigest()!=row['sha256']:raise ValueError('baseline risk fingerprint invalid')
+                    if modified!=json.loads(baseline):raise ValueError('original protected risk contract changed')
                 except Exception as exc:errors.append('risk v2.5 CP1 contract unexpected modification: '+str(exc))
             elif hashlib.sha256(p.read_bytes()).hexdigest()!=row['sha256']:errors.append('protected contract changed: '+row['path'])
     for row in report['files']:
