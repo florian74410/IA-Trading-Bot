@@ -167,7 +167,7 @@
       "ANON_MINIMAL": 3,
       "DISABLED": 5,
       "OWN_WRITE": 15,
-      "ADMIN": 70,
+      "ADMIN": 72,
       "ADMIN_READ": 7,
       "GUEST_SHARED": 5,
       "OWN_READ": 3,
@@ -2096,6 +2096,24 @@
         "path": "/api/admin/firewall/status",
         "source": "App/Core/Server/server.js",
         "source_line": 507,
+        "classification": "ADMIN"
+      },
+      {
+        "i": 214,
+        "service": "Core",
+        "method": "GET",
+        "path": "/api/admin/risk/settings",
+        "source": "App/Core/Server/server.js",
+        "source_line": 0,
+        "classification": "ADMIN"
+      },
+      {
+        "i": 215,
+        "service": "Core",
+        "method": "POST",
+        "path": "/api/admin/risk/settings",
+        "source": "App/Core/Server/server.js",
+        "source_line": 0,
         "classification": "ADMIN"
       }
     ]
