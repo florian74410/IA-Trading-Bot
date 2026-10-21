@@ -1,4 +1,4 @@
-# 🧭 Fundamental Engine V3 — V2.0 DEBUG
+# 🧭 Fundamental Engine V3 — 2.4.0 DEV
 
 > **🟢 En simple : Fundamental Engine collecte et organise les informations extérieures au graphique — actualités, événements, sources et contexte — puis peut demander une synthèse IA. Il informe les décisions mais n’exécute jamais un trade.**
 
@@ -124,6 +124,18 @@ Fonctions :
 - inspection/préparation/test d’un candidat de découverte.
 
 Cela permet d’ajouter progressivement de nouvelles sources sans transformer chaque provider en logique spéciale dans l’UI.
+
+---
+
+## 📅 Finance Calendar — 2.4.0 DEV
+
+**🟢 En simple :** le panneau macro utilise un fournisseur JSON, sans parser le HTML CME. Aucune donnée d'expiration de contrats CME n'est inventée.
+
+Le module `Fundamental/Providers/finance_calendar_provider_v2_4.js` collecte les événements économiques via HTTPS côté serveur, les normalise (date/UTC, pays, impact, consensus, précédent, réel, unité, provenance) et conserve un cache de 15 minutes. La collecte vise le mois en cours et ~60 jours suivants ; hors de cette plage, l'absence d'événements n'est pas une preuve d'absence de publications. La page Fundamental affiche l'attribution Finance Calendar et une liste défilante. Le calendrier FED reste autonome.
+
+Les contrats CP/1 `fundamental.calendar.upcoming` et `fundamental.calendar.cme` demeurent accessibles ; le second conserve son nom historique pour compatibilité, mais sa source macro active est Finance Calendar. Les échéances CME sont `NOT_CONFIGURED`. Aucun flux d'ordres n'est ajouté.
+
+Voir [documentation technique](https://github.com/florian74410/IA-Trading-Bot/blob/feature/v2.4-finance-calendar/Documentation/FINANCE_CALENDAR_V2_4.md). L'appel réel au fournisseur et la recette UI locale restent à vérifier.
 
 ---
 
