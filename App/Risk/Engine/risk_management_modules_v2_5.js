@@ -24,7 +24,6 @@ function r2(snapshot,config){const c=settings(config),limits=LEVELS[c.riskLevel]
  if(c.r2.stopBudget){if(!(equity>0)||p.some(x=>finite(x.riskAtStop)===null))missing.push('POSITION_STOP_RISK_REQUIRED');else{measurements.stopBudgetPct=round(100*p.reduce((n,x)=>n+Math.max(0,finite(x.riskAtStop)),0)/equity);if(measurements.stopBudgetPct>limits.portfolioPct)warnings.push('PORTFOLIO_STOP_BUDGET_LIMIT');}}
  // Deterministic metrics require a trusted, timestamped snapshot upstream.
  const m=s.metrics||{};
- function passed(k){return m[k]&&m[k].ok===true;}
  function fallback(k){const x=m[k];if(x&&x.ok===true&&Array.isArray(x.alerts)){warnings.push(...x.alerts.map(y=>String(y).slice(0,80)));return true;}return false;}
  if(c.r2.correlation){
   const x=m.correlation,series=x&&x.returnsBySymbol||{},names=Object.keys(series);
