@@ -293,7 +293,7 @@ html.iatb-dashboard-v186-final.iatb-trading-workspace:not(.iatb-secondary-page-a
 }
 
 /* DEBUG 2.0.4: use the actual dock; no replacement #iatbIndicatorDock is created. */
-html.iatb-trading-workspace:not(.iatb-secondary-page-active):not(.ia-chart-focus-mode) #chartArea>#indicatorDock.active{
+html.iatb-trading-workspace:not(.iatb-secondary-page-active) #chartArea>#indicatorDock.active{
  display:flex!important;flex-direction:column!important;flex:0 0 220px!important;
  width:100%!important;height:220px!important;min-height:220px!important;max-height:220px!important;overflow:hidden!important;
 }
@@ -315,11 +315,11 @@ html.iatb-trading-workspace.ia-chart-focus-mode #chartArea .controls>#chartResto
 /* ChartViewer x Indicator Renderer V2: overlays (Ichimoku, SMA, EMA, VWAP)
    live in the price chart legend and never reserve a second pane. Oscillators
    (RSI, MACD etc.) retain their genuine lower canvases. */
-html.iatb-trading-workspace:not(.iatb-secondary-page-active):not(.ia-chart-focus-mode) #chartArea>#indicatorDock:not(.iatbHasExternalIndicatorPane),
-html.iatb-trading-workspace:not(.iatb-secondary-page-active):not(.ia-chart-focus-mode) #chartArea>#indicatorDock.active:not(.iatbHasExternalIndicatorPane){
+html.iatb-trading-workspace:not(.iatb-secondary-page-active) #chartArea>#indicatorDock:not(.iatbHasExternalIndicatorPane),
+html.iatb-trading-workspace:not(.iatb-secondary-page-active) #chartArea>#indicatorDock.active:not(.iatbHasExternalIndicatorPane){
  display:none!important;height:0!important;min-height:0!important;max-height:0!important;
  border:0!important;margin:0!important;padding:0!important;overflow:hidden!important
 }
-html.iatb-trading-workspace:not(.iatb-secondary-page-active):not(.ia-chart-focus-mode) #chartArea>#indicatorDock.iatbHasExternalIndicatorPane{
+html.iatb-trading-workspace:not(.iatb-secondary-page-active) #chartArea>#indicatorDock.iatbHasExternalIndicatorPane{
  display:flex!important;min-height:165px!important
 }
