@@ -67,3 +67,11 @@ Le lancement local sera réalisé ensuite sur `https://localhost:8000` avec
 `App/start_auth21_local_safe.command`, Node 22 et le répertoire privé existant
 contenant les comptes et certificats. Ce lanceur refuse les ports occupés et
 conserve Auth21, TLS et Trading LIVE=0. Aucun lancement sur GEN-1 n'est inclus.
+
+## Qualification après fusion PR #21 (21 octobre 2026)
+
+La [PR #21](https://github.com/florian74410/IA-Trading-Bot/pull/21) a été fusionnée **dans `feature/v2.4-finance-calendar`**, sans promotion stable. Le compte rendu indique **566 tests CI réussis, 0 échec, 0 test ignoré** ; les workflows de push et PR sont validés. Référence fournie pour la livraison : `ae586a0` ; utiliser GitHub comme source de vérité pour le HEAD réel, distinct de la référence de PR.
+
+La qualification CI ne remplace pas la recette sur Macro. Le service doit encore être lancé localement sous Auth21/TLS avec `IATB_TRADING_LIVE=0`. Contrôles conseillés : démarrage local sans ports occupés, service Trading health et champ `health.executionLogs`, absence de secrets dans les **nouveaux** événements JSONL/SQLite, lecture historique existante, miroirs réconciliés et aucune commande LIVE activée.
+
+**Limites inchangées :** JSONL autoritaire, pas d'accès SQL global, aucune garantie que tous les textes libres historiques soient expurgés, snapshots gelés en lecture seule, rejeu borné à 64 Mio, récupération des bases utilisateurs hors dépôt. Les 566 tests CI ne qualifient pas une sauvegarde globale à chaud ni une exécution sur exchange.
