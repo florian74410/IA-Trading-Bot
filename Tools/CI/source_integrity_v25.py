@@ -33,6 +33,7 @@ def main():
                     modified=json.loads(p.read_text())
                     new_commands={'risk.r1.evaluate':{'allowed':['intent','context']},'risk.r2.evaluate':{'allowed':['snapshot']},'risk.r2.monitor':{'allowed':[]}}
                     new_types={'risk.r1.decision':'risk.r1.decision/1.0','risk.r2.snapshot':'risk.r2.snapshot/1.0'}
+                    new_event={'name':'risk.r2.alert','schema':'risk.r2.alert/1.0','description':'Compact, deduplicated R2 portfolio risk alert for Supervisor'}
                     names=[x.get('name')for x in modified['table']['commands']]
                     if any(names.count(k)!=1 for k in new_commands):raise ValueError('new CP1 commands absent or duplicated')
                     for command in modified['table']['commands']:
@@ -42,6 +43,8 @@ def main():
                     if any(sum(x.get('name')==k for x in modified['table']['dataTypes'])!=1 for k in new_types):raise ValueError('risk types missing')
                     modified['table']['commands']=[x for x in modified['table']['commands']if x['name'] not in new_commands]
                     modified['table']['dataTypes']=[x for x in modified['table']['dataTypes']if x['name'] not in new_types]
+                    if modified['table']['events'].count(new_event)!=1:raise ValueError('risk event invalid')
+                    modified['table']['events'].remove(new_event)
                     baseline=(ROOT/'Tools/CI/baselines/risk_protocol_242.json').read_bytes()
                     if hashlib.sha256(baseline).hexdigest()!=row['sha256']:raise ValueError('baseline risk fingerprint invalid')
                     if modified!=json.loads(baseline):raise ValueError('original protected risk contract changed')
