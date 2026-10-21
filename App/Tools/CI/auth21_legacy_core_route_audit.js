@@ -23,13 +23,16 @@ function scan(src=fs.readFileSync(source,'utf8')){
   found.push({method:match[1],path:match[2],group:owners.length===1?owners[0]:null,
    decision:'DENY_UNTIL_MIGRATED'});
  }
- return {routes:found,unclassified:found.filter(r=>!r.group),
+ const baseline=require('../../../Tools/CI/baselines/core_routes_251.json'),retired=["GET /api/ai-updates","GET /api/ai-updates/package","GET /api/ai-updates/settings","GET /api/updates","POST /api/ai-updates/execute","POST /api/ai-updates/settings","POST /api/updates/fetch","POST /api/updates/install","POST /api/updates/upload"];
+ const expected=baseline.filter(r=>!retired.includes(r)),actual=found.map(r=>r.method+' '+r.path);
+ const inventoryErrors=[...expected.filter(r=>!actual.includes(r)).map(r=>'MISSING:'+r),...actual.filter(r=>!expected.includes(r)).map(r=>'UNEXPECTED:'+r)];
+ return {routes:found,inventoryErrors,unclassified:found.filter(r=>!r.group),
   groups:Object.fromEntries(Object.keys(GROUPS).map(g=>[g,found.filter(r=>r.group===g).length]))};
 }
 if(require.main===module){
  const r=scan();
  process.stdout.write(JSON.stringify({count:r.routes.length,groups:r.groups,
-  unclassified:r.unclassified},null,2)+'\n');
- if(r.unclassified.length||r.routes.length<100)process.exitCode=1;
+  unclassified:r.unclassified,inventoryErrors:r.inventoryErrors},null,2)+'\n');
+ if(r.unclassified.length||r.inventoryErrors.length)process.exitCode=1;
 }
 module.exports={scan,GROUPS};

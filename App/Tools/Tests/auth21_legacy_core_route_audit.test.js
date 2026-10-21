@@ -6,7 +6,8 @@ const {createIsolatedCoreGate}=require('../../Core/Clients/auth21_core_route_gat
 const source=fs.readFileSync(path.join(__dirname,'../../Core/Server/server.js'),'utf8');
 test('every static Core legacy API has exactly one explicit deny-by-default migration class',()=>{
  const report=scan(source);
- assert.ok(report.routes.length>=100,'route inventory unexpectedly shrank or parser regressed');
+ assert.deepEqual(report.inventoryErrors,[],'only the nine explicitly retired update routes may disappear');
+ assert.equal(report.routes.length,97);
  assert.deepEqual(report.unclassified,[]);
  assert.ok(report.groups['wallet-key-transfer-denied']>=10);
  assert.ok(report.groups.administration>=15);
