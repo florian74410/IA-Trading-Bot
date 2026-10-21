@@ -167,7 +167,7 @@
       "ANON_MINIMAL": 3,
       "DISABLED": 5,
       "OWN_WRITE": 15,
-      "ADMIN": 70,
+      "ADMIN": 73,
       "ADMIN_READ": 7,
       "GUEST_SHARED": 5,
       "OWN_READ": 3,
