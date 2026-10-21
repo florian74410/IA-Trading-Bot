@@ -13,8 +13,8 @@ class CollectorData{
  catalog(){return {schema:'supervisor.collector-catalog/1.0',transport:'CP/1 Router only',readOnly:true,items:Object.entries(ACTIONS).flatMap(([target,names])=>names.map(n=>{const action=target+'.'+n,c=this.registry.command(target,action);return {target,action,registered:!!c,arguments:c?c.arguments:null,description:c?c.description:''};}))};}
  async read(input={}){
   const {target,action}=input,args=input.arguments||{};
-  if(!ACTIONS[target]||!ACTIONS[target].includes(String(action).slice(target.length+1))||!String(action).startsWith(target+'.'))throw Error('COLLECTOR_READ_FORBIDDEN');
-  if(!args||typeof args!=='object'||Array.isArray(args)||args.force===true||args.refresh===true)throw Error('COLLECTOR_READ_ONLY');
+  if(typeof target!=='string'||typeof action!=='string'||!Object.hasOwn(ACTIONS,target)||!ACTIONS[target].includes(String(action).slice(target.length+1))||!String(action).startsWith(target+'.'))throw Error('COLLECTOR_READ_FORBIDDEN');
+  if(!args||typeof args!=='object'||Array.isArray(args)||args.force!=null&&args.force!==false||args.refresh!=null&&args.refresh!==false)throw Error('COLLECTOR_READ_ONLY');
   const error=this.registry.validateActionArgs(target,action,args);if(error)throw Error(error);
   if(JSON.stringify(args).length>16384)throw Error('COLLECTOR_ARGUMENTS_TOO_LARGE');
   for(const [key,max] of [['limit',200],['perPage',100],['depth',100],['days',90]])if(args[key]!=null&&(!Number.isSafeInteger(args[key])||args[key]<1||args[key]>max))throw Error('COLLECTOR_BOUND_INVALID');
