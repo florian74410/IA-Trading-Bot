@@ -4,7 +4,7 @@
   "state": "provisional-static-review",
   "source_ref": "fix/v2.0.1-debug",
   "source_sha": "4a5024473e1318491f4f66516292274f4a4c852c",
-  "count": 213,
+  "count": 215,
   "services": {
     "Core": 111,
     "Firewall": 9,
@@ -1941,6 +1941,24 @@
       "path": "/api/admin/firewall/status",
       "source": "App/Core/Server/server.js",
       "line": 507,
+      "kind": "explicit",
+      "target_policy": "ADMIN_ONLY"
+    },
+    {
+      "service": "Core",
+      "method": "GET",
+      "path": "/api/admin/risk/settings",
+      "source": "App/Core/Server/server.js",
+      "line": null,
+      "kind": "explicit",
+      "target_policy": "ADMIN_ONLY"
+    },
+    {
+      "service": "Core",
+      "method": "POST",
+      "path": "/api/admin/risk/settings",
+      "source": "App/Core/Server/server.js",
+      "line": null,
       "kind": "explicit",
       "target_policy": "ADMIN_ONLY"
     }
