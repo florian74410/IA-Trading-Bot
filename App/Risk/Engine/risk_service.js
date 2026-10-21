@@ -13,6 +13,7 @@ var CP=require('../../Core/Communication/communication_protocol_v1');
 var CPClient=require('../../Core/Communication/cp1_client');
 var Risk=require('./risk_engine');
 var RiskGate=require('./risk_gate').RiskGate;
+var RiskPolicy=require('./risk_policy_v25'),R1=require('./r1_management_v25'),R2=require('./r2_monitor_v25');
 var SettingsStore=require('../../Core/Settings/sqlite_settings_store');
 var BUILD=require('../../Core/Shared/build_info');
 
@@ -24,10 +25,10 @@ var MAX_BODY=1024*1024;
 var VERSION=BUILD.version;
 var SETTINGS_DB=new SettingsStore(APP_ROOT);
 var CP_CLIENT=new CPClient({root:APP_ROOT,routerPort:ROUTER_PORT,timeout:12000,maxBytes:4*1024*1024});
-var RISK_GATE=new RiskGate({secret:CP.ensureSecret(APP_ROOT),getSettings:riskSettings,ttlMs:30000});
+var RISK_GATE=new RiskGate({secret:CP.ensureSecret(APP_ROOT),getSettings:riskSettings,ttlMs:30000,requirePreflight:true});
 var DEFAULT_SETTINGS={enabled:true,defaultTimeframe:'1h',marketSamples:500,thresholds:{capitalRiskWarningPct:3,grossExposureWarningPct:100,leverageWarning:5,volatilityWarningPct:100,drawdownWarningPct:20,var95WarningPct:5},scoreWeights:{capitalAtRisk:8,grossExposure:0.20,leverage:5,volatility:0.20,drawdown:0.50}};
-function riskSettings(){var x=SETTINGS_DB.get('risk','settings',null)||{};var o=JSON.parse(JSON.stringify(DEFAULT_SETTINGS));Object.keys(x).forEach(function(k){if(k==='thresholds'||k==='scoreWeights')Object.assign(o[k],x[k]||{});else o[k]=x[k];});return o;}
-function saveRiskSettings(patch){var o=riskSettings();patch=patch||{};if(typeof patch.enabled==='boolean')o.enabled=patch.enabled;if(patch.defaultTimeframe)o.defaultTimeframe=String(patch.defaultTimeframe);if(+patch.marketSamples>=50&&+patch.marketSamples<=2000)o.marketSamples=Math.round(+patch.marketSamples);if(patch.thresholds)Object.keys(o.thresholds).forEach(function(k){if(isFinite(+patch.thresholds[k]))o.thresholds[k]=+patch.thresholds[k];});SETTINGS_DB.set('risk','settings',o);return o;}
+function riskSettings(){var x=SETTINGS_DB.get('risk','settings',null)||{};var o=JSON.parse(JSON.stringify(DEFAULT_SETTINGS));Object.keys(x).forEach(function(k){if(k==='thresholds'||k==='scoreWeights')Object.assign(o[k],x[k]||{});else o[k]=x[k];});return Object.assign(o,RiskPolicy.sanitize(RiskPolicy.DEFAULT,x));}
+function saveRiskSettings(patch){var o=riskSettings();patch=patch||{};if(typeof patch.enabled==='boolean')o.enabled=patch.enabled;if(patch.defaultTimeframe)o.defaultTimeframe=String(patch.defaultTimeframe);if(+patch.marketSamples>=50&&+patch.marketSamples<=2000)o.marketSamples=Math.round(+patch.marketSamples);if(patch.thresholds)Object.keys(o.thresholds).forEach(function(k){if(isFinite(+patch.thresholds[k]))o.thresholds[k]=+patch.thresholds[k];});o=RiskPolicy.sanitize(o,patch);SETTINGS_DB.set('risk','settings',o);return o;}
 
 var CAPABILITIES=[
   'risk.list_capabilities',
@@ -38,9 +39,11 @@ var CAPABILITIES=[
   'risk.settings.get',
   'risk.settings.set',
   'risk.gate.evaluate',
-  'risk.gate.verify'
+  'risk.gate.verify',
+  'risk.r1.evaluate','risk.r2.refresh','risk.r2.alerts.get'
 ];
-var EVENTS=[];
+var EVENTS=['risk.r2.limit_exceeded','risk.r2.limit_recovered'];
+var R2_STATE={last:null,alerts:[],at:0},R2_INFLIGHT=false;
 
 function json(res,code,obj){
   var b=Buffer.from(JSON.stringify(obj));
@@ -135,10 +138,61 @@ function buildAnalysis(args,detail,cb){
     }
   );
 }
+
+function receiveR2(raw){
+ var cfg=riskSettings(),now=Date.now(),data=R2.analyze(raw,RiskPolicy.mergeLimits(cfg,'r2'),now);
+ var previous=Object.create(null);R2_STATE.alerts.forEach(function(x){previous[x.module+':'+x.metric]=x;});
+ var next=Object.create(null);data.alerts.forEach(function(x){next[x.module+':'+x.metric]=x;});
+ if(cfg.enabled&&cfg.r2.enabled&&cfg.r2.alertsEnabled){
+  data.alerts.forEach(function(a){var key=a.module+':'+a.metric,p=previous[key];if(!p||p.code!==a.code||Math.abs(p.current-a.current)>Math.max(0.5,Math.abs(a.limit||0)*0.1)){
+   CP_CLIENT.publish('risk','risk.r2.limit_exceeded',{schema:'risk.r2.alert/1.0',module:a.module,metric:a.metric,code:a.code,severity:a.severity,current:a.current,limit:a.limit,at:data.asOf},{});}});
+  R2_STATE.alerts.forEach(function(a){if(!next[a.module+':'+a.metric])CP_CLIENT.publish('risk','risk.r2.limit_recovered',{schema:'risk.r2.alert/1.0',module:a.module,metric:a.metric,at:data.asOf},{});});
+ }
+ R2_STATE={last:data,alerts:data.alerts,at:now};
+ return data;
+}
+function refreshR2(cb){
+ var cfg=riskSettings();if(!cfg.enabled||!cfg.r2.enabled)return cb(null,{schema:'risk.r2.monitor/1.0',status:'DISABLED',alerts:[]});
+ requestPortfolio(function(e,d){if(e)return cb(null,{schema:'risk.r2.monitor/1.0',status:'UNAVAILABLE',alerts:[{code:'PORTFOLIO_UNAVAILABLE',severity:'CRITICAL'}]});
+  cb(null,receiveR2(d&&d.snapshot||d));});
+}
+function checkTradeIntent(raw,cb){
+ var cfg=riskSettings(),i=require('./risk_gate').normalize(raw);
+ if(!cfg.enabled)return cb(null,RISK_GATE.evaluate(raw,{authorized:false,summary:{status:'RISK_ENGINE_DISABLED'}}));
+ if(!cfg.r1.enabled&&!cfg.r2.enabled)return cb(null,RISK_GATE.evaluate(raw,{authorized:true,summary:{status:'LEGACY_GUARDS_ONLY'}}));
+ requestPortfolio(function(e,p){
+  if(e)return cb(null,RISK_GATE.evaluate(raw,{authorized:false,summary:{status:'PORTFOLIO_UNAVAILABLE'}}));
+  var snap=p&&p.snapshot||p||{},blocking=false,summary={};
+  function donePrice(px){
+   if(cfg.r1.enabled){
+    var r1=R1.analyze({action:i.action,quantity:i.size,price:px,stopLoss:i.stopLoss,equity:snap.risk_equity_verified},RiskPolicy.mergeLimits(cfg,'r1'));
+    summary.r1={status:r1.status,decision:r1.decision,metrics:r1.metrics,reasons:r1.reasons,proposal:r1.proposal};
+    if(r1.decision!=='ACCEPT')blocking=true;
+   }
+   if(cfg.r2.enabled){
+    var r2=R2.analyze(snap,RiskPolicy.mergeLimits(cfg,'r2'));
+    summary.r2={status:r2.status,alerts:r2.alerts};
+    if(r2.alerts.length||r2.status==='DEGRADED'||r2.modules.integrity&&r2.modules.integrity.status==='INSUFFICIENT_DATA')blocking=true;
+   }
+   // Never convert advisory-only analysis to a trade approval when required inputs are unverified.
+   cb(null,RISK_GATE.evaluate(raw,{authorized:!blocking,summary:summary}));
+  }
+  if(!cfg.r1.enabled)return donePrice(null);
+  CP_CLIENT.request('marketdata','marketdata.asset.price',{symbol:i.symbol},'analysis',function(er,d){
+   if(er)return donePrice(null);
+   var px=d&&(+d.price||+d.last||+(d.data&&d.data.price)||+(d.value&&d.value.price));
+   donePrice(Number.isFinite(px)&&px>0?px:null);
+  });
+ });
+}
+
 function cpAction(m,cb){
   var a=m.arguments||{};
-  if(m.action==='risk.gate.evaluate'){try{return cb(null,RISK_GATE.evaluate(a.intent||a));}catch(e){return cb(e);}}
+  if(m.action==='risk.gate.evaluate'){try{return checkTradeIntent(a.intent||a,cb);}catch(e){return cb(e);}}
   if(m.action==='risk.gate.verify'){try{return cb(null,RISK_GATE.verify(a.risk_approval_id,a.intent||{},a.consume===true));}catch(e){return cb(e);}}
+  if(m.action==='risk.r1.evaluate')return cb(null,R1.analyze(a.intent||a,RiskPolicy.mergeLimits(riskSettings(),'r1')));
+  if(m.action==='risk.r2.refresh')return refreshR2(cb);
+  if(m.action==='risk.r2.alerts.get')return cb(null,{schema:'risk.r2.alerts/1.0',at:R2_STATE.at,alerts:R2_STATE.alerts.slice(0,20),status:R2_STATE.last&&R2_STATE.last.status||'NOT_REFRESHED'});
   if(m.action==='risk.settings.get')return cb(null,{schema:'risk.settings/1.0',settings:riskSettings(),storage:SETTINGS_DB.status()});
   if(m.action==='risk.settings.set'){try{return cb(null,{schema:'risk.settings/1.0',settings:saveRiskSettings(a),storage:SETTINGS_DB.status()});}catch(e){return cb(e);}}
   if(m.action==='risk.list_capabilities')
@@ -186,7 +240,7 @@ var srv=require('../../Core/Clients/auth21_engine_ingress').createServer(functio
   if(req.method==='GET'&&u.pathname==='/health')return json(res,200,{
     ok:true,service:'IA-TB Risk Engine',engine:'risk',version:VERSION,
     protocol:'CP/1',analyticalOnly:true,pid:process.pid,host:HOST,port:PORT,
-    routerPort:ROUTER_PORT,capabilities:CAPABILITIES,events:EVENTS,settings:riskSettings(),settingsStorage:SETTINGS_DB.status()
+    routerPort:ROUTER_PORT,capabilities:CAPABILITIES,events:EVENTS,settings:riskSettings(),r2State:{at:R2_STATE.at,alertCount:R2_STATE.alerts.length},settingsStorage:SETTINGS_DB.status()
   });
   if(req.method==='POST'&&u.pathname==='/cp/v1')return handleCP(req,res);
   return json(res,404,{ok:false,error:'NOT_FOUND'});
@@ -197,5 +251,6 @@ srv.listen(PORT,HOST,function(){
   console.log('IA-TB Risk Engine v'+VERSION+' http://'+HOST+':'+PORT+' CP/1');
   registrationHandle=CP_CLIENT.maintainRegistration(registrationDescriptor(),{initialDelayMs:900});
 });
-function stop(){if(registrationHandle)registrationHandle.stop();srv.close(function(){process.exit(0);});setTimeout(function(){process.exit(0);},1200);}
+var R2_TIMER=setInterval(function(){if(R2_INFLIGHT)return;R2_INFLIGHT=true;refreshR2(function(){R2_INFLIGHT=false;});},30000);if(R2_TIMER.unref)R2_TIMER.unref();
+function stop(){clearInterval(R2_TIMER);if(registrationHandle)registrationHandle.stop();srv.close(function(){process.exit(0);});setTimeout(function(){process.exit(0);},1200);}
 process.on('SIGINT',stop);process.on('SIGTERM',stop);
