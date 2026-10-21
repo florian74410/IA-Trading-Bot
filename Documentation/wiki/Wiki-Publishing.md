@@ -16,3 +16,7 @@ Le dépôt reste la source de vérité. Une modification faite directement dans 
 
 - `/Documentation/wiki` : versionné avec le code, reviewable, rattaché aux releases ;
 - Wiki GitHub natif : navigation plus agréable pour les utilisateurs.
+
+## Branche 2.4.0 DEV
+
+Les changements de `feature/v2.4-finance-calendar` sont documentés dans les sources du Wiki. Leur présence dans GitHub ne prouve **pas** la publication dans le Wiki natif. Publier/synchroniser seulement selon le processus validé, en conservant la distinction développement, recette locale et production.
