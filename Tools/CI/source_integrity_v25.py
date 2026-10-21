@@ -49,7 +49,7 @@ def main():
             elif row['path']=='App/Core/Clients/UserManagement/admin_routes.js':
                 baseline=(ROOT/'Tools/CI/baselines/admin_routes_242.js').read_bytes()
                 if hashlib.sha256(baseline).hexdigest()!=row['sha256']:errors.append('ADMIN baseline fingerprint invalid')
-                addition=b'  "GET /api/admin/risk/settings",\\n  "POST /api/admin/risk/settings",\\n'
+                addition=('  "GET /api/admin/risk/settings",'+chr(10)+'  "POST /api/admin/risk/settings",'+chr(10)).encode()
                 current=p.read_bytes()
                 if current.count(addition)!=1 or current.replace(addition,b'')!=baseline:errors.append('unexpected ADMIN auth route modification')
             elif hashlib.sha256(p.read_bytes()).hexdigest()!=row['sha256']:errors.append('protected contract changed: '+row['path'])
