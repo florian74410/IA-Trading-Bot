@@ -6,7 +6,7 @@
     "ref": "fix/v2.0.1-debug",
     "sha": "4a5024473e1318491f4f66516292274f4a4c852c",
     "endpoint_inventory": "Documentation/Security/AUTH_ENDPOINT_INVENTORY_v1.json",
-    "entries": 212
+    "entries": 216
   },
   "scope": "P1.7 design approved, 212 route entries and 77 Router actions classified; NOT runtime policy; runtime enforcement and CI coverage gate have not been activated.",
   "roles": [
@@ -2096,6 +2096,33 @@
         "path": "/api/admin/firewall/status",
         "source": "App/Core/Server/server.js",
         "source_line": 507,
+        "classification": "ADMIN"
+      },
+      {
+        "i": 214,
+        "service": "Core",
+        "method": "GET",
+        "path": "/api/admin/risk/settings",
+        "source": "App/Core/Server/server.js",
+        "source_line": 0,
+        "classification": "ADMIN"
+      },
+      {
+        "i": 215,
+        "service": "Core",
+        "method": "POST",
+        "path": "/api/admin/risk/settings",
+        "source": "App/Core/Server/server.js",
+        "source_line": 0,
+        "classification": "ADMIN"
+      },
+      {
+        "i": 216,
+        "service": "Core",
+        "method": "GET",
+        "path": "/api/admin/risk/status",
+        "source": "App/Core/Server/server.js",
+        "source_line": 0,
         "classification": "ADMIN"
       }
     ]
