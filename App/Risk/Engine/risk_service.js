@@ -156,7 +156,7 @@ function r25Sample(cb){
   var data=err?{schema:'risk.r2.snapshot/1.0',status:'UNAVAILABLE',
    alerts:[{module:'integrity',code:'PORTFOLIO_CP1_UNAVAILABLE',severity:'CRITICAL'}],
    policy:{blockAdditionalRisk:true,autoLiquidation:false},supervisor:{notify:true,alertCount:1},executable:false}
-   :R2.evaluate(risk25PortfolioObservation(packet),riskSettings().r2);
+   :(function(){var cfg=riskSettings();return R2.evaluate(risk25PortfolioObservation(packet),Object.assign({},cfg.r2,{enabled:cfg.enabled&&cfg.r2.enabled}));})();
   data.sampledAt=new Date().toISOString();R25_MONITOR.last=data;
   cb(null,data);
  });
@@ -182,8 +182,8 @@ function r25MonitorTick(){
 
 function cpAction(m,cb){
   var a=m.arguments||{};
-  if(m.action==='risk.r1.evaluate')return cb(null,R1.evaluate(a.intent||{},riskSettings().r1,a.context||{}));
-  if(m.action==='risk.r2.evaluate')return cb(null,R2.evaluate(a.snapshot||{},riskSettings().r2));
+  if(m.action==='risk.r1.evaluate'){var c1=riskSettings();return cb(null,R1.evaluate(a.intent||{},Object.assign({},c1.r1,{enabled:c1.enabled&&c1.r1.enabled}),a.context||{}));}
+  if(m.action==='risk.r2.evaluate'){var c2=riskSettings();return cb(null,R2.evaluate(a.snapshot||{},Object.assign({},c2.r2,{enabled:c2.enabled&&c2.r2.enabled})));}
   if(m.action==='risk.r2.monitor')return r25Sample(cb);
   if(m.action==='risk.gate.evaluate'){try{return cb(null,RISK_GATE.evaluate(a.intent||a));}catch(e){return cb(e);}}
   if(m.action==='risk.gate.verify'){try{return cb(null,RISK_GATE.verify(a.risk_approval_id,a.intent||{},a.consume===true));}catch(e){return cb(e);}}
