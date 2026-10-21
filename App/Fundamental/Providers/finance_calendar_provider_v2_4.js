@@ -8,7 +8,8 @@ let cache={at:0,data:null},pending=null;
 const iso=d=>d.toISOString().slice(0,10);
 function normalize(x){
  if(!x||typeof x!=='object'||!/^\d{4}-\d{2}-\d{2}$/.test(String(x.date||''))||!String(x.id||'').trim())return null;
- const date=String(x.date),timestamp=x.release_at_utc||x.time_utc||null;
+ const date=String(x.date),rawTime=x.release_at_utc||x.time_utc||null;
+ const timestamp=rawTime&&Number.isFinite(Date.parse(rawTime))?rawTime:null;
  const country=String(x.country||'').toUpperCase();
  const impact=String(x.impact||'').toUpperCase();
  return {id:'FC:'+String(x.id).slice(0,130),calendar:'FINANCE_CALENDAR',date,
@@ -35,7 +36,7 @@ function get(url,cb){
 function collect(cb){
  if(cache.data&&Date.now()-cache.at<TTL)return process.nextTick(()=>cb(null,{...cache.data,cacheAgeMs:Date.now()-cache.at}));
  if(pending){pending.push(cb);return;}pending=[cb];
- // Current month backfill + approximately 90-day forward view, including recent actuals.
+ // Current-month backfill plus next 60 days; stays within API's 92-day limit.
  const now=new Date(),from=iso(new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),1)));
  const to=iso(new Date(Date.now()+60*86400000));
  const url=BASE+'?from='+from+'&to='+to+'&limit=500&include=holidays';
