@@ -70,10 +70,11 @@ var srv=require('../Clients/auth21_engine_ingress').createServer(function(req,re
  if(msg&&msg.action==='trading.admin.command'){
   if(!auth||!sig||!tradingAdminVerifier)return send(res,403,{ok:false,error:'ADMIN_AUTH21_PROOF_REQUIRED'});
   var args=msg.arguments||{},payload={command:args.command,command_id:args.command_id,timestamp:args.timestamp,confirmed:args.confirmed};
+  function adminDenied(error){var out={ok:false,error:error};if(tradingAdminVerifier&&tradingAdminVerifier.attest)out.p3Attestation=tradingAdminVerifier.attest(payload,out,'FIREWALL');send(res,403,out);}
   return Promise.resolve(tradingAdminVerifier({payload:payload,proof:args.proof})).then(function(identity){
-   if(!identity||identity.verified!==true||identity.role!=='ADMIN')return send(res,403,{ok:false,error:'ADMIN_AUTH21_PERMISSION_DENIED'});
+   if(!identity||identity.verified!==true||identity.role!=='ADMIN')return adminDenied('ADMIN_AUTH21_PERMISSION_DENIED');
    inspectWithAdminProof(true);
-  }).catch(function(){send(res,403,{ok:false,error:'ADMIN_AUTH21_VERIFICATION_FAILED'});});
+  }).catch(function(){adminDenied('ADMIN_AUTH21_VERIFICATION_FAILED');});
  }
  inspectWithAdminProof(false);});
  send(res,404,{ok:false,error:'NOT_FOUND'});

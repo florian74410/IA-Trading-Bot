@@ -24,7 +24,14 @@ export IATB_AUTH_TLS_CERT="$PRIVATE/tls/localhost.crt"
 export IATB_AUTH_TLS_KEY="$PRIVATE/tls/localhost.key"
 export IATB_RELEASE_VERSION="$(tr -d '[:space:]' < VERSION)"
 export IATB_TRADING_LIVE=0
-export IATB_AUTH21_TRADING_ADMIN_BRIDGE=0
+export IATB_AUTH21_TRADING_ADMIN_BRIDGE="${IATB_AUTH21_TRADING_ADMIN_BRIDGE:-0}"
+export IATB_AUTH21_TRADING_ADMIN_REQUESTED="$IATB_AUTH21_TRADING_ADMIN_BRIDGE"
+if P3_PREFLIGHT="$("$NODE" Tools/CLI/trading_p3_preflight.js)"; then
+ echo "Pont ADMIN P3 — $P3_PREFLIGHT"
+else
+ echo "Pont ADMIN P3 : activation refusée — $P3_PREFLIGHT"
+ export IATB_AUTH21_TRADING_ADMIN_BRIDGE=0
+fi
 export IATB_DEBUG_MODE=0
 export IATB_PORT=8001 CORE_PUBLIC_PORT=8001 IATB_UI_PORT=8000
 export ROUTER_PORT=8021 IATB_FIREWALL_PORT=8017 IATB_TRADING_ENGINE_PORT=8016
@@ -43,7 +50,10 @@ trap 'exit 130' INT
 trap 'exit 143' TERM
 launch(){
  local name="$1" file="$2"
- "$NODE" "$file" >>"$PRIVATE/runtime/logs/$name.log" 2>&1 &
+ case "$name" in
+  core|firewall|trading) "$NODE" "$file" >>"$PRIVATE/runtime/logs/$name.log" 2>&1 & ;;
+  *) env -u IATB_AUTH21_TRADING_IPC_KEY_FILE -u IATB_AUTH21_TRADING_IPC_KEY_ROOT "$NODE" "$file" >>"$PRIVATE/runtime/logs/$name.log" 2>&1 & ;;
+ esac
  PIDS+=("$!")
  sleep 0.6
  if ! kill -0 "${PIDS[-1]}" 2>/dev/null; then echo "ECHEC $name : voir $PRIVATE/runtime/logs/$name.log"; return 1; fi
@@ -68,7 +78,7 @@ sleep 2
 curl --cacert "$IATB_AUTH_TLS_CERT" -fsS --max-time 5 https://localhost:8000/ui-health || { echo "UI indisponible, consulter les logs"; exit 1; }
 echo
 echo "IA-TB Auth21 SAFE : https://localhost:8000"
-echo "Trading LIVE=0 ; pont ADMIN P3 désactivé jusqu'à validation des clés IPC."
+echo "Trading LIVE=0 ; diagnostic P3 complet disponible dans ADMIN → Maintenance (session ADMIN requise)."
 echo "Ctrl+C pour arrêter uniquement les processus de cette session."
 while :; do
  for pid in "${PIDS[@]}"; do

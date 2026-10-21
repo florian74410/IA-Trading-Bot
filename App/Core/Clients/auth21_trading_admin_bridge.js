@@ -52,29 +52,40 @@ function createTradingAdminBridge({sessions,env=process.env,browserSessions=null
 }
 
 function createAuthenticatedDispatcher({sessions,env=process.env,port=8017}={}){
- if(!sessions||typeof sessions.verifySession!=='function'||env.IATB_AUTH21_TRADING_ADMIN_BRIDGE!=='1')return null;
- const codec=proofCodec({secret:loadTradingAdminKey({env})});
+ if(!sessions||typeof sessions.verifySession!=='function')return null;
+ if(!Number.isInteger(port)||port<1024||port>65535)throw Error('TRADING_ADMIN_FIREWALL_PORT_INVALID');
+ const preflight=require('./auth21_trading_key_provider').preflightTradingAdminKey,attestation=require('./auth21_trading_attestation');
+ function diagnostic(state,reason){return {state,reason,liveAuthorized:false,mutationsEnabled:false,p4p5Qualified:false,checkedAt:new Date().toISOString()};}
  return async function dispatch({token,payload}={}){
   const principal=token&&sessions.verifySession(token);
   if(!principal||principal.role!=='ADMIN')return {status:403,body:{error:'ADMIN_PERMISSION_DENIED'}};
-  if(!payload||typeof payload!=='object'||Array.isArray(payload)||
-   Object.keys(payload).sort().join(',')!=='command,command_id,confirmed,timestamp')
-   return {status:400,body:{error:'ARGUMENTS_INVALID'}};
-  const proof=issueTradingAdminProof({sessions,token,codec,payload});
+  if(!payload||typeof payload!=='object'||Array.isArray(payload)||Object.keys(payload).sort().join(',')!=='command,command_id,confirmed,timestamp')return {status:400,body:{error:'ARGUMENTS_INVALID'}};
+  const enabled=env.IATB_AUTH21_TRADING_ADMIN_BRIDGE==='1',localCheck=preflight({env});
+  const check=enabled?localCheck:env.IATB_AUTH21_TRADING_ADMIN_REQUESTED==='1'&&!localCheck.ok?localCheck:{ok:false,state:'DISABLED',reason:'CONFIGURATION_NOT_ENABLED'};
+  if(!check.ok)return {status:payload.command==='STATUS'?200:503,body:{ok:payload.command==='STATUS',bridge:diagnostic(check.state,check.reason),error:payload.command==='STATUS'?undefined:'P3_NOT_READY'}};
+  let secret;try{secret=loadTradingAdminKey({env});}catch(_){return {status:503,body:{error:'P3_KEY_CHANGED',bridge:diagnostic('KEY_INVALID','KEY_CHANGED')}};}
+  const codec=proofCodec({secret}),proof=issueTradingAdminProof({sessions,token,codec,payload});
   if(!proof)return {status:403,body:{error:'ADMIN_PERMISSION_DENIED'}};
+  try{if(sessions.audit)sessions.audit(principal.clientId,'TRADING_ADMIN_REQUEST',payload.command);}catch(_){return {status:503,body:{error:'ADMIN_AUDIT_UNAVAILABLE'}};}
   const msg=CP.makeRequest('trading','trading.admin.command',{...payload,proof},'summary'),raw=Buffer.from(JSON.stringify(msg));
-  let machine;try{machine=CP.ensureSecret('');}catch(_){return {status:503,body:{error:'CP_SECRET_UNAVAILABLE'}};}
+  let machine;try{machine=CP.ensureSecret('');}catch(_){return {status:503,body:{error:'CP_SECRET_UNAVAILABLE',bridge:diagnostic('AUTH_UNAVAILABLE','CP_SECRET_UNAVAILABLE')}};}
   const signature=crypto.createHmac('sha256',machine).update(raw).digest('hex');
   return await new Promise(resolve=>{
-    const q=http.request({hostname:'127.0.0.1',port,path:'/cp/v1',method:'POST',timeout:5000,agent:false,headers:{
-     'Content-Type':'application/json','Content-Length':raw.length,'X-IATB-CP-Token':machine,'X-IATB-FW-Signature':signature
-    }},response=>{
-      let n=0,parts=[];response.on('data',chunk=>{n+=chunk.length;if(n>32768){q.destroy();return;}parts.push(chunk);});
-      response.on('end',()=>{try{const out=JSON.parse(Buffer.concat(parts).toString('utf8'));resolve({status:[200,400,403,409,503].includes(response.statusCode)?response.statusCode:502,body:out});}catch(_){resolve({status:502,body:{error:'FIREWALL_RESPONSE_INVALID'}});}});
+   const fail=(state,reason)=>resolve({status:503,body:{error:reason,bridge:diagnostic(state,reason)}});
+   const q=http.request({hostname:'127.0.0.1',port,path:'/cp/v1',method:'POST',timeout:5000,agent:false,headers:{'Content-Type':'application/json','Content-Length':raw.length,'X-IATB-CP-Token':machine,'X-IATB-FW-Signature':signature}},response=>{
+    let n=0,parts=[];response.on('data',chunk=>{n+=chunk.length;if(n>32768){q.destroy();return;}parts.push(chunk)});
+    response.on('error',()=>fail('FIREWALL_UNAVAILABLE','FIREWALL_RESPONSE_INTERRUPTED'));
+    response.on('end',()=>{
+     let out;try{out=JSON.parse(Buffer.concat(parts).toString('utf8'));}catch(_){return fail('ERROR','FIREWALL_RESPONSE_INVALID');}
+     if(!out.p3Attestation)return fail('FIREWALL_UNAVAILABLE',out.error==='ADMIN_FIREWALL_BYPASS_DENIED'?'ADMIN_FIREWALL_BYPASS_DENIED':'P3_ATTESTATION_UNAVAILABLE');
+     if(!attestation.verify(secret,payload,out))return fail('KEY_INVALID','KEY_MISMATCH');
+     const stage=out.p3Attestation.stage;delete out.p3Attestation;
+     const ready=response.statusCode===200&&stage==='ENGINE'&&out.status==='OK'&&out.data&&out.data.ok===true&&out.data.security&&out.data.security.journalDurable===true;
+     out.bridge=diagnostic(ready?'READY':'ERROR',ready?'AUTH21_IPC_FIREWALL_ENGINE_VALIDATED':out.error||out.data&&out.data.error||'P3_COMMAND_REJECTED');
+     resolve({status:ready?200:[400,403,409,503].includes(response.statusCode)?response.statusCode:503,body:out});
     });
-    q.on('timeout',()=>q.destroy(Error('TIMEOUT')));
-    q.on('error',()=>resolve({status:502,body:{error:'TRADING_ADMIN_FIREWALL_UNAVAILABLE'}}));
-    q.end(raw);
+   });
+   q.on('timeout',()=>q.destroy(Error('TIMEOUT')));q.on('error',()=>fail('FIREWALL_UNAVAILABLE','TRADING_ADMIN_FIREWALL_UNAVAILABLE'));q.end(raw);
   });
  };
 }

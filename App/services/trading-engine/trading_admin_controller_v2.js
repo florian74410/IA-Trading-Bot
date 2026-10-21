@@ -19,7 +19,6 @@ class TradingAdminController {
    try {identity=await this.verifyPrincipal(context);} catch(_){return {ok:false,error:'ADMIN_AUTHORIZATION_FAILED'};}
    if(!identity||identity.verified!==true||identity.role!=='ADMIN'||!identity.subject)
      return {ok:false,error:'ADMIN_PERMISSION_DENIED'};
-   if(command==='STATUS')return {ok:true,state:this.lifecycle.snapshot()};
    const id=String(input.command_id||'');
    if(!/^[A-Za-z0-9_-]{16,128}$/.test(id))return {ok:false,error:'COMMAND_ID_INVALID'};
    if(input.confirmed!==true)return {ok:false,error:'ADMIN_CONFIRMATION_REQUIRED'};
@@ -29,8 +28,9 @@ class TradingAdminController {
    // We record no claim of execution at this stage.
    if(!this.ledger)return {ok:false,error:'ADMIN_LEDGER_NOT_CONFIGURED'};
    const fingerprint=crypto.createHash('sha256').update(JSON.stringify({command,id,timestamp,subject:String(identity.subject)})).digest('hex');
-   let record;try{record=this.ledger.record({command_id:id,command,actor:identity.subject,fingerprint,decision:'NOT_IMPLEMENTED',detail:'P3_SAFE_NOOP'});}catch(e){return {ok:false,error:'ADMIN_LEDGER_UNAVAILABLE'};}
+   let record;try{record=this.ledger.record({command_id:id,command,actor:identity.subject,fingerprint,decision:command==='STATUS'?'STATUS':'NOT_IMPLEMENTED',detail:command==='STATUS'?'P3_READ_ONLY':'P3_SAFE_NOOP'});}catch(e){return {ok:false,error:'ADMIN_LEDGER_UNAVAILABLE'};}
    if(!record.ok)return {ok:false,error:record.error};
+   if(command==='STATUS')return {ok:true,state:this.lifecycle.snapshot(),security:{journalDurable:true,liveAuthorization:false,mutationsEnabled:false}};
    return {ok:false,error:'COMMAND_IMPLEMENTATION_PENDING',command};
  }
 }

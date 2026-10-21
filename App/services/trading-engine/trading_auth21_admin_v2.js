@@ -10,7 +10,7 @@ function createVerifier({env=process.env,replayStore}={}){
  if(!env.IATB_AUTH21_TRADING_IPC_KEY_FILE)return null;
  const secret=loadTradingAdminKey({env});
  const codec=proofCodec({secret,replayStore});
- return async function(context){
+ const verifier=async function(context){
    const payload=context&&context.payload;
    const proof=context&&context.proof;
    if(!payload||typeof payload!=='object'||typeof proof!=='string')return null;
@@ -20,5 +20,7 @@ function createVerifier({env=process.env,replayStore}={}){
    const access=authorizeInterprocess({codec,proof,audience:'trading',operation,method:'POST',action,bodyDigest});
    return access.allowed?{verified:true,role:access.role,subject:access.clientId}:null;
  };
+ verifier.attest=function(payload,body,stage){return require('../../Core/Clients/auth21_trading_attestation').sign(secret,stage||'ENGINE',payload,body)};
+ return verifier;
 }
 module.exports={createVerifier};

@@ -111,7 +111,7 @@
 
       <section id="maintenance" class="dashSection anchorSection">
         <div class="dashSectionHead"><div class="sectionIdentity"><span class="sectionIcon">⌁</span><div><h2>Maintenance</h2><p>Actions administrateur et gestion des caches</p></div></div><span id="actionMsg" class="msg"></span></div>
-        <div class="dashSectionBody">
+        <div class="dashSectionBody"><section class="p3Diagnostic" aria-label="Pont ADMIN P3"><h3>Pont ADMIN P3</h3><p id="p3BridgeState" role="status">Diagnostic à effectuer avec la session ADMIN.</p><p>La vérification utilise uniquement STATUS. L'autorisation LIVE et les commandes P4/P5 restent indépendantes.</p><button id="p3BridgeCheck" type="button" class="btn">Vérifier Auth21 → Firewall → Trading</button></section>
           <div class="actions maintenanceBar">
             <button id="reloadIndicators" class="btn">Recharger les indicateurs</button>
             <button id="clearMarket" class="btn">Vider cache MarketData</button>
@@ -132,5 +132,5 @@
 </div>
 <script src="/assets/admin_controller_v1.0.js"></script>
 
-</body>
+<script src="/assets/trading_p3_admin.js?v=25201"></script></body>
 </html>
