@@ -16,4 +16,19 @@ const r=risk.r2(snap,cfg);assert.equal(r.decision,'LIMIT_EXCEEDED');assert.ok(r.
 assert.equal(risk.r2({equity:10000,positions:[]},cfg).decision,'DEGRADED');
 assert.equal(risk.r2(snap,{enabled:false}).decision,'DISABLED');
 assert.equal(risk.r1(i,a,cfg).tokenCost,0);
+
+const returns=Array.from({length:25},(_,i)=>Math.sin(i/3)/100);
+const advanced=risk.r2({equity:10000,peakEquity:10000,positions:[],metrics:{
+ correlation:{returnsBySymbol:{BTC:returns,ETH:returns.map(x=>x*1.3)}},
+ margin:{maintenanceMargin:100,marginEquity:110},
+ volatility:{dailyReturnsPct:returns.map(x=>x*100)},
+ freshness:{observedAtMs:Date.now()-45000}
+}},{r2:{stopBudget:false}});
+assert.ok(advanced.measurements.maxCorrelation>.99);
+assert.ok(advanced.warnings.includes('CORRELATED_MARKET_EXPOSURE'));
+assert.ok(advanced.warnings.includes('MARGIN_COVERAGE_LOW'));
+assert.ok(advanced.warnings.includes('PORTFOLIO_DATA_STALE'));
+assert.ok(advanced.measurements.dailyVolatilityPct>0);
+assert.equal(advanced.decision,'LIMIT_EXCEEDED');
+
 console.log('PASS Risk Engine R1/R2 2.5 deterministic modules');
