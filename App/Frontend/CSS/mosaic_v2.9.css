@@ -38,6 +38,8 @@
 .tvAttribution{position:absolute;right:7px;bottom:5px;z-index:4;font-size:9px;color:#8295a6;background:rgba(5,7,9,.72);padding:2px 5px;border-radius:3px;text-decoration:none}
 .tvAttribution:hover{color:#fff}
 
+html.ia-chart-focus-mode,html.ia-chart-focus-mode body{overflow:hidden!important}
+html.ia-chart-focus-mode .iatbCenterColumn>*:not(#chartArea),html.ia-chart-focus-mode .iatbServiceStrip{display:none!important}
 html.ia-chart-focus-mode .body[data-mosaic-root]{display:block!important;padding:0;overflow:hidden}
 html.ia-chart-focus-mode .body[data-mosaic-root] [data-mosaic-id]{display:none!important}
 html.ia-chart-focus-mode .body[data-mosaic-root] [data-mosaic-id="chart"]{

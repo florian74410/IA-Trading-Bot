@@ -237,7 +237,7 @@
    services strip remain fixed. Chart + mosaic modules form one vertical
    scroll surface in the center column. */
 @media (min-width:981px){
-  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active) .iatbCenterColumn{
+  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active):not(.ia-chart-focus-mode) .iatbCenterColumn{
     display:flex!important;
     flex-direction:column!important;
     min-width:0!important;
@@ -250,13 +250,13 @@
     scrollbar-color:#244b61 #07131c;
     padding-right:2px!important;
   }
-  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active) .iatbCenterColumn::-webkit-scrollbar{width:7px}
-  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active) .iatbCenterColumn::-webkit-scrollbar-track{background:#07131c;border-radius:6px}
-  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active) .iatbCenterColumn::-webkit-scrollbar-thumb{background:#244b61;border-radius:6px}
+  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active):not(.ia-chart-focus-mode) .iatbCenterColumn::-webkit-scrollbar{width:7px}
+  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active):not(.ia-chart-focus-mode) .iatbCenterColumn::-webkit-scrollbar-track{background:#07131c;border-radius:6px}
+  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active):not(.ia-chart-focus-mode) .iatbCenterColumn::-webkit-scrollbar-thumb{background:#244b61;border-radius:6px}
 
   /* Keep a useful chart height instead of compressing it to make the
      module deck fit in the remaining viewport. */
-  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active) .iatbCenterColumn > #chartArea[data-mosaic-id="chart"]{
+  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active):not(.ia-chart-focus-mode) .iatbCenterColumn > #chartArea[data-mosaic-id="chart"]{
     order:1!important;
     flex:0 0 416px!important;
     width:100%!important;
@@ -264,7 +264,7 @@
     min-height:416px!important;
     max-height:none!important;
   }
-  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active) .iatbCenterColumn > .iatbModuleWrap{
+  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active):not(.ia-chart-focus-mode) .iatbCenterColumn > .iatbModuleWrap{
     order:2!important;
     flex:0 0 226px!important;
     width:100%!important;
@@ -275,8 +275,8 @@
 
   /* Peripheral columns must never become part of the page scroll. Their
      own internal message/exchange lists may still scroll independently. */
-  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active) .iatbChatColumn,
-  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active) .iatbExchangeColumn{
+  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active):not(.ia-chart-focus-mode) .iatbChatColumn,
+  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active):not(.ia-chart-focus-mode) .iatbExchangeColumn{
     height:100%!important;
     max-height:100%!important;
     overflow:hidden!important;
@@ -285,12 +285,12 @@
 
 /* Macro / 1280x800 target: slightly taller chart, compact modules. */
 @media (min-width:981px) and (max-width:1365px){
-  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active) .iatbCenterColumn > #chartArea[data-mosaic-id="chart"]{
+  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active):not(.ia-chart-focus-mode) .iatbCenterColumn > #chartArea[data-mosaic-id="chart"]{
     flex-basis:400px!important;
     height:400px!important;
     min-height:400px!important;
   }
-  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active) .iatbCenterColumn > .iatbModuleWrap{
+  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active):not(.ia-chart-focus-mode) .iatbCenterColumn > .iatbModuleWrap{
     flex-basis:206px!important;
     height:206px!important;
     min-height:206px!important;
@@ -302,7 +302,7 @@
    The service strip is part of the viewport geometry: left/chat, center/chart+mosaics
    and right/exchanges all terminate above it. Each rail may scroll internally. */
 @media (min-width:981px){
-  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active) .body[data-mosaic-root]{
+  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active):not(.ia-chart-focus-mode) .body[data-mosaic-root]{
     top:var(--ia-top-h)!important;
     bottom:var(--ia-status-h)!important;
     height:auto!important;
@@ -311,9 +311,9 @@
     box-sizing:border-box!important;
   }
 
-  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active) .iatbChatColumn,
-  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active) .iatbCenterColumn,
-  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active) .iatbExchangeColumn{
+  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active):not(.ia-chart-focus-mode) .iatbChatColumn,
+  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active):not(.ia-chart-focus-mode) .iatbCenterColumn,
+  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active):not(.ia-chart-focus-mode) .iatbExchangeColumn{
     min-height:0!important;
     height:100%!important;
     max-height:100%!important;
@@ -321,14 +321,14 @@
   }
 
   /* Left rail: brand/header/form remain in place; only message history scrolls. */
-  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active) .iatbChatColumn{
+  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active):not(.ia-chart-focus-mode) .iatbChatColumn{
     overflow:hidden!important;
   }
-  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active) .iatbChatColumn .chatPrimary{
+  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active):not(.ia-chart-focus-mode) .iatbChatColumn .chatPrimary{
     min-height:0!important;
     overflow:hidden!important;
   }
-  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active) .iatbChatColumn .msgs{
+  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active):not(.ia-chart-focus-mode) .iatbChatColumn .msgs{
     min-height:0!important;
     overflow-y:auto!important;
     overflow-x:hidden!important;
@@ -336,7 +336,7 @@
   }
 
   /* Center rail: chart + mosaic deck share one independent scroll surface. */
-  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active) .iatbCenterColumn{
+  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active):not(.ia-chart-focus-mode) .iatbCenterColumn{
     overflow-y:auto!important;
     overflow-x:hidden!important;
     padding-bottom:8px!important;
@@ -345,10 +345,10 @@
   }
 
   /* Right rail: title stays fixed; exchanges/consensus area scrolls independently. */
-  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active) .iatbExchangeColumn{
+  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active):not(.ia-chart-focus-mode) .iatbExchangeColumn{
     overflow:hidden!important;
   }
-  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active) .iatbExchangeScroll{
+  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active):not(.ia-chart-focus-mode) .iatbExchangeScroll{
     flex:1 1 auto!important;
     min-height:0!important;
     overflow-y:auto!important;
@@ -358,7 +358,7 @@
   }
 
   /* The status strip itself is exactly the reserved bottom boundary. */
-  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active) .iatbServiceStrip{
+  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active):not(.ia-chart-focus-mode) .iatbServiceStrip{
     top:auto!important;
     bottom:0!important;
     height:var(--ia-status-h)!important;
@@ -372,15 +372,15 @@
 /* v1.8.6 UI tuning — toolbar: price is already rendered by the chart itself.
    Free this space for the Indicator Engine action. */
 @media (min-width:981px){
-  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active) .iatbCenterColumn #chartArea #price,
-  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active) .iatbCenterColumn #chartArea .price{
+  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active):not(.ia-chart-focus-mode) .iatbCenterColumn #chartArea #price,
+  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active):not(.ia-chart-focus-mode) .iatbCenterColumn #chartArea .price{
     display:none!important;
   }
-  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active) .iatbCenterColumn #chartArea .iatbIndBtn{
+  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active):not(.ia-chart-focus-mode) .iatbCenterColumn #chartArea .iatbIndBtn{
     display:inline-flex!important;align-items:center!important;justify-content:center!important;
     flex:0 0 auto!important;white-space:nowrap!important;order:20!important;
   }
-  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active) .iatbCenterColumn #chartArea #wsState{
+  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active):not(.ia-chart-focus-mode) .iatbCenterColumn #chartArea #wsState{
     order:30!important;margin-left:auto!important;
   }
 }
@@ -392,18 +392,18 @@
 @media (min-width:981px){
   :root{--ia-status-safe-gap:10px}
 
-  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active) .body[data-mosaic-root]{
+  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active):not(.ia-chart-focus-mode) .body[data-mosaic-root]{
     bottom:calc(var(--ia-status-h) + var(--ia-status-safe-gap))!important;
     max-height:calc(100vh - var(--ia-top-h) - var(--ia-status-h) - var(--ia-status-safe-gap))!important;
   }
 
-  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active) .iatbCenterColumn{
+  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active):not(.ia-chart-focus-mode) .iatbCenterColumn{
     box-sizing:border-box!important;
     padding-bottom:0!important;
     scroll-padding-bottom:calc(var(--ia-status-h) + 18px)!important;
   }
 
-  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active) .iatbCenterColumn:after{
+  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active):not(.ia-chart-focus-mode) .iatbCenterColumn:after{
     content:''!important;
     display:block!important;
     flex:0 0 calc(var(--ia-status-h) + 18px)!important;
@@ -413,8 +413,8 @@
     pointer-events:none!important;
   }
 
-  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active) .iatbChatColumn,
-  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active) .iatbExchangeColumn{
+  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active):not(.ia-chart-focus-mode) .iatbChatColumn,
+  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active):not(.ia-chart-focus-mode) .iatbExchangeColumn{
     margin-bottom:0!important;
     max-height:100%!important;
   }
@@ -443,7 +443,7 @@ html.iatb-dashboard-v186-final .iatbCenterColumn #chartArea > .iatbChartHead{dis
    The center rail scrolls independently, so the larger deck never pushes
    Supervisor/Exchanges outside their viewport rails. */
 @media (min-width:981px){
-  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active) .iatbCenterColumn > .iatbModuleWrap{
+  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active):not(.ia-chart-focus-mode) .iatbCenterColumn > .iatbModuleWrap{
     flex:0 0 430px!important;
     height:430px!important;
     min-height:430px!important;
@@ -598,7 +598,7 @@ html.iatb-dashboard-v186-final .iatbCenterColumn #chartArea > .iatbChartHead{dis
 
 /* 1280-ish Mac target: keep all 15 cells usable but trim the deck vertically. */
 @media (min-width:981px) and (max-width:1365px){
-  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active) .iatbCenterColumn > .iatbModuleWrap{
+  html.iatb-dashboard-v186-final:not(.iatb-secondary-page-active):not(.ia-chart-focus-mode) .iatbCenterColumn > .iatbModuleWrap{
     flex-basis:392px!important;
     height:392px!important;
     min-height:392px!important;

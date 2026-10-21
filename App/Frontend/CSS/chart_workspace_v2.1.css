@@ -86,3 +86,7 @@ html.iatb-trading-workspace #chartArea>.controls.cvToolbar>*{flex-shrink:0;min-h
 .iatbEconomicTooltip{box-sizing:border-box;width:min(320px,calc(100% - 16px));overflow-wrap:anywhere;position:absolute;z-index:40;max-width:min(320px,85%);max-height:55%;overflow:auto;white-space:pre-line;padding:10px;border:1px solid #637787;border-radius:6px;background:#101b26;color:#e3eaf1;font:12px/1.5 system-ui;box-shadow:0 4px 12px #0008;pointer-events:auto}
 .iatbEconomicTooltip[hidden]{display:none}
 .iatbChartTimeZone{position:absolute;right:72px;bottom:23px;z-index:19;color:#aab8c8;background:#070b10bb;padding:1px 4px;font:9px system-ui;pointer-events:none}
+
+/* Account event preference: persistent and visibly distinct states. */
+html.iatb-trading-workspace #chartArea .controls #iatbEconomicToggle[aria-pressed="true"]{border-color:#5acfff!important;box-shadow:inset 0 -2px #5acfff;font-weight:600}
+html.iatb-trading-workspace #chartArea .controls #iatbEconomicToggle[aria-pressed="false"]{opacity:.65}

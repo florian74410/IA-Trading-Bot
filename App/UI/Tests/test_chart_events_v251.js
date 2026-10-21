@@ -20,7 +20,7 @@ test.before(async function(){
 });
 test.after(async function(){if(browser)await browser.close();if(server)await new Promise(function(done){server.close(done);});});
 async function pageWith(options){
- options=options||{};var page=await browser.newPage({viewport:{width:options.width||1440,height:1000},hasTouch:!!options.touch}),calls=[],errors=[],custom=Object.create(null);
+ options=options||{};var page=await browser.newPage({viewport:{width:options.width||1440,height:1000},hasTouch:!!options.touch}),calls=[],errors=[],custom=Object.create(null),econPreference=null;
  page.on('pageerror',function(e){errors.push(e.message);});
  await page.addInitScript(function(selected){if(localStorage.getItem('iatb.indicators.selected.v2')==null)localStorage.setItem('iatb.indicators.selected.v2',JSON.stringify(selected));},options.selected||['rsi','macd']);
  await page.route('**/*',async function(route){var req=route.request(),u=new URL(req.url()),p=u.pathname;
@@ -28,6 +28,8 @@ async function pageWith(options){
   if(u.origin===base&&p==='/settings')return route.fulfill({contentType:'text/html',body:'<!doctype html><title>Navigation fixture</title><a href="/ia-trading">Trading IA</a>'});
   assert.equal(u.origin,base,'no external requests in QA');var d={ok:true,items:[],events:[],strategies:[],instances:[],logs:[]};
   if(p==='/api/status')d={ok:true,version:'2.1.0',role:'USER',defaultMarketSource:'KRAKEN',defaultSymbol:'BTCUSD',defaultInterval:'1m',candles:240,memoryMB:64,openai:false};
+  if(p==='/auth21/csrf')d={csrfToken:'fixture-csrf'};
+  if(p==='/auth21/preferences'){if(req.method()==='PUT'){const b=req.postDataJSON();assert.equal(req.headers()['x-iatb-csrf'],'fixture-csrf');assert.deepEqual(Object.keys(b).sort(),['key','scope','value']);assert.equal(b.scope,'chart');assert.equal(b.key,'chartEconomicEvents');econPreference=b.value;}d={value:econPreference};}
   if(p==='/api/health')d={ok:true,version:'2.1.0'};
   if(p==='/ui-data/market/candles'){var sym=u.searchParams.get('symbol'),tf=u.searchParams.get('interval');var marketRows=candles(sym,tf);if(options.noVolume)marketRows.forEach(function(row){row[5]=null});d={ok:true,candles:marketRows,provider:u.searchParams.get('exchange'),timeframe:tf,timeframeValidated:true};}
   if(p.startsWith('/communication/v1/ui/')){
@@ -51,7 +53,7 @@ async function pageWith(options){
  if(options.waitBatch!==false)await page.waitForFunction(function(){return window.IATBIndicatorBatch&&window.IATBIndicatorBatch.results.length>0;});
  await page.waitForFunction(function(){return window.IATBChartWorkspace&&window.IATBIndicatorStudio.mounted});return{page:page,calls:calls,errors:errors};
 }
-test('Firefox: real canvas line pixels, exact badges, grouping, keyboard tooltip and future rail navigation',async()=>{
+test('Firefox: real canvas line pixels, exact badges, grouping, keyboard tooltip and future navigation without synthetic candles',async()=>{
  const c=await pageWith(),p=c.page;
  try{
   await p.waitForSelector('.iatbEconomicBadge');
@@ -69,8 +71,8 @@ test('Firefox: real canvas line pixels, exact badges, grouping, keyboard tooltip
   assert.equal(await p.locator('.iatbEconomicBadge span').filter({hasText:'CME'}).first().evaluate(e=>getComputedStyle(e).color),'rgb(90, 207, 255)');
   if(process.env.IATB_QA_ARTIFACTS){fs.mkdirSync(process.env.IATB_QA_ARTIFACTS,{recursive:true});await p.screenshot({path:path.join(process.env.IATB_QA_ARTIFACTS,'events-tooltip-firefox.png')});}
   await p.keyboard.press('Escape');assert.equal(await p.locator('.iatbEconomicTooltip').isVisible(),false);
-  const unknown=p.locator('.iatbEconomicChip').filter({hasText:'heure indisponible'});assert.ok(await unknown.count());
-  await p.locator('.iatbEconomicChip').filter({hasText:'CME'}).click();
+  assert.equal(await p.locator('.iatbEconomicChip,#iatbChartEconomicRail').count(),0);
+  await p.evaluate(()=>{const c=IATBActiveChartController;c.locateEconomicEvent(c.economicMarkers.find(e=>e.label==='Future expiration'))});
   await p.waitForFunction(()=>IATBActiveChartController.panOffset<0);
   assert.equal(await p.evaluate(()=>IATBActiveChartController.rows.length),metrics.count);
   assert.ok(await p.locator('.iatbEconomicBadge').filter({hasText:'CME'}).count());
@@ -96,23 +98,29 @@ test('Firefox: empty/unavailable calendar gives no invented badges or lines',asy
 test('Firefox: touchscreen badge exposes all details and dismisses on Escape',async()=>{
  const {page:p}=await pageWith({touch:true});try{await p.waitForSelector('.iatbEconomicBadge');await p.locator('.iatbEconomicBadge').first().tap();assert.equal(await p.locator('.iatbEconomicTooltip').isVisible(),true);await p.keyboard.press('Escape');assert.equal(await p.locator('.iatbEconomicTooltip').isVisible(),false)}finally{await p.close()}
 });
-test('Firefox: event rail wraps inside its block and tooltip fits narrow hosts',async()=>{
+test('Firefox: expanded toolbar remains responsive and account event preference survives reload',async()=>{
  const {page:p,errors}=await pageWith();try{
-  await p.waitForSelector('.iatbEconomicChip');
-  await p.evaluate(()=>{const rail=document.getElementById('iatbChartEconomicRail'),chip=rail.querySelector('button');for(let i=0;i<16;i++){const c=chip.cloneNode(true);c.textContent='FINANCE_CALENDAR · 23/10/2026 14:30 UTC+2 · libellé très long pour la vérification responsive';rail.appendChild(c)}});
-  for(const width of [1440,768,390,320]){
-   await p.setViewportSize({width,height:1000});
-   await p.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+  await p.waitForSelector('.iatbEconomicBadge');
+  const toggle=p.locator('#iatbEconomicToggle');
+  await Promise.all([p.waitForResponse(r=>r.url().endsWith('/auth21/preferences')&&r.request().method()==='PUT'),toggle.click()]);await p.waitForFunction(()=>IATBActiveChartController.economicMarkers.length===0);
+  assert.equal(await toggle.getAttribute('aria-pressed'),'false');assert.equal(await p.locator('.iatbEconomicBadge').count(),0);
+  await p.reload();await p.waitForSelector('#iatbEconomicToggle[aria-pressed="false"]');
+  assert.equal(await p.locator('.iatbEconomicBadge').count(),0);await toggle.click();await p.waitForSelector('.iatbEconomicBadge');
+  await p.locator('#chartFocusBtn').click();
+  for(const width of [390,768,1024,1280,1440]){
+   await p.setViewportSize({width,height:1000});await p.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
    const state=await p.evaluate(()=>{
-    const rail=document.getElementById('iatbChartEconomicRail'),r=rail.getBoundingClientRect(),box=document.getElementById('chartBox').getBoundingClientRect();
-    const bounded=Array.from(rail.querySelectorAll('button')).every(e=>{const b=e.getBoundingClientRect();return b.left>=r.left&&b.right<=r.right+1});
-    const c=IATBActiveChartController;const g=c.economicGroups[0];if(g)c.showEconomicTooltip(g);
+    const controls=document.querySelector('#chartArea>.controls'),r=controls.getBoundingClientRect(),host=document.getElementById('iaChartHost').getBoundingClientRect();
+    const nodes=Array.from(controls.querySelectorAll('#iatbPairPickerButton,#iatbExchangePickerButton,#interval,select[aria-label="Type de graphique"],#chartRestoreBtn,#iatbEconomicToggle,#indicatorStudioButton,button[aria-label="Afficher les outils de dessin"],button[aria-label="Paramètres d’affichage"]'));
+    const bounded=nodes.length===9&&nodes.every(e=>{const b=e.getBoundingClientRect();return b.width>0&&b.height>0&&b.left>=r.left-1&&b.right<=r.right+1&&b.top>=r.top-1&&b.bottom<=r.bottom+1});
+    const c=IATBActiveChartController,g=c.economicGroups[0];if(g)c.showEconomicTooltip(g);
     const t=c.economicTooltip.getBoundingClientRect(),h=c.container.getBoundingClientRect();
-    return{bounded,overflow:rail.scrollWidth-rail.clientWidth,separate:r.top>=box.bottom-1,tooltip:!g||t.left>=h.left&&t.right<=h.right+1&&t.top>=h.top&&t.bottom<=h.bottom+1};
+    return{bounded,canvasBelow:host.top>=r.bottom-1,viewport:document.getElementById('chartArea').getBoundingClientRect().bottom<=innerHeight+1,top:r.top,overflow:controls.scrollWidth-controls.clientWidth,tooltip:!g||t.left>=h.left&&t.right<=h.right+1&&t.top>=h.top&&t.bottom<=h.bottom+1};
    });
-   if(process.env.IATB_QA_ARTIFACTS){fs.mkdirSync(process.env.IATB_QA_ARTIFACTS,{recursive:true});await p.screenshot({path:path.join(process.env.IATB_QA_ARTIFACTS,'events-responsive-'+width+'-firefox.png'),fullPage:true});}
-   assert.ok(state.bounded,JSON.stringify({width,...state}));assert.ok(state.overflow<=1,JSON.stringify({width,...state}));assert.ok(state.separate,JSON.stringify({width,...state}));assert.ok(state.tooltip,JSON.stringify({width,...state}));
+   if(process.env.IATB_QA_ARTIFACTS){fs.mkdirSync(process.env.IATB_QA_ARTIFACTS,{recursive:true});await p.screenshot({path:path.join(process.env.IATB_QA_ARTIFACTS,'expanded-'+width+'-firefox.png'),fullPage:true});}
+   assert.ok(state.bounded,JSON.stringify({width,...state}));assert.ok(state.viewport,JSON.stringify({width,...state}));assert.ok(state.canvasBelow,JSON.stringify({width,...state}));assert.ok(state.top>=76,JSON.stringify({width,...state}));assert.ok(state.overflow<=1,JSON.stringify({width,...state}));assert.ok(state.tooltip,JSON.stringify({width,...state}));
   }
-  assert.deepStrictEqual(errors,[]);
+  assert.equal(await p.locator('button[title*="PNG"]').count(),0);
+  await p.keyboard.press('Escape');await p.locator('#chartRestoreBtn').click();assert.deepStrictEqual(errors,[]);
  }finally{await p.close()}
 });
