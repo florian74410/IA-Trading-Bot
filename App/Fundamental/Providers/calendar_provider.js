@@ -110,7 +110,7 @@ function collectCme(cb){
 }
 
 exports.collect=function(cb){
- if(last.data&&Date.now()-last.at<CACHE_MS)return process.nextTick(function(){cb(null,last.data)});
+ if(last.data&&Date.now()-last.at<CACHE_MS)return process.nextTick(function(){var d=Object.assign({},last.data,{cacheAgeMs:Date.now()-last.at});if(Date.now()-last.at>CACHE_MS/2)d.cacheStatus='STALE_DATA';cb(null,d)});
  var done=0,fed=null,cme=null,expirations=null;
  function finish(){
   if(++done<3)return;
