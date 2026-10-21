@@ -36,7 +36,7 @@ def main():
                     names=[x.get('name')for x in modified['table']['commands']]
                     if any(names.count(k)!=1 for k in new_commands):raise ValueError('new CP1 commands absent or duplicated')
                     for command in modified['table']['commands']:
-                        if command['name'] in new_commands and command.get('arguments')!={'allowed':new_commands[command['name']]}:raise ValueError('CP1 command policy changed')
+                        if command['name'] in new_commands and command.get('arguments')!=new_commands[command['name']]:raise ValueError('CP1 command policy changed')
                     for item in modified['table']['dataTypes']:
                         if item.get('name') in new_types and item!={'name':item['name'],'direction':'PRODUCE','schema':new_types[item['name']]}:raise ValueError('new data type changed')
                     if any(sum(x.get('name')==k for x in modified['table']['dataTypes'])!=1 for k in new_types):raise ValueError('risk types missing')
