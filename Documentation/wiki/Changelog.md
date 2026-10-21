@@ -1,8 +1,22 @@
-> Version actuelle : **2.2.1 (TEST)**. Voir [la release et les changements](Release-2.2.1.md). La production GEN-1 reste à déployer et à valider.
 
 # 🧾 Changelog fonctionnel du Wiki
 
+> **État de développement : 2.4.0 DEV** sur `feature/v2.4-finance-calendar` (PR #21 fusionnée, 566 tests CI rapportés). **Non déployée sur VPS / non promue stable.** Recette locale Auth21/TLS à effectuer.
+
 > **🟢 En simple : cette page résume les évolutions visibles dans le code. Elle ne déclare pas V2.0 STABLE ; la branche documentée reste DEBUG.**
+
+---
+
+## 2.4.0 DEV — Finance Calendar + Trading Logs V2 (PR #21)
+
+**🟢 En simple :** nouveau calendrier économique JSON et historique Trading à double écriture, sans trading LIVE.
+
+- Finance Calendar : événements internationaux, UTC, pays, impact, consensus, précédent et réel, cache 15 min, attribution visible ; le calendrier FED reste distinct. Les expirations CME ne sont pas remplacées.
+- Trading Logs V2 : `trading_history.jsonl` reste autoritaire ; `trading_logs.db` (SQLite WAL) sert de miroir réparable, expurgé à l'écriture, rejouable de manière idempotente et bornée.
+- Conservation des frontières ADMIN Auth21, Risk/Firewall et séparation multiutilisateur ; aucun accès global aux logs ajouté.
+- PR #21 fusionnée sur la branche DEV ; **566 tests CI réussis, aucun échec ni test ignoré**. Recette locale HTTPS toujours à effectuer ; aucune promotion stable/VPS.
+
+Voir [Documentation Finance Calendar](https://github.com/florian74410/IA-Trading-Bot/blob/feature/v2.4-finance-calendar/Documentation/FINANCE_CALENDAR_V2_4.md) et [Documentation Trading Logs](https://github.com/florian74410/IA-Trading-Bot/blob/feature/v2.4-finance-calendar/Documentation/TRADING_LOGS_V2_INTEGRATION_2.4.md).
 
 ---
 
