@@ -46,6 +46,12 @@ def main():
                     if hashlib.sha256(baseline).hexdigest()!=row['sha256']:raise ValueError('baseline risk fingerprint invalid')
                     if modified!=json.loads(baseline):raise ValueError('original protected risk contract changed')
                 except Exception as exc:errors.append('risk v2.5 CP1 contract unexpected modification: '+str(exc))
+            elif row['path']=='App/Core/Clients/UserManagement/admin_routes.js':
+                baseline=(ROOT/'Tools/CI/baselines/admin_routes_242.js').read_bytes()
+                if hashlib.sha256(baseline).hexdigest()!=row['sha256']:errors.append('ADMIN baseline fingerprint invalid')
+                addition=b'  "GET /api/admin/risk/settings",\\n  "POST /api/admin/risk/settings",\\n'
+                current=p.read_bytes()
+                if current.count(addition)!=1 or current.replace(addition,b'')!=baseline:errors.append('unexpected ADMIN auth route modification')
             elif hashlib.sha256(p.read_bytes()).hexdigest()!=row['sha256']:errors.append('protected contract changed: '+row['path'])
     for row in report['files']:
         if row['path'].endswith('.json'):
