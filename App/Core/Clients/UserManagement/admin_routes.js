@@ -6,6 +6,8 @@ const ADMIN_ONLY=new Set([
   "GET /api/admin/session",
   "GET /api/admin/status",
   "GET /api/admin/firewall/status",
+  "GET /api/admin/risk/settings",
+  "POST /api/admin/risk/settings",
   "GET /api/admin/console/catalog",
   "POST /api/admin/console/execute",
   "GET /api/admin/logs",
