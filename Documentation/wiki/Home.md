@@ -1,4 +1,6 @@
-# IA-TB — Wiki · 2.4.0 DEV
+# IA-TB — Wiki · 2.5.0 DEV
+
+> **Développement courant :** 2.5.0 DEV sur `feature/v2.5-risk-management-r1-r2` : R1/R2, paramètres ADMIN, CP/1 Supervisor et sécurité à qualifier ; basé sur `2.4.2-R1`. Aucune promotion stable ni action VPS.
 
 > **Source nettoyée : [2.4.2-R1 DEV](Nettoyage-2.4.2-R1.md)** sur la branche `2.4.2-R1`, issue de 2.4.1. Recette locale à suivre ; aucune promotion stable ou opération GEN-1.
 
