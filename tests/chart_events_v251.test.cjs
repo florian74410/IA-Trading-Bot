@@ -42,5 +42,11 @@ test('provider provenance, all-day suppression, values and distinct mandatory co
  assert.equal(events.find(e=>e.sourceId==='generic').source,'FINANCE_CALENDAR');assert.equal(events.find(e=>e.sourceId==='explicit').source,'FED');assert.equal(cal.chartMarkers(events).length,2);
  assert.equal(cal.color('FED'),'#f6bf61');assert.equal(cal.color('CME'),'#5acfff');assert.equal(cal.color('FINANCE_CALENDAR'),'#b4a6cf');
  const detail=cal.details(cal.chartMarkers(events).find(e=>e.source==='FINANCE_CALENDAR'),'Europe/Paris');assert.match(detail,/GDP/);assert.match(detail,/Prévision : 0/);assert.match(detail,/Précédent : 2/);assert.match(detail,/Réel : 3/);assert.match(detail,/Importance : Indisponible/);assert.match(detail,/Europe\/Paris/);
- assert.deepEqual(cal.fromCalendars({fed:{events:[null,{}]}}),[]);assert.deepEqual(cal.chartMarkers([]),[]);
+ assert.deepEqual(cal.fromCalendars({fed:{events:[null,{}]}}),[]);assert.deepEqual(cal.chartMarkers([]),[]);assert.deepEqual(cal.fromCalendars({cme:{events:{invalid:true}}}),[]);
+ assert.equal(cal.normalize({id:'bad',source:'FED',title:'No clock',startAtUtc:'2026-10-22Z'}),null);
+});
+
+test('Fundamental preferences keep default-on display and independent source switches',()=>{
+ const on=cal.optionsFromSettings({});assert.equal(on.enabled,true);assert.equal(on.showFed,true);assert.equal(on.showCme,true);assert.equal(on.highMediumOnly,false);
+ const off=cal.optionsFromSettings({chartEconomicEvents:false,chartEconomicFed:false,chartEconomicCme:false,chartEconomicHighMediumOnly:true});assert.equal(off.enabled,false);assert.equal(off.showFed,false);assert.equal(off.showCme,false);assert.equal(off.highMediumOnly,true);
 });

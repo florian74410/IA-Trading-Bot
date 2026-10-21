@@ -1,5 +1,7 @@
 name: Chart workspace V2.1
 on:
+  push:
+    branches: ['2.5.1']
   pull_request:
     paths:
       - 'App/Frontend/**'
@@ -27,7 +29,7 @@ jobs:
           "$RUNNER_TEMP/workspace-qa/node_modules/.bin/playwright" install --with-deps firefox
           echo "NODE_PATH=$RUNNER_TEMP/workspace-qa/node_modules" >> "$GITHUB_ENV"
       - name: Browser and V2 contract regressions
-        run: node --test App/UI/Tests/test_chart_drawing_contract_v21.js App/UI/Tests/test_chart_workspace_v21.js App/UI/Tests/test_trading_indicators_v204.js App/UI/Tests/test_indicator_visual_v2.js
+        run: node --test App/UI/Tests/test_chart_drawing_contract_v21.js App/UI/Tests/test_chart_workspace_v21.js App/UI/Tests/test_trading_indicators_v204.js App/UI/Tests/test_indicator_visual_v2.js App/UI/Tests/test_chart_events_v251.js
       - name: Indicator calculation regressions
         run: |
           node App/Indicators/Tests/test_indicator_engine.js
