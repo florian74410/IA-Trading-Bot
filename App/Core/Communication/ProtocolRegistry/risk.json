@@ -174,7 +174,13 @@
         "schema": "risk.r2.snapshot/1.0"
       }
     ],
-    "events": []
+    "events": [
+      {
+        "name": "risk.r2.alert",
+        "schema": "risk.r2.alert/1.0",
+        "description": "Compact, deduplicated R2 portfolio risk alert for Supervisor"
+      }
+    ]
   },
   "registration": {
     "dynamic": true
