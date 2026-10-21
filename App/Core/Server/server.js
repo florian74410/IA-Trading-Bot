@@ -504,6 +504,20 @@ function legacyRoute(req,res){var u=new URL(req.url,'http://'+HOST+':'+PORT),p=u
  if(req.method==='GET'&&p==='/api/admin/bank/vaults')return json(res,200,{ok:true,networks:BankVaultRegistry.NETWORKS,vaults:BankVaultRegistry.list()});
  if(req.method==='POST'&&p==='/api/admin/bank/vaults')return body(req,function(e,b){if(e)return json(res,400,{ok:false,error:'JSON_INVALID'});try{var v=BankVaultRegistry.create(b);log('ADMIN','Bank Vault DRAFT créé',v.id+' '+v.network+' '+v.asset);json(res,201,{ok:true,vault:v});}catch(x){json(res,400,{ok:false,error:x.message});}});
  if(req.method==='GET'&&p==='/api/admin/session')return json(res,200,{ok:true,role:sess.role,email:sess.email,version:CURRENT_VERSION});
+ // Risk settings are ADMIN-only under Auth21. The general CP/1 UI-write gateway is intentionally blocked.
+ if(req.method==='GET'&&p==='/api/admin/risk/settings'){try{
+  var r25=require('../../Risk/Engine/risk_settings_v25');
+  return json(res,200,{ok:true,settings:r25.merge(SETTINGS_DB.get('risk','settings',{}))});
+ }catch(ree){return json(res,503,{ok:false,error:'RISK_SETTINGS_UNAVAILABLE'});}}
+ if(req.method==='POST'&&p==='/api/admin/risk/settings')return body(req,function(err,patch){
+  if(err||!patch||typeof patch!=='object'||Array.isArray(patch))return json(res,400,{ok:false,error:'RISK_SETTINGS_INVALID'});
+  try{var r25=require('../../Risk/Engine/risk_settings_v25');
+   var saved=r25.apply(SETTINGS_DB.get('risk','settings',{}),patch);
+   SETTINGS_DB.set('risk','settings',saved);
+   log('ADMIN','Risk configuration modifiée','R1/R2 levels and modules');
+   return json(res,200,{ok:true,settings:r25.merge(saved)});
+  }catch(re){return json(res,503,{ok:false,error:'RISK_SETTINGS_UNAVAILABLE'});}
+ });
  if(req.method==='GET'&&p==='/api/admin/firewall/status')return firewallHttp('GET','/health',null,function(e,o){if(e)return json(res,503,{ok:false,error:'FIREWALL_UNAVAILABLE'});json(res,200,{ok:true,firewallEnabled:o.firewallEnabled,threads:o.threads||[],healthLevel:o.healthLevel,protectionInitialized:o.protectionInitialized});});
  if(req.method==='GET'&&p==='/api/admin/status')return ADMIN.snapshot(function(e,o){if(e)return json(res,500,{ok:false,error:e.message});json(res,200,o);});
  if(req.method==='GET'&&p==='/api/admin/console/catalog')return adminConsoleCatalog(function(e,o){if(e)return json(res,503,{ok:false,error:e.message});json(res,200,o);});
