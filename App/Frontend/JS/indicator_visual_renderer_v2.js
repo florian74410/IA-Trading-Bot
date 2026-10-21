@@ -12,8 +12,8 @@ function align(r,rows){var index=Object.create(null),a=Object.create(null),times
  });return a}
 function drawPrice(ctx,batch,rows,g){
  if(!ctx||!g||!rows||!rows.length||!Array.isArray(batch))return;
- var W=g.cw/Math.max(1,rows.length),L=g.L,T=g.priceTop,H=g.priceH,range=g.hi-g.lo||1;
- function X(i){return L+(i+.5)*W}
+ var W=g.cw/Math.max(1,g.slots||rows.length),L=g.L,T=g.priceTop,H=g.priceH,range=g.hi-g.lo||1;
+ function X(i){return L+(i+(g.rowOffset||0)+.5)*W}
  function Y(v){return T+(g.hi-v)/range*H}
  ctx.save();ctx.beginPath();ctx.rect(L,T,g.cw,H);ctx.clip();
  batch.forEach(function(entry){if(!entry||!entry.ok||!entry.result)return;

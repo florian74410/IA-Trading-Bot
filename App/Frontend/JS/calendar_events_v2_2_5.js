@@ -9,7 +9,7 @@
   'use strict';
   var SOURCES = ['FED', 'CME', 'FINANCE_CALENDAR'];
   function validTime(s) {
-    if (typeof s !== 'string' || !/(Z|[+-]\d\d:\d\d)$/.test(s)) return null;
+    if (typeof s !== 'string' || !/T\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?(Z|[+-]\d\d:\d\d)$/.test(s)) return null;
     var n = Date.parse(s);
     return Number.isFinite(n) ? new Date(n).toISOString() : null;
   }
@@ -25,7 +25,7 @@
     var sid = cleanText(String(input.sourceId == null ? input.id == null ? '' : input.id : input.sourceId));
     var title = cleanText(input.title);
     if (!source || !sid || !title) return null;
-    var instant = validTime(input.startAtUtc || input.dateTime || input.starts_at || '');
+    var instant = input.allDay||input.all_day?null:validTime(input.startAtUtc || input.dateTime || input.starts_at || '');
     // Never interpret a date-only publication as midnight UTC.
     var dateOnly = typeof input.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(input.date) ? input.date : null;
     if (!instant && !dateOnly) return null;
@@ -66,29 +66,31 @@
   function whenFromLocalDate(date,label){
     if(!/^\d{4}-\d{2}-\d{2}$/.test(String(date||'')))return null;
     var m=String(label||'').match(/\b(\d{1,2}):(\d{2})\s*(UTC|GMT|Z|ET|EST|EDT|CT|CST|CDT)\b/i);
-    if(!m||+m[1]>23)return null;
+    if(!m||+m[1]>23||+m[2]>59)return null;
     var base=Date.parse(date+'T'+m[1].padStart(2,'0')+':'+m[2]+':00Z'),zone=m[3].toUpperCase();
     if(['UTC','GMT','Z'].indexOf(zone)>=0)return new Date(base).toISOString();
+    if(zone==='EST'||zone==='CST')return new Date(base+(zone==='EST'?5:6)*3600000).toISOString();
+    if(zone==='EDT'||zone==='CDT')return new Date(base+(zone==='EDT'?4:5)*3600000).toISOString();
     var tz=/^E/.test(zone)?'America/New_York':'America/Chicago';
     try{
-      var formatter=new Intl.DateTimeFormat('en-US',{timeZone:tz,timeZoneName:'shortOffset',hour:'2-digit'});
-      var offset=(formatter.formatToParts(new Date(base)).find(function(p){return p.type==='timeZoneName'})||{}).value||'';
-      var match=offset.match(/^GMT([+-])(\d{1,2})(?::(\d\d))?$/);
-      if(!match)return null;
-      var delta=(match[1]==='+'?1:-1)*(+match[2]*60+(+match[3]||0));
-      return new Date(base-delta*60000).toISOString();
+      // Resolve named local zones by testing both adjacent offsets. DST gaps or
+      // repeated local times are not authoritative instants: retain date-only.
+      var fmt=new Intl.DateTimeFormat('sv-SE',{timeZone:tz,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'});
+      var local=date+' '+m[1].padStart(2,'0')+':'+m[2],matches=[];
+      for(var hours=4;hours<=6;hours++){var candidate=base+hours*3600000;if(fmt.format(new Date(candidate))===local)matches.push(candidate)}
+      return matches.length===1?new Date(matches[0]).toISOString():null;
     }catch(_){return null}
   }
   function fromCalendars(cal){
     cal=cal||{};var all=[];
-    [['FED',cal.fed],['CME',cal.cme],['CME',cal.cmeExpirations]].forEach(function(pair){
-      var items=pair[1]&&pair[1].events||[];
+    [['FED',cal.fed],['CME',cal.cme],['CME',cal.cmeExpirations],['FINANCE_CALENDAR',cal.financeCalendar]].forEach(function(pair){
+      var items=pair[1]&&Array.isArray(pair[1].events)?pair[1].events:[];
       items.forEach(function(x,i){
         if(!x||typeof x!=='object')return;
-        var source=x.calendar==='FINANCE_CALENDAR'?'FINANCE_CALENDAR':pair[0];
-        var date=x.date||null,time=x.startAtUtc||x.start_at_utc||x.dateTime||x.starts_at||whenFromLocalDate(date,x.timeLabel||x.time||'');
+        var source=sourceOf(x.source)||sourceOf(x.sourceName)|| (x.calendar==='FINANCE_CALENDAR'?'FINANCE_CALENDAR':pair[0]);
+        var date=x.date||null,time=x.allDay||x.all_day?null:x.startAtUtc||x.start_at_utc||x.dateTime||x.starts_at||whenFromLocalDate(date,x.timeLabel||x.time||'');
         var id=x.sourceId||x.id||x.eventId||[date,x.title||x.label||x.name||x.event||'',i].join(':');
-        var e=normalize({source:source,id:id,title:x.title||x.label||x.name||x.event||'Événement économique',startAtUtc:time,date:date,category:x.category,importance:x.importance||x.impact,forecast:x.forecast??x.consensus??x.expected,actual:x.actual??x.real,previous:x.previous??x.prior,unit:x.unit,country:x.country,countryCode:x.countryCode||x.country_code||(source==='FED'?'US':null),description:x.description||x.details||x.summary,officialUrl:x.officialUrl||x.sourceUrl||x.source_url||x.url},source);
+        var e=normalize({source:source,id:id,title:x.title||x.label||x.name||x.event||'Titre indisponible',startAtUtc:time,date:date,category:x.category,importance:x.importance||x.impact,forecast:x.forecast??x.consensus??x.expected,actual:x.actual??x.real,previous:x.previous??x.prior,unit:x.unit,country:x.country,countryCode:x.countryCode||x.country_code||(source==='FED'?'US':null),description:x.description||x.details||x.summary,officialUrl:x.officialUrl||x.sourceUrl||x.source_url||x.url},source);
         if(e)all.push(e);
       });
     });
@@ -121,10 +123,19 @@
     return filter(events, options).filter(function (e) {
       return !!e.startAtUtc && (!options.highMediumOnly || e.importance === 'HIGH' || e.importance === 'MEDIUM');
     }).map(function (e) {
-      return {id:e.id,time:Math.floor(Date.parse(e.startAtUtc)/1000),source:e.source,
+      return {id:e.id,time:Date.parse(e.startAtUtc)/1000,source:e.source,
         label:e.title,country:cleanText(e.country)||null,countryCode:cleanText(e.countryCode)||null,importance:e.importance,
         forecast:e.forecast,actual:e.actual,previous:e.previous,unit:e.unit};
     });
+  }
+  function color(source) { return source==='CME'?'#5acfff':source==='FED'?'#f6bf61':'#b4a6cf'; }
+  function formatTime(sec, zone, compact) {
+    return new Intl.DateTimeFormat('fr-FR',{timeZone:zone||'UTC',year:compact?undefined:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:compact?undefined:'2-digit',timeZoneName:'shortOffset'}).format(new Date(sec*1000));
+  }
+  function details(e, zone) {
+    function value(v,withUnit){return v==null||v===''?'Indisponible':String(v)+(withUnit&&e.unit?' '+e.unit:'');}
+    return [e.label||e.title,e.source, e.time!=null?formatTime(e.time,zone)+' · '+(zone||'UTC'):(e.localDate||'Date indisponible')+' · Heure officielle indisponible',
+      'Importance : '+value(e.importance),'Prévision : '+value(e.forecast,true),'Précédent : '+value(e.previous,true),'Réel : '+value(e.actual,true)].join('\n');
   }
   function optionsFromSettings(s) {
     s = s && typeof s === 'object' ? s : {};
@@ -137,6 +148,6 @@
       highMediumOnly: s.chartEconomicHighMediumOnly === true
     };
   }
-  return {normalize:normalize,mergeFeeds:mergeFeeds,dayKey:dayKey,filter:filter,
+  return {color:color,formatTime:formatTime,details:details,normalize:normalize,mergeFeeds:mergeFeeds,dayKey:dayKey,filter:filter,
     chartMarkers:chartMarkers,optionsFromSettings:optionsFromSettings,fromCalendars:fromCalendars,whenFromLocalDate:whenFromLocalDate};
 });

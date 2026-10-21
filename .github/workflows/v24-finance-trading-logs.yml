@@ -1,7 +1,7 @@
 name: IA-TB 2.4 source integrity and full integration
 on:
   push:
-    branches: [integration/v2.4-finance-calendar-trading-logs, feature/v2.4-finance-calendar, feature/v2.4.1-bank-calendar-cp1, 2.4.2-R1, '2.5']
+    branches: [integration/v2.4-finance-calendar-trading-logs, feature/v2.4-finance-calendar, feature/v2.4.1-bank-calendar-cp1, 2.4.2-R1, '2.5', '2.5.1']
   pull_request:
     branches: [feature/v2.4-finance-calendar]
 permissions:
@@ -28,7 +28,7 @@ jobs:
           python3 -W error::ResourceWarning -m unittest discover -s Tools/CI -p 'test_auth_storage_preflight.py' -v
           python3 -m unittest discover -s Tools/Deploy -p 'test_*.py' -v
       - name: Finance Calendar, lifecycle, ADMIN, logs and SQLite regressions
-        run: node --test --test-concurrency=1 App/services/trading-engine/tests/*.js App/tests/*.js tests/calendar_events_v2_2_5.test.cjs App/Supervisor/Tests/test_supervisor_architecture.js
+        run: node --test --test-concurrency=1 App/services/trading-engine/tests/*.js App/tests/*.js tests/calendar_events_v2_2_5.test.cjs tests/chart_events_v251.test.cjs App/Supervisor/Tests/test_supervisor_architecture.js
       - name: Collector, Liquidity, Fundamental, Portfolio, Strategy and Risk fixtures
         working-directory: App
         run: |
@@ -42,7 +42,7 @@ jobs:
           "$RUNNER_TEMP/v24-browser/node_modules/.bin/playwright" install --with-deps firefox
           echo "NODE_PATH=$RUNNER_TEMP/v24-browser/node_modules" >> "$GITHUB_ENV"
       - name: Responsive calendar, event lines and Bank browser regressions
-        run: node --test App/UI/Tests/test_v2_4_1_calendar_bank.js
+        run: IATB_QA_ARTIFACTS="${{ runner.temp }}/v251-visual" node --test App/UI/Tests/test_v2_4_1_calendar_bank.js App/UI/Tests/test_chart_events_v251.js
       - name: Full Auth21 and ChartViewer browser regression without skipped tests
         run: |
           set -o pipefail
@@ -52,4 +52,6 @@ jobs:
         if: always()
         with:
           name: v24-integration-evidence
-          path: ${{ runner.temp }}/v24-security-browser.log
+          path: |
+            ${{ runner.temp }}/v24-security-browser.log
+            ${{ runner.temp }}/v251-visual

@@ -9,7 +9,7 @@ const iso=d=>d.toISOString().slice(0,10);
 function normalize(x){
  if(!x||typeof x!=='object'||!/^\d{4}-\d{2}-\d{2}$/.test(String(x.date||''))||!String(x.id||'').trim())return null;
  const date=String(x.date),rawTime=x.release_at_utc||x.time_utc||null;
- const timestamp=rawTime&&Number.isFinite(Date.parse(rawTime))?rawTime:null;
+ const timestamp=typeof rawTime==='string'&&/T\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?(Z|[+-]\d\d:\d\d)$/.test(rawTime)&&Number.isFinite(Date.parse(rawTime))&&x.all_day!==true?new Date(rawTime).toISOString():null;
  const country=String(x.country||'').toUpperCase();
  const impact=String(x.impact||'').toUpperCase();
  return {id:'FC:'+String(x.id).slice(0,130),calendar:'FINANCE_CALENDAR',date,

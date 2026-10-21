@@ -1,3 +1,10 @@
+## 2.5.1 DEV — consolidation ChartViewer
+
+- Repères économiques UTC exacts, lignes pointillées translucides et badges interactifs : CME cyan, FED jaune-orangé, Finance Calendar distinct.
+- Détails complets au survol/focus/toucher, regroupement par instant, fuseau explicite, navigation future sans OHLCV fictif et préservation des Drawing Tools.
+- Tests UTC/DST et Firefox sur la vraie page ; qualification complète héritée activée sur `2.5.1`. Recette finale encore requise, aucune promotion stable.
+- Rapport : [2.5.1 DEV](../Consolidation/2.5.1-DEV.md).
+
 ## 2.5.0 DEV — Risk Engine modulaire R1/R2
 
 - Nouvelle branche `2.5` basée sur le nettoyage `2.4.2-R1`, descendant de 2.4.1.

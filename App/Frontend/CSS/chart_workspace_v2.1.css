@@ -86,3 +86,15 @@ html.iatb-trading-workspace #chartArea>.controls.cvToolbar>*{flex-shrink:0;min-h
 .iatbChartEconomicRail>strong{flex:0 0 auto;color:#8dbcd6;font-size:9px;letter-spacing:.3px}
 .iatbEconomicChip{display:inline-flex;align-items:center;white-space:nowrap;flex:0 0 auto;color:#bceaff;background:#0a3049;border:1px solid #257b9c;padding:3px 7px;font-size:10px;border-radius:9px}
 .iatbEconomicChip.cme{color:#f8d795;background:#372911;border-color:#98702a}
+
+/* 2.5.1 DEV: nonblocking event lines; only badges accept pointer input. */
+.iatbEconomicLayer{position:absolute;inset:0;pointer-events:none;z-index:18;overflow:hidden}
+.iatbEconomicBadge{position:absolute;pointer-events:auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;height:22px;padding:2px 6px;border:1px solid;border-radius:5px;background:rgba(7,11,16,.9);color:#bdc8d4;font:10px system-ui;cursor:pointer}
+.iatbEconomicBadge span+span:before{content:' / ';color:#bdc8d4}
+.iatbEconomicBadge:focus-visible{outline:2px solid white;outline-offset:1px;z-index:10!important}
+.iatbEconomicTooltip{position:absolute;z-index:40;max-width:min(320px,85%);max-height:55%;overflow:auto;white-space:pre-line;padding:10px;border:1px solid #637787;border-radius:6px;background:#101b26;color:#e3eaf1;font:12px/1.5 system-ui;box-shadow:0 4px 12px #0008;pointer-events:auto}
+.iatbEconomicTooltip[hidden]{display:none}
+.iatbChartTimeZone{position:absolute;right:72px;bottom:23px;z-index:19;color:#aab8c8;background:#070b10bb;padding:1px 4px;font:9px system-ui;pointer-events:none}
+.iatbEconomicChip.cme{color:#5acfff;background:#0a3049;border-color:#257b9c}
+.iatbEconomicChip.fed{color:#f6bf61;background:#372911;border-color:#98702a}
+.iatbEconomicChip.finance_calendar{color:#b4a6cf;background:#231f30;border-color:#665778}
