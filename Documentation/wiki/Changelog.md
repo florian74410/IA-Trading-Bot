@@ -1,3 +1,15 @@
+## 2.5.0 DEV — Risk Engine modulaire R1/R2
+
+- Nouvelle branche `2.5` basée sur le nettoyage `2.4.2-R1`, descendant de 2.4.1.
+- R1 : capital, stop-loss, budget de risque et redimensionnement calculés localement.
+- R2 : suivi des expositions, drawdown, stop-risks, marges fournies et intégrité ; alertes CP/1 locales sans OpenAI.
+- Paramètres Risk Engine : activation des modules, profils de risque, routes de sauvegarde ADMIN Auth21.
+- **Restrictions :** corrélation/stress en attente ; R2 auto désactivé en mode Auth21 jusqu'à l'isolation des snapshots ; décision R1/R2 non encore obligatoire à chaque ordre Supervisor. Aucun trading réel.
+
+[Documentation complète](https://github.com/florian74410/IA-Trading-Bot/blob/2.5/Documentation/RISK_ENGINE_R1_R2_V2_5.md).
+
+---
+
 
 
 ## 2.4.2-R1 DEV
