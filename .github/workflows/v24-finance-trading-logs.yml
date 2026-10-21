@@ -1,7 +1,7 @@
-name: IA-TB 2.4 source integrity and full integration
+name: IA-TB 2.4/2.5 source integrity and full integration
 on:
   push:
-    branches: [integration/v2.4-finance-calendar-trading-logs, feature/v2.4-finance-calendar, feature/v2.4.1-bank-calendar-cp1, 2.4.2-R1]
+    branches: [integration/v2.4-finance-calendar-trading-logs, feature/v2.4-finance-calendar, feature/v2.4.1-bank-calendar-cp1, 2.4.2-R1, feature/v2.5-risk-engine-r1-r2]
   pull_request:
     branches: [feature/v2.4-finance-calendar]
 permissions:
