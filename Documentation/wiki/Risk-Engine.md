@@ -1,4 +1,4 @@
-# 🛡️ Risk Engine & Risk Gate — V2.0 DEBUG
+# 🛡️ Risk Engine & Risk Gate — 2.5.0 DEV
 
 > **🟢 En simple : Risk Engine mesure le danger d’une position ou d’une stratégie. En plus de cette analyse, le Risk Gate peut délivrer une autorisation temporaire appelée `risk_approval_id`. Sans cette autorisation, Trading ne peut pas exécuter une commande sensible.**
 
@@ -143,3 +143,20 @@ Une exécution réelle nécessite encore :
 4. le forward interne signé ;
 5. l’acceptation du Trading Engine ;
 6. l’acceptation de l’exchange.
+
+
+---
+
+## 🧩 R1 et R2 — chantier 2.5 DEV
+
+> **🟢 En simple :** R1 calcule le risque d'un nouvel ordre. R2 surveille les positions et signale les dépassements. Ces calculs sont locaux, sans requête OpenAI.
+
+**R1** se compose de quatre modules activables : capital/notionnel (A), perte au stop et frais/slippage (B), budget de risque (C) et proposition d'une quantité réduite (D). Les résultats CP/1 contiennent une synthèse numérique brève pour le Supervisor. Une proposition de nouvelle quantité n'est jamais une autorisation.
+
+**R2** comprend huit modules : equity, drawdown, concentration, corrélation, marge/liquidation, stress, risque au stop global et intégrité des données. La corrélation et les stress tests restent **non disponibles** sans données et méthodes validées ; leurs cases sont désactivées dans la nouvelle UI. R2 n'exécute ni vente ni liquidation automatique.
+
+**Paramètres → Risk Engine** contient l'activation générale, les interrupteurs individuels R1/R2 et le profil de risque. L'enregistrement utilise une route réservée ADMIN Auth21, et non un contournement de la passerelle CP/1 UI.
+
+**Limite actuelle :** le Portfolio `TRADING_ONLY` ne donne pas un capital total fiable et le monitoring automatique global est interdit en mode Auth21 tant qu'une collecte propriétaire n'est pas disponible. Les nouveaux modules ne remplacent pas encore le Risk Gate obligatoire sur chaque intention du Supervisor. Les protections d'exécution existantes restent intactes.
+
+Voir [spécification technique v2.5](https://github.com/florian74410/IA-Trading-Bot/blob/2.5/Documentation/RISK_ENGINE_R1_R2_V2_5.md).
