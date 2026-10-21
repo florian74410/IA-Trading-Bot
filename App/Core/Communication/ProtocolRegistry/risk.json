@@ -115,6 +115,29 @@
             "intent"
           ]
         }
+      },
+      {
+        "name": "risk.r1.evaluate",
+        "arguments": {
+          "allowed": [
+            "intent",
+            "context"
+          ]
+        }
+      },
+      {
+        "name": "risk.r2.evaluate",
+        "arguments": {
+          "allowed": [
+            "snapshot"
+          ]
+        }
+      },
+      {
+        "name": "risk.r2.monitor",
+        "arguments": {
+          "allowed": []
+        }
       }
     ],
     "dataTypes": [
@@ -139,6 +162,16 @@
         "name": "risk.approval",
         "direction": "PRODUCE",
         "schema": "risk.gate-decision/1.0"
+      },
+      {
+        "name": "risk.r1.decision",
+        "direction": "PRODUCE",
+        "schema": "risk.r1.decision/1.0"
+      },
+      {
+        "name": "risk.r2.snapshot",
+        "direction": "PRODUCE",
+        "schema": "risk.r2.snapshot/1.0"
       }
     ],
     "events": []
