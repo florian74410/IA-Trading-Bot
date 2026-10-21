@@ -44,15 +44,14 @@ html.ia-chart-focus-mode .body[data-mosaic-root] [data-mosaic-id="chart"]{
   display:flex!important;
   position:fixed!important;
   left:0!important;right:0!important;bottom:0!important;
-  top:var(--ia-info-bar-height)!important;
+  top:calc(var(--iatb-nav-h,68px) + 12px)!important;
   z-index:18!important;
   width:100%!important;height:auto!important;
   border:0!important;border-radius:0!important;
 }
 html.ia-chart-focus-mode #chartArea{position:fixed!important}
-html.ia-chart-focus-mode #chartArea .controls{position:absolute!important;top:8px;right:8px;z-index:8;min-height:0!important;padding:0!important;border:0!important;background:transparent!important}
-html.ia-chart-focus-mode #chartArea .controls>*{display:none!important}
-html.ia-chart-focus-mode #chartRestoreBtn{display:inline-flex!important;margin:0!important;background:#101b25!important;box-shadow:0 3px 14px rgba(0,0,0,.35)}
+html.ia-chart-focus-mode #chartArea .controls{position:relative!important;inset:auto!important;flex:0 0 auto!important;z-index:20;display:flex!important;flex-wrap:wrap!important;overflow:visible!important;}
+html.ia-chart-focus-mode #chartRestoreBtn{margin:0!important;background:#101b25!important;box-shadow:0 3px 14px rgba(0,0,0,.35)}
 html.ia-chart-focus-mode #chartArea .chart{flex:1!important;min-height:0!important}
 html.ia-chart-focus-mode .settingsPage,
 html.ia-chart-focus-mode .strategyPage{display:none!important}
