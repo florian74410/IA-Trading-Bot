@@ -13,6 +13,7 @@ var CP=require('../../Core/Communication/communication_protocol_v1');
 var CPClient=require('../../Core/Communication/cp1_client');
 var Risk=require('./risk_engine');
 var RiskGate=require('./risk_gate').RiskGate;
+var R1=require('./risk_r1_modules'),R2=require('./risk_r2_modules');
 var SettingsStore=require('../../Core/Settings/sqlite_settings_store');
 var BUILD=require('../../Core/Shared/build_info');
 
@@ -25,9 +26,9 @@ var VERSION=BUILD.version;
 var SETTINGS_DB=new SettingsStore(APP_ROOT);
 var CP_CLIENT=new CPClient({root:APP_ROOT,routerPort:ROUTER_PORT,timeout:12000,maxBytes:4*1024*1024});
 var RISK_GATE=new RiskGate({secret:CP.ensureSecret(APP_ROOT),getSettings:riskSettings,ttlMs:30000});
-var DEFAULT_SETTINGS={enabled:true,defaultTimeframe:'1h',marketSamples:500,thresholds:{capitalRiskWarningPct:3,grossExposureWarningPct:100,leverageWarning:5,volatilityWarningPct:100,drawdownWarningPct:20,var95WarningPct:5},scoreWeights:{capitalAtRisk:8,grossExposure:0.20,leverage:5,volatility:0.20,drawdown:0.50}};
-function riskSettings(){var x=SETTINGS_DB.get('risk','settings',null)||{};var o=JSON.parse(JSON.stringify(DEFAULT_SETTINGS));Object.keys(x).forEach(function(k){if(k==='thresholds'||k==='scoreWeights')Object.assign(o[k],x[k]||{});else o[k]=x[k];});return o;}
-function saveRiskSettings(patch){var o=riskSettings();patch=patch||{};if(typeof patch.enabled==='boolean')o.enabled=patch.enabled;if(patch.defaultTimeframe)o.defaultTimeframe=String(patch.defaultTimeframe);if(+patch.marketSamples>=50&&+patch.marketSamples<=2000)o.marketSamples=Math.round(+patch.marketSamples);if(patch.thresholds)Object.keys(o.thresholds).forEach(function(k){if(isFinite(+patch.thresholds[k]))o.thresholds[k]=+patch.thresholds[k];});SETTINGS_DB.set('risk','settings',o);return o;}
+var DEFAULT_SETTINGS={enabled:true,defaultTimeframe:'1h',marketSamples:500,thresholds:{capitalRiskWarningPct:3,grossExposureWarningPct:100,leverageWarning:5,volatilityWarningPct:100,drawdownWarningPct:20,var95WarningPct:5},scoreWeights:{capitalAtRisk:8,grossExposure:0.20,leverage:5,volatility:0.20,drawdown:0.50},r1:{enabled:true,level:'balanced',modules:{capital:true,stopLoss:true,riskBudget:true,resize:true}},r2:{enabled:true,modules:{equity:true,drawdown:true,exposure:true,correlation:false,margin:true,stress:false,stopBudget:true,integrity:true},limits:{drawdownPct:15,assetExposurePct:40,portfolioStopRiskPct:5,marginRatioPct:130}}};
+function riskSettings(){var x=SETTINGS_DB.get('risk','settings',null)||{};var o=JSON.parse(JSON.stringify(DEFAULT_SETTINGS));Object.keys(x).forEach(function(k){if(k==='thresholds'||k==='scoreWeights')Object.assign(o[k],x[k]||{});else if(k==='r1'||k==='r2'){var v=x[k]||{};Object.keys(v).forEach(function(field){if(field==='modules'||field==='limits')Object.assign(o[k][field]||{},v[field]||{});else if(field in o[k])o[k][field]=v[field];});}else if(k in o)o[k]=x[k];});return o;}
+function saveRiskSettings(patch){var o=riskSettings();patch=patch||{};if(typeof patch.enabled==='boolean')o.enabled=patch.enabled;if(patch.defaultTimeframe)o.defaultTimeframe=String(patch.defaultTimeframe);if(+patch.marketSamples>=50&&+patch.marketSamples<=2000)o.marketSamples=Math.round(+patch.marketSamples);if(patch.thresholds)Object.keys(o.thresholds).forEach(function(k){if(isFinite(+patch.thresholds[k]))o.thresholds[k]=+patch.thresholds[k];});['r1','r2'].forEach(function(k){if(!patch[k]||typeof patch[k]!=='object')return;var p=patch[k];if(typeof p.enabled==='boolean')o[k].enabled=p.enabled;if(k==='r1'&&['conservative','balanced','active','aggressive'].indexOf(p.level)>=0)o[k].level=p.level;if(p.modules)Object.keys(o[k].modules).forEach(function(m){if(typeof p.modules[m]==='boolean')o[k].modules[m]=p.modules[m];});if(k==='r2'&&p.limits)Object.keys(o.r2.limits).forEach(function(m){var v=+p.limits[m];if(Number.isFinite(v)&&v>0&&v<=1000)o.r2.limits[m]=v;});});SETTINGS_DB.set('risk','settings',o);return o;}
 
 var CAPABILITIES=[
   'risk.list_capabilities',
@@ -38,7 +39,10 @@ var CAPABILITIES=[
   'risk.settings.get',
   'risk.settings.set',
   'risk.gate.evaluate',
-  'risk.gate.verify'
+  'risk.gate.verify',
+  'risk.r1.evaluate',
+  'risk.r2.evaluate',
+  'risk.r2.monitor'
 ];
 var EVENTS=[];
 
@@ -137,6 +141,9 @@ function buildAnalysis(args,detail,cb){
 }
 function cpAction(m,cb){
   var a=m.arguments||{};
+  if(m.action==='risk.r1.evaluate')return cb(null,R1.evaluate(a.intent||{},riskSettings().r1,a.context||{}));
+  if(m.action==='risk.r2.evaluate')return cb(null,R2.evaluate(a.snapshot||{},riskSettings().r2));
+  if(m.action==='risk.r2.monitor')return requestPortfolio(function(err,data){if(err)return cb(null,{schema:'risk.r2.snapshot/1.0',status:'UNAVAILABLE',alerts:[{module:'integrity',code:'PORTFOLIO_CP1_UNAVAILABLE',severity:'CRITICAL'}],policy:{blockAdditionalRisk:true,autoLiquidation:false},executable:false});return cb(null,R2.evaluate(data&&data.snapshot||data||{},riskSettings().r2));});
   if(m.action==='risk.gate.evaluate'){try{return cb(null,RISK_GATE.evaluate(a.intent||a));}catch(e){return cb(e);}}
   if(m.action==='risk.gate.verify'){try{return cb(null,RISK_GATE.verify(a.risk_approval_id,a.intent||{},a.consume===true));}catch(e){return cb(e);}}
   if(m.action==='risk.settings.get')return cb(null,{schema:'risk.settings/1.0',settings:riskSettings(),storage:SETTINGS_DB.status()});
