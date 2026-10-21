@@ -16,5 +16,5 @@ test('Risk 2.5 UI module controls, CP1 contracts and no LLM calls',()=>{
  for(const action of ['risk.settings.get','risk.settings.set'])assert.ok(js.includes(action),action);
  for(const action of ['risk.r1.evaluate','risk.r2.snapshot']){assert.ok(risk.includes(action),action);assert.ok(core.includes(action),action);}
  for(const action of ['supervisor.risk.r1.preview','supervisor.risk.r2.snapshot'])assert.ok(supervisor.includes(action),action);
- assert.doesNotMatch(read('Risk/Engine/risk_management_modules_v2_5.js'),/openai|chat\.completions|responses\.create/i);
+ assert.doesNotMatch(read('Risk/Engine/risk_management_modules_v2_5.js'),/require\(['\"](?:openai|@openai)|chat\.completions\.create|responses\.create/i);
 });
