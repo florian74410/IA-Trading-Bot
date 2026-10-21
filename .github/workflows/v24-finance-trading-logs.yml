@@ -1,0 +1,39 @@
+name: IA-TB 2.4 Finance Calendar and Trading Logs integration
+on:
+  push:
+    branches: [integration/v2.4-finance-calendar-trading-logs, feature/v2.4-finance-calendar]
+  pull_request:
+    branches: [feature/v2.4-finance-calendar]
+permissions:
+  contents: read
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: App/package-lock.json
+      - run: npm ci --prefix App --omit=dev --no-audit --no-fund
+      - name: Finance Calendar, lifecycle, ADMIN, logs and SQLite regressions
+        run: node --test --test-concurrency=1 App/services/trading-engine/tests/*.js App/tests/*.js
+      - name: Real service snapshot and ingress regressions
+        run: node --test --test-concurrency=1 App/Tools/Tests/trading_usage_jsonl_snapshot_writers.test.js App/Tools/Tests/auth21_snapshot_real_service_ipc.test.js App/Tools/Tests/auth21_real_engines_ingress.test.js
+      - name: Install isolated browser QA
+        run: |
+          npm install --prefix "$RUNNER_TEMP/v24-browser" --no-audit --no-fund playwright@1.62.1
+          "$RUNNER_TEMP/v24-browser/node_modules/.bin/playwright" install --with-deps firefox
+          echo "NODE_PATH=$RUNNER_TEMP/v24-browser/node_modules" >> "$GITHUB_ENV"
+      - name: Full Auth21 and ChartViewer browser regression without skipped tests
+        run: |
+          set -o pipefail
+          bash App/Tools/CI/test_user_management_v1.sh | tee "$RUNNER_TEMP/v24-security-browser.log"
+          if grep -Eq '^# skipped [1-9][0-9]*$' "$RUNNER_TEMP/v24-security-browser.log"; then exit 1; fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v24-integration-evidence
+          path: ${{ runner.temp }}/v24-security-browser.log

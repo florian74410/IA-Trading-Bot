@@ -71,7 +71,7 @@ function parseCmeExpirations(html){
 // Structured diagnostics: never confuse fetch/parser failures with a genuine empty calendar.
 function classifyFetchError(error){
  var msg=String(error&&error.message||error||'');
- if(/\\b(?:HTTP\\s*(?:401|403|407|429)|access denied|forbidden|captcha|rate.limit|challenge)\\b/i.test(msg))return 'HTTP_BLOCKED';
+ if(/\b(?:HTTP\s*(?:401|403|407|429)|access denied|forbidden|captcha|rate.limit|challenge)\b/i.test(msg))return 'HTTP_BLOCKED';
  return 'UNAVAILABLE';
 }
 function classifyEmptyHtml(html,kind,parseStatus){

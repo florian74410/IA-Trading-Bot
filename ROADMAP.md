@@ -1,3 +1,10 @@
+## IA-TB 2.4 — journalisation Trading V2 intégrée
+
+Le prototype séparé du 20 octobre est repris sur `feature/v2.4-finance-calendar`.
+Double écriture JSONL/SQLite WAL, reprise idempotente, masquage des secrets et
+compatibilité historique : [détails et limites](Documentation/TRADING_LOGS_V2_INTEGRATION_2.4.md).
+Le démarrage local sur localhost:8000 reste une étape de recette distincte.
+
 > Livraison TEST 2.2.0 : comptes, sessions et isolation User Management V1.
 > Recette GEN-1 et promotion stable en attente ; les restrictions fonctionnelles
 > sont explicites dans [RELEASE_2.2.0](Documentation/RELEASE_2.2.0.md).
