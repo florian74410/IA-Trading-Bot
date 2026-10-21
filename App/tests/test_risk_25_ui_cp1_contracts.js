@@ -13,7 +13,11 @@ test('Risk 2.5 UI module controls, CP1 contracts and no LLM calls',()=>{
  const core=read('Supervisor/Core/supervisor_core.js');
  assert.match(html,/id="view-risk"/);
  for(const key of ['rmEnabled','rmLevel','rmR1','rmR2','rmSuggestions','rmSave'])assert.ok(html.includes('id="'+key+'"'),key);
- for(const action of ['risk.settings.get','risk.settings.set'])assert.ok(js.includes(action),action);
+ assert.ok(js.includes('/api/admin/risk/settings'),'Settings uses ADMIN-only API');
+ const coreServer=read('Core/Server/server.js');
+ for(const method of ['GET','POST'])assert.ok(coreServer.includes("req.method==='"+method+"'&&p==='/api/admin/risk/settings'"),method+' ADMIN Risk route');
+ const routes=read('Core/Clients/UserManagement/admin_routes.js');assert.match(routes,/GET \/api\/admin\/risk\/settings/);assert.match(routes,/POST \/api\/admin\/risk\/settings/);
+ assert.ok(js.includes('rmLoad()')&&js.includes('rmBind()'));
  for(const action of ['risk.r1.evaluate','risk.r2.snapshot']){assert.ok(risk.includes(action),action);assert.ok(core.includes(action),action);}
  for(const action of ['supervisor.risk.r1.preview','supervisor.risk.r2.snapshot'])assert.ok(supervisor.includes(action),action);
  assert.doesNotMatch(read('Risk/Engine/risk_management_modules_v2_5.js'),/require\(['\"](?:openai|@openai)|chat\.completions\.create|responses\.create/i);
