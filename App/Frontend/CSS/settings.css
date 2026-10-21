@@ -398,3 +398,29 @@
 .fundEconomicPrefs p{margin:0 0 4px;font-size:11px;color:#94bfd7}
 .fundEconomicPrefs label{display:flex;align-items:center;gap:9px;font-size:12px;color:#b1d8ed}
 .fundEconomicPrefs input[type="checkbox"]{accent-color:#20bdeb;width:15px;height:15px}
+
+/* IA-TB Risk Engine v2.5 — isolated module configuration */
+#view-risk .riskV25Intro{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:14px 0 18px}
+#view-risk .riskV25Intro>div{border:1px solid #244b66;border-radius:12px;padding:16px;background:linear-gradient(140deg,#0b2337,#0c1b29)}
+#view-risk .riskV25Intro strong,#view-risk .riskV25Intro span{display:block}
+#view-risk .riskV25Intro strong{color:#97dcff;font-size:14px;margin-bottom:6px}
+#view-risk .riskV25Intro span,#view-risk .riskV25Panel p{color:#a6bbce;font-size:12px;line-height:1.5}
+#view-risk .riskV25Panel{margin-bottom:18px;padding:18px}
+#view-risk .riskV25Top,#view-risk .riskV25Head,#view-risk .riskV25Actions{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+#view-risk .riskV25Head{margin:20px 0 10px;border-bottom:1px solid #244057;padding-bottom:9px}
+#view-risk .riskV25Head h3,#view-risk .riskV25Top h3{margin:0}
+#view-risk .riskV25Toggle{display:flex;align-items:center;gap:9px;color:#cae4f5;font-size:12px;cursor:pointer}
+#view-risk .riskV25Toggle input{accent-color:#43aef5;width:17px;height:17px}
+#view-risk .riskV25Level{display:flex;align-items:center;gap:12px;margin:12px 0;color:#aac9dc;font-size:12px}
+#view-risk .riskV25Level select,#view-risk .riskV25Level input{background:#10283b;border:1px solid #32607b;color:#e4f2ff;padding:8px;border-radius:7px;max-width:160px}
+#view-risk .riskV25Summary{border:1px solid #294760;border-radius:9px;background:#0b1d2c;padding:12px;color:#d3e3f2;font-size:12px}
+#view-risk .riskV25Groups{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;margin-top:8px}
+#view-risk .riskV25ModuleGrid{display:grid;grid-template-columns:1fr;gap:8px}
+#view-risk .riskV25Module{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;padding:11px;border:1px solid #25445c;background:#0b1d2d;border-radius:10px;cursor:pointer}
+#view-risk .riskV25Module b{font-size:12px;display:block;color:#d8ecfc}
+#view-risk .riskV25Module small{display:block;color:#94aebf;font-size:11px;margin-top:3px}
+#view-risk .riskV25Module input{accent-color:#43aef5;width:17px;height:17px;flex-shrink:0}
+#view-risk .riskV25Actions{justify-content:flex-start;margin-top:18px}
+#view-risk #riskSaveStatus{color:#b5d4e6;font-size:12px}
+#view-risk #riskMonitorAlerts{margin-top:12px;font-size:12px;color:#ffc0ab}
+@media(max-width:1000px){#view-risk .riskV25Groups,#view-risk .riskV25Intro{grid-template-columns:1fr}}
