@@ -1,3 +1,16 @@
+## 2.5.3 DEV — P4 persistant, P5 simulé
+
+P4 est raccordé au pont ADMIN Auth21/Firewall et conserve le verrou après arrêt
+ou crash. RuntimeState partage désormais le journal SQLite ADMIN. P5 SAFE/CLOSE
+et la réconciliation sont testés sur brokers contrôlés ; leur raccordement aux
+brokers réels et la reprise restent désactivés. START/RESTART restent en attente.
+Aucun ordre réel ; cette livraison partielle ne vaut pas acceptation complète P4/P5.
+
+Voir `Documentation/Consolidation/2.5.3-DEV.md`, la matrice
+`Documentation/Trading/BROKER_CAPABILITIES_2.5.3.md` et la procédure
+`Documentation/Trading/MAINTENANCE_2.5.3.md`. Les sections antérieures ci-dessous
+restent historiques ; ce bilan précise l'état actuel.
+
 # ⚡ Trading Engine — V2.0 DEBUG
 
 > **🟢 En simple : Trading Engine est le seul moteur chargé de transformer une commande autorisée en requête technique vers un exchange. Il ne choisit pas la stratégie et refuse les ordres qui n’ont pas passé Risk + Firewall.**

@@ -1,14 +1,13 @@
-# IA-Trading-Bot — 2.5.2 DEV
+# IA-Trading-Bot — 2.5.3 DEV
 
-Branche de consolidation `2.5.2` issue de `2.5.1`. Les nettoyages de
-`2.4.2-R1` sont conservés. Aucun déploiement GEN-1 ni promotion stable.
+Branche de développement depuis `2.5.2`. Arrêt d'urgence persistant P4 intégré,
+P5 SAFE/CLOSE qualifié sur fixtures uniquement. Les mutations broker réelles et
+la reprise restent désactivées ; la mission complète n'est pas déclarée acceptée.
+Les nettoyages 2.4.2-R1, Auth21, RiskGate et ChartViewer sont conservés.
 
-[Correctifs, qualification et recette locale 2.5.2](Documentation/Consolidation/2.5.2-DEV.md).
-
-- [Bilan et plan du nettoyage](Documentation/Cleanup/2.4.2-R1/REVIEW.md)
-- [Inventaire fichier par fichier](Documentation/Cleanup/2.4.2-R1/INVENTORY.tsv)
-- [Contrôles et limites](Documentation/Cleanup/2.4.2-R1/RESULTS.md)
-- [Wiki versionné](Documentation/wiki/Home.md)
+[Rapport, résultats et limites](Documentation/Consolidation/2.5.3-DEV.md) ·
+[Maintenance](Documentation/Trading/MAINTENANCE_2.5.3.md) ·
+[Matrice broker](Documentation/Trading/BROKER_CAPABILITIES_2.5.3.md)
 
 ## Arborescence maintenue
 
