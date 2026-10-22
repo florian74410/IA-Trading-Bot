@@ -39,7 +39,10 @@ class TradingAdminController {
    }catch(e){return {ok:false,error:'ADMIN_LEDGER_UNAVAILABLE'};}
    if(!record.ok)return {ok:false,error:record.error};
    const security={journalDurable:true,liveAuthorization:false,mutationsEnabled:!!this.lifecycle.db,p4p5Qualified:false};
-   if(command==='STATUS')return {ok:true,state:this.lifecycle.snapshot(),draining:this.draining?this.draining.status(identity.subject):null,security};
+   if(command==='STATUS')return {ok:true,state:this.lifecycle.snapshot(),draining:this.draining?this.draining.status(identity.subject):null,maintenance:this.lifecycle.db?{
+    pendingReconciliation:this.lifecycle.db.prepare("SELECT count(*) AS n FROM trading_operations WHERE phase='UNCERTAIN'").get().n,
+    lastIntervention:this.ledger.db.prepare("SELECT command,received_at,decision FROM admin_commands WHERE command!='STATUS' ORDER BY received_at DESC,rowid DESC LIMIT 1").get()||null
+   }:null,security};
    if(command==='EMERGENCY_STOP'&&this.lifecycle.db)return {ok:true,state:this.lifecycle.snapshot(),command_id:id,security,warning:'Existing broker orders and positions remain exposed; no liquidation or cancellation performed.'};
    if(command==='DRAINING_STOP'&&this.draining){const result=await this.draining.command(input.params||{},identity);return {...result,state:this.lifecycle.snapshot(),security};}
    if(command==='RECOVER'){

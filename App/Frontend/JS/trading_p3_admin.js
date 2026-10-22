@@ -11,8 +11,8 @@ async function command(commandName,params){
   var result=await response.json();if(!result.bridge)throw Error(response.status===401||response.status===403?'AUTH_UNAVAILABLE':'DIAGNOSTIC_UNAVAILABLE');
   var data=result.data||{};
   state.textContent=result.bridge.state+' · '+result.bridge.reason+' · LIVE non autorisé';
-  if(lock)lock.textContent=data.state?data.state.state+' · '+data.state.reason:'État du moteur non confirmé.';
-  if(report)report.textContent=JSON.stringify(data.run||data.draining||{error:data.error||'Aucun inventaire vérifié'},null,2);
+  if(lock)lock.textContent=data.state?data.state.state+' · '+data.state.reason+(data.maintenance?' · À réconcilier : '+data.maintenance.pendingReconciliation:''):'État du moteur non confirmé.';
+  if(report)report.textContent=JSON.stringify({draining:data.run||data.draining||null,maintenance:data.maintenance||null,error:data.error||null},null,2);
   if(result.bridge.state==='READY'&&data.security&&data.security.mutationsEnabled){if(emergency)emergency.disabled=false;if(preview)preview.disabled=false;if(recover)recover.disabled=!(data.state&&data.state.state==='EMERGENCY_HALTED');}
  }catch(e){state.textContent=(e.message==='AUTH_UNAVAILABLE'?'AUTH_UNAVAILABLE':'ERROR')+' · diagnostic indisponible';if(lock)lock.textContent='État non confirmé : vérifier STATUS avant une nouvelle action.';}
  finally{button.disabled=false;}
