@@ -68,7 +68,7 @@ class OkxExecutor {
     const headers={"OK-ACCESS-KEY":key,"OK-ACCESS-SIGN":sign,"OK-ACCESS-TIMESTAMP":timestamp,"OK-ACCESS-PASSPHRASE":passphrase}; if(s.demo_mode||s.demoMode)headers["x-simulated-trading"]="1";
     const res=await ctx.transport({method:"POST",url:`https://www.okx.com${path}`,headers,body}); const first=res.body&&Array.isArray(res.body.data)?res.body.data[0]:null;
     const ok=statusFromHttp(res.statusCode)&&res.body&&String(res.body.code)==="0"&&(!first||String(first.sCode)==="0");
-    return {ok,status:ok?"CANCELLED":"REJECTED",exchange_order_id:first&&(first.ordId||first.clOrdId)||order.exchange_order_id||null,raw_status:first&&first.sMsg||null,error:ok?null:(first&&first.sMsg)||asError(res.body,`HTTP ${res.statusCode}`),diagnostics:{http_status:res.statusCode,code:res.body&&res.body.code}};
+    return {ok,status:ok?"CANCEL_REQUESTED":"REJECTED",exchange_order_id:first&&(first.ordId||first.clOrdId)||order.exchange_order_id||null,raw_status:first&&first.sMsg||null,error:ok?null:(first&&first.sMsg)||asError(res.body,`HTTP ${res.statusCode}`),diagnostics:{http_status:res.statusCode,code:res.body&&res.body.code}};
   }
 }
 module.exports = { OkxExecutor };

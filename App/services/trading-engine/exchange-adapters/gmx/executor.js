@@ -102,7 +102,7 @@ class GmxExecutor {
     const prep=await ctx.transport({method:"POST",url:`${base}/orders/txns/cancel/prepare`,body:{account:order.account||order.metadata.account,orderKey:order.exchange_order_id||order.metadata.order_key}});
     if(!statusFromHttp(prep.statusCode))return {ok:false,status:"REJECTED",error:asError(prep.body,`HTTP ${prep.statusCode}`),diagnostics:{phase:"cancel-prepare",chain}};
     const signed=await ctx.walletSigner.signGmxPreparedOrder(prep.body,{order,chain,action:"cancel"}),submit=await ctx.transport({method:"POST",url:`${base}/orders/txns/submit`,body:signed}),ok=statusFromHttp(submit.statusCode);
-    return {ok,status:ok?"CANCELLED":"REJECTED",exchange_order_id:order.exchange_order_id||submit.body&&(submit.body.requestId||submit.body.taskId)||null,raw_status:submit.body&&submit.body.status||null,error:ok?null:asError(submit.body,`HTTP ${submit.statusCode}`),diagnostics:{phase:"cancel-submit",chain,eventual_consistency:true}};
+    return {ok,status:ok?"CANCEL_REQUESTED":"REJECTED",exchange_order_id:order.exchange_order_id||submit.body&&(submit.body.requestId||submit.body.taskId)||null,raw_status:submit.body&&submit.body.status||null,error:ok?null:asError(submit.body,`HTTP ${submit.statusCode}`),diagnostics:{phase:"cancel-submit",chain,eventual_consistency:true}};
   }
 }
 module.exports = { GmxExecutor };

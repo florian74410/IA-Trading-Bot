@@ -84,7 +84,7 @@ class BinanceExecutor {
     const query = qs(params), signature = crypto.createHmac("sha256", apiSecret).update(query).digest("hex");
     const res = await ctx.transport({method:"DELETE",url:`${base}${path}?${query}&signature=${signature}`,headers:{"X-MBX-APIKEY":apiKey}});
     const ok = statusFromHttp(res.statusCode) && !(res.body && res.body.code < 0);
-    return {ok,status:ok?"CANCELLED":"REJECTED",exchange_order_id:res.body&&(res.body.orderId||res.body.clientOrderId)||order.exchange_order_id||null,raw_status:res.body&&res.body.status||null,error:ok?null:asError(res.body,`HTTP ${res.statusCode}`),diagnostics:{http_status:res.statusCode,market_type:order.market_type}};
+    return {ok,status:ok?"CANCEL_REQUESTED":"REJECTED",exchange_order_id:res.body&&(res.body.orderId||res.body.clientOrderId)||order.exchange_order_id||null,raw_status:res.body&&res.body.status||null,error:ok?null:asError(res.body,`HTTP ${res.statusCode}`),diagnostics:{http_status:res.statusCode,market_type:order.market_type}};
   }
 }
 module.exports = { BinanceExecutor };

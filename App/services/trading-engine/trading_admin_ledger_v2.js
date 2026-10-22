@@ -2,12 +2,12 @@
 // Durable, fail-closed ADMIN command ledger. No secrets or raw identity tokens stored.
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
 class AdminCommandLedger {
- constructor({file,now=Date.now}={}){
+ constructor({file,now=Date.now,db=null}={}){
   if(!file)throw Error('LEDGER_PATH_REQUIRED');
   this.file=path.resolve(file);this.now=now;
   fs.mkdirSync(path.dirname(this.file),{recursive:true,mode:0o700});
   const Database=require('better-sqlite3');
-  this.db=new Database(this.file);
+  this.ownsDb=!db;this.db=db||new Database(this.file);
   this.db.pragma('journal_mode = WAL');this.db.pragma('synchronous = FULL');this.db.pragma('busy_timeout = 5000');
   this.db.exec(`CREATE TABLE IF NOT EXISTS admin_commands(
     command_id TEXT PRIMARY KEY, command TEXT NOT NULL, actor_hash TEXT NOT NULL,
@@ -25,6 +25,6 @@ class AdminCommandLedger {
    return {ok:true};
   }catch(e){if(e.code==='SQLITE_CONSTRAINT_PRIMARYKEY')return {ok:false,error:'ADMIN_COMMAND_REPLAY'};throw e;}
  }
- close(){this.db.close();}
+ close(){if(this.ownsDb)this.db.close();}
 }
 module.exports={AdminCommandLedger};

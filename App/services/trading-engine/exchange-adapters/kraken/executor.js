@@ -75,7 +75,7 @@ class KrakenExecutor {
     const hash=crypto.createHash("sha256").update(nonce+encoded).digest(), hmac=crypto.createHmac("sha512",Buffer.from(secret,"base64")); hmac.update(Buffer.concat([Buffer.from(path),hash]));
     const res=await ctx.transport({method:"POST",url:`https://api.kraken.com${path}`,headers:{"API-Key":key,"API-Sign":hmac.digest("base64"),"Content-Type":"application/x-www-form-urlencoded"},body:encoded});
     const errors=res.body&&res.body.error, ok=statusFromHttp(res.statusCode)&&Array.isArray(errors)&&errors.length===0;
-    return {ok,status:ok?"CANCELLED":"REJECTED",exchange_order_id:order.exchange_order_id||null,raw_status:res.body&&res.body.result||null,error:ok?null:(Array.isArray(errors)?errors.join("; "):asError(res.body,`HTTP ${res.statusCode}`)),diagnostics:{http_status:res.statusCode}};
+    return {ok,status:ok?"CANCEL_REQUESTED":"REJECTED",exchange_order_id:order.exchange_order_id||null,raw_status:res.body&&res.body.result||null,error:ok?null:(Array.isArray(errors)?errors.join("; "):asError(res.body,`HTTP ${res.statusCode}`)),diagnostics:{http_status:res.statusCode}};
   }
 }
 module.exports = { KrakenExecutor };
