@@ -40,7 +40,14 @@ test('P3.3 real multiprocess ADMIN chain, denial matrix, key agreement, durable 
  let first;for(let i=0;i<40;i++){first=await command();if(first.data.bridge?.state==='READY')break;await delay(60)}assert.equal(first.data.bridge?.state,'READY',JSON.stringify(first.data)+' '+outputs.get('firewall')+' '+outputs.get('engine'));
  assert.equal(first.data.bridge.liveAuthorized,false);assert.equal(first.data.data.security.journalDurable,true);
  const parallel=await Promise.all(Array.from({length:6},()=>command()));assert.ok(parallel.every(r=>r.data.bridge?.state==='READY'));
- for(const mutation of ['START','RESTART','DRAINING_STOP','EMERGENCY_STOP']){const r=await command({...payload(),command:mutation});assert.equal(r.data.data.error,'COMMAND_IMPLEMENTATION_PENDING');assert.notEqual(r.data.bridge.state,'READY')}
+ for(const mutation of ['START','RESTART']){const r=await command({...payload(),command:mutation});assert.equal(r.data.data.error,'COMMAND_IMPLEMENTATION_PENDING');assert.notEqual(r.data.bridge.state,'READY')}
+ for(const headers of [user,guest])assert.equal((await command({...payload(),command:'EMERGENCY_STOP'},headers)).status,403);
+ const halted=await command({...payload(),command:'EMERGENCY_STOP'});assert.equal(halted.data.data.state.state,'EMERGENCY_HALTED');assert.equal(halted.data.bridge.state,'READY');
+ const unavailable=await command({...payload(),command:'DRAINING_STOP',params:{stage:'PREVIEW',mode:'SAFE'}});assert.equal(unavailable.data.data.error,'BROKER_RECONCILIATION_NOT_QUALIFIED');
+ assert.equal((await command({...payload(),command:'RECOVER'})).data.data.error,'RECOVERY_RECONCILIATION_NOT_QUALIFIED');
+ await stop('engine');start('engine');await ready('engine',enginePort,false);assert.equal((await command()).data.data.state.state,'EMERGENCY_HALTED');
+ children.get('engine').kill('SIGKILL');await once(children.get('engine'),'exit');children.delete('engine');start('engine');await ready('engine',enginePort,false);assert.equal((await command()).data.data.state.state,'EMERGENCY_HALTED');
+ children.get('engine').kill('SIGINT');await once(children.get('engine'),'exit');children.delete('engine');start('engine');await ready('engine',enginePort,false);assert.equal((await command()).data.data.state.state,'EMERGENCY_HALTED');
  // A legitimate Core-issued proof cannot be re-used and cannot bypass the Firewall.
  const machine=fs.readFileSync(path.join(root,'runtime/state/security/communication_protocol_key.dat'),'utf8').trim();
  const issuer=proofCodec({secret:ipcKey}),principal={clientId:'CLp3fixture',role:'ADMIN'};

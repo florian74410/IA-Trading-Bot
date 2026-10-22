@@ -111,7 +111,12 @@
 
       <section id="maintenance" class="dashSection anchorSection">
         <div class="dashSectionHead"><div class="sectionIdentity"><span class="sectionIcon">⌁</span><div><h2>Maintenance</h2><p>Actions administrateur et gestion des caches</p></div></div><span id="actionMsg" class="msg"></span></div>
-        <div class="dashSectionBody"><section class="p3Diagnostic" aria-label="Pont ADMIN P3"><h3>Pont ADMIN P3</h3><p id="p3BridgeState" role="status">Diagnostic à effectuer avec la session ADMIN.</p><p>La vérification utilise uniquement STATUS. L'autorisation LIVE et les commandes P4/P5 restent indépendantes.</p><button id="p3BridgeCheck" type="button" class="btn">Vérifier Auth21 → Firewall → Trading</button></section>
+        <div class="dashSectionBody"><section class="p3Diagnostic" aria-label="Pont ADMIN P3"><h3>Pont ADMIN P3</h3><p id="p3BridgeState" role="status">Diagnostic à effectuer avec la session ADMIN.</p><p>La vérification utilise uniquement STATUS. L'autorisation LIVE et les commandes P4/P5 restent indépendantes.</p><button id="p3BridgeCheck" type="button" class="btn">Vérifier Auth21 → Firewall → Trading</button><p>Un arrêt d’urgence bloque les nouveaux envois. Les ordres déjà transmis et les positions peuvent rester exposés.</p>
+          <button id="p4Emergency" type="button" class="btn" disabled>⛔ Arrêt d’urgence</button>
+          <button id="p5Preview" type="button" class="btn" disabled>Inventaire d’arrêt progressif</button>
+          <button id="p4Recover" type="button" class="btn" disabled>Vérifier la reprise</button>
+          <details><summary>Arrêt progressif et réconciliation</summary><p>SAFE conserve les positions. CLOSE nécessite une confirmation distincte des comptes, marchés, quantités et risques. Les opérations broker réelles restent désactivées en 2.5.3 DEV.</p><button type="button" class="btn" disabled>Clôture : non qualifiée</button><pre id="p5Report" role="status">Aucun inventaire vérifié.</pre></details>
+          <p id="p4State" role="status">État du verrou à vérifier.</p></section>
           <div class="actions maintenanceBar">
             <button id="reloadIndicators" class="btn">Recharger les indicateurs</button>
             <button id="clearMarket" class="btn">Vider cache MarketData</button>
