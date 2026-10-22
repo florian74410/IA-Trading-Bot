@@ -63,7 +63,7 @@ def main():
         if row['path'].endswith('.json'):
             try:json.loads((ROOT/row['path']).read_text())
             except Exception as error:errors.append('JSON invalid: '+row['path']+': '+str(error))
-    expected='2.5.2';app=ROOT/'App'
+    expected='2.5.3';app=ROOT/'App'
     for p in [app/'VERSION',app/'Frontend/Settings/VERSION']:
         if p.read_text().strip()!=expected:errors.append('version mismatch: '+str(p))
     for name in ['manifest.json','package.json','package-lock.json','Updates/current_release.dat']:

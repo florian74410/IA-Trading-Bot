@@ -1,7 +1,7 @@
 name: Chart workspace V2.1
 on:
   push:
-    branches: ['2.5.1', '2.5.2']
+    branches: ['2.5.1', '2.5.2', '2.5.3']
   pull_request:
     paths:
       - 'App/Frontend/**'
