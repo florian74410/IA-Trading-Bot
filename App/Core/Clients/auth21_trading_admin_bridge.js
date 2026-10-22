@@ -32,7 +32,7 @@ function createTradingAdminBridge({sessions,env=process.env,browserSessions=null
   req.on('end',()=>{
    if(n===0||n>2048)return send(res,400,{error:'BODY_INVALID'});
    let payload;try{payload=JSON.parse(Buffer.concat(parts).toString('utf8'));}catch(_){return send(res,400,{error:'JSON_INVALID'});}
-   if(!payload||typeof payload!=='object'||Array.isArray(payload)||Object.keys(payload).sort().join(',')!=='command,command_id,confirmed,timestamp')
+   if(!payload||typeof payload!=='object'||Array.isArray(payload)||!['command,command_id,confirmed,timestamp','command,command_id,confirmed,params,timestamp'].includes(Object.keys(payload).sort().join(',')))
      return send(res,400,{error:'ARGUMENTS_INVALID'});
    const proof=issueTradingAdminProof({sessions,token,codec,payload});
    if(!proof)return send(res,403,{error:'ADMIN_PERMISSION_DENIED'});
@@ -59,7 +59,7 @@ function createAuthenticatedDispatcher({sessions,env=process.env,port=8017}={}){
  return async function dispatch({token,payload}={}){
   const principal=token&&sessions.verifySession(token);
   if(!principal||principal.role!=='ADMIN')return {status:403,body:{error:'ADMIN_PERMISSION_DENIED'}};
-  if(!payload||typeof payload!=='object'||Array.isArray(payload)||Object.keys(payload).sort().join(',')!=='command,command_id,confirmed,timestamp')return {status:400,body:{error:'ARGUMENTS_INVALID'}};
+  if(!payload||typeof payload!=='object'||Array.isArray(payload)||!['command,command_id,confirmed,timestamp','command,command_id,confirmed,params,timestamp'].includes(Object.keys(payload).sort().join(',')))return {status:400,body:{error:'ARGUMENTS_INVALID'}};
   const enabled=env.IATB_AUTH21_TRADING_ADMIN_BRIDGE==='1',localCheck=preflight({env});
   const check=enabled?localCheck:env.IATB_AUTH21_TRADING_ADMIN_REQUESTED==='1'&&!localCheck.ok?localCheck:{ok:false,state:'DISABLED',reason:'CONFIGURATION_NOT_ENABLED'};
   if(!check.ok)return {status:payload.command==='STATUS'?200:503,body:{ok:payload.command==='STATUS',bridge:diagnostic(check.state,check.reason),error:payload.command==='STATUS'?undefined:'P3_NOT_READY'}};
@@ -82,6 +82,7 @@ function createAuthenticatedDispatcher({sessions,env=process.env,port=8017}={}){
      const stage=out.p3Attestation.stage;delete out.p3Attestation;
      const ready=response.statusCode===200&&stage==='ENGINE'&&out.status==='OK'&&out.data&&out.data.ok===true&&out.data.security&&out.data.security.journalDurable===true;
      out.bridge=diagnostic(ready?'READY':'ERROR',ready?'AUTH21_IPC_FIREWALL_ENGINE_VALIDATED':out.error||out.data&&out.data.error||'P3_COMMAND_REJECTED');
+     if(ready)out.bridge.mutationsEnabled=out.data.security.mutationsEnabled===true;
      resolve({status:ready?200:[400,403,409,503].includes(response.statusCode)?response.statusCode:503,body:out});
     });
    });

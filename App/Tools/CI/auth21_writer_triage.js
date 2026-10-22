@@ -24,6 +24,9 @@ const GROUPS=Object.freeze({
   // v2.3 runtime/replay/ADMIN state: exclusive-mode writers, not hot-snapshot qualified.
   'Core/Clients/auth21_trading_replay_v2.js',
   'services/trading-engine/trading_admin_ledger_v2.js',
+  // P4/P5 share the existing ADMIN SQLite file. Offline backup only; no hot snapshot claim.
+  'services/trading-engine/trading_admin_controller_v2.js',
+  'services/trading-engine/trading_draining_v2.js',
   'services/trading-engine/trading_runtime_state_v2.js',
   // Empty persistent lock inode only; kernel lease excludes Core/CLI writers.
   'Core/Clients/auth21_local_owner_lock.js',
@@ -40,6 +43,7 @@ const GROUPS=Object.freeze({
   // Disposable keys/accounts/ledgers, no production writers.
   'services/trading-engine/tests/test_trading_p3_multiprocess_v252.js',
   'services/trading-engine/tests/test_trading_p3_qualification_v252.js',
+  'services/trading-engine/tests/test_trading_p4_p5_v253.js',
   // Reviewed temporary-only fixtures; never production writers.
   'services/trading-engine/tests/test_trading_admin_auth21_binding_v2.js',
   'services/trading-engine/tests/test_trading_admin_bridge_key_v2.js',

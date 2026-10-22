@@ -167,7 +167,8 @@
             "command_id",
             "timestamp",
             "confirmed",
-            "proof"
+            "proof",
+            "params"
           ],
           "required": [
             "command",
@@ -177,7 +178,7 @@
             "proof"
           ]
         },
-        "description": "Fail-closed ADMIN maintenance. Requires a verified Auth21 signed operation-bound proof (not the machine CP token), firewall authorization, and persistent replay journal. P4/P5 operations not enabled."
+        "description": "Authenticated ADMIN maintenance with durable emergency halt. P5 real broker mutations and recovery remain unqualified and disabled. Optional params are bound to the signed proof."
       }
     ],
     "dataTypes": [

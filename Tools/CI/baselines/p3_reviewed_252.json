@@ -5,6 +5,10 @@
   },
   "App/Core/Firewall/firewall_service.js": {
     "baseline": "b0f4f447338d010f4222912b5006dbecf3d9642d25736891ef05b6d0f5f9d119",
-    "reviewed": "c30902cc8c966138260e0aeaebf026cc85b7d271e63b288bac07bb1117e8e30a"
+    "reviewed": "d7af5c363ebcfd75f6bf87fa3de3e546bfa57fca58bc09d1855fa879f3918896"
+  },
+  "App/Core/Communication/ProtocolRegistry/trading.json": {
+    "baseline": "46c22db258c7d633f2c347e7a3c2ead302760af9ee4b1bfb0991a5a6af2d5c39",
+    "reviewed": "2ebb4359a287ee6fd40b54bd259fb14dc2cb25f683af2c627afbfb6eaf0f1fd5"
   }
 }
