@@ -7,7 +7,7 @@ const PUBLIC=new Set([
  'fundamental.health','fundamental.summary','fundamental.news.search','fundamental.sources.search','fundamental.source.get','fundamental.feeds.search','fundamental.providers.status','fundamental.fedwatch.get','fundamental.calendar.upcoming','liquidity.zones']);
 const GUEST_READ=new Set(['marketdata.providers','marketdata.registry.search','marketdata.registry.list','marketdata.registry.asset']);
 const IND_READ=new Set(['indicator.registry.reload','indicator.registry.status','indicator.settings.get','indicator.list_indicators','indicator.definition.get','indicator.definition.validate','indicator.language.info','indicator.language.validate','indicator.language.compile']);
-function createBridge({root,sessions,routerPort,configurationFor=()=>({})}){
+function createBridge({root,sessions,routerPort,tradingVault=null,configurationFor=()=>({})}){
  const client=new Client({root,routerPort,maxBytes:4*1024*1024,timeout:15000});
  const codec=proofCodec({secret:Buffer.from(CP.ensureSecret(root),'hex')});
  const rpc=(target,action,args)=>new Promise((resolve,reject)=>client.request(target,action,args,'analysis',(e,o)=>e?reject(e):resolve(o)));
@@ -19,6 +19,12 @@ function createBridge({root,sessions,routerPort,configurationFor=()=>({})}){
   if(!sessions.attempt(require('node:crypto').createHash('sha256').update('bridge:'+principal.clientId).digest('hex'),300))throw Error('AUTH_THROTTLED');
   if(require('../../../Bank/Core/feature_policy_v2_4_1').blockedAction(action))throw Error('BANK_FEATURE_SUSPENDED');
   const expected=action.split('.')[0];if(target!==expected)throw Error('FORBIDDEN');
+  if(target==='trading'&&['trading.execute','trading.cancel','trading.close_position'].includes(action)){
+   if(!tradingVault||principal.role==='GUEST'||a.metadata?.account_ticket)throw Error('FORBIDDEN');
+   const kind=action==='trading.cancel'?'cancel':action==='trading.close_position'||a.reduce_only===true?'close':'execute';
+   const grant=await tradingVault.issue(token,a,kind);
+   return rpc(target,action,{...a,metadata:{...(a.metadata||{}),account_ticket:grant.ticket}});
+  }
   const operatorPermission=require('./operator_policy').permission(target,action);if(operatorPermission){if(principal.role==='GUEST'||(operatorPermission!=='shared.write'&&principal.role!=='ADMIN')||['admin.write','shared.write'].includes(operatorPermission)&&!operatorAuthorized)throw Error('FORBIDDEN');if(operatorPermission==='shared.write'){if(action==='fundamental.collect'&&(Object.keys(a).some(k=>!['all','eventLimit'].includes(k))||a.all!==true||a.eventLimit!==undefined&&(!Number.isSafeInteger(a.eventLimit)||a.eventLimit<1||a.eventLimit>250)))throw Error('INVALID_REQUEST');if(action==='fundamental.fedwatch.refresh'&&Object.keys(a).length)throw Error('INVALID_REQUEST');if(!sessions.attempt(require('node:crypto').createHash('sha256').update('refresh:'+principal.clientId).digest('hex'),60))throw Error('AUTH_THROTTLED');}const payload={clientId:principal.clientId,sessionHash:require('node:crypto').createHash('sha256').update(Buffer.from(token,'base64url')).digest('hex'),action,args:a},proof=codec.issue({principal,audience:target,operation:operatorPermission,method:'POST',ownerClientId:principal.clientId,action:target+'.operator.request',bodyDigest:CP.hashData(payload)});sessions.audit(principal.clientId,'OPERATOR_ENGINE_REQUESTED');return rpc(target,target+'.operator.request',{payload,proof});}
   if(a.force===true||a.refresh===true)throw Error('FORBIDDEN');
   const ownerOperation=require('./owner_policy').permission(target,action);

@@ -13,7 +13,7 @@ function redact(value,key=''){
  for(const [k,v] of Object.entries(value)){
   if(['__proto__','constructor','prototype'].includes(k))continue;
   const clean=k.replace(/[^a-z0-9]/gi,'').toLowerCase();
-  if(/(?:secret|password|token|privatekey|apikey|authorization|cookie|signature|mnemonic|seedphrase|credential)/.test(clean)||['headers','rawresponse','rawrequest'].includes(clean))out[k]='[REDACTED]';
+  if(/(?:secret|password|token|privatekey|apikey|authorization|cookie|signature|mnemonic|seedphrase|credential|accountticket)/.test(clean)||['headers','rawresponse','rawrequest'].includes(clean))out[k]='[REDACTED]';
   else out[k]=redact(v,k);
  }
  return out;

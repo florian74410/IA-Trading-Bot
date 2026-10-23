@@ -42,7 +42,7 @@ jobs:
           "$RUNNER_TEMP/v24-browser/node_modules/.bin/playwright" install --with-deps firefox
           echo "NODE_PATH=$RUNNER_TEMP/v24-browser/node_modules" >> "$GITHUB_ENV"
       - name: Responsive calendar, event lines and Bank browser regressions
-        run: IATB_QA_ARTIFACTS="${{ runner.temp }}/v251-visual" node --test App/UI/Tests/test_trading_maintenance_v253.js App/UI/Tests/test_v2_4_1_calendar_bank.js App/UI/Tests/test_chart_events_v251.js
+        run: IATB_QA_ARTIFACTS="${{ runner.temp }}/v251-visual" node --test App/UI/Tests/test_trading_accounts_v253.js App/UI/Tests/test_trading_maintenance_v253.js App/UI/Tests/test_v2_4_1_calendar_bank.js App/UI/Tests/test_chart_events_v251.js
       - name: Full Auth21 and ChartViewer browser regression without skipped tests
         run: |
           set -o pipefail

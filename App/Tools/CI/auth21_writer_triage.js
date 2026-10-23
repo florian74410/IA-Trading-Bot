@@ -16,7 +16,9 @@ const GROUPS=Object.freeze({
   // CLI migration requires an explicit offline operator confirmation.
   'Core/Clients/UserManagement/cli.js','Core/Clients/UserManagement/migration.js',
   'Core/Clients/UserManagement/store.js','Core/Clients/UserManagement/legacy_vault.js',
-  'Core/Clients/UserManagement/legacy_data.js'
+  'Core/Clients/UserManagement/legacy_data.js',
+  // Encrypted preferences + secrets in the existing Auth21 DB; no hot-snapshot claim.
+  'Core/Clients/UserManagement/trading_vault.js'
  ],
  'operator-control-outside-snapshot':[
   // Read-only O_RDONLY key descriptor; syntactic fs.openSync candidate only.

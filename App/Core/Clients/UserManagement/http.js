@@ -6,12 +6,17 @@ function reply(res,status,data,headers={}){if(res.writableEnded)return;res.write
 function read(req){return new Promise((resolve,reject)=>{let size=0,parts=[];req.on('data',b=>{size+=b.length;if(size<=524288)parts.push(b);});req.once('error',reject);req.once('end',()=>{try{if(size>524288||!/^application\/json(?:;|$)/i.test(req.headers['content-type']||''))throw Error();const b=JSON.parse(Buffer.concat(parts).toString());if(!b||typeof b!=='object'||Array.isArray(b))throw Error();resolve(b);}catch(_){reject(Error('INVALID_REQUEST'));}});});}
 const LEGACY_SELF_READ=new Set(['/api/bank/vaults','/api/transfers/status','/api/transfers/assets','/api/onchain/status','/api/onchain/identity','/api/onchain/wallet','/api/onchain/history','/api/onchain/tx','/api/swap-bridge/status','/api/mosaics','/api/mosaics/runtime','/api/chart-viewer/status','/api/credits/usage','/api/token-usage','/api/status','/api/settings','/api/settings/app-profiles','/api/security/wallets','/api/security/wallets/networks','/api/security/wallets/next-id','/api/security/wallets/export','/api/notifications','/api/notifications/settings','/api/transfers/history','/api/swap-bridge/history']);
 const LEGACY_SELF_WRITE=new Set(['/api/settings/supervisor/brains','/api/settings/test-x','/api/settings/test-openai','/api/transfers/preview','/api/swap-bridge/quote','/api/swap-bridge/prepare','/api/settings/test-zerox','/api/chat','/api/companion/chat','/api/chart-viewer/chat','/api/credits/pricing','/api/mosaics/create','/api/mosaics/delete','/api/settings/modulation','/api/app-settings/select','/api/notifications/test','/api/security/wallets/remove','/api/security/wallets/remove-key','/api/settings/language','/api/settings/general','/api/settings/profile/select','/api/settings/profile/save','/api/settings/power','/api/settings/ai','/api/settings/portfolio','/api/notifications/settings','/api/notifications/read','/api/security/wallets/create','/api/security/wallets/import','/api/security/wallets/reveal','/api/security/wallets/archive','/api/security/wallets/remove-secret']);
-function createHandler({sessions,origin,secret,bridge=null,aiTransport=null,personalSettings=null,tradingAdmin=null,readiness=()=>true}={}){
- const cookies=createBrowserSession({secret,origin});
+function createHandler({sessions,origin,secret,bridge=null,aiTransport=null,personalSettings=null,tradingAdmin=null,tradingVault=null,readiness=()=>true}={}){
+ const cookies=createBrowserSession({secret,origin}),verifyVault=require('./trading_vault_auth').verifier();
  return async function handle(req,res,next){
   const u=new URL(req.url,'https://localhost'),p=u.pathname,token=cookies.parse(req);
   try{
    if(!readiness())return reply(res,503,{error:'AUTH_UNAVAILABLE'});
+   if(p==='/auth21/internal/trading-access'&&req.method==='POST'&&tradingVault){
+    if(req.socket.encrypted!==true||!require('../../Communication/communication_protocol_v1').verifyToken('',String(req.headers['x-iatb-cp-token']||'')))return reply(res,403,{error:'FORBIDDEN'});
+    const input=await read(req);if(!verifyVault(input,req.headers))return reply(res,403,{error:'FORBIDDEN'});
+    return reply(res,200,await tradingVault.access(input));
+   }
    if(p==='/auth21/internal/ai-responses'&&req.method==='POST'&&bridge&&aiTransport){
     if(req.socket.encrypted!==true||!require('../../Communication/communication_protocol_v1').verifyToken('',String(req.headers['x-iatb-cp-token']||'')))return reply(res,403,{error:'FORBIDDEN'});
     const b=await read(req),gateway=b.delegation?.gateway,grant=gateway&&bridge.codec.verify(b.delegation.proof,{audience:'ai_gateway',operation:'self.write',method:'POST',ownerClientId:gateway.clientId,action:'ai_gateway.owner.responses',bodyDigest:require('../../Communication/communication_protocol_v1').hashData(gateway)}),active=gateway&&sessions.verifyHashedSession(gateway.sessionHash);
@@ -61,6 +66,18 @@ function createHandler({sessions,origin,secret,bridge=null,aiTransport=null,pers
    if(p==='/auth21/capabilities'&&req.method==='GET')return reply(res,200,require('./capabilities').describe(principal.role));
    if(!['GET','HEAD'].includes(req.method)&&!cookies.validate(req,token)){sessions.audit(principal.clientId,'CSRF_REJECTED','DENIED');return reply(res,403,{error:'CSRF_FORBIDDEN'});}
    if(u.search&&!['/auth21/preferences'].includes(p)&&[...u.searchParams.keys()].some(k=>/client|owner|role|user/i.test(k)))return reply(res,400,{error:'IDENTITY_INPUT_FORBIDDEN'});
+   if(p==='/auth21/trading/accounts'&&tradingVault){
+    if(principal.role==='GUEST')throw Error('FORBIDDEN');
+    if(req.method==='GET')return reply(res,200,{accounts:tradingVault.list(token)});
+    if(req.method!=='PUT')return reply(res,405,{error:'METHOD_NOT_ALLOWED'});
+    const b=await read(req);if(typeof b.password!=='string')return reply(res,428,{error:'REAUTH_REQUIRED'});
+    await sessions.reauthenticate(token,b.password);delete b.password;return reply(res,200,{account:await tradingVault.save(token,b)});
+   }
+   if(p==='/auth21/trading/sign-typed-data'&&req.method==='POST'&&tradingVault){
+    if(principal.role==='GUEST')throw Error('FORBIDDEN');
+    const b=await read(req);if(typeof b.password!=='string')return reply(res,428,{error:'REAUTH_REQUIRED'});
+    await sessions.reauthenticate(token,b.password);delete b.password;return reply(res,200,await tradingVault.sign(token,b));
+   }
    if(p==='/communication/v1/client/ack'&&req.method==='POST')return reply(res,200,{ok:true,ack:sessions.acknowledgeBrowserAction(token,await read(req))});
    if(['/communication/v1/ui/read','/communication/v1/ui/write'].includes(p)&&req.method==='POST'&&bridge){const input=await read(req),operation=require('./operator_policy').permission(input.target,input.action);let operatorAuthorized=false;if(operation){if(principal.role==='GUEST'||(operation!=='shared.write'&&principal.role!=='ADMIN'))throw Error('FORBIDDEN');if(operation==='admin.write'){if(typeof input.password!=='string')return reply(res,428,{error:'REAUTH_REQUIRED',action:require('./operator_policy').label(input.action),confirmationRequired:true});await sessions.reauthenticate(token,input.password);if(input.confirmed!==true)throw Error('FORBIDDEN');operatorAuthorized=true;}if(operation==='shared.write')operatorAuthorized=true;delete input.password;delete input.confirmed;}const data=await bridge.bridge(token,input,{operatorAuthorized});return reply(res,200,{protocol:'CP/1',status:'OK',data});}
    if(p==='/ui-data/market/candles'&&req.method==='GET'&&bridge){if(principal.role==='GUEST')throw Error('FORBIDDEN');if(!sessions.attempt(crypto.createHash('sha256').update('candles:'+principal.clientId).digest('hex'),300))throw Error('AUTH_THROTTLED');const data=await bridge.rpc('marketdata','marketdata.candles',{symbol:u.searchParams.get('symbol'),timeframe:u.searchParams.get('interval')||'1m',source:u.searchParams.get('exchange'),limit:Math.min(1200,+u.searchParams.get('limit')||300),force:false});return reply(res,200,data);}
