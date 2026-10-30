@@ -31,6 +31,22 @@ assert.ok(has('md','fwdata')&&has('fwdata','router'),'MarketData Firewall toll')
 assert.ok(has('router','fwtrade')&&has('fwtrade','trading'),'Trading Firewall toll');
 assert.ok(has('risk','fwtrade'),'RiskGate participates in the protected path');
 assert.ok(html.includes('LIVE OFF')&&html.includes('non qualifié'),'no fake production promise');
+// Guard against future regression to unreadable per-provider spaghetti routes.
+assert.ok(script[1].includes('function drawProviderBus('),'BrokerAPI routes must use an aggregation trunk');
+assert.ok(script[1].includes('providerLinks.forEach('),'individual provider stubs still displayed when requested');
+assert.ok(script[1].includes('drawProviderBus(providerLinks'),'renderer uses the aggregation trunk');
+assert.ok(script[1].includes('function focusIds('),'camera can frame a selected group');
+assert.ok(script[1].includes('function centerOn('),'camera centers a selected component');
+for(const control of ['find-block','block-list','focusmap','route-count','fit','clear']){
+ assert.ok(html.includes('id="'+control+'"'),'interactive control missing: '+control);
+}
+for(const flow of ['market','trade','admin','structure','all'])
+ assert.ok(html.includes('value="'+flow+'"'),'missing route view: '+flow);
+for(const name of ['Binance BrokerAPI','OKX BrokerAPI','Kraken BrokerAPI','GMX DataAPI','Market Data Collector','Router Switch CP/1','Core Server','IA Supervisor'])
+ assert.ok(html.includes(name),'missing named architecture component: '+name);
+const p4blocks=nodes.filter(n=>n[2]==='firewall');
+assert.equal(p4blocks.length,3,'three explicit Firewall workers from ProcessRegistry');
+assert.equal(providers.length,9,'nine independent market providers in the source inventory');
 assert.ok(!/<script\b[^>]*src=/i.test(html),'no external JS');
 assert.ok(!/<link\b[^>]*rel=["']stylesheet/i.test(html),'no external CSS');
 console.log('Architecture Atlas V2: JS syntax + 35+ nodes + typed lanes + guarded routes OK');
