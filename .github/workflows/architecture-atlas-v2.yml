@@ -21,4 +21,6 @@ jobs:
         with:
           node-version: '22'
       - name: Syntax, source references and architecture invariants
-        run: node Documentation/Architecture/Atlas/check-atlas-v2.cjs
+        run: |
+          node Documentation/Architecture/Atlas/check-atlas-v2.cjs
+          node Documentation/Architecture/Atlas/smoke-atlas-v2.cjs
