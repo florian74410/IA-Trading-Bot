@@ -19,8 +19,16 @@
 .block.optional{border-style:dashed;opacity:.68}.block.optional.selected{opacity:1}
 .legend{border-top:1px solid var(--border);display:flex;flex-wrap:wrap;gap:15px;padding:9px 15px;color:#9bb5c6;font-size:11px;background:#0b1929}.legend i{display:inline-block;vertical-align:middle;width:19px;border-top:3px solid var(--c);margin-right:5px}.caption{position:absolute;left:315px;bottom:12px;border:1px solid #2e5871;border-radius:7px;padding:6px 11px;background:#0b2034e8;color:#9bb9ca;font-size:11px;pointer-events:none}
 .right h2{font-size:17px;line-height:1.3;margin:0 0 7px}.right h3{font-size:11px;color:#90bcd2;letter-spacing:.13em;text-transform:uppercase;margin:20px 0 8px}.right p{color:#b2c7d7;margin:0 0 11px}.box{background:#10263a;border:1px solid #31495f;padding:12px;border-radius:9px;color:#a9c1d2;font-size:11px}.box a{color:#78d9f0;word-break:break-all}.chip{display:inline-block;font-size:10px;padding:3px 7px;margin:0 5px 6px 0;border:1px solid #3c5f74;border-radius:5px;background:#143449;color:#b9dceb}.lineitem{padding:7px 0;border-bottom:1px solid #2e4559}.lineitem:last-child{border-bottom:0}.warning{font-size:11px;color:#e5b99f;border:1px solid #72503d;background:#30231d;padding:10px;border-radius:8px}.note{font-size:10px;color:#7897ac;margin-top:19px}
+.layout.focus-map{grid-template-columns:0 minmax(0,1fr) 0!important;grid-template-rows:minmax(0,1fr)!important}
+.layout.focus-map .left,.layout.focus-map .right{display:none!important}
+.layout.focus-map .center{grid-column:2;grid-row:1;min-height:0}
+.tools input{width:190px;max-width:30vw;background:#132d40;border:1px solid #3b5870;border-radius:7px;padding:7px 9px;color:var(--text)}
+.tools input:focus{outline:2px solid var(--cyan);outline-offset:1px}
+.tools #focusmap[aria-pressed="true"]{background:#18506b;border-color:var(--cyan)}
+.route-count{font-size:10px;color:#84adc5;white-space:nowrap}
+.block{scroll-margin:20px}
 @media(max-width:1140px){.layout{grid-template-columns:185px minmax(0,1fr);grid-template-rows:minmax(490px,1fr) 230px}.left{padding:14px 8px}.right{grid-column:2;border-left:0;border-top:1px solid var(--border);padding:13px;overflow:auto}}
-@media(max-width:680px){.layout{grid-template-columns:1fr;grid-template-rows:auto minmax(480px,1fr) 230px}.left{display:flex;flex-wrap:wrap;align-items:center;gap:4px;padding:9px;border-right:0;border-bottom:1px solid var(--border)}.left .section,.left .help{display:none}.left .logo{width:100%;font-size:13px}.left .nav{width:auto;font-size:11px;padding:6px 7px}.center{grid-row:2}.right{grid-column:1;grid-row:3}.head{padding:9px 13px}.head h1{font-size:16px}.tools{padding:7px}}
+@media(max-width:680px){.layout{grid-template-columns:1fr;grid-template-rows:auto minmax(480px,1fr) 230px}.left{display:flex;flex-wrap:wrap;align-items:center;gap:4px;padding:9px;border-right:0;border-bottom:1px solid var(--border)}.left .section,.left .help{display:none}.left .logo{width:100%;font-size:13px}.left .nav{width:auto;font-size:11px;padding:6px 7px}.center{grid-row:2}.right{grid-column:1;grid-row:3}.head{padding:9px 13px}.head h1{font-size:16px}.tools{padding:7px}.tools input{max-width:42vw}}
 @media(prefers-reduced-motion:reduce){.block{transition:none}}
 </style></head>
 <body><div class="layout">
@@ -29,7 +37,7 @@
 <div class="section">Parcours guidés</div><button class="nav" data-tour="data">01 · Données de marché</button><button class="nav" data-tour="order">02 · Intention d'ordre</button><button class="nav" data-tour="auth">03 · Administration P3/P4</button><button class="nav" data-tour="news">04 · Événement FED / CME</button>
 <div class="help"><strong>Étages = responsabilités</strong><p>Horizontal : composants pairs dans une même couche logique. Vertical : orchestration ou contrôles supérieurs.</p><p>Le niveau graphique <strong>n'accorde aucun privilège réel</strong> : ceux-ci dépendent d'Auth21, de RiskGate et des Firewalls.</p><p>Les lignes sont volontairement réduites en vue globale. Clique un bloc pour isoler ses connexions.</p></div></nav>
 <main class="center"><div class="head"><div><h1>Le système. Ses étages. Ses connexions.</h1><p>Proposition de topologie lisible · IA-TB 2.5.3 DEV · snapshot du code</p></div><span class="pill">● LIVE OFF</span></div>
-<div class="tools"><label for="mode">Liaisons</label><select id="mode" aria-label="Couche de connexions"><option value="structure">Structure</option><option value="market">Marchés</option><option value="trade">Trading</option><option value="admin">ADMIN</option><option value="all">Toutes (audit)</option></select><button id="clear">Effacer</button><span class="spacer"></span><button id="minus" aria-label="Dézoomer">−</button><output id="value">100%</output><button id="plus" aria-label="Zoomer">+</button><button id="fit">Ajuster</button></div>
+<div class="tools"><label for="mode">Liaisons</label><select id="mode" aria-label="Couche de connexions"><option value="structure">Structure</option><option value="market">Marchés</option><option value="trade">Trading</option><option value="admin">ADMIN</option><option value="all">Toutes (audit)</option></select><input id="find-block" type="search" list="block-list" placeholder="Rechercher un bloc…" autocomplete="off" aria-label="Rechercher un composant"><datalist id="block-list"></datalist><button id="clear">Effacer</button><span id="route-count" class="route-count" aria-live="polite"></span><span class="spacer"></span><button id="focusmap" aria-pressed="false" title="Élargir la carte et masquer les panneaux">⛶ Plein espace</button><button id="minus" aria-label="Dézoomer">−</button><output id="value">100%</output><button id="plus" aria-label="Zoomer">+</button><button id="fit">Ajuster</button></div>
 <div class="view" id="view"><div class="world" id="world">
 <div class="level" style="top:35px;height:108px"><b>01 · Supervision</b><small>Intentions et supervision IA</small></div>
 <div class="level" style="top:155px;height:133px"><b>02 · Core & identité</b><small>Sessions et politique</small></div>
@@ -125,19 +133,122 @@ auth:{title:'Commande ADMIN P3/P4',text:'ADMIN Auth21 → Core → Firewall Trad
 news:{title:'Source macro FED / CME',text:'Les annonces proviennent des modules du Fundamental Engine, sont publiées via CP/1 et peuvent être annotées dans ChartViewer.',ids:['calendar','fund','news','router','supervisor'],pairs:[['fund','calendar'],['fund','news'],['router','fund'],['core','router'],['supervisor','core']]}
 };
 const lookup=Object.fromEntries(data.map(n=>[n[0],n]));const view=document.getElementById('view'),world=document.getElementById('world'),blocks=document.getElementById('blocks'),wires=document.getElementById('wires'),defs=document.getElementById('defs');
-let mode='structure',chosen='',tour='',zoom=.72,dx=20,dy=10,drag=null;
+let mode='structure',chosen='',tour='',zoom=1,dx=20,dy=10,drag=null,fullscreen=false;
 const $=id=>document.getElementById(id);
 function element(tag,attrs,parent,ns){const e=ns?document.createElementNS('http://www.w3.org/2000/svg',tag):document.createElement(tag);Object.keys(attrs).forEach(k=>{if(k==='text')e.textContent=attrs[k];else e.setAttribute(k,attrs[k]);});if(parent)parent.appendChild(e);return e;}
-function mount(){data.forEach(n=>{const b=element('button',{type:'button','class':'block'+(['supervisor','core','router'].includes(n[0])?' main':'')+(n[0]==='caddy'?' optional':''),'data-kind':n[2],style:'left:'+n[3]+'px;top:'+n[4]+'px','data-id':n[0],'aria-label':n[1]+', '+TYPE[n[2]][0]},blocks);element('span',{'class':'glyph',text:TYPE[n[2]][1]},b);const box=element('span',{},b);element('strong',{text:n[1]},box);element('small',{text:n[5]},box);b.addEventListener('click',()=>{chosen=n[0];tour='';render();showNode(n)});});}
+function mount(){data.forEach(n=>{const b=element('button',{type:'button','class':'block'+(['supervisor','core','router'].includes(n[0])?' main':'')+(n[0]==='caddy'?' optional':''),'data-kind':n[2],style:'left:'+n[3]+'px;top:'+n[4]+'px','data-id':n[0],'aria-label':n[1]+', '+TYPE[n[2]][0]},blocks);element('span',{'class':'glyph',text:TYPE[n[2]][1]},b);const box=element('span',{},b);element('strong',{text:n[1]},box);element('small',{text:n[5]},box);b.addEventListener('click',()=>{chosen=n[0];tour='';render();showNode(n);centerOn(n[3],n[4],.94);});});}
 function curve(a,b){const x=a[3],y=a[4],X=b[3],Y=b[4],vx=X-x,vy=Y-y;if(Math.abs(vx)<48){const s=vy>=0?1:-1;return 'M'+x+' '+(y+s*39)+' V'+(Y-s*39);}if(Math.abs(vy)<82){const s=vx>0?1:-1;const mid=(x+X)/2;return 'M'+(x+s*102)+' '+y+' H'+mid+' V'+Y+' H'+(X-s*102);}if(Math.abs(vx)>620){const s=vx>0?1:-1;return 'M'+(x+s*102)+' '+y+' H'+((x+X)/2)+' V'+Y+' H'+(X-s*102);}const s=vy>0?1:-1,mid=(y+Y)/2;return 'M'+x+' '+(y+s*38)+' V'+mid+' H'+X+' V'+(Y-s*38);}
 function active(l){if(tour)return tours[tour].pairs.some(p=>p[0]===l[0]&&p[1]===l[1]);if(chosen)return l[0]===chosen||l[1]===chosen;if(mode==='all')return true;if(mode==='structure')return !!l[4];return l[5]===mode;}
-function render(){wires.replaceChildren();defs.replaceChildren();Object.keys(palette).forEach(k=>{const m=element('marker',{id:'m-'+k,viewBox:'0 0 10 10',refX:'9',refY:'5',markerWidth:'5',markerHeight:'5',orient:'auto'},defs,true);element('path',{d:'M0 1 L9 5 L0 9z',fill:palette[k]},m,true);});const chosenLinks=links.filter(active),seen=new Set();chosenLinks.forEach(l=>{const a=lookup[l[0]],b=lookup[l[1]];seen.add(l[0]);seen.add(l[1]);const p=element('path',{d:curve(a,b),stroke:palette[l[2]],'stroke-width':chosen||tour?'3':'1.85','stroke-opacity':chosen||tour?'.92':'.64','stroke-dasharray':l[2]==='logical'?'6 5':l[2]==='optional'?'3 6':'none',fill:'none','marker-end':'url(#m-'+l[2]+')'},wires,true);element('title',{text:l[3]},p,true);});if(!chosen&&!tour&&mode==='structure'){const bus=element('path',{d:'M960 571 V631 M704 631 H1460 M704 631 V650 M956 631 V650 M1208 631 V650 M1460 631 V650',stroke:palette.cp,'stroke-opacity':'.24','stroke-width':'2.3',fill:'none'},wires,true);element('title',{text:'Bus CP/1 schématique : services pairs via Router, pas des communications directes entre moteurs'},bus,true);const p=element('path',{d:'M277 646 V1190 M277 690 H345',stroke:palette.https,'stroke-opacity':'.6','stroke-width':'2', 'stroke-dasharray':'4 5',fill:'none'},wires,true);element('title',{text:'Sources indépendantes → agrégation Market Data (pas de cascade)'},p,true);}document.querySelectorAll('.block').forEach(b=>{const id=b.dataset.id;b.classList.toggle('selected',id===chosen||!!tour&&tours[tour].ids.includes(id));b.classList.toggle('dim',!!(chosen||tour)&&!(seen.has(id)||id===chosen||tour&&tours[tour].ids.includes(id)));});document.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===mode&&!tour)));document.querySelectorAll('[data-tour]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.tour===tour)));$('mode').value=mode;}
+function drawRoute(d,type,label,strong){
+ const p=element('path',{d,stroke:palette[type],'stroke-width':strong?'3.1':'2','stroke-opacity':strong?'.94':'.6','stroke-dasharray':type==='logical'?'6 5':type==='optional'?'3 6':'none',fill:'none'},wires,true);
+ element('title',{text:label},p,true);
+ return p;
+}
+// Les BrokerAPI sont des sources parallèles : on les raccorde au bus latéral,
+// puis une SEULE branche entre dans le collecteur Market Data.
+function drawProviderBus(providerLinks,showOverview){
+ if(!providerLinks.length&&!showOverview)return;
+ const sourceYs=providerLinks.map(l=>lookup[l[0]][4]);
+ const upper=sourceYs.length?Math.min(690,...sourceYs):646,lower=sourceYs.length?Math.max(690,...sourceYs):1190;
+ const spine=drawRoute('M316 '+upper+' V'+lower,'https','Tronc d’agrégation visuel — sources indépendantes',!showOverview);
+ if(showOverview){drawRoute('M316 690 H354','https','BrokerAPI → collecteur unique',false);return;}
+ providerLinks.forEach(l=>{const n=lookup[l[0]],y=n[4];drawRoute('M244 '+y+' H316','https',n[1]+' → agrégation Market Data',true);});
+ const arrow=drawRoute('M316 690 H354','https','Entrée commune de Market Data Collector',true);
+ arrow.setAttribute('marker-end','url(#m-https)');
+}
+function render(){
+ wires.replaceChildren();defs.replaceChildren();
+ Object.keys(palette).forEach(k=>{
+  const m=element('marker',{id:'m-'+k,viewBox:'0 0 10 10',refX:'9',refY:'5',markerWidth:'5',markerHeight:'5',orient:'auto'},defs,true);
+  element('path',{d:'M0 1 L9 5 L0 9z',fill:palette[k]},m,true);
+ });
+ const chosenLinks=links.filter(active),seen=new Set();
+ const providerLinks=chosenLinks.filter(l=>lookup[l[0]][2]==='provider'&&l[1]==='md');
+ chosenLinks.forEach(l=>{seen.add(l[0]);seen.add(l[1]);});
+ chosenLinks.filter(l=>!providerLinks.includes(l)).forEach(l=>{
+  const a=lookup[l[0]],b=lookup[l[1]],p=drawRoute(curve(a,b),l[2],l[3],!!chosen||!!tour);
+  p.setAttribute('marker-end','url(#m-'+l[2]+')');
+ });
+ drawProviderBus(providerLinks,!chosen&&!tour&&mode==='structure');
+ // Un tronc CP/1 schématique explicite la relation Router ↔ Engines pairs.
+ // Pas de liaison directe MarketData → Router hors du Firewall Data.
+ if(!chosen&&!tour&&mode==='structure'){
+  drawRoute('M1067 368 H1605 V632 H454 M454 632 V650 M704 632 V650 M956 632 V650 M1208 632 V650 M1460 632 V650','cp','Bus logique CP/1 partagé : les Engines sont des pairs du Router',false);
+ }
+ document.querySelectorAll('.block').forEach(b=>{
+  const id=b.dataset.id;
+  b.classList.toggle('selected',id===chosen||!!tour&&tours[tour].ids.includes(id));
+  b.classList.toggle('dim',!!(chosen||tour)&&!(seen.has(id)||id===chosen||tour&&tours[tour].ids.includes(id)));
+ });
+ document.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===mode&&!tour)));
+ document.querySelectorAll('[data-tour]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.tour===tour)));
+ $('mode').value=mode;
+ $('route-count').textContent=chosenLinks.length+' liaison'+(chosenLinks.length>1?'s':'');
+}
 function showNode(n){$('title').textContent=n[1];$('description').textContent=n[7];$('tags').replaceChildren();[TYPE[n[2]][0],n[5],'Code 2.5.3'].forEach(v=>element('span',{'class':'chip',text:v},$('tags')));const list=links.filter(l=>l[0]===n[0]||l[1]===n[0]);$('connections').replaceChildren();list.forEach(l=>element('div',{'class':'lineitem',text:(l[0]===n[0]?'→ '+lookup[l[1]][1]:'← '+lookup[l[0]][1])+' · '+l[3]+' ['+l[2]+']'},$('connections')));$('source').replaceChildren();const a=element('a',{href:ROOT+n[6],target:'_blank',rel:'noopener',text:n[6]},$('source'));}
 function showTour(k){const t=tours[k];$('title').textContent=t.title;$('description').textContent=t.text;$('tags').replaceChildren();element('span',{'class':'chip',text:t.ids.length+' composants éclairés'},$('tags'));$('connections').replaceChildren();t.pairs.forEach(p=>element('div',{'class':'lineitem',text:lookup[p[0]][1]+' → '+lookup[p[1]][1]},$('connections')));$('source').textContent='Sources : fichiers du dépôt liés aux blocs sélectionnés. Clique un bloc pour sa référence précise.';}
+function centerOn(x,y,z){
+ zoom=Math.max(.45,Math.min(1.25,z||zoom));
+ dx=Math.round(view.clientWidth/2-x*zoom);
+ dy=Math.round(view.clientHeight/2-y*zoom);
+ transform();
+}
+function focusIds(ids,z){
+ const found=ids.map(id=>lookup[id]).filter(Boolean);
+ if(!found.length)return;
+ const xs=found.map(n=>n[3]),ys=found.map(n=>n[4]);
+ const width=Math.max(...xs)-Math.min(...xs)+250,height=Math.max(...ys)-Math.min(...ys)+170;
+ const scale=Math.min(z||1.03,(view.clientWidth-24)/width,(view.clientHeight-24)/height);
+ centerOn((Math.max(...xs)+Math.min(...xs))/2,(Math.max(...ys)+Math.min(...ys))/2,Math.max(.45,scale));
+}
 function transform(){world.style.transform='translate('+dx+'px,'+dy+'px) scale('+zoom+')';$('value').textContent=Math.round(zoom*100)+'%';}
 function fit(){zoom=Math.max(.38,Math.min(.9,(view.clientWidth-32)/1700,(view.clientHeight-32)/1320));dx=Math.max(8,(view.clientWidth-1700*zoom)/2);dy=8;transform();}
 function zoomTo(f){const z=Math.max(.28,Math.min(1.6,zoom*f)),cx=view.clientWidth/2,cy=view.clientHeight/2;dx=cx-(cx-dx)*z/zoom;dy=cy-(cy-dy)*z/zoom;zoom=z;transform();}
-document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>{mode=b.dataset.mode;chosen='';tour='';render();}));document.querySelectorAll('[data-tour]').forEach(b=>b.addEventListener('click',()=>{tour=b.dataset.tour;chosen='';mode=tour==='order'?'trade':tour==='auth'?'admin':'market';render();showTour(tour);}));$('mode').addEventListener('change',e=>{mode=e.target.value;chosen='';tour='';render();});$('clear').addEventListener('click',()=>{chosen='';tour='';mode='structure';render();$('title').textContent='Sélectionne un bloc.';$('description').textContent='Clique sur un composant ou choisis un parcours guidé.';$('connections').textContent='Les connexions apparaîtront ici.';$('source').textContent='Références disponibles sur chaque composant.';});$('plus').onclick=()=>zoomTo(1.2);$('minus').onclick=()=>zoomTo(1/1.2);$('fit').onclick=fit;
-view.addEventListener('pointerdown',e=>{if(e.target.closest('.block'))return;drag={x:e.clientX,y:e.clientY,dx,dy};view.setPointerCapture(e.pointerId);view.classList.add('panning');});view.addEventListener('pointermove',e=>{if(!drag)return;dx=drag.dx+e.clientX-drag.x;dy=drag.dy+e.clientY-drag.y;transform();});function end(){drag=null;view.classList.remove('panning');}view.addEventListener('pointerup',end);view.addEventListener('pointercancel',end);view.addEventListener('wheel',e=>{if(e.ctrlKey||e.metaKey){e.preventDefault();zoomTo(e.deltaY<0?1.12:1/1.12);}}, {passive:false});view.addEventListener('keydown',e=>{if(e.key==='Escape')$('clear').click();});mount();fit();render();
+function selectMode(k){
+ mode=k;chosen='';tour='';render();
+ if(k==='market')focusIds(['binance','kraken','md','fwdata','router'],.86);
+ else if(k==='trade')focusIds(['router','fwtrade','risk','trading','portfolio'],.91);
+ else if(k==='admin')focusIds(['ui','auth','core','router','fwtrade'],.97);
+ else if(k==='structure')focusIds(['supervisor','core','router','fwdata','fwtrade'],1.08);
+ else fit();
+}
+document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>selectMode(b.dataset.mode)));
+document.querySelectorAll('[data-tour]').forEach(b=>b.addEventListener('click',()=>{
+ tour=b.dataset.tour;chosen='';mode=tour==='order'?'trade':tour==='auth'?'admin':'market';
+ render();showTour(tour);focusIds(tours[tour].ids,.99);
+}));
+$('mode').addEventListener('change',e=>selectMode(e.target.value));
+$('clear').addEventListener('click',()=>{
+ chosen='';tour='';mode='structure';render();
+ $('title').textContent='Sélectionne un bloc.';
+ $('description').textContent='Clique sur un composant ou choisis un parcours guidé.';
+ $('connections').textContent='Les connexions apparaîtront ici.';
+ $('source').textContent='Références disponibles sur chaque composant.';
+ $('find-block').value='';
+ focusIds(['supervisor','core','router','fwdata','fwtrade'],1.08);
+});
+$('plus').onclick=()=>zoomTo(1.2);
+$('minus').onclick=()=>zoomTo(1/1.2);
+$('fit').onclick=fit;
+$('focusmap').addEventListener('click',()=>{
+ fullscreen=!fullscreen;document.querySelector('.layout').classList.toggle('focus-map',fullscreen);
+ $('focusmap').setAttribute('aria-pressed',String(fullscreen));
+ $('focusmap').textContent=fullscreen?'✕ Fermer le plein espace':'⛶ Plein espace';
+ requestAnimationFrame(()=>{if(chosen){const n=lookup[chosen];centerOn(n[3],n[4],1.08);}
+ else if(tour)focusIds(tours[tour].ids,1.08);
+ else focusIds(['supervisor','core','router','fwdata','fwtrade'],1.08);});
+});
+const datalist=$('block-list');
+data.forEach(n=>element('option',{value:n[1]},datalist));
+function chooseSearch(){
+ const value=$('find-block').value.trim().toLocaleLowerCase('fr');
+ if(!value)return;
+ const n=data.find(n=>n[1].toLocaleLowerCase('fr')===value)||
+         data.find(n=>n[1].toLocaleLowerCase('fr').includes(value)||n[0].includes(value));
+ if(n){chosen=n[0];tour='';render();showNode(n);centerOn(n[3],n[4],1.08);}
+}
+$('find-block').addEventListener('change',chooseSearch);
+$('find-block').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();chooseSearch();}});
+view.addEventListener('pointerdown',e=>{if(e.target.closest('.block'))return;drag={x:e.clientX,y:e.clientY,dx,dy};view.setPointerCapture(e.pointerId);view.classList.add('panning');});view.addEventListener('pointermove',e=>{if(!drag)return;dx=drag.dx+e.clientX-drag.x;dy=drag.dy+e.clientY-drag.y;transform();});function end(){drag=null;view.classList.remove('panning');}view.addEventListener('pointerup',end);view.addEventListener('pointercancel',end);view.addEventListener('wheel',e=>{e.preventDefault();zoomTo(e.deltaY<0?1.12:1/1.12);}, {passive:false});view.addEventListener('keydown',e=>{if(e.key==='Escape')$('clear').click();});mount();render();requestAnimationFrame(()=>focusIds(['supervisor','core','router','fwdata','fwtrade'],1.08));
 })();
 </script></body></html>
