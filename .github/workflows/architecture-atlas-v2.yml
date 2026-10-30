@@ -25,3 +25,4 @@ jobs:
           node Documentation/Architecture/Atlas/check-atlas-v2.cjs
           node Documentation/Architecture/Atlas/smoke-atlas-v2.cjs
           node Documentation/Architecture/Atlas/check-atlas-v2-2.cjs
+          node Documentation/Architecture/Atlas/smoke-atlas-v2-2.cjs
