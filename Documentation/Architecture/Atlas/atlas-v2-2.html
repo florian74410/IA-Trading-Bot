@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>IA-TB · Architecture Atlas V2.2 — Superblocs</title>
+<style>
+:root{color-scheme:dark;--bg:#07101c;--panel:#0e1c2c;--border:#284155;--text:#e7f4ff;--muted:#8da9c0;--cyan:#51d6f0;--orange:#eeb276;--purple:#bd9dff;--pink:#ef8ba8;--green:#78d9ad}
+*{box-sizing:border-box}body{margin:0;color:var(--text);background:var(--bg);font:13px/1.5 system-ui,Segoe UI,sans-serif}button,select{font:inherit;color:inherit}button{cursor:pointer}button:focus-visible,select:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.layout{height:100dvh;min-height:580px;display:grid;grid-template-columns:225px minmax(0,1fr) 300px}.left,.right{overflow:auto;background:#091625;padding:20px 14px}.left{border-right:1px solid var(--border)}.right{border-left:1px solid var(--border)}
+.logo{font-size:15px;font-weight:850;letter-spacing:.07em}.logo span{color:var(--cyan)}.muted,.info{color:var(--muted);font-size:11px}.section{font-size:10px;color:#6990ab;text-transform:uppercase;letter-spacing:.16em;margin:24px 0 9px;font-weight:750}
+.nav{width:100%;border:1px solid transparent;border-radius:8px;background:none;color:#a1bad0;text-align:left;padding:10px 11px;margin:2px 0}.nav:hover{background:#14283b}.nav[aria-pressed=true]{background:#13374d;border-color:#38657a;color:#ebfbff}
+.help{border-top:1px solid var(--border);margin-top:20px;padding-top:16px;color:#8caac0;font-size:11px}.help strong{color:#cfe6f5}
+.center{display:flex;flex-direction:column;min-width:0;min-height:0}.head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;gap:12px;align-items:center;justify-content:space-between;background:#0b1b2d}.head h1{font-size:19px;margin:0}.head p{margin:2px 0;color:var(--muted);font-size:11px}.pill{font:700 10px ui-monospace,monospace;border:1px solid #2f6957;background:#0a2c29;border-radius:20px;padding:5px 8px;color:#9af0c5}
+.tools{display:flex;align-items:center;flex-wrap:wrap;gap:7px;padding:9px 14px;background:#0e2033;border-bottom:1px solid var(--border)}.tools select,.tools button{background:#132d40;border:1px solid #3b5870;padding:7px 9px;border-radius:7px}.tools button:hover{border-color:var(--cyan)}.tools .spacer{flex:1}.tools output{font:11px ui-monospace,monospace;color:#a4c2d6;min-width:42px;text-align:center}
+.view{position:relative;flex:1;min-height:280px;overflow:hidden;touch-action:none;cursor:grab;background:radial-gradient(ellipse at 60% 3%,#142c44 0%,#07101c 64%)}.view.panning{cursor:grabbing}.world{position:absolute;top:0;left:0;width:1700px;height:1320px;transform-origin:0 0}
+.level{position:absolute;left:315px;width:1335px;border:1px solid #27465d;border-radius:13px;background:linear-gradient(180deg,#17304d42,#10243b15);pointer-events:none}.level b{position:absolute;top:9px;left:13px;font-size:10px;letter-spacing:.17em;color:#6996b5;text-transform:uppercase}.level small{position:absolute;right:14px;top:9px;color:#52748b;font-size:10px}
+.provider-lane{position:absolute;left:20px;top:589px;height:653px;width:260px;border:1px dashed #3b5b79;background:#0c1c30ad;border-radius:13px}.provider-lane b{display:block;margin:11px 14px 1px;font-size:11px;color:#9bafff;letter-spacing:.08em}.provider-lane small{margin:0 14px;color:#7093ac;font-size:10px}
+#edges{position:absolute;inset:0;width:1700px;height:1320px;pointer-events:none;overflow:visible}.block{position:absolute;transform:translate(-50%,-50%);min-height:60px;width:194px;display:flex;align-items:center;gap:9px;text-align:left;padding:9px 11px;border:1px solid #3b556d;border-left:4px solid var(--accent);border-radius:10px;background:linear-gradient(125deg,#183148,#0d1d2e);box-shadow:0 9px 19px #02080fa9;z-index:2;transition:opacity .1s,border-color .1s;color:#eaf6ff}
+.block:hover,.block.selected{z-index:4;border-color:var(--accent);background:#20425a;box-shadow:0 0 0 2px #3982a94f,0 8px 23px #000b}.block.dim{opacity:.22}.block.main{width:225px;min-height:70px}
+.block .glyph{font-size:18px;font-weight:bold;min-width:22px;text-align:center;color:var(--accent)}.block strong{display:block;font-size:12px;line-height:1.22}.block small{display:block;color:#91afc3;font-size:10px;margin-top:4px;line-height:1.25}
+.block[data-kind=engine]{--accent:#59d1ed}.block[data-kind=firewall]{--accent:#ffb36b}.block[data-kind=provider]{--accent:#b6a0ff}.block[data-kind=control]{--accent:#7bd8ac}.block[data-kind=identity]{--accent:#f28cac}.block[data-kind=module]{--accent:#a9bfd4}.block[data-kind=storage]{--accent:#e7c38b}
+.block.optional{border-style:dashed;opacity:.68}.block.optional.selected{opacity:1}
+.legend{border-top:1px solid var(--border);display:flex;flex-wrap:wrap;gap:15px;padding:9px 15px;color:#9bb5c6;font-size:11px;background:#0b1929}.legend i{display:inline-block;vertical-align:middle;width:19px;border-top:3px solid var(--c);margin-right:5px}.caption{position:absolute;left:315px;bottom:12px;border:1px solid #2e5871;border-radius:7px;padding:6px 11px;background:#0b2034e8;color:#9bb9ca;font-size:11px;pointer-events:none}
+.right h2{font-size:17px;line-height:1.3;margin:0 0 7px}.right h3{font-size:11px;color:#90bcd2;letter-spacing:.13em;text-transform:uppercase;margin:20px 0 8px}.right p{color:#b2c7d7;margin:0 0 11px}.box{background:#10263a;border:1px solid #31495f;padding:12px;border-radius:9px;color:#a9c1d2;font-size:11px}.box a{color:#78d9f0;word-break:break-all}.chip{display:inline-block;font-size:10px;padding:3px 7px;margin:0 5px 6px 0;border:1px solid #3c5f74;border-radius:5px;background:#143449;color:#b9dceb}.lineitem{padding:7px 0;border-bottom:1px solid #2e4559}.lineitem:last-child{border-bottom:0}.warning{font-size:11px;color:#e5b99f;border:1px solid #72503d;background:#30231d;padding:10px;border-radius:8px}.note{font-size:10px;color:#7897ac;margin-top:19px}
+.layout.focus-map{grid-template-columns:0 minmax(0,1fr) 0!important;grid-template-rows:minmax(0,1fr)!important}
+.layout.focus-map .left,.layout.focus-map .right{display:none!important}
+.layout.focus-map .center{grid-column:2;grid-row:1;min-height:0}
+.tools input{width:190px;max-width:30vw;background:#132d40;border:1px solid #3b5870;border-radius:7px;padding:7px 9px;color:var(--text)}
+.tools input:focus{outline:2px solid var(--cyan);outline-offset:1px}
+.tools #focusmap[aria-pressed="true"]{background:#18506b;border-color:var(--cyan)}
+.route-count{font-size:10px;color:#84adc5;white-space:nowrap}
+.block{scroll-margin:20px}
+
+/* V2.2 superblocs — les sous-modules ne sont pas de nouveaux services CP/1. */
+#superblocks{position:absolute;inset:0;pointer-events:none}
+.world[data-level="macro"] .block:not([data-kind="provider"]):not([data-id="supervisor"]):not([data-id="caddy"]){display:none}
+.world[data-level="components"] #superblocks{display:none}
+.superblock{position:absolute;transform:translate(-50%,-50%);width:244px;min-height:88px;z-index:5;
+ border:1px solid #466880;border-left:4px solid var(--accent,#64cee9);border-radius:11px;
+ background:linear-gradient(140deg,#19364b,#0b2031);box-shadow:0 10px 23px #01070ddc;
+ padding:10px 12px;text-align:left;color:#e9f6ff;pointer-events:auto;cursor:pointer;transition:width .16s,box-shadow .16s}
+.superblock:hover,.superblock.expanded{border-color:var(--accent,#64cee9);box-shadow:0 0 0 2px #4198bc3a,0 14px 28px #01070ad9}
+.superblock.expanded{width:273px;min-height:214px;z-index:20}
+.superblock[data-type="firewall"]{--accent:#ffb571}
+.superblock[data-type="core"]{--accent:#77dcb0}
+.superblock[data-type="engine"]{--accent:#58d6eb}
+.superblock[data-type="router"]{--accent:#92aaff}
+.superblock .mainline{display:flex;align-items:center;gap:9px}
+.superblock .symbol{display:grid;place-items:center;width:31px;height:31px;border:1px solid #426b83;border-radius:8px;background:#0b2536;color:var(--accent);flex:0 0 auto}
+.superblock .symbol svg,.block .glyph svg,.sidebar-ico{width:18px;height:18px;display:block}
+.superblock .mainline strong{display:block;font-size:13px;line-height:1.25}
+.superblock .mainline small{font-size:10px;color:#93b8ca;display:block;margin:2px 0 0}
+.superblock .counter{margin-left:auto;color:var(--accent);background:#0e2938;border:1px solid #416075;border-radius:20px;padding:2px 7px;font:700 10px ui-monospace,monospace}
+.superblock .subintro{margin:9px 0 0;font-size:10px;color:#8eb0c4}
+.superblock .satellites{display:none;margin:10px 0 0;gap:5px;border-top:1px solid #35546b;padding-top:9px}
+.superblock.expanded .satellites{display:flex;flex-direction:column}
+.superblock .satellite{color:#bbdff0;border:1px solid #33546d;border-radius:6px;background:#112e42;
+ display:flex;align-items:center;gap:7px;text-align:left;min-height:29px;padding:4px 7px;font-size:11px;width:100%;cursor:pointer}
+.superblock .satellite:hover{background:#205071;border-color:#71cee6}
+.superblock .satellite svg{width:14px;height:14px;flex:none;color:var(--accent)}
+.superblock .satellite em{font:9px ui-monospace,monospace;color:#789caf;margin-left:auto;font-style:normal}
+.superblock.fade{opacity:.5}
+.route-text{font:10.7px ui-monospace,monospace;fill:#d7eafa;paint-order:stroke;stroke:#071522;stroke-width:4.5px;stroke-linejoin:round;pointer-events:none}
+.svgicon{width:20px;height:20px;vertical-align:middle}
+.block .glyph{display:grid;place-items:center}
+@media(max-width:680px){.tools #supermode{max-width:135px}}
+
+@media(max-width:1140px){.layout{grid-template-columns:185px minmax(0,1fr);grid-template-rows:minmax(490px,1fr) 230px}.left{padding:14px 8px}.right{grid-column:2;border-left:0;border-top:1px solid var(--border);padding:13px;overflow:auto}}
+@media(max-width:680px){.layout{grid-template-columns:1fr;grid-template-rows:auto minmax(480px,1fr) 230px}.left{display:flex;flex-wrap:wrap;align-items:center;gap:4px;padding:9px;border-right:0;border-bottom:1px solid var(--border)}.left .section,.left .help{display:none}.left .logo{width:100%;font-size:13px}.left .nav{width:auto;font-size:11px;padding:6px 7px}.center{grid-row:2}.right{grid-column:1;grid-row:3}.head{padding:9px 13px}.head h1{font-size:16px}.tools{padding:7px}.tools input{max-width:42vw}}
+@media(prefers-reduced-motion:reduce){.block{transition:none}}
+</style></head>
+<body><div class="layout">
+<nav class="left" aria-label="Navigation Architecture Atlas"><div class="logo">◈ IA-TB <span>ARCHITECTURE ATLAS V2.2</span></div><div class="section">Vues du diagramme</div>
+<button class="nav" data-mode="structure" aria-pressed="true">◈ Vue hiérarchique</button><button class="nav" data-mode="market">◉ Market Data & APIs</button><button class="nav" data-mode="trade">⚡ Trading & sécurité</button><button class="nav" data-mode="admin">◆ Autorisations ADMIN</button><button class="nav" data-mode="all">☷ Tous les liens (audit)</button>
+<div class="section">Parcours guidés</div><button class="nav" data-tour="data">01 · Données de marché</button><button class="nav" data-tour="order">02 · Intention d'ordre</button><button class="nav" data-tour="auth">03 · Administration P3/P4</button><button class="nav" data-tour="news">04 · Événement FED / CME</button>
+<div class="help"><strong>Étages = responsabilités</strong><p>Horizontal : composants pairs dans une même couche logique. Vertical : orchestration ou contrôles supérieurs.</p><p>Le niveau graphique <strong>n'accorde aucun privilège réel</strong> : ceux-ci dépendent d'Auth21, de RiskGate et des Firewalls.</p><p>Les lignes sont volontairement réduites en vue globale. Clique un bloc pour isoler ses connexions.</p></div></nav>
+<main class="center"><div class="head"><div><h1>Le système. Ses étages. Ses connexions.</h1><p>Superblocs hiérarchiques · IA-TB 2.5.3 DEV · snapshot du code</p></div><span class="pill">● LIVE OFF</span></div>
+<div class="tools"><label for="supermode">Niveau</label><select id="supermode"><option value="macro">Superblocs</option><option value="components">Composants</option></select><label for="mode">Liaisons</label><select id="mode" aria-label="Couche de connexions"><option value="structure">Structure</option><option value="market">Marchés</option><option value="trade">Trading</option><option value="admin">ADMIN</option><option value="all">Toutes (audit)</option></select><input id="find-block" type="search" list="block-list" placeholder="Rechercher un bloc…" autocomplete="off" aria-label="Rechercher un composant"><datalist id="block-list"></datalist><button id="clear">Effacer</button><span id="route-count" class="route-count" aria-live="polite"></span><span class="spacer"></span><button id="focusmap" aria-pressed="false" title="Élargir la carte et masquer les panneaux">⛶ Plein espace</button><button id="minus" aria-label="Dézoomer">−</button><output id="value">100%</output><button id="plus" aria-label="Zoomer">+</button><button id="fit">Ajuster</button></div>
+<div class="view" id="view"><div class="world" id="world">
+<div class="level" style="top:35px;height:108px"><b>01 · Supervision</b><small>Intentions et supervision IA</small></div>
+<div class="level" style="top:155px;height:133px"><b>02 · Core & identité</b><small>Sessions et politique</small></div>
+<div class="level" style="top:303px;height:133px"><b>03 · Router Switch</b><small>Hub CP/1 central</small></div>
+<div class="level" style="top:452px;height:161px"><b>04 · Firewalls</b><small>Workers / péages indépendants</small></div>
+<div class="level" style="top:622px;height:440px"><b>05 · Superblocs Engines · rang horizontal</b><small>Services séparés, aucun Engine unique</small></div>
+<div class="level" style="top:1078px;height:165px"><b>06 · Modules internes des superblocs</b><small>Storage, ledger et executors</small></div>
+<div class="provider-lane"><b>BROKER / PROVIDER APIs</b><small>Sources parallèles, non chaînées</small></div>
+<svg id="edges" viewBox="0 0 1700 1320" xmlns="http://www.w3.org/2000/svg"><defs id="defs"></defs><g id="wires"></g></svg><div id="blocks"></div><div id="superblocks"></div>
+<div class="caption">↑ Contrôle & orchestration · ↔ Services pairs · ◆ Firewall = passage de sécurité · Déplacer le fond pour naviguer</div></div></div>
+<div class="legend"><span><i style="--c:#51d6f0"></i>CP/1</span><span><i style="--c:#eeb276"></i>Firewall</span><span><i style="--c:#bd9dff"></i>HTTPS/REST</span><span><i style="--c:#ef8ba8"></i>Auth21/IPC signé</span><span><i style="--c:#78d9ad"></i>Lien logique (pointillé)</span></div></main>
+<aside class="right" aria-live="polite"><div class="section" style="margin-top:0">Inspecteur de composants</div><h2 id="title">Sélectionne un bloc.</h2><p id="description">Clique sur un Engine, un Firewall, un BrokerAPI ou un module pour examiner son rôle et ses connexions.</p><div id="tags"><span class="chip">Types ≠ composants</span><span class="chip">Snapshot 8caae37</span></div>
+<h3>Connexions</h3><div class="box" id="connections">Dans la vue générale, les liens secondaires sont volontairement masqués. Les parcours et la sélection les révèlent.</div><h3>Fichier source</h3><div class="box" id="source">La carte est fondée sur les manifestes ProcessRegistry, ProtocolRegistry et la documentation du dépôt.</div><h3>Confiance & statut</h3><div class="warning">Supervisor → Core → Router est une hiérarchie <b>conceptuelle</b> demandée pour la lecture. Le Supervisor dépend techniquement du Router. P5 réel, reprise et ordres LIVE restent désactivés. Caddy est une option, pas un service déployé.</div><div class="note">Proposition indépendante de l'application. Aucun endpoint, ordre ou secret consommé.</div></aside></div>
+<script>
+(function(){'use strict';
+const ROOT='https://github.com/florian74410/IA-Trading-Bot/blob/8caae37ac25ffbd72c25f52ca4eeab21ee10aa8b/';
+const TYPE={control:['Système / contrôle','◈'],engine:['Engine / service','E'],firewall:['Firewall / péage','◆'],provider:['Provider / Broker API','↗'],module:['Sous-module / adaptateur','⇄'],identity:['Identité / coffre','◎'],storage:['Stockage','▤']};
+const data=[
+['supervisor','IA Supervisor','control',960,93,'3000 · superviseur','App/Supervisor/supervisor_service.js','Orchestration, raisonnement et intentions ; dépend techniquement du Router.'],
+['ui','UI Gateway','control',666,230,'8000 · interface','App/UI/Gateway/ui_service.js','Point d’accès navigateur et pages IA-TB.'],
+['core','Core Server','control',960,230,'8001 · contrôle','App/Core/Server/server.js','Sessions, permissions, politiques et ponts internes.'],
+['auth','Auth21 / RBAC','identity',1254,230,'session + CSRF','App/Core/Clients/auth21_trading_admin_bridge.js','Identité utilisateur, rôles et autorisations signées.'],
+['caddy','Caddy / proxy','module',396,230,'OPTION · non actif','compose.debug.stack.yml','Reverse proxy envisagé ; aucun déploiement n’est affirmé.'],
+['router','Router Switch CP/1','control',960,368,'8021 · hub','App/Core/Router/router.js','Aiguillage central des requêtes et événements CP/1.'],
+['fwdata','Firewall · Data','firewall',710,530,'8017 · worker data','App/Core/Firewall/Protection/market_data_firewall.js','Inspecte les données avant distribution par le Router.'],
+['fwrouter','Firewall · Router','firewall',960,530,'8017 · worker router','App/Core/ProcessRegistry/manifests/firewall.json','Worker interne de protection du routage.'],
+['fwtrade','Firewall · Trading','firewall',1254,530,'8017 · worker trading','App/Core/Firewall/Protection/trading_firewall.js','Contrôle de l’exécution et des autorisations Risk.'],
+['md','Market Data Collector','engine',452,690,'8013 · collector unique','App/MarketData/market_data_service.js','Collecte et normalise les providers CEX/DEX. Il n’existe qu’un collecteur central.'],
+['fund','Fundamental Engine','engine',704,690,'8015 · macro/news','App/Fundamental/Engine/fundamental_service.js','Moteur macro, calendrier, actualités et DeFi.'],
+['indicator','Indicator Engine','engine',956,690,'8012 · indicateurs','App/Indicators/Engine/indicator_service.js','Calcul d’indicateurs sur données normalisées.'],
+['strategy','Strategy Engine','engine',1208,690,'8018 · intention','App/Strategy/Engine/strategy_service.js','Génère des signaux, pas d’ordres directs au broker.'],
+['risk','Risk Engine / Gate','engine',1460,690,'8019 · autorisations','App/Risk/Engine/risk_service.js','Contrôle risque et risk_approval_id ; ne remplace pas Firewall.'],
+['micro','Microstructure','module',452,821,'dans Market Data','App/MarketData/Provider/microstructure_provider.js','Carnets, open interest et liquidations dans le même collecteur.'],
+['news','News Collector','module',704,821,'dans Fundamental','App/Fundamental/Providers/rss_provider.js','Flux d’actualités, sans service CP/1 indépendant.'],
+['liquidity','Liquidity Engine','engine',956,821,'8014 · liquidité','App/Liquidity/Engine/liquidity_service.js','Consomme les données Market Data via Router, sans accès Internet parallèle.'],
+['trading','Trading Engine','engine',1208,821,'8016 · LIVE OFF','App/services/trading-engine/trading_service.js','Exécute uniquement les intentions autorisées et filtrées ; P4 DEV, P5 LIVE non qualifié.'],
+['portfolio','Portfolio Engine','engine',1460,821,'8020 · historique','App/Portfolio/Engine/portfolio_service.js','Reconstitue ordres, positions et événements confirmés.'],
+['marketstore','SQLite · Data Cache','storage',452,1034,'Market Data','App/MarketData/market_data_service.js','Cache et historique du collecteur.'],
+['calendar','FED / CME / Calendar','module',704,1034,'sources macro','App/Fundamental/Providers/calendar_provider.js','Données économiques et annonces événementielles.'],
+['vault','Coffre Auth21','identity',956,1034,'secrets + tickets','Documentation/Trading/ACCOUNT_ROUTING_2.5.3.md','Core gère clés et affectations chiffrées ; Trading obtient un ticket borné.'],
+['ledger','P4 / P5 Ledger','storage',1208,1034,'état + réconciliation','App/services/trading-engine/trading_runtime_state_v2.js','Verrou d’urgence persistant ; P5 limité à la simulation.'],
+['binexec','Binance Executor','module',1460,993,'adaptateur CEX','App/services/trading-engine/exchange-adapters/binance/executor.js','Adaptateur de soumission, non actif en LIVE.'],
+['okxexec','OKX Executor','module',1460,1071,'adaptateur CEX','App/services/trading-engine/exchange-adapters/okx/executor.js','Adaptateur d’exécution OKX.'],
+['krakenexec','Kraken Executor','module',1460,1149,'adaptateur CEX','App/services/trading-engine/exchange-adapters/kraken/executor.js','Adaptateur d’exécution Kraken.'],
+['gmxexec','GMX Executor','module',1460,1227,'DEX · non qualifié','App/services/trading-engine/exchange-adapters/gmx/executor.js','Ordres GMX en préparation, signature contrôlée, pas de broadcast LIVE.'],
+['binance','Binance BrokerAPI','provider',145,646,'CEX · REST','App/MarketData/Provider/binance_provider.js','Source indépendante de données de marché.'],
+['okx','OKX BrokerAPI','provider',145,714,'CEX · REST','App/MarketData/Provider/okx_provider.js','Source indépendante de données de marché.'],
+['kraken','Kraken BrokerAPI','provider',145,782,'CEX · REST','App/MarketData/Provider/kraken_provider.js','Source indépendante de données de marché.'],
+['bybit','Bybit BrokerAPI','provider',145,850,'CEX · REST','App/MarketData/Provider/bybit_provider.js','Source indépendante de données de marché.'],
+['gmx','GMX DataAPI','provider',145,918,'DEX · oracle','App/MarketData/Provider/gmx_provider.js','Source de données distincte de l’exécution GMX.'],
+['hyper','Hyperliquid API','provider',145,986,'DEX · REST','App/MarketData/Provider/hyperliquid_provider.js','Provider du marché Hyperliquid.'],
+['dex','DEX Screener API','provider',145,1054,'DEX agrégateur','App/MarketData/Provider/dexscreener_provider.js','Données des pools et paires DEX.'],
+['coingecko','CoinGecko API','provider',145,1122,'référentiel','App/MarketData/Provider/coingecko_provider.js','Référentiel d’actifs et données financières.'],
+['defillama','DeFiLlama API','provider',145,1190,'DeFi / TVL','App/MarketData/Provider/defillama_provider.js','Données financières DeFi, hors cascade CEX.']
+];
+const links=[
+['supervisor','core','logical','Gouvernance visuelle, non un socket direct',1,'structure'],
+['ui','core','https','UI vers Core',1,'structure'],
+['auth','core','ipc','Sessions Auth21 / CSRF',1,'admin'],
+['core','router','logical','Contrôle et dépendances du Router',1,'structure'],
+['router','fwrouter','firewall','Protection du routage',1,'structure'],
+['md','fwdata','firewall','Collecte inspectée',1,'market'],
+['fwdata','router','cp','Distribution CP/1 validée',1,'market'],
+['router','fund','cp','Service Fundamental',0,'market'],
+['router','indicator','cp','Service Indicator',0,'market'],
+['router','liquidity','cp','Service Liquidity',0,'market'],
+['router','strategy','cp','Intentions Strategy',0,'trade'],
+['router','risk','cp','RiskGate',0,'trade'],
+['router','portfolio','cp','Événements Portfolio',0,'trade'],
+['router','fwtrade','firewall','Chemin obligatoire vers Trading',1,'trade'],
+['fwtrade','trading','cp','Forward signé Firewall',1,'trade'],
+['risk','fwtrade','firewall','Autorisation risque contrôlée',0,'trade'],
+['trading','router','cp','Événement Trading vers Portfolio',0,'trade'],
+['md','micro','logical','Sous-module intégré',0,'market'],
+['md','marketstore','logical','Persistance collecteur',0,'market'],
+['fund','news','logical','Sous-module nouvelles',0,'market'],
+['fund','calendar','https','Calendriers et FedWatch',0,'market'],
+['core','vault','ipc','Coffre sécurisé / ticket signé',0,'admin'],
+['vault','trading','ipc','Ticket opaque borné',0,'admin'],
+['trading','ledger','logical','État P4 et audit P5',0,'admin'],
+['trading','binexec','logical','Executor Binance',0,'trade'],
+['trading','okxexec','logical','Executor OKX',0,'trade'],
+['trading','krakenexec','logical','Executor Kraken',0,'trade'],
+['trading','gmxexec','logical','Executor GMX',0,'trade'],
+['caddy','ui','optional','Reverse proxy envisagé, non déployé',0,'admin'],
+...['binance','okx','kraken','bybit','gmx','hyper','dex','coingecko','defillama'].map(id=>[id,'md','https','API '+id+' → collector (source parallèle)',0,'market'])
+];
+const palette={cp:'#51d6f0',firewall:'#eeb276',https:'#bd9dff',ipc:'#ef8ba8',logical:'#78d9ad',optional:'#6d869a'};
+const tours={
+data:{title:'Circuit de marché · sources parallèles',text:'Binance, OKX et les autres providers alimentent individuellement un collecteur unique. Le Firewall Data est un péage entre le collecteur et le Router, pas un Engine.',ids:['binance','okx','kraken','md','fwdata','router','indicator','liquidity'],pairs:[['binance','md'],['okx','md'],['kraken','md'],['md','fwdata'],['fwdata','router'],['router','indicator'],['router','liquidity']]},
+order:{title:'Circuit d’une intention de trading',text:'L’intention Strategy requiert RiskGate. L’opération mutante passe obligatoirement par Firewall puis Trading. Les ordres réels sont désactivés.',ids:['strategy','router','risk','fwtrade','trading','binexec','portfolio'],pairs:[['router','strategy'],['router','risk'],['risk','fwtrade'],['router','fwtrade'],['fwtrade','trading'],['trading','binexec'],['trading','router'],['router','portfolio']]},
+auth:{title:'Commande ADMIN P3/P4',text:'ADMIN Auth21 → Core → Firewall Trading → Engine. Le contrôle de P4 est intégré en DEV ; l’état P3 READY n’autorise pas LIVE.',ids:['ui','auth','core','router','fwtrade','trading','ledger'],pairs:[['ui','core'],['auth','core'],['core','router'],['router','fwtrade'],['fwtrade','trading'],['trading','ledger']]},
+news:{title:'Source macro FED / CME',text:'Les annonces proviennent des modules du Fundamental Engine, sont publiées via CP/1 et peuvent être annotées dans ChartViewer.',ids:['calendar','fund','news','router','supervisor'],pairs:[['fund','calendar'],['fund','news'],['router','fund'],['core','router'],['supervisor','core']]}
+};
+const lookup=Object.fromEntries(data.map(n=>[n[0],n]));
+// Every satellite below is grounded in a real file from commit 8caae37.
+// Each Engine remains an independent superblock (no Engine is merged with another).
+const groupSpecs=[
+ ['gcore','Core Server','core',960,230,'server',['core','ui','auth','vault'],[
+  ['UI Gateway','App/UI/Gateway/ui_service.js','globe'],['Auth21 / Sessions','App/Core/Clients/auth21_trading_admin_bridge.js','lock-keyhole'],['Coffre / Tickets','Documentation/Trading/ACCOUNT_ROUTING_2.5.3.md','database']]],
+ ['grouter','Router Switch CP/1','router',960,372,'network',['router'],[
+  ['Protocol Registry','App/Core/Communication/protocol_registry_v2.js','route'],['Process Registry','App/Core/ProcessRegistry/manifests/router.json','layers'],['Router / Dispatcher','App/Core/Router/router.js','workflow']]],
+ ['gfirewall','Firewall System','firewall',960,536,'shield-check',['fwdata','fwrouter','fwtrade'],[
+  ['Data Firewall','App/Core/Firewall/Protection/market_data_firewall.js','shield'],['Router Firewall','App/Core/ProcessRegistry/manifests/firewall.json','network'],['Trading Firewall','App/Core/Firewall/Protection/trading_firewall.js','shield-check']]],
+ ['gmd','Market Data Collector','engine',435,747,'activity',['md','micro','marketstore'],[
+  ['Microstructure','App/MarketData/Collectors/microstructure_collector.js','chart-no-axes-combined'],['API Request Broker','App/MarketData/Orchestrator/request_broker.js','network'],['Market Cache','App/MarketData/Cache/market_cache.js','database']]],
+ ['gfund','Fundamental Engine','engine',730,747,'newspaper',['fund','news','calendar'],[
+  ['News Collector','App/Fundamental/Engine/collector.js','rss'],['Calendar / Event Parser','App/Fundamental/Engine/event_engine.js','calendar-clock'],['AI Synthesis / Translation','App/Fundamental/Engine/translation_service.js','brain-circuit']]],
+ ['gindicator','Indicator Engine','engine',1025,747,'chart-no-axes-combined',['indicator'],[
+  ['Indicator Language','App/Indicators/Engine/indicator_language.js','workflow'],['Indicator Registry','App/Indicators/Engine/indicator_registry.js','layers'],['Compute Kernel','App/Indicators/Engine/user_compute.js','cpu']]],
+ ['gstrategy','Strategy Engine','engine',1320,747,'brain-circuit',['strategy'],[
+  ['Strategy Evaluator','App/Strategy/Engine/evaluate_strategy.js','activity'],['Strategy Registry','App/Strategy/Engine/strategy_registry_v2.js','layers'],['Strategy Core','App/Strategy/Engine/strategy_v2_core.js','workflow']]],
+ ['grisk','Risk Engine / Gate','engine',435,944,'shield-alert',['risk'],[
+  ['R1 Policies','App/Risk/Engine/risk_r1_modules.js','shield'],['R2 Policies','App/Risk/Engine/risk_r2_modules.js','shield-check'],['Risk Gate','App/Risk/Engine/risk_gate.js','lock-keyhole']]],
+ ['gliquidity','Liquidity Engine','engine',730,944,'chart-line',['liquidity'],[
+  ['Liquidity Metrics','App/Liquidity/Engine/liquidity_metrics.js','chart-no-axes-combined'],['Liquidations Buffer','App/Liquidity/Cache/liquidation_buffer.js','database'],['Market Data Client','App/Liquidity/Provider/market_data_provider.js','network']]],
+ ['gtrading','Trading Engine','engine',1025,944,'cpu',['trading','ledger','binexec','okxexec','krakenexec','gmxexec'],[
+  ['Trading ADMIN Ledger','App/services/trading-engine/trading_admin_ledger_v2.js','database'],['Account Routing','App/services/trading-engine/account-routing.js','route'],['Broker Executors','App/services/trading-engine/executor_catalog.json','blocks']]],
+ ['gportfolio','Portfolio Engine','engine',1320,944,'chart-no-axes-combined',['portfolio'],[
+  ['Portfolio Store','App/Portfolio/Engine/portfolio_store.js','database'],['Portfolio Runtime','App/Portfolio/Engine/portfolio_engine.js','cpu'],['Owner Portfolio','App/Portfolio/Engine/owner_portfolio.js','users-round']]]
+];
+const groupLookup=Object.fromEntries(groupSpecs.map(g=>[g[0],g]));
+const childGroup=Object.fromEntries(groupSpecs.flatMap(g=>g[6].map(id=>[id,g[0]])));
+let level='macro',expandedGroup='';
+function iconMarkup(name){return '<svg class="svgicon" aria-hidden="true"><use href="icons.svg#i-'+name+'"></use></svg>';}
+function groupOf(id){return childGroup[id]||id;}
+function groupNode(id){const g=groupLookup[id];return g?[g[0],g[1],g[2],g[3],g[4]]:lookup[id];}
+const view=document.getElementById('view'),world=document.getElementById('world'),blocks=document.getElementById('blocks'),wires=document.getElementById('wires'),defs=document.getElementById('defs');
+let mode='structure',chosen='',tour='',zoom=1,dx=20,dy=10,drag=null,fullscreen=false;
+const $=id=>document.getElementById(id);
+function element(tag,attrs,parent,ns){const e=ns?document.createElementNS('http://www.w3.org/2000/svg',tag):document.createElement(tag);Object.keys(attrs).forEach(k=>{if(k==='text')e.textContent=attrs[k];else e.setAttribute(k,attrs[k]);});if(parent)parent.appendChild(e);return e;}
+function mount(){world.dataset.level=level;data.forEach(n=>{const b=element('button',{type:'button','class':'block'+(['supervisor','core','router'].includes(n[0])?' main':'')+(n[0]==='caddy'?' optional':''),'data-kind':n[2],style:'left:'+n[3]+'px;top:'+n[4]+'px','data-id':n[0],title:n[7],'aria-label':n[1]+', '+TYPE[n[2]][0]},blocks);const iconName=n[2]==='provider'?(n[0]==='binance'||n[0]==='okx'||n[0]==='gmx'?'binance'===n[0]?'binance':n[0]==='okx'?'okx':'globe':'globe'):n[2]==='engine'?'cpu':n[2]==='firewall'?'shield':n[2]==='storage'?'database':n[2]==='identity'?'lock-keyhole':'server';const g=element('span',{'class':'glyph'},b);g.innerHTML=iconMarkup(iconName);const box=element('span',{},b);element('strong',{text:n[1]},box);element('small',{text:n[5]},box);b.addEventListener('click',()=>{chosen=n[0];tour='';render();showNode(n);centerOn(n[3],n[4],.94);});});groupSpecs.forEach(g=>{const b=element('div',{'class':'superblock','data-type':g[2],'data-group':g[0],style:'left:'+g[3]+'px;top:'+g[4]+'px',role:'button',tabindex:'0','aria-expanded':'false'},$('superblocks'));b.innerHTML='<div class="mainline"><span class="symbol">'+iconMarkup(g[5])+'</span><span><strong>'+g[1]+'</strong><small>'+g[2].toUpperCase()+' · '+g[7].length+' satellites</small></span><span class="counter">+'+g[7].length+'</span></div><div class="subintro">Cliquer pour inspecter les modules internes</div>';const list=element('div',{'class':'satellites'},b);g[7].forEach((sat,i)=>{const item=element('button',{type:'button','class':'satellite',title:sat[1]},list);item.innerHTML=iconMarkup(sat[2])+'<span>'+sat[0]+'</span><em>LOCAL</em>';item.onclick=e=>{e.stopPropagation();showSatellite(g,sat);};});const open=()=>{expandedGroup=expandedGroup===g[0]?'':g[0];chosen=g[0];tour='';render();showGroup(g);centerOn(g[3],g[4],.95)};b.addEventListener('click',open);b.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open();}});});}
+function curve(a,b){const x=a[3],y=a[4],X=b[3],Y=b[4],vx=X-x,vy=Y-y;if(Math.abs(vx)<48){const s=vy>=0?1:-1;return 'M'+x+' '+(y+s*39)+' V'+(Y-s*39);}if(Math.abs(vy)<82){const s=vx>0?1:-1;const mid=(x+X)/2;return 'M'+(x+s*102)+' '+y+' H'+mid+' V'+Y+' H'+(X-s*102);}if(Math.abs(vx)>620){const s=vx>0?1:-1;return 'M'+(x+s*102)+' '+y+' H'+((x+X)/2)+' V'+Y+' H'+(X-s*102);}const s=vy>0?1:-1,mid=(y+Y)/2;return 'M'+x+' '+(y+s*38)+' V'+mid+' H'+X+' V'+(Y-s*38);}
+function active(l){if(chosen&&level==='macro'&&groupLookup[chosen])return groupOf(l[0])===chosen||groupOf(l[1])===chosen;if(tour)return tours[tour].pairs.some(p=>p[0]===l[0]&&p[1]===l[1]);if(chosen)return l[0]===chosen||l[1]===chosen;if(mode==='all')return true;if(mode==='structure')return !!l[4];return l[5]===mode;}
+function drawRoute(d,type,label,strong){
+ const p=element('path',{d,stroke:palette[type],'stroke-width':strong?'3.1':'2','stroke-opacity':strong?'.94':'.6','stroke-dasharray':type==='logical'?'6 5':type==='optional'?'3 6':'none',fill:'none'},wires,true);
+ element('title',{text:label},p,true);
+ return p;
+}
+// Les BrokerAPI sont des sources parallèles : on les raccorde au bus latéral,
+// puis une SEULE branche entre dans le collecteur Market Data.
+function drawProviderBus(providerLinks,showOverview){
+ if(!providerLinks.length&&!showOverview)return;
+ const sourceYs=providerLinks.map(l=>lookup[l[0]][4]);
+ const upper=sourceYs.length?Math.min(690,...sourceYs):646,lower=sourceYs.length?Math.max(690,...sourceYs):1190;
+ const spine=drawRoute('M316 '+upper+' V'+lower,'https','Tronc d’agrégation visuel — sources indépendantes',!showOverview);
+ if(showOverview){drawRoute('M316 690 H354','https','BrokerAPI → collecteur unique',false);return;}
+ providerLinks.forEach(l=>{const n=lookup[l[0]],y=n[4];drawRoute('M244 '+y+' H316','https',n[1]+' → agrégation Market Data',true);});
+ const arrow=drawRoute('M316 690 H354','https','Entrée commune de Market Data Collector',true);
+ arrow.setAttribute('marker-end','url(#m-https)');
+}
+function routeLabel(path,label,i,kind){
+ const id='route-'+i;path.setAttribute('id',id);
+ const t=element('text',{'class':'route-text','text-anchor':'middle',dy:'-5'},wires,true);
+ const tp=element('textPath',{href:'#'+id,startOffset:'50%',text:label.length>36?label.slice(0,34)+'…':label},t,true);
+}
+function drawMacroRoute(aId,bId,kind,title,i){
+ const a=groupNode(aId),b=groupNode(bId);if(!a||!b)return;
+ let path=curve(a,b);
+ const p=drawRoute(path,kind,title,!!chosen||!!tour);
+ p.setAttribute('marker-end','url(#m-'+kind+')');
+ routeLabel(p,title,i,kind);
+}
+function render(){
+ world.dataset.level=level;wires.replaceChildren();defs.replaceChildren();
+ Object.keys(palette).forEach(k=>{
+  const m=element('marker',{id:'m-'+k,viewBox:'0 0 10 10',refX:'9',refY:'5',markerWidth:'5',markerHeight:'5',orient:'auto'},defs,true);
+  element('path',{d:'M0 1 L9 5 L0 9z',fill:palette[k]},m,true);
+ });
+ $('supermode').value=level;
+ document.querySelectorAll('.superblock').forEach(b=>{
+   const id=b.dataset.group,active=id===expandedGroup;
+   b.classList.toggle('expanded',active);
+   b.classList.toggle('fade',!!expandedGroup&&!active);
+   b.setAttribute('aria-expanded',String(active));
+ });
+ const current=links.filter(active);
+ if(level==='macro'){
+  const used=new Map();
+  current.forEach(e=>{
+    const a=groupOf(e[0]),b=groupOf(e[1]);
+    if(a===b)return;
+    const key=a+'|'+b+'|'+e[2];
+    if(!used.has(key))used.set(key,{a,b,kind:e[2],original:e,labels:[e[3]]});
+    else used.get(key).labels.push(e[3]);
+  });
+  // Router → service peers is a single CP/1 visual bus; it does not imply an unfiltered
+  // Market Data or Trading mutation path.
+  if(!chosen&&!tour&&mode==='structure'){
+   const bus=drawRoute('M960 416 V634 H1448 M435 634 V687 M730 634 V687 M1025 634 V687 M1320 634 V687','cp','CP/1 — services pairs via Router',false);
+   routeLabel(bus,'CP/1 · service registry',100,'cp');
+   const p=drawRoute('M314 646 V1190 M314 747 H333','https','Providers indépendants → Market Data',false);
+   routeLabel(p,'HTTPS/WSS · market feeds',101,'https');
+  }
+  let i=0;
+  for(const v of used.values()){
+    if(v.a==='supervisor'&&v.b==='gcore'){drawMacroRoute('supervisor','gcore','logical','Supervision · logique',i++);continue;}
+    if(v.a==='gcore'&&v.b==='grouter'){drawMacroRoute('gcore','grouter','logical','Contrôle · Core/CP1',i++);continue;}
+    if(v.a==='grouter'&&v.b==='gfirewall'){drawMacroRoute('grouter','gfirewall','firewall','GATE · Routage',i++);continue;}
+    if(v.a==='gfirewall'&&v.b==='grouter')continue; // réponse déjà couverte en macro
+    if(lookup[v.a]?.[2]==='provider'&&v.b==='gmd'){
+      if(chosen||tour||mode==='all'||mode==='market')drawRoute('M244 '+lookup[v.a][4]+' H314','https',v.a+' → collecteur',true);
+      continue;
+    }
+    const label=v.kind==='firewall'?'GATE · '+(v.a==='gmd'?'Data':v.b==='gtrading'?'Trading':'Contrôle'):v.kind==='cp'?'CP/1 · '+groupNode(v.b)?.[1]:v.kind==='https'?'HTTPS · Market Data':v.kind==='ipc'?'IPC · Auth21':'Module · '+groupNode(v.b)?.[1];
+    drawMacroRoute(v.a,v.b,v.kind,label,i++);
+  }
+  if(!chosen&&!tour&&mode==='structure')for(const id of ['gfund','gindicator','gstrategy','grisk','gliquidity','gportfolio']){
+    // service labels are shown along the shared bus, not as 6 crossing lines
+  }
+ }else{
+   const providers=current.filter(e=>lookup[e[0]][2]==='provider'&&e[1]==='md');
+   current.forEach((e,i)=>{
+      if(providers.includes(e))return;
+      const p=drawRoute(curve(lookup[e[0]],lookup[e[1]]),e[2],e[3],!!chosen||!!tour);
+      p.setAttribute('marker-end','url(#m-'+e[2]+')');
+      routeLabel(p,e[3],i,e[2]);
+   });
+   drawProviderBus(providers,!chosen&&!tour&&mode==='structure');
+ }
+ const focused=chosen?new Set([chosen,...current.flatMap(e=>[groupOf(e[0]),groupOf(e[1])])]):null;
+ document.querySelectorAll('.block').forEach(b=>b.classList.toggle('dim',!!chosen&&level==='components'&&groupOf(b.dataset.id)!==chosen));
+ document.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===mode&&!tour)));
+ document.querySelectorAll('[data-tour]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.tour===tour)));
+ $('mode').value=mode;$('route-count').textContent=current.length+' liaisons';
+}
+function showGroup(g){
+ $('title').textContent=g[1]+' · Superbloc';
+ $('description').textContent='Conteneur logique : '+g[7].length+' modules internes. Les satellites ne disposent pas automatiquement de privilèges ou de connexions réseau indépendants.';
+ $('tags').replaceChildren();['TYPE '+g[2].toUpperCase(),g[7].length+' satellites','V2.2 / Snapshot 2.5.3'].forEach(t=>element('span',{'class':'chip',text:t},$('tags')));
+ $('connections').replaceChildren();
+ links.filter(e=>groupOf(e[0])===g[0]&&groupOf(e[1])!==g[0]||groupOf(e[1])===g[0]&&groupOf(e[0])!==g[0])
+ .forEach(e=>element('div',{'class':'lineitem',text:(groupOf(e[0])===g[0]?'→ ':'← ')+(groupNode(groupOf(e[0])===g[0]?groupOf(e[1]):groupOf(e[0]))?.[1]||'?')+' · '+e[3]+' ['+e[2]+']'},$('connections')));
+ $('source').replaceChildren();g[7].forEach(x=>{const line=element('div',{'class':'lineitem'},$('source'));element('span',{text:x[0]+' · '},line);element('a',{href:ROOT+x[1],target:'_blank',rel:'noopener',text:x[1]},line);});
+}
+function showSatellite(g,sat){
+ $('title').textContent=sat[0];$('description').textContent='Satellite interne du superbloc '+g[1]+'. Les relations directes sont des liens internes de module : pas de route CP/1 supposée.';
+ $('tags').replaceChildren();['Satellite local','TYPE Module',g[1]].forEach(x=>element('span',{'class':'chip',text:x},$('tags')));
+ $('connections').textContent='Contenu dans '+g[1]+' ; explorer les contrats de son fichier source avant d’inférer des connexions supplémentaires.';
+ $('source').replaceChildren();element('a',{href:ROOT+sat[1],target:'_blank',rel:'noopener',text:sat[1]},$('source'));
+}
+function showNode(n){$('title').textContent=n[1];$('description').textContent=n[7];$('tags').replaceChildren();[TYPE[n[2]][0],n[5],'Code 2.5.3'].forEach(v=>element('span',{'class':'chip',text:v},$('tags')));const list=links.filter(l=>l[0]===n[0]||l[1]===n[0]);$('connections').replaceChildren();list.forEach(l=>element('div',{'class':'lineitem',text:(l[0]===n[0]?'→ '+lookup[l[1]][1]:'← '+lookup[l[0]][1])+' · '+l[3]+' ['+l[2]+']'},$('connections')));$('source').replaceChildren();const a=element('a',{href:ROOT+n[6],target:'_blank',rel:'noopener',text:n[6]},$('source'));}
+function showTour(k){const t=tours[k];$('title').textContent=t.title;$('description').textContent=t.text;$('tags').replaceChildren();element('span',{'class':'chip',text:t.ids.length+' composants éclairés'},$('tags'));$('connections').replaceChildren();t.pairs.forEach(p=>element('div',{'class':'lineitem',text:lookup[p[0]][1]+' → '+lookup[p[1]][1]},$('connections')));$('source').textContent='Sources : fichiers du dépôt liés aux blocs sélectionnés. Clique un bloc pour sa référence précise.';}
+function centerOn(x,y,z){
+ zoom=Math.max(.45,Math.min(1.25,z||zoom));
+ dx=Math.round(view.clientWidth/2-x*zoom);
+ dy=Math.round(view.clientHeight/2-y*zoom);
+ transform();
+}
+function focusIds(ids,z){
+ const found=ids.map(id=>lookup[id]).filter(Boolean);
+ if(!found.length)return;
+ const xs=found.map(n=>n[3]),ys=found.map(n=>n[4]);
+ const width=Math.max(...xs)-Math.min(...xs)+250,height=Math.max(...ys)-Math.min(...ys)+170;
+ const scale=Math.min(z||1.03,(view.clientWidth-24)/width,(view.clientHeight-24)/height);
+ centerOn((Math.max(...xs)+Math.min(...xs))/2,(Math.max(...ys)+Math.min(...ys))/2,Math.max(.45,scale));
+}
+function transform(){world.style.transform='translate('+dx+'px,'+dy+'px) scale('+zoom+')';$('value').textContent=Math.round(zoom*100)+'%';}
+function fit(){zoom=Math.max(.15,Math.min(1,(view.clientWidth-32)/1700,(view.clientHeight-32)/1320));dx=Math.max(8,(view.clientWidth-1700*zoom)/2);dy=Math.max(8,(view.clientHeight-1320*zoom)/2);transform();}
+function zoomTo(f){const z=Math.max(.28,Math.min(1.6,zoom*f)),cx=view.clientWidth/2,cy=view.clientHeight/2;dx=cx-(cx-dx)*z/zoom;dy=cy-(cy-dy)*z/zoom;zoom=z;transform();}
+function selectMode(k){
+ mode=k;chosen='';tour='';render();
+ if(k==='market')focusIds(['binance','kraken','md','fwdata','router'],.86);
+ else if(k==='trade')focusIds(['router','fwtrade','risk','trading','portfolio'],.91);
+ else if(k==='admin')focusIds(['ui','auth','core','router','fwtrade'],.97);
+ else if(k==='structure')focusIds(['supervisor','core','router','fwdata','fwtrade'],1.08);
+ else fit();
+}
+$('supermode').addEventListener('change',e=>{level=e.target.value;expandedGroup='';chosen='';tour='';render();fit();});
+document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>selectMode(b.dataset.mode)));
+document.querySelectorAll('[data-tour]').forEach(b=>b.addEventListener('click',()=>{
+ tour=b.dataset.tour;chosen='';mode=tour==='order'?'trade':tour==='auth'?'admin':'market';
+ render();showTour(tour);focusIds(tours[tour].ids,.99);
+}));
+$('mode').addEventListener('change',e=>selectMode(e.target.value));
+$('clear').addEventListener('click',()=>{
+ chosen='';tour='';mode='structure';render();
+ $('title').textContent='Sélectionne un bloc.';
+ $('description').textContent='Clique sur un composant ou choisis un parcours guidé.';
+ $('connections').textContent='Les connexions apparaîtront ici.';
+ $('source').textContent='Références disponibles sur chaque composant.';
+ $('find-block').value='';
+ focusIds(['supervisor','core','router','fwdata','fwtrade'],1.08);
+});
+$('plus').onclick=()=>zoomTo(1.2);
+$('minus').onclick=()=>zoomTo(1/1.2);
+$('fit').onclick=fit;
+$('focusmap').addEventListener('click',()=>{
+ fullscreen=!fullscreen;document.querySelector('.layout').classList.toggle('focus-map',fullscreen);
+ $('focusmap').setAttribute('aria-pressed',String(fullscreen));
+ $('focusmap').textContent=fullscreen?'✕ Fermer le plein espace':'⛶ Plein espace';
+ requestAnimationFrame(()=>{if(chosen){const n=lookup[chosen];centerOn(n[3],n[4],1.08);}
+ else if(tour)focusIds(tours[tour].ids,1.08);
+ else focusIds(['supervisor','core','router','fwdata','fwtrade'],1.08);});
+});
+const datalist=$('block-list');
+data.forEach(n=>element('option',{value:n[1]},datalist));
+function chooseSearch(){
+ const value=$('find-block').value.trim().toLocaleLowerCase('fr');
+ if(!value)return;
+ const n=data.find(n=>n[1].toLocaleLowerCase('fr')===value)||
+         data.find(n=>n[1].toLocaleLowerCase('fr').includes(value)||n[0].includes(value));
+ if(n){chosen=n[0];tour='';render();showNode(n);centerOn(n[3],n[4],1.08);}
+}
+$('find-block').addEventListener('change',chooseSearch);
+$('find-block').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();chooseSearch();}});
+view.addEventListener('pointerdown',e=>{if(e.target.closest('.block'))return;drag={x:e.clientX,y:e.clientY,dx,dy};view.setPointerCapture(e.pointerId);view.classList.add('panning');});view.addEventListener('pointermove',e=>{if(!drag)return;dx=drag.dx+e.clientX-drag.x;dy=drag.dy+e.clientY-drag.y;transform();});function end(){drag=null;view.classList.remove('panning');}view.addEventListener('pointerup',end);view.addEventListener('pointercancel',end);view.addEventListener('wheel',e=>{e.preventDefault();zoomTo(e.deltaY<0?1.12:1/1.12);}, {passive:false});view.addEventListener('keydown',e=>{if(e.key==='Escape')$('clear').click();});mount();render();requestAnimationFrame(()=>focusIds(['supervisor','core','router','fwdata','fwtrade'],1.08));
+})();
+</script></body></html>
