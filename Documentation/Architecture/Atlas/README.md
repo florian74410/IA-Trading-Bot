@@ -38,6 +38,22 @@ Providers → Market Data       Engines pairs    Trading Engine
 7. **Légende** : CP/1, Firewall, HTTPS/REST, Auth21/IPC signé, liaison logique en pointillés.
 8. **Sans fausse disponibilité** : Caddy est optionnel ; Trading LIVE et P5 réel ne sont pas déclarés actifs ; aucune télémétrie, clé ou endpoint privé n'est appelé.
 
+## Améliorations de lisibilité (itération V2.1)
+
+- **Vue initiale à taille lisible** : la carte est centrée sur l'axe Supervisor → Core → Router et les trois workers Firewall, plutôt que de réduire simultanément 36 composants sur un écran de 1280 × 800.
+- **Plein espace** : masque temporairement les panneaux latéraux pour donner toute la largeur au graphe, sans modifier l'application ni le site Atlas publié.
+- **Recherche de composants** : saisie avec suggestions, sélection et recentrage automatique d'un Engine, Firewall, module ou BrokerAPI.
+- **Cadrage par circuit** : les vues Marché, Trading, ADMIN et les parcours guidés déplacent la caméra sur la zone utile.
+- **Bus d'agrégation Market Data** : les neuf sources publiques sont disposées dans une colonne unique, avec des petits segments parallèles qui rejoignent un même tronc. Cette géométrie est une **simplification graphique**, pas un nouveau broker ni un protocole réseau inventé.
+- **Bus CP/1 schématique** : en vue globale, le raccordement logique des Engines pairs est dessiné comme un tronc, afin de limiter la superposition des 36+ connexions.
+- **Inspection de proximité** : un clic ne rend visibles que les connexions du bloc, et l'inspecteur indique leurs types. Le survol donne sa description. Les liens sources renvoient aux fichiers du snapshot `8caae37`.
+- **« Ajuster »** reste disponible pour obtenir une vue d'ensemble, y compris à faible largeur ; cette vue panoramique peut être moins lisible et sert à la navigation, pas à la lecture détaillée.
+- **Un test GitHub Actions** contrôle les éléments de navigation et garantit que les API ne sont pas présentées comme une chaîne fictive.
+
+### Audit de cohérence du snapshot
+
+Les **36 références de fichiers associées aux blocs ont été comparées à l'arbre Git du commit `8caae37ac25ffbd72c25f52ca4eeab21ee10aa8b`** et correspondent à des chemins existants. Cela ne garantit pas qu'un service soit actuellement démarré ; cette carte ne fournit pas de télémétrie live.
+
 ## Interactions
 
 - Navigation par type de flux : général, marché, trading, ADMIN ou audit.
