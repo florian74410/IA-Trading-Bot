@@ -1,0 +1,29 @@
+name: Architecture Atlas V2 prototype validation
+on:
+  push:
+    branches:
+      - proposal/architecture-atlas-v2-hierarchical
+  pull_request:
+    branches:
+      - '2.5.3'
+    paths:
+      - 'Documentation/Architecture/Atlas/**'
+      - '.github/workflows/architecture-atlas-v2.yml'
+permissions:
+  contents: read
+jobs:
+  atlas-static:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax, source references and architecture invariants
+        run: |
+          node Documentation/Architecture/Atlas/check-atlas-v2.cjs
+          node Documentation/Architecture/Atlas/smoke-atlas-v2.cjs
+          node Documentation/Architecture/Atlas/check-atlas-v2-2.cjs
+          node Documentation/Architecture/Atlas/smoke-atlas-v2-2.cjs
+          node Documentation/Architecture/Atlas/check-project-isolation.cjs
