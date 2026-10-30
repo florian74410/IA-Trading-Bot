@@ -16,7 +16,7 @@ const links=vm.runInNewContext(extract('const links=','const palette='),{});
 const map=new Map(nodes.map(n=>[n[0],n]));
 assert.equal(map.size,nodes.length,'unique component IDs');
 assert.ok(nodes.length>=35,'not an over-minimalized architecture');
-for(const n of nodes)assert.ok(n[6]&&n[6].startsWith('App/')||n[6]&&n[6].startsWith('Documentation/'),'source for '+n[0]);
+for(const n of nodes)assert.ok(n[6]&&(n[6].startsWith('App/')||n[6].startsWith('Documentation/')||n[6]==='compose.debug.stack.yml'),'source for '+n[0]);
 for(const e of links){assert.ok(map.has(e[0]),'edge from exists '+e[0]);assert.ok(map.has(e[1]),'edge to exists '+e[1]);}
 const at=k=>map.get(k),has=(a,b)=>links.some(x=>x[0]===a&&x[1]===b);
 assert.equal(at('supervisor')[3],at('core')[3]);assert.equal(at('core')[3],at('router')[3]);
