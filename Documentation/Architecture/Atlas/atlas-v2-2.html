@@ -73,8 +73,6 @@ Trademarks remain with their owners. No endorsement or partnership is implied.
 .superblock .satellite svg{width:14px;height:14px;flex:none;color:var(--accent)}
 .superblock .satellite em{font:9px ui-monospace,monospace;color:#789caf;margin-left:auto;font-style:normal}
 .superblock.fade{opacity:.5}
-.nav[href]{display:block;text-decoration:none}
-.nav[href] svg{display:inline-block;vertical-align:middle;margin-right:4px}
 
 .route-text{font:10.7px ui-monospace,monospace;fill:#d7eafa;paint-order:stroke;stroke:#071522;stroke-width:4.5px;stroke-linejoin:round;pointer-events:none}
 .svgicon{width:20px;height:20px;vertical-align:middle}
@@ -196,41 +194,13 @@ Trademarks remain with their owners. No endorsement or partnership is implied.
 </symbol>
 
 
-<symbol id="i-hard-drive" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-  <path d="M10 16h.01" />
-  <path d="M2.212 11.577a2 2 0 0 0-.212.896V18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-5.527a2 2 0 0 0-.212-.896L18.55 5.11A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" />
-  <path d="M21.946 12.013H2.054" />
-  <path d="M6 16h.01" />
-</symbol>
-<symbol id="i-memory-stick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-  <path d="M12 12v-2" />
-  <path d="M12 18v-2" />
-  <path d="M16 12v-2" />
-  <path d="M16 18v-2" />
-  <path d="M2 11h1.5" />
-  <path d="M20 18v-2" />
-  <path d="M20.5 11H22" />
-  <path d="M4 18v-2" />
-  <path d="M8 12v-2" />
-  <path d="M8 18v-2" />
-  <rect x="2" y="6" width="20" height="10" rx="2" />
-</symbol>
-<symbol id="i-circuit-board" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-  <rect width="18" height="18" x="3" y="3" rx="2" />
-  <path d="M11 9h4a2 2 0 0 0 2-2V3" />
-  <circle cx="9" cy="9" r="2" />
-  <path d="M7 21v-4a2 2 0 0 1 2-2h4" />
-  <circle cx="15" cy="15" r="2" />
-</symbol>
+
 <symbol id="i-monitor" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
   <rect width="20" height="14" x="2" y="3" rx="2" />
   <line x1="8" x2="16" y1="21" y2="21" />
   <line x1="12" x2="12" y1="17" y2="21" />
 </symbol>
-<symbol id="i-fan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-  <path d="M10.827 16.379a6.082 6.082 0 0 1-8.618-7.002l5.412 1.45a6.082 6.082 0 0 1 7.002-8.618l-1.45 5.412a6.082 6.082 0 0 1 8.618 7.002l-5.412-1.45a6.082 6.082 0 0 1-7.002 8.618l1.45-5.412Z" />
-  <path d="M12 12v.01" />
-</symbol>
+
 <symbol id="i-power" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
   <path d="M12 2v10" />
   <path d="M18.4 6.6a9 9 0 1 1-12.77.04" />
@@ -443,7 +413,7 @@ Trademarks remain with their owners. No endorsement or partnership is implied.
 <nav class="left" aria-label="Navigation Architecture Atlas"><div class="logo">◈ IA-TB <span>ARCHITECTURE ATLAS V2.2</span></div><div class="section">Vues du diagramme</div>
 <button class="nav" data-mode="structure" aria-pressed="true">◈ Vue hiérarchique</button><button class="nav" data-mode="market">◉ Market Data & APIs</button><button class="nav" data-mode="trade">⚡ Trading & sécurité</button><button class="nav" data-mode="admin">◆ Autorisations ADMIN</button><button class="nav" data-mode="all">☷ Tous les liens (audit)</button>
 <div class="section">Parcours guidés</div><button class="nav" data-tour="data">01 · Données de marché</button><button class="nav" data-tour="order">02 · Intention d'ordre</button><button class="nav" data-tour="auth">03 · Administration P3/P4</button><button class="nav" data-tour="news">04 · Événement FED / CME</button>
-<div class="section">AUTRES OUTILS</div><a class="nav" href="http://127.0.0.1:8765/?page=configurator" target="_blank" rel="noopener" title="Outil local Hardware Lab : nécessite un serveur actif sur 127.0.0.1:8765"><svg class="svgicon"><use href="#i-circuit-board"></use></svg> Configurateur PC ↗</a><div class="help"><strong>Étages = responsabilités</strong><p>Horizontal : composants pairs dans une même couche logique. Vertical : orchestration ou contrôles supérieurs.</p><p>Le niveau graphique <strong>n'accorde aucun privilège réel</strong> : ceux-ci dépendent d'Auth21, de RiskGate et des Firewalls.</p><p>Les lignes sont volontairement réduites en vue globale. Clique un bloc pour isoler ses connexions.</p></div></nav>
+<div class="help"><strong>Étages = responsabilités</strong><p>Horizontal : composants pairs dans une même couche logique. Vertical : orchestration ou contrôles supérieurs.</p><p>Le niveau graphique <strong>n'accorde aucun privilège réel</strong> : ceux-ci dépendent d'Auth21, de RiskGate et des Firewalls.</p><p>Les lignes sont volontairement réduites en vue globale. Clique un bloc pour isoler ses connexions.</p></div></nav>
 <main class="center"><div class="head"><div><h1>Le système. Ses étages. Ses connexions.</h1><p>Superblocs hiérarchiques · IA-TB 2.5.3 DEV · snapshot du code</p></div><span class="pill">● LIVE OFF</span></div>
 <div class="tools"><label for="supermode">Niveau</label><select id="supermode"><option value="macro">Superblocs</option><option value="components">Composants</option></select><label for="mode">Liaisons</label><select id="mode" aria-label="Couche de connexions"><option value="structure">Structure</option><option value="market">Marchés</option><option value="trade">Trading</option><option value="admin">ADMIN</option><option value="all">Toutes (audit)</option></select><input id="find-block" type="search" list="block-list" placeholder="Rechercher un bloc…" autocomplete="off" aria-label="Rechercher un composant"><datalist id="block-list"></datalist><button id="clear">Effacer</button><span id="route-count" class="route-count" aria-live="polite"></span><span class="spacer"></span><button id="focusmap" aria-pressed="false" title="Élargir la carte et masquer les panneaux">⛶ Plein espace</button><button id="minus" aria-label="Dézoomer">−</button><output id="value">100%</output><button id="plus" aria-label="Zoomer">+</button><button id="fit">Ajuster</button></div>
 <div class="view" id="view"><div class="world" id="world">
