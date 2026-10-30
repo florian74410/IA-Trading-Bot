@@ -57,6 +57,9 @@
 .superblock .satellite svg{width:14px;height:14px;flex:none;color:var(--accent)}
 .superblock .satellite em{font:9px ui-monospace,monospace;color:#789caf;margin-left:auto;font-style:normal}
 .superblock.fade{opacity:.5}
+.nav[href]{display:block;text-decoration:none}
+.nav[href] svg{display:inline-block;vertical-align:middle;margin-right:4px}
+
 .route-text{font:10.7px ui-monospace,monospace;fill:#d7eafa;paint-order:stroke;stroke:#071522;stroke-width:4.5px;stroke-linejoin:round;pointer-events:none}
 .svgicon{width:20px;height:20px;vertical-align:middle}
 .block .glyph{display:grid;place-items:center}
@@ -70,7 +73,7 @@
 <nav class="left" aria-label="Navigation Architecture Atlas"><div class="logo">◈ IA-TB <span>ARCHITECTURE ATLAS V2.2</span></div><div class="section">Vues du diagramme</div>
 <button class="nav" data-mode="structure" aria-pressed="true">◈ Vue hiérarchique</button><button class="nav" data-mode="market">◉ Market Data & APIs</button><button class="nav" data-mode="trade">⚡ Trading & sécurité</button><button class="nav" data-mode="admin">◆ Autorisations ADMIN</button><button class="nav" data-mode="all">☷ Tous les liens (audit)</button>
 <div class="section">Parcours guidés</div><button class="nav" data-tour="data">01 · Données de marché</button><button class="nav" data-tour="order">02 · Intention d'ordre</button><button class="nav" data-tour="auth">03 · Administration P3/P4</button><button class="nav" data-tour="news">04 · Événement FED / CME</button>
-<div class="help"><strong>Étages = responsabilités</strong><p>Horizontal : composants pairs dans une même couche logique. Vertical : orchestration ou contrôles supérieurs.</p><p>Le niveau graphique <strong>n'accorde aucun privilège réel</strong> : ceux-ci dépendent d'Auth21, de RiskGate et des Firewalls.</p><p>Les lignes sont volontairement réduites en vue globale. Clique un bloc pour isoler ses connexions.</p></div></nav>
+<div class="section">AUTRES OUTILS</div><a class="nav" href="http://127.0.0.1:8765/?page=configurator" target="_blank" rel="noopener" title="Outil local Hardware Lab : nécessite un serveur actif sur 127.0.0.1:8765"><svg class="svgicon"><use href="icons.svg#i-circuit-board"></use></svg> Configurateur PC ↗</a><div class="help"><strong>Étages = responsabilités</strong><p>Horizontal : composants pairs dans une même couche logique. Vertical : orchestration ou contrôles supérieurs.</p><p>Le niveau graphique <strong>n'accorde aucun privilège réel</strong> : ceux-ci dépendent d'Auth21, de RiskGate et des Firewalls.</p><p>Les lignes sont volontairement réduites en vue globale. Clique un bloc pour isoler ses connexions.</p></div></nav>
 <main class="center"><div class="head"><div><h1>Le système. Ses étages. Ses connexions.</h1><p>Superblocs hiérarchiques · IA-TB 2.5.3 DEV · snapshot du code</p></div><span class="pill">● LIVE OFF</span></div>
 <div class="tools"><label for="supermode">Niveau</label><select id="supermode"><option value="macro">Superblocs</option><option value="components">Composants</option></select><label for="mode">Liaisons</label><select id="mode" aria-label="Couche de connexions"><option value="structure">Structure</option><option value="market">Marchés</option><option value="trade">Trading</option><option value="admin">ADMIN</option><option value="all">Toutes (audit)</option></select><input id="find-block" type="search" list="block-list" placeholder="Rechercher un bloc…" autocomplete="off" aria-label="Rechercher un composant"><datalist id="block-list"></datalist><button id="clear">Effacer</button><span id="route-count" class="route-count" aria-live="polite"></span><span class="spacer"></span><button id="focusmap" aria-pressed="false" title="Élargir la carte et masquer les panneaux">⛶ Plein espace</button><button id="minus" aria-label="Dézoomer">−</button><output id="value">100%</output><button id="plus" aria-label="Zoomer">+</button><button id="fit">Ajuster</button></div>
 <div class="view" id="view"><div class="world" id="world">
@@ -274,12 +277,13 @@ function render(){
     if(v.a==='grouter'&&v.b==='gfirewall'){drawMacroRoute('grouter','gfirewall','firewall','GATE · Routage',i++);continue;}
     if(v.a==='gfirewall'&&v.b==='grouter')continue; // réponse déjà couverte en macro
     if(lookup[v.a]?.[2]==='provider'&&v.b==='gmd'){
-      if(chosen||tour||mode==='all'||mode==='market')drawRoute('M244 '+lookup[v.a][4]+' H314','https',v.a+' → collecteur',true);
+      if(chosen||tour||mode==='all'||mode==='market'){const stub=drawRoute('M244 '+lookup[v.a][4]+' H314','https',v.a+' → collecteur',true);routeLabel(stub,'REST / WSS',1000+i++,'https');}
       continue;
     }
     const label=v.kind==='firewall'?'GATE · '+(v.a==='gmd'?'Data':v.b==='gtrading'?'Trading':'Contrôle'):v.kind==='cp'?'CP/1 · '+groupNode(v.b)?.[1]:v.kind==='https'?'HTTPS · Market Data':v.kind==='ipc'?'IPC · Auth21':'Module · '+groupNode(v.b)?.[1];
     drawMacroRoute(v.a,v.b,v.kind,label,i++);
   }
+  if((mode==='market'||mode==='all'||tour==='data')&&current.some(e=>lookup[e[0]][2]==='provider'&&e[1]==='md')){const spine=drawRoute('M314 646 V1190 M314 747 H313','https','Providers indépendants → Market Data',false);routeLabel(spine,'HTTPS/WSS · APIs',909,'https');}
   if(!chosen&&!tour&&mode==='structure')for(const id of ['gfund','gindicator','gstrategy','grisk','gliquidity','gportfolio']){
     // service labels are shown along the shared bus, not as 6 crossing lines
   }
