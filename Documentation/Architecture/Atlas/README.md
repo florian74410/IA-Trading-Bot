@@ -11,16 +11,16 @@ Cette itération conserve `atlas-v2.html` comme témoin V2.1 et ajoute une carte
 - **3 satellites par superbloc** : les modules représentés ont des références vers les sources vérifiées du snapshot 2.5.3, sans prétendre que chaque bibliothèque est un service CP/1.
 - **Clic sur superbloc** : déplie 3 satellites directement au sein du conteneur. Le clic sur un satellite renseigne l'inspecteur droit et son fichier source.
 - **Routes colorées et nommées** : les connexions comportent des libellés vectoriels `textPath` parallèles aux traits ; les neuf sources se raccordent à un tronc d'agrégation conceptuel, sans créer de cascade Binance → OKX.
-- **Icônes** : pack vectoriel SVG local (`icons.svg`, **61 glyphes**, dont logos Binance et OKX). Aucun CDN ou suivi utilisateur ; voir `ICONS_LICENSE.md`.
-- **Autres outils** : lien vers le configurateur PC local sur `http://127.0.0.1:8765/?page=configurator`. Il s'ouvre dans un autre onglet et nécessite le serveur Hardware Lab déjà démarré. Le Trading Engine ne dépend pas du Hardware Lab.
+- **Icônes** : pack vectoriel SVG local (`icons.svg`, **57 glyphes**, dont logos Binance et OKX). Aucun CDN ou suivi utilisateur ; voir `ICONS_LICENSE.md`.
 
 ### Tests V2.2
 
 ```bash
 node Documentation/Architecture/Atlas/check-atlas-v2-2.cjs
+node Documentation/Architecture/Atlas/check-project-isolation.cjs
 ```
 
-Le test inspecte le modèle, les types et hiérarchies, les 11 superblocs, les 24 satellites des 8 Engines, les péages de sécurité, les routes annotées et le pack d'icônes.
+Les tests inspectent le modèle, les types et hiérarchies, les 11 superblocs, les 24 satellites des 8 Engines, les péages de sécurité, les routes annotées et le pack d'icônes. Ils vérifient aussi que l'Atlas reste strictement dédié à IA-TB et ne contient aucune navigation vers d'autres projets.
 
 Ce prototype n'a pas encore été déployé dans le site ChatGPT « IA-TB · Architecture Atlas ». La PR est une proposition en brouillon, non fusionnée, sans modification des services financiers.
 
