@@ -1,5 +1,33 @@
 # Architecture Atlas V2 — proposition de diagramme hiérarchique
 
+## Architecture Atlas V2.2 — superblocs et satellites
+
+**Nouveau prototype : [atlas-v2-2.html](atlas-v2-2.html)**
+
+Cette itération conserve `atlas-v2.html` comme témoin V2.1 et ajoute une carte à deux niveaux :
+
+- **Superblocs** (vue par défaut) : 1 Core, 1 Router, 1 Firewall (3 workers internes) et **8 superblocs Engines autonomes**, avec les neuf BrokerAPI conservés en colonne externe.
+- **Composants** : retour au diagramme détaillé V2.1, avec les liaisons et inspecteurs existants.
+- **3 satellites par superbloc** : les modules représentés ont des références vers les sources vérifiées du snapshot 2.5.3, sans prétendre que chaque bibliothèque est un service CP/1.
+- **Clic sur superbloc** : déplie 3 satellites directement au sein du conteneur. Le clic sur un satellite renseigne l'inspecteur droit et son fichier source.
+- **Routes colorées et nommées** : les connexions comportent des libellés vectoriels `textPath` parallèles aux traits ; les neuf sources se raccordent à un tronc d'agrégation conceptuel, sans créer de cascade Binance → OKX.
+- **Icônes** : pack vectoriel SVG local (`icons.svg`, **61 glyphes**, dont logos Binance et OKX). Aucun CDN ou suivi utilisateur ; voir `ICONS_LICENSE.md`.
+- **Autres outils** : lien vers le configurateur PC local sur `http://127.0.0.1:8765/?page=configurator`. Il s'ouvre dans un autre onglet et nécessite le serveur Hardware Lab déjà démarré. Le Trading Engine ne dépend pas du Hardware Lab.
+
+### Tests V2.2
+
+```bash
+node Documentation/Architecture/Atlas/check-atlas-v2-2.cjs
+```
+
+Le test inspecte le modèle, les types et hiérarchies, les 11 superblocs, les 24 satellites des 8 Engines, les péages de sécurité, les routes annotées et le pack d'icônes.
+
+Ce prototype n'a pas encore été déployé dans le site ChatGPT « IA-TB · Architecture Atlas ». La PR est une proposition en brouillon, non fusionnée, sans modification des services financiers.
+
+---
+
+
+
 Prototype interactif **autonome, sans accès réseau ni dépendance externe** :
 
 - **[Ouvrir atlas-v2.html](atlas-v2.html)** en téléchargeant le fichier et en l'ouvrant dans Firefox/Chromium.
