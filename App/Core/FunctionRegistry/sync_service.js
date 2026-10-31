@@ -33,19 +33,24 @@ function start(options){
     return cb(err||Error(last.reason));
    }
    const imported=[],errors=[];
-   for(const [id,dir] of CLIENTS){
-    const file=path.join(root,dir,'FunctionRegistry','Functions.json');
-    try{
-     const raw=fs.readFileSync(file,'utf8');
-     if(Buffer.byteLength(raw)>1024*1024)throw Error('MANIFEST_TOO_LARGE');
-     const manifest=JSON.parse(raw);
-     if(manifest.engine_id!==id||!Array.isArray(manifest.functions)||manifest.functions.some(f=>f.default_privilege!=='DENY'))throw Error('MANIFEST_CONTRACT_INVALID');
-     imported.push(manager.sync(manifest,id));
-    }catch(e){errors.push({engine:id,error:e.message});}
+   let outstanding=CLIENTS.length;
+   function finish(){
+    if(--outstanding!==0)return;
+    busy=false;
+    last={ok:errors.length===0,imported,errors,timestamp:new Date().toISOString(),generation:manager.generation};
+    cb(errors.length?Error('REGISTRY_PARTIAL_SYNC'):null,last);
    }
-   busy=false;
-   last={ok:errors.length===0,imported,errors,timestamp:new Date().toISOString(),generation:manager.generation};
-   cb(errors.length?Error('REGISTRY_PARTIAL_SYNC'):null,last);
+   for(const [id] of CLIENTS){
+    routerGet('/communication/v1/functions/'+id,function(e,result){
+     try{
+      if(e||!result||result.ok===false||!result.manifest)throw e||Error('ENGINE_CATALOG_UNAVAILABLE');
+      const manifest=result.manifest;
+      if(manifest.engine_id!==id||!Array.isArray(manifest.functions)||manifest.functions.some(f=>f.default_privilege!=='DENY'))throw Error('MANIFEST_CONTRACT_INVALID');
+      imported.push(manager.sync(manifest,id));
+     }catch(error){errors.push({engine:id,error:String(error.message||error)});}
+     finish();
+    });
+   }
   });
  }
  const interval=setInterval(()=>reconcile(),Math.max(15000,+options.intervalMs||60000));
