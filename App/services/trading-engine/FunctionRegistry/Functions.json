@@ -1,0 +1,524 @@
+{
+  "schema_version": "2.6.0",
+  "engine_id": "trading",
+  "engine_version": "2.6.0",
+  "transport": "CP/1",
+  "source_protocol_registry": "App/Core/Communication/ProtocolRegistry/trading.json",
+  "functions": [
+    {
+      "id": "trading.health",
+      "engine": "trading",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 trading.health. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/trading.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "trading.capabilities",
+      "engine": "trading",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 trading.capabilities. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "exchange": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/trading.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "trading.account.positions",
+      "engine": "trading",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Read account positions through the selected exchange executor.",
+      "input": {
+        "type": "object",
+        "required": [
+          "exchange"
+        ],
+        "properties": {
+          "exchange": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "address": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "account": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "chain": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/trading.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "trading.account.orders",
+      "engine": "trading",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Read account orders through the selected exchange executor.",
+      "input": {
+        "type": "object",
+        "required": [
+          "exchange"
+        ],
+        "properties": {
+          "exchange": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "address": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "account": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "chain": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/trading.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "trading.account.balances",
+      "engine": "trading",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Read account balances through the selected exchange executor.",
+      "input": {
+        "type": "object",
+        "required": [
+          "exchange"
+        ],
+        "properties": {
+          "exchange": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "address": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "account": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "chain": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/trading.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "trading.execute",
+      "engine": "trading",
+      "type": "MUTATION",
+      "risk_level": "HIGH",
+      "hard_deny": false,
+      "description": "Commande CP/1 trading.execute. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [
+          "risk_approval_id",
+          "exchange",
+          "symbol",
+          "side"
+        ],
+        "properties": {
+          "risk_approval_id": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "exchange": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "market_type": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "symbol": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "side": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "order_type": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "quantity": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "quote_quantity": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "price": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "stop_price": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "leverage": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "reduce_only": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "time_in_force": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "client_order_id": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "position_side": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "chain": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "account": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "slippage_bps": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "metadata": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/trading.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": true
+    },
+    {
+      "id": "trading.cancel",
+      "engine": "trading",
+      "type": "MUTATION",
+      "risk_level": "HIGH",
+      "hard_deny": false,
+      "description": "Commande CP/1 trading.cancel. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [
+          "risk_approval_id",
+          "exchange",
+          "symbol"
+        ],
+        "properties": {
+          "risk_approval_id": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "exchange": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "market_type": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "symbol": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "exchange_order_id": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "client_order_id": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "chain": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "account": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "metadata": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/trading.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": true
+    },
+    {
+      "id": "trading.close_position",
+      "engine": "trading",
+      "type": "MUTATION",
+      "risk_level": "HIGH",
+      "hard_deny": false,
+      "description": "Commande CP/1 trading.close_position. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [
+          "risk_approval_id",
+          "exchange",
+          "symbol",
+          "position_side",
+          "quantity"
+        ],
+        "properties": {
+          "risk_approval_id": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "exchange": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "market_type": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "symbol": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "position_side": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "quantity": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "leverage": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "chain": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "account": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "slippage_bps": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "metadata": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/trading.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": true
+    },
+    {
+      "id": "trading.history",
+      "engine": "trading",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 trading.history. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "limit": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "since": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "exchange": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "symbol": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/trading.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "trading.admin.command",
+      "engine": "trading",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Authenticated ADMIN maintenance with durable emergency halt. P5 real broker mutations and recovery remain unqualified and disabled. Optional params are bound to the signed proof.",
+      "input": {
+        "type": "object",
+        "required": [
+          "command",
+          "command_id",
+          "timestamp",
+          "confirmed",
+          "proof"
+        ],
+        "properties": {
+          "command": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "command_id": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "timestamp": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "confirmed": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "proof": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "params": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/trading.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    }
+  ],
+  "verification_status": "PROTOCOL_DECLARED_UNVERIFIED_HANDLERS"
+}
