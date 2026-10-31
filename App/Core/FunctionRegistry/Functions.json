@@ -1,0 +1,9 @@
+{
+  "schema_version": "2.6.0",
+  "engine_id": "core",
+  "engine_version": "2.6.0",
+  "transport": "CP/1",
+  "source_protocol_registry": "App/Core/Communication/ProtocolRegistry/core.json",
+  "functions": [],
+  "verification_status": "PROTOCOL_DECLARED_UNVERIFIED_HANDLERS"
+}

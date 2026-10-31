@@ -1,0 +1,476 @@
+{
+  "schema_version": "2.6.0",
+  "engine_id": "risk",
+  "engine_version": "2.6.0",
+  "transport": "CP/1",
+  "source_protocol_registry": "App/Core/Communication/ProtocolRegistry/risk.json",
+  "functions": [
+    {
+      "id": "risk.list_capabilities",
+      "engine": "risk",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 risk.list_capabilities. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/risk.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "risk.position.analyze",
+      "engine": "risk",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 risk.position.analyze. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "symbol": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "timeframe": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "position": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "portfolio": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/risk.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "risk.portfolio.analyze",
+      "engine": "risk",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 risk.portfolio.analyze. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "symbol": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "timeframe": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "portfolio": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/risk.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "risk.strategy.analyze",
+      "engine": "risk",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 risk.strategy.analyze. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "symbol": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "timeframe": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "strategy": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "portfolio": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/risk.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "risk.snapshot",
+      "engine": "risk",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 risk.snapshot. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": true
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/risk.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "risk.settings.get",
+      "engine": "risk",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 risk.settings.get. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/risk.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "risk.settings.set",
+      "engine": "risk",
+      "type": "MUTATION",
+      "risk_level": "HIGH",
+      "hard_deny": false,
+      "description": "Commande CP/1 risk.settings.set. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": true
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/risk.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": true
+    },
+    {
+      "id": "risk.gate.evaluate",
+      "engine": "risk",
+      "type": "EVALUATION",
+      "risk_level": "MEDIUM",
+      "hard_deny": false,
+      "description": "Commande CP/1 risk.gate.evaluate. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "intent": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "schema": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "source": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "mode": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "exchange": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "market_type": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "marketType": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "symbol": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "action": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "side": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "orderType": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "order_type": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "size": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "quantity": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "quoteQuantity": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "quote_quantity": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "limitPrice": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "price": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "stopLoss": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "stop_loss": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "takeProfit": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "take_profit": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "leverage": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "reduceOnly": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "reduce_only": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "confidence": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "createdAt": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "metadata": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/risk.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "risk.gate.verify",
+      "engine": "risk",
+      "type": "EVALUATION",
+      "risk_level": "MEDIUM",
+      "hard_deny": false,
+      "description": "Commande CP/1 risk.gate.verify. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [
+          "risk_approval_id",
+          "intent"
+        ],
+        "properties": {
+          "risk_approval_id": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "intent": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "consume": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/risk.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "risk.r1.evaluate",
+      "engine": "risk",
+      "type": "EVALUATION",
+      "risk_level": "MEDIUM",
+      "hard_deny": false,
+      "description": "Commande CP/1 risk.r1.evaluate. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "intent": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "context": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/risk.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "risk.r2.evaluate",
+      "engine": "risk",
+      "type": "EVALUATION",
+      "risk_level": "MEDIUM",
+      "hard_deny": false,
+      "description": "Commande CP/1 risk.r2.evaluate. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "snapshot": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/risk.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "risk.r2.monitor",
+      "engine": "risk",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 risk.r2.monitor. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/risk.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    }
+  ],
+  "verification_status": "PROTOCOL_DECLARED_UNVERIFIED_HANDLERS"
+}
