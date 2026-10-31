@@ -53,9 +53,21 @@ function start(options){
    }
   });
  }
+ let changeSequence=0;
+ const changeTimer=setInterval(function(){
+  if(stopped||busy)return;
+  routerGet('/communication/v1/functions/changes?since='+changeSequence,function(e,result){
+   if(e||!result||result.ok!==true)return; // periodic retry stays active
+   if(Array.isArray(result.changes)&&result.changes.length){
+    // Do not trust the notification payload: pull all manifests via Router.
+    reconcile(function(err){if(!err)changeSequence=result.sequence;});
+   }else if(Number.isSafeInteger(result.sequence))changeSequence=result.sequence;
+  });
+ },Math.max(3000,+options.changePollMs||5000));
+ if(changeTimer.unref)changeTimer.unref();
  const interval=setInterval(()=>reconcile(),Math.max(15000,+options.intervalMs||60000));
  if(interval.unref)interval.unref();
  const startup=setImmediate(()=>reconcile());
- return {manager,reconcile,status:()=>last,stop(){stopped=true;clearInterval(interval);clearImmediate(startup);manager.close();}};
+ return {manager,reconcile,status:()=>last,stop(){stopped=true;clearInterval(interval);clearInterval(changeTimer);clearImmediate(startup);manager.close();}};
 }
 module.exports={start,CLIENTS};
