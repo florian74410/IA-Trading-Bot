@@ -42,9 +42,30 @@ Adapter.prototype.handleFunctionRegistry=function(req,res){
 Adapter.prototype.handle=function(req,res){var self=this;if(self.handleFunctionRegistry(req,res))return;if(req.method!=='POST')return false;var u=String(req.url||'').split('?')[0];if(u!==self.cpPath)return false;read(req,524288,function(er,raw){if(er)return send(res,413,{ok:false,error:er.message});var msg;try{msg=JSON.parse(raw.toString('utf8')||'{}');}catch(e){return send(res,400,{ok:false,error:'CP_JSON_INVALID'});}var token=String(req.headers['x-iatb-cp-token']||''),secret='';try{secret=CP.ensureSecret(self.root);}catch(e){}if(!CP.verifyToken(self.root,token))return send(res,403,{ok:false,error:'CP_AUTH_INVALID'});var sig=String(req.headers['x-iatb-cp-signature']||'');var expect=crypto.createHmac('sha256',secret).update(raw).digest('hex');if(!eq(sig,expect))return send(res,403,{ok:false,error:'CP_SIGNATURE_INVALID'});var v=CP.validateRequest(msg,self.allowed,Date.now());if(!v.ok)return send(res,400,{ok:false,error:v.errors[0],errors:v.errors});if(v.target!==self.id)return send(res,404,{ok:false,error:'CP_TARGET_INVALID'});if(process.env.IATB_AUTH_MODE==='authenticated'&&require('../Clients/UserManagement/operator_policy').permission(self.id,v.action))return send(res,403,{ok:false,error:'ADMIN_CAPABILITY_REQUIRED'});var fn=self.handlers[v.action];if(typeof fn!=='function')return send(res,400,CP.makeResponse(msg,'ERROR',{error:'CP_ACTION_HANDLER_MISSING'},{engine:self.id,action:v.action,schema:self.schema}));var started=Date.now(),done=false;function finish(err,data,status,warnings){if(done)return;done=true;if(err)return send(res,500,CP.makeResponse(msg,'ERROR',{error:String(err.message||err).slice(0,300)},{engine:self.id,action:v.action,schema:self.schema,duration_ms:Date.now()-started}));send(res,200,CP.makeResponse(msg,status||'OK',data==null?{}:data,{engine:self.id,action:v.action,schema:self.schema,duration_ms:Date.now()-started,warnings:warnings||[]}));}try{var r=fn(v.arguments||{},msg,finish);if(r&&typeof r.then==='function')r.then(function(x){finish(null,x);},finish);else if(r!==undefined)finish(null,r);}catch(e){finish(e);}});return true;};
 Adapter.prototype.registrationDescriptor=function(){return{id:this.id,label:this.label,host:'127.0.0.1',port:this.port,cpPath:this.cpPath,healthPath:this.healthPath,version:this.version,schemaVersion:this.schema,capabilities:this.actions,events:this.events};};
 Adapter.prototype.register=function(cb){this.client.register(this.registrationDescriptor(),function(e,o){if(cb)cb(!e,e,o);});};
-Adapter.prototype.maintainRegistration=function(opt){var self=this;if(this.registrationHandle)this.registrationHandle.stop();this.registrationHandle=this.client.maintainRegistration(this.registrationDescriptor(),Object.assign({},opt||{},{
+Adapter.prototype.maintainRegistration=function(opt){var self=this;this.startFunctionChangeWatch();if(this.registrationHandle)this.registrationHandle.stop();this.registrationHandle=this.client.maintainRegistration(this.registrationDescriptor(),Object.assign({},opt||{},{
  onResult:function(ok,e,o,state){if(opt&&typeof opt.onResult==='function')opt.onResult(ok,e,o,state);else if(!ok&&process.env.IATB_CP_REGISTER_LOG==='1')console.error(self.label+' CP register:',e&&e.message||'HTTP');}
 }));return this.registrationHandle;};
-Adapter.prototype.stopRegistration=function(){if(this.registrationHandle){this.registrationHandle.stop();this.registrationHandle=null;}};
+Adapter.prototype.startFunctionChangeWatch=function(){
+ if(process.env.IATB_FUNCTION_REGISTRY_SYNC_V26!=='1'||this._functionsWatch)return;
+ var fs=require('fs'),crypto=require('crypto'),path=require('path'),self=this;
+ var ids={core:'Core',router:'Core/Router',supervisor:'Supervisor',marketdata:'MarketData',
+ fundamental:'Fundamental',indicator:'Indicators',liquidity:'Liquidity',portfolio:'Portfolio',
+ risk:'Risk',strategy:'Strategy',trading:'services/trading-engine',firewall:'Core/Firewall'};
+ if(!ids[self.id])return;
+ var file=path.resolve(__dirname,'../..',ids[self.id],'FunctionRegistry','Functions.json');
+ var previous=null;
+ try{previous=crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');}catch(e){}
+ fs.watchFile(file,{interval:3000,persistent:false},function(){
+  var current;try{current=crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');}catch(e){return;}
+  if(current===previous)return;previous=current;
+  // Hint only; Router/Core will re-fetch catalog from the fixed Engine endpoint.
+  self.client.routerPost('/communication/v1/functions/changed',{engine:self.id},function(){});
+ });
+ self._functionsWatch=file;
+};
+Adapter.prototype.stopFunctionChangeWatch=function(){
+ if(this._functionsWatch){require('fs').unwatchFile(this._functionsWatch);this._functionsWatch=null;}
+};
+Adapter.prototype.stopRegistration=function(){if(this.registrationHandle){this.registrationHandle.stop();this.registrationHandle=null;}this.stopFunctionChangeWatch();};
 Adapter.prototype.publish=function(type,data,meta,cb){this.client.publish(this.id,type,data,meta,cb);};
 module.exports=Adapter;
