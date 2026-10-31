@@ -7,7 +7,7 @@
 const fs=require('fs'),path=require('path');
 const {FunctionRegistryManager}=require('./manager');
 const CLIENTS=[
- ['core','Core'],['router','Core/Router'],['supervisor','Supervisor'],
+ ['supervisor','Supervisor'],
  ['marketdata','MarketData'],['fundamental','Fundamental'],
  ['indicator','Indicators'],['liquidity','Liquidity'],['portfolio','Portfolio'],
  ['risk','Risk'],['strategy','Strategy'],['trading','services/trading-engine'],
