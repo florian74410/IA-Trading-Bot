@@ -1,0 +1,2304 @@
+{
+  "schema_version": "2.6.0",
+  "engine_id": "fundamental",
+  "engine_version": "2.6.0",
+  "transport": "CP/1",
+  "source_protocol_registry": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+  "functions": [
+    {
+      "id": "fundamental.health",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 fundamental.health. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.status",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 fundamental.status. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.capabilities",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 fundamental.capabilities. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.fedwatch.get",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 fundamental.fedwatch.get. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.fedwatch.history",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Read persisted FedWatch snapshot history.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "limit": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.calendar.cme",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 fundamental.calendar.cme. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.calendar.cme.expirations",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 fundamental.calendar.cme.expirations. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.calendar.fed",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 fundamental.calendar.fed. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.calendar.upcoming",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 fundamental.calendar.upcoming. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "days": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "country": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "impact": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "limit": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.news.search",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 fundamental.news.search. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "query": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "asset": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "category": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "source": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "feed": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "minGrade": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "minReliability": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "minImportance": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "since": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "until": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "sort": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "limit": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "lang": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.news.get",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 fundamental.news.get. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "id": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "newsId": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.events.search",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 fundamental.events.search. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "asset": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "status": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "limit": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.event.get",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 fundamental.event.get. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "eventId": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "id": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.event.evidence",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 fundamental.event.evidence. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "eventId": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "id": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.sources.search",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 fundamental.sources.search. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "query": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "domain": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "enabled": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "limit": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.collect",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 fundamental.collect. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "all": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "eventLimit": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.synthesis.news",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 fundamental.synthesis.news. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "newsIds": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "query": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "source": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "feed": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "since": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "limit": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "language": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "window": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.synthesis.event",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 fundamental.synthesis.event. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "eventId": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "event_id": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "language": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "window": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.synthesis.market",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 fundamental.synthesis.market. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "asset": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "query": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "since": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "limit": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "language": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "window": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.synthesis.history",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 fundamental.synthesis.history. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "eventId": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "event_id": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "scope": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "limit": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.logs.purge",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 fundamental.logs.purge. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.logs.stats",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 fundamental.logs.stats. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.logs.history",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 fundamental.logs.history. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "level": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "component": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "source": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "query": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "limit": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.logs.recent",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 fundamental.logs.recent. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "level": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "component": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "source": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "query": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "limit": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.summary",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 fundamental.summary. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.context",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 fundamental.context. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "query": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.sources",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 fundamental.sources. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "query": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "domain": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "enabled": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "limit": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.events",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 fundamental.events. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "limit": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "asset": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "status": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.get_state",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 fundamental.get_state. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.get_events",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 fundamental.get_events. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "asset": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "status": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "limit": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.get_sources",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 fundamental.get_sources. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "query": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "domain": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "enabled": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "limit": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.get_context",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 fundamental.get_context. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "query": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.get_evidence",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 fundamental.get_evidence. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "eventId": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "event_id": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.list_capabilities",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 fundamental.list_capabilities. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.latest_news",
+      "engine": "fundamental",
+      "type": "EVALUATION",
+      "risk_level": "MEDIUM",
+      "hard_deny": false,
+      "description": "Commande CP/1 fundamental.latest_news. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.event_process",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 fundamental.event_process. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "limit": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.source.get",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 fundamental.source.get. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "code": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "source": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.feeds.search",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 fundamental.feeds.search. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "source": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "provider": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "enabled": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "limit": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.providers.status",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 fundamental.providers.status. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.diagnostic.feed",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 fundamental.diagnostic.feed. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "feedId": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "id": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.diagnostic.draft",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 fundamental.diagnostic.draft. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "source_code": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "sourceCode": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "label": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "provider_type": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "providerType": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "endpoint": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "platform": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "account_identifier": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "enabled": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "poll_interval_sec": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "base_importance": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "content_role": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "content_class": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "provider_config": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "config": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.timeline.get",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 fundamental.timeline.get. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "eventId": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "event_id": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "id": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "since": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "limit": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.timeline.context",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 fundamental.timeline.context. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "eventId": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "event_id": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "id": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "limit": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.timeline.rebuild",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 fundamental.timeline.rebuild. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "eventId": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "event_id": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "id": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.discovery.inspect",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 fundamental.discovery.inspect. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "candidate": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "name": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "code": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "url": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "endpoint": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "type": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "format": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "categories": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "language": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "authentication": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "label": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "poll_interval_sec": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "provider_config": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.discovery.prepare",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 fundamental.discovery.prepare. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "candidate": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "name": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "code": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "url": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "endpoint": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "type": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "format": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "categories": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "language": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "authentication": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "label": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "poll_interval_sec": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "provider_config": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.discovery.test",
+      "engine": "fundamental",
+      "type": "EVALUATION",
+      "risk_level": "MEDIUM",
+      "hard_deny": false,
+      "description": "Commande CP/1 fundamental.discovery.test. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "candidate": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "name": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "code": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "url": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "endpoint": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "type": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "format": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "categories": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "language": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "authentication": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "label": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "poll_interval_sec": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "provider_config": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.synthesis.import",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Persist a validated synthesis through Fundamental Engine storage.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "scope": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "eventId": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "event_id": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "query": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "inputHash": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "model": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "result": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "evidenceCount": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.translation.get",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Read a cached translation from Fundamental storage.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "itemId": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "raw_item_id": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "id": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "lang": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "target_lang": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.translation.pending",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "List untranslated Fundamental items for a target language.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "lang": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "target_lang": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "limit": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.translation.save",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Persist a Fundamental item translation.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "raw_item_id": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "itemId": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "target_lang": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "lang": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "translated_title": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "translated_summary": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "provider": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.provider.test",
+      "engine": "fundamental",
+      "type": "EVALUATION",
+      "risk_level": "MEDIUM",
+      "hard_deny": false,
+      "description": "Test a configured Fundamental provider/feed through the real collector path.",
+      "input": {
+        "type": "object",
+        "required": [
+          "feedId"
+        ],
+        "properties": {
+          "feedId": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "id": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.feed.test_draft",
+      "engine": "fundamental",
+      "type": "EVALUATION",
+      "risk_level": "MEDIUM",
+      "hard_deny": false,
+      "description": "Test a feed draft without persisting it.",
+      "input": {
+        "type": "object",
+        "required": [
+          "feed"
+        ],
+        "properties": {
+          "feed": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.feed.create",
+      "engine": "fundamental",
+      "type": "MUTATION",
+      "risk_level": "HIGH",
+      "hard_deny": false,
+      "description": "Create and persist a Fundamental feed.",
+      "input": {
+        "type": "object",
+        "required": [
+          "feed"
+        ],
+        "properties": {
+          "feed": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": true
+    },
+    {
+      "id": "fundamental.feed.update",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Update a persisted Fundamental feed.",
+      "input": {
+        "type": "object",
+        "required": [
+          "feedId",
+          "feed"
+        ],
+        "properties": {
+          "feedId": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "feed": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.feed.toggle",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Enable or disable a persisted Fundamental feed.",
+      "input": {
+        "type": "object",
+        "required": [
+          "feedId"
+        ],
+        "properties": {
+          "feedId": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "enabled": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.feed.delete",
+      "engine": "fundamental",
+      "type": "MUTATION",
+      "risk_level": "HIGH",
+      "hard_deny": false,
+      "description": "Delete a Fundamental feed and its associated publications.",
+      "input": {
+        "type": "object",
+        "required": [
+          "feedId"
+        ],
+        "properties": {
+          "feedId": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": true
+    },
+    {
+      "id": "fundamental.news.purge",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Purge Fundamental publications and cached translations.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.fedwatch.refresh",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Force a FedWatch refresh.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.ai_summary.state",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Read the current Fundamental AI summary state/cache.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.ai_summary.generate",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Generate or refresh the Fundamental AI market summary.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "force": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.translate",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Translate one Fundamental raw item using the Fundamental-owned translation service.",
+      "input": {
+        "type": "object",
+        "required": [
+          "itemId"
+        ],
+        "properties": {
+          "itemId": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "id": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "lang": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "fundamental.operator.request",
+      "engine": "fundamental",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Authenticated Core ADMIN capability; exact operator action, payload, owner and current ADMIN session verified before effects. Never a human UI authority.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "payload": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "proof": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    }
+  ],
+  "verification_status": "PROTOCOL_DECLARED_UNVERIFIED_HANDLERS"
+}
