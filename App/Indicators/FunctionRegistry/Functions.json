@@ -1,0 +1,884 @@
+{
+  "schema_version": "2.6.0",
+  "engine_id": "indicator",
+  "engine_version": "2.6.0",
+  "transport": "CP/1",
+  "source_protocol_registry": "App/Core/Communication/ProtocolRegistry/indicator.json",
+  "functions": [
+    {
+      "id": "indicator.custom.delete",
+      "engine": "indicator",
+      "type": "MUTATION",
+      "risk_level": "HIGH",
+      "hard_deny": false,
+      "description": "Delete a Custom indicator definition. Built-ins remain protected.",
+      "input": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/indicator.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": true
+    },
+    {
+      "id": "indicator.registry.reload",
+      "engine": "indicator",
+      "type": "MUTATION",
+      "risk_level": "HIGH",
+      "hard_deny": false,
+      "description": "Reload Indicator Engine registry and reconcile settings.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/indicator.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": true
+    },
+    {
+      "id": "indicator.registry.status",
+      "engine": "indicator",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Read Indicator Registry counts, quarantine state and current items.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/indicator.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "indicator.settings.set",
+      "engine": "indicator",
+      "type": "MUTATION",
+      "risk_level": "HIGH",
+      "hard_deny": false,
+      "description": "Update Indicator Engine settings through CP/1.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "settings": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "refreshMs": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "enabled": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/indicator.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": true
+    },
+    {
+      "id": "indicator.settings.get",
+      "engine": "indicator",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Read Indicator Engine settings through CP/1.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/indicator.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "indicator.language.info",
+      "engine": "indicator",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 indicator.language.info. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/indicator.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "indicator.language.compile",
+      "engine": "indicator",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 indicator.language.compile. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [
+          "source"
+        ],
+        "properties": {
+          "source": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/indicator.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "indicator.language.validate",
+      "engine": "indicator",
+      "type": "EVALUATION",
+      "risk_level": "MEDIUM",
+      "hard_deny": false,
+      "description": "Commande CP/1 indicator.language.validate. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [
+          "source"
+        ],
+        "properties": {
+          "source": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/indicator.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "indicator.language.create",
+      "engine": "indicator",
+      "type": "MUTATION",
+      "risk_level": "HIGH",
+      "hard_deny": false,
+      "description": "Commande CP/1 indicator.language.create. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [
+          "source"
+        ],
+        "properties": {
+          "source": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "overwrite": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/indicator.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": true
+    },
+    {
+      "id": "indicator.definition.validate",
+      "engine": "indicator",
+      "type": "EVALUATION",
+      "risk_level": "MEDIUM",
+      "hard_deny": false,
+      "description": "Commande CP/1 indicator.definition.validate. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [
+          "definition"
+        ],
+        "properties": {
+          "definition": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/indicator.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "indicator.definition.create",
+      "engine": "indicator",
+      "type": "MUTATION",
+      "risk_level": "HIGH",
+      "hard_deny": false,
+      "description": "Commande CP/1 indicator.definition.create. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [
+          "definition"
+        ],
+        "properties": {
+          "definition": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "overwrite": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/indicator.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": true
+    },
+    {
+      "id": "indicator.compute_batch_data",
+      "engine": "indicator",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 indicator.compute_batch_data. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [
+          "candles",
+          "requests"
+        ],
+        "properties": {
+          "candles": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "requests": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "symbol": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "timeframe": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "source": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/indicator.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "indicator.compute_data",
+      "engine": "indicator",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 indicator.compute_data. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [
+          "id",
+          "candles"
+        ],
+        "properties": {
+          "id": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "candles": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "params": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "symbol": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "timeframe": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "source": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/indicator.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "indicator.financial_context",
+      "engine": "indicator",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Read-only current CeFi/DeFi financial context from Market Data Collector via Router.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "scope": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/indicator.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "indicator.financial_series",
+      "engine": "indicator",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Read-only numeric financial time series extracted from persisted Market Data snapshots.",
+      "input": {
+        "type": "object",
+        "required": [
+          "metric"
+        ],
+        "properties": {
+          "family": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "metric": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "limit": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "since": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/indicator.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "indicator.financial_analyze",
+      "engine": "indicator",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Calculate change, min/max, mean, SMA and EMA from persisted Market Data financial series.",
+      "input": {
+        "type": "object",
+        "required": [
+          "metric"
+        ],
+        "properties": {
+          "family": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "metric": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "limit": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "since": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "period": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/indicator.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "indicator.definition.get",
+      "engine": "indicator",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 indicator.definition.get. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/indicator.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "indicator.compute",
+      "engine": "indicator",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 indicator.compute. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [
+          "id",
+          "symbol",
+          "timeframe"
+        ],
+        "properties": {
+          "id": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "symbol": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "timeframe": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "params": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "force": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/indicator.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "indicator.compute_batch",
+      "engine": "indicator",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 indicator.compute_batch. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [
+          "symbol",
+          "timeframe",
+          "requests"
+        ],
+        "properties": {
+          "symbol": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "timeframe": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "requests": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "force": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/indicator.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "indicator.analyze",
+      "engine": "indicator",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 indicator.analyze. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [
+          "symbol",
+          "timeframe"
+        ],
+        "properties": {
+          "symbol": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "timeframe": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "force": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/indicator.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "indicator.get_state",
+      "engine": "indicator",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 indicator.get_state. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "symbol": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "timeframe": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/indicator.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "indicator.get_levels",
+      "engine": "indicator",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 indicator.get_levels. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [
+          "symbol",
+          "timeframe"
+        ],
+        "properties": {
+          "symbol": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "timeframe": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/indicator.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "indicator.get_signals",
+      "engine": "indicator",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 indicator.get_signals. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [
+          "symbol",
+          "timeframe"
+        ],
+        "properties": {
+          "symbol": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "timeframe": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/indicator.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "indicator.list_capabilities",
+      "engine": "indicator",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 indicator.list_capabilities. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/indicator.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "indicator.list_indicators",
+      "engine": "indicator",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 indicator.list_indicators. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/indicator.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "indicator.user.compute",
+      "engine": "indicator",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Core authorized per-user indicator computation with current-session revalidation.",
+      "input": {
+        "type": "object",
+        "required": [
+          "payload",
+          "proof"
+        ],
+        "properties": {
+          "payload": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "proof": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/indicator.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    }
+  ],
+  "verification_status": "PROTOCOL_DECLARED_UNVERIFIED_HANDLERS"
+}
