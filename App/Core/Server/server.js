@@ -661,4 +661,20 @@ else if(process.env.IATB_AUTH21_BROWSER_TRIAL==='1'){
   cert:fs.readFileSync(certFile)},route);
 }else SERVER=http.createServer(route);
 if(UM_CONFIG.enabled){const deny=function(req,socket){socket.end('HTTP/1.1 403 Forbidden\r\nConnection: close\r\nContent-Length: 0\r\n\r\n');};SERVER.on('upgrade',deny);SERVER.on('connect',deny);}
-SERVER.listen(PORT,HOST,function(){log('SYSTEM','Core listening',PORT);});
+SERVER.listen(PORT,HOST,function(){
+ log('SYSTEM','Core listening',PORT);
+ // Opt-in DEBUG: never run unreviewed registry code on the existing production boot.
+ if(process.env.IATB_FUNCTION_REGISTRY_SYNC_V26==='1'){
+  try{
+   var syncService=require('../FunctionRegistry/sync_service');
+   var syncRuntime=syncService.start({
+    appRoot:path.resolve(__dirname,'../..'),
+    dbPath:process.env.IATB_FUNCTION_REGISTRY_DB,
+    routerGet:function(p,cb){COMM_CLIENT.routerGet(p,cb);},
+    intervalMs:+(process.env.IATB_FUNCTION_REGISTRY_INTERVAL_MS||60000)
+   });
+   process.once('exit',function(){try{syncRuntime.stop();}catch(e){}});
+   log('SYSTEM','FunctionRegistry 2.6 DEBUG sync enabled');
+  }catch(e){log('SYSTEM','FunctionRegistry sync disabled: '+e.message);}
+ }
+});
