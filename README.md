@@ -1,4 +1,9 @@
-# IA-Trading-Bot — 2.5.3 DEV
+# IA-Trading-Bot — 2.6.0 DEV (socle IA)
+
+> **Branche évolutive `2.6`**, basée sur la 2.5.3. Les manifestes de fonctions CP/1 par composant et le Core Function Registry Manager constituent le **socle** de l'intégration IA à venir, pas une activation de l'IA directe ou une release qualifiée.
+>
+> [Suivi 2.6 et étapes à terminer](Documentation/Versions/2.6-FUNCTION-REGISTRY-DEBUG.md) · [Core Function Registry](App/Core/FunctionRegistry/README.md)
+
 
 Branche de développement depuis `2.5.2`. Arrêt d'urgence persistant P4 intégré,
 P5 SAFE/CLOSE qualifié sur fixtures uniquement. Les mutations broker réelles et
