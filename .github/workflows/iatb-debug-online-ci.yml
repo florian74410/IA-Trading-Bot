@@ -1,0 +1,45 @@
+name: IA-TB DEBUG Online - build-only CI
+
+on:
+  push:
+    branches: [infra/debug-online-v1]
+    paths:
+      - App/**
+      - Infrastructure/DEBUG_ONLINE/**
+      - .github/workflows/iatb-debug-online-ci.yml
+  pull_request:
+    paths:
+      - App/**
+      - Infrastructure/DEBUG_ONLINE/**
+      - .github/workflows/iatb-debug-online-ci.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: iatb-debug-online-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  source-build:
+    name: Source preflight + Docker build (NO DEPLOY)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - name: Checkout tested commit
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Static preflight
+        run: python3 Infrastructure/DEBUG_ONLINE/preflight.py
+      - name: Build full application image
+        run: docker build --pull -f App/Dockerfile.app -t iatb-debug-online:ci App
+      - name: Inspect image and version without starting the app
+        run: |
+          set -eu
+          docker image inspect iatb-debug-online:ci --format '{{.Id}}'
+          docker run --rm --network none --entrypoint node iatb-debug-online:ci \
+            -e 'const p=require("./package.json"); if(p.version !== "2.5.3") process.exit(2); console.log("Source version:",p.version);'
+      - name: Explicitly no deployment
+        run: echo "Build validated only. No VPS credentials, container runtime or public HTTPS route were touched."
