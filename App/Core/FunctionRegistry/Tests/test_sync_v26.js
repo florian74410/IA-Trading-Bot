@@ -8,7 +8,7 @@ const sync=start({
  appRoot:path.join(root,'App'),
  dbPath:path.join(root,'data','functions.sqlite'),
  intervalMs:3600000,
- routerGet(_path,cb){setImmediate(()=>cb(nextError,{ok:!nextError}));}
+ routerGet(requestPath,cb){if(requestPath==='/communication/v1/registry')return setImmediate(()=>cb(nextError,{ok:!nextError}));const id=requestPath.slice('/communication/v1/functions/'.length);return setImmediate(()=>{if(nextError)return cb(nextError);if(id!=='risk')return cb(Error('ENGINE_OFFLINE'));cb(null,{ok:true,manifest:JSON.parse(fs.readFileSync(manifestPath,'utf8'))});});}
 });
 const manifestPath=path.join(root,'App','Risk','FunctionRegistry','Functions.json');
 fs.mkdirSync(path.dirname(manifestPath),{recursive:true});
