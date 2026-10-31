@@ -19,6 +19,29 @@ var PORTFOLIO_PORT=+(process.env.IATB_PORTFOLIO_PORT||8020);
 var SUPERVISOR_HOST='127.0.0.1',SUPERVISOR_PORT=+(process.env.IATB_SUPERVISOR_PORT||3000);
 var APP_ROOT=path.resolve(__dirname,'../..'),COMM=new CommRouter(APP_ROOT);
 var COMM_MAX_BODY=512*1024;
+var functionChanges=[],functionChangeSeq=0;
+function functionChanged(req,res){
+ var token=String(req.headers['x-iatb-cp-token']||'');
+ if(!COMM.verifyToken(token))return sendJson(res,403,{ok:false,error:'CP_AUTH_FAILED'});
+ readJsonBody(req,4096,function(e,b){
+  if(e)return sendJson(res,400,{ok:false,error:'INVALID_CHANGE'});
+  var id=b&&b.engine;
+  if(typeof id!=='string'||!COMM.registry[id])return sendJson(res,400,{ok:false,error:'UNKNOWN_ENGINE'});
+  // A notification is just a hint. Core ALWAYS pulls a real catalog from
+  // the fixed Router endpoint and never trusts the payload to grant rights.
+  functionChanges.push({sequence:++functionChangeSeq,engine:id,at:Date.now()});
+  if(functionChanges.length>256)functionChanges.shift();
+  sendJson(res,200,{ok:true,sequence:functionChangeSeq});
+ });
+}
+function functionChangesRead(req,u,res){
+ var token=String(req.headers['x-iatb-cp-token']||'');
+ if(!COMM.verifyToken(token))return sendJson(res,403,{ok:false,error:'CP_AUTH_FAILED'});
+ var since=Math.max(0,Number(u.searchParams.get('since')||0));
+ if(!Number.isSafeInteger(since))return sendJson(res,400,{ok:false,error:'INVALID_SEQUENCE'});
+ sendJson(res,200,{ok:true,sequence:functionChangeSeq,changes:functionChanges.filter(function(v){return v.sequence>since;})});
+}
+
 
 function sendJson(res,code,obj){var b=Buffer.from(JSON.stringify(obj,null,2));res.writeHead(code,{'Content-Type':'application/json; charset=utf-8','Content-Length':b.length,'Cache-Control':'no-store'});res.end(b);}
 function readJsonBody(req,limit,cb){var a=[],n=0,done=false;limit=limit||COMM_MAX_BODY;function fail(e){if(done)return;done=true;cb(e);}req.on('data',function(c){if(done)return;n+=c.length;if(n>limit){try{req.destroy();}catch(x){}return fail(new Error('COMM_PAYLOAD_TOO_LARGE'));}a.push(c);});req.on('end',function(){if(done)return;done=true;try{cb(null,JSON.parse(Buffer.concat(a).toString('utf8')||'{}'));}catch(e){cb(new Error('COMM_JSON_INVALID'));}});req.on('error',fail);}
@@ -247,6 +270,8 @@ var server=http.createServer(function(req,res){var u=new URL(req.url,'http://'+H
  if(req.method==='POST'&&p==='/communication/v1/ui/write')return communicationUiWrite(req,res);
  if(req.method==='POST'&&p==='/communication/v1/event')return communicationEvent(req,res);
  if(req.method==='GET'&&p==='/communication/v1/events')return communicationEvents(req,u,res);
+ if(req.method==='POST'&&p==='/communication/v1/functions/changed')return functionChanged(req,res);
+ if(req.method==='GET'&&p==='/communication/v1/functions/changes')return functionChangesRead(req,u,res);
  if(req.method==='GET'&&p.indexOf('/communication/v1/functions/')===0)return communicationFunctionManifest(req,res,p.slice('/communication/v1/functions/'.length));
  if(req.method==='GET'&&p==='/communication/v1/capabilities')return communicationCapabilities(req,res);
  if(req.method==='GET'&&p==='/communication/v1/registry')return communicationRegistry(req,res,'');
