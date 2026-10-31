@@ -1,0 +1,419 @@
+{
+  "schema_version": "2.6.0",
+  "engine_id": "strategy",
+  "engine_version": "2.6.0",
+  "transport": "CP/1",
+  "source_protocol_registry": "App/Core/Communication/ProtocolRegistry/strategy.json",
+  "functions": [
+    {
+      "id": "strategy.health",
+      "engine": "strategy",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 strategy.health. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/strategy.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "strategy.capabilities",
+      "engine": "strategy",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 strategy.capabilities. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/strategy.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "strategy.catalog",
+      "engine": "strategy",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 strategy.catalog. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/strategy.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "strategy.validate",
+      "engine": "strategy",
+      "type": "EVALUATION",
+      "risk_level": "MEDIUM",
+      "hard_deny": false,
+      "description": "Commande CP/1 strategy.validate. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": true
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/strategy.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "strategy.evaluate",
+      "engine": "strategy",
+      "type": "EVALUATION",
+      "risk_level": "MEDIUM",
+      "hard_deny": false,
+      "description": "Commande CP/1 strategy.evaluate. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "symbol": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "timeframe": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "timestamp": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "market": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "indicators": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "indicator": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "fundamental": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "portfolio": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "strategy_ids": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "strategies": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "min_confidence": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "correlation_id": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/strategy.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "strategy.dry_run",
+      "engine": "strategy",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 strategy.dry_run. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "symbol": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "timeframe": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "timestamp": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "market": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "indicators": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "indicator": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "fundamental": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "portfolio": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "strategy_ids": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "strategies": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "min_confidence": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "correlation_id": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/strategy.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "strategy.stats",
+      "engine": "strategy",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 strategy.stats. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/strategy.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "strategy.state",
+      "engine": "strategy",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 strategy.state. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/strategy.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "strategy.reload",
+      "engine": "strategy",
+      "type": "MUTATION",
+      "risk_level": "HIGH",
+      "hard_deny": false,
+      "description": "Commande CP/1 strategy.reload. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/strategy.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": true
+    },
+    {
+      "id": "strategy.pause",
+      "engine": "strategy",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 strategy.pause. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/strategy.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "strategy.resume",
+      "engine": "strategy",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 strategy.resume. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/strategy.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "strategy.reset_stats",
+      "engine": "strategy",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 strategy.reset_stats. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/strategy.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "strategy.user.request",
+      "engine": "strategy",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Core-bound owner capability with live session revalidation; no browser identity authority",
+      "input": {
+        "type": "object",
+        "required": [
+          "payload",
+          "proof"
+        ],
+        "properties": {
+          "payload": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "proof": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/strategy.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    }
+  ],
+  "verification_status": "PROTOCOL_DECLARED_UNVERIFIED_HANDLERS"
+}
