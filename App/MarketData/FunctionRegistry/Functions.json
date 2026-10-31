@@ -1,0 +1,1347 @@
+{
+  "schema_version": "2.6.0",
+  "engine_id": "marketdata",
+  "engine_version": "2.6.0",
+  "transport": "CP/1",
+  "source_protocol_registry": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+  "functions": [
+    {
+      "id": "marketdata.audit",
+      "engine": "marketdata",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Market Data Collector V2.0 integrity, freshness, quality and routing audit.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "marketdata.health",
+      "engine": "marketdata",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 marketdata.health. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "marketdata.candles",
+      "engine": "marketdata",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 marketdata.candles. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [
+          "symbol",
+          "timeframe"
+        ],
+        "properties": {
+          "symbol": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "timeframe": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "limit": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "force": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "exchange": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "source": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "marketdata.symbols",
+      "engine": "marketdata",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Generic symbol catalogue resolved by the selected Market Data provider. Dynamic when supported by the provider, configured fallback otherwise.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "source": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "exchange": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "query": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "q": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "limit": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "marketdata.providers",
+      "engine": "marketdata",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 marketdata.providers. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "marketdata.provider.test",
+      "engine": "marketdata",
+      "type": "EVALUATION",
+      "risk_level": "MEDIUM",
+      "hard_deny": false,
+      "description": "Run a bounded public connectivity/data probe against one Market Data provider.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "provider": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "source": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "exchange": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "marketdata.financial.capabilities",
+      "engine": "marketdata",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Read-only catalogue of normalized financial data capabilities.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "marketdata.registry.status",
+      "engine": "marketdata",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 marketdata.registry.status. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "marketdata.registry.asset",
+      "engine": "marketdata",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 marketdata.registry.asset. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "id": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "symbol": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "name": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "term": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "detail": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "marketdata.registry.search",
+      "engine": "marketdata",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 marketdata.registry.search. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "term": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "query": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "limit": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "marketdata.registry.list",
+      "engine": "marketdata",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 marketdata.registry.list. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "offset": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "limit": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "term": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "marketdata.registry.query",
+      "engine": "marketdata",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 marketdata.registry.query. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "action": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "arguments": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "args": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "marketdata.financial.snapshot",
+      "engine": "marketdata",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Current firewall-validated CeFi/DeFi financial snapshot.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "force": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "staleWhileRevalidate": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "marketdata.financial.history",
+      "engine": "marketdata",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Persisted financial snapshot history.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "family": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "limit": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "since": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "marketdata.financial.ai_context",
+      "engine": "marketdata",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Read-only compact financial context for Supervisor/LLM.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "scope": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "marketdata.financial.storage",
+      "engine": "marketdata",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Financial cache/persistence status.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "marketdata.financial.status",
+      "engine": "marketdata",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Read Market Data financial collector runtime status.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "marketdata.financial.refresh",
+      "engine": "marketdata",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Internal refresh of financial provider data.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "marketdata.derivatives.open_interest",
+      "engine": "marketdata",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Aggregated covered perpetual Open Interest in USD across connected CEX/DEX venues, with explicit coverage.",
+      "input": {
+        "type": "object",
+        "required": [
+          "symbol"
+        ],
+        "properties": {
+          "symbol": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "sources": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "marketdata.liquidations.recent",
+      "engine": "marketdata",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Recent firewall-validated liquidation events from connected streams.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "symbol": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "source": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "windowMs": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "limit": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "since": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "marketdata.liquidations.stats",
+      "engine": "marketdata",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Aggregated liquidation flow statistics for a time window.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "symbol": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "source": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "windowMs": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "marketdata.microstructure.capabilities",
+      "engine": "marketdata",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Canonical Market Data microstructure capabilities; same Market Data Collector service.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "marketdata.microstructure.snapshot",
+      "engine": "marketdata",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Firewall-validated order book/open-interest snapshot from the Market Data Collector.",
+      "input": {
+        "type": "object",
+        "required": [
+          "symbol"
+        ],
+        "properties": {
+          "symbol": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "source": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "depth": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "force": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "marketdata.microstructure.history",
+      "engine": "marketdata",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "SQLite microstructure history owned by Market Data.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "symbol": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "source": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "limit": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "since": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "marketdata.microstructure.storage",
+      "engine": "marketdata",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Market Data microstructure cache and SQLite status.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "marketdata.microstructure.refresh",
+      "engine": "marketdata",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Force a microstructure provider refresh through the Data Firewall.",
+      "input": {
+        "type": "object",
+        "required": [
+          "symbol"
+        ],
+        "properties": {
+          "symbol": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "source": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "depth": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "marketdata.liquidations.streams",
+      "engine": "marketdata",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Status of the per-provider real-time liquidation worker threads owned by Market Data Collector.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "marketdata.derivatives.open_interest.history",
+      "engine": "marketdata",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Persisted covered Open Interest history from the unified Market Data Collector.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "symbol": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "limit": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "since": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "marketdata.dex.liquidity.capabilities",
+      "engine": "marketdata",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "DEX pair pool-liquidity capability from DEX Screener; pool liquidity is not executable order-book depth.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "marketdata.dex.liquidity.snapshot",
+      "engine": "marketdata",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Firewall-validated DEX pool liquidity, volume and top pools for a pair.",
+      "input": {
+        "type": "object",
+        "required": [
+          "symbol"
+        ],
+        "properties": {
+          "symbol": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "force": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "marketdata.dex.liquidity.history",
+      "engine": "marketdata",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Persisted DEX pair liquidity history from Market Data SQLite.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "symbol": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "limit": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "since": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "marketdata.ticker",
+      "engine": "marketdata",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Generic ticker routed through the Market Data provider catalogue and Data Firewall.",
+      "input": {
+        "type": "object",
+        "required": [
+          "symbol"
+        ],
+        "properties": {
+          "symbol": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "exchange": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "source": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "marketdata.refresh",
+      "engine": "marketdata",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Force a candle refresh for any registered CEX/DEX provider.",
+      "input": {
+        "type": "object",
+        "required": [
+          "symbol",
+          "timeframe"
+        ],
+        "properties": {
+          "symbol": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "timeframe": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "limit": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "exchange": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "source": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "marketdata.active",
+      "engine": "marketdata",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "List active candle contexts currently maintained by Market Data.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "marketdata.cache.clear",
+      "engine": "marketdata",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Clear Market Data in-memory caches.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "marketdata.settings.get",
+      "engine": "marketdata",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Read sanitized Market Data provider settings.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "marketdata.settings.set",
+      "engine": "marketdata",
+      "type": "MUTATION",
+      "risk_level": "HIGH",
+      "hard_deny": false,
+      "description": "Update Market Data provider settings. Provider IDs come from the provider catalogue.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "settings": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": true
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": true
+    },
+    {
+      "id": "marketdata.registry.refresh",
+      "engine": "marketdata",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Force the CoinGecko-backed market registry refresh.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "marketdata.asset.price",
+      "engine": "marketdata",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Read a CoinGecko-backed asset price through Market Data.",
+      "input": {
+        "type": "object",
+        "required": [
+          "symbol"
+        ],
+        "properties": {
+          "symbol": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "currency": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "marketdata.catalog",
+      "engine": "marketdata",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Browse/search the CoinGecko asset catalog through Market Data.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "query": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "page": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "perPage": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "marketdata.asset.resolve",
+      "engine": "marketdata",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Resolve asset metadata and network transferability through CoinGecko metadata.",
+      "input": {
+        "type": "object",
+        "required": [
+          "id",
+          "network"
+        ],
+        "properties": {
+          "id": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "network": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "marketdata.operator.request",
+      "engine": "marketdata",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Authenticated Core ADMIN capability; exact operator action, payload, owner and current ADMIN session verified before effects. Never a human UI authority.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "payload": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "proof": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    }
+  ],
+  "verification_status": "PROTOCOL_DECLARED_UNVERIFIED_HANDLERS"
+}
