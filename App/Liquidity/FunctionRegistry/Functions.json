@@ -1,0 +1,556 @@
+{
+  "schema_version": "2.6.0",
+  "engine_id": "liquidity",
+  "engine_version": "2.6.0",
+  "transport": "CP/1",
+  "source_protocol_registry": "App/Core/Communication/ProtocolRegistry/liquidity.json",
+  "functions": [
+    {
+      "id": "liquidity.health",
+      "engine": "liquidity",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 liquidity.health. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/liquidity.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "liquidity.zones",
+      "engine": "liquidity",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 liquidity.zones. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [
+          "symbol",
+          "timeframe"
+        ],
+        "properties": {
+          "symbol": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "timeframe": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "limit": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/liquidity.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "liquidity.realtime",
+      "engine": "liquidity",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 liquidity.realtime. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [
+          "symbol"
+        ],
+        "properties": {
+          "symbol": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "source": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "depth": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "liquidationWindowMs": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "force": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/liquidity.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "liquidity.snapshot",
+      "engine": "liquidity",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 liquidity.snapshot. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [
+          "symbol"
+        ],
+        "properties": {
+          "symbol": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "source": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "depth": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "liquidationWindowMs": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "timeframe": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "limit": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "force": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/liquidity.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "liquidity.financial",
+      "engine": "liquidity",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Read-only liquidity-oriented financial context derived from Market Data Collector via Router.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "scope": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/liquidity.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "liquidity.liquidations",
+      "engine": "liquidity",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 liquidity.liquidations. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [
+          "symbol"
+        ],
+        "properties": {
+          "symbol": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "source": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "windowMs": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/liquidity.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "liquidity.capabilities",
+      "engine": "liquidity",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 liquidity.capabilities. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/liquidity.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "liquidity.raw",
+      "engine": "liquidity",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Firewall-validated raw liquidity data received only from Market Data through Router CP/1.",
+      "input": {
+        "type": "object",
+        "required": [
+          "symbol"
+        ],
+        "properties": {
+          "symbol": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "source": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "depth": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "force": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/liquidity.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "liquidity.history",
+      "engine": "liquidity",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Long-term liquidity history read from Market Data SQLite storage.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "symbol": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "source": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "limit": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "since": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/liquidity.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "liquidity.context",
+      "engine": "liquidity",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Compact READ_ONLY liquidity context prepared for Supervisor/LLM.",
+      "input": {
+        "type": "object",
+        "required": [
+          "symbol"
+        ],
+        "properties": {
+          "symbol": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "source": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "depth": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "liquidationWindowMs": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "timeframe": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "limit": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/liquidity.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "liquidity.cache.clear",
+      "engine": "liquidity",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Commande CP/1 liquidity.cache.clear. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/liquidity.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "liquidity.open_interest",
+      "engine": "liquidity",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Covered aggregate perpetual Open Interest from Market Data across connected venues.",
+      "input": {
+        "type": "object",
+        "required": [
+          "symbol"
+        ],
+        "properties": {
+          "symbol": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "sources": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/liquidity.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "liquidity.open_interest.history",
+      "engine": "liquidity",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Read covered aggregate Open Interest history stored by Market Data.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "symbol": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "limit": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "since": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/liquidity.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "liquidity.dex_liquidity",
+      "engine": "liquidity",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "DEX pool liquidity snapshot from Market Data/DEX Screener; distinct from executable order-book depth.",
+      "input": {
+        "type": "object",
+        "required": [
+          "symbol"
+        ],
+        "properties": {
+          "symbol": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "force": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/liquidity.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "liquidity.dex_liquidity.history",
+      "engine": "liquidity",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Historical DEX pool liquidity stored by Market Data.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "symbol": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "limit": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "since": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "App/Core/Communication/ProtocolRegistry/liquidity.json",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false
+    }
+  ],
+  "verification_status": "PROTOCOL_DECLARED_UNVERIFIED_HANDLERS"
+}
