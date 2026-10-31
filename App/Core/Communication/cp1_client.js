@@ -41,8 +41,10 @@ Client.prototype._post=function(pathname,obj,opt,cb){
 };
 function routerPathAllowed(pathname,method){
  pathname=String(pathname||'').split('?')[0];
+ if(method==='GET' && pathname==='/communication/v1/functions/changes')return true;
  if(method==='GET' && pathname.startsWith('/communication/v1/functions/') && /^[a-z][a-z0-9_-]{1,47}$/.test(pathname.slice('/communication/v1/functions/'.length)))return true;
  if(method==='GET')return pathname==='/communication-health'||pathname==='/router-health'||pathname==='/communication/v1/registry'||pathname.indexOf('/communication/v1/registry/')===0||pathname==='/communication/v1/capabilities'||pathname==='/communication/v1/runtime'||pathname==='/communication/v1/events';
+ if(method==='POST'&&pathname==='/communication/v1/functions/changed')return true;
  if(method==='POST')return pathname==='/communication/v1/client/plan'||pathname==='/communication/v1/client/ack'||pathname==='/communication-test';
  return false;
 }
