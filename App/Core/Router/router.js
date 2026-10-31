@@ -210,6 +210,25 @@ var AUTH21_ROUTER_GUARDED_READ=process.env.IATB_AUTH21_IPC_PROBE_TRIAL==='1'?req
 var AUTH21_BUSINESS_FORWARD=process.env.IATB_AUTH21_BUSINESS_TRIAL==='1'?
  require('../Clients/auth21_router_business_forward').createForward({env:process.env,ports:{indicators:INDICATOR_PORT,marketdata:MARKET_DATA_PORT,
  fundamental:FUNDAMENTAL_PORT,portfolio:PORTFOLIO_PORT,strategy:STRATEGY_PORT}}):null;
+function communicationFunctionManifest(req,res,id){
+ var token=String(req.headers['x-iatb-cp-token']||'');
+ if(!COMM.verifyToken(token))return sendJson(res,403,{ok:false,error:'CP_AUTH_FAILED'});
+ if(!/^[a-z][a-z0-9_-]{1,47}$/.test(id))return sendJson(res,400,{ok:false,error:'INVALID_ENGINE'});
+ var engine=COMM.registry[id];
+ if(!engine||!engine.port||engine.host!=='127.0.0.1')return sendJson(res,404,{ok:false,error:'ENGINE_NOT_REGISTERED'});
+ var request=http.get({host:'127.0.0.1',port:engine.port,path:engine.cpPath+'/functions',
+  timeout:3000,headers:{'X-IATB-CP-Token':token,Accept:'application/json'}},function(upstream){
+  var chunks=[],n=0,limit=2*1024*1024;
+  upstream.on('data',function(part){n+=part.length;if(n<=limit)chunks.push(part);else upstream.destroy();});
+  upstream.on('end',function(){if(n>limit)return sendJson(res,502,{ok:false,error:'CATALOG_TOO_LARGE'});
+   var body;try{body=JSON.parse(Buffer.concat(chunks).toString('utf8'));}catch(e){return sendJson(res,502,{ok:false,error:'CATALOG_INVALID_JSON'});}
+   if(upstream.statusCode!==200||!body.ok||!body.manifest||body.manifest.engine_id!==id)return sendJson(res,502,{ok:false,error:'CATALOG_NOT_AVAILABLE'});
+   sendJson(res,200,{ok:true,engine:id,manifest:body.manifest});
+  });
+ });
+ request.on('timeout',function(){request.destroy(Error('CATALOG_TIMEOUT'));});
+ request.on('error',function(){if(!res.headersSent)sendJson(res,503,{ok:false,error:'ENGINE_CATALOG_UNREACHABLE'});});
+}
 var server=http.createServer(function(req,res){var u=new URL(req.url,'http://'+HOST+':'+PORT),p=u.pathname;
  var auth21Boundary=require('../Clients/auth21_service_boundary').decision(process.env,'router',req.method,p);
  if(auth21Boundary.intercept&&
@@ -228,6 +247,7 @@ var server=http.createServer(function(req,res){var u=new URL(req.url,'http://'+H
  if(req.method==='POST'&&p==='/communication/v1/ui/write')return communicationUiWrite(req,res);
  if(req.method==='POST'&&p==='/communication/v1/event')return communicationEvent(req,res);
  if(req.method==='GET'&&p==='/communication/v1/events')return communicationEvents(req,u,res);
+ if(req.method==='GET'&&p.indexOf('/communication/v1/functions/')===0)return communicationFunctionManifest(req,res,p.slice('/communication/v1/functions/'.length));
  if(req.method==='GET'&&p==='/communication/v1/capabilities')return communicationCapabilities(req,res);
  if(req.method==='GET'&&p==='/communication/v1/registry')return communicationRegistry(req,res,'');
  if(req.method==='GET'&&p.indexOf('/communication/v1/registry/')===0)return communicationRegistry(req,res,decodeURIComponent(p.slice('/communication/v1/registry/'.length)));
