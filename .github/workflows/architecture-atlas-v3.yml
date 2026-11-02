@@ -1,0 +1,44 @@
+name: Architecture Atlas V3 — public presentation
+on:
+  push:
+    branches: [feature/architecture-atlas-v3-reactflow]
+    paths:
+      - 'Documentation/Architecture/AtlasV3/**'
+      - '.github/workflows/architecture-atlas-v3.yml'
+  pull_request:
+    paths:
+      - 'Documentation/Architecture/AtlasV3/**'
+      - '.github/workflows/architecture-atlas-v3.yml'
+permissions:
+  contents: read
+jobs:
+  build-public:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    defaults:
+      run:
+        working-directory: Documentation/Architecture/AtlasV3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned direct dependencies
+        run: npm install --no-audit --no-fund
+      - name: Validate public architecture model
+        run: npm run test
+      - name: Build public read-only presentation
+        run: npm run build
+        env:
+          VITE_ENABLE_EDITOR: 'false'
+      - name: Validate output and client build
+        run: |
+          test -s dist/index.html
+          test -d dist/assets
+          test "$(find dist -type f | wc -l)" -ge 3
+      - uses: actions/upload-artifact@v4
+        with:
+          name: architecture-atlas-v3-public
+          path: Documentation/Architecture/AtlasV3/dist/
+          if-no-files-found: error
+          retention-days: 14
