@@ -7,7 +7,7 @@ const EDITOR=typeof __ATLAS_EDITOR_ENABLED__!=='undefined'&&__ATLAS_EDITOR_ENABL
 const getLocal=()=>{try{return JSON.parse(localStorage.getItem('iatb-atlas-v3-draft-layout')||'null')}catch{return null}};
 const safeSave=(positions,expanded)=>{try{localStorage.setItem('iatb-atlas-v3-draft-layout',JSON.stringify({positions,expanded}))}catch{}};
 const initial=EDITOR?getLocal():null;
-function EditorToolbar({model,setModel,positions,setPositions,expanded,setExpanded,selected,selectedEdge,setSelectedEdge}){
+function EditorToolbar({model,setModel,positions,setPositions,expanded,setExpanded,selected,setSelected,selectedEdge,setSelectedEdge}){
  const fileRef=useRef(null);
  function download(){
   const content=JSON.stringify(exportDraft(model,positions),null,2);
@@ -23,6 +23,17 @@ function EditorToolbar({model,setModel,positions,setPositions,expanded,setExpand
  }
  const system=model.systems.find(s=>s.id===selected);
  const edge=model.edges.find(e=>e.id===selectedEdge);
+ const createBlock=()=>{const id='draft_'+Date.now().toString(36);setModel(m=>validateModel({...m,systems:[...m.systems,{
+  id,title:'Nouveau système (brouillon)',subtitle:'À qualifier',kind:'engine',icon:'server',
+  summary:'Module conceptuel à vérifier avant toute publication.',note:'Brouillon non validé',
+  modules:[{label:'Satellite A'},{label:'Satellite B'},{label:'Satellite C'}]
+ }]}));setPositions(prev=>({...prev,[id]:{x:250,y:350}}));setSelected(id)};
+ const deleteBlock=()=>{if(!system||!window.confirm('Supprimer ce système et ses routes du brouillon ?'))return;
+  setModel(m=>validateModel({...m,systems:m.systems.filter(n=>n.id!==selected),edges:m.edges.filter(e=>e.source!==selected&&e.target!==selected)}));
+  setExpanded(prev=>prev.filter(id=>id!==selected));setSelected(null)};
+ const deleteEdge=()=>{if(!edge||!window.confirm('Supprimer cette liaison du brouillon ?'))return;
+  setModel(m=>validateModel({...m,edges:m.edges.filter(e=>e.id!==selectedEdge)}));setSelectedEdge(null)};
+
  const editSystem=(patch)=>setModel(m=>validateModel({...m,systems:m.systems.map(s=>s.id===selected?{...s,...patch}:s)}));
  const editEdge=(patch)=>setModel(m=>validateModel({...m,edges:m.edges.map(e=>e.id===selectedEdge?{...e,...patch}:e)}));
  return <div className="editor-box">
@@ -32,11 +43,17 @@ function EditorToolbar({model,setModel,positions,setPositions,expanded,setExpand
    <button onClick={()=>safeSave(positions,expanded)}><Save size={15}/> Sauvegarde locale</button>
    <button onClick={download}><Download size={15}/> Export JSON</button>
    <button onClick={()=>fileRef.current?.click()}><Upload size={15}/> Import JSON</button>
+   <button onClick={createBlock}><Box size={15}/> Ajouter un bloc</button>
+   {system&&<button onClick={deleteBlock}><X size={15}/> Retirer le bloc</button>}
+   {edge&&<button onClick={deleteEdge}><X size={15}/> Retirer la route</button>}
    <input ref={fileRef} type="file" accept=".json,application/json" hidden onChange={async e=>{try{await importFile(e.target.files?.[0]);alert('Brouillon importé localement.')}catch(err){alert(err.message)}e.target.value=''}}/>
   </div>
   {system&&<div className="editor-fields">
    <label>Nom du bloc<input value={system.title} onChange={e=>editSystem({title:e.target.value})} maxLength={80}/></label>
+   <label>Type de bloc<select value={system.kind} onChange={e=>editSystem({kind:e.target.value})}>
+    {['engine','control','router','firewall','external'].map(k=><option key={k} value={k}>{k}</option>)}</select></label>
    <label>Introduction<textarea rows={3} value={system.summary} onChange={e=>editSystem({summary:e.target.value})} maxLength={650}/></label>
+   <label>Satellites (un par ligne)<textarea rows={4} value={system.modules.map(m=>m.label).join('\n')} onChange={e=>editSystem({modules:e.target.value.split('\n').slice(0,9).map(x=>({label:x.slice(0,75)}))})}/></label>
   </div>}
   {edge&&<div className="editor-fields">
    <label>Nom de liaison<input value={edge.label} onChange={e=>editEdge({label:e.target.value})} maxLength={80}/></label>
@@ -46,7 +63,7 @@ function EditorToolbar({model,setModel,positions,setPositions,expanded,setExpand
   </div>}
  </div>
 }
-function DetailPanel({selected,model,detail,selectedEdge,editor,setModel,positions,setPositions,expanded,setExpanded,setSelectedEdge}){
+function DetailPanel({selected,setSelected,model,detail,selectedEdge,editor,setModel,positions,setPositions,expanded,setExpanded,setSelectedEdge}){
  const sys=model.systems.find(s=>s.id===selected),edge=model.edges.find(e=>e.id===selectedEdge);
  return <aside className="map-inspector">
   <div className="inspector-eyebrow"><Info size={14}/> LECTURE DE L'ARCHITECTURE</div>
@@ -61,7 +78,7 @@ function DetailPanel({selected,model,detail,selectedEdge,editor,setModel,positio
    <div className="inspector-stat">{model.systems.length} systèmes documentés</div></>}
   {edge&&<div className="selected-edge"><strong>Liaison sélectionnée</strong><span>{edge.label}</span>
     <small>{edge.source} → {edge.target} · {edge.protocol}</small><button onClick={()=>setSelectedEdge(null)}>Fermer</button></div>}
-  {editor&&<EditorToolbar {...{model,setModel,positions,setPositions,expanded,setExpanded,selected,selectedEdge,setSelectedEdge}}/>}
+  {editor&&<EditorToolbar {...{model,setModel,positions,setPositions,expanded,setExpanded,selected,setSelected,selectedEdge,setSelectedEdge}}/>}
   {!editor&&<div className="public-disclaimer"><ShieldCheck size={16}/><span>Présentation conceptuelle. Aucun accès aux secrets ni à l'administration IA-TB.</span></div>}
  </aside>;
 }
@@ -125,7 +142,7 @@ function GraphBody({model,setModel,full,onToggleFull,editorEnabled,preview=false
    <div className="graph-legend"><span><i style={{background:hues.logical}}/>Logique</span><span><i style={{background:hues.cp1}}/>CP/1</span><span><i style={{background:hues.security}}/>Firewall</span><span><i style={{background:hues.external}}/>API externe</span></div>
    {error&&<div role="alert" className="graph-error">{error}</div>}
    </div>
-   {!preview&&<DetailPanel {...{selected,model,detail,selectedEdge,setSelectedEdge,editor:editorEnabled&&EDITOR,setModel,positions,setPositions,expanded,setExpanded}}/>}
+   {!preview&&<DetailPanel {...{selected,setSelected,model,detail,selectedEdge,setSelectedEdge,editor:editorEnabled&&EDITOR,setModel,positions,setPositions,expanded,setExpanded}}/>}
    </div>
   <div className="graph-status"><span><span className="status-dot"/> Snapshot documentaire · aucune télémétrie LIVE</span>
    <span>{model.systems.length} systèmes · {edges.length} routes visibles</span></div>
