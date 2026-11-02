@@ -1,0 +1,421 @@
+{
+  "schemaVersion": 3,
+  "revision": "public-v3.0.0-dev.1",
+  "audience": "public",
+  "disclaimer": "Diagramme explicatif fondé sur le snapshot de développement IA-TB 2.5.3. Ne représente pas l'état réel d'un serveur ni une capacité de trading en production.",
+  "systems": [
+    {
+      "id": "supervisor",
+      "title": "IA Supervisor",
+      "subtitle": "Intelligence & supervision",
+      "kind": "control",
+      "icon": "brain",
+      "summary": "Orchestration conceptuelle des moteurs et aide à la décision.",
+      "modules": [
+        {
+          "id": "supervisor-m1",
+          "label": "Contextualisation des signaux"
+        },
+        {
+          "id": "supervisor-m2",
+          "label": "Synthèses structurées"
+        },
+        {
+          "id": "supervisor-m3",
+          "label": "Coordination des décisions"
+        }
+      ],
+      "note": "La position au sommet exprime une hiérarchie visuelle, pas une connexion réseau directe."
+    },
+    {
+      "id": "core",
+      "title": "Core Server",
+      "subtitle": "Contrôle et gouvernance",
+      "kind": "control",
+      "icon": "server",
+      "summary": "Gestion des contrôles, sessions et cohérence du système.",
+      "modules": [
+        {
+          "id": "core-m1",
+          "label": "Sessions & identité"
+        },
+        {
+          "id": "core-m2",
+          "label": "Contrats système"
+        },
+        {
+          "id": "core-m3",
+          "label": "Autorisation & administration"
+        }
+      ],
+      "note": "Les autorisations dépendent des règles réelles du système ; pas de privilège hérité du dessin."
+    },
+    {
+      "id": "router",
+      "title": "Router Switch CP/1",
+      "subtitle": "Orchestration des échanges",
+      "kind": "router",
+      "icon": "network",
+      "summary": "Coordonne les messages entre services via des contrats définis.",
+      "modules": [
+        {
+          "id": "router-m1",
+          "label": "Protocol Registry"
+        },
+        {
+          "id": "router-m2",
+          "label": "Process Registry"
+        },
+        {
+          "id": "router-m3",
+          "label": "Aiguillage / dispatch"
+        }
+      ],
+      "note": "Les communications sont schématiques et ne décrivent pas un état réseau en temps réel."
+    },
+    {
+      "id": "firewall",
+      "title": "Firewall System",
+      "subtitle": "Frontières de sécurité",
+      "kind": "firewall",
+      "icon": "shield",
+      "summary": "Contrôles d'entrée et de sortie des opérations sensibles.",
+      "modules": [
+        {
+          "id": "firewall-m1",
+          "label": "Firewall Data"
+        },
+        {
+          "id": "firewall-m2",
+          "label": "Firewall Router"
+        },
+        {
+          "id": "firewall-m3",
+          "label": "Firewall Trading"
+        }
+      ],
+      "note": "Trois fonctions de protection regroupées graphiquement, pas trois services indépendants."
+    },
+    {
+      "id": "marketdata",
+      "title": "Market Data Collector",
+      "subtitle": "Acquisition et normalisation",
+      "kind": "engine",
+      "icon": "activity",
+      "summary": "Centralise et normalise les informations de marché issues de sources externes.",
+      "modules": [
+        {
+          "id": "marketdata-m1",
+          "label": "Microstructure"
+        },
+        {
+          "id": "marketdata-m2",
+          "label": "Request Broker"
+        },
+        {
+          "id": "marketdata-m3",
+          "label": "Cache & normalisation"
+        }
+      ],
+      "note": "Les sources externes sont parallèles ; le collecteur communique sous les contrôles requis."
+    },
+    {
+      "id": "fundamental",
+      "title": "Fundamental Engine",
+      "subtitle": "Actualités et macroéconomie",
+      "kind": "engine",
+      "icon": "newspaper",
+      "summary": "Analyse des événements macroéconomiques, actualités et calendriers.",
+      "modules": [
+        {
+          "id": "fundamental-m1",
+          "label": "News Collector"
+        },
+        {
+          "id": "fundamental-m2",
+          "label": "Calendriers FED / CME"
+        },
+        {
+          "id": "fundamental-m3",
+          "label": "Traduction et synthèse"
+        }
+      ],
+      "note": "Modules internes représentés selon la structure du code, pas comme des services réseau."
+    },
+    {
+      "id": "indicator",
+      "title": "Indicator Engine",
+      "subtitle": "Calculs d'indicateurs",
+      "kind": "engine",
+      "icon": "chart",
+      "summary": "Produit et structure les analyses techniques du marché.",
+      "modules": [
+        {
+          "id": "indicator-m1",
+          "label": "Indicator Language"
+        },
+        {
+          "id": "indicator-m2",
+          "label": "Indicator Registry"
+        },
+        {
+          "id": "indicator-m3",
+          "label": "Compute Kernel"
+        }
+      ],
+      "note": "Les calculs consomment des informations provenant des circuits autorisés."
+    },
+    {
+      "id": "strategy",
+      "title": "Strategy Engine",
+      "subtitle": "Élaboration des signaux",
+      "kind": "engine",
+      "icon": "target",
+      "summary": "Construit des signaux et intentions à partir des règles de stratégie.",
+      "modules": [
+        {
+          "id": "strategy-m1",
+          "label": "Strategy Evaluator"
+        },
+        {
+          "id": "strategy-m2",
+          "label": "Strategy Registry"
+        },
+        {
+          "id": "strategy-m3",
+          "label": "Strategy Core"
+        }
+      ],
+      "note": "Une intention n'est pas un ordre transmis directement à un exchange."
+    },
+    {
+      "id": "risk",
+      "title": "Risk Engine",
+      "subtitle": "Évaluation des risques",
+      "kind": "engine",
+      "icon": "shieldCheck",
+      "summary": "Contrôle les contraintes et autorisations associées aux opérations.",
+      "modules": [
+        {
+          "id": "risk-m1",
+          "label": "Politiques R1"
+        },
+        {
+          "id": "risk-m2",
+          "label": "Politiques R2"
+        },
+        {
+          "id": "risk-m3",
+          "label": "Risk Gate"
+        }
+      ],
+      "note": "Les validations de risque précèdent les opérations mutantes."
+    },
+    {
+      "id": "liquidity",
+      "title": "Liquidity Engine",
+      "subtitle": "Lecture des liquidités",
+      "kind": "engine",
+      "icon": "waves",
+      "summary": "Analyse les carnets, métriques et informations de liquidité disponibles.",
+      "modules": [
+        {
+          "id": "liquidity-m1",
+          "label": "Liquidity Metrics"
+        },
+        {
+          "id": "liquidity-m2",
+          "label": "Liquidation Buffer"
+        },
+        {
+          "id": "liquidity-m3",
+          "label": "Market Data Client"
+        }
+      ],
+      "note": "Consommation des données via les contrats établis du système."
+    },
+    {
+      "id": "trading",
+      "title": "Trading Engine",
+      "subtitle": "Exécution sous contrôle",
+      "kind": "engine",
+      "icon": "arrowRightLeft",
+      "summary": "Gère le cycle de vie des intentions approuvées et leur exécution contrôlée.",
+      "modules": [
+        {
+          "id": "trading-m1",
+          "label": "Order Runtime"
+        },
+        {
+          "id": "trading-m2",
+          "label": "P4/P5 Ledger"
+        },
+        {
+          "id": "trading-m3",
+          "label": "Broker Executors"
+        }
+      ],
+      "note": "Schéma conceptuel. Aucun état LIVE, ordre ou exécution réelle n'est montré."
+    },
+    {
+      "id": "portfolio",
+      "title": "Portfolio Engine",
+      "subtitle": "Suivi des positions",
+      "kind": "engine",
+      "icon": "briefcase",
+      "summary": "Consolide l'état des positions et les événements du portefeuille.",
+      "modules": [
+        {
+          "id": "portfolio-m1",
+          "label": "Portfolio Store"
+        },
+        {
+          "id": "portfolio-m2",
+          "label": "Portfolio Runtime"
+        },
+        {
+          "id": "portfolio-m3",
+          "label": "Owner Portfolio"
+        }
+      ],
+      "note": "Les positions présentées ne sont pas de vraies positions client."
+    },
+    {
+      "id": "providers",
+      "title": "Market APIs",
+      "subtitle": "Sources externes",
+      "kind": "external",
+      "icon": "globe",
+      "summary": "Connecteurs de données indépendants provenant de différentes plateformes.",
+      "modules": [
+        {
+          "id": "providers-m1",
+          "label": "Binance · OKX · Kraken"
+        },
+        {
+          "id": "providers-m2",
+          "label": "GMX · Hyperliquid"
+        },
+        {
+          "id": "providers-m3",
+          "label": "CoinGecko · DeFiLlama"
+        }
+      ],
+      "note": "Les providers ne forment pas une chaîne les uns à travers les autres."
+    }
+  ],
+  "edges": [
+    {
+      "id": "s1",
+      "source": "supervisor",
+      "target": "core",
+      "protocol": "logical",
+      "label": "Gouvernance conceptuelle",
+      "priority": 1
+    },
+    {
+      "id": "s2",
+      "source": "core",
+      "target": "router",
+      "protocol": "logical",
+      "label": "Contrats du système",
+      "priority": 1
+    },
+    {
+      "id": "s3",
+      "source": "router",
+      "target": "firewall",
+      "protocol": "security",
+      "label": "Protection des routes",
+      "priority": 1
+    },
+    {
+      "id": "s4",
+      "source": "providers",
+      "target": "marketdata",
+      "protocol": "external",
+      "label": "Données REST / WebSocket",
+      "priority": 1
+    },
+    {
+      "id": "s5",
+      "source": "marketdata",
+      "target": "firewall",
+      "protocol": "security",
+      "label": "Contrôle des données",
+      "priority": 1
+    },
+    {
+      "id": "s6",
+      "source": "firewall",
+      "target": "trading",
+      "protocol": "security",
+      "label": "Autorisation des opérations",
+      "priority": 1
+    },
+    {
+      "id": "s7",
+      "source": "router",
+      "target": "fundamental",
+      "protocol": "cp1",
+      "label": "CP/1 · événements macro",
+      "priority": 2
+    },
+    {
+      "id": "s8",
+      "source": "router",
+      "target": "indicator",
+      "protocol": "cp1",
+      "label": "CP/1 · indicateurs",
+      "priority": 2
+    },
+    {
+      "id": "s9",
+      "source": "router",
+      "target": "strategy",
+      "protocol": "cp1",
+      "label": "CP/1 · intentions",
+      "priority": 2
+    },
+    {
+      "id": "s10",
+      "source": "router",
+      "target": "risk",
+      "protocol": "cp1",
+      "label": "CP/1 · RiskGate",
+      "priority": 2
+    },
+    {
+      "id": "s11",
+      "source": "router",
+      "target": "liquidity",
+      "protocol": "cp1",
+      "label": "CP/1 · liquidité",
+      "priority": 2
+    },
+    {
+      "id": "s12",
+      "source": "router",
+      "target": "portfolio",
+      "protocol": "cp1",
+      "label": "CP/1 · positions",
+      "priority": 2
+    },
+    {
+      "id": "s13",
+      "source": "router",
+      "target": "marketdata",
+      "protocol": "cp1",
+      "label": "CP/1 · données normalisées",
+      "priority": 2
+    },
+    {
+      "id": "s14",
+      "source": "router",
+      "target": "trading",
+      "protocol": "cp1",
+      "label": "CP/1 · messages d'exécution",
+      "priority": 2
+    }
+  ]
+}

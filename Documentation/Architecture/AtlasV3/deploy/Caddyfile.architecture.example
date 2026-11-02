@@ -1,0 +1,16 @@
+# EXEMPLE UNIQUEMENT : ne pas appliquer au Caddy partagé avant revue.
+architecture.iatb.duckdns.org {
+    encode zstd gzip
+    root * /srv/iatb-architecture/current
+    @private path /.git* /.env* /_ops* /admin* /mcp*
+    respond @private 404
+    header {
+        X-Content-Type-Options "nosniff"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        X-Frame-Options "DENY"
+        Permissions-Policy "camera=(), microphone=(), geolocation=()"
+        Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; worker-src 'self' blob:; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+    }
+    try_files {path} /index.html
+    file_server
+}
