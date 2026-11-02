@@ -7,6 +7,8 @@ const EDITOR=typeof __ATLAS_EDITOR_ENABLED__!=='undefined'&&__ATLAS_EDITOR_ENABL
 const getLocal=()=>{try{return JSON.parse(localStorage.getItem('iatb-atlas-v3-draft-layout')||'null')}catch{return null}};
 const safeSave=(positions,expanded)=>{try{localStorage.setItem('iatb-atlas-v3-draft-layout',JSON.stringify({positions,expanded}))}catch{}};
 const initial=EDITOR?getLocal():null;
+const overviewIds=new Set(['supervisor','core','router','firewall','providers','marketdata','trading']);
+const overviewPositions={supervisor:{x:440,y:20},core:{x:440,y:175},router:{x:440,y:330},firewall:{x:440,y:485},providers:{x:80,y:665},marketdata:{x:440,y:665},trading:{x:800,y:665}};
 function EditorToolbar({model,setModel,positions,setPositions,expanded,setExpanded,selected,setSelected,selectedEdge,setSelectedEdge}){
  const fileRef=useRef(null);
  function download(){
@@ -86,7 +88,7 @@ function GraphBody({model,setModel,full,onToggleFull,editorEnabled,preview=false
  const reactFlow=useReactFlow();
  const [selected,setSelected]=useState(null);
  const [selectedEdge,setSelectedEdge]=useState(null);
- const [detail,setDetail]=useState(!preview&&full);
+ const [detail,setDetail]=useState((!preview&&full)||editorEnabled);
  const [expanded,setExpanded]=useState(initial?.expanded||[]);
  const [positions,setPositions]=useState(()=>({...staticPositions,...(initial?.positions||{})}));
  const [search,setSearch]=useState('');
@@ -94,16 +96,18 @@ function GraphBody({model,setModel,full,onToggleFull,editorEnabled,preview=false
  const [layoutBusy,setLayoutBusy]=useState(false);
  const [error,setError]=useState('');
  const toggleExpand=useCallback(id=>{setDetail(true);setExpanded(prev=>prev.includes(id)?prev.filter(x=>x!==id):[...prev,id]);setSelected(id)},[]);
- const nodes=useMemo(()=>deriveNodes(model,expanded,positions,editorEnabled).map(n=>n.type==='system'?{...n,data:{...n.data,onExpand:toggleExpand}}:n),[model,expanded,positions,editorEnabled,toggleExpand]);
- const edges=useMemo(()=>deriveEdges(model,selected,detail).map(e=>({...e,markerEnd:{type:MarkerType.ArrowClosed,color:hues[e.protocol]}})),[model,selected,detail]);
+ const visibleModel=useMemo(()=>detail?model:{...model,systems:model.systems.filter(s=>overviewIds.has(s.id))},[model,detail]);
+ const currentPositions=detail?positions:overviewPositions;
+ const nodes=useMemo(()=>deriveNodes(visibleModel,detail?expanded:[],currentPositions,editorEnabled&&detail).map(n=>n.type==='system'?{...n,data:{...n.data,onExpand:toggleExpand}}:n),[visibleModel,expanded,currentPositions,editorEnabled,detail,toggleExpand]);
+ const edges=useMemo(()=>deriveEdges(model,selected,detail).filter(e=>detail||(overviewIds.has(e.source)&&overviewIds.has(e.target))).map(e=>({...e,markerEnd:{type:MarkerType.ArrowClosed,color:hues[e.protocol]}})),[model,selected,detail]);
  const onNodesChange=useCallback(changes=>{if(!editorEnabled)return;setPositions(prev=>{
    let update=null;for(const c of changes)if(c.type==='position'&&c.position&&model.systems.some(n=>n.id===c.id)){if(!update)update={...prev};update[c.id]={x:c.position.x,y:c.position.y}}
    return update||prev;
   })},[editorEnabled,model]);
- useEffect(()=>{const id=requestAnimationFrame(()=>reactFlow.fitView({padding:0.18,duration:350,maxZoom:1}));return()=>cancelAnimationFrame(id)},[reactFlow,preview]);
- const focus=useCallback(id=>{const pos=positions[id];if(pos){reactFlow.setCenter(pos.x+WIDTH/2,pos.y+60,{duration:450,zoom:1.12});setSelected(id)}},[positions,reactFlow]);
+ useEffect(()=>{const id=requestAnimationFrame(()=>reactFlow.fitView({padding:0.12,duration:350,maxZoom:1}));return()=>cancelAnimationFrame(id)},[reactFlow,preview,detail]);
+ const focus=useCallback(id=>{if(!overviewIds.has(id)&&!detail)setDetail(true);const pos=(detail?positions:overviewPositions)[id]||positions[id];if(pos){reactFlow.setCenter(pos.x+WIDTH/2,pos.y+60,{duration:450,zoom:1.12});setSelected(id)}},[positions,reactFlow]);
  async function arrange(){
-  setLayoutBusy(true);setError('');
+  if(!detail){setError('Passe en vue Détail pour recalculer la disposition complète.');return;}setLayoutBusy(true);setError('');
   try{const next=await autoLayout(model,expanded);setPositions(next);requestAnimationFrame(()=>reactFlow.fitView({duration:550,padding:0.18,maxZoom:1.05}))}
   catch(e){setError('Placement automatique indisponible : '+e.message)}
   finally{setLayoutBusy(false)}
@@ -131,7 +135,7 @@ function GraphBody({model,setModel,full,onToggleFull,editorEnabled,preview=false
      onEdgeClick={(_,edge)=>{setSelectedEdge(edge.id);setSelected(null)}}
      onPaneClick={()=>{setSelected(null);setSelectedEdge(null)}}
      onConnect={onConnect} nodeTypes={nodeTypes} edgeTypes={edgeTypes}
-     nodesDraggable={editorEnabled} nodesConnectable={editorEnabled} elementsSelectable={!preview} fitView
+     nodesDraggable={editorEnabled&&detail} nodesConnectable={editorEnabled&&detail} elementsSelectable={!preview} fitView
      fitViewOptions={{padding:0.16}} minZoom={0.16} maxZoom={2} zoomOnDoubleClick={false}
      proOptions={{hideAttribution:false}}>
     <Background color="#1a3549" variant={BackgroundVariant.Dots} gap={26} size={1}/>
@@ -144,7 +148,7 @@ function GraphBody({model,setModel,full,onToggleFull,editorEnabled,preview=false
    </div>
    {!preview&&<DetailPanel {...{selected,setSelected,model,detail,selectedEdge,setSelectedEdge,editor:editorEnabled&&EDITOR,setModel,positions,setPositions,expanded,setExpanded}}/>}
    </div>
-  <div className="graph-status"><span><span className="status-dot"/> Snapshot documentaire · aucune télémétrie LIVE</span>
+  <div className="graph-status"><span><span className="status-dot"/> {detail?'Carte détaillée':'Synthèse — 7 systèmes structurants, 8 moteurs en vue Détail'} · aucune télémétrie LIVE</span>
    <span>{model.systems.length} systèmes · {edges.length} routes visibles</span></div>
  </div>;
 }
