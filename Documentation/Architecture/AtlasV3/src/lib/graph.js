@@ -1,5 +1,5 @@
 import ELK from 'elkjs/lib/elk.bundled.js';
-import publicArchitecture from '../data/public-architecture.json';
+import publicArchitecture from '../data/public-architecture.json' with {type:'json'};
 export const baseModel=publicArchitecture;
 export const WIDTH=264;
 export const HEIGHT=104;
