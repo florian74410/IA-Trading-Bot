@@ -95,6 +95,7 @@ function GraphBody({model,setModel,full,onToggleFull,editorEnabled,preview=false
  const [showMinimap,setShowMinimap]=useState(!preview);
  const [layoutBusy,setLayoutBusy]=useState(false);
  const [error,setError]=useState('');
+ useEffect(()=>{if(full)setDetail(true)},[full]);
  const toggleExpand=useCallback(id=>{setDetail(true);setExpanded(prev=>prev.includes(id)?prev.filter(x=>x!==id):[...prev,id]);setSelected(id)},[]);
  const visibleModel=useMemo(()=>detail?model:{...model,systems:model.systems.filter(s=>overviewIds.has(s.id))},[model,detail]);
  const currentPositions=detail?positions:overviewPositions;
@@ -105,7 +106,7 @@ function GraphBody({model,setModel,full,onToggleFull,editorEnabled,preview=false
    return update||prev;
   })},[editorEnabled,model]);
  useEffect(()=>{const id=requestAnimationFrame(()=>reactFlow.fitView({padding:0.12,duration:350,maxZoom:1}));return()=>cancelAnimationFrame(id)},[reactFlow,preview,detail]);
- const focus=useCallback(id=>{if(!overviewIds.has(id)&&!detail)setDetail(true);const pos=(detail?positions:overviewPositions)[id]||positions[id];if(pos){reactFlow.setCenter(pos.x+WIDTH/2,pos.y+60,{duration:450,zoom:1.12});setSelected(id)}},[positions,reactFlow]);
+ const focus=useCallback(id=>{if(!overviewIds.has(id)&&!detail)setDetail(true);const pos=(detail?positions:overviewPositions)[id]||positions[id];if(pos){reactFlow.setCenter(pos.x+WIDTH/2,pos.y+60,{duration:450,zoom:1.12});setSelected(id)}},[positions,reactFlow,detail]);
  async function arrange(){
   if(!detail){setError('Passe en vue Détail pour recalculer la disposition complète.');return;}setLayoutBusy(true);setError('');
   try{const next=await autoLayout(model,expanded);setPositions(next);requestAnimationFrame(()=>reactFlow.fitView({duration:550,padding:0.18,maxZoom:1.05}))}
