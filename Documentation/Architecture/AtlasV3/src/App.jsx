@@ -9,12 +9,19 @@ const details=[
  {icon:ShieldCheck,number:'03',title:'Sécurité par conception',body:'Pare-feu fonctionnels, contrôles de risques et garde-fous autour des opérations sensibles.'},
  {icon:Database,number:'04',title:'Données et observabilité',body:'Collecte multi-sources, cache, suivi des événements et composants de portfolio dans un ensemble cohérent.'}
 ];
+const capabilities=[
+ {id:'data',index:'01',title:'Observer',area:'Collecte & contexte',summary:'Rassembler, normaliser et contextualiser les informations de marché.',engines:['Market Data Collector','Fundamental Engine','Liquidity Engine'],facts:['Sources de marché indépendantes','Événements macroéconomiques','Mesures de microstructure'],accent:'cyan'},
+ {id:'analysis',index:'02',title:'Interpréter',area:'Analyse & stratégie',summary:'Transformer les données en analyses techniques et intentions structurées.',engines:['Indicator Engine','Strategy Engine','IA Supervisor'],facts:['Indicateurs calculés','Stratégies séparées de l’exécution','Synthèse et orchestration'],accent:'purple'},
+ {id:'control',index:'03',title:'Contrôler',area:'Risque & sécurité',summary:'Confronter les intentions aux contraintes et protections avant toute action sensible.',engines:['Risk Engine','Firewall System','Trading Engine'],facts:['Vérifications R1 / R2','Points de passage Firewall','Exécution non présentée comme active'],accent:'orange'},
+ {id:'governance',index:'04',title:'Coordonner',area:'Architecture & suivi',summary:'Garantir la cohérence des échanges et la lisibilité de l’état système.',engines:['Core Server','Router Switch CP/1','Portfolio Engine'],facts:['Contrats de communication CP/1','Séparation des responsabilités','Événements et suivi de portefeuille'],accent:'green'}
+];
 function AtlasLogo(){return <span className="atlas-brand-symbol"><span>IA</span><i/></span>}
 export default function App(){
  const [page,setPage]=useState('home');
  const [full,setFull]=useState(false);
  const [menu,setMenu]=useState(false);
  const [model,setModel]=useState(baseModel);
+ const [capability,setCapability]=useState('data');
  const [activeSection,setActiveSection]=useState('home');
  function navigate(to){setPage(to);setFull(false);setMenu(false);window.scrollTo({top:0,behavior:'smooth'});}
  useEffect(()=>{function escape(e){if(e.key==='Escape'&&full)setFull(false)}document.addEventListener('keydown',escape);return()=>document.removeEventListener('keydown',escape)},[full]);
@@ -64,6 +71,25 @@ export default function App(){
    <section id="overview" className="overview-section">
      <div className="section-intro"><div><div className="eyebrow light">CONCEPTION & CAPACITÉS</div><h2>Une architecture pensée<br/>par responsabilités.</h2></div><p>Chaque moteur possède une mission précise. Les échanges sont organisés autour de contrats explicites et de contrôles dédiés. Voici les grands principes du projet.</p></div>
      <div className="feature-grid">{details.map(d=><article className="feature-card" key={d.number}><span className="feature-number">{d.number}</span><div className="feature-icon"><d.icon size={23} strokeWidth={1.6}/></div><h3>{d.title}</h3><p>{d.body}</p></article>)}</div>
+   </section>
+   <section className="capability-section" aria-labelledby="capabilities-heading">
+    <div className="capability-intro"><div className="eyebrow light">PARCOURS DE LA PLATEFORME</div><h2 id="capabilities-heading">Du marché à la décision.<br/><span>Des rôles toujours identifiables.</span></h2>
+      <p>Quatre points de vue pour découvrir le projet complet sans noyer le visiteur dans les détails de son infrastructure.</p>
+    </div>
+    <div className="capability-shell">
+      <div className="capability-tabs" role="tablist" aria-label="Explorer les domaines IA-TB">{capabilities.map(c=>
+        <button key={c.id} id={'tab-'+c.id} role="tab" aria-controls="capability-panel" aria-selected={capability===c.id} className={capability===c.id?'active':''} onClick={()=>setCapability(c.id)}>
+         <small>{c.index}</small><strong>{c.title}</strong><span>{c.area}</span><ChevronRight size={15}/></button>)}</div>
+      <div className="capability-content" id="capability-panel" role="tabpanel" aria-labelledby={'tab-'+capability}>
+       {capabilities.filter(c=>c.id===capability).map(c=><div key={c.id}>
+        <div className={'capability-mark '+c.accent}><Layers3 size={25}/><span>SYSTÈME {c.index} / 04</span></div>
+        <h3>{c.area}</h3><p>{c.summary}</p>
+        <div className="capability-label">COMPOSANTS IMPLIQUÉS</div><div className="capability-engines">{c.engines.map(e=><span key={e}><Box size={12}/>{e}</span>)}</div>
+        <div className="capability-label">CAPACITÉS DOCUMENTÉES</div><div className="capability-facts">{c.facts.map(f=><div key={f}><CheckCircle2 size={15}/>{f}</div>)}</div>
+       </div>)}
+       <button className="capability-map-link" onClick={()=>navigate('map')}>Voir les interconnexions dans l'Atlas <ArrowUpRight size={16}/></button>
+      </div>
+    </div>
    </section>
    <section className="diagram-section">
     <div className="diagram-intro"><div><div className="eyebrow light">VISUALISATION DU SYSTÈME</div><h2>Explorer, plutôt que déchiffrer.</h2><p>Une carte claire pour une première lecture. En plein écran, chaque système dévoile ses modules, ses connexions et son rôle.</p></div>
