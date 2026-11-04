@@ -7,8 +7,8 @@ class ConversationMemory {
  constructor({filename,ttlSeconds=86400,maxMessages=40,maxChars=12000}={}){
   if(!filename||filename===':memory:'&&process.env.NODE_ENV==='production')throw Error('PRIVATE_DB_PATH_REQUIRED');
   if(!Number.isInteger(ttlSeconds)||ttlSeconds<60||!Number.isInteger(maxMessages)||maxMessages<1||maxMessages>1000||!Number.isInteger(maxChars)||maxChars<1||maxChars>100000)throw Error('INVALID_MEMORY_CONFIG');
-  if(filename!==':memory:')fs.mkdirSync(path.dirname(filename),{recursive:true,mode:0o700});
-  this.db=new Database(filename);if(filename!==':memory:')fs.chmodSync(filename,0o600);this.db.pragma('journal_mode=WAL');this.db.pragma('busy_timeout=5000');
+  if(filename!==':memory:'){fs.mkdirSync(path.dirname(filename),{recursive:true,mode:0o700});fs.chmodSync(path.dirname(filename),0o700);}
+  this.db=new Database(filename);if(filename!==':memory:')fs.chmodSync(filename,0o600);this.db.pragma('journal_mode=WAL');this.db.pragma('busy_timeout=5000');this.db.pragma('secure_delete=ON');
   this.db.exec(`CREATE TABLE IF NOT EXISTS conversations(tenant_id TEXT NOT NULL,session_id TEXT NOT NULL,created_at INTEGER NOT NULL,updated_at INTEGER NOT NULL,expires_at INTEGER NOT NULL,PRIMARY KEY(tenant_id,session_id));
 CREATE TABLE IF NOT EXISTS messages(id TEXT PRIMARY KEY,tenant_id TEXT NOT NULL,session_id TEXT NOT NULL,role TEXT NOT NULL CHECK(role IN ('user','assistant','tool','system')),content TEXT NOT NULL,created_at INTEGER NOT NULL,FOREIGN KEY(tenant_id,session_id) REFERENCES conversations(tenant_id,session_id) ON DELETE CASCADE);
 CREATE INDEX IF NOT EXISTS idx_messages_session ON messages(tenant_id,session_id,created_at,id);`);
