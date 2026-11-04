@@ -9,7 +9,10 @@ function compact(x,limit=1400){const s=typeof x==='string'?x:JSON.stringify(x);r
 function parseResponse(text){
  let result;
  try{result=JSON.parse(String(text||''));}catch(e){throw Error('COGNITIVE_INVALID_JSON');}
- if(!result||typeof result.message!=='string'||result.message.length>12000||!Array.isArray(result.tool_requests)||!Array.isArray(result.memory_proposals))throw Error('COGNITIVE_INVALID_FORMAT');
+ if(!result||typeof result.message!=='string'||result.message.length>12000)throw Error('COGNITIVE_INVALID_FORMAT');
+ if(result.tool_requests==null)result.tool_requests=[];
+ if(result.memory_proposals==null)result.memory_proposals=[];
+ if(!Array.isArray(result.tool_requests)||!Array.isArray(result.memory_proposals))throw Error('COGNITIVE_INVALID_FORMAT');
  return result;
 }
 class CognitiveRuntime{
