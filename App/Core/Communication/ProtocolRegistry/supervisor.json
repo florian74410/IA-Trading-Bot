@@ -292,7 +292,7 @@
       },
       {
         "name": "supervisor.cognitive.reason",
-        "description": "Memory-first, read-only, LLM structured response via AI Gateway CP/1. Writes only private conversation and pending proposals.",
+        "description": "Requires Auth21 owner proof through supervisor.user.request; never directly routed to Supervisor",
         "arguments": {
           "allowed": [
             "prompt",
@@ -302,7 +302,8 @@
           "required": [
             "prompt"
           ]
-        }
+        },
+        "transport": "OWNER"
       },
       {
         "name": "supervisor.cognitive.status",
@@ -316,6 +317,20 @@
         "description": "Read configured provider, selected model and allowed model names",
         "arguments": {
           "allowed": []
+        }
+      },
+      {
+        "name": "supervisor.llm.select",
+        "transport": "OWNER",
+        "description": "ADMIN only: persist approved provider and model through Auth21 owner request",
+        "arguments": {
+          "allowed": [
+            "provider",
+            "model"
+          ],
+          "required": [
+            "model"
+          ]
         }
       }
     ],
