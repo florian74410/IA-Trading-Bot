@@ -1,0 +1,42 @@
+name: CP1 Registry interprocess communication
+on:
+  push:
+    branches:
+      - 'supervisor/**'
+  pull_request:
+    branches:
+      - '2.6'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  cp1-registry:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: App/package-lock.json
+      - name: Install runtime dependencies
+        working-directory: App
+        run: npm ci --ignore-scripts=false
+      - name: Check ActionBlock syntax
+        run: |
+          find App -path '*/FunctionRegistry/startup.js' -print0 | xargs -0 -n1 node --check
+          node --check App/Core/FunctionRegistry/publisher.js
+          node --check App/Core/FunctionRegistry/receiver.js
+          node --check App/tests/registry-process-integration.js
+      - name: Run CP1 interprocess startup publication test
+        run: node App/tests/registry-process-integration.js
+      - name: Run discovery contract tests
+        run: node --test App/tests/function-registry-discovery.test.js
+      - name: Publish machine-readable report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cp1-registry-communication-report
+          path: artifacts/cp1-registry-report.json
+          if-no-files-found: warn
