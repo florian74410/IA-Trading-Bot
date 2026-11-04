@@ -19,7 +19,7 @@ class CognitiveRuntime{
  constructor({root,llm,cp,settings,shortMemory,longMemory,protocolRegistry,functionRegistryDb}={}){
   if(!root||!llm||!cp||!settings)throw Error('COGNITIVE_ADAPTERS_REQUIRED');
   this.root=root;this.llm=llm;this.cp=cp;this.settings=settings;
-  const dir=path.join(root,'.runtime','cognitive');
+  const dir=path.join(process.env.IATB_RUNTIME_ROOT||path.join(root,'.runtime'),'cognitive');
   this.short=shortMemory||new ConversationMemory({filename:path.join(dir,'short.sqlite'),ttlSeconds:86400,maxMessages:40});
   this.long=longMemory||new PersonalMemory(path.join(dir,'long.sqlite'));
   this.protocol=protocolRegistry||new ProtocolRegistry(root);
