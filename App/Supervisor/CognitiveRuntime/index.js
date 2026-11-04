@@ -31,7 +31,7 @@ class CognitiveRuntime{
   this.long=longMemory||new PersonalMemory(path.join(dir,'long.sqlite'));
   this.protocol=protocolRegistry||new ProtocolRegistry(root);
   this.functionRegistryDb=functionRegistryDb||process.env.IATB_FUNCTION_REGISTRY_DB||'';
-  this.ram=new Map();this.busy=new Set();
+  this.ram=new Map();this.busy=new Set();this.maintenance();
  }
  models(){
   const cfg=this.settings.llm(),configured=String(cfg.openai?.model||'gpt-5.6');
