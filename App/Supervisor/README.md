@@ -21,13 +21,39 @@ Current runtime stage:
 - AutonomousTrading extension discovery: active
 - Trade execution from Supervisor: intentionally locked until the Risk approval contract and Firewall-to-Trading path are implemented and tested.
 
-## Cognitive V1 (DEBUG, opt-in route)
+## Cognitive V1.1 — DEBUG (Auth21 owner-only)
 
-- `Core/supervisor_core.js` mounts `CognitiveRuntime` lazily from the real Supervisor CP/1 service.
-- `supervisor.cognitive.reason` uses private SQLite short memory, self/verified memory, compact Soul and read-only registries.
-- `supervisor.cognitive.status` and `supervisor.llm.models` expose safe diagnostics and the model allowlist.
-- `OPENAI_API` continues through the existing CP/1 AI Gateway and OpenAI Responses API; `MOCK` remains default for DEBUG.
-- Long-memory suggestions remain pending and cannot change capabilities or execute commands.
-- Full logs/health analysis, operator-identity binding and authenticated write-review are **not enabled** in this V1.
+The actual `supervisor_service.js` and `Core/supervisor_core.js` mount a compact
+`CognitiveRuntime` with Soul, bounded working RAM, persistent short and verified
+long memory, review-only proposals, protocol discovery, private backups and health.
 
-See `Documentation/wiki/Supervisor-IA.md` for contracts, configuration, and safety notes.
+**The cognitive conversation is never a direct CP/1 action.** A logged-in client
+sends `supervisor.cognitive.reason` to Core's owner bridge; Core authorizes the
+current session, signs the exact owner request and delegates any personal OpenAI
+API use. The Supervisor receives it as `supervisor.user.request`, verifies the
+owner proof, and scopes memory by a hash of the verified `clientId`. The
+`supervisor.cognitive.reason` protocol entry uses `transport:OWNER`, and the
+Function Registry marks it `hard_deny` for generic agents.
+
+Read-only CP/1 actions:
+- `supervisor.cognitive.status` — Soul/SQLite/Registry/Router/LLM readiness.
+- `supervisor.llm.models` — configured provider, selected and allowed models.
+
+Owner-verified operations:
+- `supervisor.cognitive.reason` — conversation with up to two safe read-only queries.
+- `supervisor.llm.select` — ADMIN only, persists allowed provider/model in Settings.
+
+`OPENAI_API` uses the existing `LLMManager`, Auth21 delegated Core AI
+Gateway and OpenAI Responses API. DEBUG CI uses MOCK only. No trading, mutation
+tool calls, permission changes or cross-owner conversation reads are permitted.
+
+SQLite location: `<IATB_RUNTIME_ROOT>/cognitive/` (private), 24-hour/40-message
+retention by default. Long-memory proposals await review; no autonomous promotion.
+Context is limited using a UTF-8 byte-based token **estimate**, not an exact
+tokenizer. Incomplete or invalid LLM results are handled without loss of user
+turns. Trusted runtime housekeeping includes `maintenance()` and `backup()`.
+
+Sources and verification: `Documentation/wiki/Supervisor-IA.md` and
+`.github/workflows/cp1-registry-integration.yml` (real Router/Supervisor,
+stubbed Auth21 Core TLS and mocked LLM in DEBUG). No live OpenAI test or VPS
+deployment has been performed.
