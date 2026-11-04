@@ -29,6 +29,14 @@ jobs:
           node --check App/Core/FunctionRegistry/publisher.js
           node --check App/Core/FunctionRegistry/receiver.js
           node --check App/tests/registry-process-integration.js
+      - name: Check Supervisor service, Core and cognitive runtime syntax
+        run: |
+          node --check App/Supervisor/supervisor_service.js
+          node --check App/Supervisor/Core/supervisor_core.js
+          node --check App/Supervisor/CognitiveRuntime/index.js
+          node --check App/Supervisor/Memory/short-term.js
+          node --check App/Supervisor/Memory/personal-memory.js
+          node App/Supervisor/Tests/test_supervisor_architecture.js
       - name: Run CP1 interprocess startup publication test
         run: node App/tests/registry-process-integration.js
       - name: Run discovery contract tests
