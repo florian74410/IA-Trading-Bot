@@ -57,3 +57,24 @@ test('tool allowlist blocks model-command injection; no direct trade/tool execut
   r.close();
  }finally{fs.rmSync(root,{recursive:true,force:true});}
 });
+
+test('existing OpenAI provider forwards chosen model through CP1 AI Gateway Responses API',async()=>{
+ const LLMManager=require('../Supervisor/LLM/llm_manager'),root=fs.mkdtempSync(path.join(os.tmpdir(),'iatb-cognitive-gateway-'));
+ const payloads=[];
+ try{
+  const cp={request:async (target,action,arguments_)=>{
+   assert.equal(target,'ai_gateway');assert.equal(action,'ai_gateway.responses');
+   payloads.push(arguments_.payload);
+   return {response:{output_text:JSON.stringify({message:'Gateway accepted model',tool_requests:[],memory_proposals:[]})}};
+  }};
+  const llm=new LLMManager({provider:'OPENAI_API',openai:{model:'gpt-5.6',transport:body=>cp.request('ai_gateway','ai_gateway.responses',{payload:body})}});
+  const settings={llm:()=>({provider:'OPENAI_API',openai:{model:'gpt-5.6'}})};
+  const runtime=new CognitiveRuntime({root,llm,cp,settings,protocolRegistry:new ProtocolRegistry(appRoot)});
+  const x=await runtime.reason({sessionId:'gateway1',prompt:'Explain service status',model:'gpt-5-mini'});
+  assert.equal(x.response.message,'Gateway accepted model');assert.equal(x.response.provider,'OPENAI_API');
+  assert.equal(payloads.length,1);assert.equal(payloads[0].model,'gpt-5-mini');
+  assert.equal(payloads[0].store,false);assert.match(payloads[0].input[0].content,/BOOTLOADER/);
+  assert.equal(fs.statSync(path.join(root,'.runtime','cognitive','short.sqlite')).mode & 0o077,0);
+  runtime.close();
+ }finally{fs.rmSync(root,{recursive:true,force:true});}
+});
