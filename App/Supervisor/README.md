@@ -20,3 +20,14 @@ Current runtime stage:
 - LLM Manager: active (MOCK/OpenAI/remote OpenAI-compatible VPS)
 - AutonomousTrading extension discovery: active
 - Trade execution from Supervisor: intentionally locked until the Risk approval contract and Firewall-to-Trading path are implemented and tested.
+
+## Cognitive V1 (DEBUG, opt-in route)
+
+- `Core/supervisor_core.js` mounts `CognitiveRuntime` lazily from the real Supervisor CP/1 service.
+- `supervisor.cognitive.reason` uses private SQLite short memory, self/verified memory, compact Soul and read-only registries.
+- `supervisor.cognitive.status` and `supervisor.llm.models` expose safe diagnostics and the model allowlist.
+- `OPENAI_API` continues through the existing CP/1 AI Gateway and OpenAI Responses API; `MOCK` remains default for DEBUG.
+- Long-memory suggestions remain pending and cannot change capabilities or execute commands.
+- Full logs/health analysis, operator-identity binding and authenticated write-review are **not enabled** in this V1.
+
+See `Documentation/wiki/Supervisor-IA.md` for contracts, configuration, and safety notes.
