@@ -23,14 +23,14 @@ CREATE INDEX IF NOT EXISTS idx_messages_session ON messages(tenant_id,session_id
    this.db.prepare('DELETE FROM conversations WHERE expires_at<=?').run(now);
    this.db.prepare('INSERT INTO conversations(tenant_id,session_id,created_at,updated_at,expires_at) VALUES(?,?,?,?,?) ON CONFLICT(tenant_id,session_id) DO UPDATE SET updated_at=excluded.updated_at,expires_at=excluded.expires_at').run(tenantId,sessionId,now,now,now+this.ttlSeconds*1000);
    this.db.prepare('INSERT INTO messages(id,tenant_id,session_id,role,content,created_at) VALUES(?,?,?,?,?,?)').run(id,tenantId,sessionId,role,content,now);
-   this.db.prepare('DELETE FROM messages WHERE tenant_id=? AND session_id=? AND id NOT IN (SELECT id FROM messages WHERE tenant_id=? AND session_id=? ORDER BY created_at DESC,id DESC LIMIT ?)').run(tenantId,sessionId,tenantId,sessionId,this.maxMessages);
+   this.db.prepare('DELETE FROM messages WHERE tenant_id=? AND session_id=? AND id NOT IN (SELECT id FROM messages WHERE tenant_id=? AND session_id=? ORDER BY created_at DESC,rowid DESC LIMIT ?)').run(tenantId,sessionId,tenantId,sessionId,this.maxMessages);
   })();
   return {id,createdAt:new Date(now).toISOString()};
  }
  history({tenantId,sessionId,limit=this.maxMessages}){
   this.validate(tenantId,sessionId);if(!Number.isInteger(limit)||limit<1||limit>this.maxMessages)throw Error('INVALID_LIMIT');
   const now=Date.now();
-  const rows=this.db.prepare('SELECT role,content,created_at FROM messages WHERE tenant_id=? AND session_id=? AND EXISTS(SELECT 1 FROM conversations WHERE tenant_id=? AND session_id=? AND expires_at>?) ORDER BY created_at DESC,id DESC LIMIT ?').all(tenantId,sessionId,tenantId,sessionId,now,limit);
+  const rows=this.db.prepare('SELECT role,content,created_at FROM messages WHERE tenant_id=? AND session_id=? AND EXISTS(SELECT 1 FROM conversations WHERE tenant_id=? AND session_id=? AND expires_at>?) ORDER BY created_at DESC,rowid DESC LIMIT ?').all(tenantId,sessionId,tenantId,sessionId,now,limit);
   return rows.reverse().map(r=>({role:r.role,content:r.content,createdAt:new Date(r.created_at).toISOString()}));
  }
  clear({tenantId,sessionId}){this.validate(tenantId,sessionId);return this.db.prepare('DELETE FROM conversations WHERE tenant_id=? AND session_id=?').run(tenantId,sessionId).changes>0;}
