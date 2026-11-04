@@ -895,6 +895,93 @@
       "verified_handler": false,
       "default_privilege": "DENY",
       "side_effects": false
+    },
+    {
+      "id": "supervisor.cognitive.reason",
+      "engine": "supervisor",
+      "type": "MUTATION",
+      "risk_level": "MEDIUM",
+      "hard_deny": false,
+      "description": "Cognitive structured reasoning; persists local conversation and PENDING-only proposals. Never executes trades.",
+      "input": {
+        "type": "object",
+        "required": [
+          "prompt"
+        ],
+        "properties": {
+          "prompt": {
+            "type": "string"
+          },
+          "sessionId": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "object",
+        "description": "supervisor.cognitive/1.0 or status/model catalog"
+      },
+      "errors": [
+        "COGNITIVE_ADAPTERS_REQUIRED"
+      ],
+      "source": "App/Core/Communication/ProtocolRegistry/supervisor.json",
+      "verified_handler": true,
+      "default_privilege": "DENY",
+      "side_effects": true
+    },
+    {
+      "id": "supervisor.cognitive.status",
+      "engine": "supervisor",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Read-only Supervisor cognitive capability.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "object",
+        "description": "supervisor.cognitive/1.0 or status/model catalog"
+      },
+      "errors": [
+        "COGNITIVE_ADAPTERS_REQUIRED"
+      ],
+      "source": "App/Core/Communication/ProtocolRegistry/supervisor.json",
+      "verified_handler": true,
+      "default_privilege": "DENY",
+      "side_effects": false
+    },
+    {
+      "id": "supervisor.llm.models",
+      "engine": "supervisor",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Read-only Supervisor cognitive capability.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "object",
+        "description": "supervisor.cognitive/1.0 or status/model catalog"
+      },
+      "errors": [
+        "COGNITIVE_ADAPTERS_REQUIRED"
+      ],
+      "source": "App/Core/Communication/ProtocolRegistry/supervisor.json",
+      "verified_handler": true,
+      "default_privilege": "DENY",
+      "side_effects": false
     }
   ],
   "verification_status": "PROTOCOL_DECLARED_UNVERIFIED_HANDLERS"
