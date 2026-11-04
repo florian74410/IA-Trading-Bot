@@ -1,7 +1,7 @@
 'use strict';
 const test=require('node:test');
 const assert=require('node:assert/strict');
-const {RegistryDiscovery}=require('../../Core/FunctionRegistry/discovery');
+const {RegistryDiscovery}=require('../Core/FunctionRegistry/discovery');
 const targets=[{engineId:'marketdata'},{engineId:'trading',brokerId:'binance'},{engineId:'trading',brokerId:'kraken'}];
 const calls=[],snapshots=[];
 const manager={sync:(manifest,identity)=>{snapshots.push({manifest,identity});return {count:manifest.functions.length,changed:true};}};
