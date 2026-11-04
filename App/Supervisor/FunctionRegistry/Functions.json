@@ -901,8 +901,8 @@
       "engine": "supervisor",
       "type": "MUTATION",
       "risk_level": "MEDIUM",
-      "hard_deny": false,
-      "description": "Cognitive structured reasoning; persists local conversation and PENDING-only proposals. Never executes trades.",
+      "hard_deny": true,
+      "description": "Owner/Auth21 delegated cognitive conversation. Not available via generic CP1 agent privileges.",
       "input": {
         "type": "object",
         "required": [
@@ -982,6 +982,41 @@
       "verified_handler": true,
       "default_privilege": "DENY",
       "side_effects": false
+    },
+    {
+      "id": "supervisor.llm.select",
+      "engine": "supervisor",
+      "type": "MUTATION",
+      "risk_level": "HIGH",
+      "hard_deny": true,
+      "description": "ADMIN Auth21 owner-only model selection; cannot be granted to generic AI agent",
+      "input": {
+        "type": "object",
+        "required": [
+          "model"
+        ],
+        "properties": {
+          "provider": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "object",
+        "description": "Persisted model selection"
+      },
+      "errors": [
+        "LLM_ADMIN_REQUIRED",
+        "LLM_MODEL_NOT_ALLOWED"
+      ],
+      "source": "App/Core/Communication/ProtocolRegistry/supervisor.json",
+      "verified_handler": true,
+      "default_privilege": "DENY",
+      "side_effects": true
     }
   ],
   "verification_status": "PROTOCOL_DECLARED_UNVERIFIED_HANDLERS"
