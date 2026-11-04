@@ -28,7 +28,7 @@ SupervisorCore.prototype.analyze=function(a){var self=this;a=a||{};return this.c
 SupervisorCore.prototype.structured=function(a){var self=this;a=a||{};return this.llm.structured(a).then(function(r){self.reasoningCount++;self.lastReasoning={at:new Date().toISOString(),provider:r.provider,model:r.model,latencyMs:r.latencyMs,structured:true};return{schema:'supervisor.structured/1.0',execution:'NONE',response:r};});};
 SupervisorCore.prototype.reason=function(a){var self=this;a=a||{};return this.llm.reason({system:String(a.system||'You are the IA-TB Supervisor. Analyze the supplied context. Never claim that an order was executed. Return reasoning only; execution is handled by Risk, Firewall and Trading Engine.'),prompt:String(a.prompt||''),model:String(a.model||''),temperature:a.temperature,maxTokens:a.maxTokens,metadata:a.metadata||{}}).then(function(r){self.reasoningCount++;self.lastReasoning={at:new Date().toISOString(),provider:r.provider,model:r.model,latencyMs:r.latencyMs,fallbackFrom:r.fallbackFrom||null};return{schema:'supervisor.reasoning/1.0',execution:'NONE',response:r};});};
 SupervisorCore.prototype.cognitiveRuntime=function(){if(!this.cognitive){var CognitiveRuntime=require('../CognitiveRuntime').CognitiveRuntime;this.cognitive=new CognitiveRuntime({root:this.root,llm:this.llm,cp:this.cp,settings:this.settings});}return this.cognitive;};
-SupervisorCore.prototype.cognitiveReason=function(a){return this.cognitiveRuntime().reason(a||{});};
-SupervisorCore.prototype.cognitiveStatus=function(){return this.cognitiveRuntime().status();};
+SupervisorCore.prototype.cognitiveReason=function(a,auth){return this.cognitiveRuntime().reason(a||{},auth||{});};
+SupervisorCore.prototype.cognitiveStatus=function(){return this.cognitiveRuntime().health();};
 SupervisorCore.prototype.llmModels=function(){return this.cognitiveRuntime().models();};
 module.exports=SupervisorCore;
