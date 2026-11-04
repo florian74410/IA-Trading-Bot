@@ -1,6 +1,6 @@
 # IA-TB — Wiki · 2.5.2 DEV
 
-> **🧠 Supervisor Cognitif V1 (branche DEBUG `supervisor/iatb_v2.6.0.2`)** — [Soul, RAM, mémoires persistantes, registres CP/1 et sélection du modèle OpenAI](Supervisor-IA.md#-cognitive-runtime-v1--26-debug-nouveau-expérimental). Cette évolution est expérimentale et ne modifie pas la RELEASE.\n\n> **Consolidation actuelle : `2.5.2` DEV**, depuis `2.5.1` au commit `9027d85c`. [Correctifs et qualification](../Consolidation/2.5.2-DEV.md). Aucune promotion stable ni opération GEN-1.
+> **🧠 Supervisor Cognitif V1.1 (branche DEBUG `supervisor/iatb_v2.6.0.2`)** — [Soul, RAM, mémoires persistantes, registres CP/1 et sélection du modèle OpenAI](Supervisor-IA.md). Cette évolution est expérimentale et ne modifie pas la RELEASE.\n\n> **Consolidation actuelle : `2.5.2` DEV**, depuis `2.5.1` au commit `9027d85c`. [Correctifs et qualification](../Consolidation/2.5.2-DEV.md). Aucune promotion stable ni opération GEN-1.
 
 > **Source nettoyée : [2.4.2-R1 DEV](Nettoyage-2.4.2-R1.md)** sur la branche `2.4.2-R1`, issue de 2.4.1. Recette locale à suivre ; aucune promotion stable ou opération GEN-1.
 
