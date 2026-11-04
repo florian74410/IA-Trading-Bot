@@ -47,6 +47,8 @@ jobs:
         run: node --test App/tests/supervisor-cognitive-runtime.test.js
       - name: Test authenticated Core owner, LLM delegated gateway and persistent model settings
         run: node --test App/tests/supervisor-owner-cognitive-auth.test.js
+      - name: Network smoke - real Router and Supervisor with isolated Auth21 mock Core
+        run: node --test App/tests/supervisor-cognitive-network-smoke.js
       - name: Publish machine-readable report
         if: always()
         uses: actions/upload-artifact@v4
