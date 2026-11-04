@@ -35,6 +35,8 @@ jobs:
         run: node --test App/tests/function-registry-discovery.test.js
       - name: Test Supervisor persistent short-term memory
         run: node --test App/tests/supervisor-short-term-memory.test.js
+      - name: Test Supervisor cognitive runtime, memories, model picker and CP1 contracts
+        run: node --test App/tests/supervisor-cognitive-runtime.test.js
       - name: Publish machine-readable report
         if: always()
         uses: actions/upload-artifact@v4
