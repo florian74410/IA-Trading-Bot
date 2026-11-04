@@ -67,7 +67,7 @@ test('existing OpenAI provider forwards chosen model through CP1 AI Gateway Resp
    payloads.push(arguments_.payload);
    return {response:{output_text:JSON.stringify({message:'Gateway accepted model',tool_requests:[],memory_proposals:[]})}};
   }};
-  const llm=new LLMManager({provider:'OPENAI_API',openai:{model:'gpt-5.6',transport:body=>cp.request('ai_gateway','ai_gateway.responses',{payload:body})}});
+  const llm=new LLMManager({provider:'OPENAI_API',openai:{model:'gpt-5.6',transport:async body=>(await cp.request('ai_gateway','ai_gateway.responses',{payload:body})).response}});
   const settings={llm:()=>({provider:'OPENAI_API',openai:{model:'gpt-5.6'}})};
   const runtime=new CognitiveRuntime({root,llm,cp,settings,protocolRegistry:new ProtocolRegistry(appRoot)});
   const x=await runtime.reason({sessionId:'gateway1',prompt:'Explain service status',model:'gpt-5-mini'});
