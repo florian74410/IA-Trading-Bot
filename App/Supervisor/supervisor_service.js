@@ -5,7 +5,7 @@ PATHS.ensureAppRuntimeDirs();
 var ROOT=PATHS.ROOT,HOST='127.0.0.1',PORT=+(process.env.IATB_SUPERVISOR_PORT||3000),ROUTER_PORT=+(process.env.ROUTER_PORT||8021),VERSION=BUILD.version;
 var LOG=path.join(ROOT,'.runtime','logs','supervisor.log'),core=new SupervisorCore(ROOT);
 var collectorData=new (require('./Core/collector_data_v2_4_1').CollectorData)(core.cp,ROOT);
-var ACTIONS=['supervisor.data.catalog','supervisor.data.read','supervisor.user.request','supervisor.health','supervisor.capabilities','supervisor.status','supervisor.calendar','supervisor.calendar.fed','supervisor.calendar.cme','supervisor.calendar.cme.expirations','supervisor.fedwatch','supervisor.reload','supervisor.extensions','supervisor.llm.health','supervisor.context','supervisor.analyze','supervisor.indicators','supervisor.indicator.language','supervisor.indicator.validate','supervisor.indicator.create','supervisor.indicator.definition','supervisor.indicators.compute','supervisor.risk.evaluate','supervisor.reason','supervisor.structured'];
+var ACTIONS=['supervisor.data.catalog','supervisor.data.read','supervisor.user.request','supervisor.health','supervisor.capabilities','supervisor.status','supervisor.calendar','supervisor.calendar.fed','supervisor.calendar.cme','supervisor.calendar.cme.expirations','supervisor.fedwatch','supervisor.reload','supervisor.extensions','supervisor.llm.health','supervisor.context','supervisor.analyze','supervisor.indicators','supervisor.indicator.language','supervisor.indicator.validate','supervisor.indicator.create','supervisor.indicator.definition','supervisor.indicators.compute','supervisor.risk.evaluate','supervisor.reason','supervisor.structured','supervisor.cognitive.reason','supervisor.cognitive.status','supervisor.llm.models'];
 var EVENTS=['supervisor.reasoning.completed','supervisor.extension.loaded'];
 function log(tag,msg){try{fs.appendFileSync(LOG,'['+new Date().toISOString()+'] ['+tag+'] '+String(msg||'').replace(/[\r\n]+/g,' ').slice(0,1000)+'\n');}catch(e){}}
 function send(res,code,o){var b=Buffer.from(JSON.stringify(o));res.writeHead(code,{'Content-Type':'application/json; charset=utf-8','Content-Length':b.length,'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});res.end(b);}
@@ -36,6 +36,9 @@ var adapter=new Adapter({root:ROOT,id:'supervisor',label:'IA Supervisor',port:PO
  'supervisor.data.read':function(a){return collectorData.read(a);},
  'supervisor.context':function(a){return core.collectContext(a||{});},
  'supervisor.analyze':function(a){return core.analyze(a||{});},
+ 'supervisor.cognitive.reason':function(a){return core.cognitiveReason(a||{});},
+ 'supervisor.cognitive.status':function(){return core.cognitiveStatus();},
+ 'supervisor.llm.models':function(){return core.llmModels();},
  'supervisor.reason':function(a){if(!a||!String(a.prompt||'').trim())throw new Error('SUPERVISOR_PROMPT_REQUIRED');return core.reason(a).then(function(x){log('REASON','provider='+x.response.provider+' latency='+x.response.latencyMs+'ms');return x;});},
  'supervisor.structured':function(a){a=a||{};if(!String(a.prompt||'').trim())throw new Error('SUPERVISOR_PROMPT_REQUIRED');if(!a.schema||typeof a.schema!=='object')throw new Error('SUPERVISOR_SCHEMA_REQUIRED');if(String(a.prompt).length>120000||String(a.instructions||'').length>24000)throw new Error('SUPERVISOR_STRUCTURED_INPUT_TOO_LARGE');return core.structured(a).then(function(x){log('STRUCTURED','provider='+x.response.provider+' latency='+x.response.latencyMs+'ms name='+String(a.name||''));return x;});}
 }});
