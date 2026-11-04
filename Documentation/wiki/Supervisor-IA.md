@@ -149,7 +149,7 @@ Le Supervisor produit du contexte, du raisonnement et des intentions. La vérit�
 
 ---
 
-## 🧠 Cognitive Runtime V1 — 2.6 DEBUG (nouveau, expérimental)
+## 🧠 Cognitive Runtime V1 — historique (remplacé par V1.1)
 
 Le service réel `App/Supervisor/supervisor_service.js` propose maintenant une première voie **memory-first** distincte de `supervisor.reason` (compatibilité conservée).
 
@@ -169,11 +169,11 @@ Le modèle reçoit au plus 8 anciens messages tronqués, un résumé personnel d
 
 | Commande | Arguments | Rôle |
 | --- | --- | --- |
-| `supervisor.cognitive.reason` | `prompt` (requis), `sessionId` (optionnel), `model` (optionnel) | Réponse structurée, historique persistant et propositions mémoire **PENDING** |
+| `supervisor.cognitive.reason` | `prompt` (requis), `sessionId`, `model` | **OWNER Auth21 uniquement depuis la V1.1**, via `supervisor.user.request` ; mémoire et propositions **PENDING** |
 | `supervisor.cognitive.status` | aucun | État du runtime et des connexions |
 | `supervisor.llm.models` | aucun | Fournisseur, modèle sélectionné, liste autorisée |
 
-Les contrats figurent dans `App/Core/Communication/ProtocolRegistry/supervisor.json` **et** `App/Supervisor/FunctionRegistry/Functions.json`. Le Router valide les actions enregistrées ; le protocole CP/1 reste authentifié et aucun droit d'exécution financière n'est ajouté.
+Les contrats figurent dans `App/Core/Communication/ProtocolRegistry/supervisor.json` **et** `App/Supervisor/FunctionRegistry/Functions.json`. Le Router valide seulement les commandes de transport `CP1`; les opérations `OWNER` exigent la preuve Auth21 via `supervisor.user.request`. Aucun droit financier n'est ajouté.
 
 ### Choisir son LLM
 
@@ -191,7 +191,7 @@ La commande `supervisor.llm.models` révèle les modèles autorisés. Une requê
 
 - **Pas de confirmation d'appel API réel en CI** : les tests utilisent `MOCK` ; un compte OpenAI configuré et une vérification manuelle DEBUG sont nécessaires.
 - **Pas d'analyse automatique des logs** pour l'instant : aucune commande CP/1 de recherche de logs n'a été ajoutée sans handler vérifié. Les analyses de santé et les actions administratives font partie de la prochaine étape.
-- **Pas de mémoire multiutilisateur exposée** : les sessions cognitives appartiennent au périmètre interne du Supervisor et du Router de confiance. Le service CP/1 utilise une authentification de service ; un rattachement à une identité utilisateur vérifiée sera nécessaire avant d'exposer l'historique dans une UI publique.
+- **Mise à jour V1.1 :** les mémoires sont maintenant isolées par identité Auth21 vérifiée. L'accès conversationnel public reste à intégrer à une interface utilisateur dédiée ; aucun historique n'est exposé en lecture CP/1 directe.
 - La mémoire longue ne stocke automatiquement que des **propositions en attente** ; leur vérification/promotion exige un processus ADMIN de confiance encore à construire.
 - En l'absence de `IATB_FUNCTION_REGISTRY_DB`, la lecture du registre de permissions apparaît `connected:false` (aucune base vide créée).
 - La RELEASE GEN-1 et l'exécution Trading LIVE ne sont pas modifiées.
@@ -219,7 +219,7 @@ Workflow GitHub Actions : `.github/workflows/cp1-registry-integration.yml`. Les 
 - Fichiers SQLite et dossiers cognitifs : accès propriétaire seulement (`0600` / `0700`). Les sessions expirent après 24 h ; 40 messages au maximum sont conservés par session. Les propositions non examinées peuvent être purgées après 30 jours.
 
 ### Budget et résilience
-- Les messages anciens sont écartés du contexte envoyé à l'API pour conserver un budget estimé de **4 400 tokens en entrée** et **1 800 tokens maximum en sortie**. Le calcul `octets UTF-8 / 3` est une **estimation conservatrice**, pas un tokenizer exact ; les limites du fournisseur restent déterminantes.
+- Les messages anciens sont écartés du contexte envoyé à l'API pour conserver un budget estimé de **4 400 tokens en entrée** et **1 800 tokens maximum en sortie**. Le calcul `octets UTF-8 / 3` est un **estimateur approximatif**, pas un tokenizer exact ; les limites du fournisseur restent déterminantes.
 - Une réponse JSON incorrecte provoque **une seule tentative corrective**. Les réponses incomplètes ou de refus échouent explicitement, sans exécuter d'outil.
 - Le message utilisateur est enregistré avant l'appel API ; un échec est mémorisé sous forme d'erreur contrôlée afin de conserver la continuité après redémarrage.
 - Les outils sont en lecture seule et plafonnés à deux recherches; la découverte CP/1 utilise le vrai endpoint machine authentifié `GET /communication/v1/registry`.
