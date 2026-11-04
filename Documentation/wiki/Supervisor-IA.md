@@ -205,3 +205,46 @@ node --test tests/supervisor-short-term-memory.test.js tests/supervisor-cognitiv
 ```
 
 Workflow GitHub Actions : `.github/workflows/cp1-registry-integration.yml`. Les résultats CI doivent être consultés avant tout déploiement.
+
+---
+
+## 🛡️ Cognitive Runtime V1.1 — Auth21, configuration et qualification
+
+**La V1.1 remplace la consultation cognitive directe de la V1 par un accès propriétaire Auth21.** Le nom `supervisor.cognitive.reason` représente désormais une opération **OWNER**, non une commande exécutable directement dans le Router. Pour dialoguer, l'interface authentifiée envoie `supervisor.cognitive.reason` au **Core UserManagement CP Bridge** ; Core valide la session, émet une preuve signée pour `supervisor.user.request`, puis le Supervisor revalide la preuve et fait confirmer la session par Core avant de charger la mémoire. Les privilèges génériques du Function Registry marquent `supervisor.cognitive.reason` comme `hard_deny`. Le statut et le catalogue des modèles restent disponibles en lecture CP/1.
+
+### Identité et confidentialité
+- Les sessions d'un utilisateur sont isolées sous un identifiant dérivé du `clientId` **vérifié par Auth21**, jamais du champ d'identité fourni dans le prompt.
+- Les messages persistants, la RAM et les recherches de souvenirs sont isolés par utilisateur/session ; le Soul reste une politique commune du moteur.
+- Les mots de passe, clés `sk-` et Bearer sont masqués **par règles heuristiques** avant envoi au LLM ou écriture conversationnelle. Cela n'est **pas** une prévention exhaustive des fuites de données : ne jamais placer de secrets dans les prompts.
+- Fichiers SQLite et dossiers cognitifs : accès propriétaire seulement (`0600` / `0700`). Les sessions expirent après 24 h ; 40 messages au maximum sont conservés par session. Les propositions non examinées peuvent être purgées après 30 jours.
+
+### Budget et résilience
+- Les messages anciens sont écartés du contexte envoyé à l'API pour conserver un budget estimé de **4 400 tokens en entrée** et **1 800 tokens maximum en sortie**. Le calcul `octets UTF-8 / 3` est une **estimation conservatrice**, pas un tokenizer exact ; les limites du fournisseur restent déterminantes.
+- Une réponse JSON incorrecte provoque **une seule tentative corrective**. Les réponses incomplètes ou de refus échouent explicitement, sans exécuter d'outil.
+- Le message utilisateur est enregistré avant l'appel API ; un échec est mémorisé sous forme d'erreur contrôlée afin de conserver la continuité après redémarrage.
+- Les outils sont en lecture seule et plafonnés à deux recherches; la découverte CP/1 utilise le vrai endpoint machine authentifié `GET /communication/v1/registry`.
+- Sauvegarde SQLite en ligne possible via le `CognitiveRuntime.backup()` interne du Supervisor. Les copies sont placées dans `<IATB_RUNTIME_ROOT>/cognitive/backups` et privées; ne pas exposer cette méthode directement à un LLM ni à CP/1. La restauration doit être faite hors ligne après arrêt des services.
+
+### Choix persistant du modèle
+
+Le Core expose l'opération owner `supervisor.llm.select` **uniquement pour ADMIN** : `{ "provider": "OPENAI_API", "model": "gpt-5-mini" }` (ou `MOCK` pour DEBUG). La sélection est sauvegardée dans le profil `app_profile` du Settings Store SQLite existant et recharge le fournisseur Supervisor.
+
+Les commandes `supervisor.llm.models` et `supervisor.cognitive.status` affichent les modèles autorisés et l'état des mémoires, du Soul, des registres, du Router et du Gateway. Elles ne retournent aucune conversation ni clé API. Les modèles OpenAI réellement accessibles dépendent des droits du compte et du Gateway.
+
+Le chemin réseau pour les utilisateurs Auth21 est :
+
+```text
+Client Auth21 -> Core CP Bridge -> preuve owner -> Router CP/1
+             -> supervisor.user.request -> Cognitive Runtime
+             -> LLMManager -> Core AI Gateway (délégation vérifiée) -> OpenAI
+```
+
+Le Gateway Core n'accepte le payload cognitif que si le modèle est dans la liste autorisée, que le prompt courant correspond au prompt signé initialement, que les tailles et les tokens sont bornés, et que la session est toujours valide. Aucun outil ou ordre financier ne peut être demandé via ce canal.
+
+### Tests
+- `App/tests/supervisor-owner-cognitive-auth.test.js` — politique Core Auth21, délégation OpenAI, sélection persistante en Settings.
+- `App/tests/supervisor-cognitive-runtime.test.js` — sécurité, isolation, erreurs LLM, sauvegarde, persistance.
+- `App/tests/supervisor-cognitive-network-smoke.js` — vrais processus **Router et Supervisor** en DEBUG, revalidation TLS Core simulée et `MOCK`, puis redémarrage Supervisor.
+- Workflow : `.github/workflows/cp1-registry-integration.yml` ; le changement de frontière Auth21 est également soumis aux autres workflows Core.
+
+**Limites :** le test de réseau n'est pas un déploiement sur VPS, le Core Auth21 TLS est simulé, et aucun appel réseau à l'API OpenAI réel n'est inclus. Les analyses de logs en continu et les autorisations de trading restent hors périmètre V1.1.
