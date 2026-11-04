@@ -48,7 +48,7 @@ class CognitiveRuntime{
   }
   try{this.protocol.reload();checks.protocolRegistry=this.protocol.get('supervisor')?'OK':'ERROR';}catch(e){checks.protocolRegistry='ERROR';}
   const f=this.permissions();checks.functionRegistry=f.connected?'OK':(this.functionRegistryDb?'ERROR':'NOT_CONFIGURED');
-  try{await this.cp.request('router','router.registry.list',{},'summary',5000);checks.cp1Router='OK';}catch(e){checks.cp1Router='UNAVAILABLE';}
+  try{await this.routerRegistry();checks.cp1Router='OK';}catch(e){checks.cp1Router='UNAVAILABLE';}
   try{const gateway=await this.llm.health(this.models().provider);checks.llmGateway=gateway?.ok?'OK':'UNAVAILABLE';}catch(e){checks.llmGateway='UNAVAILABLE';}
   out.health={checks,level:Object.values(checks).some(x=>x==='ERROR')?'ERROR':Object.values(checks).some(x=>x==='UNAVAILABLE')?'DEGRADED':'READY'};
   return out;
@@ -72,6 +72,12 @@ class CognitiveRuntime{
   }catch(e){return {connected:false,error:'REGISTRY_READ_UNAVAILABLE',commands:[]};}
   finally{if(db)db.close();}
  }
+ async routerRegistry(){
+  // Router's authenticated machine GET endpoint is implemented; router.registry.list is only a protocol declaration.
+  if(this.cp.client&&typeof this.cp.client.routerGet==='function')
+   return new Promise((resolve,reject)=>this.cp.client.routerGet('/communication/v1/registry',(e,x)=>e?reject(e):resolve(x)));
+  return this.cp.request('router','router.registry.list',{},'summary',5000);
+ }
  async tools(requests,tenant){
   const output=[];
   for(const x of requests.slice(0,2)){
@@ -80,7 +86,7 @@ class CognitiveRuntime{
    else if(x.tool==='registry.commands.list')output.push({tool:x.tool,data:this.protocol.list().slice(0,25).map(e=>({engine:e.id,commands:e.table.commands.length}))});
    else if(x.tool==='registry.permissions.list')output.push({tool:x.tool,data:this.permissions()});
    else if(x.tool==='cp1.registry.list'){
-    try{const value=await this.cp.request('router','router.registry.list',{},'summary',12000);output.push({tool:x.tool,data:compact(value,1600)});}
+    try{const value=await this.routerRegistry();output.push({tool:x.tool,data:compact(value,1600)});}
     catch(e){output.push({tool:x.tool,error:'CP1_REGISTRY_UNAVAILABLE'});}
    }
   }
