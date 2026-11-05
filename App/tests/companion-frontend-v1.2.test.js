@@ -17,6 +17,7 @@ function create(role='USER'){
  const fetch=async(url,options={})=>{
   requests.push({url,options});
   let data={};
+  if(url==='/router-health')data={ok:true,dependencies:{supervisor:{ok:true},marketData:{ok:true}}};
   if(url==='/api/companion/history')data={ok:true,messages:[{role:'user',content:'before restart'},{role:'assistant',content:'retained answer'}]};
   if(url==='/api/companion/chat')data={ok:true,source:'supervisor-cognitive',mode:'cognitive',message:'Supervisor cognitive répond',model:'gpt-5-mini',routerActions:[],mood:7};
   if(url==='/communication/v1/ui/read')data={status:'OK',data:options.body&&JSON.parse(options.body).action==='supervisor.llm.models'?{available:['gpt-5-mini','gpt-5.6'],selected:'gpt-5-mini',provider:'OPENAI_API'}:{ok:true,service:'Supervisor'}};
@@ -45,6 +46,8 @@ test('Blob restores history, converses with cognitive mode, retains command mode
  engines.onclick();
  const engine=find(root,n=>n.className==='iatbCompEngines hide'),read=engine?null:find(root,n=>n.className==='iatbCompEngineRow');
  const row=find(root,n=>n.className==='iatbCompEngineRow');row.children.find(n=>n.tagName==='button').onclick();await tick();await tick();
+ assert.ok(x.requests.some(r=>r.url==='/router-health'),'Global network status should be read from authenticated Gateway');
+ row.children.find(n=>n.tagName==='select').value='1';row.children.find(n=>n.tagName==='button').onclick();await tick();await tick();
  assert.ok(x.requests.some(r=>r.url==='/communication/v1/ui/read'));
  const controls=find(root,n=>n.className==='iatbCompEngineControls');controls.children[0].onclick();await tick();await tick();
  assert.equal(x.calls.confirm,1);
