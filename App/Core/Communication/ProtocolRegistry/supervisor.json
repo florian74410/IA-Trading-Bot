@@ -297,7 +297,8 @@
           "allowed": [
             "prompt",
             "sessionId",
-            "model"
+            "model",
+            "uiContext"
           ],
           "required": [
             "prompt"
