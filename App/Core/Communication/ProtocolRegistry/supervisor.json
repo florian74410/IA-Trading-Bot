@@ -332,6 +332,18 @@
             "model"
           ]
         }
+      },
+      {
+        "name": "supervisor.cognitive.history",
+        "transport": "OWNER",
+        "description": "Authenticated owner-only short conversation history; not callable via generic CP1",
+        "arguments": {
+          "allowed": [
+            "sessionId",
+            "limit"
+          ],
+          "required": []
+        }
       }
     ],
     "dataTypes": [
