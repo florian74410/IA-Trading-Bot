@@ -74,7 +74,35 @@ function setupEnginePanel(){
  resume.onclick=function(){engineCall('strategy','strategy.resume',true,output)};
  if(!authenticated()){pause.disabled=true;resume.disabled=true;read.disabled=true;info.textContent='Authentification Auth21 requise pour accéder aux Engines.'}
  controls.appendChild(pause);controls.appendChild(resume);
- engineBox.appendChild(info);engineBox.appendChild(row);engineBox.appendChild(title);engineBox.appendChild(controls);engineBox.appendChild(output);
+ engineBox.appendChild(info);engineBox.appendChild(row);engineBox.appendChild(title);engineBox.appendChild(controls);
+ if(window.IATBSession&&window.IATBSession.role==='ADMIN'){
+  var modelLabel=el('div','iatbCompInfo','ADMIN · Choisir le modèle utilisé par le Supervisor :');
+  var modelRow=el('div','iatbCompModelRow'),modelSelect=el('select','iatbCompEngineSelect'),provider=el('select','iatbCompEngineSelect');
+  [['OPENAI_API','OpenAI API'],['MOCK','Simulation MOCK']].forEach(function(v){var o=el('option','',v[1]);o.value=v[0];provider.appendChild(o)});
+  var loadModel=el('button','iatbCompAction','Modèles');loadModel.type='button';
+  var saveModel=el('button','iatbCompAction','Appliquer');saveModel.type='button';saveModel.disabled=true;
+  loadModel.onclick=function(){
+   if(busy)return;setBusy(true);
+   request('/communication/v1/ui/read',{target:'supervisor',action:'supervisor.llm.models',arguments:{}})
+    .then(function(j){var c=j.data===undefined?j:j.data;if(!Array.isArray(c.available))throw Error('Catalogue de modèles indisponible');modelSelect.textContent='';
+     c.available.forEach(function(name){var opt=el('option','',name);opt.value=name;modelSelect.appendChild(opt)});
+     modelSelect.value=c.selected||c.available[0]||'';provider.value=c.provider||'OPENAI_API';
+     saveModel.disabled=!modelSelect.value;output.textContent='Modèles disponibles : '+c.available.join(', ');})
+    .catch(function(e){output.textContent='Erreur catalogue : '+e.message;setMood(9)}).finally(function(){setBusy(false)});
+  };
+  saveModel.onclick=function(){
+   if(busy||!modelSelect.value)return;
+   if(!window.confirm('ADMIN : appliquer '+provider.value+' / '+modelSelect.value+' au Supervisor ?'))return;
+   setBusy(true);
+   request('/communication/v1/ui/write',{target:'supervisor',action:'supervisor.llm.select',arguments:{provider:provider.value,model:modelSelect.value}})
+    .then(function(j){var o=j.data===undefined?j:j.data;if(o.ok!==true)throw Error(o.error||'MODEL_SAVE_FAILED');
+      output.textContent=JSON.stringify(o,null,2);setMood(8);statusLine('Supervisor · modèle enregistré dans Settings');})
+    .catch(function(e){output.textContent='Configuration refusée : '+e.message;setMood(9)}).finally(function(){setBusy(false)});
+  };
+  modelRow.appendChild(provider);modelRow.appendChild(modelSelect);modelRow.appendChild(loadModel);modelRow.appendChild(saveModel);
+  engineBox.appendChild(modelLabel);engineBox.appendChild(modelRow);
+ }
+ engineBox.appendChild(output);
  return engineBox;
 }
 function setupVoice(){var SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){add('ai',"La reconnaissance vocale n'est pas disponible dans ce navigateur.");return}if(rec){try{rec.stop()}catch(e){}rec=null;mic.classList.remove('on');return}rec=new SR();rec.lang='fr-FR';rec.interimResults=false;rec.continuous=false;rec.onstart=function(){mic.classList.add('on');setMood(6)};rec.onresult=function(e){var t=e.results[e.results.length-1][0].transcript;input.value=t;send(t)};rec.onerror=function(e){setMood(9);add('ai','Micro : '+e.error)};rec.onend=function(){mic.classList.remove('on');rec=null};try{rec.start()}catch(e){rec=null}}
