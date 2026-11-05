@@ -47,6 +47,15 @@ jobs:
         run: node --test App/tests/supervisor-cognitive-runtime.test.js
       - name: Test authenticated Core owner, LLM delegated gateway and persistent model settings
         run: node --test App/tests/supervisor-owner-cognitive-auth.test.js
+      - name: Check Blob UI, Core chat bridge and updated Supervisor syntax
+        run: |
+          node --check App/Frontend/JS/companion_v1.0.js
+          node --check App/Core/Server/server.js
+          node --check App/Core/Server/companion_cognitive_bridge.js
+          node --check App/Supervisor/CognitiveRuntime/index.js
+          node --check App/Supervisor/Core/owner_supervisor.js
+      - name: Test Blob to Supervisor cognitive chat and engine control boundaries
+        run: node --test App/tests/companion-supervisor-bridge.test.js
       - name: Network smoke - real Router and Supervisor with isolated Auth21 mock Core
         run: node --test App/tests/supervisor-cognitive-network-smoke.js
       - name: Publish machine-readable report
