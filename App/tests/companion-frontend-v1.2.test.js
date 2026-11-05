@@ -10,7 +10,7 @@ class Element{
  querySelectorAll(tag){const all=[];function scan(x){for(const child of x.children){if(child.tagName===tag)all.push(child);scan(child);}}scan(this);return all;}
 }
 function find(node,predicate){if(predicate(node))return node;for(const child of node.children){const result=find(child,predicate);if(result)return result;}return null;}
-function create(){
+function create(role='USER'){
  const requests=[],events=[],body=new Element('body');
  const document={readyState:'complete',body,activeElement:null,createElement:tag=>new Element(tag),addEventListener(){},elementFromPoint:()=>null,querySelector:()=>null};
  const calls={confirm:0};
@@ -19,11 +19,11 @@ function create(){
   let data={};
   if(url==='/api/companion/history')data={ok:true,messages:[{role:'user',content:'before restart'},{role:'assistant',content:'retained answer'}]};
   if(url==='/api/companion/chat')data={ok:true,source:'supervisor-cognitive',mode:'cognitive',message:'Supervisor cognitive répond',model:'gpt-5-mini',routerActions:[],mood:7};
-  if(url==='/communication/v1/ui/read')data={status:'OK',data:{ok:true,service:'Supervisor'}};
-  if(url==='/communication/v1/ui/write')data={status:'OK',data:{ok:true,mode:'PAUSED'}};
+  if(url==='/communication/v1/ui/read')data={status:'OK',data:options.body&&JSON.parse(options.body).action==='supervisor.llm.models'?{available:['gpt-5-mini','gpt-5.6'],selected:'gpt-5-mini',provider:'OPENAI_API'}:{ok:true,service:'Supervisor'}};
+  if(url==='/communication/v1/ui/write')data={status:'OK',data:options.body&&JSON.parse(options.body).action==='supervisor.llm.select'?{ok:true,selection:{persisted:true}}:{ok:true,mode:'PAUSED'}};
   return {ok:true,status:200,json:async()=>data};
  };
- const window={IATBSession:{authenticated:true,role:'USER',clientId:'CLalice'},speechSynthesis:null,dispatchEvent:e=>events.push(e),confirm:()=>{calls.confirm++;return true}};
+ const window={IATBSession:{authenticated:true,role:role,clientId:'CLalice'},speechSynthesis:null,dispatchEvent:e=>events.push(e),confirm:()=>{calls.confirm++;return true}};
  const sandbox={window,document,fetch,CustomEvent:class{constructor(type,{detail}){this.type=type;this.detail=detail;}},setTimeout:()=>1,clearTimeout(){},innerWidth:1024,innerHeight:768,location:{pathname:'/trading',hash:''}};
  vm.runInNewContext(code,sandbox,{filename:'companion_v1.0.js'});
  return {requests,events,body,window,calls};
@@ -52,4 +52,23 @@ test('Blob restores history, converses with cognitive mode, retains command mode
  assert.ok(mutation);
  const args=JSON.parse(mutation.options.body);assert.equal(args.action,'strategy.pause');assert.equal(args.target,'strategy');
  assert.equal(x.events.length,1,'No Engine action may be dispatched via model-created UI event');
+});
+
+test('ADMIN can load allowlisted models and explicitly persist selected Supervisor provider',async()=>{
+ const x=create('ADMIN');await tick();await tick();
+ const root=find(x.body,n=>n.id==='iatbCompanion');
+ const engines=find(root,n=>n.className==='iatbCompTabs').children.find(b=>b.dataset.mode==='engines');
+ engines.onclick();
+ const controls=find(root,n=>n.className==='iatbCompModelRow');
+ assert.ok(controls,'ADMIN model controls must exist');
+ const buttons=controls.children.filter(n=>n.tagName==='button');
+ buttons[0].onclick();await tick();await tick();
+ const model=controls.children[1];assert.equal(model.value,'gpt-5-mini');
+ buttons[1].onclick();await tick();await tick();
+ assert.equal(x.calls.confirm,1);
+ const write=x.requests.filter(r=>r.url==='/communication/v1/ui/write').at(-1);
+ const args=JSON.parse(write.options.body);
+ assert.equal(args.action,'supervisor.llm.select');
+ assert.equal(args.arguments.model,'gpt-5-mini');
+ assert.equal(args.arguments.provider,'OPENAI_API');
 });
