@@ -104,7 +104,7 @@ class CognitiveRuntime{
    const history=this.short.history({tenantId:tenant,sessionId,limit:8}).map(x=>({role:x.role,content:compact(x.content,800)}));
    const ram=this.ram.get(key)||{objective:null};
    const system=this.systemPrompt(),llm=auth.llm||this.llm;
-   const input=prepare({system,self,history,ram:{objective:compact(ram.objective,150)},prompt});
+   const input=prepare({system,self,history,ram:{objective:compact(ram.objective,150),uiContext:compact(a.uiContext&&typeof a.uiContext==='object'?a.uiContext:{},450)},prompt});
    this.short.append({tenantId:tenant,sessionId,role:'user',content:prompt});
    const call=async prepared=>{
     const output=await llm.reason({system,prompt:prepared.prompt,model,maxTokens:1800});
@@ -125,7 +125,7 @@ class CognitiveRuntime{
    let latest=await call(input),observations=[],used=input.historyUsed;
    if(latest.parsed.tool_requests.length){
     observations=await this.tools(latest.parsed.tool_requests,tenant);
-    const followup=prepare({system,self,history:[],ram:{objective:compact(ram.objective,150)},prompt,observations});
+    const followup=prepare({system,self,history:[],ram:{objective:compact(ram.objective,150),uiContext:compact(a.uiContext&&typeof a.uiContext==='object'?a.uiContext:{},450)},prompt,observations});
     latest=await call(followup);
    }
    const message=redactSecrets(latest.parsed.message);
