@@ -283,3 +283,12 @@ GitHub Actions : `.github/workflows/cp1-registry-integration.yml`. Le test rése
 **Limites :** le Blob n'a pas encore fait l'objet d'un test manuel de navigation dans Firefox ou d'une recette sur VPS DEBUG. Les commandes disponibles sont limitées par les droits Core et la présence effective des Engines. Pour les ADMIN, le panneau Engines propose également un sélecteur de modèle : lecture de `supervisor.llm.models`, choix explicite du fournisseur `OPENAI_API` ou `MOCK`, puis écriture `supervisor.llm.select` avec confirmation utilisateur. La sélection est vérifiée et persistée côté Core ; aucun modèle arbitraire ne peut être proposé par l'UI.
 
 Les commandes financières et l'administration infrastructure restent hors de l'interface Blob V1.2.
+
+### Fiabilité du pilotage / requêtes lentes
+
+- Le Blob ajoute une consultation **Core · Santé de tous les Engines**, via `GET /router-health` authentifié et assaini par l'UI Gateway. Il affiche les dépendances vues par le Router ; cela ne donne aucun privilège supplémentaire.
+- Le trafic de conversation `/api/companion/chat` dispose de délais adaptés aux raisonnements OpenAI qui peuvent nécessiter deux appels : **145 secondes côté UI Gateway**, **135 secondes côté Router et Core CP Bridge**. Ces délais ne sont pas appliqués aux requêtes CP/1 ordinaires des Engines (leurs limites restent inchangées).
+- Chaque demande `supervisor.cognitive.reason` possède un maximum de quatre appels OpenAI (aller-retour d'outil et correction JSON au besoin). Une nouvelle preuve HMAC à usage unique est liée au **même utilisateur authentifié et à la même demande signée** lors des tours suivants ; le Core revérifie la session avant chaque utilisation.
+- Les écritures Strategy ne sont pas déclenchées par le LLM : elles passent par `/communication/v1/ui/write`, la politique du Core, une confirmation utilisateur et la réponse réelle de l'Engine.
+
+Les tests d'interface simulent le DOM et les réponses HTTP dans `App/tests/companion-frontend-v1.2.test.js`. Ils valident les interactions, mais **ne remplacent pas une recette Firefox et VPS DEBUG**.
