@@ -248,3 +248,36 @@ Le Gateway Core n'accepte le payload cognitif que si le modèle est dans la list
 - Workflow : `.github/workflows/cp1-registry-integration.yml` ; le changement de frontière Auth21 est également soumis aux autres workflows Core.
 
 **Limites :** le test de réseau n'est pas un déploiement sur VPS, le Core Auth21 TLS est simulé, et aucun appel réseau à l'API OpenAI réel n'est inclus. Les analyses de logs en continu et les autorisations de trading restent hors périmètre V1.1.
+
+---
+
+## 🎛️ Blob Companion — Console de pilotage du Supervisor et des Engines (V1.2 DEBUG)
+
+L'interface flottante existante, dans `App/Frontend/JS/companion_v1.0.js` et `App/Frontend/CSS/companion_v1.0.css`, est réutilisée **sans remplacer ses expressions, son micro, ses réponses vocales, son glisser-déposer ni les anciennes actions UI**. Une interface à trois onglets distingue explicitement :
+
+1. **🧠 Supervisor** : `POST /api/companion/chat` avec `mode:"cognitive"`, contrôlé par Core Auth21 ; passage par `supervisor.user.request` vers le Cognitive Runtime V1.1 puis l'AI Gateway OpenAI ou MOCK. Le Core impose le `sessionId=companion-default` et l'identité est dérivée de la session authentifiée. Les descriptions de la page sont traitées comme **du contexte non fiable**, non comme des permissions.
+2. **⚙ Actions UI** : ancienne voie `mode:"commands"`. Les commandes graphiques du Chat historique restent soumises au plan/ACK du Router CP/1. Elles ne sont PAS transformées en mutations directes par le nouveau LLM.
+3. **🛰 Engines** : contrôles explicitement sélectionnés par l'utilisateur. Les lectures autorisées (Supervisor Health/modèles, Market Data Health, Fundamental Health/synthèse, Strategy state/stats et Portfolio overview) utilisent `POST /communication/v1/ui/read`; les seules écritures incluses dans cette première interface sont `strategy.pause` et `strategy.resume` pour **l'état Strategy personnel de l'utilisateur**, via `POST /communication/v1/ui/write`. Confirmation visible avant toute modification. Le Core refuse toute commande non autorisée indépendamment des boutons affichés.
+
+Le nouvel endpoint `GET /api/companion/history` restaure les 20 derniers échanges enregistrés dans la mémoire courte du **propriétaire authentifié**. Il passe par `supervisor.cognitive.history`, opération OWNER Auth21 (`hard_deny` pour les privilèges génériques de Function Registry). Aucun historique privé n'est consultable depuis une commande machine CP/1 directe.
+
+### Principes fonctionnels
+
+- Le Blob reste une **interface** : l'autorité appartient au Core Auth21 et aux politiques du Router/Engine.
+- Réponses réelles uniquement : aucune action Engine n'est annoncée réussie sans réponse positive du Core. Une indisponibilité du Supervisor ou du Gateway est une erreur visible, pas une réponse locale inventée.
+- Séparation stricte entre demandes de conversation et commandes d'Engine : l'utilisateur choisit l'onglet et confirme les changements. Le modèle ne peut pas déclencher un trade ni une mutation Engine par une simple phrase.
+- En l'absence de connexion Auth21, l'onglet cognitif et les contrôles Engine signalent qu'ils sont indisponibles. L'ancien chat UI est conservé pour compatibilité dans le mode non-authentifié historique.
+- Les comptes GUEST n'accèdent ni aux conversations cognitives ni aux commandes personnelles des Engines.
+- La liste des opérations visibles est volontairement réduite : ajouter de nouveaux contrôles implique de vérifier leur contrat CP/1, leur handler et leur politique d'autorisation Core.
+
+### Validation
+
+```bash
+node --test App/tests/companion-supervisor-bridge.test.js
+node --test App/tests/supervisor-cognitive-network-smoke.js
+node --check App/Frontend/JS/companion_v1.0.js
+```
+
+GitHub Actions : `.github/workflows/cp1-registry-integration.yml`. Le test réseau démarre le vrai Router et Supervisor avec Core Auth21 simulé, vérifie l'isolation utilisateur et récupère l'historique après redémarrage.
+
+**Limites :** le Blob n'a pas encore fait l'objet d'un test manuel de navigation dans Firefox ou d'une recette sur VPS DEBUG. Les commandes disponibles sont limitées par les droits Core et la présence effective des Engines. Les commandes financières et l'administration infrastructure restent hors de l'interface Blob V1.2.
