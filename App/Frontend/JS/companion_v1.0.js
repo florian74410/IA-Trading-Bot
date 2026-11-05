@@ -21,7 +21,7 @@ function restoreHistory(){
  if(historyLoaded||!authenticated())return;
  historyLoaded=true;
  request('/api/companion/history').then(function(j){
-  if(mode!=='cognitive')return;
+  if(mode!=='cognitive'){historyLoaded=false;return;}
   if(j.messages&&j.messages.length){msgs.textContent='';j.messages.forEach(function(x){add(x.role==='user'?'me':'ai',x.content)})}
  }).catch(function(e){historyLoaded=false;add('ai','Historique indisponible : '+e.message)});
 }
@@ -53,7 +53,7 @@ function engineCall(target,action,write,out){
  if(write&&!window.confirm('Confirmer la commande '+action+' sur '+target+' ?\\nUne confirmation réelle du Core est nécessaire.'))return;
  setBusy(true);out.textContent='Envoi authentifié à Core → Router CP/1 → '+target+'…';setMood(6);
  request('/communication/v1/ui/'+(write?'write':'read'),{target:target,action:action,arguments:{}})
- .then(function(j){var result=j.data===undefined?j:j.data;out.textContent=JSON.stringify(result,null,2).slice(0,4500);setMood(8);statusLine(target+' · '+action+' · accusé de réception Core');})
+ .then(function(j){var result=j.data===undefined?j:j.data;if(result&&result.ok===false)throw Error(String(result.error||'ENGINE_OPERATION_FAILED'));out.textContent=JSON.stringify(result,null,2).slice(0,4500);setMood(8);statusLine(target+' · '+action+' · accusé de réception Core');})
  .catch(function(e){out.textContent='Échec / refus : '+e.message;setMood(9);statusLine(target+' · commande refusée ou indisponible')})
  .finally(function(){setBusy(false)});
 }
