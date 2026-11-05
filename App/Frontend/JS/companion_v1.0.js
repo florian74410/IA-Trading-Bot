@@ -38,6 +38,7 @@ function send(text){
  }).catch(function(e){setMood(9);add('ai','Requête non exécutée : '+e.message)}).finally(function(){setBusy(false)});
 }
 var ENGINE_READS=[
+ {target:'core',action:'core.network.status',label:'Core · Santé de tous les Engines'},
  {target:'supervisor',action:'supervisor.cognitive.status',label:'Supervisor · Santé cognitive'},
  {target:'supervisor',action:'supervisor.llm.models',label:'Supervisor · Modèles LLM'},
  {target:'marketdata',action:'marketdata.health',label:'Market Data · Santé'},
@@ -52,7 +53,7 @@ function engineCall(target,action,write,out){
  if(!authenticated()){out.textContent='Connexion Auth21 (USER/ADMIN) requise.';return}
  if(write&&!window.confirm('Confirmer la commande '+action+' sur '+target+' ?\\nUne confirmation réelle du Core est nécessaire.'))return;
  setBusy(true);out.textContent='Envoi authentifié à Core → Router CP/1 → '+target+'…';setMood(6);
- request('/communication/v1/ui/'+(write?'write':'read'),{target:target,action:action,arguments:{}})
+ (action==='core.network.status'?request('/router-health'):request('/communication/v1/ui/'+(write?'write':'read'),{target:target,action:action,arguments:{}}))
  .then(function(j){var result=j.data===undefined?j:j.data;if(result&&result.ok===false)throw Error(String(result.error||'ENGINE_OPERATION_FAILED'));out.textContent=JSON.stringify(result,null,2).slice(0,4500);setMood(8);statusLine(target+' · '+action+' · accusé de réception Core');})
  .catch(function(e){out.textContent='Échec / refus : '+e.message;setMood(9);statusLine(target+' · commande refusée ou indisponible')})
  .finally(function(){setBusy(false)});
