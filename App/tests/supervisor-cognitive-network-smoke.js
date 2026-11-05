@@ -36,9 +36,11 @@ test('actual Router -> Supervisor -> verified owner receiver -> persistent cogni
   const rpc=(action,args)=>new Promise((ok,no)=>client.request('supervisor',action,args,'analysis',(e,d)=>e?no(e):ok(d)));
   await waitFor(async()=>{const x=await rpc('supervisor.health',{});return x?.execution==='INTENTION_ONLY';});
   const codec=proofCodec({secret:Buffer.from(CP.ensureSecret(appRoot),'hex')});
-  const owner=async(clientId,sessionId,prompt)=>{
-   const principal={clientId,role:'USER'},payload={clientId,sessionHash:'test-session-hash',action:'supervisor.cognitive.reason',args:{sessionId,prompt},configuration:{provider:'MOCK',model:'gpt-5.6'},delegation:{mock:true}};
-   const proof=codec.issue({principal,audience:'supervisor',operation:'self.write',method:'POST',ownerClientId:clientId,action:'supervisor.user.request',bodyDigest:CP.hashData(payload)});
+  const owner=async(clientId,sessionId,prompt,action='supervisor.cognitive.reason')=>{
+   const principal={clientId,role:'USER'},args=action==='supervisor.cognitive.history'?{sessionId,limit:20}:{sessionId,prompt};
+   const payload={clientId,sessionHash:'test-session-hash',action,args,configuration:{provider:'MOCK',model:'gpt-5.6'}};
+   if(action==='supervisor.cognitive.reason')payload.delegation={mock:true};
+   const proof=codec.issue({principal,audience:'supervisor',operation:action==='supervisor.cognitive.history'?'self.read':'self.write',method:'POST',ownerClientId:clientId,action:'supervisor.user.request',bodyDigest:CP.hashData(payload)});
    return rpc('supervisor.user.request',{payload,proof});
   };
   await assert.rejects(rpc('supervisor.cognitive.reason',{prompt:'bypass'}),/FORBIDDEN|MISSING|ROUTE/i);
@@ -52,6 +54,11 @@ test('actual Router -> Supervisor -> verified owner receiver -> persistent cogni
   await waitFor(async()=>{const x=await rpc('supervisor.health',{});return x?.execution==='INTENTION_ONLY';});
   const continued=await owner('CLalice','same','Continue conversation');
   assert.equal(continued.memory.historyUsed,2,'owner history should survive Supervisor restart');
+  const restored=await owner('CLalice','same',null,'supervisor.cognitive.history');
+  assert.equal(restored.schema,'supervisor.cognitive.history/1.0');
+  assert.equal(restored.messages.length,4);
+  const isolated=await owner('CLbob','same',null,'supervisor.cognitive.history');
+  assert.equal(isolated.messages.length,2,'history must never leak other user conversations');
   const status=await rpc('supervisor.cognitive.status',{});
   assert.equal(status.health.checks.shortTerm,'OK');assert.equal(status.health.checks.longTerm,'OK');
  }catch(e){e.message+='\nSERVICE_LOG_TAIL: '+outputs.join('').slice(-3500);throw e;}
