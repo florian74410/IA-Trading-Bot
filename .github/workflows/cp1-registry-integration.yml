@@ -1,0 +1,69 @@
+name: CP1 Registry interprocess communication
+on:
+  push:
+    branches:
+      - 'supervisor/**'
+  pull_request:
+    branches:
+      - '2.6'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  cp1-registry:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: App/package-lock.json
+      - name: Install runtime dependencies
+        working-directory: App
+        run: npm ci --ignore-scripts=false
+      - name: Check ActionBlock syntax
+        run: |
+          find App -path '*/FunctionRegistry/startup.js' -print0 | xargs -0 -n1 node --check
+          node --check App/Core/FunctionRegistry/publisher.js
+          node --check App/Core/FunctionRegistry/receiver.js
+          node --check App/tests/registry-process-integration.js
+      - name: Check Supervisor service, Core and cognitive runtime syntax
+        run: |
+          node --check App/Supervisor/supervisor_service.js
+          node --check App/Supervisor/Core/supervisor_core.js
+          node --check App/Supervisor/CognitiveRuntime/index.js
+          node --check App/Supervisor/Memory/short-term.js
+          node --check App/Supervisor/Memory/personal-memory.js
+          node App/Supervisor/Tests/test_supervisor_architecture.js
+      - name: Run CP1 interprocess startup publication test
+        run: node App/tests/registry-process-integration.js
+      - name: Run discovery contract tests
+        run: node --test App/tests/function-registry-discovery.test.js
+      - name: Test Supervisor persistent short-term memory
+        run: node --test App/tests/supervisor-short-term-memory.test.js
+      - name: Test Supervisor cognitive runtime, memories, model picker and CP1 contracts
+        run: node --test App/tests/supervisor-cognitive-runtime.test.js
+      - name: Test authenticated Core owner, LLM delegated gateway and persistent model settings
+        run: node --test App/tests/supervisor-owner-cognitive-auth.test.js
+      - name: Check Blob UI, Core chat bridge and updated Supervisor syntax
+        run: |
+          node --check App/Frontend/JS/companion_v1.0.js
+          node --check App/Core/Server/server.js
+          node --check App/Core/Server/companion_cognitive_bridge.js
+          node --check App/Supervisor/CognitiveRuntime/index.js
+          node --check App/Supervisor/Core/owner_supervisor.js
+      - name: Test Blob to Supervisor cognitive chat and engine control boundaries
+        run: node --test App/tests/companion-supervisor-bridge.test.js
+      - name: Exercise real Companion frontend interactions with simulated DOM and authenticated Core responses
+        run: node --test App/tests/companion-frontend-v1.2.test.js
+      - name: Network smoke - real Router and Supervisor with isolated Auth21 mock Core
+        run: node --test App/tests/supervisor-cognitive-network-smoke.js
+      - name: Publish machine-readable report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cp1-registry-communication-report
+          path: artifacts/cp1-registry-report.json
+          if-no-files-found: warn

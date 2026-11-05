@@ -11,7 +11,7 @@ function Client(opt){
  this.root=opt.root;
  this.host='127.0.0.1';
  this.port=+opt.routerPort||+(process.env.ROUTER_PORT||8021);
- this.timeout=Math.max(500,Math.min(60000,+opt.timeout||8000));
+ this.timeout=Math.max(500,Math.min(150000,+opt.timeout||8000));
  this.maxBytes=Math.max(65536,Math.min(8*1024*1024,+opt.maxBytes||4*1024*1024));
 }
 Client.prototype._token=function(){return CP.ensureSecret(this.root);};

@@ -289,6 +289,62 @@
           ]
         },
         "description": "Bounded shared-data read through Router; no operator mutations or private portfolios."
+      },
+      {
+        "name": "supervisor.cognitive.reason",
+        "description": "Requires Auth21 owner proof through supervisor.user.request; never directly routed to Supervisor",
+        "arguments": {
+          "allowed": [
+            "prompt",
+            "sessionId",
+            "model",
+            "uiContext"
+          ],
+          "required": [
+            "prompt"
+          ]
+        },
+        "transport": "OWNER"
+      },
+      {
+        "name": "supervisor.cognitive.status",
+        "description": "Cognitive memory/runtime status without conversation contents",
+        "arguments": {
+          "allowed": []
+        }
+      },
+      {
+        "name": "supervisor.llm.models",
+        "description": "Read configured provider, selected model and allowed model names",
+        "arguments": {
+          "allowed": []
+        }
+      },
+      {
+        "name": "supervisor.llm.select",
+        "transport": "OWNER",
+        "description": "ADMIN only: persist approved provider and model through Auth21 owner request",
+        "arguments": {
+          "allowed": [
+            "provider",
+            "model"
+          ],
+          "required": [
+            "model"
+          ]
+        }
+      },
+      {
+        "name": "supervisor.cognitive.history",
+        "transport": "OWNER",
+        "description": "Authenticated owner-only short conversation history; not callable via generic CP1",
+        "arguments": {
+          "allowed": [
+            "sessionId",
+            "limit"
+          ],
+          "required": []
+        }
       }
     ],
     "dataTypes": [
@@ -335,6 +391,11 @@
       {
         "name": "indicator.compute",
         "direction": "CONSUME"
+      },
+      {
+        "name": "supervisor.cognitive.response",
+        "direction": "PRODUCE",
+        "description": "Read-only cognitive answer and pending review proposals"
       }
     ],
     "events": [

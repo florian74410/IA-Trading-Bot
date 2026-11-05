@@ -1,15 +1,38 @@
 'use strict';
 const fs=require('node:fs'),https=require('node:https'),CP=require('../../Core/Communication/communication_protocol_v1'),Manager=require('../LLM/llm_manager'),Settings=require('../../Core/Settings/sqlite_settings_store');
-function dispatch({root,client}){const storage=new Settings(root),data=new (require('./collector_data_v2_4_1').CollectorData)(client||new (require('./cp1_client'))(root,process.env.ROUTER_PORT),root);return async function(principal,action,args,envelope){
+function dispatch({root,client,cognitiveCore}){const storage=new Settings(root),data=new (require('./collector_data_v2_4_1').CollectorData)(client||new (require('./cp1_client'))(root,process.env.ROUTER_PORT),root);return async function(principal,action,args,envelope){
  if(action==='supervisor.data.catalog')return data.catalog();
  if(action==='supervisor.data.read')return data.read(args);
  if(action==='supervisor.context')return data.collect(args);
  const configuration=envelope.configuration||{},scope='supervisor_owner:'+principal.clientId,state=storage.get(scope,'state',{reasoningCount:0,lastReasoning:null});
  const status=()=>({schema:'supervisor.status/1.0',mode:'ORCHESTRATOR',execution:'INTENTION_ONLY',ownerScoped:true,reasoningCount:state.reasoningCount,lastReasoning:state.lastReasoning,llm:{provider:configuration.provider||'OPENAI_API',configured:configuration.configured===true,model:configuration.model||'gpt-5.6'},autonomousTrading:{masterEnabled:false,mode:'OFF'},extensions:[],collectorData:{readOnly:true,catalog:'supervisor.data.catalog',read:'supervisor.data.read',context:'supervisor.context'}});
  if(['supervisor.health','supervisor.status','supervisor.capabilities'].includes(action))return status();
- if(!['supervisor.structured','supervisor.reason'].includes(action)||!envelope.delegation)throw Error('OWNER_OPERATION_DENIED');
- const transport=payload=>new Promise((resolve,reject)=>{const raw=JSON.stringify({delegation:envelope.delegation,payload}),q=https.request({host:'127.0.0.1',port:+process.env.CORE_PUBLIC_PORT||8001,servername:'localhost',ca:fs.readFileSync(process.env.IATB_AUTH_TLS_CERT),path:'/auth21/internal/ai-responses',method:'POST',timeout:65000,headers:{'Content-Type':'application/json','Content-Length':Buffer.byteLength(raw),'X-IATB-CP-Token':CP.ensureSecret(root)}},res=>{let n=0,parts=[];res.on('data',b=>{n+=b.length;if(n>4*1024*1024)q.destroy(Error('OWNER_AI_RESPONSE_TOO_LARGE'));else parts.push(b);});res.on('end',()=>{if(res.statusCode!==200)return reject(Error('OWNER_AI_GATEWAY_REFUSED'));try{resolve(JSON.parse(Buffer.concat(parts)));}catch(e){reject(e);}});});q.on('error',reject);q.on('timeout',()=>q.destroy(Error('OWNER_AI_TIMEOUT')));q.end(raw);});
- const manager=new Manager({provider:args.provider==='MOCK'?'MOCK':configuration.provider==='MOCK'?'MOCK':'OPENAI_API',fallbackEnabled:configuration.fallbackEnabled===true,fallbackProvider:configuration.fallbackProvider==='MOCK'?'MOCK':'OPENAI_API',openai:{model:configuration.model||'gpt-5.6',transport,context:async()=>configuration}}),response=await manager[action==='supervisor.structured'?'structured':'reason'](args);
+ if(action==='supervisor.cognitive.history')return cognitiveCore.cognitiveHistory(args,{source:'AUTH21_OWNER',principal});
+ if(action==='supervisor.cognitive.status')return cognitiveCore.cognitiveRuntime().health();
+ if(action==='supervisor.llm.models')return cognitiveCore.llmModels();
+ if(action==='supervisor.llm.select'){
+  if(principal.role!=='ADMIN'||!cognitiveCore)throw Error('LLM_ADMIN_REQUIRED');
+  const selection=cognitiveCore.settings.selectLlm(args,principal);cognitiveCore.reload();return {ok:true,selection};
+ }
+ if(!['supervisor.structured','supervisor.reason','supervisor.cognitive.reason'].includes(action)||!envelope.delegation)throw Error('OWNER_OPERATION_DENIED');
+ let aiCalls=0;
+ // Core signs the original owner-bound delegation. On subsequent cognitive rounds,
+ // the verified Supervisor issues a new short-lived single-use proof for the *same*
+ // owner/gateway request, never a different action or user; Core rechecks the session.
+ const transport=payload=>new Promise((resolve,reject)=>{
+  if(++aiCalls>4)return reject(Error('OWNER_AI_CALL_BUDGET'));
+  const original=envelope.delegation,gateway=original.gateway;
+  if(!gateway||gateway.clientId!==principal.clientId||gateway.operation!==action||gateway.spec?.prompt!==args.prompt)return reject(Error('OWNER_AI_DELEGATION_INVALID'));
+  let delegation=original;
+  if(aiCalls>1){
+   const codec=require('../../Core/Clients/auth21_ipc_proof').proofCodec({secret:Buffer.from(CP.ensureSecret(root),'hex')});
+   const proof=codec.issue({principal,audience:'ai_gateway',operation:'self.write',method:'POST',ownerClientId:principal.clientId,action:'ai_gateway.owner.responses',bodyDigest:CP.hashData(gateway)});
+   delegation={gateway,proof};
+  }
+  const raw=JSON.stringify({delegation,payload}),q=https.request({host:'127.0.0.1',port:+process.env.CORE_PUBLIC_PORT||8001,servername:'localhost',ca:fs.readFileSync(process.env.IATB_AUTH_TLS_CERT),path:'/auth21/internal/ai-responses',method:'POST',timeout:65000,headers:{'Content-Type':'application/json','Content-Length':Buffer.byteLength(raw),'X-IATB-CP-Token':CP.ensureSecret(root)}},res=>{let n=0,parts=[];res.on('data',b=>{n+=b.length;if(n>4*1024*1024)q.destroy(Error('OWNER_AI_RESPONSE_TOO_LARGE'));else parts.push(b);});res.on('end',()=>{if(res.statusCode!==200)return reject(Error('OWNER_AI_GATEWAY_REFUSED'));try{resolve(JSON.parse(Buffer.concat(parts)));}catch(e){reject(e);}});});q.on('error',reject);q.on('timeout',()=>q.destroy(Error('OWNER_AI_TIMEOUT')));q.end(raw);});
+ const preferred=action==='supervisor.cognitive.reason'?cognitiveCore.settings.llm().provider:(configuration.provider==='MOCK'?'MOCK':'OPENAI_API');
+ const manager=new Manager({provider:preferred,fallbackEnabled:configuration.fallbackEnabled===true,fallbackProvider:configuration.fallbackProvider==='MOCK'?'MOCK':'OPENAI_API',openai:{model:configuration.model||'gpt-5.6',transport,context:async()=>configuration}}),response=action==='supervisor.cognitive.reason'?await cognitiveCore.cognitiveReason(args,{source:'AUTH21_OWNER',principal,llm:manager}):await manager[action==='supervisor.structured'?'structured':'reason'](args);
+ if(action==='supervisor.cognitive.reason')return response;
  state.reasoningCount++;state.lastReasoning={at:new Date().toISOString(),provider:response.provider,model:response.model||null};storage.set(scope,'state',state);return {schema:action==='supervisor.structured'?'supervisor.structured/1.0':'supervisor.reasoning/1.0',execution:'NONE',response};
 };}
 module.exports={dispatch};

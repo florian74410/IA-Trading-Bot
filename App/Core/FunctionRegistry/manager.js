@@ -8,6 +8,7 @@ class FunctionRegistryManager {
  CREATE TABLE IF NOT EXISTS functions(engine TEXT NOT NULL,id TEXT NOT NULL,contract_json TEXT NOT NULL,contract_hash TEXT NOT NULL,PRIMARY KEY(engine,id));
  CREATE TABLE IF NOT EXISTS privileges(agent TEXT NOT NULL,engine TEXT NOT NULL,id TEXT NOT NULL,decision TEXT NOT NULL CHECK(decision IN ('ALLOW','DENY')),contract_hash TEXT NOT NULL,actor TEXT NOT NULL,updated_at TEXT NOT NULL,PRIMARY KEY(agent,engine,id),FOREIGN KEY(engine,id) REFERENCES functions(engine,id));
  CREATE TABLE IF NOT EXISTS audit(id INTEGER PRIMARY KEY AUTOINCREMENT,at TEXT NOT NULL,actor TEXT NOT NULL,action TEXT NOT NULL,details TEXT NOT NULL);`);
+ this.db.exec(`CREATE TABLE IF NOT EXISTS permission_requests(request_id TEXT PRIMARY KEY,agent TEXT NOT NULL,engine TEXT NOT NULL,id TEXT NOT NULL,scope TEXT NOT NULL CHECK(scope IN ('ONCE','TEMPORARY','PERMANENT')),duration_seconds INTEGER,reason TEXT NOT NULL,status TEXT NOT NULL CHECK(status IN ('PENDING','APPROVED','DENIED','REVOKED')),contract_hash TEXT NOT NULL,created_at TEXT NOT NULL,reviewed_at TEXT,reviewer TEXT,expires_at TEXT,uses_remaining INTEGER);`);
  this.cache=new Map();this.generation=0;
  }
  sync(manifest,verifiedEngine){
@@ -44,4 +45,58 @@ class FunctionRegistryManager {
  allowed(agent,engine,id){return this.list(agent).functions.some(f=>f.engine===engine&&f.id===id&&f.decision==='ALLOW');}
  close(){this.db.close();}
 }
+// Requests do not grant access: only an independently authenticated administrator can approve.
+FunctionRegistryManager.prototype.requestPermission=function(agent,engine,id,scope,reason,durationSeconds){
+ if(!agent||!['ONCE','TEMPORARY','PERMANENT'].includes(scope)||typeof reason!=='string'||!reason.trim()||reason.length>2000)throw Error('INVALID_REQUEST');
+ if(scope==='TEMPORARY'&&(!Number.isInteger(durationSeconds)||durationSeconds<60||durationSeconds>86400))throw Error('INVALID_DURATION');
+ const row=this.db.prepare('SELECT contract_json,contract_hash FROM functions WHERE engine=? AND id=?').get(engine,id);
+ if(!row)throw Error('UNKNOWN_FUNCTION');
+ const contract=JSON.parse(row.contract_json);
+ if(contract.hard_deny||!contract.verified_handler)throw Error('FUNCTION_UNAVAILABLE');
+ const requestId=crypto.randomUUID(),at=new Date().toISOString();
+ this.db.prepare('INSERT INTO permission_requests(request_id,agent,engine,id,scope,duration_seconds,reason,status,contract_hash,created_at) VALUES(?,?,?,?,?,?,?,?,?,?)').run(requestId,agent,engine,id,scope,scope==='TEMPORARY'?durationSeconds:null,reason.trim(),'PENDING',row.contract_hash,at);
+ this.db.prepare('INSERT INTO audit(at,actor,action,details) VALUES(?,?,?,?)').run(at,agent,'PERMISSION_REQUEST',JSON.stringify({requestId,engine,id,scope}));
+ return {requestId,status:'PENDING'};
+};
+FunctionRegistryManager.prototype.reviewPermission=function(requestId,approve,adminIdentity){
+ if(!adminIdentity?.verified||!adminIdentity.isAdmin||!adminIdentity.id)throw Error('ADMIN_REQUIRED');
+ const at=new Date().toISOString();
+ const outcome=this.db.transaction(()=>{
+  const req=this.db.prepare('SELECT * FROM permission_requests WHERE request_id=?').get(requestId);
+  if(!req||req.status!=='PENDING')throw Error('REQUEST_NOT_PENDING');
+  const fn=this.db.prepare('SELECT contract_json,contract_hash FROM functions WHERE engine=? AND id=?').get(req.engine,req.id);
+  if(approve&&(!fn||fn.contract_hash!==req.contract_hash))throw Error('CONTRACT_CHANGED');
+  if(approve){const c=JSON.parse(fn.contract_json);if(c.hard_deny||!c.verified_handler||!['LOW','MEDIUM'].includes(c.risk_level))throw Error('GRANT_NOT_PERMITTED');}
+  const status=approve?'APPROVED':'DENIED';
+  const expires=approve&&req.scope==='TEMPORARY'?new Date(Date.now()+req.duration_seconds*1000).toISOString():null;
+  this.db.prepare('UPDATE permission_requests SET status=?,reviewed_at=?,reviewer=?,expires_at=?,uses_remaining=? WHERE request_id=?').run(status,at,adminIdentity.id,expires,approve&&req.scope==='ONCE'?1:null,requestId);
+  this.db.prepare('INSERT INTO audit(at,actor,action,details) VALUES(?,?,?,?)').run(at,adminIdentity.id,'PERMISSION_REVIEW',JSON.stringify({requestId,status}));
+  return {requestId,status};
+ });
+ const result=outcome();this.cache.clear();this.generation++;return result;
+};
+FunctionRegistryManager.prototype.consumePermission=function(agent,engine,id){
+ const at=new Date().toISOString();
+ return this.db.transaction(()=>{
+  const fn=this.db.prepare('SELECT contract_json,contract_hash FROM functions WHERE engine=? AND id=?').get(engine,id);
+  if(!fn)return false;
+  const contract=JSON.parse(fn.contract_json);
+  if(contract.hard_deny||!contract.verified_handler||!['LOW','MEDIUM'].includes(contract.risk_level))return false;
+  const req=this.db.prepare("SELECT * FROM permission_requests WHERE agent=? AND engine=? AND id=? AND status='APPROVED' AND contract_hash=? AND (expires_at IS NULL OR expires_at>?) AND (uses_remaining IS NULL OR uses_remaining>0) ORDER BY CASE scope WHEN 'ONCE' THEN 0 WHEN 'TEMPORARY' THEN 1 ELSE 2 END,created_at LIMIT 1").get(agent,engine,id,fn.contract_hash,at);
+  if(!req)return false;
+  if(req.scope==='ONCE')this.db.prepare("UPDATE permission_requests SET uses_remaining=0,status='REVOKED' WHERE request_id=? AND uses_remaining=1").run(req.request_id);
+  this.db.prepare('INSERT INTO audit(at,actor,action,details) VALUES(?,?,?,?)').run(at,agent,'PERMISSION_CONSUMED',JSON.stringify({requestId:req.request_id,engine,id}));
+  return true;
+ })();
+};
+FunctionRegistryManager.prototype.revokePermission=function(requestId,adminIdentity){
+ if(!adminIdentity?.verified||!adminIdentity.isAdmin||!adminIdentity.id)throw Error('ADMIN_REQUIRED');
+ const changed=this.db.prepare("UPDATE permission_requests SET status='REVOKED',reviewer=?,reviewed_at=? WHERE request_id=? AND status='APPROVED'").run(adminIdentity.id,new Date().toISOString(),requestId);
+ if(changed.changes!==1)throw Error('ACTIVE_GRANT_NOT_FOUND');
+ this.cache.clear();this.generation++;return {requestId,status:'REVOKED'};
+};
+FunctionRegistryManager.prototype.listRequests=function(adminIdentity){
+ if(!adminIdentity?.verified||!adminIdentity.isAdmin)throw Error('ADMIN_REQUIRED');
+ return this.db.prepare('SELECT * FROM permission_requests ORDER BY created_at DESC LIMIT 500').all();
+};
 module.exports={FunctionRegistryManager};

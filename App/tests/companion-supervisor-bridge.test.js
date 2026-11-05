@@ -1,0 +1,72 @@
+'use strict';
+const {test}=require('node:test'),assert=require('node:assert/strict');
+const fs=require('node:fs'),path=require('node:path');
+const {talk,history,SESSION_ID}=require('../Core/Server/companion_cognitive_bridge');
+const {permission}=require('../Core/Clients/UserManagement/owner_policy');
+const root=path.resolve(__dirname,'..');
+test('Companion calls only Auth21 owner bridge; model and UI context sanitized',async()=>{
+ let received=null;
+ const bridge={bridge:async(token,args)=>{received={token,args};return {schema:'supervisor.cognitive/1.1',response:{message:'Supervisor prêt',model:'gpt-5-mini'},memory:{historyUsed:2,proposals:[]}};}};
+ const response=await talk({bridge,token:'verified-cookie-context',input:{message:'Analyse les Engines',context:{path:'/trading',title:'clé sk-proj-abcdefghijklmno',clientId:'CLspoof',role:'ADMIN'}}});
+ assert.equal(received.token,'verified-cookie-context');assert.equal(received.args.action,'supervisor.cognitive.reason');
+ assert.equal(received.args.target,'supervisor');assert.equal(received.args.arguments.sessionId,SESSION_ID);
+ assert.equal(received.args.arguments.prompt,'Analyse les Engines');
+ assert.ok(!JSON.stringify(received.args.arguments).includes('CLspoof'));
+ assert.ok(!JSON.stringify(received.args.arguments).includes('sk-proj-abcdefghijklmno'));
+ assert.equal(response.mode,'cognitive');assert.equal(response.execution,'NONE');assert.deepEqual(response.routerActions,[]);
+ assert.equal(response.command,null);assert.equal(response.memory.historyUsed,2);
+});
+test('Chat history is retrieved only through owner-verified Supervisor action',async()=>{
+ const calls=[],bridge={bridge:async(t,x)=>{calls.push(x);return {schema:'supervisor.cognitive.history/1.0',messages:[{role:'user',content:'Hi'},{role:'assistant',content:'Hello'},{role:'system',content:'Never show'}]};}};
+ const result=await history({bridge,token:'owner-session'});
+ assert.equal(calls[0].action,'supervisor.cognitive.history');
+ assert.equal(calls[0].arguments.sessionId,SESSION_ID);
+ assert.deepEqual(result.messages.map(x=>x.content),['Hi','Hello']);
+ assert.equal(permission('supervisor','supervisor.cognitive.history'),'self.read');
+ await assert.rejects(history({bridge:null,token:'x'}),/COMPANION_AUTH_REQUIRED/);
+ await assert.rejects(talk({bridge,token:'',input:{message:'X'}}),/COMPANION_AUTH_REQUIRED/);
+});
+test('Engine panel lists only Core-authorized read operations and explicit owner Strategy controls',()=>{
+ const src=fs.readFileSync(path.join(root,'Frontend','JS','companion_v1.0.js'),'utf8');
+ const service=fs.readFileSync(path.join(root,'Core','Server','server.js'),'utf8');
+ const auth=require('../Core/Clients/UserManagement/http');
+ assert.ok(auth.LEGACY_SELF_READ.has('/api/companion/history'));
+ assert.ok(auth.LEGACY_SELF_WRITE.has('/api/companion/chat'));
+ assert.ok(service.includes("require('./companion_cognitive_bridge').talk"),'Core companion must use verified owner bridge');
+ assert.ok(service.includes("require('./companion_cognitive_bridge').history"),'Core companion must load owner history');
+ assert.ok(src.includes('/communication/v1/ui/'+""), 'Engine panel must use Core bridge');
+ assert.ok(src.includes('window.confirm('),'Mutations must have explicit confirmation');
+ assert.ok(src.includes("['cognitive','🧠 Supervisor']"),'Cognitive tab must be available');
+ assert.ok(src.includes("['commands','⚙ Actions UI']"),'Legacy UI commands retained');
+ assert.ok(src.includes("['engines','🛰 Engines']"),'Engine panel must be present');
+ assert.ok(!src.includes('trading.execute'),'Companion must not directly execute trades');
+});
+
+test('slow OpenAI conversation gets dedicated timeouts; regular Engines keep their normal limits',()=>{
+ const read=p=>fs.readFileSync(path.join(root,p),'utf8');
+ const router=read('Core/Communication/communication_router_v1.js');
+ const ownerBridge=read('Core/Clients/UserManagement/cp_bridge.js');
+ const client=read('Core/Communication/cp1_client.js');
+ const authGateway=read('UI/Gateway/user_management_gateway.js');
+ const service=read('UI/Gateway/ui_service.js');
+ assert.match(router,/v\.target==='supervisor'&&v\.action==='supervisor\.user\.request'\?135000:12000/);
+ assert.match(ownerBridge,/supervisorClient=new Client\(/);
+ assert.match(ownerBridge,/timeout:135000/);
+ assert.match(client,/Math\.min\(150000/);
+ assert.match(authGateway,/pathname\.split\('\?'\)\[0\]==='\/api\/companion\/chat'\?145000:20000/);
+ assert.match(service,/targetPath\.split\('\?'\)\[0\]==='\/api\/companion\/chat'\?145000:20000/);
+});
+test('delegated owner AI proof renewal is single-use and bounded to same verified owner',()=>{
+ const crypto=require('node:crypto'),CP=require('../Core/Communication/communication_protocol_v1');
+ const {proofCodec}=require('../Core/Clients/auth21_ipc_proof');
+ const secret=crypto.randomBytes(32),core=proofCodec({secret}),supervisor=proofCodec({secret});
+ const principal={clientId:'CLalice',role:'USER'},gateway={clientId:'CLalice',sessionHash:'active-session',operation:'supervisor.cognitive.reason',spec:{prompt:'Analyse'}};
+ const params={principal,audience:'ai_gateway',operation:'self.write',method:'POST',ownerClientId:'CLalice',action:'ai_gateway.owner.responses',bodyDigest:CP.hashData(gateway)};
+ const original=core.issue(params),fresh=supervisor.issue(params);
+ const expected={audience:params.audience,operation:params.operation,method:params.method,ownerClientId:params.ownerClientId,action:params.action,bodyDigest:params.bodyDigest};
+ assert.ok(core.verify(original,expected));assert.equal(core.verify(original,expected),null,'replays refused');
+ assert.ok(core.verify(fresh,expected),'fresh owner-bound proof can authorize second model round');
+ assert.equal(core.verify(fresh,{...expected,ownerClientId:'CLbob'}),null,'different owner is forbidden');
+ const code=read=>fs.readFileSync(path.join(root,read),'utf8');
+ assert.match(code('Supervisor/Core/owner_supervisor.js'),/if\(\+\+aiCalls>4\)/);
+});

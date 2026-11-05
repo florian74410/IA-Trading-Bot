@@ -8,7 +8,7 @@ function create({root,corePort,pages,findAsset}){
  function upstream(req,res,pathname){
   const headers={...req.headers,host:'localhost:'+corePort};
   for(const k of Object.keys(headers))if((k.startsWith('x-iatb-')&&k!=='x-iatb-csrf')||['connection','transfer-encoding'].includes(k))delete headers[k];
-  const q=https.request({host:'127.0.0.1',port:corePort,servername:'localhost',ca:tlsOptions.cert,rejectUnauthorized:true,path:pathname,method:req.method,headers,timeout:20000},r=>{res.writeHead(r.statusCode,r.headers);r.pipe(res);});
+  const q=https.request({host:'127.0.0.1',port:corePort,servername:'localhost',ca:tlsOptions.cert,rejectUnauthorized:true,path:pathname,method:req.method,headers,timeout:pathname.split('?')[0]==='/api/companion/chat'?145000:20000},r=>{res.writeHead(r.statusCode,r.headers);r.pipe(res);});
   q.on('error',()=>{if(!res.headersSent)res.writeHead(503,{'Content-Type':'application/json'});res.end('{"error":"CORE_UNAVAILABLE"}');});q.on('timeout',()=>q.destroy());req.pipe(q);
  }
  function core(req,pathname){return new Promise((resolve,reject)=>{const q=https.get({host:'127.0.0.1',port:corePort,servername:'localhost',ca:tlsOptions.cert,path:pathname,headers:{cookie:req.headers.cookie||''},timeout:5000},r=>{let n=0,parts=[];r.on('data',b=>{n+=b.length;if(n>524288)q.destroy(Error('CORE_RESPONSE_TOO_LARGE'));else parts.push(b);});r.on('end',()=>{try{resolve({status:r.statusCode,data:JSON.parse(Buffer.concat(parts))});}catch(e){reject(e);}});});q.on('error',reject);q.on('timeout',()=>q.destroy(Error('CORE_TIMEOUT')));});}

@@ -41,7 +41,7 @@ function browserTlsOptions(){
 var AUTH21_BROWSER_TLS=browserTlsOptions();
 function proxy(req,res,port,targetPath,meta){meta=meta||{};var h=copyHeaders(req.headers),role=AUTH_MODE==='disabled'?BYPASS_ROLE:'SESSION';h.host='127.0.0.1:'+port;h['x-iatb-ui-origin']='IA-TB-UI';h['x-iatb-ui-role']=role;h['x-iatb-ui-permission']=meta.permission||'READ';var coreAuthTls=Boolean(AUTH21_BROWSER_TLS&&meta.service==='Auth21 isolated Core');
  if(coreAuthTls&&!req.socket.encrypted)return json(res,403,{error:'AUTH21_BROWSER_HTTPS_REQUIRED'});
- var q=(coreAuthTls?https:http).request({host:'127.0.0.1',port:port,path:targetPath,method:req.method,headers:h,timeout:20000,
+ var q=(coreAuthTls?https:http).request({host:'127.0.0.1',port:port,path:targetPath,method:req.method,headers:h,timeout:targetPath.split('?')[0]==='/api/companion/chat'?145000:20000,
  ...(coreAuthTls?{ca:AUTH21_BROWSER_TLS.cert,servername:'localhost',rejectUnauthorized:true}:{})},function(r){var rh=responseHeaders(r.headers);res.writeHead(r.statusCode||200,rh);r.pipe(res);});q.on('timeout',function(){q.destroy(new Error('UI_UPSTREAM_TIMEOUT'));});q.on('error',function(e){if(!res.headersSent)json(res,503,{ok:false,error:'UI_UPSTREAM_UNAVAILABLE',service:meta.service||'upstream',detail:e.message});else try{res.end();}catch(x){}});req.pipe(q);}
 function currentRole(){return AUTH_MODE==='disabled'?BYPASS_ROLE:'SESSION';}
 function isAdminRole(role){role=Permissions.normalizeRole(role);return role==='ADMIN'||role==='SUPERADMIN';}
