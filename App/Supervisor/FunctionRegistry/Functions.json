@@ -1017,6 +1017,38 @@
       "verified_handler": true,
       "default_privilege": "DENY",
       "side_effects": true
+    },
+    {
+      "id": "supervisor.cognitive.history",
+      "engine": "supervisor",
+      "type": "READ",
+      "risk_level": "MEDIUM",
+      "hard_deny": true,
+      "description": "Owner-authenticated history only. Never grant to generic Supervisor agent.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "sessionId": {
+            "type": "string"
+          },
+          "limit": {
+            "type": "integer"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "object",
+        "description": "Only verified owner messages"
+      },
+      "errors": [
+        "COGNITIVE_OWNER_PROOF_REQUIRED"
+      ],
+      "source": "App/Core/Communication/ProtocolRegistry/supervisor.json",
+      "verified_handler": true,
+      "default_privilege": "DENY",
+      "side_effects": false
     }
   ],
   "verification_status": "PROTOCOL_DECLARED_UNVERIFIED_HANDLERS"
