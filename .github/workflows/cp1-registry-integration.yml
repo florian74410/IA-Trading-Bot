@@ -56,6 +56,8 @@ jobs:
           node --check App/Supervisor/Core/owner_supervisor.js
       - name: Test Blob to Supervisor cognitive chat and engine control boundaries
         run: node --test App/tests/companion-supervisor-bridge.test.js
+      - name: Exercise real Companion frontend interactions with simulated DOM and authenticated Core responses
+        run: node --test App/tests/companion-frontend-v1.2.test.js
       - name: Network smoke - real Router and Supervisor with isolated Auth21 mock Core
         run: node --test App/tests/supervisor-cognitive-network-smoke.js
       - name: Publish machine-readable report
