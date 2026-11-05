@@ -280,4 +280,6 @@ node --check App/Frontend/JS/companion_v1.0.js
 
 GitHub Actions : `.github/workflows/cp1-registry-integration.yml`. Le test réseau démarre le vrai Router et Supervisor avec Core Auth21 simulé, vérifie l'isolation utilisateur et récupère l'historique après redémarrage.
 
-**Limites :** le Blob n'a pas encore fait l'objet d'un test manuel de navigation dans Firefox ou d'une recette sur VPS DEBUG. Les commandes disponibles sont limitées par les droits Core et la présence effective des Engines. Les commandes financières et l'administration infrastructure restent hors de l'interface Blob V1.2.
+**Limites :** le Blob n'a pas encore fait l'objet d'un test manuel de navigation dans Firefox ou d'une recette sur VPS DEBUG. Les commandes disponibles sont limitées par les droits Core et la présence effective des Engines. Pour les ADMIN, le panneau Engines propose également un sélecteur de modèle : lecture de `supervisor.llm.models`, choix explicite du fournisseur `OPENAI_API` ou `MOCK`, puis écriture `supervisor.llm.select` avec confirmation utilisateur. La sélection est vérifiée et persistée côté Core ; aucun modèle arbitraire ne peut être proposé par l'UI.
+
+Les commandes financières et l'administration infrastructure restent hors de l'interface Blob V1.2.
