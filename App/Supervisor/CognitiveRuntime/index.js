@@ -143,6 +143,16 @@ class CognitiveRuntime{
    throw e;
   }finally{this.busy.delete(key);}
  }
+ history(a={},auth={}){
+  const tenant=tenantOf(auth),sessionId=String(a.sessionId||'companion-default');
+  this.short.validate(tenant,sessionId);
+  const limit=a.limit===undefined?20:Number(a.limit);
+  if(!Number.isInteger(limit)||limit<1||limit>40)throw Error('COGNITIVE_HISTORY_LIMIT_INVALID');
+  const messages=this.short.history({tenantId:tenant,sessionId,limit}).map(x=>({
+   role:x.role,content:x.content,createdAt:x.createdAt
+  }));
+  return {schema:'supervisor.cognitive.history/1.0',sessionId,messages,retentionHours:24};
+ }
  async backup(){const root=process.env.IATB_RUNTIME_ROOT||path.join(this.root,'.runtime');const dir=path.join(root,'cognitive','backups');fs.mkdirSync(dir,{recursive:true,mode:0o700});fs.chmodSync(dir,0o700);const id=new Date().toISOString().replace(/[:.]/g,'-');const files=[];for(const [name,db] of [['short',this.short],['long',this.long]]){const out=path.join(dir,name+'-'+id+'.sqlite');await db.db.backup(out);fs.chmodSync(out,0o600);files.push(out);}return files;}
  maintenance(){return {expiredSessions:this.short.prune(),expiredProposals:this.long.prune()};}
  close(){this.short.close();this.long.close();}
