@@ -7,6 +7,7 @@ function dispatch({root,client,cognitiveCore}){const storage=new Settings(root),
  const configuration=envelope.configuration||{},scope='supervisor_owner:'+principal.clientId,state=storage.get(scope,'state',{reasoningCount:0,lastReasoning:null});
  const status=()=>({schema:'supervisor.status/1.0',mode:'ORCHESTRATOR',execution:'INTENTION_ONLY',ownerScoped:true,reasoningCount:state.reasoningCount,lastReasoning:state.lastReasoning,llm:{provider:configuration.provider||'OPENAI_API',configured:configuration.configured===true,model:configuration.model||'gpt-5.6'},autonomousTrading:{masterEnabled:false,mode:'OFF'},extensions:[],collectorData:{readOnly:true,catalog:'supervisor.data.catalog',read:'supervisor.data.read',context:'supervisor.context'}});
  if(['supervisor.health','supervisor.status','supervisor.capabilities'].includes(action))return status();
+ if(action==='supervisor.cognitive.history')return cognitiveCore.cognitiveHistory(args,{source:'AUTH21_OWNER',principal});
  if(action==='supervisor.cognitive.status')return cognitiveCore.cognitiveRuntime().health();
  if(action==='supervisor.llm.models')return cognitiveCore.llmModels();
  if(action==='supervisor.llm.select'){
