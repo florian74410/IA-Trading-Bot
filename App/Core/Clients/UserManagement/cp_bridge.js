@@ -9,8 +9,9 @@ const GUEST_READ=new Set(['marketdata.providers','marketdata.registry.search','m
 const IND_READ=new Set(['indicator.registry.reload','indicator.registry.status','indicator.settings.get','indicator.list_indicators','indicator.definition.get','indicator.definition.validate','indicator.language.info','indicator.language.validate','indicator.language.compile']);
 function createBridge({root,sessions,routerPort,tradingVault=null,configurationFor=()=>({})}){
  const client=new Client({root,routerPort,maxBytes:4*1024*1024,timeout:15000});
+ const supervisorClient=new Client({root,routerPort,maxBytes:4*1024*1024,timeout:135000});
  const codec=proofCodec({secret:Buffer.from(CP.ensureSecret(root),'hex')});
- const rpc=(target,action,args)=>new Promise((resolve,reject)=>client.request(target,action,args,'analysis',(e,o)=>e?reject(e):resolve(o)));
+ const rpc=(target,action,args)=>new Promise((resolve,reject)=>(target==='supervisor'&&action==='supervisor.user.request'?supervisorClient:client).request(target,action,args,'analysis',(e,o)=>e?reject(e):resolve(o)));
  async function bridge(token,input,{operatorAuthorized=false}={}){
   const principal=sessions.verifySession(token);if(!principal)throw Error('UNAUTHORIZED');
   if(!input||Object.keys(input).some(k=>!['target','action','arguments'].includes(k))||typeof input.action!=='string')throw Error('INVALID_REQUEST');
