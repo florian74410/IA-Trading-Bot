@@ -17,3 +17,7 @@
 .iatbCompBusy .iatbCompFace{animation:iatbCompWorking 1s ease-in-out infinite alternate}
 @keyframes iatbCompWorking{from{filter:drop-shadow(0 0 3px #38c1ff);transform:scale(.95)}to{filter:drop-shadow(0 0 14px #18b6ff);transform:scale(1.08)}}
 @media(max-width:520px){.iatbCompPanel{width:min(95vw,390px);height:min(70vh,530px)}}
+
+.iatbCompModelRow{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.iatbCompModelRow select{min-width:98px;flex:1}
+.iatbCompModelRow button{flex:0 0 auto}
