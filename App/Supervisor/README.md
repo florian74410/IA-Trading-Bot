@@ -57,3 +57,12 @@ Sources and verification: `Documentation/wiki/Supervisor-IA.md` and
 `.github/workflows/cp1-registry-integration.yml` (real Router/Supervisor,
 stubbed Auth21 Core TLS and mocked LLM in DEBUG). No live OpenAI test or VPS
 deployment has been performed.
+
+## Companion Blob cockpit V1.2 (DEBUG)
+The existing `Frontend/JS/companion_v1.0.js` is now a functional owner-facing control surface:
+- **Supervisor** conversations use Core's Auth21 owner bridge, persistent `companion-default` short-term memory, and `GET /api/companion/history` for authorized message restoration after reload.
+- **UI Actions** retain the previous command/graph logic without silently converting chat text into Engine mutations.
+- **Engines** use existing Core `/communication/v1/ui/read` and `/communication/v1/ui/write` routes. The initial curated set covers health/status and two explicit owner-scoped Strategy pause/resume controls, requiring confirmation and a positive Core result.
+- No unverified owner identity, LLM-generated mutation dispatch, direct exchange calls, or production release change is allowed.
+
+See `Documentation/wiki/Supervisor-IA.md` for the full event path and verification scope.
