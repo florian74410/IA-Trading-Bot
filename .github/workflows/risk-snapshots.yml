@@ -1,0 +1,32 @@
+name: Risk parallel snapshots DEBUG
+on:
+  push:
+    branches: ['feature/risk-engine-parallel-snapshots']
+  pull_request:
+    paths: ['App/Risk/**', 'App/Supervisor/Core/**', 'App/Core/Communication/**', 'App/Core/Firewall/risk_approval_client.js', 'App/Core/Shared/build_info.js', 'Tools/Build/**']
+permissions:
+  contents: read
+jobs:
+  qualify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci --omit=dev --no-audit --no-fund
+        working-directory: App
+      - run: node App/Tools_validate_release_version.js
+      - run: node --test --test-concurrency=1 App/Risk/Tests/snapshots.test.js App/Risk/Tests/snapshots.integration.test.js App/Risk/Tests/risk_engine.test.js App/Risk/Tests/test_risk_gate.js App/Risk/Tests/test_risk_r1_r2_v25.js App/Risk/Tests/test_risk_settings_v25.js App/Supervisor/Tests/test_supervisor_architecture.js App/Supervisor/LLM/Tests/test_llm_manager.js App/Core/Communication/Tests/test_communication_router_v1.js App/Core/Communication/Tests/test_router_normalization_v1.8.12.js App/tests/function-registry-discovery.test.js
+        env:
+          IATB_RUNTIME_ROOT: /tmp/iatb-risk-runtime
+          IATB_DATA_ROOT: /tmp/iatb-risk-data
+      - run: node App/Risk/Tests/benchmark_snapshots.js /tmp/benchmark.json
+      - run: python3 Tools/Build/build_risk_snapshot.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: risk-snapshots-debug-source
+          path: |
+            artifacts/IA-TB-*-debug-source.zip*
+            /tmp/benchmark.json

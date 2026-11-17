@@ -22,7 +22,7 @@ SupervisorCore.prototype.calendarFed=function(){return this.cp.request('fundamen
 SupervisorCore.prototype.calendarCme=function(){return this.cp.request('fundamental','fundamental.calendar.cme',{},'analysis');};
 SupervisorCore.prototype.calendarCmeExpirations=function(){return this.cp.request('fundamental','fundamental.calendar.cme.expirations',{},'analysis');};
 SupervisorCore.prototype.fedwatch=function(){return this.cp.request('fundamental','fundamental.fedwatch.get',{},'analysis');};
-SupervisorCore.prototype.requestRiskApproval=function(intent){if(!intent||typeof intent!=='object')return Promise.reject(new Error('TRADE_INTENT_REQUIRED'));return this.cp.request('risk','risk.gate.evaluate',{intent:intent},'execution');};
+SupervisorCore.prototype.requestRiskApproval=function(intent){if(!intent||typeof intent!=='object')return Promise.reject(new Error('TRADE_INTENT_REQUIRED'));return this.cp.request('risk','risk.gate.evaluate',{intent:intent},'analysis');};
 SupervisorCore.prototype.collectContext=function(a){var self=this;return this.context.collect(a||{}).then(function(x){self.lastContext={at:new Date().toISOString(),symbol:x.symbol,timeframe:x.timeframe,degraded:x.degraded,warnings:x.warnings};return x;});};
 SupervisorCore.prototype.analyze=function(a){var self=this;a=a||{};return this.collectContext(a).then(function(ctx){var prompt=String(a.prompt||'Analyze this IA-TB market context and explain the relevant observations. Do not execute or claim to execute any trade.')+'\n\nCONTEXT_JSON:\n'+JSON.stringify(ctx);return self.reason({prompt:prompt,system:a.system,model:a.model,temperature:a.temperature,maxTokens:a.maxTokens,metadata:{symbol:ctx.symbol,timeframe:ctx.timeframe,degraded:ctx.degraded}}).then(function(reasoning){return{schema:'supervisor.analysis/1.0',execution:'NONE',context:ctx,reasoning:reasoning};});});};
 SupervisorCore.prototype.structured=function(a){var self=this;a=a||{};return this.llm.structured(a).then(function(r){self.reasoningCount++;self.lastReasoning={at:new Date().toISOString(),provider:r.provider,model:r.model,latencyMs:r.latencyMs,structured:true};return{schema:'supervisor.structured/1.0',execution:'NONE',response:r};});};
@@ -32,4 +32,8 @@ SupervisorCore.prototype.cognitiveReason=function(a,auth){var self=this;return t
 SupervisorCore.prototype.cognitiveHistory=function(a,auth){return this.cognitiveRuntime().history(a||{},auth||{});};
 SupervisorCore.prototype.cognitiveStatus=function(){return this.cognitiveRuntime().health();};
 SupervisorCore.prototype.llmModels=function(){return this.cognitiveRuntime().models();};
+// Explicit structured risk preparation. Never turns a snapshot into an order approval.
+SupervisorCore.prototype.createRiskSnapshot=function(a){return this.cp.request('risk','risk.snapshot.create',a,'analysis',10000);};
+SupervisorCore.prototype.getRiskSnapshot=function(snapshotId,portfolioId){return this.cp.request('risk','risk.snapshot.get',{snapshot_id:snapshotId,portfolio_id:portfolioId},'analysis');};
+SupervisorCore.prototype.riskConstraints=function(){return this.cp.request('risk','risk.constraints.get',{},'analysis');};
 module.exports=SupervisorCore;

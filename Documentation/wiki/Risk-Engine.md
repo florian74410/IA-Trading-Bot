@@ -160,3 +160,11 @@ Une exécution réelle nécessite encore :
 **Limite actuelle :** le Portfolio `TRADING_ONLY` ne donne pas un capital total fiable et le monitoring automatique global est interdit en mode Auth21 tant qu'une collecte propriétaire n'est pas disponible. Les nouveaux modules ne remplacent pas encore le Risk Gate obligatoire sur chaque intention du Supervisor. Les protections d'exécution existantes restent intactes.
 
 Voir [spécification technique v2.5](https://github.com/florian74410/IA-Trading-Bot/blob/2.5/Documentation/RISK_ENGINE_R1_R2_V2_5.md).
+
+## vNext 2.6.0-dev.3 DEBUG
+
+Le contrat historique ci-dessus reste disponible. Les nouveaux snapshots structurés,
+les modèles supplémentaires, les scores et les contrôles du scalping natif sont
+spécifiés dans [la référence vNext](../Risk/RISK_ENGINE_VNEXT.md).
+Les données propriétaires/capital/frais nécessaires ne sont pas encore disponibles
+sur tous les chemins réels : la nouvelle voie retourne UNAVAILABLE sans les inventer.

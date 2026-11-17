@@ -1,0 +1,120 @@
+{
+  "schema": "risk.benchmark/1.0",
+  "fixture": "500 timestamp-aligned 1m candles, empty reconciled portfolio, two 2000-unit book levels, 3 net trades; synthetic 5ms I/O per source",
+  "machine": {
+    "node": "v22.23.5",
+    "platform": "linux",
+    "arch": "x64",
+    "cpu": "INTEL(R) XEON(R) PLATINUM 8573C",
+    "logical_cpus": 9,
+    "memory_bytes": 10451423232
+  },
+  "baseline_commit": "a4c86e6c",
+  "notes": [
+    "CPU/RSS cover the Node process including worker threads; sampled RSS is not an OS high-water mark.",
+    "Legacy core and vNext have different scope; no before/after speedup ratio is claimed.",
+    "Sequential and parallel vNext have identical inputs and calculations; only the CPU scheduling differs."
+  ],
+  "legacy_core": {
+    "n": 100,
+    "p50_ms": 0.17368199999999945,
+    "p95_ms": 0.6199629999999985,
+    "p99_ms": 1.2725209999999976,
+    "wall_ms": 28.702774999999995,
+    "cpu_user_ms": 35.012,
+    "cpu_system_ms": 7.014,
+    "rss_start_bytes": 55767040,
+    "rss_peak_sampled_bytes": 66121728
+  },
+  "parallel_cold": {
+    "n": 1,
+    "p50_ms": 94.633172,
+    "p95_ms": 94.633172,
+    "p99_ms": 94.633172,
+    "wall_ms": 94.67989299999999,
+    "cpu_user_ms": 157.759,
+    "cpu_system_ms": 19.223,
+    "rss_start_bytes": 66121728,
+    "rss_peak_sampled_bytes": 99151872
+  },
+  "sequential": {
+    "n": 100,
+    "p50_ms": 6.591040000000021,
+    "p95_ms": 7.30553500000002,
+    "p99_ms": 7.431446999999935,
+    "wall_ms": 670.5565349999999,
+    "cpu_user_ms": 191.51,
+    "cpu_system_ms": 5.307,
+    "rss_start_bytes": 99151872,
+    "rss_peak_sampled_bytes": 106840064
+  },
+  "parallel_warm": {
+    "n": 100,
+    "p50_ms": 7.238788999999997,
+    "p95_ms": 8.781031999999868,
+    "p99_ms": 9.657178000000044,
+    "wall_ms": 752.2179369999999,
+    "cpu_user_ms": 306.641,
+    "cpu_system_ms": 67.049,
+    "rss_start_bytes": 106840064,
+    "rss_peak_sampled_bytes": 125644800
+  },
+  "default": {
+    "n": 100,
+    "p50_ms": 6.539473000000044,
+    "p95_ms": 8.038657000000057,
+    "p99_ms": 9.04146999999989,
+    "wall_ms": 677.1956540000001,
+    "cpu_user_ms": 216.555,
+    "cpu_system_ms": 26.65,
+    "rss_start_bytes": 125644800,
+    "rss_peak_sampled_bytes": 146006016
+  },
+  "concurrency": {
+    "requested": 4,
+    "fulfilled": 4,
+    "rejected": [],
+    "wall_ms": 11.631829999999809
+  },
+  "overload": {
+    "requested": 5,
+    "fulfilled": 4,
+    "rejected": [
+      "RISK_OVERLOADED"
+    ],
+    "wall_ms": 10.298877000000175
+  },
+  "unavailable_source": {
+    "n": 5,
+    "p50_ms": 50.41836299999977,
+    "p95_ms": 50.42688999999973,
+    "p99_ms": 50.42688999999973,
+    "wall_ms": 251.39131700000007,
+    "cpu_user_ms": 2.026,
+    "cpu_system_ms": 0,
+    "rss_start_bytes": 143683584,
+    "rss_peak_sampled_bytes": 143683584
+  },
+  "cpu_sequential_only": {
+    "n": 100,
+    "p50_ms": 0.24198399999977482,
+    "p95_ms": 1.4364049999999224,
+    "p99_ms": 1.4611810000001242,
+    "wall_ms": 37.94666999999981,
+    "cpu_user_ms": 37.111,
+    "cpu_system_ms": 16.102,
+    "rss_start_bytes": 143683584,
+    "rss_peak_sampled_bytes": 151023616
+  },
+  "cpu_parallel_only": {
+    "n": 100,
+    "p50_ms": 0.6708979999998519,
+    "p95_ms": 0.9563750000002074,
+    "p99_ms": 1.4079529999999068,
+    "wall_ms": 73.5621329999999,
+    "cpu_user_ms": 147.467,
+    "cpu_system_ms": 12.368,
+    "rss_start_bytes": 151023616,
+    "rss_peak_sampled_bytes": 151822336
+  }
+}

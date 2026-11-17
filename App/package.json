@@ -1,7 +1,7 @@
 {
   "name": "ia-tb-runtime",
   "private": true,
-  "version": "2.6.0-dev.1",
+  "version": "2.6.0-dev.3",
   "description": "IA-TB unified Node.js runtime",
   "engines": {
     "node": ">=22 <23"
@@ -10,5 +10,10 @@
     "better-sqlite3": "12.4.1",
     "ethers": "5.7.2",
     "argon2": "0.45.1"
+  },
+  "scripts": {
+    "test:risk": "node --test --test-concurrency=1 Risk/Tests/snapshots.test.js Risk/Tests/snapshots.integration.test.js Risk/Tests/risk_engine.test.js Risk/Tests/test_risk_gate.js Risk/Tests/test_risk_r1_r2_v25.js Risk/Tests/test_risk_settings_v25.js",
+    "bench:risk": "node Risk/Tests/benchmark_snapshots.js",
+    "build:risk": "python3 ../Tools/Build/build_risk_snapshot.py"
   }
 }

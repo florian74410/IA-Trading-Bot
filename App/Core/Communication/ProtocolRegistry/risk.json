@@ -138,6 +138,59 @@
         "arguments": {
           "allowed": []
         }
+      },
+      {
+        "name": "risk.snapshot.create",
+        "description": "Create a coherent bounded parallel risk snapshot; never an execution approval.",
+        "arguments": {
+          "allowed": [
+            "portfolio_id",
+            "symbol",
+            "timeframe",
+            "context",
+            "intent",
+            "strategy_type",
+            "strategy_parameters",
+            "capital",
+            "horizon",
+            "correlation_id"
+          ],
+          "required": [
+            "portfolio_id",
+            "symbol",
+            "correlation_id"
+          ]
+        }
+      },
+      {
+        "name": "risk.snapshot.get",
+        "description": "Retrieve a bounded cached snapshot by portfolio; expired results become UNAVAILABLE.",
+        "arguments": {
+          "allowed": [
+            "snapshot_id",
+            "portfolio_id"
+          ],
+          "required": [
+            "snapshot_id",
+            "portfolio_id"
+          ]
+        }
+      },
+      {
+        "name": "risk.constraints.get",
+        "description": "Read operator-owned provisional snapshot risk constraints.",
+        "arguments": {
+          "allowed": [],
+          "required": []
+        }
+      },
+      {
+        "name": "risk.status",
+        "description": "Read bounded snapshot orchestration status; no financial data.",
+        "arguments": {
+          "allowed": [],
+          "required": []
+        }
       }
     ],
     "dataTypes": [

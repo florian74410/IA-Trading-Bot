@@ -1,7 +1,7 @@
 {
   "schema_version": "2.6.0",
   "engine_id": "risk",
-  "engine_version": "2.6.0",
+  "engine_version": "2.6.0-dev.3",
   "transport": "CP/1",
   "source_protocol_registry": "App/Core/Communication/ProtocolRegistry/risk.json",
   "functions": [
@@ -470,7 +470,656 @@
       "verified_handler": false,
       "default_privilege": "DENY",
       "side_effects": false
+    },
+    {
+      "type": "EVALUATION",
+      "risk_level": "MEDIUM",
+      "description": "Compute an immutable risk preparation snapshot with bounded concurrency and explicit unavailable data. Never authorizes an order.",
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "portfolio_id",
+          "symbol",
+          "correlation_id"
+        ],
+        "properties": {
+          "portfolio_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 96
+          },
+          "symbol": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 96
+          },
+          "correlation_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 96
+          },
+          "timeframe": {
+            "enum": [
+              "1m",
+              "5m",
+              "15m",
+              "30m",
+              "1h",
+              "4h",
+              "1d"
+            ]
+          },
+          "context": {
+            "enum": [
+              "analysis",
+              "native_scalping"
+            ]
+          },
+          "intent": {
+            "type": "object",
+            "description": "Proposed intent only; fee, market, portfolio and policy inputs are never trusted from callers."
+          },
+          "strategy_type": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "strategy_parameters": {
+            "type": "object"
+          },
+          "capital": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "horizon": {
+            "type": "string",
+            "description": "Must match timeframe; metrics are one-period horizon."
+          }
+        }
+      },
+      "output": {
+        "type": "object",
+        "required": [
+          "schema",
+          "schema_version",
+          "snapshot_id",
+          "timestamp_utc",
+          "portfolio_id",
+          "symbol",
+          "context",
+          "timeframe",
+          "correlation_id",
+          "status",
+          "decision",
+          "scores",
+          "metrics",
+          "constraints",
+          "reasons",
+          "warnings",
+          "missing_metrics",
+          "data_quality",
+          "data_reference",
+          "execution_authorization",
+          "valid_until_utc",
+          "calculation_time_ms"
+        ],
+        "properties": {
+          "schema": {
+            "const": "risk.snapshot/2.0"
+          },
+          "schema_version": {
+            "const": "2.0"
+          },
+          "snapshot_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "timestamp_utc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "portfolio_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 96
+          },
+          "symbol": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 96
+          },
+          "context": {
+            "enum": [
+              "analysis",
+              "native_scalping"
+            ]
+          },
+          "timeframe": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 96
+          },
+          "correlation_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 96
+          },
+          "status": {
+            "enum": [
+              "COMPLETE",
+              "PARTIAL",
+              "INCOMPLETE",
+              "EXPIRED"
+            ]
+          },
+          "decision": {
+            "enum": [
+              "ALLOW",
+              "ALLOW_WITH_LIMITS",
+              "REVIEW",
+              "BLOCK",
+              "UNAVAILABLE"
+            ]
+          },
+          "execution_authorization": {
+            "const": false
+          },
+          "valid_until_utc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "scores": {
+            "type": "object",
+            "required": [
+              "market",
+              "portfolio",
+              "volatility",
+              "liquidity",
+              "execution",
+              "concentration",
+              "overall"
+            ],
+            "properties": {
+              "market": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 100
+              },
+              "portfolio": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 100
+              },
+              "volatility": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 100
+              },
+              "liquidity": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 100
+              },
+              "execution": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 100
+              },
+              "concentration": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 100
+              },
+              "overall": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 100
+              }
+            }
+          },
+          "metrics": {
+            "type": "object"
+          },
+          "constraints": {
+            "type": "object"
+          },
+          "reasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "missing_metrics": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "data_quality": {
+            "type": "object"
+          },
+          "data_reference": {
+            "type": "string"
+          },
+          "calculation_time_ms": {
+            "type": "number",
+            "minimum": 0
+          }
+        }
+      },
+      "examples": [
+        {
+          "portfolio_id": "account-1",
+          "symbol": "BTCUSDT",
+          "timeframe": "1m",
+          "context": "native_scalping",
+          "correlation_id": "example-1",
+          "intent": {
+            "action": "BUY",
+            "size": 0.01,
+            "stopLoss": 90000,
+            "leverage": 1
+          }
+        }
+      ],
+      "id": "risk.snapshot.create",
+      "engine": "risk",
+      "hard_deny": false,
+      "verified_handler": true,
+      "default_privilege": "DENY",
+      "side_effects": false,
+      "errors": [
+        "RISK_ARGUMENT_INVALID",
+        "RISK_HORIZON_MISMATCH",
+        "RISK_OVERLOADED",
+        "RISK_CANCELLED",
+        "RISK_SNAPSHOT_NOT_FOUND"
+      ],
+      "source": "App/Risk/Snapshots/orchestrator.js",
+      "authorization": "Existing authenticated machine CP/1 only. No public route, agent grant, settings write or owner proof is created."
+    },
+    {
+      "type": "READ",
+      "risk_level": "LOW",
+      "description": "Get an existing bounded in-memory snapshot for its exact portfolio. Expired snapshots have decision UNAVAILABLE.",
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "snapshot_id",
+          "portfolio_id"
+        ],
+        "properties": {
+          "snapshot_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 96
+          },
+          "portfolio_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 96
+          }
+        }
+      },
+      "output": {
+        "type": "object",
+        "required": [
+          "schema",
+          "schema_version",
+          "snapshot_id",
+          "timestamp_utc",
+          "portfolio_id",
+          "symbol",
+          "context",
+          "timeframe",
+          "correlation_id",
+          "status",
+          "decision",
+          "scores",
+          "metrics",
+          "constraints",
+          "reasons",
+          "warnings",
+          "missing_metrics",
+          "data_quality",
+          "data_reference",
+          "execution_authorization",
+          "valid_until_utc",
+          "calculation_time_ms"
+        ],
+        "properties": {
+          "schema": {
+            "const": "risk.snapshot/2.0"
+          },
+          "schema_version": {
+            "const": "2.0"
+          },
+          "snapshot_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "timestamp_utc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "portfolio_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 96
+          },
+          "symbol": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 96
+          },
+          "context": {
+            "enum": [
+              "analysis",
+              "native_scalping"
+            ]
+          },
+          "timeframe": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 96
+          },
+          "correlation_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 96
+          },
+          "status": {
+            "enum": [
+              "COMPLETE",
+              "PARTIAL",
+              "INCOMPLETE",
+              "EXPIRED"
+            ]
+          },
+          "decision": {
+            "enum": [
+              "ALLOW",
+              "ALLOW_WITH_LIMITS",
+              "REVIEW",
+              "BLOCK",
+              "UNAVAILABLE"
+            ]
+          },
+          "execution_authorization": {
+            "const": false
+          },
+          "valid_until_utc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "scores": {
+            "type": "object",
+            "required": [
+              "market",
+              "portfolio",
+              "volatility",
+              "liquidity",
+              "execution",
+              "concentration",
+              "overall"
+            ],
+            "properties": {
+              "market": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 100
+              },
+              "portfolio": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 100
+              },
+              "volatility": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 100
+              },
+              "liquidity": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 100
+              },
+              "execution": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 100
+              },
+              "concentration": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 100
+              },
+              "overall": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 100
+              }
+            }
+          },
+          "metrics": {
+            "type": "object"
+          },
+          "constraints": {
+            "type": "object"
+          },
+          "reasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "missing_metrics": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "data_quality": {
+            "type": "object"
+          },
+          "data_reference": {
+            "type": "string"
+          },
+          "calculation_time_ms": {
+            "type": "number",
+            "minimum": 0
+          }
+        }
+      },
+      "examples": [
+        {
+          "snapshot_id": "00000000-0000-4000-8000-000000000000",
+          "portfolio_id": "account-1"
+        }
+      ],
+      "id": "risk.snapshot.get",
+      "engine": "risk",
+      "hard_deny": false,
+      "verified_handler": true,
+      "default_privilege": "DENY",
+      "side_effects": false,
+      "errors": [
+        "RISK_ARGUMENT_INVALID",
+        "RISK_HORIZON_MISMATCH",
+        "RISK_OVERLOADED",
+        "RISK_CANCELLED",
+        "RISK_SNAPSHOT_NOT_FOUND"
+      ],
+      "source": "App/Risk/Snapshots/orchestrator.js",
+      "authorization": "Existing authenticated machine CP/1 only. No public route, agent grant, settings write or owner proof is created."
+    },
+    {
+      "type": "READ",
+      "risk_level": "LOW",
+      "description": "Read provisional operator-owned constraints. This command cannot change risk policy.",
+      "input": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "object",
+        "required": [
+          "schema",
+          "policy",
+          "provisional_calibration",
+          "modifiable_by_agent"
+        ],
+        "properties": {
+          "schema": {
+            "const": "risk.constraints/1.0"
+          },
+          "policy": {
+            "type": "object"
+          },
+          "provisional_calibration": {
+            "const": true
+          },
+          "modifiable_by_agent": {
+            "const": false
+          }
+        }
+      },
+      "examples": [
+        {}
+      ],
+      "id": "risk.constraints.get",
+      "engine": "risk",
+      "hard_deny": false,
+      "verified_handler": true,
+      "default_privilege": "DENY",
+      "side_effects": false,
+      "errors": [
+        "RISK_ARGUMENT_INVALID",
+        "RISK_HORIZON_MISMATCH",
+        "RISK_OVERLOADED",
+        "RISK_CANCELLED",
+        "RISK_SNAPSHOT_NOT_FOUND"
+      ],
+      "source": "App/Risk/Snapshots/orchestrator.js",
+      "authorization": "Existing authenticated machine CP/1 only. No public route, agent grant, settings write or owner proof is created."
+    },
+    {
+      "type": "READ",
+      "risk_level": "LOW",
+      "description": "Read bounded orchestration health and capacity without account data.",
+      "input": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "object",
+        "required": [
+          "schema",
+          "active",
+          "stored",
+          "max_concurrency",
+          "workers",
+          "execution_authorization"
+        ],
+        "properties": {
+          "schema": {
+            "const": "risk.snapshot-status/1.0"
+          },
+          "active": {
+            "type": "integer"
+          },
+          "stored": {
+            "type": "integer"
+          },
+          "max_concurrency": {
+            "type": "integer"
+          },
+          "workers": {
+            "type": "integer"
+          },
+          "execution_authorization": {
+            "const": false
+          }
+        }
+      },
+      "examples": [
+        {}
+      ],
+      "id": "risk.status",
+      "engine": "risk",
+      "hard_deny": false,
+      "verified_handler": true,
+      "default_privilege": "DENY",
+      "side_effects": false,
+      "errors": [
+        "RISK_ARGUMENT_INVALID",
+        "RISK_HORIZON_MISMATCH",
+        "RISK_OVERLOADED",
+        "RISK_CANCELLED",
+        "RISK_SNAPSHOT_NOT_FOUND"
+      ],
+      "source": "App/Risk/Snapshots/orchestrator.js",
+      "authorization": "Existing authenticated machine CP/1 only. No public route, agent grant, settings write or owner proof is created."
     }
   ],
-  "verification_status": "PROTOCOL_DECLARED_UNVERIFIED_HANDLERS"
+  "verification_status": "PROTOCOL_DECLARED_UNVERIFIED_HANDLERS",
+  "revision_hash": "80be55f704f460564487ac5535efdfae344b250f4e60f05466aff08aad8af262",
+  "source_sha256": "e7aa7a525edeba240d93ec1441ead5a216ecf0361bf06dd6e81611b732479c2d"
 }

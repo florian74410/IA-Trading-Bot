@@ -292,3 +292,10 @@ Les commandes financières et l'administration infrastructure restent hors de l'
 - Les écritures Strategy ne sont pas déclenchées par le LLM : elles passent par `/communication/v1/ui/write`, la politique du Core, une confirmation utilisateur et la réponse réelle de l'Engine.
 
 Les tests d'interface simulent le DOM et les réponses HTTP dans `App/tests/companion-frontend-v1.2.test.js`. Ils valident les interactions, mais **ne remplacent pas une recette Firefox et VPS DEBUG**.
+
+## Préparation Risk vNext (2.6.0-dev.3 DEBUG)
+
+Supervisor expose les méthodes internes `createRiskSnapshot`, `getRiskSnapshot` et
+`riskConstraints`, uniquement avec le client CP/1 commun via Router. La demande
+Risk Gate utilise le niveau de détail CP/1 `analysis`. Aucun droit ni outil cognitif
+supplémentaire n'est activé. Voir [Risk vNext](../Risk/RISK_ENGINE_VNEXT.md).

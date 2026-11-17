@@ -44,7 +44,17 @@ var CAPABILITIES=[
   'risk.r2.evaluate',
   'risk.r2.monitor'
 ];
+var SNAPSHOT_POLICY=process.env.IATB_RISK_POLICY_FILE?JSON.parse(require('fs').readFileSync(process.env.IATB_RISK_POLICY_FILE,'utf8')):{};
+var SNAPSHOTS=new (require('../Snapshots/orchestrator').Orchestrator)({
+  authenticated:process.env.IATB_AUTH_MODE==='authenticated',config:SNAPSHOT_POLICY,
+  request:function(target,action,args){var client=new CPClient({root:APP_ROOT,routerPort:ROUTER_PORT,timeout:Math.min(5000,SNAPSHOT_POLICY.ioTimeoutMs||2500),maxBytes:4*1024*1024});return new Promise(function(resolve,reject){client.request(target,action,args,'analysis',function(e,d){e?reject(e):resolve(d);});});}
+});
+CAPABILITIES=CAPABILITIES.concat(['risk.snapshot.create','risk.snapshot.get','risk.constraints.get','risk.status']);
 var EVENTS=['risk.r2.alert'];
+function nativeIntent(i){return !!(i&&i.metadata&&i.metadata.context==='native_scalping');}
+function nativeCheck(i,rid){return SNAPSHOTS.create({portfolio_id:i.metadata.portfolio_id,symbol:i.symbol,timeframe:i.metadata.timeframe||'1m',context:'native_scalping',correlation_id:rid,intent:i});}
+function nativeAllowed(s){return s.status==='COMPLETE'&&['ALLOW','ALLOW_WITH_LIMITS'].indexOf(s.decision)>=0;}
+
 
 function json(res,code,obj){
   var b=Buffer.from(JSON.stringify(obj));
@@ -182,6 +192,20 @@ function r25MonitorTick(){
 
 function cpAction(m,cb){
   var a=m.arguments||{};
+  if(m.action==='risk.snapshot.create')return SNAPSHOTS.create(a).then(function(d){cb(null,d);},cb);
+  if(m.action==='risk.snapshot.get'){try{return cb(null,SNAPSHOTS.get(a.snapshot_id,a.portfolio_id));}catch(e){return cb(e);}}
+  if(m.action==='risk.constraints.get')return cb(null,SNAPSHOTS.constraints());
+  if(m.action==='risk.status')return cb(null,SNAPSHOTS.status());
+  if(m.action==='risk.gate.evaluate'&&nativeIntent(a.intent||a)){
+    var ni=a.intent||a;return nativeCheck(ni,m.request_id).then(function(s){
+      if(!nativeAllowed(s))return cb(null,{schema:'risk.gate-decision/1.0',decision:'REJECTED',approved:false,risk_approval_id:null,reasons:['NATIVE_SNAPSHOT_NOT_EXECUTABLE'].concat(s.reasons),snapshot_id:s.snapshot_id});
+      cb(null,RISK_GATE.evaluate(ni));
+    },cb);
+  }
+  if(m.action==='risk.gate.verify'&&a.consume===true&&nativeIntent(a.intent)){
+    var verified=RISK_GATE.verify(a.risk_approval_id,a.intent,false);if(!verified.ok)return cb(null,verified);
+    return nativeCheck(a.intent,m.request_id).then(function(s){if(!nativeAllowed(s))return cb(null,{ok:false,error:'NATIVE_RISK_RECHECK_FAILED'});cb(null,RISK_GATE.verify(a.risk_approval_id,a.intent,true));},cb);
+  }
   if(m.action==='risk.r1.evaluate'){var c1=riskSettings();return cb(null,R1.evaluate(a.intent||{},Object.assign({},c1.r1,{enabled:c1.enabled&&c1.r1.enabled}),a.context||{}));}
   if(m.action==='risk.r2.evaluate'){var c2=riskSettings();return cb(null,R2.evaluate(a.snapshot||{},Object.assign({},c2.r2,{enabled:c2.enabled&&c2.r2.enabled})));}
   if(m.action==='risk.r2.monitor')return r25Sample(cb);
@@ -210,6 +234,9 @@ function handleCP(req,res){
     var v=CP.validateRequest(m,allow);
     if(!v.ok)return json(res,400,{ok:false,error:v.errors[0],errors:v.errors});
     if(v.target!=='risk')return json(res,404,{ok:false,error:'CP_TARGET_INVALID'});
+    var contractError=new (require('../../Core/Communication/protocol_registry_v2'))(APP_ROOT).validateActionArgs('risk',m.action,m.arguments||{});
+    if(contractError)return json(res,400,CP.makeResponse(m,'ERROR',{error:contractError},{schema:'cp.error/1.0'}));
+    if(m.action==='risk.snapshot.get'&&(typeof m.arguments.snapshot_id!=='string'||typeof m.arguments.portfolio_id!=='string'))return json(res,400,CP.makeResponse(m,'ERROR',{error:'RISK_ARGUMENT_INVALID'},{schema:'cp.error/1.0'}));
     var started=Date.now();
     cpAction(m,function(x,d){
       if(x)return json(res,400,CP.makeResponse(m,'ERROR',{error:String(x.message||x).slice(0,240)},{
@@ -247,5 +274,5 @@ srv.listen(PORT,HOST,function(){
   R25_MONITOR.interval=setInterval(r25MonitorTick,30000);R25_MONITOR.interval.unref();
   setTimeout(r25MonitorTick,5000).unref();
 });
-function stop(){if(R25_MONITOR.interval)clearInterval(R25_MONITOR.interval);if(registrationHandle)registrationHandle.stop();srv.close(function(){process.exit(0);});setTimeout(function(){process.exit(0);},1200);}
+function stop(){SNAPSHOTS.close().catch(function(){});if(R25_MONITOR.interval)clearInterval(R25_MONITOR.interval);if(registrationHandle)registrationHandle.stop();srv.close(function(){process.exit(0);});setTimeout(function(){process.exit(0);},1200);}
 process.on('SIGINT',stop);process.on('SIGTERM',stop);

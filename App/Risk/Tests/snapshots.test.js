@@ -1,0 +1,55 @@
+'use strict';
+const {test}=require('node:test'),assert=require('node:assert/strict'),math=require('../Snapshots/math'),{policy,aggregate}=require('../Snapshots/policy'),{Orchestrator,validate}=require('../Snapshots/orchestrator'),{Pool}=require('../Snapshots/pool'),{fixture}=require('./snapshot_fixture');
+const near=(x,y,eps=1e-10)=>assert.ok(Math.abs(x-y)<eps,`${x} != ${y}`);
+test('reference log returns, sample volatility, Gaussian VaR, empirical tail, drawdown',()=>{
+ const r=Array.from({length:20},(_,i)=>i%2?.01:-.02);let price=100;const candles=[[0,0,0,0,price]];r.forEach((x,i)=>{price*=Math.exp(x);candles.push([(i+1)*60000,0,0,0,price]);});
+ const m=math.market({candles,timeframe:'1m'}),sigma=Math.sqrt((10*.015**2+10*.015**2)/19);
+ near(m.log_mean,-.005);near(m.volatility,sigma);near(m.var_gaussian_95,1.6448536269514722*sigma+.005);near(m.var_historical_95,.02);near(m.cvar_95,.02);
+ near(m.realized_volatility,Math.sqrt(.005));near(m.sharpe,-.005/sigma*Math.sqrt(525600));
+ near(m.sortino,-.005/Math.sqrt(.0002)*Math.sqrt(525600));near(m.max_drawdown,1-Math.exp(-.11));
+});
+test('zero volatility has undefined ratios; invalid/empty/gapped histories unavailable',()=>{
+ const c=Array.from({length:21},(_,i)=>[i*60000,0,0,0,100]);const m=math.market({candles:c,timeframe:'1m'});assert.equal(m.volatility,0);assert.equal(m.sharpe,null);assert.equal(m.sortino,null);assert.equal(m.calmar,null);
+ for(const candles of [[],c.slice(1),c.map((x,i)=>i===10?[x[0]+1,0,0,0,100]:x),c.map((x,i)=>i===10?[x[0],0,0,0,NaN]:x)])assert.equal(math.market({candles,timeframe:'1m'}).available,false);
+ const huge=c.map((x,i)=>[x[0],0,0,0,i<10?1e100:1e-100]);const extreme=math.market({candles:huge,timeframe:'1m'});assert.ok(extreme.cvar_99>100);assert.equal(extreme.max_drawdown,1);
+});
+test('correlation aligns timestamps, rejects constant and desynchronised series',()=>{const f=fixture();near(math.correlation(f.sources.market.candles,f.sources.market.candles,'1m'),1);const other=structuredClone(f.sources.market.candles);other[1][0]++;assert.equal(math.correlation(f.sources.market.candles,other,'1m'),null);});
+test('portfolio reference exposure, concentration and stop budget; rejects TRADING_ONLY',()=>{
+ const p={equity:1000,peakEquity:1250,dailyPnl:-10,positions:[{symbol:'A',notional:200,estimatedStopRiskQuote:10},{symbol:'B',notional:-100,estimatedStopRiskQuote:5}]};const m=math.portfolio({portfolio:p});near(m.gross_exposure,.3);near(m.concentration,.2);near(m.hhi,5/9);near(m.combined_stop_risk,.015);near(m.drawdown,.2);near(m.daily_loss,.01);assert.equal(m.correlations[0].pearson,null);assert.equal(math.portfolio({portfolio:{...p,analysis_mode:'TRADING_ONLY'}}).available,false);
+});
+test('VWAP, spread, fees, partial fills, crossed/unsorted books and constraints',()=>{
+ const b={orderBook:{bids:[{price:99,size:2}],asks:[{price:101,size:1},{price:103,size:1}]}},d={book:b,intent:{action:'BUY',size:2},feeRate:.001,exchangeConstraints:{minQuantity:1,maxQuantity:5,quantityStep:1}};
+ const x=math.execution(d);near(x.vwap,102);near(x.spread,.02);near(x.slippage,.02);near(x.fees_quote,.204);assert.equal(x.exchange_constraints_valid,true);assert.equal(x.partial_fill,false);
+ assert.equal(math.execution({...d,intent:{action:'BUY',size:3}}).partial_fill,true);assert.equal(math.execution({...d,feeRate:null}).fee_rate,null);
+ assert.equal(math.execution({...d,book:{orderBook:{bids:[{price:105,size:1}],asks:b.orderBook.asks}}}).available,false);
+ assert.equal(math.execution({...d,book:{orderBook:{bids:b.orderBook.bids,asks:[...b.orderBook.asks].reverse()}}}).available,false);
+});
+test('strategy expectancy and profit factor use net closed trades',()=>{const x=math.strategy({trades:[{netPnl:4},{netPnl:-2},{netPnl:0}]});near(x.expectancy,2/3);near(x.profit_factor,2);near(x.win_rate,1/3);assert.equal(math.strategy({trades:[]}).available,false);});
+test('policy rejects invalid values; unavailable overall does not imply low risk',()=>{assert.throws(()=>policy({maxSpread:0}));assert.throws(()=>policy({weights:{market:-1}}));assert.throws(()=>policy({maxStored:1.2}));const s=aggregate({market:{available:false},portfolio:{available:false},execution:{available:false}},policy());assert.equal(s.overall,null);assert.ok(Object.values(s).every(x=>x===null));});
+test('complete immutable snapshot, unique identity, expiry and portfolio isolation',async()=>{
+ const f=fixture();let now=f.now;const o=new Orchestrator({request:f.request,now:()=>now});try{const s=await o.create(f.args);assert.equal(s.status,'COMPLETE');assert.equal(s.decision,'ALLOW_WITH_LIMITS');assert.equal(s.execution_authorization,false);assert.equal(s.correlation_id,'test-1');s.scores.overall=100;assert.notEqual(o.get(s.snapshot_id,'account-1').scores.overall,100);assert.throws(()=>o.get(s.snapshot_id,'account-2'));now+=4000;assert.equal(o.get(s.snapshot_id,'account-1').decision,'UNAVAILABLE');}finally{await o.close();}
+});
+test('incomplete, stale, mismatched and untrusted data never grant permission',async()=>{
+ for(const mutate of [f=>f.sources.portfolio.analysis_mode='TRADING_ONLY',f=>f.sources.book.observedAt-=10000,f=>f.sources.market.symbol='ETHUSDT',f=>delete f.sources.portfolio.portfolio_id,f=>f.sources.portfolio.reconciled=false,f=>delete f.sources.book.feeRate,f=>f.sources.book.firewall.decision='BLOCK']){
+  const f=fixture();mutate(f);const o=new Orchestrator({request:f.request,now:()=>f.now});try{const s=await o.create(f.args);assert.equal(s.decision,'UNAVAILABLE');}finally{await o.close();}
+ }
+ const f=fixture(),o=new Orchestrator({request:f.request,authenticated:true});try{const s=await o.create(f.args);assert.equal(s.decision,'UNAVAILABLE');assert.ok(s.reasons.includes('OWNER_SCOPED_PORTFOLIO_UNAVAILABLE'));}finally{await o.close();}
+});
+test('hard limits and critical components cannot hide behind average scores',async()=>{const f=fixture();f.sources.book.orderBook.asks[0].size=.1;const o=new Orchestrator({request:f.request});try{const s=await o.create(f.args);assert.equal(s.decision,'BLOCK');assert.ok(s.reasons.includes('INSUFFICIENT_BOOK_DEPTH'));}finally{await o.close();}});
+test('bounded simultaneous snapshots do not mix contexts; overload and cancellation',async()=>{
+ const f=fixture();let release;const wait=new Promise(r=>release=r),o=new Orchestrator({request:async(...a)=>{await wait;return f.request(...a);},config:{maxSnapshotConcurrency:2}});
+ try{const a=o.create({...f.args,correlation_id:'a'}),b=o.create({...f.args,correlation_id:'b'});await assert.rejects(o.create(f.args),/RISK_OVERLOADED/);release();const [x,y]=await Promise.all([a,b]);assert.notEqual(x.snapshot_id,y.snapshot_id);assert.equal(x.correlation_id,'a');assert.equal(y.correlation_id,'b');const c=new AbortController();c.abort();await assert.rejects(o.create(f.args,{signal:c.signal}),/RISK_CANCELLED/);}finally{await o.close();}
+});
+test('source timeout returns incomplete result, no raw service error or late mutation',async()=>{const f=fixture(),o=new Orchestrator({request:()=>new Promise(()=>{}),config:{ioTimeoutMs:20}});try{const s=await o.create(f.args);assert.equal(s.decision,'UNAVAILABLE');assert.ok(s.reasons.some(x=>x.includes('TIMEOUT')));assert.equal(o.active,0);}finally{await o.close();}});
+test('parallel and sequential calculations are identical apart from metadata',async()=>{const f=fixture(),o=new Orchestrator({request:f.request,now:()=>f.now});try{const a=await o.create(f.args,{mode:'parallel'}),b=await o.create(f.args,{mode:'sequential'});assert.deepEqual(a.metrics,b.metrics);assert.deepEqual(a.scores,b.scores);assert.equal(a.data_reference,b.data_reference);}finally{await o.close();}});
+test('worker timeout, failed job and queue saturation recover',async()=>{const pool=new Pool({size:1,maxQueue:1,timeout:1});try{await assert.rejects(pool.run('market',{}),/RISK_CALCULATION_TIMEOUT/);}finally{await pool.close();}
+ const p=new Pool({size:1,maxQueue:1});try{const a=p.run('missing',{}),b=p.run('market',{});await assert.rejects(p.run('market',{}),/RISK_OVERLOADED/);await assert.rejects(a,/RISK_CALCULATION_FAILED/);assert.equal((await b).available,false);}finally{await p.close();}
+});
+test('strict requests reject injected data, policy and incompatible horizons',()=>{const f=fixture();for(const patch of [{scores:{}},{portfolio:{}},{policy:{}},{horizon:'1d'},{capital:0},{intent:[]}])assert.throws(()=>validate({...f.args,...patch}));});
+test('cancellation during I/O clears active slot without caching a partial response',async()=>{const f=fixture(),o=new Orchestrator({request:()=>new Promise(()=>{})}),c=new AbortController();try{const running=o.create(f.args,{signal:c.signal});setTimeout(()=>c.abort(),10);await assert.rejects(running,/RISK_CANCELLED/);assert.equal(o.active,0);assert.equal(o.stored.size,0);}finally{await o.close();}});
+test('unsupported leverage, missing protection and mismatched quote currency fail closed',async()=>{for(const patch of ['stop','leverage','quote']){const f=fixture();if(patch==='stop')delete f.args.intent.stopLoss;if(patch==='leverage')f.args.intent.leverage=2;if(patch==='quote')f.sources.book.quoteCurrency='USD';const o=new Orchestrator({request:f.request});try{const s=await o.create(f.args);assert.equal(s.decision,'UNAVAILABLE');}finally{await o.close();}}});
+test('component REVIEW and explicit policy violation are distinct decisions',async()=>{const f=fixture(),o=new Orchestrator({request:f.request,config:{reviewScore:1}});try{assert.equal((await o.create(f.args)).decision,'REVIEW');f.args.intent.size=100;assert.equal((await o.create(f.args)).decision,'BLOCK');}finally{await o.close();}});
+test('overflow is explicitly unavailable, capacity is bounded, market expiry is checked after CPU',async()=>{const f=fixture();f.sources.portfolio.positions=[{symbol:'A',notional:1e308,estimatedStopRiskQuote:1e308},{symbol:'A',notional:1e308,estimatedStopRiskQuote:1e308}];const o=new Orchestrator({request:f.request});try{const s=await o.create(f.args);assert.equal(s.metrics.portfolio.available,false);assert.ok(s.missing_metrics.includes('portfolio'));}finally{await o.close();}
+ let time=f.now;const b=fixture(time),fake={size:2,run:async(k,d)=>{time=b.now+6000;return math[k](d);},close:async()=>{}};const p=new Orchestrator({request:b.request,pool:fake,now:()=>time});try{const s=await p.create(b.args,{mode:'parallel'});assert.equal(s.decision,'UNAVAILABLE');assert.ok(s.reasons.includes('BOOK_EXPIRED_DURING_CALCULATION'));}finally{await p.close();}
+});
+test('book execution venue, market type, order type and trade scope cannot be substituted',async()=>{for(const patch of ['venue','market','type','trades','symbol']){const f=fixture();if(patch==='venue')f.sources.book.source='OTHER';if(patch==='market')f.args.intent.market_type='INVERSE';if(patch==='type')f.args.intent.orderType='LIMIT';if(patch==='trades')f.sources.trades.portfolio_id='someone-else';if(patch==='symbol')f.args.intent.symbol='ETHUSDT';const o=new Orchestrator({request:f.request});try{assert.equal((await o.create(f.args)).decision,'UNAVAILABLE');}finally{await o.close();}}});

@@ -17,3 +17,5 @@ App/secrets_v2.dat
 *.db-shm
 *.db
 *.sqlite
+
+/artifacts/
