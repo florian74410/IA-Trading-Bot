@@ -154,37 +154,37 @@
     "supervisor": {
       "commands": {
         "supervisor.status": {
-          "implementation_sha256": "0ac703326686c187bd1793b8ff93e83a7a79450921bab721bb42472a4d28fbf4",
+          "implementation_sha256": "ff64998859870fd79b06f2028fbca728327c8d7190cb2eb480f38d37f643b599",
           "contract_sha256": "1b81fe1ff246d009a1f7e84443e1286a9b9cbc371fe87fcff6363d5d6dea1a68"
         }
       },
       "native_verified": {
         "supervisor.chatbot.message": {
-          "implementation_sha256": "0ac703326686c187bd1793b8ff93e83a7a79450921bab721bb42472a4d28fbf4"
+          "implementation_sha256": "ff64998859870fd79b06f2028fbca728327c8d7190cb2eb480f38d37f643b599"
         },
         "supervisor.chatbot.history": {
-          "implementation_sha256": "0ac703326686c187bd1793b8ff93e83a7a79450921bab721bb42472a4d28fbf4"
+          "implementation_sha256": "ff64998859870fd79b06f2028fbca728327c8d7190cb2eb480f38d37f643b599"
         },
         "supervisor.chatbot.confirm": {
-          "implementation_sha256": "0ac703326686c187bd1793b8ff93e83a7a79450921bab721bb42472a4d28fbf4"
+          "implementation_sha256": "ff64998859870fd79b06f2028fbca728327c8d7190cb2eb480f38d37f643b599"
         },
         "supervisor.chatbot.cancel": {
-          "implementation_sha256": "0ac703326686c187bd1793b8ff93e83a7a79450921bab721bb42472a4d28fbf4"
+          "implementation_sha256": "ff64998859870fd79b06f2028fbca728327c8d7190cb2eb480f38d37f643b599"
         },
         "supervisor.cognitive.reason": {
-          "implementation_sha256": "0ac703326686c187bd1793b8ff93e83a7a79450921bab721bb42472a4d28fbf4"
+          "implementation_sha256": "ff64998859870fd79b06f2028fbca728327c8d7190cb2eb480f38d37f643b599"
         },
         "supervisor.cognitive.status": {
-          "implementation_sha256": "0ac703326686c187bd1793b8ff93e83a7a79450921bab721bb42472a4d28fbf4"
+          "implementation_sha256": "ff64998859870fd79b06f2028fbca728327c8d7190cb2eb480f38d37f643b599"
         },
         "supervisor.cognitive.history": {
-          "implementation_sha256": "0ac703326686c187bd1793b8ff93e83a7a79450921bab721bb42472a4d28fbf4"
+          "implementation_sha256": "ff64998859870fd79b06f2028fbca728327c8d7190cb2eb480f38d37f643b599"
         },
         "supervisor.llm.models": {
-          "implementation_sha256": "0ac703326686c187bd1793b8ff93e83a7a79450921bab721bb42472a4d28fbf4"
+          "implementation_sha256": "ff64998859870fd79b06f2028fbca728327c8d7190cb2eb480f38d37f643b599"
         },
         "supervisor.llm.select": {
-          "implementation_sha256": "0ac703326686c187bd1793b8ff93e83a7a79450921bab721bb42472a4d28fbf4"
+          "implementation_sha256": "ff64998859870fd79b06f2028fbca728327c8d7190cb2eb480f38d37f643b599"
         }
       }
     }
