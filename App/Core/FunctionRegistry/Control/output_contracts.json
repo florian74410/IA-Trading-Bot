@@ -1,0 +1,1531 @@
+{
+  "marketdata.health": {
+    "type": "object",
+    "required": [
+      "ok",
+      "providers",
+      "security"
+    ],
+    "properties": {
+      "offlineDiagnostic": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "ok": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "name": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "service": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "version": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "componentVersion": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "pid": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "provider": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "providers": {
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "apiRequestOrchestrator": {
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "apiTelemetry": {
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "microstructureProviders": {
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "cache": {
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "refresh": {
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "registry": {
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "financial": {
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "microstructure": {
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "coingecko": {
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "dexLiquidity": {
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "liquidationStreams": {
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "security": {
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "currencyRegistry": {
+        "type": [
+          "object",
+          "null"
+        ]
+      }
+    }
+  },
+  "marketdata.providers": {
+    "type": "object",
+    "required": [
+      "ok",
+      "providers"
+    ],
+    "properties": {
+      "ok": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "providers": {
+        "type": [
+          "array",
+          "null"
+        ]
+      }
+    }
+  },
+  "marketdata.financial.capabilities": {
+    "type": "object",
+    "required": [
+      "ok"
+    ],
+    "properties": {
+      "ok": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "schema": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "collectorVersion": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "role": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "distribution": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "consumers": {
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "aiAccess": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "ownership": {
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "freshness": {
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "families": {
+        "type": [
+          "array",
+          "null"
+        ]
+      }
+    }
+  },
+  "indicator.list_indicators": {
+    "type": "object",
+    "required": [
+      "indicators"
+    ],
+    "properties": {
+      "schema": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "refreshMs": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "refreshPresets": {
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "indicators": {
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "updatedAt": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    }
+  },
+  "indicator.language.info": {
+    "type": "object",
+    "required": [],
+    "properties": {
+      "schema": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "id": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "version": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "owner": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "purpose": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "syntax": {
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "security": {
+        "type": [
+          "object",
+          "null"
+        ]
+      }
+    }
+  },
+  "indicator.compute_batch_data": {
+    "type": "object",
+    "required": [],
+    "properties": {
+      "schema": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "engine": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "input": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "symbol": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "timeframe": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "source": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "generatedAt": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "requested": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "succeeded": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "failed": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "results": {
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "provenance": {
+        "type": [
+          "object",
+          "null"
+        ]
+      }
+    }
+  },
+  "fundamental.health": {
+    "type": "object",
+    "required": [
+      "ok",
+      "mode",
+      "database"
+    ],
+    "properties": {
+      "ok": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "name": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "version": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "mode": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "pid": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "host": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "port": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "database": {
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "sqlite": {
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "internalRouting": {
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "collector": {
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "eventEngine": {
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "eventStats": {
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "providers": {
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "ai": {
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "observability": {
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "capabilities": {
+        "type": [
+          "object",
+          "null"
+        ]
+      }
+    }
+  },
+  "fundamental.summary": {
+    "type": "object",
+    "required": [],
+    "properties": {
+      "ok": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "version": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "summary": {
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "events": {
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "latestNews": {},
+      "domains": {
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "collector": {
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "eventEngine": {
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "providers": {
+        "type": [
+          "object",
+          "null"
+        ]
+      }
+    }
+  },
+  "liquidity.health": {
+    "type": "object",
+    "required": [
+      "ok"
+    ],
+    "properties": {
+      "ok": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "name": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "service": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "version": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "pid": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "host": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "port": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "mode": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "internetAccess": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "dataPath": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "features": {
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "cache": {
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "liquidationBuffer": {
+        "type": [
+          "object",
+          "null"
+        ]
+      }
+    }
+  },
+  "liquidity.capabilities": {
+    "type": "object",
+    "required": [],
+    "properties": {
+      "ok": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "schema": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "role": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "internetAccess": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "input": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "consumers": {
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "aiAccess": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "features": {
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "rule": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    }
+  },
+  "strategy.health": {
+    "type": "object",
+    "required": [
+      "ok",
+      "execution"
+    ],
+    "properties": {
+      "ok": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "service": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "marker": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "version": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "pid": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "port": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "mode": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "execution": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "supervisorReady": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "protocol": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "strategies": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "uptimeSec": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "lastEvaluation": {},
+      "lastSignal": {}
+    }
+  },
+  "strategy.catalog": {
+    "type": "object",
+    "required": [],
+    "properties": {
+      "ok": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "catalog": {
+        "type": [
+          "object",
+          "null"
+        ]
+      }
+    }
+  },
+  "risk.list_capabilities": {
+    "type": "object",
+    "required": [
+      "schema",
+      "capabilities"
+    ],
+    "properties": {
+      "schema": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "engine": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "protocol": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "capabilities": {
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "events": {
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "analyticalOnly": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      }
+    }
+  },
+  "risk.constraints.get": {
+    "type": "object",
+    "required": [
+      "schema",
+      "policy",
+      "modifiable_by_agent"
+    ],
+    "properties": {
+      "schema": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "policy": {
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "provisional_calibration": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "modifiable_by_agent": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      }
+    }
+  },
+  "risk.status": {
+    "type": "object",
+    "required": [
+      "schema",
+      "active",
+      "stored"
+    ],
+    "properties": {
+      "schema": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "active": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "stored": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "max_concurrency": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "workers": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "execution_authorization": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      }
+    }
+  },
+  "risk.r1.evaluate": {
+    "type": "object",
+    "required": [
+      "schema",
+      "status",
+      "executable",
+      "reasons",
+      "metrics"
+    ],
+    "properties": {
+      "schema": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "status": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "executable": {
+        "const": false
+      },
+      "reasons": {
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "metrics": {
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "proposed": {
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "disabledModules": {
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "supervisor": {
+        "type": [
+          "object",
+          "null"
+        ]
+      }
+    }
+  },
+  "risk.r2.evaluate": {
+    "type": "object",
+    "required": [
+      "schema",
+      "status",
+      "executable",
+      "alerts"
+    ],
+    "properties": {
+      "schema": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "status": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "summary": {
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "alerts": {
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "policy": {
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "executable": {
+        "const": false
+      },
+      "supervisor": {
+        "type": [
+          "object",
+          "null"
+        ]
+      }
+    }
+  },
+  "portfolio.health": {
+    "type": "object",
+    "required": [
+      "ok"
+    ],
+    "properties": {
+      "ok": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "name": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "version": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "pid": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "host": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "port": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "uptimeSec": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "communicationProtocol": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "storage": {
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "settings": {
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "eventsRecorded": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "lastTradingSync": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "lastSyncError": {},
+      "lastPriceSync": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "lastPriceSyncError": {}
+    }
+  },
+  "firewall.status": {
+    "type": "object",
+    "required": [
+      "ok"
+    ],
+    "properties": {
+      "healthLevel": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "metrics": {
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "ok": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "name": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "version": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "pid": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "host": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "port": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "uptimeSec": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "firewallEnabled": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "bypassMode": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "protectionInitialized": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "threadCount": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "workerCount": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "threads": {
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "securityFolders": {
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "log": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    }
+  },
+  "trading.health": {
+    "type": "object",
+    "required": [
+      "ok",
+      "engine",
+      "registeredExchanges"
+    ],
+    "properties": {
+      "ok": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "executionLogs": {
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "lifecycle": {
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "name": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "version": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "engine": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "engineVersion": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "contractVersion": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "pid": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "host": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "port": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "serviceEnabled": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "liveExecutionEnabled": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "mode": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "riskApprovalRequired": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "firewallForwardRequired": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "portfolioFeed": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "communicationProtocol": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "registeredExchanges": {
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "registeredExchangeCount": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "lastExecution": {},
+      "requestCount": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "uptimeSec": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "schema": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "timestamp": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "state": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "executionAllowed": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "inFlightRequests": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "lastLatencyMs": {},
+      "lastError": {},
+      "brokers": {
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "brokerConnectivityMeasured": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "orders": {
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "cp1": {
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "storage": {
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "stop": {
+        "type": [
+          "object",
+          "null"
+        ]
+      }
+    }
+  },
+  "trading.capabilities": {
+    "type": "object",
+    "required": [
+      "exchanges"
+    ],
+    "properties": {
+      "exchanges": {
+        "type": [
+          "object",
+          "null"
+        ]
+      }
+    }
+  },
+  "supervisor.status": {
+    "type": "object",
+    "required": [
+      "schema",
+      "execution"
+    ],
+    "properties": {
+      "schema": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "mode": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "execution": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "uptimeSec": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "llm": {
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "autonomousTrading": {
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "extensions": {
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "reasoningCount": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "lastReasoning": {},
+      "lastContext": {},
+      "settingsStorage": {
+        "type": [
+          "object",
+          "null"
+        ]
+      }
+    }
+  }
+}

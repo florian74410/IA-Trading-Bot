@@ -1,0 +1,136 @@
+{
+  "schema": "cp1.simulator/1.0",
+  "id": "owner-okx-risk-preparation",
+  "permissions": "Only authenticated test ADMIN grants these reads. No order execution permission.",
+  "steps": [
+    {
+      "id": "account",
+      "engine": "portfolio",
+      "command": "portfolio.account.snapshot",
+      "permission": "ALLOW",
+      "arguments": {
+        "account": {
+          "$input": "account"
+        },
+        "exchange": "OKX",
+        "symbol": "BTC-USDT"
+      },
+      "wait_after_ms": 1100,
+      "assertions": [
+        {
+          "path": "data.readOnly",
+          "equals": true
+        },
+        {
+          "path": "data.snapshot.analysis_mode",
+          "equals": "OKX_ACCOUNT"
+        }
+      ]
+    },
+    {
+      "id": "candles",
+      "engine": "marketdata",
+      "command": "marketdata.candles",
+      "permission": "ALLOW",
+      "arguments": {
+        "symbol": "BTCUSDT",
+        "timeframe": "1m",
+        "source": "OKX",
+        "limit": 100
+      },
+      "assertions": [
+        {
+          "path": "data.ok",
+          "equals": true
+        }
+      ]
+    },
+    {
+      "id": "book",
+      "engine": "marketdata",
+      "command": "marketdata.microstructure.snapshot",
+      "permission": "ALLOW",
+      "arguments": {
+        "symbol": "BTCUSDT",
+        "source": "OKX",
+        "depth": 20
+      },
+      "assertions": [
+        {
+          "path": "data.ok",
+          "equals": true
+        }
+      ]
+    },
+    {
+      "id": "risk",
+      "engine": "risk",
+      "command": "risk.snapshot.create",
+      "permission": "ALLOW",
+      "arguments": {
+        "portfolio_id": {
+          "$input": "account"
+        },
+        "symbol": "BTCUSDT",
+        "timeframe": "1m",
+        "context": "native_scalping",
+        "correlation_id": "simulator-okx-buy",
+        "intent": {
+          "exchange": "OKX",
+          "action": "BUY",
+          "size": 0.1,
+          "stopLoss": 99,
+          "leverage": 1
+        }
+      },
+      "assertions": [
+        {
+          "path": "data.execution_authorization",
+          "equals": false
+        },
+        {
+          "path": "data.decision",
+          "equals": "UNAVAILABLE"
+        },
+        {
+          "path": "data.correlation_id",
+          "equals": "simulator-okx-buy"
+        }
+      ]
+    },
+    {
+      "id": "saved",
+      "engine": "risk",
+      "command": "risk.snapshot.get",
+      "permission": "ALLOW",
+      "arguments": {
+        "portfolio_id": {
+          "$input": "account"
+        },
+        "snapshot_id": {
+          "$ref": "risk.data.snapshot_id"
+        }
+      },
+      "assertions": [
+        {
+          "path": "data.execution_authorization",
+          "equals": false
+        }
+      ]
+    },
+    {
+      "id": "order",
+      "engine": "trading",
+      "command": "trading.execute",
+      "arguments": {
+        "exchange": "OKX",
+        "market_type": "SPOT",
+        "symbol": "BTC-USDT",
+        "side": "BUY",
+        "order_type": "MARKET",
+        "quantity": 0.1
+      },
+      "expected_error": "COMMAND_UNAVAILABLE"
+    }
+  ]
+}

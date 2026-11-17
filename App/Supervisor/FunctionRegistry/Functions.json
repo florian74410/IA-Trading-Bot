@@ -1,16 +1,17 @@
 {
   "schema_version": "2.6.0",
   "engine_id": "supervisor",
-  "engine_version": "2.6.0",
+  "engine_version": "2.6.0-dev.4",
   "transport": "CP/1",
-  "source_protocol_registry": "App/Core/Communication/ProtocolRegistry/supervisor.json",
+  "source_protocol_registry": "Core/Communication/ProtocolRegistry/supervisor.json",
+  "source_sha256": "11cbd8e6bc594f3d06d67804c4cd459b55741ff00157ea361bd645a9c8535819",
   "functions": [
     {
       "id": "supervisor.health",
       "engine": "supervisor",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 supervisor.health. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -23,17 +24,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/supervisor.json",
+      "source": "Supervisor/supervisor_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "1ee51d80b8d5233a38473b99e685c743d280eb49755600ef81249094f954b32b",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "supervisor.capabilities",
       "engine": "supervisor",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 supervisor.capabilities. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -46,10 +54,17 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/supervisor.json",
+      "source": "Supervisor/supervisor_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "1ee51d80b8d5233a38473b99e685c743d280eb49755600ef81249094f954b32b",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "supervisor.status",
@@ -57,29 +72,97 @@
       "type": "READ",
       "risk_level": "LOW",
       "hard_deny": false,
-      "description": "Commande CP/1 supervisor.status. La description du handler doit être validée.",
+      "description": "Read or evaluate supervisor.status from supervisor. No financial side effect.",
       "input": {
         "type": "object",
-        "required": [],
         "properties": {},
+        "required": [],
         "additionalProperties": false
       },
       "output": {
-        "type": "unknown",
-        "description": "Schéma à confirmer dans le handler réel"
+        "type": "object",
+        "required": [
+          "schema",
+          "execution"
+        ],
+        "properties": {
+          "schema": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "mode": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "execution": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "uptimeSec": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "llm": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "autonomousTrading": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "extensions": {
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "reasoningCount": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "lastReasoning": {},
+          "lastContext": {},
+          "settingsStorage": {
+            "type": [
+              "object",
+              "null"
+            ]
+          }
+        }
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/supervisor.json",
-      "verified_handler": false,
+      "source": "Supervisor/supervisor_service.js",
+      "verified_handler": true,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Authenticated service identity, authenticated agent session and effective per-command permission.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "1ee51d80b8d5233a38473b99e685c743d280eb49755600ef81249094f954b32b",
+      "availability_reason": null,
+      "timeout_ms": 5000,
+      "agent_qualified": true
     },
     {
       "id": "supervisor.reload",
       "engine": "supervisor",
       "type": "MUTATION",
       "risk_level": "HIGH",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 supervisor.reload. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -92,17 +175,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/supervisor.json",
+      "source": "Supervisor/supervisor_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": true
+      "side_effects": true,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "1ee51d80b8d5233a38473b99e685c743d280eb49755600ef81249094f954b32b",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "supervisor.extensions",
       "engine": "supervisor",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 supervisor.extensions. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -115,17 +205,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/supervisor.json",
+      "source": "Supervisor/supervisor_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "1ee51d80b8d5233a38473b99e685c743d280eb49755600ef81249094f954b32b",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "supervisor.llm.health",
       "engine": "supervisor",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 supervisor.llm.health. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -143,17 +240,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/supervisor.json",
+      "source": "Supervisor/supervisor_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "1ee51d80b8d5233a38473b99e685c743d280eb49755600ef81249094f954b32b",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "supervisor.context",
       "engine": "supervisor",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 supervisor.context. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -225,17 +329,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/supervisor.json",
+      "source": "Supervisor/supervisor_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "1ee51d80b8d5233a38473b99e685c743d280eb49755600ef81249094f954b32b",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "supervisor.analyze",
       "engine": "supervisor",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 supervisor.analyze. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -327,17 +438,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/supervisor.json",
+      "source": "Supervisor/supervisor_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "1ee51d80b8d5233a38473b99e685c743d280eb49755600ef81249094f954b32b",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "supervisor.indicators",
       "engine": "supervisor",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 supervisor.indicators. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -350,17 +468,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/supervisor.json",
+      "source": "Supervisor/supervisor_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "1ee51d80b8d5233a38473b99e685c743d280eb49755600ef81249094f954b32b",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "supervisor.indicator.language",
       "engine": "supervisor",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 supervisor.indicator.language. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -373,17 +498,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/supervisor.json",
+      "source": "Supervisor/supervisor_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "1ee51d80b8d5233a38473b99e685c743d280eb49755600ef81249094f954b32b",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "supervisor.indicator.validate",
       "engine": "supervisor",
       "type": "EVALUATION",
       "risk_level": "MEDIUM",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 supervisor.indicator.validate. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -403,17 +535,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/supervisor.json",
+      "source": "Supervisor/supervisor_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "1ee51d80b8d5233a38473b99e685c743d280eb49755600ef81249094f954b32b",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "supervisor.indicator.create",
       "engine": "supervisor",
       "type": "MUTATION",
       "risk_level": "HIGH",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 supervisor.indicator.create. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -437,17 +576,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/supervisor.json",
+      "source": "Supervisor/supervisor_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": true
+      "side_effects": true,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "1ee51d80b8d5233a38473b99e685c743d280eb49755600ef81249094f954b32b",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "supervisor.indicator.definition",
       "engine": "supervisor",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 supervisor.indicator.definition. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -467,17 +613,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/supervisor.json",
+      "source": "Supervisor/supervisor_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "1ee51d80b8d5233a38473b99e685c743d280eb49755600ef81249094f954b32b",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "supervisor.indicators.compute",
       "engine": "supervisor",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 supervisor.indicators.compute. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -523,17 +676,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/supervisor.json",
+      "source": "Supervisor/supervisor_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "1ee51d80b8d5233a38473b99e685c743d280eb49755600ef81249094f954b32b",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "supervisor.risk.evaluate",
       "engine": "supervisor",
       "type": "EVALUATION",
       "risk_level": "MEDIUM",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 supervisor.risk.evaluate. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -553,17 +713,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/supervisor.json",
+      "source": "Supervisor/supervisor_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "1ee51d80b8d5233a38473b99e685c743d280eb49755600ef81249094f954b32b",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "supervisor.reason",
       "engine": "supervisor",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 supervisor.reason. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -603,17 +770,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/supervisor.json",
+      "source": "Supervisor/supervisor_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "1ee51d80b8d5233a38473b99e685c743d280eb49755600ef81249094f954b32b",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "supervisor.structured",
       "engine": "supervisor",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Internal structured LLM request through Supervisor and the secure AI Gateway.",
       "input": {
         "type": "object",
@@ -662,17 +836,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/supervisor.json",
+      "source": "Supervisor/supervisor_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "1ee51d80b8d5233a38473b99e685c743d280eb49755600ef81249094f954b32b",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "supervisor.calendar",
       "engine": "supervisor",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 supervisor.calendar. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -702,17 +883,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/supervisor.json",
+      "source": "Supervisor/supervisor_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "1ee51d80b8d5233a38473b99e685c743d280eb49755600ef81249094f954b32b",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "supervisor.calendar.fed",
       "engine": "supervisor",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 supervisor.calendar.fed. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -725,17 +913,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/supervisor.json",
+      "source": "Supervisor/supervisor_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "1ee51d80b8d5233a38473b99e685c743d280eb49755600ef81249094f954b32b",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "supervisor.calendar.cme",
       "engine": "supervisor",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 supervisor.calendar.cme. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -748,17 +943,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/supervisor.json",
+      "source": "Supervisor/supervisor_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "1ee51d80b8d5233a38473b99e685c743d280eb49755600ef81249094f954b32b",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "supervisor.fedwatch",
       "engine": "supervisor",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 supervisor.fedwatch. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -771,17 +973,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/supervisor.json",
+      "source": "Supervisor/supervisor_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "1ee51d80b8d5233a38473b99e685c743d280eb49755600ef81249094f954b32b",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "supervisor.calendar.cme.expirations",
       "engine": "supervisor",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 supervisor.calendar.cme.expirations. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -794,17 +1003,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/supervisor.json",
+      "source": "Supervisor/supervisor_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "1ee51d80b8d5233a38473b99e685c743d280eb49755600ef81249094f954b32b",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "supervisor.user.request",
       "engine": "supervisor",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Owner-scoped reasoning and status; session revalidated; credentials remain inside Core",
       "input": {
         "type": "object",
@@ -829,17 +1045,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/supervisor.json",
+      "source": "Supervisor/supervisor_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "1ee51d80b8d5233a38473b99e685c743d280eb49755600ef81249094f954b32b",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "supervisor.data.catalog",
       "engine": "supervisor",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Read-only normalized collector product catalogue.",
       "input": {
         "type": "object",
@@ -852,17 +1075,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/supervisor.json",
+      "source": "Supervisor/supervisor_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "1ee51d80b8d5233a38473b99e685c743d280eb49755600ef81249094f954b32b",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "supervisor.data.read",
       "engine": "supervisor",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Bounded shared-data read through Router; no operator mutations or private portfolios.",
       "input": {
         "type": "object",
@@ -891,10 +1121,17 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/supervisor.json",
+      "source": "Supervisor/supervisor_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "1ee51d80b8d5233a38473b99e685c743d280eb49755600ef81249094f954b32b",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "supervisor.cognitive.reason",
@@ -932,17 +1169,24 @@
       "errors": [
         "COGNITIVE_ADAPTERS_REQUIRED"
       ],
-      "source": "App/Core/Communication/ProtocolRegistry/supervisor.json",
+      "source": "Supervisor/supervisor_service.js",
       "verified_handler": true,
       "default_privilege": "DENY",
-      "side_effects": true
+      "side_effects": true,
+      "transport": "OWNER",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "1ee51d80b8d5233a38473b99e685c743d280eb49755600ef81249094f954b32b",
+      "availability_reason": "OWNER_ONLY",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "supervisor.cognitive.status",
       "engine": "supervisor",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Read-only Supervisor cognitive capability.",
       "input": {
         "type": "object",
@@ -957,17 +1201,24 @@
       "errors": [
         "COGNITIVE_ADAPTERS_REQUIRED"
       ],
-      "source": "App/Core/Communication/ProtocolRegistry/supervisor.json",
+      "source": "Supervisor/supervisor_service.js",
       "verified_handler": true,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "1ee51d80b8d5233a38473b99e685c743d280eb49755600ef81249094f954b32b",
+      "availability_reason": "OWNER_ONLY",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "supervisor.llm.models",
       "engine": "supervisor",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Read-only Supervisor cognitive capability.",
       "input": {
         "type": "object",
@@ -982,10 +1233,17 @@
       "errors": [
         "COGNITIVE_ADAPTERS_REQUIRED"
       ],
-      "source": "App/Core/Communication/ProtocolRegistry/supervisor.json",
+      "source": "Supervisor/supervisor_service.js",
       "verified_handler": true,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "1ee51d80b8d5233a38473b99e685c743d280eb49755600ef81249094f954b32b",
+      "availability_reason": "OWNER_ONLY",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "supervisor.llm.select",
@@ -1017,10 +1275,17 @@
         "LLM_ADMIN_REQUIRED",
         "LLM_MODEL_NOT_ALLOWED"
       ],
-      "source": "App/Core/Communication/ProtocolRegistry/supervisor.json",
+      "source": "Supervisor/supervisor_service.js",
       "verified_handler": true,
       "default_privilege": "DENY",
-      "side_effects": true
+      "side_effects": true,
+      "transport": "OWNER",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "1ee51d80b8d5233a38473b99e685c743d280eb49755600ef81249094f954b32b",
+      "availability_reason": "OWNER_ONLY",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "supervisor.cognitive.history",
@@ -1049,11 +1314,18 @@
       "errors": [
         "COGNITIVE_OWNER_PROOF_REQUIRED"
       ],
-      "source": "App/Core/Communication/ProtocolRegistry/supervisor.json",
+      "source": "Supervisor/supervisor_service.js",
       "verified_handler": true,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "OWNER",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "1ee51d80b8d5233a38473b99e685c743d280eb49755600ef81249094f954b32b",
+      "availability_reason": "OWNER_ONLY",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     }
   ],
-  "verification_status": "PROTOCOL_DECLARED_UNVERIFIED_HANDLERS"
+  "revision_hash": "51840c7b76d100b0e8393ae117b1a332c8dbc6ca92c09ea33e43ac87d80d2676"
 }

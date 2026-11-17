@@ -1,0 +1,148 @@
+{
+  "schema": "cp1.simulator-report/1.0",
+  "scenario": "owner-okx-risk-preparation",
+  "ok": true,
+  "discovery_ms": 18.043461999999636,
+  "engines": [
+    {
+      "id": "marketdata",
+      "online": true
+    },
+    {
+      "id": "indicator",
+      "online": false
+    },
+    {
+      "id": "fundamental",
+      "online": false
+    },
+    {
+      "id": "liquidity",
+      "online": false
+    },
+    {
+      "id": "strategy",
+      "online": false
+    },
+    {
+      "id": "risk",
+      "online": true
+    },
+    {
+      "id": "portfolio",
+      "online": true
+    },
+    {
+      "id": "firewall",
+      "online": true
+    },
+    {
+      "id": "trading",
+      "online": true
+    },
+    {
+      "id": "supervisor",
+      "online": false
+    }
+  ],
+  "commands_discovered": 93,
+  "permissions": {
+    "allow": 5,
+    "deny": 88
+  },
+  "latency_ms": {
+    "p50": 54.39262899999994,
+    "p95": 99.19241300000067,
+    "p99": 99.19241300000067
+  },
+  "steps": [
+    {
+      "id": "account",
+      "engine": "portfolio",
+      "command": "portfolio.account.snapshot",
+      "permission_validation_ms": 2.243796000000657,
+      "request_id": "cp-mwkv5t1s-23164e7fd96488a0",
+      "response_schema": "portfolio.response/1.0",
+      "routing": {
+        "permission_ms": 4.454689000000144,
+        "engine_round_trip_ms": 45.75996099999975
+      },
+      "response_hash": "5f19f915c8e8ab28f06acd725f0b74d8a41bb23ec2ff351f2501431d0f695875",
+      "audit_events": 3,
+      "status": "PASS",
+      "latency_ms": 71.68160699999953
+    },
+    {
+      "id": "candles",
+      "engine": "marketdata",
+      "command": "marketdata.candles",
+      "permission_validation_ms": 4.6962329999996655,
+      "request_id": "cp-mwkv5tyf-1736234f04950445",
+      "response_schema": "marketdata.response/2.0",
+      "routing": {
+        "permission_ms": 3.5404349999998885,
+        "engine_round_trip_ms": 27.251698999999462
+      },
+      "response_hash": "3eccac62ea3b8e87dcb8efc2265554c094270fb307b1c81940f34bc3823e1fa3",
+      "audit_events": 3,
+      "status": "PASS",
+      "latency_ms": 65.3425129999996
+    },
+    {
+      "id": "book",
+      "engine": "marketdata",
+      "command": "marketdata.microstructure.snapshot",
+      "permission_validation_ms": 2.7670969999999215,
+      "request_id": "cp-mwkv5u06-087e2dd22012cd8f",
+      "response_schema": "marketdata.response/2.0",
+      "routing": {
+        "permission_ms": 4.521106000000145,
+        "engine_round_trip_ms": 14.2187729999996
+      },
+      "response_hash": "6ac4711da60e9ee4472f32918a99ec94629af6fc12e4d202899787ba2573f789",
+      "audit_events": 3,
+      "status": "PASS",
+      "latency_ms": 46.8843339999994
+    },
+    {
+      "id": "risk",
+      "engine": "risk",
+      "command": "risk.snapshot.create",
+      "permission_validation_ms": 2.654080000000249,
+      "request_id": "cp-mwkv5u1h-eec03bb9d50a57c1",
+      "response_schema": "risk.snapshot/2.0",
+      "routing": {
+        "permission_ms": 4.666304999999738,
+        "engine_round_trip_ms": 75.56272400000034
+      },
+      "response_hash": "301f913e700abfd30d77bddc55b4b052858ad57f6b6fdc88f4fdb4a7783dd0bd",
+      "audit_events": 3,
+      "status": "PASS",
+      "latency_ms": 99.19241300000067
+    },
+    {
+      "id": "saved",
+      "engine": "risk",
+      "command": "risk.snapshot.get",
+      "permission_validation_ms": 1.9351809999998295,
+      "request_id": "cp-mwkv5u47-ac346c5e2aeb1817",
+      "response_schema": "risk.snapshot/2.0",
+      "routing": {
+        "permission_ms": 6.094879000000219,
+        "engine_round_trip_ms": 26.73779299999933
+      },
+      "response_hash": "4ced2db64a51b0dae265bb590d8c4d128f22aae66781cb669a26fb40eebb6f8c",
+      "audit_events": 3,
+      "status": "PASS",
+      "latency_ms": 54.39262899999994
+    },
+    {
+      "id": "order",
+      "engine": "trading",
+      "command": "trading.execute",
+      "error": "COMMAND_UNAVAILABLE",
+      "status": "EXPECTED_REFUSAL",
+      "latency_ms": 4.855242999999973
+    }
+  ]
+}

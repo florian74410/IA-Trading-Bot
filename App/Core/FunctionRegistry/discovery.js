@@ -22,7 +22,7 @@ class RegistryDiscovery {
     if(manifest.engine_id!==engineId||manifest.functions.length>1000)throw Error('INVALID_SNAPSHOT');
     if(brokerId!==null&&manifest.broker_id!==brokerId)throw Error('BROKER_MISMATCH');
     // Broker capabilities are scoped to the actual broker; never share grants across brokers.
-    const scoped={...manifest,engine_id:identity,functions:manifest.functions.map(f=>({...f,engine:identity,broker_id:brokerId}))};
+    const scoped={...manifest,engine_id:identity,functions:manifest.functions.map(f=>({...f,engine:identity,...(brokerId===null?{}:{broker_id:brokerId})}))};
     const result=this.manager.sync(scoped,identity);
     report.push({engineId,brokerId,status:'SYNCED',count:result.count,changed:result.changed,revision:digest(scoped.functions)});
    }catch(error){report.push({engineId,brokerId,status:'ERROR',error:String(error.message||error)});}

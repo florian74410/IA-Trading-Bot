@@ -1,9 +1,10 @@
 {
   "schema_version": "2.6.0",
   "engine_id": "trading",
-  "engine_version": "2.6.0-dev.3",
+  "engine_version": "2.6.0-dev.4",
   "transport": "CP/1",
-  "source_protocol_registry": "App/Core/Communication/ProtocolRegistry/trading.json",
+  "source_protocol_registry": "Core/Communication/ProtocolRegistry/trading.json",
+  "source_sha256": "274871b00f5ced314cdfa9abb787d9afad84807d970dd66630a38d39a036ab23",
   "functions": [
     {
       "id": "trading.health",
@@ -11,22 +12,236 @@
       "type": "READ",
       "risk_level": "LOW",
       "hard_deny": false,
-      "description": "Commande CP/1 trading.health. La description du handler doit être validée.",
+      "description": "Read or evaluate trading.health from trading. No financial side effect.",
       "input": {
         "type": "object",
-        "required": [],
         "properties": {},
+        "required": [],
         "additionalProperties": false
       },
       "output": {
-        "type": "unknown",
-        "description": "Schéma à confirmer dans le handler réel"
+        "type": "object",
+        "required": [
+          "ok",
+          "engine",
+          "registeredExchanges"
+        ],
+        "properties": {
+          "ok": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "executionLogs": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "lifecycle": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "version": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "engine": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "engineVersion": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "contractVersion": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "pid": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "host": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "port": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "serviceEnabled": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "liveExecutionEnabled": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "mode": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "riskApprovalRequired": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "firewallForwardRequired": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "portfolioFeed": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "communicationProtocol": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "registeredExchanges": {
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "registeredExchangeCount": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "lastExecution": {},
+          "requestCount": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "uptimeSec": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "schema": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "timestamp": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "state": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "executionAllowed": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "inFlightRequests": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "lastLatencyMs": {},
+          "lastError": {},
+          "brokers": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "brokerConnectivityMeasured": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "orders": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "cp1": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "storage": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "stop": {
+            "type": [
+              "object",
+              "null"
+            ]
+          }
+        }
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/trading.json",
-      "verified_handler": false,
+      "source": "services/trading-engine/trading_service.js",
+      "verified_handler": true,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Authenticated service identity, authenticated agent session and effective per-command permission.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "1be6d39de559bc63e3c88166b1b4fbf000a6fb9d89e9ed0993a34cffc06a3797",
+      "availability_reason": null,
+      "timeout_ms": 5000,
+      "agent_qualified": true
     },
     {
       "id": "trading.capabilities",
@@ -34,34 +249,46 @@
       "type": "READ",
       "risk_level": "LOW",
       "hard_deny": false,
-      "description": "Commande CP/1 trading.capabilities. La description du handler doit être validée.",
+      "description": "Read or evaluate trading.capabilities from trading. No financial side effect.",
       "input": {
         "type": "object",
+        "properties": {},
         "required": [],
-        "properties": {
-          "exchange": {
-            "type": "unknown",
-            "description": "Type non vérifié"
-          }
-        },
         "additionalProperties": false
       },
       "output": {
-        "type": "unknown",
-        "description": "Schéma à confirmer dans le handler réel"
+        "type": "object",
+        "required": [
+          "exchanges"
+        ],
+        "properties": {
+          "exchanges": {
+            "type": [
+              "object",
+              "null"
+            ]
+          }
+        }
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/trading.json",
-      "verified_handler": false,
+      "source": "services/trading-engine/trading_service.js",
+      "verified_handler": true,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Authenticated service identity, authenticated agent session and effective per-command permission.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "1be6d39de559bc63e3c88166b1b4fbf000a6fb9d89e9ed0993a34cffc06a3797",
+      "availability_reason": null,
+      "timeout_ms": 5000,
+      "agent_qualified": true
     },
     {
       "id": "trading.account.positions",
       "engine": "trading",
       "type": "READ",
       "risk_level": "MEDIUM",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Read OKX account data using a short-lived owner-bound vault ticket; no order or withdrawal.",
       "input": {
         "type": "object",
@@ -108,8 +335,8 @@
         "OKX_ACCOUNT_READ_REJECTED",
         "OKX_ACCOUNT_RATE_LIMITED"
       ],
-      "source": "App/services/trading-engine/exchange-adapters/okx/account-reader.js",
-      "verified_handler": true,
+      "source": "services/trading-engine/trading_service.js",
+      "verified_handler": false,
       "default_privilege": "DENY",
       "side_effects": false,
       "examples": [
@@ -121,14 +348,21 @@
             "account_ticket": "ISSUED_BY_CORE_ONLY"
           }
         }
-      ]
+      ],
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "1be6d39de559bc63e3c88166b1b4fbf000a6fb9d89e9ed0993a34cffc06a3797",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "trading.account.orders",
       "engine": "trading",
       "type": "READ",
       "risk_level": "MEDIUM",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Read OKX account data using a short-lived owner-bound vault ticket; no order or withdrawal.",
       "input": {
         "type": "object",
@@ -175,8 +409,8 @@
         "OKX_ACCOUNT_READ_REJECTED",
         "OKX_ACCOUNT_RATE_LIMITED"
       ],
-      "source": "App/services/trading-engine/exchange-adapters/okx/account-reader.js",
-      "verified_handler": true,
+      "source": "services/trading-engine/trading_service.js",
+      "verified_handler": false,
       "default_privilege": "DENY",
       "side_effects": false,
       "examples": [
@@ -188,14 +422,21 @@
             "account_ticket": "ISSUED_BY_CORE_ONLY"
           }
         }
-      ]
+      ],
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "1be6d39de559bc63e3c88166b1b4fbf000a6fb9d89e9ed0993a34cffc06a3797",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "trading.account.balances",
       "engine": "trading",
       "type": "READ",
       "risk_level": "MEDIUM",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Read OKX account data using a short-lived owner-bound vault ticket; no order or withdrawal.",
       "input": {
         "type": "object",
@@ -242,8 +483,8 @@
         "OKX_ACCOUNT_READ_REJECTED",
         "OKX_ACCOUNT_RATE_LIMITED"
       ],
-      "source": "App/services/trading-engine/exchange-adapters/okx/account-reader.js",
-      "verified_handler": true,
+      "source": "services/trading-engine/trading_service.js",
+      "verified_handler": false,
       "default_privilege": "DENY",
       "side_effects": false,
       "examples": [
@@ -255,14 +496,21 @@
             "account_ticket": "ISSUED_BY_CORE_ONLY"
           }
         }
-      ]
+      ],
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "1be6d39de559bc63e3c88166b1b4fbf000a6fb9d89e9ed0993a34cffc06a3797",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "trading.execute",
       "engine": "trading",
       "type": "MUTATION",
       "risk_level": "HIGH",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 trading.execute. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -357,17 +605,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/trading.json",
+      "source": "services/trading-engine/trading_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": true
+      "side_effects": true,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "1be6d39de559bc63e3c88166b1b4fbf000a6fb9d89e9ed0993a34cffc06a3797",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "trading.cancel",
       "engine": "trading",
       "type": "MUTATION",
       "risk_level": "HIGH",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 trading.cancel. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -421,17 +676,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/trading.json",
+      "source": "services/trading-engine/trading_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": true
+      "side_effects": true,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "1be6d39de559bc63e3c88166b1b4fbf000a6fb9d89e9ed0993a34cffc06a3797",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "trading.close_position",
       "engine": "trading",
       "type": "MUTATION",
       "risk_level": "HIGH",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 trading.close_position. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -495,17 +757,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/trading.json",
+      "source": "services/trading-engine/trading_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": true
+      "side_effects": true,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "1be6d39de559bc63e3c88166b1b4fbf000a6fb9d89e9ed0993a34cffc06a3797",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "trading.history",
       "engine": "trading",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 trading.history. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -535,17 +804,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/trading.json",
+      "source": "services/trading-engine/trading_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "1be6d39de559bc63e3c88166b1b4fbf000a6fb9d89e9ed0993a34cffc06a3797",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "trading.admin.command",
       "engine": "trading",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Authenticated ADMIN maintenance with durable emergency halt. P5 real broker mutations and recovery remain unqualified and disabled. Optional params are bound to the signed proof.",
       "input": {
         "type": "object",
@@ -589,17 +865,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/trading.json",
+      "source": "services/trading-engine/trading_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "1be6d39de559bc63e3c88166b1b4fbf000a6fb9d89e9ed0993a34cffc06a3797",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "trading.account.snapshot",
       "engine": "trading",
       "type": "READ",
       "risk_level": "MEDIUM",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Read OKX account data using a short-lived owner-bound vault ticket; no order or withdrawal.",
       "input": {
         "type": "object",
@@ -647,8 +930,8 @@
         "OKX_ACCOUNT_READ_REJECTED",
         "OKX_ACCOUNT_RATE_LIMITED"
       ],
-      "source": "App/services/trading-engine/exchange-adapters/okx/account-reader.js",
-      "verified_handler": true,
+      "source": "services/trading-engine/trading_service.js",
+      "verified_handler": false,
       "default_privilege": "DENY",
       "side_effects": false,
       "examples": [
@@ -660,10 +943,15 @@
             "account_ticket": "ISSUED_BY_CORE_ONLY"
           }
         }
-      ]
+      ],
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "1be6d39de559bc63e3c88166b1b4fbf000a6fb9d89e9ed0993a34cffc06a3797",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     }
   ],
-  "verification_status": "PROTOCOL_DECLARED_UNVERIFIED_HANDLERS",
-  "source_sha256": "0a5745ce21d6a120d999640361b05391bbc29cdca9f2c02e0b66053abf012582",
-  "revision_hash": "1371ad118c7c93cfa1eae2bff48102075eb47e2b7d2575db99ccb96da00d4655"
+  "revision_hash": "b4ed569ed82cc7124c327b4885f3878b847005ebf0fb07fbc25320481f235d9c"
 }

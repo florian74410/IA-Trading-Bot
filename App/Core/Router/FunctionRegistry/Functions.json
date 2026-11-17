@@ -1,9 +1,10 @@
 {
   "schema_version": "2.6.0",
   "engine_id": "router",
-  "engine_version": "2.6.0",
+  "engine_version": "2.6.0-dev.4",
   "transport": "CP/1",
-  "source_protocol_registry": "App/Core/Communication/ProtocolRegistry/router.json",
+  "source_protocol_registry": "Core/Communication/ProtocolRegistry/router.json",
+  "source_sha256": "a528b72ff0e1d113546fa70d278ec9281e68d08adc8ac486712b4461e28e3ec8",
   "functions": [
     {
       "id": "router.registry.list",
@@ -11,7 +12,7 @@
       "type": "READ",
       "risk_level": "LOW",
       "hard_deny": false,
-      "description": "Commande CP/1 router.registry.list. La description du handler doit être validée.",
+      "description": "Commande CP/1 router.registry.list du composant router. Contrat de sortie à compléter après inspection de son handler.",
       "input": {
         "type": "object",
         "required": [],
@@ -20,7 +21,7 @@
       },
       "output": {
         "type": "unknown",
-        "description": "Schéma à confirmer dans le handler réel"
+        "description": "Réponse réelle à documenter depuis le handler CP/1"
       },
       "errors": [],
       "source": "App/Core/Communication/ProtocolRegistry/router.json",
@@ -34,7 +35,7 @@
       "type": "READ",
       "risk_level": "LOW",
       "hard_deny": false,
-      "description": "Commande CP/1 router.capabilities. La description du handler doit être validée.",
+      "description": "Commande CP/1 router.capabilities du composant router. Contrat de sortie à compléter après inspection de son handler.",
       "input": {
         "type": "object",
         "required": [],
@@ -43,7 +44,7 @@
       },
       "output": {
         "type": "unknown",
-        "description": "Schéma à confirmer dans le handler réel"
+        "description": "Réponse réelle à documenter depuis le handler CP/1"
       },
       "errors": [],
       "source": "App/Core/Communication/ProtocolRegistry/router.json",
@@ -52,5 +53,5 @@
       "side_effects": false
     }
   ],
-  "verification_status": "PROTOCOL_DECLARED_UNVERIFIED_HANDLERS"
+  "revision_hash": "ddad140b2060ffc34bea3e2635312cb6bf4a18044dfac82e6223c143860edc08"
 }

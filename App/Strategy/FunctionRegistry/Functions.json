@@ -1,9 +1,10 @@
 {
   "schema_version": "2.6.0",
   "engine_id": "strategy",
-  "engine_version": "2.6.0",
+  "engine_version": "2.6.0-dev.4",
   "transport": "CP/1",
-  "source_protocol_registry": "App/Core/Communication/ProtocolRegistry/strategy.json",
+  "source_protocol_registry": "Core/Communication/ProtocolRegistry/strategy.json",
+  "source_sha256": "437fa03034b0ccbb437e775edc9424cdd35334110dc6548aa09c95a5e8ac2399",
   "functions": [
     {
       "id": "strategy.health",
@@ -11,29 +12,115 @@
       "type": "READ",
       "risk_level": "LOW",
       "hard_deny": false,
-      "description": "Commande CP/1 strategy.health. La description du handler doit être validée.",
+      "description": "Read or evaluate strategy.health from strategy. No financial side effect.",
       "input": {
         "type": "object",
-        "required": [],
         "properties": {},
+        "required": [],
         "additionalProperties": false
       },
       "output": {
-        "type": "unknown",
-        "description": "Schéma à confirmer dans le handler réel"
+        "type": "object",
+        "required": [
+          "ok",
+          "execution"
+        ],
+        "properties": {
+          "ok": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "service": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "marker": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "version": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "pid": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "port": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "mode": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "execution": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "supervisorReady": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "protocol": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "strategies": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "uptimeSec": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "lastEvaluation": {},
+          "lastSignal": {}
+        }
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/strategy.json",
-      "verified_handler": false,
+      "source": "Strategy/Engine/strategy_service.js",
+      "verified_handler": true,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Authenticated service identity, authenticated agent session and effective per-command permission.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "272d8b8c0d5d1139c0b52d8f6f47783b30dadbbc3ffbe7ab5f520ab9ce65ee0b",
+      "availability_reason": null,
+      "timeout_ms": 5000,
+      "agent_qualified": true
     },
     {
       "id": "strategy.capabilities",
       "engine": "strategy",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 strategy.capabilities. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -46,10 +133,17 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/strategy.json",
+      "source": "Strategy/Engine/strategy_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "272d8b8c0d5d1139c0b52d8f6f47783b30dadbbc3ffbe7ab5f520ab9ce65ee0b",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "strategy.catalog",
@@ -57,29 +151,50 @@
       "type": "READ",
       "risk_level": "LOW",
       "hard_deny": false,
-      "description": "Commande CP/1 strategy.catalog. La description du handler doit être validée.",
+      "description": "Read or evaluate strategy.catalog from strategy. No financial side effect.",
       "input": {
         "type": "object",
-        "required": [],
         "properties": {},
+        "required": [],
         "additionalProperties": false
       },
       "output": {
-        "type": "unknown",
-        "description": "Schéma à confirmer dans le handler réel"
+        "type": "object",
+        "required": [],
+        "properties": {
+          "ok": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "catalog": {
+            "type": [
+              "object",
+              "null"
+            ]
+          }
+        }
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/strategy.json",
-      "verified_handler": false,
+      "source": "Strategy/Engine/strategy_service.js",
+      "verified_handler": true,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Authenticated service identity, authenticated agent session and effective per-command permission.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "272d8b8c0d5d1139c0b52d8f6f47783b30dadbbc3ffbe7ab5f520ab9ce65ee0b",
+      "availability_reason": null,
+      "timeout_ms": 5000,
+      "agent_qualified": true
     },
     {
       "id": "strategy.validate",
       "engine": "strategy",
       "type": "EVALUATION",
       "risk_level": "MEDIUM",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 strategy.validate. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -92,17 +207,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/strategy.json",
+      "source": "Strategy/Engine/strategy_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "272d8b8c0d5d1139c0b52d8f6f47783b30dadbbc3ffbe7ab5f520ab9ce65ee0b",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "strategy.evaluate",
       "engine": "strategy",
       "type": "EVALUATION",
       "risk_level": "MEDIUM",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 strategy.evaluate. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -164,89 +286,97 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/strategy.json",
+      "source": "Strategy/Engine/strategy_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "272d8b8c0d5d1139c0b52d8f6f47783b30dadbbc3ffbe7ab5f520ab9ce65ee0b",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "strategy.dry_run",
       "engine": "strategy",
-      "type": "READ",
-      "risk_level": "LOW",
+      "type": "EVALUATION",
+      "risk_level": "MEDIUM",
       "hard_deny": false,
-      "description": "Commande CP/1 strategy.dry_run. La description du handler doit être validée.",
+      "description": "Evaluate owner strategies and persist evaluation statistics; never submit an order.",
       "input": {
         "type": "object",
-        "required": [],
         "properties": {
           "symbol": {
-            "type": "unknown",
-            "description": "Type non vérifié"
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 40
           },
           "timeframe": {
-            "type": "unknown",
-            "description": "Type non vérifié"
-          },
-          "timestamp": {
-            "type": "unknown",
-            "description": "Type non vérifié"
-          },
-          "market": {
-            "type": "unknown",
-            "description": "Type non vérifié"
-          },
-          "indicators": {
-            "type": "unknown",
-            "description": "Type non vérifié"
-          },
-          "indicator": {
-            "type": "unknown",
-            "description": "Type non vérifié"
-          },
-          "fundamental": {
-            "type": "unknown",
-            "description": "Type non vérifié"
-          },
-          "portfolio": {
-            "type": "unknown",
-            "description": "Type non vérifié"
-          },
-          "strategy_ids": {
-            "type": "unknown",
-            "description": "Type non vérifié"
-          },
-          "strategies": {
-            "type": "unknown",
-            "description": "Type non vérifié"
-          },
-          "min_confidence": {
-            "type": "unknown",
-            "description": "Type non vérifié"
+            "enum": [
+              "1m",
+              "5m",
+              "15m",
+              "30m",
+              "1h",
+              "4h",
+              "1d"
+            ]
           },
           "correlation_id": {
-            "type": "unknown",
-            "description": "Type non vérifié"
+            "type": "string",
+            "maxLength": 96
           }
         },
         "additionalProperties": false
       },
       "output": {
-        "type": "unknown",
-        "description": "Schéma à confirmer dans le handler réel"
+        "type": "object",
+        "required": [
+          "ok",
+          "execution",
+          "aggregate",
+          "results",
+          "dry_run"
+        ],
+        "properties": {
+          "ok": {
+            "const": true
+          },
+          "execution": {
+            "const": "NEVER_EXECUTE"
+          },
+          "dry_run": {
+            "const": true
+          },
+          "aggregate": {
+            "type": "object"
+          },
+          "results": {
+            "type": "array"
+          }
+        }
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/strategy.json",
-      "verified_handler": false,
+      "source": "Strategy/Engine/strategy_service.js",
+      "verified_handler": true,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": true,
+      "transport": "OWNER",
+      "authorization": "Core-issued owner delegation, authenticated agent session and effective per-command permission.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "272d8b8c0d5d1139c0b52d8f6f47783b30dadbbc3ffbe7ab5f520ab9ce65ee0b",
+      "availability_reason": null,
+      "timeout_ms": 5000,
+      "agent_qualified": true
     },
     {
       "id": "strategy.stats",
       "engine": "strategy",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 strategy.stats. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -259,17 +389,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/strategy.json",
+      "source": "Strategy/Engine/strategy_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "272d8b8c0d5d1139c0b52d8f6f47783b30dadbbc3ffbe7ab5f520ab9ce65ee0b",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "strategy.state",
       "engine": "strategy",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 strategy.state. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -282,17 +419,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/strategy.json",
+      "source": "Strategy/Engine/strategy_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "272d8b8c0d5d1139c0b52d8f6f47783b30dadbbc3ffbe7ab5f520ab9ce65ee0b",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "strategy.reload",
       "engine": "strategy",
       "type": "MUTATION",
       "risk_level": "HIGH",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 strategy.reload. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -305,17 +449,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/strategy.json",
+      "source": "Strategy/Engine/strategy_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": true
+      "side_effects": true,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "272d8b8c0d5d1139c0b52d8f6f47783b30dadbbc3ffbe7ab5f520ab9ce65ee0b",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "strategy.pause",
       "engine": "strategy",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 strategy.pause. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -328,17 +479,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/strategy.json",
+      "source": "Strategy/Engine/strategy_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "272d8b8c0d5d1139c0b52d8f6f47783b30dadbbc3ffbe7ab5f520ab9ce65ee0b",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "strategy.resume",
       "engine": "strategy",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 strategy.resume. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -351,17 +509,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/strategy.json",
+      "source": "Strategy/Engine/strategy_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "272d8b8c0d5d1139c0b52d8f6f47783b30dadbbc3ffbe7ab5f520ab9ce65ee0b",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "strategy.reset_stats",
       "engine": "strategy",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 strategy.reset_stats. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -374,17 +539,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/strategy.json",
+      "source": "Strategy/Engine/strategy_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "272d8b8c0d5d1139c0b52d8f6f47783b30dadbbc3ffbe7ab5f520ab9ce65ee0b",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "strategy.user.request",
       "engine": "strategy",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Core-bound owner capability with live session revalidation; no browser identity authority",
       "input": {
         "type": "object",
@@ -409,11 +581,18 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/strategy.json",
+      "source": "Strategy/Engine/strategy_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "272d8b8c0d5d1139c0b52d8f6f47783b30dadbbc3ffbe7ab5f520ab9ce65ee0b",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     }
   ],
-  "verification_status": "PROTOCOL_DECLARED_UNVERIFIED_HANDLERS"
+  "revision_hash": "c00572399fc2425f4548e5d9db899da02279b66ce18bbb359111b44fc078135c"
 }

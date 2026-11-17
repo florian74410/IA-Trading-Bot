@@ -1,10 +1,7 @@
 {
   "engine_id": "portfolio",
-  "engine_version": "2.6.0-dev.3",
+  "engine_version": "2.6.0-dev.4",
   "registry_schema": "2.6.0",
-  "functions_count": 19,
-  "source": "protocol_registry",
-  "release_state": "DEBUG_CANDIDATE",
-  "source_sha256": "41543dfd1e602960c7f375f3f8d0face7c5e49a381b0c2724563f05033690fcb",
-  "revision_hash": "f114d0dd1c90ba43c888b04d875a59f958542a66a1d8b7aa50351f15a8605564"
+  "source_sha256": "a141336e3613cbe6a9ec45c34420ac73f0177f65abbad478f8da69930c7cf047",
+  "revision_hash": "e33f7259d78ff4e9546e83f5dfbe517364e46099713bdd8b7377ffea5bca14d7"
 }

@@ -15,7 +15,100 @@
         "name": "liquidity.health",
         "arguments": {
           "allowed": []
-        }
+        },
+        "input": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        },
+        "output": {
+          "type": "object",
+          "required": [
+            "ok"
+          ],
+          "properties": {
+            "ok": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "service": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "version": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "pid": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "host": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "port": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "mode": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "internetAccess": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "dataPath": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "features": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "cache": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "liquidationBuffer": {
+              "type": [
+                "object",
+                "null"
+              ]
+            }
+          }
+        },
+        "contractVersion": "2.6.0-dev.4"
       },
       {
         "name": "liquidity.zones",
@@ -89,7 +182,74 @@
         "name": "liquidity.capabilities",
         "arguments": {
           "allowed": []
-        }
+        },
+        "input": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        },
+        "output": {
+          "type": "object",
+          "required": [],
+          "properties": {
+            "ok": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "schema": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "role": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "internetAccess": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "input": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "consumers": {
+              "type": [
+                "array",
+                "null"
+              ]
+            },
+            "aiAccess": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "features": {
+              "type": [
+                "array",
+                "null"
+              ]
+            },
+            "rule": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        },
+        "contractVersion": "2.6.0-dev.4"
       },
       {
         "name": "liquidity.raw",

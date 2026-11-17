@@ -1,8 +1,7 @@
 {
   "engine_id": "marketdata",
-  "engine_version": "2.6.0",
+  "engine_version": "2.6.0-dev.4",
   "registry_schema": "2.6.0",
-  "functions_count": 42,
-  "source": "protocol_registry",
-  "release_state": "DEBUG_CANDIDATE"
+  "source_sha256": "03f0d302e6090545c19c0d5034278996a492e0a1ea2d40669bc12fb0fab9c7de",
+  "revision_hash": "e8d8ab28dbefb264af163ef62a71bc586a0a622b81bf6f478324c2be001eed00"
 }

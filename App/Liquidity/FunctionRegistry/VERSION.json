@@ -1,8 +1,7 @@
 {
   "engine_id": "liquidity",
-  "engine_version": "2.6.0",
+  "engine_version": "2.6.0-dev.4",
   "registry_schema": "2.6.0",
-  "functions_count": 15,
-  "source": "protocol_registry",
-  "release_state": "DEBUG_CANDIDATE"
+  "source_sha256": "a63bc04a2b9c8b8e92cbcd05d4178c88a0c197741b8f06c5caa073c404f970b8",
+  "revision_hash": "2f3745951830a73043b3756181d0951d552fd6901158ca6be388f3361c3652be"
 }

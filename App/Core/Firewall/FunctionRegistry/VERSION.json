@@ -1,8 +1,7 @@
 {
   "engine_id": "firewall",
-  "engine_version": "2.6.0",
+  "engine_version": "2.6.0-dev.4",
   "registry_schema": "2.6.0",
-  "functions_count": 3,
-  "source": "protocol_registry",
-  "release_state": "DEBUG_CANDIDATE"
+  "source_sha256": "7df07a1114fac1750e952be02d31260c1d5093d76cf484b18ac555d0dfb84861",
+  "revision_hash": "40d659131906be54a1eb48cc6379f62d5b1eac0defbdc77149972c177c4a5938"
 }

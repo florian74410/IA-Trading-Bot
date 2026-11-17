@@ -65,11 +65,20 @@ class TradingVault {
   this.tickets.set(ticket,{token,intent:normalized,action,account:binding.identity.id,revision:this.list(token).find(a=>a.id===binding.identity.id).revision,expires:this.now()+30000,claimed:false,credentialRead:false});
   return {ticket,account:binding.identity,expiresInMs:30000};
  }
+ readSessionContext(sessionHash,expected){
+  if(typeof sessionHash!=='string'||!/^[a-f0-9]{64}$/.test(sessionHash)||typeof this.sessions.tradingReadContext!=='function')throw Error('TRADING_ACCOUNT_UNAUTHORIZED');
+  const context=this.sessions.tradingReadContext(sessionHash),routing=()=>new AccountRouting({authorize:async({intent,action})=>action==='read'&&CP.hashData(canonical(intent,'read'))===CP.hashData(expected)?context.principal():null,listAccounts:async()=>context.listAccounts(),readCredentials:async(p,ref)=>{if(context.principal().clientId!==p.clientId)throw Error('TRADING_ACCOUNT_UNAUTHORIZED');const raw=context.secrets()[ref],record=context.listAccounts().find(a=>a.credentialRef===ref&&a.owner===p.clientId);if(!raw||!record)throw Error('TRADING_CREDENTIALS_INCOMPLETE');return {...JSON.parse(raw),apiRegion:record.apiRegion||'GLOBAL',demoMode:record.demoMode===true};},walletSigner:async()=>{throw Error('TRADING_ACCESS_OPERATION_DENIED');}});
+  return {list:()=>context.listAccounts(),routing};
+ }
+ async issueReadForSession(sessionHash,intent){
+  const normalized=canonical(intent,'read'),context=this.readSessionContext(sessionHash,normalized),binding=await context.routing().bind(normalized,'read');
+  for(const [id,t]of this.tickets)if(t.expires<=this.now())this.tickets.delete(id);if(this.tickets.size>=256)throw Error('TRADING_TICKET_LIMIT');const ticket=crypto.randomBytes(32).toString('base64url');this.tickets.set(ticket,{sessionHash,intent:normalized,action:'read',account:binding.identity.id,revision:context.list().find(a=>a.id===binding.identity.id).revision,expires:this.now()+30000,claimed:false,credentialRead:false});return {ticket,account:binding.identity,expiresInMs:30000};
+ }
  async access({ticket,intent,action,operation,exchange}){
   const t=this.tickets.get(ticket);if(!t||t.expires<=this.now()||t.action!==action||CP.hashData(canonical(intent,action))!==CP.hashData(t.intent))throw Error('TRADING_TICKET_INVALID');
-  const record=this.list(t.token).find(a=>a.id===t.account);if(!record||record.revision!==t.revision)throw Error('TRADING_ACCOUNT_REVOKED');
+  const context=t.sessionHash?this.readSessionContext(t.sessionHash,t.intent):{list:()=>this.list(t.token),routing:()=>this.routing(t.token,t.intent,action)};const record=context.list().find(a=>a.id===t.account);if(!record||record.revision!==t.revision)throw Error('TRADING_ACCOUNT_REVOKED');
   if(operation==='bind'){if(t.claimed)throw Error('TRADING_TICKET_REPLAY');t.claimed=true;}else if(!t.claimed)throw Error('TRADING_TICKET_UNCLAIMED');
-  const b=await this.routing(t.token,t.intent,action).bind(t.intent,action);
+  const b=await context.routing().bind(t.intent,action);
   if(operation==='bind')return {identity:b.identity,account:b.account,kind:record.kind};
   if(operation==='validate'&&action==='read')return {ok:true,identity:b.identity};
   if(operation==='credentials'&&record.kind==='CEX'){if(t.credentialRead)throw Error('TRADING_CREDENTIAL_REPLAY');t.credentialRead=true;return {credentials:await b.secretProvider.get(exchange)};}

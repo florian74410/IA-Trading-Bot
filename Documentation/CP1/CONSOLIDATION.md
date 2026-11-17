@@ -1,0 +1,40 @@
+# Consolidation sélective — IA-TB 2.6.0-dev.4
+
+Base conservée : `e115285a8d0484b139ecb706d2361193eda30f2d` (Risk et portefeuille OKX du profil). `main` et les branches sources restent inchangées.
+
+Les branches Supervisor et Function Registry sont déjà ancêtres de la base : leurs fonctionnalités sont conservées, sans les recopier depuis une ancienne version. Les branches dev.2 divergent ; leurs synchronisations reposaient sur un token CP1 partagé. Leurs capacités utiles sont intégrées au mécanisme Core actuel avec identités de service, publications signées, découverte authentifiée et reprise périodique. Aucun ancien fichier Risk n’est réintroduit.
+
+| Branche source | Commit | Modification | Déjà intégrée ? | Décision | Validation |
+|---|---|---|---|---|---|
+| `feature/risk-engine-parallel-snapshots` | `e115285a8d04` | Branche source | Oui, ancêtre ou base | Conserver | Régression complète |
+| `supervisor/iatb_v2.6.0.2` | `a4c86e6cae11` | Branche source | Oui, ancêtre ou base | Conserver | Régression complète |
+| `feature/2.6-function-registry` | `05e5d42b3dee` | Branche source | Oui, ancêtre ou base | Conserver | Régression complète |
+| `feature/2.6.0-dev.2-cp1-sync` | `ffa14b937c0f` | chore(2.6): version bump to 2.6.0-dev.2 | Non dans le graphe ; équivalence évaluée | EXCLUDED_OLD_VERSION | Services réels, simulateur, permissions |
+| `feature/2.6.0-dev.2-cp1-sync` | `18fa875b819c` | chore(2.6): version bump to 2.6.0-dev.2 | Non dans le graphe ; équivalence évaluée | EXCLUDED_OLD_VERSION | Services réels, simulateur, permissions |
+| `feature/2.6.0-dev.2-cp1-sync` | `614675168106` | test/docs(2.6-dev2): Core CP1 reconciliation tests and deployment boundaries | Non dans le graphe ; équivalence évaluée | REPLACED_DOCUMENTATION | Services réels, simulateur, permissions |
+| `feature/2.6.0-dev.2-cp1-sync` | `d72cf73d4b75` | test/docs(2.6-dev2): Core CP1 reconciliation tests and deployment boundaries | Non dans le graphe ; équivalence évaluée | REPLACED_DOCUMENTATION | Services réels, simulateur, permissions |
+| `feature/2.6.0-dev.2-cp1-sync` | `37e68fd44f44` | feat(2.6-dev2): opt-in Core CP1 registry sync startup | Non dans le graphe ; équivalence évaluée | INTEGRATED_EQUIVALENT_WITH_STRONGER_IDENTITY | Services réels, simulateur, permissions |
+| `feature/2.6.0-dev.2-cp1-sync` | `3be6a5c52510` | feat(2.6-dev2): Core CP1-authenticated registry reconciliation loop | Non dans le graphe ; équivalence évaluée | INTEGRATED_EQUIVALENT_WITH_STRONGER_IDENTITY | Services réels, simulateur, permissions |
+| `feature/2.6.0-dev.2-engine-router-core` | `7a2080621051` | docs(dev2): describe engine notification and Core change cursor accurately | Non dans le graphe ; équivalence évaluée | REPLACED_DOCUMENTATION | Services réels, simulateur, permissions |
+| `feature/2.6.0-dev.2-engine-router-core` | `85d93080df33` | feat(core): react to CP1 engine change sequence with bounded polling | Non dans le graphe ; équivalence évaluée | INTEGRATED_EQUIVALENT_WITH_STRONGER_IDENTITY | Services réels, simulateur, permissions |
+| `feature/2.6.0-dev.2-engine-router-core` | `4b4335e3832d` | feat(engines): shared adapter watches function manifest and signals Router | Non dans le graphe ; équivalence évaluée | INTEGRATED_EQUIVALENT_WITH_STRONGER_IDENTITY | Services réels, simulateur, permissions |
+| `feature/2.6.0-dev.2-engine-router-core` | `73eea533896f` | feat(cp1 client): permit narrowly-scoped function change endpoints | Non dans le graphe ; équivalence évaluée | INTEGRATED_EQUIVALENT_WITH_STRONGER_IDENTITY | Services réels, simulateur, permissions |
+| `feature/2.6.0-dev.2-engine-router-core` | `4e77f70f2bb5` | feat(router): bounded CP1 registry-change notifications and sequence cursor | Non dans le graphe ; équivalence évaluée | INTEGRATED_EQUIVALENT_WITH_STRONGER_IDENTITY | Services réels, simulateur, permissions |
+| `feature/2.6.0-dev.2-engine-router-core` | `51050593a051` | docs: specify actual CP1 catalogue pull and remaining push/identity work | Non dans le graphe ; équivalence évaluée | REPLACED_DOCUMENTATION | Services réels, simulateur, permissions |
+| `feature/2.6.0-dev.2-engine-router-core` | `e7980a0db3ff` | test(2.6): mock Engine→Router CP1 manifest retrieval and recovery | Non dans le graphe ; équivalence évaluée | REPLACED_WITH_REAL_SERVICE_TESTS | Services réels, simulateur, permissions |
+| `feature/2.6.0-dev.2-engine-router-core` | `a7a1185063bd` | fix(sync): exclude Core and Router from Engine adapter polling | Non dans le graphe ; équivalence évaluée | INTEGRATED_EQUIVALENT_WITH_STRONGER_IDENTITY | Services réels, simulateur, permissions |
+| `feature/2.6.0-dev.2-engine-router-core` | `d2eadbe3afc2` | fix(cp1): robust allowlist for authenticated function relay paths | Non dans le graphe ; équivalence évaluée | INTEGRATED_EQUIVALENT_WITH_STRONGER_IDENTITY | Services réels, simulateur, permissions |
+| `feature/2.6.0-dev.2-engine-router-core` | `9af6cc05d723` | feat(cp1 client): allow read-only authenticated function catalogue relay | Non dans le graphe ; équivalence évaluée | INTEGRATED_EQUIVALENT_WITH_STRONGER_IDENTITY | Services réels, simulateur, permissions |
+| `feature/2.6.0-dev.2-engine-router-core` | `5cc51f463525` | feat(core): fetch engine manifests via Router CP1 instead of local filesystem | Non dans le graphe ; équivalence évaluée | INTEGRATED_EQUIVALENT_WITH_STRONGER_IDENTITY | Services réels, simulateur, permissions |
+| `feature/2.6.0-dev.2-engine-router-core` | `49f59ef6cfa0` | feat(router): authenticated CP1 per-engine function manifest relay | Non dans le graphe ; équivalence évaluée | INTEGRATED_EQUIVALENT_WITH_STRONGER_IDENTITY | Services réels, simulateur, permissions |
+| `feature/2.6.0-dev.2-engine-router-core` | `429296e25b8b` | feat(cp1): expose authenticated per-engine Functions JSON on shared adapter | Non dans le graphe ; équivalence évaluée | INTEGRATED_EQUIVALENT_WITH_STRONGER_IDENTITY | Services réels, simulateur, permissions |
+| `feature/2.6.0-dev.2-engine-router-core` | `ffa14b937c0f` | chore(2.6): version bump to 2.6.0-dev.2 | Non dans le graphe ; équivalence évaluée | EXCLUDED_OLD_VERSION | Services réels, simulateur, permissions |
+| `feature/2.6.0-dev.2-engine-router-core` | `18fa875b819c` | chore(2.6): version bump to 2.6.0-dev.2 | Non dans le graphe ; équivalence évaluée | EXCLUDED_OLD_VERSION | Services réels, simulateur, permissions |
+| `feature/2.6.0-dev.2-engine-router-core` | `614675168106` | test/docs(2.6-dev2): Core CP1 reconciliation tests and deployment boundaries | Non dans le graphe ; équivalence évaluée | REPLACED_DOCUMENTATION | Services réels, simulateur, permissions |
+| `feature/2.6.0-dev.2-engine-router-core` | `d72cf73d4b75` | test/docs(2.6-dev2): Core CP1 reconciliation tests and deployment boundaries | Non dans le graphe ; équivalence évaluée | REPLACED_DOCUMENTATION | Services réels, simulateur, permissions |
+| `feature/2.6.0-dev.2-engine-router-core` | `37e68fd44f44` | feat(2.6-dev2): opt-in Core CP1 registry sync startup | Non dans le graphe ; équivalence évaluée | INTEGRATED_EQUIVALENT_WITH_STRONGER_IDENTITY | Services réels, simulateur, permissions |
+| `feature/2.6.0-dev.2-engine-router-core` | `3be6a5c52510` | feat(2.6-dev2): Core CP1-authenticated registry reconciliation loop | Non dans le graphe ; équivalence évaluée | INTEGRATED_EQUIVALENT_WITH_STRONGER_IDENTITY | Services réels, simulateur, permissions |
+
+Les changements de surveillance des manifestes de `4b4335e3`, de curseur Router `4e77f70f` et de réaction Core `85d93080` sont remplacés par la publication au démarrage puis toutes les cinq secondes et par le pull signé de Core. Le catalogue est relu sur disque ; une empreinte d’implémentation ou de contrat modifiée retire la qualification, puis révoque les autorisations. Le heartbeat n’accorde aucun droit.
+
+Le fichier `consolidation.json` contient les SHA complets et les fichiers de chaque commit divergent. Les commits doubles de dev.2 ne sont pas appliqués deux fois. Les versions dev.2, les routes de catalogue protégées uniquement par le token partagé et le second registre SQLite concurrent sont volontairement exclus.

@@ -3,5 +3,5 @@
 const path=require('node:path');
 const {publishOnStartup}=require(path.resolve(__dirname,'../../FunctionRegistry/publisher'));
 const manifestPath=path.join(__dirname,'Functions.json');
-const publish=(send,brokerId=null)=>publishOnStartup({manifestPath,send,brokerId});
+const publish=(send,brokerId=null,options={})=>publishOnStartup({...options,manifestPath,send,brokerId});
 module.exports={publish,manifestPath};

@@ -1,16 +1,17 @@
 {
   "schema_version": "2.6.0",
   "engine_id": "marketdata",
-  "engine_version": "2.6.0",
+  "engine_version": "2.6.0-dev.4",
   "transport": "CP/1",
-  "source_protocol_registry": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+  "source_protocol_registry": "Core/Communication/ProtocolRegistry/marketdata.json",
+  "source_sha256": "03f0d302e6090545c19c0d5034278996a492e0a1ea2d40669bc12fb0fab9c7de",
   "functions": [
     {
       "id": "marketdata.audit",
       "engine": "marketdata",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Market Data Collector V2.0 integrity, freshness, quality and routing audit.",
       "input": {
         "type": "object",
@@ -23,10 +24,17 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "source": "MarketData/market_data_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "marketdata.health",
@@ -34,22 +42,167 @@
       "type": "READ",
       "risk_level": "LOW",
       "hard_deny": false,
-      "description": "Commande CP/1 marketdata.health. La description du handler doit être validée.",
+      "description": "Read or evaluate marketdata.health from marketdata. No financial side effect.",
       "input": {
         "type": "object",
-        "required": [],
         "properties": {},
+        "required": [],
         "additionalProperties": false
       },
       "output": {
-        "type": "unknown",
-        "description": "Schéma à confirmer dans le handler réel"
+        "type": "object",
+        "required": [
+          "ok",
+          "providers",
+          "security"
+        ],
+        "properties": {
+          "offlineDiagnostic": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "ok": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "service": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "version": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "componentVersion": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "pid": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "provider": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "providers": {
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "apiRequestOrchestrator": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "apiTelemetry": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "microstructureProviders": {
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "cache": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "refresh": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "registry": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "financial": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "microstructure": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "coingecko": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "dexLiquidity": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "liquidationStreams": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "security": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "currencyRegistry": {
+            "type": [
+              "object",
+              "null"
+            ]
+          }
+        }
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
-      "verified_handler": false,
+      "source": "MarketData/market_data_service.js",
+      "verified_handler": true,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Authenticated service identity, authenticated agent session and effective per-command permission.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+      "availability_reason": null,
+      "timeout_ms": 5000,
+      "agent_qualified": true
     },
     {
       "id": "marketdata.candles",
@@ -57,57 +210,108 @@
       "type": "READ",
       "risk_level": "LOW",
       "hard_deny": false,
-      "description": "Commande CP/1 marketdata.candles. La description du handler doit être validée.",
+      "description": "Read or evaluate marketdata.candles from marketdata. No financial side effect.",
       "input": {
         "type": "object",
         "required": [
-          "symbol",
-          "timeframe"
+          "symbol"
         ],
         "properties": {
           "symbol": {
-            "type": "unknown",
-            "description": "Type non vérifié"
-          },
-          "timeframe": {
-            "type": "unknown",
-            "description": "Type non vérifié"
-          },
-          "limit": {
-            "type": "unknown",
-            "description": "Type non vérifié"
-          },
-          "force": {
-            "type": "unknown",
-            "description": "Type non vérifié"
-          },
-          "exchange": {
-            "type": "unknown",
-            "description": "Type non vérifié"
+            "type": "string",
+            "pattern": "^[A-Z0-9/_-]{3,40}$"
           },
           "source": {
-            "type": "unknown",
-            "description": "Type non vérifié"
+            "enum": [
+              "OKX",
+              "KRAKEN",
+              "BINANCE",
+              "BINANCE_FUTURES",
+              "HYPERLIQUID",
+              "BYBIT"
+            ]
+          },
+          "timeframe": {
+            "enum": [
+              "1m",
+              "5m",
+              "15m",
+              "30m",
+              "1h",
+              "4h",
+              "1d"
+            ]
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 20,
+            "maximum": 500
+          },
+          "force": {
+            "const": false
           }
         },
         "additionalProperties": false
       },
       "output": {
-        "type": "unknown",
-        "description": "Schéma à confirmer dans le handler réel"
+        "type": "object",
+        "required": [
+          "ok",
+          "canonicalSymbol",
+          "timeframe",
+          "candles",
+          "firewall"
+        ],
+        "properties": {
+          "ok": {
+            "const": true
+          },
+          "canonicalSymbol": {
+            "type": "string"
+          },
+          "timeframe": {
+            "type": "string"
+          },
+          "candles": {
+            "type": "array",
+            "minItems": 20,
+            "maxItems": 500,
+            "items": {
+              "type": "array",
+              "minItems": 5,
+              "maxItems": 6,
+              "items": {
+                "type": "number"
+              }
+            }
+          },
+          "firewall": {
+            "type": "object",
+            "required": [
+              "decision"
+            ]
+          }
+        }
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
-      "verified_handler": false,
+      "source": "MarketData/market_data_service.js",
+      "verified_handler": true,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Authenticated service identity, authenticated agent session and effective per-command permission.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+      "availability_reason": null,
+      "timeout_ms": 5000,
+      "agent_qualified": true
     },
     {
       "id": "marketdata.symbols",
       "engine": "marketdata",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Generic symbol catalogue resolved by the selected Market Data provider. Dynamic when supported by the provider, configured fallback otherwise.",
       "input": {
         "type": "object",
@@ -141,10 +345,17 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "source": "MarketData/market_data_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "marketdata.providers",
@@ -152,29 +363,53 @@
       "type": "READ",
       "risk_level": "LOW",
       "hard_deny": false,
-      "description": "Commande CP/1 marketdata.providers. La description du handler doit être validée.",
+      "description": "Read or evaluate marketdata.providers from marketdata. No financial side effect.",
       "input": {
         "type": "object",
-        "required": [],
         "properties": {},
+        "required": [],
         "additionalProperties": false
       },
       "output": {
-        "type": "unknown",
-        "description": "Schéma à confirmer dans le handler réel"
+        "type": "object",
+        "required": [
+          "ok",
+          "providers"
+        ],
+        "properties": {
+          "ok": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "providers": {
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        }
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
-      "verified_handler": false,
+      "source": "MarketData/market_data_service.js",
+      "verified_handler": true,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Authenticated service identity, authenticated agent session and effective per-command permission.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+      "availability_reason": null,
+      "timeout_ms": 5000,
+      "agent_qualified": true
     },
     {
       "id": "marketdata.provider.test",
       "engine": "marketdata",
       "type": "EVALUATION",
       "risk_level": "MEDIUM",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Run a bounded public connectivity/data probe against one Market Data provider.",
       "input": {
         "type": "object",
@@ -200,10 +435,17 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "source": "MarketData/market_data_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "marketdata.financial.capabilities",
@@ -211,29 +453,100 @@
       "type": "READ",
       "risk_level": "LOW",
       "hard_deny": false,
-      "description": "Read-only catalogue of normalized financial data capabilities.",
+      "description": "Read or evaluate marketdata.financial.capabilities from marketdata. No financial side effect.",
       "input": {
         "type": "object",
-        "required": [],
         "properties": {},
+        "required": [],
         "additionalProperties": false
       },
       "output": {
-        "type": "unknown",
-        "description": "Schéma à confirmer dans le handler réel"
+        "type": "object",
+        "required": [
+          "ok"
+        ],
+        "properties": {
+          "ok": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "schema": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "collectorVersion": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "role": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "distribution": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "consumers": {
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "aiAccess": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "ownership": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "freshness": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "families": {
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        }
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
-      "verified_handler": false,
+      "source": "MarketData/market_data_service.js",
+      "verified_handler": true,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Authenticated service identity, authenticated agent session and effective per-command permission.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+      "availability_reason": null,
+      "timeout_ms": 5000,
+      "agent_qualified": true
     },
     {
       "id": "marketdata.registry.status",
       "engine": "marketdata",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 marketdata.registry.status. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -246,17 +559,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "source": "MarketData/market_data_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "marketdata.registry.asset",
       "engine": "marketdata",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 marketdata.registry.asset. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -290,17 +610,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "source": "MarketData/market_data_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "marketdata.registry.search",
       "engine": "marketdata",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 marketdata.registry.search. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -326,17 +653,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "source": "MarketData/market_data_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "marketdata.registry.list",
       "engine": "marketdata",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 marketdata.registry.list. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -362,17 +696,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "source": "MarketData/market_data_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "marketdata.registry.query",
       "engine": "marketdata",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 marketdata.registry.query. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -398,17 +739,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "source": "MarketData/market_data_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "marketdata.financial.snapshot",
       "engine": "marketdata",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Current firewall-validated CeFi/DeFi financial snapshot.",
       "input": {
         "type": "object",
@@ -430,17 +778,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "source": "MarketData/market_data_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "marketdata.financial.history",
       "engine": "marketdata",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Persisted financial snapshot history.",
       "input": {
         "type": "object",
@@ -466,17 +821,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "source": "MarketData/market_data_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "marketdata.financial.ai_context",
       "engine": "marketdata",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Read-only compact financial context for Supervisor/LLM.",
       "input": {
         "type": "object",
@@ -494,17 +856,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "source": "MarketData/market_data_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "marketdata.financial.storage",
       "engine": "marketdata",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Financial cache/persistence status.",
       "input": {
         "type": "object",
@@ -517,17 +886,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "source": "MarketData/market_data_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "marketdata.financial.status",
       "engine": "marketdata",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Read Market Data financial collector runtime status.",
       "input": {
         "type": "object",
@@ -540,17 +916,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "source": "MarketData/market_data_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "marketdata.financial.refresh",
       "engine": "marketdata",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Internal refresh of financial provider data.",
       "input": {
         "type": "object",
@@ -563,17 +946,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "source": "MarketData/market_data_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "marketdata.derivatives.open_interest",
       "engine": "marketdata",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Aggregated covered perpetual Open Interest in USD across connected CEX/DEX venues, with explicit coverage.",
       "input": {
         "type": "object",
@@ -597,17 +987,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "source": "MarketData/market_data_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "marketdata.liquidations.recent",
       "engine": "marketdata",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Recent firewall-validated liquidation events from connected streams.",
       "input": {
         "type": "object",
@@ -641,17 +1038,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "source": "MarketData/market_data_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "marketdata.liquidations.stats",
       "engine": "marketdata",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Aggregated liquidation flow statistics for a time window.",
       "input": {
         "type": "object",
@@ -677,17 +1081,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "source": "MarketData/market_data_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "marketdata.microstructure.capabilities",
       "engine": "marketdata",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Canonical Market Data microstructure capabilities; same Market Data Collector service.",
       "input": {
         "type": "object",
@@ -700,10 +1111,17 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "source": "MarketData/market_data_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "marketdata.microstructure.snapshot",
@@ -711,7 +1129,7 @@
       "type": "READ",
       "risk_level": "LOW",
       "hard_deny": false,
-      "description": "Firewall-validated order book/open-interest snapshot from the Market Data Collector.",
+      "description": "Read or evaluate marketdata.microstructure.snapshot from marketdata. No financial side effect.",
       "input": {
         "type": "object",
         "required": [
@@ -719,40 +1137,91 @@
         ],
         "properties": {
           "symbol": {
-            "type": "unknown",
-            "description": "Type non vérifié"
+            "type": "string",
+            "pattern": "^[A-Z0-9/_-]{3,40}$"
           },
           "source": {
-            "type": "unknown",
-            "description": "Type non vérifié"
+            "enum": [
+              "OKX",
+              "KRAKEN",
+              "BINANCE",
+              "BINANCE_FUTURES",
+              "HYPERLIQUID",
+              "BYBIT"
+            ]
           },
           "depth": {
-            "type": "unknown",
-            "description": "Type non vérifié"
+            "type": "integer",
+            "minimum": 5,
+            "maximum": 100
           },
           "force": {
-            "type": "unknown",
-            "description": "Type non vérifié"
+            "const": false
           }
         },
         "additionalProperties": false
       },
       "output": {
-        "type": "unknown",
-        "description": "Schéma à confirmer dans le handler réel"
+        "type": "object",
+        "required": [
+          "ok",
+          "source",
+          "observedAt",
+          "orderBook",
+          "firewall"
+        ],
+        "properties": {
+          "ok": {
+            "const": true
+          },
+          "source": {
+            "type": "string"
+          },
+          "observedAt": {
+            "type": "number"
+          },
+          "orderBook": {
+            "type": "object",
+            "required": [
+              "bids",
+              "asks"
+            ],
+            "properties": {
+              "bids": {
+                "type": "array"
+              },
+              "asks": {
+                "type": "array"
+              }
+            }
+          },
+          "firewall": {
+            "type": "object",
+            "required": [
+              "decision"
+            ]
+          }
+        }
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
-      "verified_handler": false,
+      "source": "MarketData/market_data_service.js",
+      "verified_handler": true,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Authenticated service identity, authenticated agent session and effective per-command permission.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+      "availability_reason": null,
+      "timeout_ms": 5000,
+      "agent_qualified": true
     },
     {
       "id": "marketdata.microstructure.history",
       "engine": "marketdata",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "SQLite microstructure history owned by Market Data.",
       "input": {
         "type": "object",
@@ -782,17 +1251,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "source": "MarketData/market_data_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "marketdata.microstructure.storage",
       "engine": "marketdata",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Market Data microstructure cache and SQLite status.",
       "input": {
         "type": "object",
@@ -805,17 +1281,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "source": "MarketData/market_data_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "marketdata.microstructure.refresh",
       "engine": "marketdata",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Force a microstructure provider refresh through the Data Firewall.",
       "input": {
         "type": "object",
@@ -843,17 +1326,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "source": "MarketData/market_data_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "marketdata.liquidations.streams",
       "engine": "marketdata",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Status of the per-provider real-time liquidation worker threads owned by Market Data Collector.",
       "input": {
         "type": "object",
@@ -866,17 +1356,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "source": "MarketData/market_data_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "marketdata.derivatives.open_interest.history",
       "engine": "marketdata",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Persisted covered Open Interest history from the unified Market Data Collector.",
       "input": {
         "type": "object",
@@ -902,17 +1399,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "source": "MarketData/market_data_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "marketdata.dex.liquidity.capabilities",
       "engine": "marketdata",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "DEX pair pool-liquidity capability from DEX Screener; pool liquidity is not executable order-book depth.",
       "input": {
         "type": "object",
@@ -925,17 +1429,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "source": "MarketData/market_data_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "marketdata.dex.liquidity.snapshot",
       "engine": "marketdata",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Firewall-validated DEX pool liquidity, volume and top pools for a pair.",
       "input": {
         "type": "object",
@@ -959,17 +1470,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "source": "MarketData/market_data_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "marketdata.dex.liquidity.history",
       "engine": "marketdata",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Persisted DEX pair liquidity history from Market Data SQLite.",
       "input": {
         "type": "object",
@@ -995,17 +1513,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "source": "MarketData/market_data_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "marketdata.ticker",
       "engine": "marketdata",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Generic ticker routed through the Market Data provider catalogue and Data Firewall.",
       "input": {
         "type": "object",
@@ -1033,17 +1558,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "source": "MarketData/market_data_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "marketdata.refresh",
       "engine": "marketdata",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Force a candle refresh for any registered CEX/DEX provider.",
       "input": {
         "type": "object",
@@ -1080,17 +1612,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "source": "MarketData/market_data_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "marketdata.active",
       "engine": "marketdata",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "List active candle contexts currently maintained by Market Data.",
       "input": {
         "type": "object",
@@ -1103,17 +1642,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "source": "MarketData/market_data_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "marketdata.cache.clear",
       "engine": "marketdata",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Clear Market Data in-memory caches.",
       "input": {
         "type": "object",
@@ -1126,17 +1672,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "source": "MarketData/market_data_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "marketdata.settings.get",
       "engine": "marketdata",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Read sanitized Market Data provider settings.",
       "input": {
         "type": "object",
@@ -1149,17 +1702,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "source": "MarketData/market_data_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "marketdata.settings.set",
       "engine": "marketdata",
       "type": "MUTATION",
       "risk_level": "HIGH",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Update Market Data provider settings. Provider IDs come from the provider catalogue.",
       "input": {
         "type": "object",
@@ -1177,17 +1737,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "source": "MarketData/market_data_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": true
+      "side_effects": true,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "marketdata.registry.refresh",
       "engine": "marketdata",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Force the CoinGecko-backed market registry refresh.",
       "input": {
         "type": "object",
@@ -1200,17 +1767,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "source": "MarketData/market_data_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "marketdata.asset.price",
       "engine": "marketdata",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Read a CoinGecko-backed asset price through Market Data.",
       "input": {
         "type": "object",
@@ -1234,17 +1808,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "source": "MarketData/market_data_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "marketdata.catalog",
       "engine": "marketdata",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Browse/search the CoinGecko asset catalog through Market Data.",
       "input": {
         "type": "object",
@@ -1270,17 +1851,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "source": "MarketData/market_data_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "marketdata.asset.resolve",
       "engine": "marketdata",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Resolve asset metadata and network transferability through CoinGecko metadata.",
       "input": {
         "type": "object",
@@ -1305,17 +1893,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "source": "MarketData/market_data_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "marketdata.operator.request",
       "engine": "marketdata",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Authenticated Core ADMIN capability; exact operator action, payload, owner and current ADMIN session verified before effects. Never a human UI authority.",
       "input": {
         "type": "object",
@@ -1337,11 +1932,18 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/marketdata.json",
+      "source": "MarketData/market_data_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     }
   ],
-  "verification_status": "PROTOCOL_DECLARED_UNVERIFIED_HANDLERS"
+  "revision_hash": "e8d8ab28dbefb264af163ef62a71bc586a0a622b81bf6f478324c2be001eed00"
 }

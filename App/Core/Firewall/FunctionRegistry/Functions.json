@@ -1,9 +1,10 @@
 {
   "schema_version": "2.6.0",
   "engine_id": "firewall",
-  "engine_version": "2.6.0",
+  "engine_version": "2.6.0-dev.4",
   "transport": "CP/1",
-  "source_protocol_registry": "App/Core/Communication/ProtocolRegistry/firewall.json",
+  "source_protocol_registry": "Core/Communication/ProtocolRegistry/firewall.json",
+  "source_sha256": "7df07a1114fac1750e952be02d31260c1d5093d76cf484b18ac555d0dfb84861",
   "functions": [
     {
       "id": "firewall.status",
@@ -11,29 +12,142 @@
       "type": "READ",
       "risk_level": "LOW",
       "hard_deny": false,
-      "description": "Read Firewall coordinator and protection thread status.",
+      "description": "Read or evaluate firewall.status from firewall. No financial side effect.",
       "input": {
         "type": "object",
-        "required": [],
         "properties": {},
+        "required": [],
         "additionalProperties": false
       },
       "output": {
-        "type": "unknown",
-        "description": "Schéma à confirmer dans le handler réel"
+        "type": "object",
+        "required": [
+          "ok"
+        ],
+        "properties": {
+          "healthLevel": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "metrics": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "ok": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "version": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "pid": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "host": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "port": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "uptimeSec": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "firewallEnabled": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "bypassMode": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "protectionInitialized": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "threadCount": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "workerCount": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "threads": {
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "securityFolders": {
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "log": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/firewall.json",
-      "verified_handler": false,
+      "source": "Core/Firewall/firewall_service.js",
+      "verified_handler": true,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Authenticated service identity, authenticated agent session and effective per-command permission.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "d32d195a10e5c3f7d3d9e13bd37d2abe018dfb4c919575d2e08d30e40992ed95",
+      "availability_reason": null,
+      "timeout_ms": 5000,
+      "agent_qualified": true
     },
     {
       "id": "firewall.threads",
       "engine": "firewall",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Read Firewall protection thread states.",
       "input": {
         "type": "object",
@@ -46,17 +160,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/firewall.json",
+      "source": "Core/Firewall/firewall_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "d32d195a10e5c3f7d3d9e13bd37d2abe018dfb4c919575d2e08d30e40992ed95",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "firewall.events",
       "engine": "firewall",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Read bounded Firewall event feed.",
       "input": {
         "type": "object",
@@ -82,11 +203,18 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/firewall.json",
+      "source": "Core/Firewall/firewall_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "d32d195a10e5c3f7d3d9e13bd37d2abe018dfb4c919575d2e08d30e40992ed95",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     }
   ],
-  "verification_status": "PROTOCOL_DECLARED_UNVERIFIED_HANDLERS"
+  "revision_hash": "40d659131906be54a1eb48cc6379f62d5b1eac0defbdc77149972c177c4a5938"
 }

@@ -15,7 +15,102 @@
         "name": "portfolio.health",
         "arguments": {
           "allowed": []
-        }
+        },
+        "input": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        },
+        "output": {
+          "type": "object",
+          "required": [
+            "ok"
+          ],
+          "properties": {
+            "ok": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "version": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "pid": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "host": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "port": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "uptimeSec": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "communicationProtocol": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "storage": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "settings": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "eventsRecorded": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "lastTradingSync": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "lastSyncError": {},
+            "lastPriceSync": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "lastPriceSyncError": {}
+          }
+        },
+        "contractVersion": "2.6.0-dev.4"
       },
       {
         "name": "portfolio.overview",
@@ -218,7 +313,50 @@
             "exchange",
             "symbol"
           ]
-        }
+        },
+        "input": {
+          "type": "object",
+          "properties": {
+            "account": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 40
+            },
+            "exchange": {
+              "const": "OKX"
+            },
+            "symbol": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 40
+            }
+          },
+          "additionalProperties": false
+        },
+        "output": {
+          "type": "object",
+          "required": [
+            "snapshot"
+          ],
+          "properties": {
+            "snapshot": {
+              "type": "object",
+              "required": [
+                "equity",
+                "analysis_mode"
+              ],
+              "properties": {
+                "equity": {
+                  "type": "number"
+                },
+                "analysis_mode": {
+                  "const": "OKX_ACCOUNT"
+                }
+              }
+            }
+          }
+        },
+        "contractVersion": "2.6.0-dev.4"
       }
     ],
     "dataTypes": [

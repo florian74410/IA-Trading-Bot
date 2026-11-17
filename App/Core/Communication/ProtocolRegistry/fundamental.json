@@ -15,7 +15,126 @@
         "name": "fundamental.health",
         "arguments": {
           "allowed": []
-        }
+        },
+        "input": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        },
+        "output": {
+          "type": "object",
+          "required": [
+            "ok",
+            "mode",
+            "database"
+          ],
+          "properties": {
+            "ok": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "version": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "mode": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "pid": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "host": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "port": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "database": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "sqlite": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "internalRouting": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "collector": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "eventEngine": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "eventStats": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "providers": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "ai": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "observability": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "capabilities": {
+              "type": [
+                "object",
+                "null"
+              ]
+            }
+          }
+        },
+        "contractVersion": "2.6.0-dev.4"
       },
       {
         "name": "fundamental.status",
@@ -240,7 +359,69 @@
         "name": "fundamental.summary",
         "arguments": {
           "allowed": []
-        }
+        },
+        "input": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        },
+        "output": {
+          "type": "object",
+          "required": [],
+          "properties": {
+            "ok": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "version": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "summary": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "events": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "latestNews": {},
+            "domains": {
+              "type": [
+                "array",
+                "null"
+              ]
+            },
+            "collector": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "eventEngine": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "providers": {
+              "type": [
+                "object",
+                "null"
+              ]
+            }
+          }
+        },
+        "contractVersion": "2.6.0-dev.4"
       },
       {
         "name": "fundamental.context",

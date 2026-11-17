@@ -1,0 +1,28 @@
+'use strict';
+const {PassThrough}=require('node:stream'),path=require('node:path'),I=require('./identity'),Catalog=require('./catalog'),Client=require('./client'),Schema=require('./schema'),CP=require('../../Communication/communication_protocol_v1');
+function send(res,code,data,headers={}){const b=JSON.stringify(data);res.writeHead(code,{'Content-Type':'application/json','Cache-Control':'no-store',...headers});res.end(b);}
+function body(req){return new Promise((resolve,reject)=>{let n=0,a=[];req.on('data',x=>{n+=x.length;if(n>512*1024)reject(Error('CP_BODY_TOO_LARGE'));else a.push(x);});req.on('end',()=>{try{resolve({raw:Buffer.concat(a),message:JSON.parse(Buffer.concat(a))});}catch(e){reject(Error('CP_JSON_INVALID'));}});req.on('error',reject);});}
+function install(server,handler,{root,engineId,env=process.env}){
+ if(!Catalog.folders[engineId]||env.IATB_CP1_SERVICE_ID!==engineId)throw Error('ENGINE_SERVICE_IDENTITY_MISMATCH');
+ const manifest=()=>Catalog.manifest(root,engineId);
+ const publish=()=>require(path.join(root,Catalog.folders[engineId],'FunctionRegistry/startup')).publish(request=>{request.arguments.manifest=manifest();request.arguments.revision=I.hash(request.arguments.manifest.functions);return Client.call('publish',{request},env);},null,{retries:2,delayMs:500}).catch(()=>{});
+ server.once('listening',publish);const timer=setInterval(publish,5000);timer.unref();server.once('close',()=>clearInterval(timer));
+ return function intercept(req,res){const pathname=String(req.url).split('?')[0];
+  if(pathname==='/registry/v1/snapshot'){try{if(req.method!=='GET')throw Error('METHOD_DENIED');const p=I.verify(req.headers['x-iatb-registry-proof'],env);if(p.purpose!=='discovery'||p.target!==engineId)throw Error('DISCOVERY_DENIED');const data={challenge:p.challenge,manifest:manifest()};send(res,200,data,I.headers(data,env));}catch(e){send(res,403,{error:'REGISTRY_AUTH_REQUIRED'});}return true;}
+  if(req.method!=='POST'||!['/cp/v1','/cp/read/v1'].includes(pathname))return false;
+  body(req).then(async({raw,message})=>{
+   const m={...message};delete m.agent_proof;delete m.machine_proof;
+   if(!message.agent_proof){const p=I.verify(message.machine_proof,env);if(p.purpose!=='machine'||p.target!==message.target||p.message_hash!==I.hash(m)||engineId!==message.target&&!(engineId==='firewall'&&message.target==='trading'))throw Error('MACHINE_PROOF_INVALID');replay(req,res,raw,handler);return;}
+   // Firewall remains the mandatory Trading ingress; the final Engine performs admission.
+   if(engineId==='firewall'&&message.target==='trading'){const p=I.verify(message.agent_proof,env);if(p.purpose!=='engine'||p.target!=='trading'||p.message_hash!==I.hash(m))throw Error('CONTROL_BINDING_MISMATCH');replay(req,res,raw,handler);return;}
+   const p=I.verify(message.agent_proof,env);if(p.target!==engineId)throw Error('CONTROL_BINDING_MISMATCH');
+   const admitted=await Client.call('admit',{message,proof:message.agent_proof},env),contract=admitted.contract;let execution=message,executionRaw=raw,executionReq=req;if(contract.transport==='OWNER'){if(!admitted.owner_envelope)throw Error('OWNER_PROOF_REQUIRED');execution={...message,action:engineId+'.user.request',arguments:admitted.owner_envelope};executionRaw=Buffer.from(JSON.stringify(execution));executionReq={url:req.url,method:req.method,socket:req.socket,httpVersion:req.httpVersion,headers:{...req.headers,'content-length':String(executionRaw.length),'x-iatb-cp-signature':require('node:crypto').createHmac('sha256',CP.ensureSecret(root)).update(executionRaw).digest('hex')}};}
+   const original={writeHead:res.writeHead.bind(res),write:res.write.bind(res),end:res.end.bind(res)},chunks=[];let bytes=0,done=false;
+   res.writeHead=()=>res;res.write=x=>{if(x){bytes+=Buffer.byteLength(x);if(bytes<=2*1024*1024)chunks.push(Buffer.from(x));}return true;};
+   res.end=x=>{if(done)return res;done=true;if(x)res.write(x);Object.assign(res,original);Promise.resolve().then(async()=>{if(bytes>2*1024*1024)throw Error('CP_RESULT_TOO_LARGE');const packet=JSON.parse(Buffer.concat(chunks));if(env.IATB_CP1_DIAGNOSTIC==='1'&&(packet.status==='ERROR'||Schema.validate(packet.data,contract.output)))console.error('CP_AGENT_OUTPUT',engineId,message.action,packet.status,/^[A-Z0-9_]+$/.test(packet.data?.error||'')?packet.data.error:'-',Schema.validate(packet.data,contract.output)||'-');if(!CP.validateResponse(packet,execution).ok||packet.engine!==engineId||packet.action!==execution.action||packet.status==='ERROR'||Schema.validate(packet.data,contract.output))throw Error('CP_RESULT_SCHEMA_INVALID');const finish=await Client.call('complete',{request_id:message.request_id,result:packet.data},env);if(!finish.ok)throw Error('CP_RESULT_SCHEMA_INVALID');send(res,200,contract.transport==='OWNER'?CP.makeResponse(message,packet.status,packet.data,{engine:engineId,schema:packet.schema,warnings:packet.warnings}):packet);}).catch(async()=>{await Client.call('complete',{request_id:message.request_id,error:'ENGINE_HANDLER_FAILED'},env).catch(()=>{});send(res,502,CP.makeResponse(message,'ERROR',{error:'CP_AGENT_RESULT_INVALID'},{schema:'cp.error/1.0'}));});return res;};
+   replay(executionReq,res,executionRaw,handler);
+  }).catch(e=>{if(env.IATB_CP1_DIAGNOSTIC==='1')console.error('CP_AGENT_ENGINE_REJECT',engineId,/^[A-Z0-9_]+$/.test(e.message)?e.message:'CONTROL_REJECTED');send(res,403,{error:'CP_EXECUTION_PROOF_REQUIRED'});});return true;
+ };
+}
+function replay(req,res,raw,handler){const stream=new PassThrough();Object.assign(stream,{url:req.url,method:req.method,headers:req.headers,socket:req.socket,httpVersion:req.httpVersion});handler(stream,res);stream.end(raw);}
+module.exports={install};

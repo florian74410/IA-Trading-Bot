@@ -19,7 +19,124 @@
         "arguments": {
           "allowed": []
         },
-        "description": "Read Firewall coordinator and protection thread status."
+        "description": "Read Firewall coordinator and protection thread status.",
+        "input": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        },
+        "output": {
+          "type": "object",
+          "required": [
+            "ok"
+          ],
+          "properties": {
+            "healthLevel": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "metrics": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "ok": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "version": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "pid": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "host": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "port": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "uptimeSec": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "firewallEnabled": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "bypassMode": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "protectionInitialized": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "threadCount": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "workerCount": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "threads": {
+              "type": [
+                "array",
+                "null"
+              ]
+            },
+            "securityFolders": {
+              "type": [
+                "array",
+                "null"
+              ]
+            },
+            "log": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        },
+        "contractVersion": "2.6.0-dev.4"
       },
       {
         "name": "firewall.threads",

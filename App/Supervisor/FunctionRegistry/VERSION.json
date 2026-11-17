@@ -1,8 +1,7 @@
 {
   "engine_id": "supervisor",
-  "engine_version": "2.6.0",
+  "engine_version": "2.6.0-dev.4",
   "registry_schema": "2.6.0",
-  "functions_count": 25,
-  "source": "protocol_registry",
-  "release_state": "DEBUG_CANDIDATE"
+  "source_sha256": "11cbd8e6bc594f3d06d67804c4cd459b55741ff00157ea361bd645a9c8535819",
+  "revision_hash": "51840c7b76d100b0e8393ae117b1a332c8dbc6ca92c09ea33e43ac87d80d2676"
 }

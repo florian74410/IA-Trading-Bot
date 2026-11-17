@@ -36,4 +36,6 @@ SupervisorCore.prototype.llmModels=function(){return this.cognitiveRuntime().mod
 SupervisorCore.prototype.createRiskSnapshot=function(a){return this.cp.request('risk','risk.snapshot.create',a,'analysis',10000);};
 SupervisorCore.prototype.getRiskSnapshot=function(snapshotId,portfolioId){return this.cp.request('risk','risk.snapshot.get',{snapshot_id:snapshotId,portfolio_id:portfolioId},'analysis');};
 SupervisorCore.prototype.riskConstraints=function(){return this.cp.request('risk','risk.constraints.get',{},'analysis');};
+// The token is issued by Auth21 to an owner-bound agent session and stays server-side.
+SupervisorCore.prototype.agentEngineGateway=function(token){var Gateway=require('../Gateway/agent_engine_gateway').AgentEngineGateway;return new Gateway({root:this.root,token:token,env:process.env});};
 module.exports=SupervisorCore;

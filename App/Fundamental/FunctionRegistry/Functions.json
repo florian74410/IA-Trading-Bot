@@ -1,9 +1,10 @@
 {
   "schema_version": "2.6.0",
   "engine_id": "fundamental",
-  "engine_version": "2.6.0",
+  "engine_version": "2.6.0-dev.4",
   "transport": "CP/1",
-  "source_protocol_registry": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+  "source_protocol_registry": "Core/Communication/ProtocolRegistry/fundamental.json",
+  "source_sha256": "2291e9e01284542f0eb0e597490997d7e7a25e905a82f1d861b7c2de9f3a2d5d",
   "functions": [
     {
       "id": "fundamental.health",
@@ -11,29 +12,144 @@
       "type": "READ",
       "risk_level": "LOW",
       "hard_deny": false,
-      "description": "Commande CP/1 fundamental.health. La description du handler doit être validée.",
+      "description": "Read or evaluate fundamental.health from fundamental. No financial side effect.",
       "input": {
         "type": "object",
-        "required": [],
         "properties": {},
+        "required": [],
         "additionalProperties": false
       },
       "output": {
-        "type": "unknown",
-        "description": "Schéma à confirmer dans le handler réel"
+        "type": "object",
+        "required": [
+          "ok",
+          "mode",
+          "database"
+        ],
+        "properties": {
+          "ok": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "version": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "mode": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "pid": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "host": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "port": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "database": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "sqlite": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "internalRouting": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "collector": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "eventEngine": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "eventStats": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "providers": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "ai": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "observability": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "capabilities": {
+            "type": [
+              "object",
+              "null"
+            ]
+          }
+        }
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
-      "verified_handler": false,
+      "source": "Fundamental/Engine/fundamental_service.js",
+      "verified_handler": true,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Authenticated service identity, authenticated agent session and effective per-command permission.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": null,
+      "timeout_ms": 5000,
+      "agent_qualified": true
     },
     {
       "id": "fundamental.status",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 fundamental.status. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -46,17 +162,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.capabilities",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 fundamental.capabilities. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -69,17 +192,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.fedwatch.get",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 fundamental.fedwatch.get. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -92,17 +222,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.fedwatch.history",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Read persisted FedWatch snapshot history.",
       "input": {
         "type": "object",
@@ -120,17 +257,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.calendar.cme",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 fundamental.calendar.cme. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -143,17 +287,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.calendar.cme.expirations",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 fundamental.calendar.cme.expirations. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -166,17 +317,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.calendar.fed",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 fundamental.calendar.fed. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -189,17 +347,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.calendar.upcoming",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 fundamental.calendar.upcoming. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -229,17 +394,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.news.search",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 fundamental.news.search. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -305,17 +477,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.news.get",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 fundamental.news.get. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -337,17 +516,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.events.search",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 fundamental.events.search. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -373,17 +559,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.event.get",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 fundamental.event.get. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -405,17 +598,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.event.evidence",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 fundamental.event.evidence. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -437,17 +637,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.sources.search",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 fundamental.sources.search. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -477,17 +684,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.collect",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 fundamental.collect. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -509,17 +723,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.synthesis.news",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 fundamental.synthesis.news. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -565,17 +786,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.synthesis.event",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 fundamental.synthesis.event. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -605,17 +833,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.synthesis.market",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 fundamental.synthesis.market. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -653,17 +888,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.synthesis.history",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 fundamental.synthesis.history. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -693,17 +935,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.logs.purge",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 fundamental.logs.purge. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -716,17 +965,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.logs.stats",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 fundamental.logs.stats. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -739,17 +995,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.logs.history",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 fundamental.logs.history. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -783,17 +1046,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.logs.recent",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 fundamental.logs.recent. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -827,10 +1097,17 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.summary",
@@ -838,29 +1115,87 @@
       "type": "READ",
       "risk_level": "LOW",
       "hard_deny": false,
-      "description": "Commande CP/1 fundamental.summary. La description du handler doit être validée.",
+      "description": "Read or evaluate fundamental.summary from fundamental. No financial side effect.",
       "input": {
         "type": "object",
-        "required": [],
         "properties": {},
+        "required": [],
         "additionalProperties": false
       },
       "output": {
-        "type": "unknown",
-        "description": "Schéma à confirmer dans le handler réel"
+        "type": "object",
+        "required": [],
+        "properties": {
+          "ok": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "version": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "summary": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "events": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "latestNews": {},
+          "domains": {
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "collector": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "eventEngine": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "providers": {
+            "type": [
+              "object",
+              "null"
+            ]
+          }
+        }
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
-      "verified_handler": false,
+      "source": "Fundamental/Engine/fundamental_service.js",
+      "verified_handler": true,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Authenticated service identity, authenticated agent session and effective per-command permission.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": null,
+      "timeout_ms": 5000,
+      "agent_qualified": true
     },
     {
       "id": "fundamental.context",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 fundamental.context. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -878,17 +1213,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.sources",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 fundamental.sources. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -918,17 +1260,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.events",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 fundamental.events. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -954,17 +1303,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.get_state",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 fundamental.get_state. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -977,17 +1333,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.get_events",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 fundamental.get_events. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -1013,17 +1376,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.get_sources",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 fundamental.get_sources. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -1053,17 +1423,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.get_context",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 fundamental.get_context. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -1081,17 +1458,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.get_evidence",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 fundamental.get_evidence. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -1113,17 +1497,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.list_capabilities",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 fundamental.list_capabilities. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -1136,17 +1527,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.latest_news",
       "engine": "fundamental",
       "type": "EVALUATION",
       "risk_level": "MEDIUM",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 fundamental.latest_news. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -1159,17 +1557,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.event_process",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 fundamental.event_process. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -1187,17 +1592,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.source.get",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 fundamental.source.get. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -1219,17 +1631,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.feeds.search",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 fundamental.feeds.search. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -1259,17 +1678,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.providers.status",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 fundamental.providers.status. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -1282,17 +1708,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.diagnostic.feed",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 fundamental.diagnostic.feed. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -1314,17 +1747,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.diagnostic.draft",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 fundamental.diagnostic.draft. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -1398,17 +1838,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.timeline.get",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 fundamental.timeline.get. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -1442,17 +1889,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.timeline.context",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 fundamental.timeline.context. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -1482,17 +1936,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.timeline.rebuild",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 fundamental.timeline.rebuild. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -1518,17 +1979,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.discovery.inspect",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 fundamental.discovery.inspect. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -1594,17 +2062,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.discovery.prepare",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 fundamental.discovery.prepare. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -1670,17 +2145,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.discovery.test",
       "engine": "fundamental",
       "type": "EVALUATION",
       "risk_level": "MEDIUM",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 fundamental.discovery.test. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -1746,17 +2228,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.synthesis.import",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Persist a validated synthesis through Fundamental Engine storage.",
       "input": {
         "type": "object",
@@ -1802,17 +2291,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.translation.get",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Read a cached translation from Fundamental storage.",
       "input": {
         "type": "object",
@@ -1846,17 +2342,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.translation.pending",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "List untranslated Fundamental items for a target language.",
       "input": {
         "type": "object",
@@ -1882,17 +2385,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.translation.save",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Persist a Fundamental item translation.",
       "input": {
         "type": "object",
@@ -1934,17 +2444,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.provider.test",
       "engine": "fundamental",
       "type": "EVALUATION",
       "risk_level": "MEDIUM",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Test a configured Fundamental provider/feed through the real collector path.",
       "input": {
         "type": "object",
@@ -1968,17 +2485,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.feed.test_draft",
       "engine": "fundamental",
       "type": "EVALUATION",
       "risk_level": "MEDIUM",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Test a feed draft without persisting it.",
       "input": {
         "type": "object",
@@ -1998,17 +2522,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.feed.create",
       "engine": "fundamental",
       "type": "MUTATION",
       "risk_level": "HIGH",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Create and persist a Fundamental feed.",
       "input": {
         "type": "object",
@@ -2028,17 +2559,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": true
+      "side_effects": true,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.feed.update",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Update a persisted Fundamental feed.",
       "input": {
         "type": "object",
@@ -2063,17 +2601,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.feed.toggle",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Enable or disable a persisted Fundamental feed.",
       "input": {
         "type": "object",
@@ -2097,17 +2642,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.feed.delete",
       "engine": "fundamental",
       "type": "MUTATION",
       "risk_level": "HIGH",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Delete a Fundamental feed and its associated publications.",
       "input": {
         "type": "object",
@@ -2127,17 +2679,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": true
+      "side_effects": true,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.news.purge",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Purge Fundamental publications and cached translations.",
       "input": {
         "type": "object",
@@ -2150,17 +2709,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.fedwatch.refresh",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Force a FedWatch refresh.",
       "input": {
         "type": "object",
@@ -2173,17 +2739,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.ai_summary.state",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Read the current Fundamental AI summary state/cache.",
       "input": {
         "type": "object",
@@ -2196,17 +2769,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.ai_summary.generate",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Generate or refresh the Fundamental AI market summary.",
       "input": {
         "type": "object",
@@ -2224,17 +2804,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.translate",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Translate one Fundamental raw item using the Fundamental-owned translation service.",
       "input": {
         "type": "object",
@@ -2262,17 +2849,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "fundamental.operator.request",
       "engine": "fundamental",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Authenticated Core ADMIN capability; exact operator action, payload, owner and current ADMIN session verified before effects. Never a human UI authority.",
       "input": {
         "type": "object",
@@ -2294,11 +2888,18 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/fundamental.json",
+      "source": "Fundamental/Engine/fundamental_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     }
   ],
-  "verification_status": "PROTOCOL_DECLARED_UNVERIFIED_HANDLERS"
+  "revision_hash": "39b4cc10e7a17e385fde40409d7492199278d083cdb604d33721d53979a3dd5b"
 }

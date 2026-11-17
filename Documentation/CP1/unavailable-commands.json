@@ -1,0 +1,1294 @@
+{
+  "marketdata": [
+    {
+      "command": "marketdata.audit",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "marketdata.symbols",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "marketdata.provider.test",
+      "risk_level": "MEDIUM",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "marketdata.registry.status",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "marketdata.registry.asset",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "marketdata.registry.search",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "marketdata.registry.list",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "marketdata.registry.query",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "marketdata.financial.snapshot",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "marketdata.financial.history",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "marketdata.financial.ai_context",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "marketdata.financial.storage",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "marketdata.financial.status",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "marketdata.financial.refresh",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "marketdata.derivatives.open_interest",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "marketdata.liquidations.recent",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "marketdata.liquidations.stats",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "marketdata.microstructure.capabilities",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "marketdata.microstructure.history",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "marketdata.microstructure.storage",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "marketdata.microstructure.refresh",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "marketdata.liquidations.streams",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "marketdata.derivatives.open_interest.history",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "marketdata.dex.liquidity.capabilities",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "marketdata.dex.liquidity.snapshot",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "marketdata.dex.liquidity.history",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "marketdata.ticker",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "marketdata.refresh",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "marketdata.active",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "marketdata.cache.clear",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "marketdata.settings.get",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "marketdata.settings.set",
+      "risk_level": "HIGH",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "marketdata.registry.refresh",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "marketdata.asset.price",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "marketdata.catalog",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "marketdata.asset.resolve",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "marketdata.operator.request",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    }
+  ],
+  "indicator": [
+    {
+      "command": "indicator.custom.delete",
+      "risk_level": "HIGH",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "indicator.registry.reload",
+      "risk_level": "HIGH",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "indicator.registry.status",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "indicator.settings.set",
+      "risk_level": "HIGH",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "indicator.settings.get",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "indicator.language.compile",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "indicator.language.validate",
+      "risk_level": "MEDIUM",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "indicator.language.create",
+      "risk_level": "HIGH",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "indicator.definition.validate",
+      "risk_level": "MEDIUM",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "indicator.definition.create",
+      "risk_level": "HIGH",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "indicator.compute_data",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "indicator.financial_context",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "indicator.financial_series",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "indicator.financial_analyze",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "indicator.definition.get",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "indicator.compute",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "indicator.compute_batch",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "indicator.analyze",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "indicator.get_state",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "indicator.get_levels",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "indicator.get_signals",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "indicator.list_capabilities",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "indicator.user.compute",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    }
+  ],
+  "fundamental": [
+    {
+      "command": "fundamental.status",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.capabilities",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.fedwatch.get",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.fedwatch.history",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.calendar.cme",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.calendar.cme.expirations",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.calendar.fed",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.calendar.upcoming",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.news.search",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.news.get",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.events.search",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.event.get",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.event.evidence",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.sources.search",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.collect",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.synthesis.news",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.synthesis.event",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.synthesis.market",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.synthesis.history",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.logs.purge",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.logs.stats",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.logs.history",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.logs.recent",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.context",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.sources",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.events",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.get_state",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.get_events",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.get_sources",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.get_context",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.get_evidence",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.list_capabilities",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.latest_news",
+      "risk_level": "MEDIUM",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.event_process",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.source.get",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.feeds.search",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.providers.status",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.diagnostic.feed",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.diagnostic.draft",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.timeline.get",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.timeline.context",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.timeline.rebuild",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.discovery.inspect",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.discovery.prepare",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.discovery.test",
+      "risk_level": "MEDIUM",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.synthesis.import",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.translation.get",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.translation.pending",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.translation.save",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.provider.test",
+      "risk_level": "MEDIUM",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.feed.test_draft",
+      "risk_level": "MEDIUM",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.feed.create",
+      "risk_level": "HIGH",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.feed.update",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.feed.toggle",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.feed.delete",
+      "risk_level": "HIGH",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.news.purge",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.fedwatch.refresh",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.ai_summary.state",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.ai_summary.generate",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.translate",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "fundamental.operator.request",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    }
+  ],
+  "liquidity": [
+    {
+      "command": "liquidity.zones",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "liquidity.realtime",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "liquidity.snapshot",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "liquidity.financial",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "liquidity.liquidations",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "liquidity.raw",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "liquidity.history",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "liquidity.context",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "liquidity.cache.clear",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "liquidity.open_interest",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "liquidity.open_interest.history",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "liquidity.dex_liquidity",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "liquidity.dex_liquidity.history",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    }
+  ],
+  "strategy": [
+    {
+      "command": "strategy.capabilities",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "strategy.validate",
+      "risk_level": "MEDIUM",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "strategy.evaluate",
+      "risk_level": "MEDIUM",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "strategy.stats",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "strategy.state",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "strategy.reload",
+      "risk_level": "HIGH",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "strategy.pause",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "strategy.resume",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "strategy.reset_stats",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "strategy.user.request",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    }
+  ],
+  "risk": [
+    {
+      "command": "risk.position.analyze",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "risk.portfolio.analyze",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "risk.strategy.analyze",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "risk.snapshot",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "risk.settings.get",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "risk.settings.set",
+      "risk_level": "HIGH",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "risk.gate.evaluate",
+      "risk_level": "MEDIUM",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "risk.gate.verify",
+      "risk_level": "MEDIUM",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "risk.r2.monitor",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "risk.user.request",
+      "risk_level": "MEDIUM",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    }
+  ],
+  "portfolio": [
+    {
+      "command": "portfolio.overview",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "portfolio.settings.get",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "portfolio.settings.set",
+      "risk_level": "HIGH",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "portfolio.event.record",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "portfolio.balance.record",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "portfolio.snapshot",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "portfolio.positions",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "portfolio.balances",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "portfolio.history",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "portfolio.statistics",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "portfolio.events",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "portfolio.sync",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "portfolio.cost.summary",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "portfolio.cost.history",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "portfolio.position.health",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "portfolio.trades",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "portfolio.trade.detail",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "portfolio.user.request",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    }
+  ],
+  "firewall": [
+    {
+      "command": "firewall.threads",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "firewall.events",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    }
+  ],
+  "trading": [
+    {
+      "command": "trading.account.positions",
+      "risk_level": "MEDIUM",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "trading.account.orders",
+      "risk_level": "MEDIUM",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "trading.account.balances",
+      "risk_level": "MEDIUM",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "trading.execute",
+      "risk_level": "HIGH",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "trading.cancel",
+      "risk_level": "HIGH",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "trading.close_position",
+      "risk_level": "HIGH",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "trading.history",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "trading.admin.command",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "trading.account.snapshot",
+      "risk_level": "MEDIUM",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    }
+  ],
+  "supervisor": [
+    {
+      "command": "supervisor.health",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "supervisor.capabilities",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "supervisor.reload",
+      "risk_level": "HIGH",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "supervisor.extensions",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "supervisor.llm.health",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "supervisor.context",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "supervisor.analyze",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "supervisor.indicators",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "supervisor.indicator.language",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "supervisor.indicator.validate",
+      "risk_level": "MEDIUM",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "supervisor.indicator.create",
+      "risk_level": "HIGH",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "supervisor.indicator.definition",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "supervisor.indicators.compute",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "supervisor.risk.evaluate",
+      "risk_level": "MEDIUM",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "supervisor.reason",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "supervisor.structured",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "supervisor.calendar",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "supervisor.calendar.fed",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "supervisor.calendar.cme",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "supervisor.fedwatch",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "supervisor.calendar.cme.expirations",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "supervisor.user.request",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "supervisor.data.catalog",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "supervisor.data.read",
+      "risk_level": "LOW",
+      "verified_handler": false,
+      "reason": "NOT_QUALIFIED_FOR_AGENT"
+    },
+    {
+      "command": "supervisor.cognitive.reason",
+      "risk_level": "MEDIUM",
+      "verified_handler": true,
+      "reason": "OWNER_ONLY"
+    },
+    {
+      "command": "supervisor.cognitive.status",
+      "risk_level": "LOW",
+      "verified_handler": true,
+      "reason": "OWNER_ONLY"
+    },
+    {
+      "command": "supervisor.llm.models",
+      "risk_level": "LOW",
+      "verified_handler": true,
+      "reason": "OWNER_ONLY"
+    },
+    {
+      "command": "supervisor.llm.select",
+      "risk_level": "HIGH",
+      "verified_handler": true,
+      "reason": "OWNER_ONLY"
+    },
+    {
+      "command": "supervisor.cognitive.history",
+      "risk_level": "MEDIUM",
+      "verified_handler": true,
+      "reason": "OWNER_ONLY"
+    }
+  ]
+}

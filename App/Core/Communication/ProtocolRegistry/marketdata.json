@@ -22,7 +22,156 @@
         "name": "marketdata.health",
         "arguments": {
           "allowed": []
-        }
+        },
+        "input": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        },
+        "output": {
+          "type": "object",
+          "required": [
+            "ok",
+            "providers",
+            "security"
+          ],
+          "properties": {
+            "offlineDiagnostic": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "ok": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "service": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "version": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "componentVersion": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "pid": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "provider": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "providers": {
+              "type": [
+                "array",
+                "null"
+              ]
+            },
+            "apiRequestOrchestrator": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "apiTelemetry": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "microstructureProviders": {
+              "type": [
+                "array",
+                "null"
+              ]
+            },
+            "cache": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "refresh": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "registry": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "financial": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "microstructure": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "coingecko": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "dexLiquidity": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "liquidationStreams": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "security": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "currencyRegistry": {
+              "type": [
+                "object",
+                "null"
+              ]
+            }
+          }
+        },
+        "contractVersion": "2.6.0-dev.4"
       },
       {
         "name": "marketdata.candles",
@@ -39,7 +188,90 @@
             "symbol",
             "timeframe"
           ]
-        }
+        },
+        "input": {
+          "type": "object",
+          "required": [
+            "symbol"
+          ],
+          "properties": {
+            "symbol": {
+              "type": "string",
+              "pattern": "^[A-Z0-9/_-]{3,40}$"
+            },
+            "source": {
+              "enum": [
+                "OKX",
+                "KRAKEN",
+                "BINANCE",
+                "BINANCE_FUTURES",
+                "HYPERLIQUID",
+                "BYBIT"
+              ]
+            },
+            "timeframe": {
+              "enum": [
+                "1m",
+                "5m",
+                "15m",
+                "30m",
+                "1h",
+                "4h",
+                "1d"
+              ]
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 20,
+              "maximum": 500
+            },
+            "force": {
+              "const": false
+            }
+          },
+          "additionalProperties": false
+        },
+        "output": {
+          "type": "object",
+          "required": [
+            "ok",
+            "canonicalSymbol",
+            "timeframe",
+            "candles",
+            "firewall"
+          ],
+          "properties": {
+            "ok": {
+              "const": true
+            },
+            "canonicalSymbol": {
+              "type": "string"
+            },
+            "timeframe": {
+              "type": "string"
+            },
+            "candles": {
+              "type": "array",
+              "minItems": 20,
+              "maxItems": 500,
+              "items": {
+                "type": "array",
+                "minItems": 5,
+                "maxItems": 6,
+                "items": {
+                  "type": "number"
+                }
+              }
+            },
+            "firewall": {
+              "type": "object",
+              "required": [
+                "decision"
+              ]
+            }
+          }
+        },
+        "contractVersion": "2.6.0-dev.4"
       },
       {
         "name": "marketdata.symbols",
@@ -58,7 +290,35 @@
         "name": "marketdata.providers",
         "arguments": {
           "allowed": []
-        }
+        },
+        "input": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        },
+        "output": {
+          "type": "object",
+          "required": [
+            "ok",
+            "providers"
+          ],
+          "properties": {
+            "ok": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "providers": {
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          }
+        },
+        "contractVersion": "2.6.0-dev.4"
       },
       {
         "name": "marketdata.provider.test",
@@ -76,7 +336,82 @@
         "arguments": {
           "allowed": []
         },
-        "description": "Read-only catalogue of normalized financial data capabilities."
+        "description": "Read-only catalogue of normalized financial data capabilities.",
+        "input": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        },
+        "output": {
+          "type": "object",
+          "required": [
+            "ok"
+          ],
+          "properties": {
+            "ok": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "schema": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "collectorVersion": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "role": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "distribution": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "consumers": {
+              "type": [
+                "array",
+                "null"
+              ]
+            },
+            "aiAccess": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "ownership": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "freshness": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "families": {
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          }
+        },
+        "contractVersion": "2.6.0-dev.4"
       },
       {
         "name": "marketdata.registry.status",
@@ -234,7 +569,81 @@
             "symbol"
           ]
         },
-        "description": "Firewall-validated order book/open-interest snapshot from the Market Data Collector."
+        "description": "Firewall-validated order book/open-interest snapshot from the Market Data Collector.",
+        "input": {
+          "type": "object",
+          "required": [
+            "symbol"
+          ],
+          "properties": {
+            "symbol": {
+              "type": "string",
+              "pattern": "^[A-Z0-9/_-]{3,40}$"
+            },
+            "source": {
+              "enum": [
+                "OKX",
+                "KRAKEN",
+                "BINANCE",
+                "BINANCE_FUTURES",
+                "HYPERLIQUID",
+                "BYBIT"
+              ]
+            },
+            "depth": {
+              "type": "integer",
+              "minimum": 5,
+              "maximum": 100
+            },
+            "force": {
+              "const": false
+            }
+          },
+          "additionalProperties": false
+        },
+        "output": {
+          "type": "object",
+          "required": [
+            "ok",
+            "source",
+            "observedAt",
+            "orderBook",
+            "firewall"
+          ],
+          "properties": {
+            "ok": {
+              "const": true
+            },
+            "source": {
+              "type": "string"
+            },
+            "observedAt": {
+              "type": "number"
+            },
+            "orderBook": {
+              "type": "object",
+              "required": [
+                "bids",
+                "asks"
+              ],
+              "properties": {
+                "bids": {
+                  "type": "array"
+                },
+                "asks": {
+                  "type": "array"
+                }
+              }
+            },
+            "firewall": {
+              "type": "object",
+              "required": [
+                "decision"
+              ]
+            }
+          }
+        },
+        "contractVersion": "2.6.0-dev.4"
       },
       {
         "name": "marketdata.microstructure.history",

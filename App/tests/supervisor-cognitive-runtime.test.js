@@ -11,7 +11,7 @@ function make(root,replies,calls){
  const llm={reason:async x=>{calls.push(x);return {text:JSON.stringify(replies.shift()||{message:'ok'}),provider:'MOCK',model:'mock-debug',latencyMs:1};}};
  const cp={request:async (target,action)=>{assert.equal(target,'router');assert.equal(action,'router.registry.list');return {ok:true,engines:[]};}};
  const settings={llm:()=>({provider:'MOCK',openai:{model:'gpt-5.6'}})};
- return new CognitiveRuntime({root,llm,cp,settings,protocolRegistry:new ProtocolRegistry(appRoot),functionRegistryDb:path.join(root,'absent.sqlite')});
+ return new CognitiveRuntime({root,llm,cp,settings,shortMemory:new (require('../Supervisor/Memory/short-term').ConversationMemory)({filename:path.join(root,'.runtime/cognitive/short.sqlite')}),longMemory:new PersonalMemory(path.join(root,'.runtime/cognitive/long.sqlite')),protocolRegistry:new ProtocolRegistry(appRoot),functionRegistryDb:path.join(root,'absent.sqlite')});
 }
 test('persistent cognitive memory, self first, scoped tools, reviewed-only proposals, model allowlist',async()=>{
  const root=fs.mkdtempSync(path.join(os.tmpdir(),'iatb-cognitive-')),calls=[];
@@ -80,7 +80,7 @@ test('existing OpenAI provider forwards chosen model through CP1 AI Gateway Resp
   assert.equal(x.response.message,'Gateway accepted model');assert.equal(x.response.provider,'OPENAI_API');
   assert.equal(payloads.length,1);assert.equal(payloads[0].model,'gpt-5-mini');
   assert.equal(payloads[0].store,false);assert.match(payloads[0].input[0].content,/BOOTLOADER/);
-  assert.equal(fs.statSync(path.join(root,'.runtime','cognitive','short.sqlite')).mode & 0o077,0);
+  assert.equal(fs.statSync(runtime.short.db.name).mode & 0o077,0);
   runtime.close();
  }finally{fs.rmSync(root,{recursive:true,force:true});}
 });

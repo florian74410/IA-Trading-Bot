@@ -15,7 +15,225 @@
         "name": "trading.health",
         "arguments": {
           "allowed": []
-        }
+        },
+        "input": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        },
+        "output": {
+          "type": "object",
+          "required": [
+            "ok",
+            "engine",
+            "registeredExchanges"
+          ],
+          "properties": {
+            "ok": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "executionLogs": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "lifecycle": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "version": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "engine": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "engineVersion": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "contractVersion": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "pid": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "host": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "port": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "serviceEnabled": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "liveExecutionEnabled": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "mode": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "riskApprovalRequired": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "firewallForwardRequired": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "portfolioFeed": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "communicationProtocol": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "registeredExchanges": {
+              "type": [
+                "array",
+                "null"
+              ]
+            },
+            "registeredExchangeCount": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "lastExecution": {},
+            "requestCount": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "uptimeSec": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "schema": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "timestamp": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "state": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "executionAllowed": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "inFlightRequests": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "lastLatencyMs": {},
+            "lastError": {},
+            "brokers": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "brokerConnectivityMeasured": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "orders": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "cp1": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "storage": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "stop": {
+              "type": [
+                "object",
+                "null"
+              ]
+            }
+          }
+        },
+        "contractVersion": "2.6.0-dev.4"
       },
       {
         "name": "trading.capabilities",
@@ -23,7 +241,28 @@
           "allowed": [
             "exchange"
           ]
-        }
+        },
+        "input": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        },
+        "output": {
+          "type": "object",
+          "required": [
+            "exchanges"
+          ],
+          "properties": {
+            "exchanges": {
+              "type": [
+                "object",
+                "null"
+              ]
+            }
+          }
+        },
+        "contractVersion": "2.6.0-dev.4"
       },
       {
         "name": "trading.account.positions",

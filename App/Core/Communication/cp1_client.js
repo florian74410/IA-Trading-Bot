@@ -8,7 +8,7 @@ var http=require('http'),CP=require('./communication_protocol_v1');
 
 function Client(opt){
  opt=opt||{};
- this.root=opt.root;
+ this.root=opt.root;this.serviceEnv=opt.serviceEnv||process.env;
  this.host='127.0.0.1';
  this.port=+opt.routerPort||+(process.env.ROUTER_PORT||8021);
  this.timeout=Math.max(500,Math.min(150000,+opt.timeout||8000));
@@ -21,7 +21,7 @@ Client.prototype._post=function(pathname,obj,opt,cb){
  var raw;try{raw=Buffer.from(JSON.stringify(obj||{}));}catch(e){return cb(e);}
  var done=false,self=this,limit=Math.max(65536,Math.min(8*1024*1024,+opt.maxBytes||self.maxBytes));
  var q=http.request({host:self.host,port:self.port,path:pathname,method:'POST',timeout:+opt.timeout||self.timeout,headers:{
-   Accept:'application/json','Content-Type':'application/json','Content-Length':raw.length,'X-IATB-CP-Token':token
+   Accept:'application/json','Content-Type':'application/json','Content-Length':raw.length,'X-IATB-CP-Token':token,...(self.serviceEnv.IATB_CP1_CONTROL_ROOT?require('../FunctionRegistry/Control/identity').headers(obj||{},self.serviceEnv):{})
  }},function(r){
    var a=[],n=0;
    r.on('data',function(c){n+=c.length;if(n<=limit)a.push(c);});

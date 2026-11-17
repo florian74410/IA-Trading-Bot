@@ -15,7 +15,59 @@
         "name": "risk.list_capabilities",
         "arguments": {
           "allowed": []
-        }
+        },
+        "input": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        },
+        "output": {
+          "type": "object",
+          "required": [
+            "schema",
+            "capabilities"
+          ],
+          "properties": {
+            "schema": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "engine": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "protocol": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "capabilities": {
+              "type": [
+                "array",
+                "null"
+              ]
+            },
+            "events": {
+              "type": [
+                "array",
+                "null"
+              ]
+            },
+            "analyticalOnly": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            }
+          }
+        },
+        "contractVersion": "2.6.0-dev.4"
       },
       {
         "name": "risk.position.analyze",
@@ -123,7 +175,137 @@
             "intent",
             "context"
           ]
-        }
+        },
+        "input": {
+          "type": "object",
+          "required": [
+            "intent",
+            "context"
+          ],
+          "properties": {
+            "intent": {
+              "type": "object",
+              "properties": {
+                "quantity": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "size": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "entryPrice": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "limitPrice": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "stopLoss": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "side": {
+                  "enum": [
+                    "BUY",
+                    "SELL"
+                  ]
+                },
+                "action": {
+                  "enum": [
+                    "BUY",
+                    "SELL"
+                  ]
+                }
+              },
+              "additionalProperties": false
+            },
+            "context": {
+              "type": "object",
+              "properties": {
+                "equity": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "feeRate": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 0.1
+                },
+                "slippageRate": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 0.2
+                },
+                "quantityStep": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        "output": {
+          "type": "object",
+          "required": [
+            "schema",
+            "status",
+            "executable",
+            "reasons",
+            "metrics"
+          ],
+          "properties": {
+            "schema": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "status": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "executable": {
+              "const": false
+            },
+            "reasons": {
+              "type": [
+                "array",
+                "null"
+              ]
+            },
+            "metrics": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "proposed": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "disabledModules": {
+              "type": [
+                "array",
+                "null"
+              ]
+            },
+            "supervisor": {
+              "type": [
+                "object",
+                "null"
+              ]
+            }
+          }
+        },
+        "contractVersion": "2.6.0-dev.4"
       },
       {
         "name": "risk.r2.evaluate",
@@ -131,7 +313,93 @@
           "allowed": [
             "snapshot"
           ]
-        }
+        },
+        "input": {
+          "type": "object",
+          "required": [
+            "snapshot"
+          ],
+          "properties": {
+            "snapshot": {
+              "type": "object",
+              "properties": {
+                "equity": {
+                  "type": "number"
+                },
+                "peakEquity": {
+                  "type": "number"
+                },
+                "asOf": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "reconciled": {
+                  "type": "boolean"
+                },
+                "positions": {
+                  "type": "array",
+                  "maxItems": 32,
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        "output": {
+          "type": "object",
+          "required": [
+            "schema",
+            "status",
+            "executable",
+            "alerts"
+          ],
+          "properties": {
+            "schema": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "status": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "summary": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "alerts": {
+              "type": [
+                "array",
+                "null"
+              ]
+            },
+            "policy": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "executable": {
+              "const": false
+            },
+            "supervisor": {
+              "type": [
+                "object",
+                "null"
+              ]
+            }
+          }
+        },
+        "contractVersion": "2.6.0-dev.4"
       },
       {
         "name": "risk.r2.monitor",
@@ -160,7 +428,267 @@
             "symbol",
             "correlation_id"
           ]
-        }
+        },
+        "input": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "portfolio_id",
+            "symbol",
+            "correlation_id"
+          ],
+          "properties": {
+            "portfolio_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 96
+            },
+            "symbol": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 96
+            },
+            "correlation_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 96
+            },
+            "timeframe": {
+              "enum": [
+                "1m",
+                "5m",
+                "15m",
+                "30m",
+                "1h",
+                "4h",
+                "1d"
+              ]
+            },
+            "context": {
+              "enum": [
+                "analysis",
+                "native_scalping"
+              ]
+            },
+            "intent": {
+              "type": "object",
+              "description": "Proposed intent only; fee, market, portfolio and policy inputs are never trusted from callers."
+            },
+            "strategy_type": {
+              "type": "string",
+              "maxLength": 64
+            },
+            "strategy_parameters": {
+              "type": "object"
+            },
+            "capital": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "horizon": {
+              "type": "string",
+              "description": "Must match timeframe; metrics are one-period horizon."
+            }
+          }
+        },
+        "output": {
+          "type": "object",
+          "required": [
+            "schema",
+            "schema_version",
+            "snapshot_id",
+            "timestamp_utc",
+            "portfolio_id",
+            "symbol",
+            "context",
+            "timeframe",
+            "correlation_id",
+            "status",
+            "decision",
+            "scores",
+            "metrics",
+            "constraints",
+            "reasons",
+            "warnings",
+            "missing_metrics",
+            "data_quality",
+            "data_reference",
+            "execution_authorization",
+            "valid_until_utc",
+            "calculation_time_ms"
+          ],
+          "properties": {
+            "schema": {
+              "const": "risk.snapshot/2.0"
+            },
+            "schema_version": {
+              "const": "2.0"
+            },
+            "snapshot_id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "timestamp_utc": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "portfolio_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 96
+            },
+            "symbol": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 96
+            },
+            "context": {
+              "enum": [
+                "analysis",
+                "native_scalping"
+              ]
+            },
+            "timeframe": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 96
+            },
+            "correlation_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 96
+            },
+            "status": {
+              "enum": [
+                "COMPLETE",
+                "PARTIAL",
+                "INCOMPLETE",
+                "EXPIRED"
+              ]
+            },
+            "decision": {
+              "enum": [
+                "ALLOW",
+                "ALLOW_WITH_LIMITS",
+                "REVIEW",
+                "BLOCK",
+                "UNAVAILABLE"
+              ]
+            },
+            "execution_authorization": {
+              "const": false
+            },
+            "valid_until_utc": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "scores": {
+              "type": "object",
+              "required": [
+                "market",
+                "portfolio",
+                "volatility",
+                "liquidity",
+                "execution",
+                "concentration",
+                "overall"
+              ],
+              "properties": {
+                "market": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "portfolio": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "volatility": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "liquidity": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "execution": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "concentration": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "overall": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "minimum": 0,
+                  "maximum": 100
+                }
+              }
+            },
+            "metrics": {
+              "type": "object"
+            },
+            "constraints": {
+              "type": "object"
+            },
+            "reasons": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "warnings": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "missing_metrics": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "data_quality": {
+              "type": "object"
+            },
+            "data_reference": {
+              "type": "string"
+            },
+            "calculation_time_ms": {
+              "type": "number",
+              "minimum": 0
+            }
+          }
+        },
+        "contractVersion": "2.6.0-dev.4"
       },
       {
         "name": "risk.snapshot.get",
@@ -174,7 +702,225 @@
             "snapshot_id",
             "portfolio_id"
           ]
-        }
+        },
+        "input": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "snapshot_id",
+            "portfolio_id"
+          ],
+          "properties": {
+            "snapshot_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 96
+            },
+            "portfolio_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 96
+            }
+          }
+        },
+        "output": {
+          "type": "object",
+          "required": [
+            "schema",
+            "schema_version",
+            "snapshot_id",
+            "timestamp_utc",
+            "portfolio_id",
+            "symbol",
+            "context",
+            "timeframe",
+            "correlation_id",
+            "status",
+            "decision",
+            "scores",
+            "metrics",
+            "constraints",
+            "reasons",
+            "warnings",
+            "missing_metrics",
+            "data_quality",
+            "data_reference",
+            "execution_authorization",
+            "valid_until_utc",
+            "calculation_time_ms"
+          ],
+          "properties": {
+            "schema": {
+              "const": "risk.snapshot/2.0"
+            },
+            "schema_version": {
+              "const": "2.0"
+            },
+            "snapshot_id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "timestamp_utc": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "portfolio_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 96
+            },
+            "symbol": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 96
+            },
+            "context": {
+              "enum": [
+                "analysis",
+                "native_scalping"
+              ]
+            },
+            "timeframe": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 96
+            },
+            "correlation_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 96
+            },
+            "status": {
+              "enum": [
+                "COMPLETE",
+                "PARTIAL",
+                "INCOMPLETE",
+                "EXPIRED"
+              ]
+            },
+            "decision": {
+              "enum": [
+                "ALLOW",
+                "ALLOW_WITH_LIMITS",
+                "REVIEW",
+                "BLOCK",
+                "UNAVAILABLE"
+              ]
+            },
+            "execution_authorization": {
+              "const": false
+            },
+            "valid_until_utc": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "scores": {
+              "type": "object",
+              "required": [
+                "market",
+                "portfolio",
+                "volatility",
+                "liquidity",
+                "execution",
+                "concentration",
+                "overall"
+              ],
+              "properties": {
+                "market": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "portfolio": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "volatility": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "liquidity": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "execution": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "concentration": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "overall": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "minimum": 0,
+                  "maximum": 100
+                }
+              }
+            },
+            "metrics": {
+              "type": "object"
+            },
+            "constraints": {
+              "type": "object"
+            },
+            "reasons": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "warnings": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "missing_metrics": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "data_quality": {
+              "type": "object"
+            },
+            "data_reference": {
+              "type": "string"
+            },
+            "calculation_time_ms": {
+              "type": "number",
+              "minimum": 0
+            }
+          }
+        },
+        "contractVersion": "2.6.0-dev.4"
       },
       {
         "name": "risk.constraints.get",
@@ -182,7 +928,48 @@
         "arguments": {
           "allowed": [],
           "required": []
-        }
+        },
+        "input": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        },
+        "output": {
+          "type": "object",
+          "required": [
+            "schema",
+            "policy",
+            "modifiable_by_agent"
+          ],
+          "properties": {
+            "schema": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "policy": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "provisional_calibration": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "modifiable_by_agent": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            }
+          }
+        },
+        "contractVersion": "2.6.0-dev.4"
       },
       {
         "name": "risk.status",
@@ -190,7 +977,60 @@
         "arguments": {
           "allowed": [],
           "required": []
-        }
+        },
+        "input": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        },
+        "output": {
+          "type": "object",
+          "required": [
+            "schema",
+            "active",
+            "stored"
+          ],
+          "properties": {
+            "schema": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "active": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "stored": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "max_concurrency": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "workers": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "execution_authorization": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            }
+          }
+        },
+        "contractVersion": "2.6.0-dev.4"
       },
       {
         "name": "risk.user.request",

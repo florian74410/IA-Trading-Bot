@@ -1,0 +1,9 @@
+{
+  "artifact": "artifacts/IA-TB-2.6.0-dev.4-debug-source.zip",
+  "sha256": "19ac3f781267bd1d11938845bddb5a69fc574880de71fc40e2539d269cf59ff1",
+  "files": 1011,
+  "version": "2.6.0-dev.4",
+  "reproducible": true,
+  "second_build_sha256": "19ac3f781267bd1d11938845bddb5a69fc574880de71fc40e2539d269cf59ff1",
+  "deployment": "NONE"
+}

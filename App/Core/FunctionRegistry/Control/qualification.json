@@ -1,0 +1,180 @@
+{
+  "schema": "cp1.qualification/1.0",
+  "tests": [
+    "Core/FunctionRegistry/Tests/control_http.integration.test.js",
+    "Portfolio/Tests/okx_pipeline.integration.test.js",
+    "tests/supervisor-cognitive-runtime.test.js",
+    "tests/supervisor-owner-cognitive-auth.test.js"
+  ],
+  "engines": {
+    "marketdata": {
+      "commands": {
+        "marketdata.candles": {
+          "implementation_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+          "contract_sha256": "2f625354acbd9427ad9bfb74d1928f36ae453810cf3ef584a7e8c5ec91289993"
+        },
+        "marketdata.microstructure.snapshot": {
+          "implementation_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+          "contract_sha256": "695f5ec1b3894dac43b7333d6d608da597c33285c8291db65be5cd8cb5e6912b"
+        },
+        "marketdata.health": {
+          "implementation_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+          "contract_sha256": "0e227f42bc20d47b2b9a88b17493acf70b7733f316cc568313b89a32ff9ac0bc"
+        },
+        "marketdata.providers": {
+          "implementation_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+          "contract_sha256": "9bdfc1cfe71fa4da26636556024c1e6adbe111073d936e27d40e19f410b4ea3e"
+        },
+        "marketdata.financial.capabilities": {
+          "implementation_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+          "contract_sha256": "4fc95c596ba7b04f10bbdb6b5e5d5128ca43f6eca346e7498fa119ecbd7af97e"
+        }
+      }
+    },
+    "indicator": {
+      "commands": {
+        "indicator.list_indicators": {
+          "implementation_sha256": "dab54601e6177b1be05f6e3e1f0566edffb0ebf1eed834a274ba95906fbb8cf9",
+          "contract_sha256": "5313a6a709fdbd8b3751d90674c8c151eda597669da3bb4dd824f284c915e33e"
+        },
+        "indicator.language.info": {
+          "implementation_sha256": "dab54601e6177b1be05f6e3e1f0566edffb0ebf1eed834a274ba95906fbb8cf9",
+          "contract_sha256": "ce3e24aeeada3e35035325d8b20cc7a40494d2407b1b466ed1dd1aaf824f5bb4"
+        },
+        "indicator.compute_batch_data": {
+          "implementation_sha256": "dab54601e6177b1be05f6e3e1f0566edffb0ebf1eed834a274ba95906fbb8cf9",
+          "contract_sha256": "0cc25b32e705b08578c645710940561091c2399ba00802c16e57a9f738f897cb"
+        }
+      }
+    },
+    "fundamental": {
+      "commands": {
+        "fundamental.health": {
+          "implementation_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+          "contract_sha256": "a0336a7240c4f9f5b8e1c8b9b8d047b1d4dfbb868b529d9a5425ae48c15510a5"
+        },
+        "fundamental.summary": {
+          "implementation_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+          "contract_sha256": "c206c3cc1d104074d43fa91ab41ce7bb7c9e03cdb8ce33f512b244afd7b78595"
+        }
+      }
+    },
+    "liquidity": {
+      "commands": {
+        "liquidity.health": {
+          "implementation_sha256": "266962aa83a44cb53215618b78e43b739ffacabb9417412efa28bc537468cc68",
+          "contract_sha256": "68f13ea67811ba0dc197ee140a3976e8ef4c5d3011dafd6b06f2096d2170f463"
+        },
+        "liquidity.capabilities": {
+          "implementation_sha256": "266962aa83a44cb53215618b78e43b739ffacabb9417412efa28bc537468cc68",
+          "contract_sha256": "e6fc9fa0aaa671c334cd7474cfbbf4c8fa2b736f6eb84a188daf7e743e5c19d2"
+        }
+      }
+    },
+    "strategy": {
+      "commands": {
+        "strategy.health": {
+          "implementation_sha256": "272d8b8c0d5d1139c0b52d8f6f47783b30dadbbc3ffbe7ab5f520ab9ce65ee0b",
+          "contract_sha256": "c50d756a970561175e53150765a710285d4b30b2456bb83c6e794ae6fc4b2ba2"
+        },
+        "strategy.catalog": {
+          "implementation_sha256": "272d8b8c0d5d1139c0b52d8f6f47783b30dadbbc3ffbe7ab5f520ab9ce65ee0b",
+          "contract_sha256": "8bad56333849b812be7ca9e64bf65813849cedc680411061f0c6fa0f01d7ae4b"
+        },
+        "strategy.dry_run": {
+          "implementation_sha256": "272d8b8c0d5d1139c0b52d8f6f47783b30dadbbc3ffbe7ab5f520ab9ce65ee0b",
+          "contract_sha256": "15f84d77ad02b1a5a96baef4ed7fa3a3621958127967608f3ae6c401ae9b78aa"
+        }
+      }
+    },
+    "risk": {
+      "commands": {
+        "risk.snapshot.create": {
+          "implementation_sha256": "a1a58fb63273e6a9f0a0bf646a05f067a9c5cc2a48f383532ba4cd88a489a373",
+          "contract_sha256": "d2c96307b33832f494a43d05e7211b7774c5b7526c3b157d72830741cddd4122"
+        },
+        "risk.snapshot.get": {
+          "implementation_sha256": "a1a58fb63273e6a9f0a0bf646a05f067a9c5cc2a48f383532ba4cd88a489a373",
+          "contract_sha256": "39841e2b0c0689d08a85bd866d99fc202b683f3dd25ec518baa7aa4190eb4cd6"
+        },
+        "risk.list_capabilities": {
+          "implementation_sha256": "a1a58fb63273e6a9f0a0bf646a05f067a9c5cc2a48f383532ba4cd88a489a373",
+          "contract_sha256": "0e98fe2c8396b4e5e252558f3aee8ecdcfde755e4406eff5f858caed8e1424a0"
+        },
+        "risk.constraints.get": {
+          "implementation_sha256": "a1a58fb63273e6a9f0a0bf646a05f067a9c5cc2a48f383532ba4cd88a489a373",
+          "contract_sha256": "4e17d2fd224a8ffb8bb36726ec01511dae930d8de9536c36899e4f69ea6dc245"
+        },
+        "risk.status": {
+          "implementation_sha256": "a1a58fb63273e6a9f0a0bf646a05f067a9c5cc2a48f383532ba4cd88a489a373",
+          "contract_sha256": "b3eecb078062c75a72cfe80fc9b25ee6efc63d3e06bb261e0e86ee0cb6700c27"
+        },
+        "risk.r1.evaluate": {
+          "implementation_sha256": "a1a58fb63273e6a9f0a0bf646a05f067a9c5cc2a48f383532ba4cd88a489a373",
+          "contract_sha256": "5afb918fe869bb3cffdd463a94f12d5c5720d3689f30e9f2f8affb837a64510c"
+        },
+        "risk.r2.evaluate": {
+          "implementation_sha256": "a1a58fb63273e6a9f0a0bf646a05f067a9c5cc2a48f383532ba4cd88a489a373",
+          "contract_sha256": "6046fbaa3ad097d4684bbc47ae2074f5b19ce42733e91ac117ba617d192cc8b3"
+        }
+      }
+    },
+    "portfolio": {
+      "commands": {
+        "portfolio.health": {
+          "implementation_sha256": "5fc715be09a6803cd21a709226fdb008b906ebcb3fc56b2c5f1e4e7990a9cee0",
+          "contract_sha256": "f20ab3efb766af42b772d185d098fc9bc62946df1ca6189f88a90c2488e44dfa"
+        },
+        "portfolio.account.snapshot": {
+          "implementation_sha256": "5fc715be09a6803cd21a709226fdb008b906ebcb3fc56b2c5f1e4e7990a9cee0",
+          "contract_sha256": "91ddda11d459efb3b202641106148f47a877226fc82e9b5c3017506c77f60f0e"
+        }
+      }
+    },
+    "firewall": {
+      "commands": {
+        "firewall.status": {
+          "implementation_sha256": "d32d195a10e5c3f7d3d9e13bd37d2abe018dfb4c919575d2e08d30e40992ed95",
+          "contract_sha256": "11b866db270c560eb869095299c2f5f2644a72dd7efddb9bac13b4f744727206"
+        }
+      }
+    },
+    "trading": {
+      "commands": {
+        "trading.health": {
+          "implementation_sha256": "1be6d39de559bc63e3c88166b1b4fbf000a6fb9d89e9ed0993a34cffc06a3797",
+          "contract_sha256": "b23ab46387711ec3e05b224254c4c83a3712cd22d3d02060e8105dc5926fec7c"
+        },
+        "trading.capabilities": {
+          "implementation_sha256": "1be6d39de559bc63e3c88166b1b4fbf000a6fb9d89e9ed0993a34cffc06a3797",
+          "contract_sha256": "3b95beff89041877a3ff67ad91141f021ed94b57278dd199c5055925db10281d"
+        }
+      }
+    },
+    "supervisor": {
+      "commands": {
+        "supervisor.status": {
+          "implementation_sha256": "1ee51d80b8d5233a38473b99e685c743d280eb49755600ef81249094f954b32b",
+          "contract_sha256": "1b81fe1ff246d009a1f7e84443e1286a9b9cbc371fe87fcff6363d5d6dea1a68"
+        }
+      },
+      "native_verified": {
+        "supervisor.cognitive.reason": {
+          "implementation_sha256": "1ee51d80b8d5233a38473b99e685c743d280eb49755600ef81249094f954b32b"
+        },
+        "supervisor.cognitive.status": {
+          "implementation_sha256": "1ee51d80b8d5233a38473b99e685c743d280eb49755600ef81249094f954b32b"
+        },
+        "supervisor.cognitive.history": {
+          "implementation_sha256": "1ee51d80b8d5233a38473b99e685c743d280eb49755600ef81249094f954b32b"
+        },
+        "supervisor.llm.models": {
+          "implementation_sha256": "1ee51d80b8d5233a38473b99e685c743d280eb49755600ef81249094f954b32b"
+        },
+        "supervisor.llm.select": {
+          "implementation_sha256": "1ee51d80b8d5233a38473b99e685c743d280eb49755600ef81249094f954b32b"
+        }
+      }
+    }
+  }
+}

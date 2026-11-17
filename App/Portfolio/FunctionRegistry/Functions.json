@@ -1,9 +1,10 @@
 {
   "schema_version": "2.6.0",
   "engine_id": "portfolio",
-  "engine_version": "2.6.0-dev.3",
+  "engine_version": "2.6.0-dev.4",
   "transport": "CP/1",
-  "source_protocol_registry": "App/Core/Communication/ProtocolRegistry/portfolio.json",
+  "source_protocol_registry": "Core/Communication/ProtocolRegistry/portfolio.json",
+  "source_sha256": "a141336e3613cbe6a9ec45c34420ac73f0177f65abbad478f8da69930c7cf047",
   "functions": [
     {
       "id": "portfolio.health",
@@ -11,29 +12,120 @@
       "type": "READ",
       "risk_level": "LOW",
       "hard_deny": false,
-      "description": "Commande CP/1 portfolio.health. La description du handler doit être validée.",
+      "description": "Read or evaluate portfolio.health from portfolio. No financial side effect.",
       "input": {
         "type": "object",
-        "required": [],
         "properties": {},
+        "required": [],
         "additionalProperties": false
       },
       "output": {
-        "type": "unknown",
-        "description": "Schéma à confirmer dans le handler réel"
+        "type": "object",
+        "required": [
+          "ok"
+        ],
+        "properties": {
+          "ok": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "version": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "pid": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "host": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "port": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "uptimeSec": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "communicationProtocol": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "storage": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "settings": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "eventsRecorded": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "lastTradingSync": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "lastSyncError": {},
+          "lastPriceSync": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "lastPriceSyncError": {}
+        }
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/portfolio.json",
-      "verified_handler": false,
+      "source": "Portfolio/Engine/portfolio_service.js",
+      "verified_handler": true,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Authenticated service identity, authenticated agent session and effective per-command permission.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "5fc715be09a6803cd21a709226fdb008b906ebcb3fc56b2c5f1e4e7990a9cee0",
+      "availability_reason": null,
+      "timeout_ms": 5000,
+      "agent_qualified": true
     },
     {
       "id": "portfolio.overview",
       "engine": "portfolio",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Aggregated read-only Portfolio UI overview through CP/1.",
       "input": {
         "type": "object",
@@ -46,17 +138,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/portfolio.json",
+      "source": "Portfolio/Engine/portfolio_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "5fc715be09a6803cd21a709226fdb008b906ebcb3fc56b2c5f1e4e7990a9cee0",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "portfolio.settings.get",
       "engine": "portfolio",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Read Portfolio Engine runtime settings.",
       "input": {
         "type": "object",
@@ -69,17 +168,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/portfolio.json",
+      "source": "Portfolio/Engine/portfolio_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "5fc715be09a6803cd21a709226fdb008b906ebcb3fc56b2c5f1e4e7990a9cee0",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "portfolio.settings.set",
       "engine": "portfolio",
       "type": "MUTATION",
       "risk_level": "HIGH",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Update Portfolio Engine runtime settings through CP/1.",
       "input": {
         "type": "object",
@@ -121,17 +227,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/portfolio.json",
+      "source": "Portfolio/Engine/portfolio_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": true
+      "side_effects": true,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "5fc715be09a6803cd21a709226fdb008b906ebcb3fc56b2c5f1e4e7990a9cee0",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "portfolio.event.record",
       "engine": "portfolio",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 portfolio.event.record. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -249,17 +362,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/portfolio.json",
+      "source": "Portfolio/Engine/portfolio_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "5fc715be09a6803cd21a709226fdb008b906ebcb3fc56b2c5f1e4e7990a9cee0",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "portfolio.balance.record",
       "engine": "portfolio",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 portfolio.balance.record. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -297,17 +417,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/portfolio.json",
+      "source": "Portfolio/Engine/portfolio_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "5fc715be09a6803cd21a709226fdb008b906ebcb3fc56b2c5f1e4e7990a9cee0",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "portfolio.snapshot",
       "engine": "portfolio",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 portfolio.snapshot. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -325,17 +452,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/portfolio.json",
+      "source": "Portfolio/Engine/portfolio_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "5fc715be09a6803cd21a709226fdb008b906ebcb3fc56b2c5f1e4e7990a9cee0",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "portfolio.positions",
       "engine": "portfolio",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 portfolio.positions. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -348,17 +482,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/portfolio.json",
+      "source": "Portfolio/Engine/portfolio_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "5fc715be09a6803cd21a709226fdb008b906ebcb3fc56b2c5f1e4e7990a9cee0",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "portfolio.balances",
       "engine": "portfolio",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 portfolio.balances. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -371,17 +512,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/portfolio.json",
+      "source": "Portfolio/Engine/portfolio_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "5fc715be09a6803cd21a709226fdb008b906ebcb3fc56b2c5f1e4e7990a9cee0",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "portfolio.history",
       "engine": "portfolio",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 portfolio.history. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -399,17 +547,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/portfolio.json",
+      "source": "Portfolio/Engine/portfolio_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "5fc715be09a6803cd21a709226fdb008b906ebcb3fc56b2c5f1e4e7990a9cee0",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "portfolio.statistics",
       "engine": "portfolio",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 portfolio.statistics. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -422,17 +577,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/portfolio.json",
+      "source": "Portfolio/Engine/portfolio_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "5fc715be09a6803cd21a709226fdb008b906ebcb3fc56b2c5f1e4e7990a9cee0",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "portfolio.events",
       "engine": "portfolio",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 portfolio.events. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -454,17 +616,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/portfolio.json",
+      "source": "Portfolio/Engine/portfolio_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "5fc715be09a6803cd21a709226fdb008b906ebcb3fc56b2c5f1e4e7990a9cee0",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "portfolio.sync",
       "engine": "portfolio",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 portfolio.sync. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -482,17 +651,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/portfolio.json",
+      "source": "Portfolio/Engine/portfolio_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "5fc715be09a6803cd21a709226fdb008b906ebcb3fc56b2c5f1e4e7990a9cee0",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "portfolio.cost.summary",
       "engine": "portfolio",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 portfolio.cost.summary. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -522,17 +698,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/portfolio.json",
+      "source": "Portfolio/Engine/portfolio_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "5fc715be09a6803cd21a709226fdb008b906ebcb3fc56b2c5f1e4e7990a9cee0",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "portfolio.cost.history",
       "engine": "portfolio",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 portfolio.cost.history. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -562,17 +745,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/portfolio.json",
+      "source": "Portfolio/Engine/portfolio_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "5fc715be09a6803cd21a709226fdb008b906ebcb3fc56b2c5f1e4e7990a9cee0",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "portfolio.position.health",
       "engine": "portfolio",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 portfolio.position.health. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -602,17 +792,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/portfolio.json",
+      "source": "Portfolio/Engine/portfolio_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "5fc715be09a6803cd21a709226fdb008b906ebcb3fc56b2c5f1e4e7990a9cee0",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "portfolio.trades",
       "engine": "portfolio",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 portfolio.trades. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -630,17 +827,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/portfolio.json",
+      "source": "Portfolio/Engine/portfolio_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "5fc715be09a6803cd21a709226fdb008b906ebcb3fc56b2c5f1e4e7990a9cee0",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "portfolio.trade.detail",
       "engine": "portfolio",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 portfolio.trade.detail. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -662,17 +866,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/portfolio.json",
+      "source": "Portfolio/Engine/portfolio_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "5fc715be09a6803cd21a709226fdb008b906ebcb3fc56b2c5f1e4e7990a9cee0",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "portfolio.user.request",
       "engine": "portfolio",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Core-bound owner capability with live session revalidation; no browser identity authority",
       "input": {
         "type": "object",
@@ -697,37 +908,66 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/portfolio.json",
+      "source": "Portfolio/Engine/portfolio_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "5fc715be09a6803cd21a709226fdb008b906ebcb3fc56b2c5f1e4e7990a9cee0",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "portfolio.account.snapshot",
       "engine": "portfolio",
       "type": "READ",
       "risk_level": "MEDIUM",
-      "hard_deny": true,
-      "description": "Owner-scoped profile read, accepted only through the authenticated Core owner bridge.",
+      "hard_deny": false,
+      "description": "Read or evaluate portfolio.account.snapshot from portfolio. No financial side effect.",
       "input": {
         "type": "object",
-        "required": [],
         "properties": {
+          "account": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 40
+          },
           "exchange": {
             "const": "OKX"
           },
-          "account": {
-            "type": "string"
-          },
           "symbol": {
-            "type": "string"
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 40
           }
         },
         "additionalProperties": false
       },
       "output": {
         "type": "object",
-        "description": "Owner-scoped portfolio.account/1.0 snapshot, balances, USD valuation, available quote and explicit risk quality."
+        "required": [
+          "snapshot"
+        ],
+        "properties": {
+          "snapshot": {
+            "type": "object",
+            "required": [
+              "equity",
+              "analysis_mode"
+            ],
+            "properties": {
+              "equity": {
+                "type": "number"
+              },
+              "analysis_mode": {
+                "const": "OKX_ACCOUNT"
+              }
+            }
+          }
+        }
       },
       "errors": [
         "OWNER_OPERATION_DENIED",
@@ -736,16 +976,21 @@
         "OKX_ACCOUNT_READ_REJECTED",
         "OKX_ACCOUNT_RATE_LIMITED"
       ],
-      "source": "App/Portfolio/Engine/okx_account.js",
+      "source": "Portfolio/Engine/portfolio_service.js",
       "verified_handler": true,
       "default_privilege": "DENY",
       "side_effects": false,
       "examples": [
         {}
-      ]
+      ],
+      "transport": "OWNER",
+      "authorization": "Core-issued owner delegation, authenticated agent session and effective per-command permission.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "5fc715be09a6803cd21a709226fdb008b906ebcb3fc56b2c5f1e4e7990a9cee0",
+      "availability_reason": null,
+      "timeout_ms": 5000,
+      "agent_qualified": true
     }
   ],
-  "verification_status": "PROTOCOL_DECLARED_UNVERIFIED_HANDLERS",
-  "source_sha256": "41543dfd1e602960c7f375f3f8d0face7c5e49a381b0c2724563f05033690fcb",
-  "revision_hash": "f114d0dd1c90ba43c888b04d875a59f958542a66a1d8b7aa50351f15a8605564"
+  "revision_hash": "e33f7259d78ff4e9546e83f5dfbe517364e46099713bdd8b7377ffea5bca14d7"
 }

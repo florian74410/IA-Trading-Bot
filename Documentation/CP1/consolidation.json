@@ -1,0 +1,391 @@
+{
+  "schema": "iatb.consolidation/1.0",
+  "base": "e115285a8d0484b139ecb706d2361193eda30f2d",
+  "previous_version": "2.6.0-dev.3",
+  "version": "2.6.0-dev.4",
+  "method": "Selective functional integration; no global branch merge.",
+  "branches": [
+    {
+      "branch": "feature/risk-engine-parallel-snapshots",
+      "head": "e115285a8d0484b139ecb706d2361193eda30f2d",
+      "merge_base": "e115285a8d0484b139ecb706d2361193eda30f2d",
+      "absent_commits": []
+    },
+    {
+      "branch": "supervisor/iatb_v2.6.0.2",
+      "head": "a4c86e6cae11eca04d90765255021dcccfd4f2cb",
+      "merge_base": "a4c86e6cae11eca04d90765255021dcccfd4f2cb",
+      "absent_commits": []
+    },
+    {
+      "branch": "feature/2.6-function-registry",
+      "head": "05e5d42b3dee73785e6d4e3965c7bf88a4838396",
+      "merge_base": "05e5d42b3dee73785e6d4e3965c7bf88a4838396",
+      "absent_commits": []
+    },
+    {
+      "branch": "feature/2.6.0-dev.2-cp1-sync",
+      "head": "ffa14b937c0fc35fe9e1bb1402611f9e6e24e8e2",
+      "merge_base": "ba709915179a8ae8b0d926bbe7b1a565ea4e46aa",
+      "absent_commits": [
+        {
+          "commit": "ffa14b937c0fc35fe9e1bb1402611f9e6e24e8e2",
+          "subject": "chore(2.6): version bump to 2.6.0-dev.2",
+          "files": [
+            "App/package.json"
+          ],
+          "decision": "EXCLUDED_OLD_VERSION",
+          "reason": "Versions dev.2 superseded by dev.4; preserve Risk dev.3 changes.",
+          "tests": [
+            "control_http.integration.test.js",
+            "control_runtime.test.js",
+            "SupervisorSimulator/scenarios/engine-read.json"
+          ]
+        },
+        {
+          "commit": "18fa875b819cee5a6689379d76f20584a593391f",
+          "subject": "chore(2.6): version bump to 2.6.0-dev.2",
+          "files": [
+            "App/VERSION"
+          ],
+          "decision": "EXCLUDED_OLD_VERSION",
+          "reason": "Versions dev.2 superseded by dev.4; preserve Risk dev.3 changes.",
+          "tests": [
+            "control_http.integration.test.js",
+            "control_runtime.test.js",
+            "SupervisorSimulator/scenarios/engine-read.json"
+          ]
+        },
+        {
+          "commit": "614675168106373e693ed6165866c8bdde8886fa",
+          "subject": "test/docs(2.6-dev2): Core CP1 reconciliation tests and deployment boundaries",
+          "files": [
+            "Documentation/Versions/2.6.0-dev.2-CP1-SYNC.md"
+          ],
+          "decision": "REPLACED_DOCUMENTATION",
+          "reason": "Current consolidation, simulator, real-service tests and deployment boundaries replace earlier prototype notes.",
+          "tests": [
+            "control_http.integration.test.js",
+            "control_runtime.test.js",
+            "SupervisorSimulator/scenarios/engine-read.json"
+          ]
+        },
+        {
+          "commit": "d72cf73d4b75d552d53cb32207194a4ac0506208",
+          "subject": "test/docs(2.6-dev2): Core CP1 reconciliation tests and deployment boundaries",
+          "files": [
+            "App/Core/FunctionRegistry/Tests/test_sync_v26.js"
+          ],
+          "decision": "REPLACED_DOCUMENTATION",
+          "reason": "Current consolidation, simulator, real-service tests and deployment boundaries replace earlier prototype notes.",
+          "tests": [
+            "control_http.integration.test.js",
+            "control_runtime.test.js",
+            "SupervisorSimulator/scenarios/engine-read.json"
+          ]
+        },
+        {
+          "commit": "37e68fd44f44fece911b3478e611abc54e4179f9",
+          "subject": "feat(2.6-dev2): opt-in Core CP1 registry sync startup",
+          "files": [
+            "App/Core/Server/server.js"
+          ],
+          "decision": "INTEGRATED_EQUIVALENT_WITH_STRONGER_IDENTITY",
+          "reason": "Core-owned persistent ControlRuntime, signed Engine push/pull, shared startup adapters and 5-second heartbeat implement reconciliation/change recovery; old shared-token relay is excluded.",
+          "tests": [
+            "control_http.integration.test.js",
+            "control_runtime.test.js",
+            "SupervisorSimulator/scenarios/engine-read.json"
+          ]
+        },
+        {
+          "commit": "3be6a5c5251001cc7a340b66b5bcccf1ee6a109c",
+          "subject": "feat(2.6-dev2): Core CP1-authenticated registry reconciliation loop",
+          "files": [
+            "App/Core/FunctionRegistry/sync_service.js"
+          ],
+          "decision": "INTEGRATED_EQUIVALENT_WITH_STRONGER_IDENTITY",
+          "reason": "Core-owned persistent ControlRuntime, signed Engine push/pull, shared startup adapters and 5-second heartbeat implement reconciliation/change recovery; old shared-token relay is excluded.",
+          "tests": [
+            "control_http.integration.test.js",
+            "control_runtime.test.js",
+            "SupervisorSimulator/scenarios/engine-read.json"
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "feature/2.6.0-dev.2-engine-router-core",
+      "head": "7a2080621051ddfd0fb7cdc080c06152b7c67a25",
+      "merge_base": "ba709915179a8ae8b0d926bbe7b1a565ea4e46aa",
+      "absent_commits": [
+        {
+          "commit": "7a2080621051ddfd0fb7cdc080c06152b7c67a25",
+          "subject": "docs(dev2): describe engine notification and Core change cursor accurately",
+          "files": [
+            "Documentation/Versions/2.6.0-dev.2-ENGINE-ROUTER-CORE.md"
+          ],
+          "decision": "REPLACED_DOCUMENTATION",
+          "reason": "Current consolidation, simulator, real-service tests and deployment boundaries replace earlier prototype notes.",
+          "tests": [
+            "control_http.integration.test.js",
+            "control_runtime.test.js",
+            "SupervisorSimulator/scenarios/engine-read.json"
+          ]
+        },
+        {
+          "commit": "85d93080df33298c0c836ea3d246e34656980fb0",
+          "subject": "feat(core): react to CP1 engine change sequence with bounded polling",
+          "files": [
+            "App/Core/FunctionRegistry/sync_service.js"
+          ],
+          "decision": "INTEGRATED_EQUIVALENT_WITH_STRONGER_IDENTITY",
+          "reason": "Core-owned persistent ControlRuntime, signed Engine push/pull, shared startup adapters and 5-second heartbeat implement reconciliation/change recovery; old shared-token relay is excluded.",
+          "tests": [
+            "control_http.integration.test.js",
+            "control_runtime.test.js",
+            "SupervisorSimulator/scenarios/engine-read.json"
+          ]
+        },
+        {
+          "commit": "4b4335e3832dcb5d29202e444b9d7308419b50ed",
+          "subject": "feat(engines): shared adapter watches function manifest and signals Router",
+          "files": [
+            "App/Core/Communication/component_cp1_adapter.js"
+          ],
+          "decision": "INTEGRATED_EQUIVALENT_WITH_STRONGER_IDENTITY",
+          "reason": "Core-owned persistent ControlRuntime, signed Engine push/pull, shared startup adapters and 5-second heartbeat implement reconciliation/change recovery; old shared-token relay is excluded.",
+          "tests": [
+            "control_http.integration.test.js",
+            "control_runtime.test.js",
+            "SupervisorSimulator/scenarios/engine-read.json"
+          ]
+        },
+        {
+          "commit": "73eea533896f829e38058f0bca90154734b086d8",
+          "subject": "feat(cp1 client): permit narrowly-scoped function change endpoints",
+          "files": [
+            "App/Core/Communication/cp1_client.js"
+          ],
+          "decision": "INTEGRATED_EQUIVALENT_WITH_STRONGER_IDENTITY",
+          "reason": "Core-owned persistent ControlRuntime, signed Engine push/pull, shared startup adapters and 5-second heartbeat implement reconciliation/change recovery; old shared-token relay is excluded.",
+          "tests": [
+            "control_http.integration.test.js",
+            "control_runtime.test.js",
+            "SupervisorSimulator/scenarios/engine-read.json"
+          ]
+        },
+        {
+          "commit": "4e77f70f2bb5bd71eea370da663928c2243280cd",
+          "subject": "feat(router): bounded CP1 registry-change notifications and sequence cursor",
+          "files": [
+            "App/Core/Router/router.js"
+          ],
+          "decision": "INTEGRATED_EQUIVALENT_WITH_STRONGER_IDENTITY",
+          "reason": "Core-owned persistent ControlRuntime, signed Engine push/pull, shared startup adapters and 5-second heartbeat implement reconciliation/change recovery; old shared-token relay is excluded.",
+          "tests": [
+            "control_http.integration.test.js",
+            "control_runtime.test.js",
+            "SupervisorSimulator/scenarios/engine-read.json"
+          ]
+        },
+        {
+          "commit": "51050593a05176ae4de71d80ba436f8190173c23",
+          "subject": "docs: specify actual CP1 catalogue pull and remaining push/identity work",
+          "files": [
+            "Documentation/Versions/2.6.0-dev.2-ENGINE-ROUTER-CORE.md"
+          ],
+          "decision": "REPLACED_DOCUMENTATION",
+          "reason": "Current consolidation, simulator, real-service tests and deployment boundaries replace earlier prototype notes.",
+          "tests": [
+            "control_http.integration.test.js",
+            "control_runtime.test.js",
+            "SupervisorSimulator/scenarios/engine-read.json"
+          ]
+        },
+        {
+          "commit": "e7980a0db3ff396e20fd7331e1f77f0a0214c60b",
+          "subject": "test(2.6): mock Engine→Router CP1 manifest retrieval and recovery",
+          "files": [
+            "App/Core/FunctionRegistry/Tests/test_sync_v26.js"
+          ],
+          "decision": "REPLACED_WITH_REAL_SERVICE_TESTS",
+          "reason": "Authenticated TLS + real Engine processes and Supervisor Simulator replace mocked catalogue tests.",
+          "tests": [
+            "control_http.integration.test.js",
+            "control_runtime.test.js",
+            "SupervisorSimulator/scenarios/engine-read.json"
+          ]
+        },
+        {
+          "commit": "a7a1185063bd569357635ffb2045bf6044ae3981",
+          "subject": "fix(sync): exclude Core and Router from Engine adapter polling",
+          "files": [
+            "App/Core/FunctionRegistry/sync_service.js"
+          ],
+          "decision": "INTEGRATED_EQUIVALENT_WITH_STRONGER_IDENTITY",
+          "reason": "Core-owned persistent ControlRuntime, signed Engine push/pull, shared startup adapters and 5-second heartbeat implement reconciliation/change recovery; old shared-token relay is excluded.",
+          "tests": [
+            "control_http.integration.test.js",
+            "control_runtime.test.js",
+            "SupervisorSimulator/scenarios/engine-read.json"
+          ]
+        },
+        {
+          "commit": "d2eadbe3afc25b0817aac3806e32684d7b1d65e6",
+          "subject": "fix(cp1): robust allowlist for authenticated function relay paths",
+          "files": [
+            "App/Core/Communication/cp1_client.js"
+          ],
+          "decision": "INTEGRATED_EQUIVALENT_WITH_STRONGER_IDENTITY",
+          "reason": "Core-owned persistent ControlRuntime, signed Engine push/pull, shared startup adapters and 5-second heartbeat implement reconciliation/change recovery; old shared-token relay is excluded.",
+          "tests": [
+            "control_http.integration.test.js",
+            "control_runtime.test.js",
+            "SupervisorSimulator/scenarios/engine-read.json"
+          ]
+        },
+        {
+          "commit": "9af6cc05d723b44ae4e151c0ec0a1dbf26a6ecd7",
+          "subject": "feat(cp1 client): allow read-only authenticated function catalogue relay",
+          "files": [
+            "App/Core/Communication/cp1_client.js"
+          ],
+          "decision": "INTEGRATED_EQUIVALENT_WITH_STRONGER_IDENTITY",
+          "reason": "Core-owned persistent ControlRuntime, signed Engine push/pull, shared startup adapters and 5-second heartbeat implement reconciliation/change recovery; old shared-token relay is excluded.",
+          "tests": [
+            "control_http.integration.test.js",
+            "control_runtime.test.js",
+            "SupervisorSimulator/scenarios/engine-read.json"
+          ]
+        },
+        {
+          "commit": "5cc51f463525c712f59ff89a5ebab864fd4faa32",
+          "subject": "feat(core): fetch engine manifests via Router CP1 instead of local filesystem",
+          "files": [
+            "App/Core/FunctionRegistry/sync_service.js"
+          ],
+          "decision": "INTEGRATED_EQUIVALENT_WITH_STRONGER_IDENTITY",
+          "reason": "Core-owned persistent ControlRuntime, signed Engine push/pull, shared startup adapters and 5-second heartbeat implement reconciliation/change recovery; old shared-token relay is excluded.",
+          "tests": [
+            "control_http.integration.test.js",
+            "control_runtime.test.js",
+            "SupervisorSimulator/scenarios/engine-read.json"
+          ]
+        },
+        {
+          "commit": "49f59ef6cfa0ea3c270b6f40b9c09949deafca30",
+          "subject": "feat(router): authenticated CP1 per-engine function manifest relay",
+          "files": [
+            "App/Core/Router/router.js"
+          ],
+          "decision": "INTEGRATED_EQUIVALENT_WITH_STRONGER_IDENTITY",
+          "reason": "Core-owned persistent ControlRuntime, signed Engine push/pull, shared startup adapters and 5-second heartbeat implement reconciliation/change recovery; old shared-token relay is excluded.",
+          "tests": [
+            "control_http.integration.test.js",
+            "control_runtime.test.js",
+            "SupervisorSimulator/scenarios/engine-read.json"
+          ]
+        },
+        {
+          "commit": "429296e25b8b1e1ef2f4f4bef9abf422c324c438",
+          "subject": "feat(cp1): expose authenticated per-engine Functions JSON on shared adapter",
+          "files": [
+            "App/Core/Communication/component_cp1_adapter.js"
+          ],
+          "decision": "INTEGRATED_EQUIVALENT_WITH_STRONGER_IDENTITY",
+          "reason": "Core-owned persistent ControlRuntime, signed Engine push/pull, shared startup adapters and 5-second heartbeat implement reconciliation/change recovery; old shared-token relay is excluded.",
+          "tests": [
+            "control_http.integration.test.js",
+            "control_runtime.test.js",
+            "SupervisorSimulator/scenarios/engine-read.json"
+          ]
+        },
+        {
+          "commit": "ffa14b937c0fc35fe9e1bb1402611f9e6e24e8e2",
+          "subject": "chore(2.6): version bump to 2.6.0-dev.2",
+          "files": [
+            "App/package.json"
+          ],
+          "decision": "EXCLUDED_OLD_VERSION",
+          "reason": "Versions dev.2 superseded by dev.4; preserve Risk dev.3 changes.",
+          "tests": [
+            "control_http.integration.test.js",
+            "control_runtime.test.js",
+            "SupervisorSimulator/scenarios/engine-read.json"
+          ]
+        },
+        {
+          "commit": "18fa875b819cee5a6689379d76f20584a593391f",
+          "subject": "chore(2.6): version bump to 2.6.0-dev.2",
+          "files": [
+            "App/VERSION"
+          ],
+          "decision": "EXCLUDED_OLD_VERSION",
+          "reason": "Versions dev.2 superseded by dev.4; preserve Risk dev.3 changes.",
+          "tests": [
+            "control_http.integration.test.js",
+            "control_runtime.test.js",
+            "SupervisorSimulator/scenarios/engine-read.json"
+          ]
+        },
+        {
+          "commit": "614675168106373e693ed6165866c8bdde8886fa",
+          "subject": "test/docs(2.6-dev2): Core CP1 reconciliation tests and deployment boundaries",
+          "files": [
+            "Documentation/Versions/2.6.0-dev.2-CP1-SYNC.md"
+          ],
+          "decision": "REPLACED_DOCUMENTATION",
+          "reason": "Current consolidation, simulator, real-service tests and deployment boundaries replace earlier prototype notes.",
+          "tests": [
+            "control_http.integration.test.js",
+            "control_runtime.test.js",
+            "SupervisorSimulator/scenarios/engine-read.json"
+          ]
+        },
+        {
+          "commit": "d72cf73d4b75d552d53cb32207194a4ac0506208",
+          "subject": "test/docs(2.6-dev2): Core CP1 reconciliation tests and deployment boundaries",
+          "files": [
+            "App/Core/FunctionRegistry/Tests/test_sync_v26.js"
+          ],
+          "decision": "REPLACED_DOCUMENTATION",
+          "reason": "Current consolidation, simulator, real-service tests and deployment boundaries replace earlier prototype notes.",
+          "tests": [
+            "control_http.integration.test.js",
+            "control_runtime.test.js",
+            "SupervisorSimulator/scenarios/engine-read.json"
+          ]
+        },
+        {
+          "commit": "37e68fd44f44fece911b3478e611abc54e4179f9",
+          "subject": "feat(2.6-dev2): opt-in Core CP1 registry sync startup",
+          "files": [
+            "App/Core/Server/server.js"
+          ],
+          "decision": "INTEGRATED_EQUIVALENT_WITH_STRONGER_IDENTITY",
+          "reason": "Core-owned persistent ControlRuntime, signed Engine push/pull, shared startup adapters and 5-second heartbeat implement reconciliation/change recovery; old shared-token relay is excluded.",
+          "tests": [
+            "control_http.integration.test.js",
+            "control_runtime.test.js",
+            "SupervisorSimulator/scenarios/engine-read.json"
+          ]
+        },
+        {
+          "commit": "3be6a5c5251001cc7a340b66b5bcccf1ee6a109c",
+          "subject": "feat(2.6-dev2): Core CP1-authenticated registry reconciliation loop",
+          "files": [
+            "App/Core/FunctionRegistry/sync_service.js"
+          ],
+          "decision": "INTEGRATED_EQUIVALENT_WITH_STRONGER_IDENTITY",
+          "reason": "Core-owned persistent ControlRuntime, signed Engine push/pull, shared startup adapters and 5-second heartbeat implement reconciliation/change recovery; old shared-token relay is excluded.",
+          "tests": [
+            "control_http.integration.test.js",
+            "control_runtime.test.js",
+            "SupervisorSimulator/scenarios/engine-read.json"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -90,7 +90,7 @@ function route(req,res){var u=new URL(req.url,'http://'+HOST+':'+PORT),p=u.pathn
  return json(res,404,{ok:false,error:'Not found'});
 }
 var registrationHandle=null;
-var server=require('../../Core/Clients/auth21_engine_ingress').createServer(route,process.env,{
+var server=require('../../Core/Clients/auth21_engine_ingress').createEngineServer('indicator',route,process.env,{
  businessHandlers:{
   'indicator.settings.set':function(input){
    if(!AUTH21_INDICATOR_SNAPSHOT)throw Error('AUTH21_INDICATOR_GATE_REQUIRED');

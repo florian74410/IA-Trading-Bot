@@ -41,7 +41,7 @@ function spawnRouter(cb){
  var script=safeRoot('Core/Router/router.js'),logPath=PATHS.RuntimeLogs.router;
  if(!fs.existsSync(script))return cb(new Error('ROUTER_SCRIPT_INVALID'));
  var fd;try{fd=fs.openSync(logPath,'a');}catch(e){return cb(e);}
- var proc;try{proc=child.spawn(process.execPath,[script],{cwd:ROOT,env:routerEnvironment(),stdio:['ignore',fd,fd],detached:true});}
+ var proc;try{proc=child.spawn(process.execPath,[script],{cwd:ROOT,env:require('../FunctionRegistry/Control/service_environment').environment(routerEnvironment(),'router'),stdio:['ignore',fd,fd],detached:true});}
  catch(e){try{fs.closeSync(fd);}catch(x){}return cb(e);}
  try{fs.closeSync(fd);}catch(x){}
  proc.unref();

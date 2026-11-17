@@ -1,0 +1,112 @@
+{
+  "schema": "cp1.simulator/1.0",
+  "id": "all-engines-read",
+  "permissions": "Provisioned explicitly by the isolated test administrator; this scenario grants nothing.",
+  "steps": [
+    {
+      "id": "market",
+      "engine": "marketdata",
+      "command": "marketdata.health",
+      "permission": "ALLOW",
+      "assertions": [
+        {
+          "path": "data.ok",
+          "equals": true
+        }
+      ]
+    },
+    {
+      "id": "indicator",
+      "engine": "indicator",
+      "command": "indicator.list_indicators",
+      "permission": "ALLOW"
+    },
+    {
+      "id": "fundamental",
+      "engine": "fundamental",
+      "command": "fundamental.health",
+      "permission": "ALLOW"
+    },
+    {
+      "id": "liquidity",
+      "engine": "liquidity",
+      "command": "liquidity.health",
+      "permission": "ALLOW"
+    },
+    {
+      "id": "strategy",
+      "engine": "strategy",
+      "command": "strategy.health",
+      "permission": "ALLOW"
+    },
+    {
+      "id": "risk",
+      "engine": "risk",
+      "command": "risk.constraints.get",
+      "permission": "ALLOW",
+      "assertions": [
+        {
+          "path": "data.modifiable_by_agent",
+          "equals": false
+        }
+      ]
+    },
+    {
+      "id": "portfolio",
+      "engine": "portfolio",
+      "command": "portfolio.health",
+      "permission": "ALLOW"
+    },
+    {
+      "id": "firewall",
+      "engine": "firewall",
+      "command": "firewall.status",
+      "permission": "ALLOW"
+    },
+    {
+      "id": "trading",
+      "engine": "trading",
+      "command": "trading.health",
+      "permission": "ALLOW",
+      "assertions": [
+        {
+          "path": "data.liveExecutionEnabled",
+          "equals": false
+        }
+      ]
+    },
+    {
+      "id": "supervisor",
+      "engine": "supervisor",
+      "command": "supervisor.status",
+      "permission": "ALLOW"
+    },
+    {
+      "id": "forbidden",
+      "engine": "trading",
+      "command": "trading.execute",
+      "expected_error": "COMMAND_UNAVAILABLE"
+    },
+    {
+      "id": "invalid",
+      "engine": "risk",
+      "command": "risk.status",
+      "arguments": {
+        "owner": "forged"
+      },
+      "expected_error": "CP_ARGUMENT_SCHEMA"
+    },
+    {
+      "id": "unknown",
+      "engine": "risk",
+      "command": "risk.does_not_exist",
+      "expected_error": "COMMAND_UNKNOWN"
+    },
+    {
+      "id": "no-permission",
+      "engine": "risk",
+      "command": "risk.status",
+      "expected_error": "PERMISSION_DENIED"
+    }
+  ]
+}

@@ -1,8 +1,7 @@
 {
   "engine_id": "router",
-  "engine_version": "2.6.0",
+  "engine_version": "2.6.0-dev.4",
   "registry_schema": "2.6.0",
-  "functions_count": 2,
-  "source": "protocol_registry",
-  "release_state": "DEBUG_CANDIDATE"
+  "source_sha256": "a528b72ff0e1d113546fa70d278ec9281e68d08adc8ac486712b4461e28e3ec8",
+  "revision_hash": "ddad140b2060ffc34bea3e2635312cb6bf4a18044dfac82e6223c143860edc08"
 }

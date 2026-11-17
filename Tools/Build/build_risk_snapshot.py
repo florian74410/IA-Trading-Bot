@@ -15,9 +15,9 @@ paths = subprocess.check_output(['git', 'ls-files', '-z'], cwd=root).decode().sp
 files = []
 for name in sorted(filter(None, paths)):
     p = Path(name)
-    if name == 'Documentation/Risk/build-verification.json':
+    if name in ['Documentation/Risk/build-verification.json', 'Documentation/CP1/build-verification.json']:
         continue
-    if not (name.startswith(('App/', 'Tools/', 'Documentation/')) or name in ['README.md', 'ROADMAP.md']):
+    if not (name.startswith(('App/', 'Tools/', 'Documentation/', '.github/workflows/')) or name in ['README.md', 'ROADMAP.md', '.dockerignore'] or (p.name.startswith('compose.') and p.suffix in ['.yml', '.yaml'])):
         continue
     if any(x in p.parts for x in ['node_modules', '.runtime', '__pycache__']) or p.suffix in ['.db', '.sqlite', '.zip']:
         continue
@@ -33,7 +33,7 @@ with zipfile.ZipFile(out, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=9
     for name, data in files:
         info = zipfile.ZipInfo(name, date_time=(2026, 1, 1, 0, 0, 0))
         info.compress_type = zipfile.ZIP_DEFLATED
-        info.external_attr = 0o100644 << 16
+        info.external_attr = (0o100755 if ((root / name).exists() and (root / name).stat().st_mode & 0o111) else 0o100644) << 16
         bundle.writestr(info, data)
 digest = hashlib.sha256(out.read_bytes()).hexdigest()
 out.with_suffix(out.suffix + '.sha256').write_text(digest + '  ' + out.name + '\n')

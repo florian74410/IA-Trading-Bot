@@ -1,10 +1,7 @@
 {
   "engine_id": "risk",
-  "engine_version": "2.6.0-dev.3",
+  "engine_version": "2.6.0-dev.4",
   "registry_schema": "2.6.0",
-  "functions_count": 12,
-  "source": "protocol_registry",
-  "release_state": "DEBUG_CANDIDATE",
-  "revision_hash": "528e74684a79f3c3497c2e93e9f036de4f5b3914861040ff4c36d88d86eadf77",
-  "source_sha256": "b08a31bd2acb906d4c00352f1860caf86d2783c275e33ecb9b1c6fa0d93d3257"
+  "source_sha256": "99d7ac8d8f6b2a7e52f56b9b4628a8bb98da21fc3dd8d270185cc4cfc81fb5be",
+  "revision_hash": "cf4dbbe70dec2abbacd034360341d7c669015fbfbe75680961c2bcdcd2a6ad7c"
 }

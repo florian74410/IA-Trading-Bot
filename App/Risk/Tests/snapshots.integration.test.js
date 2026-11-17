@@ -28,7 +28,7 @@ test('real Router + Risk processes, Supervisor facade, discovery, auth, compatib
   const caps=await client.request('risk','risk.list_capabilities',{});assert.ok(caps.capabilities.includes('risk.snapshot.create'));assert.ok(caps.capabilities.includes('risk.snapshot'));
   const legacy=await client.request('risk','risk.snapshot',{symbol:'BTCUSDT',timeframe:'1m'});assert.equal(legacy.schema,'risk.analysis/0.1');
   await assert.rejects(client.request('risk','risk.snapshot.create',{...f.args,scores:{overall:0}}),/CP_ARGUMENT_UNEXPECTED/);
-  await assert.rejects(client.request('risk','risk.snapshot.create',{...f.args,timeframe:'nonsense'}),/RISK_ARGUMENT_INVALID/);
+  await assert.rejects(client.request('risk','risk.snapshot.create',{...f.args,timeframe:'nonsense'}),/RISK_ARGUMENT_INVALID|CP_ARGUMENT_SCHEMA/);
   await assert.rejects(client.request('risk','risk.snapshot.get',{snapshot_id:snap.snapshot_id,portfolio_id:'another'}),/RISK_SNAPSHOT_NOT_FOUND/);
   const denied=await post(riskPort,'/cp/v1',CP.makeRequest('risk','risk.status',{}),'bad');assert.equal(denied.code,403);
   const unknown=await post(riskPort,'/cp/v1',CP.makeRequest('risk','risk.status',{injected:true}),token);assert.equal(unknown.code,400);

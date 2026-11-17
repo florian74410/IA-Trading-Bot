@@ -1,0 +1,34 @@
+name: CP1 consolidation and Supervisor Simulator
+on:
+  push:
+    branches: ['integration/iatb-2.6.0-dev.4']
+  pull_request:
+    paths: ['App/**', 'Tools/Build/**', 'Documentation/CP1/**', '.github/workflows/cp1-consolidation.yml']
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci --omit=dev --no-audit --no-fund
+        working-directory: App
+      - run: node App/Tools_validate_release_version.js
+      - run: node App/Tools/Tests/SupervisorSimulator/run_validation.js /tmp/iatb-cp1-validation
+      - run: python3 Tools/Build/build_risk_snapshot.py
+      - run: python3 Tools/Build/verify_source_bundle.py artifacts/IA-TB-2.6.0-dev.4-debug-source.zip
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: IA-TB-2.6.0-dev.4-DEBUG-source-and-validation
+          path: |
+            artifacts/IA-TB-2.6.0-dev.4-debug-source.zip*
+            /tmp/iatb-cp1-validation/*.json
+            /tmp/iatb-cp1-validation/*.tap
+            /tmp/iatb-cp1-validation/stderr.log

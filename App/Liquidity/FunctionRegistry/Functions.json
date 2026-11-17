@@ -1,9 +1,10 @@
 {
   "schema_version": "2.6.0",
   "engine_id": "liquidity",
-  "engine_version": "2.6.0",
+  "engine_version": "2.6.0-dev.4",
   "transport": "CP/1",
-  "source_protocol_registry": "App/Core/Communication/ProtocolRegistry/liquidity.json",
+  "source_protocol_registry": "Core/Communication/ProtocolRegistry/liquidity.json",
+  "source_sha256": "a63bc04a2b9c8b8e92cbcd05d4178c88a0c197741b8f06c5caa073c404f970b8",
   "functions": [
     {
       "id": "liquidity.health",
@@ -11,29 +12,118 @@
       "type": "READ",
       "risk_level": "LOW",
       "hard_deny": false,
-      "description": "Commande CP/1 liquidity.health. La description du handler doit être validée.",
+      "description": "Read or evaluate liquidity.health from liquidity. No financial side effect.",
       "input": {
         "type": "object",
-        "required": [],
         "properties": {},
+        "required": [],
         "additionalProperties": false
       },
       "output": {
-        "type": "unknown",
-        "description": "Schéma à confirmer dans le handler réel"
+        "type": "object",
+        "required": [
+          "ok"
+        ],
+        "properties": {
+          "ok": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "service": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "version": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "pid": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "host": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "port": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "mode": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "internetAccess": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "dataPath": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "features": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "cache": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "liquidationBuffer": {
+            "type": [
+              "object",
+              "null"
+            ]
+          }
+        }
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/liquidity.json",
-      "verified_handler": false,
+      "source": "Liquidity/Engine/liquidity_service.js",
+      "verified_handler": true,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Authenticated service identity, authenticated agent session and effective per-command permission.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "266962aa83a44cb53215618b78e43b739ffacabb9417412efa28bc537468cc68",
+      "availability_reason": null,
+      "timeout_ms": 5000,
+      "agent_qualified": true
     },
     {
       "id": "liquidity.zones",
       "engine": "liquidity",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 liquidity.zones. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -62,17 +152,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/liquidity.json",
+      "source": "Liquidity/Engine/liquidity_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "266962aa83a44cb53215618b78e43b739ffacabb9417412efa28bc537468cc68",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "liquidity.realtime",
       "engine": "liquidity",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 liquidity.realtime. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -108,17 +205,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/liquidity.json",
+      "source": "Liquidity/Engine/liquidity_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "266962aa83a44cb53215618b78e43b739ffacabb9417412efa28bc537468cc68",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "liquidity.snapshot",
       "engine": "liquidity",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 liquidity.snapshot. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -162,17 +266,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/liquidity.json",
+      "source": "Liquidity/Engine/liquidity_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "266962aa83a44cb53215618b78e43b739ffacabb9417412efa28bc537468cc68",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "liquidity.financial",
       "engine": "liquidity",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Read-only liquidity-oriented financial context derived from Market Data Collector via Router.",
       "input": {
         "type": "object",
@@ -190,17 +301,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/liquidity.json",
+      "source": "Liquidity/Engine/liquidity_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "266962aa83a44cb53215618b78e43b739ffacabb9417412efa28bc537468cc68",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "liquidity.liquidations",
       "engine": "liquidity",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 liquidity.liquidations. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -228,10 +346,17 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/liquidity.json",
+      "source": "Liquidity/Engine/liquidity_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "266962aa83a44cb53215618b78e43b739ffacabb9417412efa28bc537468cc68",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "liquidity.capabilities",
@@ -239,29 +364,92 @@
       "type": "READ",
       "risk_level": "LOW",
       "hard_deny": false,
-      "description": "Commande CP/1 liquidity.capabilities. La description du handler doit être validée.",
+      "description": "Read or evaluate liquidity.capabilities from liquidity. No financial side effect.",
       "input": {
         "type": "object",
-        "required": [],
         "properties": {},
+        "required": [],
         "additionalProperties": false
       },
       "output": {
-        "type": "unknown",
-        "description": "Schéma à confirmer dans le handler réel"
+        "type": "object",
+        "required": [],
+        "properties": {
+          "ok": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "schema": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "role": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "internetAccess": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "input": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "consumers": {
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "aiAccess": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "features": {
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "rule": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/liquidity.json",
-      "verified_handler": false,
+      "source": "Liquidity/Engine/liquidity_service.js",
+      "verified_handler": true,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Authenticated service identity, authenticated agent session and effective per-command permission.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "266962aa83a44cb53215618b78e43b739ffacabb9417412efa28bc537468cc68",
+      "availability_reason": null,
+      "timeout_ms": 5000,
+      "agent_qualified": true
     },
     {
       "id": "liquidity.raw",
       "engine": "liquidity",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Firewall-validated raw liquidity data received only from Market Data through Router CP/1.",
       "input": {
         "type": "object",
@@ -293,17 +481,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/liquidity.json",
+      "source": "Liquidity/Engine/liquidity_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "266962aa83a44cb53215618b78e43b739ffacabb9417412efa28bc537468cc68",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "liquidity.history",
       "engine": "liquidity",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Long-term liquidity history read from Market Data SQLite storage.",
       "input": {
         "type": "object",
@@ -333,17 +528,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/liquidity.json",
+      "source": "Liquidity/Engine/liquidity_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "266962aa83a44cb53215618b78e43b739ffacabb9417412efa28bc537468cc68",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "liquidity.context",
       "engine": "liquidity",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Compact READ_ONLY liquidity context prepared for Supervisor/LLM.",
       "input": {
         "type": "object",
@@ -383,17 +585,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/liquidity.json",
+      "source": "Liquidity/Engine/liquidity_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "266962aa83a44cb53215618b78e43b739ffacabb9417412efa28bc537468cc68",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "liquidity.cache.clear",
       "engine": "liquidity",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Commande CP/1 liquidity.cache.clear. La description du handler doit être validée.",
       "input": {
         "type": "object",
@@ -406,17 +615,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/liquidity.json",
+      "source": "Liquidity/Engine/liquidity_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "266962aa83a44cb53215618b78e43b739ffacabb9417412efa28bc537468cc68",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "liquidity.open_interest",
       "engine": "liquidity",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Covered aggregate perpetual Open Interest from Market Data across connected venues.",
       "input": {
         "type": "object",
@@ -440,17 +656,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/liquidity.json",
+      "source": "Liquidity/Engine/liquidity_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "266962aa83a44cb53215618b78e43b739ffacabb9417412efa28bc537468cc68",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "liquidity.open_interest.history",
       "engine": "liquidity",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Read covered aggregate Open Interest history stored by Market Data.",
       "input": {
         "type": "object",
@@ -476,17 +699,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/liquidity.json",
+      "source": "Liquidity/Engine/liquidity_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "266962aa83a44cb53215618b78e43b739ffacabb9417412efa28bc537468cc68",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "liquidity.dex_liquidity",
       "engine": "liquidity",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "DEX pool liquidity snapshot from Market Data/DEX Screener; distinct from executable order-book depth.",
       "input": {
         "type": "object",
@@ -510,17 +740,24 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/liquidity.json",
+      "source": "Liquidity/Engine/liquidity_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "266962aa83a44cb53215618b78e43b739ffacabb9417412efa28bc537468cc68",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     },
     {
       "id": "liquidity.dex_liquidity.history",
       "engine": "liquidity",
       "type": "READ",
       "risk_level": "LOW",
-      "hard_deny": false,
+      "hard_deny": true,
       "description": "Historical DEX pool liquidity stored by Market Data.",
       "input": {
         "type": "object",
@@ -546,11 +783,18 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/liquidity.json",
+      "source": "Liquidity/Engine/liquidity_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "2.6.0-dev.4",
+      "handler_sha256": "266962aa83a44cb53215618b78e43b739ffacabb9417412efa28bc537468cc68",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
     }
   ],
-  "verification_status": "PROTOCOL_DECLARED_UNVERIFIED_HANDLERS"
+  "revision_hash": "2f3745951830a73043b3756181d0951d552fd6901158ca6be388f3361c3652be"
 }

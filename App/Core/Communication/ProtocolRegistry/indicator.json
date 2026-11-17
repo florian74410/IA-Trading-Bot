@@ -59,7 +59,62 @@
         "name": "indicator.language.info",
         "arguments": {
           "allowed": []
-        }
+        },
+        "input": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        },
+        "output": {
+          "type": "object",
+          "required": [],
+          "properties": {
+            "schema": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "version": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "owner": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "purpose": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "syntax": {
+              "type": [
+                "array",
+                "null"
+              ]
+            },
+            "security": {
+              "type": [
+                "object",
+                "null"
+              ]
+            }
+          }
+        },
+        "contractVersion": "2.6.0-dev.4"
       },
       {
         "name": "indicator.language.compile",
@@ -132,7 +187,150 @@
             "candles",
             "requests"
           ]
-        }
+        },
+        "input": {
+          "type": "object",
+          "required": [
+            "candles",
+            "requests"
+          ],
+          "properties": {
+            "candles": {
+              "type": "array",
+              "minItems": 20,
+              "maxItems": 1200,
+              "items": {
+                "type": "array",
+                "minItems": 5,
+                "maxItems": 6,
+                "items": {
+                  "type": "number"
+                }
+              }
+            },
+            "requests": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 32,
+              "items": {
+                "type": "object",
+                "required": [
+                  "id"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64
+                  },
+                  "params": {
+                    "type": "object"
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "symbol": {
+              "type": "string",
+              "maxLength": 40
+            },
+            "timeframe": {
+              "enum": [
+                "1m",
+                "5m",
+                "15m",
+                "30m",
+                "1h",
+                "4h",
+                "1d"
+              ]
+            },
+            "source": {
+              "type": "string",
+              "maxLength": 64
+            }
+          },
+          "additionalProperties": false
+        },
+        "output": {
+          "type": "object",
+          "required": [],
+          "properties": {
+            "schema": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "engine": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "input": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "symbol": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "timeframe": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "source": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "generatedAt": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "requested": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "succeeded": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "failed": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "results": {
+              "type": [
+                "array",
+                "null"
+              ]
+            },
+            "provenance": {
+              "type": [
+                "object",
+                "null"
+              ]
+            }
+          }
+        },
+        "contractVersion": "2.6.0-dev.4"
       },
       {
         "name": "indicator.compute_data",
@@ -294,7 +492,52 @@
         "name": "indicator.list_indicators",
         "arguments": {
           "allowed": []
-        }
+        },
+        "input": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        },
+        "output": {
+          "type": "object",
+          "required": [
+            "indicators"
+          ],
+          "properties": {
+            "schema": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "refreshMs": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "refreshPresets": {
+              "type": [
+                "array",
+                "null"
+              ]
+            },
+            "indicators": {
+              "type": [
+                "array",
+                "null"
+              ]
+            },
+            "updatedAt": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        },
+        "contractVersion": "2.6.0-dev.4"
       },
       {
         "name": "indicator.user.compute",

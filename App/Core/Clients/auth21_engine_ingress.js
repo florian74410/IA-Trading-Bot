@@ -23,7 +23,9 @@ function createServer(handler, env = process.env, options = {}) {
     if(trial&&['indicators','marketdata','fundamental','portfolio','strategy'].includes(trial.engine))
       businessHandler=require('./auth21_engine_business_ingress').openBusinessIngress({env,businessHandlers:options.businessHandlers||null});
   }
+  let controlIntercept=null;
   const server = http.createServer(function(req, res) {
+    if(controlIntercept&&controlIntercept(req,res))return;
     if (authenticated) {
       const pathname=String(req.url).split('?')[0];
       if(req.method==='GET'&&pathname==='/health')return handler(req,res);
@@ -43,6 +45,7 @@ function createServer(handler, env = process.env, options = {}) {
     });
     res.end(JSON.stringify({error: 'AUTH21_ENGINE_OPERATION_DENIED'}));
   });
+  if(env.IATB_CP1_CONTROL_ROOT&&env.IATB_CP1_SERVICE_ID!=='router'&&env.IATB_CP1_SERVICE_ID!=='core'){const engineId=options.engineId||env.IATB_CP1_SERVICE_ID;controlIntercept=require('../FunctionRegistry/Control/engine').install(server,handler,{root:require('../Shared/paths').ROOT,engineId,env});}
   // Upgrade/CONNECT bypass the HTTP request callback in Node. Reject both
   // before any legacy protocol handler can interpret a message.
   if (isolated || authenticated) {
@@ -55,4 +58,5 @@ function createServer(handler, env = process.env, options = {}) {
   return server;
 }
 
-module.exports = {createServer};
+function createEngineServer(engineId,handler,env=process.env,options={}){return createServer(handler,env,{...options,engineId});}
+module.exports = {createServer,createEngineServer};

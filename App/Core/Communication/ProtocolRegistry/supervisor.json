@@ -35,7 +35,79 @@
         "name": "supervisor.status",
         "arguments": {
           "allowed": []
-        }
+        },
+        "input": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        },
+        "output": {
+          "type": "object",
+          "required": [
+            "schema",
+            "execution"
+          ],
+          "properties": {
+            "schema": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "mode": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "execution": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "uptimeSec": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "llm": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "autonomousTrading": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "extensions": {
+              "type": [
+                "array",
+                "null"
+              ]
+            },
+            "reasoningCount": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "lastReasoning": {},
+            "lastContext": {},
+            "settingsStorage": {
+              "type": [
+                "object",
+                "null"
+              ]
+            }
+          }
+        },
+        "contractVersion": "2.6.0-dev.4"
       },
       {
         "name": "supervisor.reload",
