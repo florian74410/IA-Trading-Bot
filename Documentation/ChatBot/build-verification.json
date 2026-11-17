@@ -5,5 +5,30 @@
   "files_verified": 1043,
   "deterministic_rebuild": true,
   "deployment": "NONE",
-  "excluded_self": "Documentation/ChatBot/build-verification.json"
+  "excluded_self": "Documentation/ChatBot/build-verification.json",
+  "ci": {
+    "source_commit": "5b58803f4a8d0e427c42bd3b7716afbbd72d9e6c",
+    "run_id": 44134896994,
+    "url": "https://github.com/florian74410/IA-Trading-Bot/actions/runs/44134896994",
+    "conclusion": "success",
+    "node": "v22.23.4",
+    "tests": 108,
+    "passed": 108,
+    "failed": 0,
+    "browser_checks": 13,
+    "browser_status": "PASS",
+    "screenshots": [
+      "chat-desktop.png",
+      "preparation-desktop.png",
+      "preparation-mobile.png",
+      "chat-mobile.png"
+    ],
+    "artifact_id": 14351832213,
+    "artifact_url": "https://github.com/florian74410/IA-Trading-Bot/actions/runs/44134896994/artifacts/14351832213",
+    "archive_sha256_matches_local": true,
+    "production": false,
+    "live_orders": false,
+    "external_openai_calls": 0,
+    "visual_review": "Automated Chromium checks passed; manual screenshot inspection unavailable after local environment disconnected."
+  }
 }
