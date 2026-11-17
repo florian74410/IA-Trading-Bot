@@ -1,4 +1,10 @@
-# IA-Trading-Bot — 2.6.0 DEV (socle IA)
+# IA-Trading-Bot — 2.6.0-dev.5 DEBUG
+
+ChatBot hybride intégré : intentions locales, interprétation OpenAI explicite, préférences Auth21 et lectures via Supervisor/CP1. Préparations financières désactivées, LIVE désactivé.
+
+[Guide du ChatBot](Documentation/ChatBot/README.md) · [Rapport de livraison dev.5](Documentation/ChatBot/DELIVERY.md) · [Consolidation CP1 dev.4](Documentation/CP1/DELIVERY.md)
+
+## Historique du socle 2.6
 
 > **Branche évolutive `2.6`**, basée sur la 2.5.3. Les manifestes de fonctions CP/1 par composant et le Core Function Registry Manager constituent le **socle** de l'intégration IA à venir, pas une activation de l'IA directe ou une release qualifiée.
 >

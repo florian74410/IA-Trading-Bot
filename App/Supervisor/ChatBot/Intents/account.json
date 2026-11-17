@@ -1,0 +1,235 @@
+{
+  "schema": "iatb.intent-file/1.0",
+  "intents": [
+    {
+      "id": "account.balance",
+      "category": "account",
+      "description": "Consulter le portefeuille et le solde disponible",
+      "examples": [
+        "Montre mon solde disponible sur OKX."
+      ],
+      "synonyms": [
+        "\\b(solde|soldes|portefeuille|balance|balances|portfolio)\\b"
+      ],
+      "patterns": [
+        "\\b(solde|soldes|portefeuille|balance|balances|portfolio)\\b"
+      ],
+      "required": [
+        "account"
+      ],
+      "optional": [
+        "exchange",
+        "account",
+        "environment",
+        "market",
+        "asset",
+        "quote",
+        "instrument_candidate",
+        "amount",
+        "amount_unit",
+        "order_type",
+        "limit_price",
+        "trigger_price",
+        "order_id",
+        "position_id",
+        "position_side",
+        "close_fraction",
+        "leverage",
+        "timeframe"
+      ],
+      "okx_operation": "rest.get.account.balance",
+      "implementation": "READ_GATEWAY_PROCEDURE",
+      "risk_level": "LOW",
+      "confirmation": "NO_FINANCIAL_EXECUTION",
+      "parameters_contract": "intent.parameters/1.0",
+      "cp1": {
+        "engine": "portfolio",
+        "command": "portfolio.account.snapshot"
+      },
+      "parameters_schema": "intent.parameters/1.0"
+    },
+    {
+      "id": "account.fees",
+      "category": "account",
+      "description": "Consulter les frais du compte",
+      "examples": [
+        "Combien coûtent les frais sur BTC-USDT ?"
+      ],
+      "synonyms": [
+        "\\b(frais|commission|fee|fees)\\b"
+      ],
+      "patterns": [
+        "\\b(frais|commission|fee|fees)\\b"
+      ],
+      "required": [
+        "account",
+        "instrument_candidate"
+      ],
+      "optional": [
+        "exchange",
+        "account",
+        "environment",
+        "market",
+        "asset",
+        "quote",
+        "instrument_candidate",
+        "amount",
+        "amount_unit",
+        "order_type",
+        "limit_price",
+        "trigger_price",
+        "order_id",
+        "position_id",
+        "position_side",
+        "close_fraction",
+        "leverage",
+        "timeframe"
+      ],
+      "okx_operation": "rest.get.account.trade-fee",
+      "implementation": "READ_GATEWAY_PROCEDURE",
+      "risk_level": "LOW",
+      "confirmation": "NO_FINANCIAL_EXECUTION",
+      "parameters_contract": "intent.parameters/1.0",
+      "cp1": {
+        "engine": "portfolio",
+        "command": "portfolio.account.snapshot"
+      },
+      "parameters_schema": "intent.parameters/1.0"
+    },
+    {
+      "id": "account.leverage",
+      "category": "account",
+      "description": "Modifier le levier",
+      "examples": [
+        "Règle mon levier à 3."
+      ],
+      "synonyms": [
+        "\\b(levier|leverage)\\b"
+      ],
+      "patterns": [
+        "\\b(levier|leverage)\\b"
+      ],
+      "required": [
+        "account",
+        "leverage"
+      ],
+      "optional": [
+        "exchange",
+        "account",
+        "environment",
+        "market",
+        "asset",
+        "quote",
+        "instrument_candidate",
+        "amount",
+        "amount_unit",
+        "order_type",
+        "limit_price",
+        "trigger_price",
+        "order_id",
+        "position_id",
+        "position_side",
+        "close_fraction",
+        "leverage",
+        "timeframe"
+      ],
+      "okx_operation": "rest.post.account.set-leverage",
+      "implementation": "RECOGNITION_ONLY",
+      "risk_level": "HIGH",
+      "confirmation": "NO_FINANCIAL_EXECUTION",
+      "parameters_contract": "intent.parameters/1.0",
+      "cp1": null,
+      "parameters_schema": "intent.parameters/1.0"
+    },
+    {
+      "id": "subaccount.list",
+      "category": "account",
+      "description": "Consulter les sous-comptes",
+      "examples": [
+        "Liste mes sous-comptes."
+      ],
+      "synonyms": [
+        "\\b(sous.comptes?|sub.?accounts?)\\b"
+      ],
+      "patterns": [
+        "\\b(sous.comptes?|sub.?accounts?)\\b"
+      ],
+      "required": [],
+      "optional": [
+        "exchange",
+        "account",
+        "environment",
+        "market",
+        "asset",
+        "quote",
+        "instrument_candidate",
+        "amount",
+        "amount_unit",
+        "order_type",
+        "limit_price",
+        "trigger_price",
+        "order_id",
+        "position_id",
+        "position_side",
+        "close_fraction",
+        "leverage",
+        "timeframe"
+      ],
+      "okx_operation": "rest.get.users.subaccount.list",
+      "implementation": "RECOGNITION_ONLY",
+      "risk_level": "LOW",
+      "confirmation": "NO_FINANCIAL_EXECUTION",
+      "parameters_contract": "intent.parameters/1.0",
+      "cp1": null,
+      "parameters_schema": "intent.parameters/1.0"
+    },
+    {
+      "id": "risk.evaluate",
+      "category": "account",
+      "description": "Préparer une évaluation Risk",
+      "examples": [
+        "Évalue le risque de mon portefeuille BTC-USDT."
+      ],
+      "synonyms": [
+        "\\b(risque|risk)\\b"
+      ],
+      "patterns": [
+        "\\b(risque|risk)\\b"
+      ],
+      "required": [
+        "account",
+        "instrument_candidate"
+      ],
+      "optional": [
+        "exchange",
+        "account",
+        "environment",
+        "market",
+        "asset",
+        "quote",
+        "instrument_candidate",
+        "amount",
+        "amount_unit",
+        "order_type",
+        "limit_price",
+        "trigger_price",
+        "order_id",
+        "position_id",
+        "position_side",
+        "close_fraction",
+        "leverage",
+        "timeframe"
+      ],
+      "okx_operation": null,
+      "implementation": "READ_GATEWAY_PROCEDURE",
+      "risk_level": "LOW",
+      "confirmation": "NO_FINANCIAL_EXECUTION",
+      "parameters_contract": "intent.parameters/1.0",
+      "cp1": {
+        "engine": "risk",
+        "command": "risk.snapshot.create"
+      },
+      "parameters_schema": "intent.parameters/1.0"
+    }
+  ]
+}

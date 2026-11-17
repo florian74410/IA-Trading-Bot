@@ -1,7 +1,7 @@
 {
   "engine_id": "indicator",
-  "engine_version": "2.6.0-dev.4",
+  "engine_version": "2.6.0-dev.5",
   "registry_schema": "2.6.0",
   "source_sha256": "bcec8d6a9944c534fe328688f6d11cf9b7e02927bf2b79b8c400d8cf5809172c",
-  "revision_hash": "81d6b8a9b98319a30ee450d70fdf1cfa7fdb5dd1c125227df2782ea305c68d30"
+  "revision_hash": "42595b3ec40681bcb357c9fc2240cee362fbf7701af0f4b8365e2b310e3d5a2b"
 }

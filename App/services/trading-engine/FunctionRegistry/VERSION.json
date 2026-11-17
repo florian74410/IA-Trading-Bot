@@ -1,7 +1,7 @@
 {
   "engine_id": "trading",
-  "engine_version": "2.6.0-dev.4",
+  "engine_version": "2.6.0-dev.5",
   "registry_schema": "2.6.0",
   "source_sha256": "274871b00f5ced314cdfa9abb787d9afad84807d970dd66630a38d39a036ab23",
-  "revision_hash": "b4ed569ed82cc7124c327b4885f3878b847005ebf0fb07fbc25320481f235d9c"
+  "revision_hash": "17660101cedc7ccad38e758056c4df9c983bca4beba68a081f789ddbf4a76907"
 }

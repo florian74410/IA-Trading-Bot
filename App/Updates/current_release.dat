@@ -1,11 +1,11 @@
 {
   "schema": 1,
   "application": "IA-Trading-Bot",
-  "version": "2.6.0-dev.4",
+  "version": "2.6.0-dev.5",
   "server": "Core/Server/server.js",
   "ui": "UI/Gateway/ui_service.js",
   "uiPort": 8000,
   "routerPort": 8021,
-  "revision": "CP1-INTEGRATION-SIMULATOR",
+  "revision": "HYBRID-CHATBOT-INTENTS",
   "status": "DEBUG"
 }

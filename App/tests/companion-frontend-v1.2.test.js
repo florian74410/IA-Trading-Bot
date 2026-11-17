@@ -3,7 +3,12 @@ const {test}=require('node:test'),assert=require('node:assert/strict'),fs=requir
 const code=fs.readFileSync(path.join(__dirname,'..','Frontend','JS','companion_v1.0.js'),'utf8');
 const tick=()=>new Promise(resolve=>setImmediate(resolve));
 class Element{
- constructor(tag){this.tagName=tag;this.children=[];this.dataset={};this.style={};this.value='';this.className='';this.id='';this._text='';this.disabled=false;const set=new Set();this.classList={add:x=>set.add(x),remove:x=>set.delete(x),toggle:(x,v)=>{const enabled=v===undefined?!set.has(x):!!v;if(enabled)set.add(x);else set.delete(x);return enabled;},contains:x=>set.has(x)};}
+ constructor(tag){this.tagName=tag;this.children=[];this.dataset={};this.style={};this.value='';this.className='';this.id='';this._text='';this.disabled=false;this.attributes={};this.offsetWidth=470;this.offsetHeight=500;const set=new Set();this.classList={add:x=>set.add(x),remove:x=>set.delete(x),toggle:(x,v)=>{const enabled=v===undefined?!set.has(x):!!v;if(enabled)set.add(x);else set.delete(x);return enabled;},contains:x=>set.has(x)};}
+ setAttribute(k,v){this.attributes[k]=String(v);}
+ getAttribute(k){return this.attributes[k]||null;}
+ focus(){this.focused=true;}
+ remove(){if(this.parentNode)this.parentNode.children=this.parentNode.children.filter(x=>x!==this);}
+ getBoundingClientRect(){return {left:20,top:20,width:470,height:500};}
  appendChild(el){this.children.push(el);el.parentNode=this;return el;}
  get textContent(){return this._text;}
  set textContent(x){this._text=String(x);if(x==='')this.children=[];}
@@ -12,13 +17,13 @@ class Element{
 function find(node,predicate){if(predicate(node))return node;for(const child of node.children){const result=find(child,predicate);if(result)return result;}return null;}
 function create(role='USER'){
  const requests=[],events=[],body=new Element('body');
- const document={readyState:'complete',body,activeElement:null,createElement:tag=>new Element(tag),addEventListener(){},elementFromPoint:()=>null,querySelector:()=>null};
+ const document={readyState:'complete',body,activeElement:null,getElementById:id=>find(body,n=>n.id===id),createElement:tag=>new Element(tag),addEventListener(){},elementFromPoint:()=>null,querySelector:()=>null};
  const calls={confirm:0};
  const fetch=async(url,options={})=>{
   requests.push({url,options});
-  let data={};
+  let data={};if(url==='/auth21/csrf')data={csrfToken:'fixture-csrf'};
   if(url==='/router-health')data={ok:true,dependencies:{supervisor:{ok:true},marketData:{ok:true}}};
-  if(url==='/api/companion/history')data={ok:true,messages:[{role:'user',content:'before restart'},{role:'assistant',content:'retained answer'}]};
+  if(url.split('?')[0]==='/api/companion/history')data={ok:true,messages:[{role:'user',content:'before restart'},{role:'assistant',content:'retained answer'}]};
   if(url==='/api/companion/chat')data={ok:true,source:'supervisor-cognitive',mode:'cognitive',message:'Supervisor cognitive répond',model:'gpt-5-mini',routerActions:[],mood:7};
   if(url==='/communication/v1/ui/read')data={status:'OK',data:options.body&&JSON.parse(options.body).action==='supervisor.llm.models'?{available:['gpt-5-mini','gpt-5.6'],selected:'gpt-5-mini',provider:'OPENAI_API'}:{ok:true,service:'Supervisor'}};
   if(url==='/communication/v1/ui/write')data={status:'OK',data:options.body&&JSON.parse(options.body).action==='supervisor.llm.select'?{ok:true,selection:{persisted:true}}:{ok:true,mode:'PAUSED'}};
@@ -31,7 +36,7 @@ function create(role='USER'){
 }
 test('Blob restores history, converses with cognitive mode, retains command mode and controls Engines via Core',async()=>{
  const x=create();await tick();await tick();
- const root=find(x.body,n=>n.id==='iatbCompanion');assert.ok(root);
+ const root=find(x.body,n=>n.id==='iatbCompanion');assert.ok(root);find(root,n=>n.className==='iatbCompTabs').children.find(x=>x.dataset.mode==='cognitive').onclick();await tick();await tick();
  assert.ok(x.requests.some(r=>r.url==='/api/companion/history'));
  const tabs=find(root,n=>n.className==='iatbCompTabs');
  const cognitive=tabs.children.find(x=>x.dataset.mode==='cognitive'),commands=tabs.children.find(x=>x.dataset.mode==='commands'),engines=tabs.children.find(x=>x.dataset.mode==='engines');

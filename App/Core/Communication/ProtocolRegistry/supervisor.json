@@ -417,6 +417,154 @@
           ],
           "required": []
         }
+      },
+      {
+        "name": "supervisor.chatbot.message",
+        "transport": "OWNER",
+        "description": "Authenticated owner Hybrid ChatBot; no generic execution grant.",
+        "arguments": {
+          "allowed": [
+            "message",
+            "forceOpenAI",
+            "conversation_id",
+            "model"
+          ],
+          "required": [
+            "message"
+          ]
+        },
+        "input": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1400
+            },
+            "forceOpenAI": {
+              "type": "boolean"
+            },
+            "conversation_id": {
+              "type": "string",
+              "maxLength": 64
+            },
+            "model": {
+              "type": "string",
+              "maxLength": 80
+            }
+          },
+          "required": [
+            "message"
+          ],
+          "additionalProperties": false
+        },
+        "output": {
+          "type": "object"
+        },
+        "contractVersion": "2.6.0-dev.5"
+      },
+      {
+        "name": "supervisor.chatbot.history",
+        "transport": "OWNER",
+        "description": "Authenticated owner Hybrid ChatBot; no generic execution grant.",
+        "arguments": {
+          "allowed": [
+            "conversation_id"
+          ],
+          "required": []
+        },
+        "input": {
+          "type": "object",
+          "properties": {
+            "conversation_id": {
+              "type": "string",
+              "maxLength": 64
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        },
+        "output": {
+          "type": "object"
+        },
+        "contractVersion": "2.6.0-dev.5"
+      },
+      {
+        "name": "supervisor.chatbot.confirm",
+        "transport": "OWNER",
+        "description": "Authenticated owner Hybrid ChatBot; no generic execution grant.",
+        "arguments": {
+          "allowed": [
+            "preparation_id",
+            "digest",
+            "conversation_id"
+          ],
+          "required": [
+            "preparation_id",
+            "digest"
+          ]
+        },
+        "input": {
+          "type": "object",
+          "properties": {
+            "preparation_id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "digest": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "conversation_id": {
+              "type": "string",
+              "maxLength": 64
+            }
+          },
+          "required": [
+            "preparation_id",
+            "digest"
+          ],
+          "additionalProperties": false
+        },
+        "output": {
+          "type": "object"
+        },
+        "contractVersion": "2.6.0-dev.5"
+      },
+      {
+        "name": "supervisor.chatbot.cancel",
+        "transport": "OWNER",
+        "description": "Authenticated owner Hybrid ChatBot; no generic execution grant.",
+        "arguments": {
+          "allowed": [
+            "preparation_id",
+            "conversation_id"
+          ],
+          "required": [
+            "preparation_id"
+          ]
+        },
+        "input": {
+          "type": "object",
+          "properties": {
+            "preparation_id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "conversation_id": {
+              "type": "string",
+              "maxLength": 64
+            }
+          },
+          "required": [
+            "preparation_id"
+          ],
+          "additionalProperties": false
+        },
+        "output": {
+          "type": "object"
+        },
+        "contractVersion": "2.6.0-dev.5"
       }
     ],
     "dataTypes": [

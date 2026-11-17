@@ -1,0 +1,13 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),Database=require('better-sqlite3'),crypto=require('node:crypto');
+class State{
+ constructor(root,{now=Date.now}={}){const dir=path.join(process.env.IATB_RUNTIME_ROOT||path.join(root,'.runtime'),'chatbot');fs.mkdirSync(dir,{recursive:true,mode:0o700});this.file=path.join(dir,'contexts.sqlite');this.db=new Database(this.file);fs.chmodSync(this.file,0o600);this.db.pragma('journal_mode=WAL');this.db.pragma('busy_timeout=5000');this.db.exec('CREATE TABLE IF NOT EXISTS chatbot_contexts(owner TEXT,session TEXT,room TEXT,expires INTEGER,value TEXT,PRIMARY KEY(owner,session,room));');this.now=now;}
+ key(auth,room='default'){if(!auth?.principal||!['ADMIN','USER'].includes(auth.principal.role)||!/^CL[A-Za-z0-9_-]{1,64}$/.test(auth.principal.clientId)||!/^[a-f0-9]{64}$/.test(auth.sessionHash||'')||!/^[-A-Za-z0-9_]{1,64}$/.test(room))throw Error('CHATBOT_OWNER_REQUIRED');return [auth.principal.clientId,auth.sessionHash,room];}
+ load(auth,room){const key=this.key(auth,room),now=this.now();this.db.prepare('DELETE FROM chatbot_contexts WHERE expires<=?').run(now);const row=this.db.prepare('SELECT value FROM chatbot_contexts WHERE owner=? AND session=? AND room=?').get(...key);return row?JSON.parse(row.value):{pending:null,preparation:null,messages:[],revision:0};}
+ save(auth,room,state){this.db.prepare('INSERT INTO chatbot_contexts VALUES(?,?,?,?,?) ON CONFLICT(owner,session,room) DO UPDATE SET expires=excluded.expires,value=excluded.value').run(...this.key(auth,room),this.now()+300000,JSON.stringify(state));}
+ confirm(auth,room,id,digest){return this.db.transaction(()=>{const state=this.load(auth,room),p=state.preparation;if(!p||p.id!==id||p.digest!==digest||p.expires_at<=this.now()||p.state!=='PREPARED')throw Error('PREPARATION_EXPIRED_OR_CHANGED');if(!p.confirmable)throw Error('FINANCIAL_EXECUTION_UNAVAILABLE');throw Error('LIVE_EXECUTION_DISABLED');}).immediate();}
+ cancel(auth,room,id){return this.db.transaction(()=>{const s=this.load(auth,room);if(!s.preparation||s.preparation.id!==id)throw Error('PREPARATION_NOT_FOUND');s.preparation.state='CANCELLED';s.preparation.confirmable=false;s.pending=null;this.save(auth,room,s);return {ok:true,execution:'NONE',message:'Préparation annulée.'};}).immediate();}
+ close(){this.db.close();}
+}
+function digest(value){return crypto.createHash('sha256').update(JSON.stringify(value)).digest('hex');}
+module.exports={State,digest};

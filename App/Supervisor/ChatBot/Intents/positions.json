@@ -1,0 +1,155 @@
+{
+  "schema": "iatb.intent-file/1.0",
+  "intents": [
+    {
+      "id": "positions.open",
+      "category": "positions",
+      "description": "Préparer une ouverture de position",
+      "examples": [
+        "Ouvre une position LONG BTC."
+      ],
+      "synonyms": [
+        "\\b(ouvre|ouvrir|open)\\b.*\\b(position|long|short)\\b"
+      ],
+      "patterns": [
+        "\\b(ouvre|ouvrir|open)\\b.*\\b(position|long|short)\\b"
+      ],
+      "required": [
+        "asset",
+        "amount",
+        "amount_unit",
+        "account",
+        "environment",
+        "market",
+        "order_type",
+        "position_side",
+        "instrument_candidate"
+      ],
+      "optional": [
+        "exchange",
+        "account",
+        "environment",
+        "market",
+        "asset",
+        "quote",
+        "instrument_candidate",
+        "amount",
+        "amount_unit",
+        "order_type",
+        "limit_price",
+        "trigger_price",
+        "order_id",
+        "position_id",
+        "position_side",
+        "close_fraction",
+        "leverage",
+        "timeframe"
+      ],
+      "okx_operation": "rest.post.trade.order",
+      "implementation": "BOUNDED_PREPARATION_ONLY",
+      "risk_level": "HIGH",
+      "confirmation": "AUTHENTICATED_EXACT_PREPARATION",
+      "parameters_contract": "intent.parameters/1.0",
+      "cp1": {
+        "engine": "trading",
+        "command": "trading.execute"
+      },
+      "parameters_schema": "intent.parameters/1.0"
+    },
+    {
+      "id": "positions.close",
+      "category": "positions",
+      "description": "Préparer la fermeture d’une position",
+      "examples": [
+        "Ferme 50 % de ma position LONG BTC."
+      ],
+      "synonyms": [
+        "\\b(ferme|fermer|close)\\b.*\\b(position|long|short)\\b"
+      ],
+      "patterns": [
+        "\\b(ferme|fermer|close)\\b.*\\b(position|long|short)\\b"
+      ],
+      "required": [
+        "account",
+        "position_id"
+      ],
+      "optional": [
+        "exchange",
+        "account",
+        "environment",
+        "market",
+        "asset",
+        "quote",
+        "instrument_candidate",
+        "amount",
+        "amount_unit",
+        "order_type",
+        "limit_price",
+        "trigger_price",
+        "order_id",
+        "position_id",
+        "position_side",
+        "close_fraction",
+        "leverage",
+        "timeframe"
+      ],
+      "okx_operation": "rest.post.trade.close-position",
+      "implementation": "BOUNDED_PREPARATION_ONLY",
+      "risk_level": "HIGH",
+      "confirmation": "AUTHENTICATED_EXACT_PREPARATION",
+      "parameters_contract": "intent.parameters/1.0",
+      "cp1": {
+        "engine": "trading",
+        "command": "trading.close_position"
+      },
+      "parameters_schema": "intent.parameters/1.0"
+    },
+    {
+      "id": "positions.list",
+      "category": "positions",
+      "description": "Consulter les positions",
+      "examples": [
+        "Montre mes positions OKX."
+      ],
+      "synonyms": [
+        "\\b(mes positions|positions ouvertes|open positions|show positions)\\b"
+      ],
+      "patterns": [
+        "\\b(mes positions|positions ouvertes|open positions|show positions)\\b"
+      ],
+      "required": [
+        "account"
+      ],
+      "optional": [
+        "exchange",
+        "account",
+        "environment",
+        "market",
+        "asset",
+        "quote",
+        "instrument_candidate",
+        "amount",
+        "amount_unit",
+        "order_type",
+        "limit_price",
+        "trigger_price",
+        "order_id",
+        "position_id",
+        "position_side",
+        "close_fraction",
+        "leverage",
+        "timeframe"
+      ],
+      "okx_operation": "rest.get.account.positions",
+      "implementation": "READ_GATEWAY_PROCEDURE",
+      "risk_level": "LOW",
+      "confirmation": "NO_FINANCIAL_EXECUTION",
+      "parameters_contract": "intent.parameters/1.0",
+      "cp1": {
+        "engine": "portfolio",
+        "command": "portfolio.account.snapshot"
+      },
+      "parameters_schema": "intent.parameters/1.0"
+    }
+  ]
+}

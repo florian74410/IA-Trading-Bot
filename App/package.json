@@ -1,7 +1,7 @@
 {
   "name": "ia-tb-runtime",
   "private": true,
-  "version": "2.6.0-dev.4",
+  "version": "2.6.0-dev.5",
   "description": "IA-TB unified Node.js runtime",
   "engines": {
     "node": ">=22 <23"
@@ -19,6 +19,7 @@
     "test:cp1": "node --test --test-concurrency=1 Core/FunctionRegistry/Tests/*.test.js",
     "qualify:cp1": "node Tools/qualify_cp1_control.js",
     "test:integration": "node Tools/Tests/SupervisorSimulator/run_validation.js",
-    "simulator": "node Tools/Tests/SupervisorSimulator/cli.js"
+    "simulator": "node Tools/Tests/SupervisorSimulator/cli.js",
+    "test:chatbot": "node --test --test-concurrency=1 Supervisor/ChatBot/Tests/*.test.js tests/companion-frontend-v1.2.test.js"
   }
 }

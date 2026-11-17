@@ -644,12 +644,12 @@ function legacyRoute(req,res){var u=new URL(req.url,'http://'+HOST+':'+PORT),p=u
  if(req.method==='GET'&&p==='/api/companion/history'){
   var ownerHistory=UM_RUNTIME&&UM_CONTEXT.current();
   if(!ownerHistory||!ownerHistory.token||ownerHistory.role==='GUEST')return json(res,401,{error:'COMPANION_AUTH_REQUIRED'});
-  require('./companion_cognitive_bridge').history({bridge:UM_RUNTIME.bridge,token:ownerHistory.token})
+  require('./companion_cognitive_bridge').history({bridge:UM_RUNTIME.bridge,token:ownerHistory.token,mode:u.searchParams.get('mode')})
    .then(function(x){json(res,200,x);},function(e){log('SUPERVISOR','Companion history unavailable',String(e.message||e));json(res,502,{error:'COMPANION_HISTORY_UNAVAILABLE'});});
   return;
  }
  if(req.method==='POST'&&p==='/api/companion/chat')return body(req,function(e,b){if(e||!b||!String(b.message||'').trim())return json(res,400,{error:'Message invalide'});if(String(b.message).length>1400)return json(res,400,{error:'Message trop long'});
- if(b.mode==='cognitive'){
+ if(b.mode==='cognitive'||b.mode==='hybrid'){
   var owner=UM_RUNTIME&&UM_CONTEXT.current();
   if(!owner||!owner.token||owner.role==='GUEST')return json(res,401,{error:'COMPANION_AUTH_REQUIRED'});
   return require('./companion_cognitive_bridge').talk({bridge:UM_RUNTIME.bridge,token:owner.token,input:b})

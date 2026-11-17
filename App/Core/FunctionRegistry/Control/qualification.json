@@ -154,25 +154,37 @@
     "supervisor": {
       "commands": {
         "supervisor.status": {
-          "implementation_sha256": "1ee51d80b8d5233a38473b99e685c743d280eb49755600ef81249094f954b32b",
+          "implementation_sha256": "0ac703326686c187bd1793b8ff93e83a7a79450921bab721bb42472a4d28fbf4",
           "contract_sha256": "1b81fe1ff246d009a1f7e84443e1286a9b9cbc371fe87fcff6363d5d6dea1a68"
         }
       },
       "native_verified": {
+        "supervisor.chatbot.message": {
+          "implementation_sha256": "0ac703326686c187bd1793b8ff93e83a7a79450921bab721bb42472a4d28fbf4"
+        },
+        "supervisor.chatbot.history": {
+          "implementation_sha256": "0ac703326686c187bd1793b8ff93e83a7a79450921bab721bb42472a4d28fbf4"
+        },
+        "supervisor.chatbot.confirm": {
+          "implementation_sha256": "0ac703326686c187bd1793b8ff93e83a7a79450921bab721bb42472a4d28fbf4"
+        },
+        "supervisor.chatbot.cancel": {
+          "implementation_sha256": "0ac703326686c187bd1793b8ff93e83a7a79450921bab721bb42472a4d28fbf4"
+        },
         "supervisor.cognitive.reason": {
-          "implementation_sha256": "1ee51d80b8d5233a38473b99e685c743d280eb49755600ef81249094f954b32b"
+          "implementation_sha256": "0ac703326686c187bd1793b8ff93e83a7a79450921bab721bb42472a4d28fbf4"
         },
         "supervisor.cognitive.status": {
-          "implementation_sha256": "1ee51d80b8d5233a38473b99e685c743d280eb49755600ef81249094f954b32b"
+          "implementation_sha256": "0ac703326686c187bd1793b8ff93e83a7a79450921bab721bb42472a4d28fbf4"
         },
         "supervisor.cognitive.history": {
-          "implementation_sha256": "1ee51d80b8d5233a38473b99e685c743d280eb49755600ef81249094f954b32b"
+          "implementation_sha256": "0ac703326686c187bd1793b8ff93e83a7a79450921bab721bb42472a4d28fbf4"
         },
         "supervisor.llm.models": {
-          "implementation_sha256": "1ee51d80b8d5233a38473b99e685c743d280eb49755600ef81249094f954b32b"
+          "implementation_sha256": "0ac703326686c187bd1793b8ff93e83a7a79450921bab721bb42472a4d28fbf4"
         },
         "supervisor.llm.select": {
-          "implementation_sha256": "1ee51d80b8d5233a38473b99e685c743d280eb49755600ef81249094f954b32b"
+          "implementation_sha256": "0ac703326686c187bd1793b8ff93e83a7a79450921bab721bb42472a4d28fbf4"
         }
       }
     }

@@ -1,0 +1,15 @@
+{
+  "schema": "iatb.validation/1.0",
+  "version": "2.6.0-dev.5",
+  "node": "v22.23.5",
+  "files": 32,
+  "tests": 108,
+  "passed": 108,
+  "failed": 0,
+  "skipped": 0,
+  "cancelled": 0,
+  "exit_code": 0,
+  "error": null,
+  "production": false,
+  "live_orders": false
+}

@@ -28,5 +28,7 @@
   "tests/supervisor-cognitive-runtime.test.js",
   "tests/supervisor-owner-cognitive-auth.test.js",
   "tests/supervisor-cognitive-network-smoke.js",
-  "tests/companion-supervisor-bridge.test.js"
+  "tests/companion-supervisor-bridge.test.js",
+  "Supervisor/ChatBot/Tests/hybrid.test.js",
+  "tests/companion-frontend-v1.2.test.js"
 ]

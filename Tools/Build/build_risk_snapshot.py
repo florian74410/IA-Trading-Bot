@@ -15,7 +15,7 @@ paths = subprocess.check_output(['git', 'ls-files', '-z'], cwd=root).decode().sp
 files = []
 for name in sorted(filter(None, paths)):
     p = Path(name)
-    if name in ['Documentation/Risk/build-verification.json', 'Documentation/CP1/build-verification.json']:
+    if name in ['Documentation/Risk/build-verification.json', 'Documentation/CP1/build-verification.json', 'Documentation/ChatBot/build-verification.json']:
         continue
     if not (name.startswith(('App/', 'Tools/', 'Documentation/', '.github/workflows/')) or name in ['README.md', 'ROADMAP.md', '.dockerignore'] or (p.name.startswith('compose.') and p.suffix in ['.yml', '.yaml'])):
         continue

@@ -38,4 +38,5 @@ SupervisorCore.prototype.getRiskSnapshot=function(snapshotId,portfolioId){return
 SupervisorCore.prototype.riskConstraints=function(){return this.cp.request('risk','risk.constraints.get',{},'analysis');};
 // The token is issued by Auth21 to an owner-bound agent session and stays server-side.
 SupervisorCore.prototype.agentEngineGateway=function(token){var Gateway=require('../Gateway/agent_engine_gateway').AgentEngineGateway;return new Gateway({root:this.root,token:token,env:process.env});};
+SupervisorCore.prototype.hybridChatBot=function(){if(!this.chatbot)this.chatbot=new (require('../ChatBot').HybridChatBot)({root:this.root});return this.chatbot;};
 module.exports=SupervisorCore;

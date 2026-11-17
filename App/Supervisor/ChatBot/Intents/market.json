@@ -1,0 +1,184 @@
+{
+  "schema": "iatb.intent-file/1.0",
+  "intents": [
+    {
+      "id": "market.candles",
+      "category": "market",
+      "description": "Lire les bougies du marché",
+      "examples": [
+        "Affiche les bougies de BTC-USDT en 1m."
+      ],
+      "synonyms": [
+        "\\b(bougies|candles|candlesticks|cours|prix|price)\\b"
+      ],
+      "patterns": [
+        "\\b(bougies|candles|candlesticks|cours|prix|price)\\b"
+      ],
+      "required": [
+        "instrument_candidate",
+        "timeframe"
+      ],
+      "optional": [
+        "exchange",
+        "account",
+        "environment",
+        "market",
+        "asset",
+        "quote",
+        "instrument_candidate",
+        "amount",
+        "amount_unit",
+        "order_type",
+        "limit_price",
+        "trigger_price",
+        "order_id",
+        "position_id",
+        "position_side",
+        "close_fraction",
+        "leverage",
+        "timeframe"
+      ],
+      "okx_operation": "rest.get.market.candles",
+      "implementation": "READ_GATEWAY_PROCEDURE",
+      "risk_level": "LOW",
+      "confirmation": "NO_FINANCIAL_EXECUTION",
+      "parameters_contract": "intent.parameters/1.0",
+      "cp1": {
+        "engine": "marketdata",
+        "command": "marketdata.candles"
+      },
+      "parameters_schema": "intent.parameters/1.0"
+    },
+    {
+      "id": "market.book",
+      "category": "market",
+      "description": "Lire le carnet d’ordres",
+      "examples": [
+        "Montre le carnet de BTC-USDT."
+      ],
+      "synonyms": [
+        "\\b(carnet|order book|orderbook|depth)\\b"
+      ],
+      "patterns": [
+        "\\b(carnet|order book|orderbook|depth)\\b"
+      ],
+      "required": [
+        "instrument_candidate"
+      ],
+      "optional": [
+        "exchange",
+        "account",
+        "environment",
+        "market",
+        "asset",
+        "quote",
+        "instrument_candidate",
+        "amount",
+        "amount_unit",
+        "order_type",
+        "limit_price",
+        "trigger_price",
+        "order_id",
+        "position_id",
+        "position_side",
+        "close_fraction",
+        "leverage",
+        "timeframe"
+      ],
+      "okx_operation": "rest.get.market.books",
+      "implementation": "READ_GATEWAY_PROCEDURE",
+      "risk_level": "LOW",
+      "confirmation": "NO_FINANCIAL_EXECUTION",
+      "parameters_contract": "intent.parameters/1.0",
+      "cp1": {
+        "engine": "marketdata",
+        "command": "marketdata.microstructure.snapshot"
+      },
+      "parameters_schema": "intent.parameters/1.0"
+    },
+    {
+      "id": "market.instruments",
+      "category": "market",
+      "description": "Consulter les instruments",
+      "examples": [
+        "Quels instruments sont disponibles ?"
+      ],
+      "synonyms": [
+        "\\b(instruments|paires disponibles|trading pairs)\\b"
+      ],
+      "patterns": [
+        "\\b(instruments|paires disponibles|trading pairs)\\b"
+      ],
+      "required": [],
+      "optional": [
+        "exchange",
+        "account",
+        "environment",
+        "market",
+        "asset",
+        "quote",
+        "instrument_candidate",
+        "amount",
+        "amount_unit",
+        "order_type",
+        "limit_price",
+        "trigger_price",
+        "order_id",
+        "position_id",
+        "position_side",
+        "close_fraction",
+        "leverage",
+        "timeframe"
+      ],
+      "okx_operation": "rest.get.public.instruments",
+      "implementation": "RECOGNITION_ONLY",
+      "risk_level": "LOW",
+      "confirmation": "NO_FINANCIAL_EXECUTION",
+      "parameters_contract": "intent.parameters/1.0",
+      "cp1": null,
+      "parameters_schema": "intent.parameters/1.0"
+    },
+    {
+      "id": "platform.status",
+      "category": "market",
+      "description": "Découvrir les Engines et leurs états",
+      "examples": [
+        "État des Engines."
+      ],
+      "synonyms": [
+        "\\b(etat des engines|statut des engines|engines status|sante des engines|statut plateforme)\\b"
+      ],
+      "patterns": [
+        "\\b(etat des engines|statut des engines|engines status|sante des engines|statut plateforme)\\b"
+      ],
+      "required": [],
+      "optional": [
+        "exchange",
+        "account",
+        "environment",
+        "market",
+        "asset",
+        "quote",
+        "instrument_candidate",
+        "amount",
+        "amount_unit",
+        "order_type",
+        "limit_price",
+        "trigger_price",
+        "order_id",
+        "position_id",
+        "position_side",
+        "close_fraction",
+        "leverage",
+        "timeframe"
+      ],
+      "okx_operation": null,
+      "implementation": "RECOGNITION_ONLY",
+      "risk_level": "LOW",
+      "confirmation": "NO_FINANCIAL_EXECUTION",
+      "parameters_contract": "intent.parameters/1.0",
+      "cp1": null,
+      "parameters_schema": "intent.parameters/1.0"
+    }
+  ]
+}

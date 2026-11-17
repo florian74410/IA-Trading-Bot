@@ -1,0 +1,131 @@
+{
+  "schema": "iatb.intent-file/1.0",
+  "intents": [
+    {
+      "id": "funding.transfer",
+      "category": "funding",
+      "description": "Reconnaître un transfert sans l’exécuter",
+      "examples": [
+        "Transfère 50 USDT."
+      ],
+      "synonyms": [
+        "\\b(transfere|transferer|transfert|transfer)\\b"
+      ],
+      "patterns": [
+        "\\b(transfere|transferer|transfert|transfer)\\b"
+      ],
+      "required": [],
+      "optional": [
+        "exchange",
+        "account",
+        "environment",
+        "market",
+        "asset",
+        "quote",
+        "instrument_candidate",
+        "amount",
+        "amount_unit",
+        "order_type",
+        "limit_price",
+        "trigger_price",
+        "order_id",
+        "position_id",
+        "position_side",
+        "close_fraction",
+        "leverage",
+        "timeframe"
+      ],
+      "okx_operation": "rest.post.asset.transfer",
+      "implementation": "RECOGNITION_ONLY",
+      "risk_level": "CRITICAL",
+      "confirmation": "NO_FINANCIAL_EXECUTION",
+      "parameters_contract": "intent.parameters/1.0",
+      "cp1": null,
+      "parameters_schema": "intent.parameters/1.0"
+    },
+    {
+      "id": "funding.withdraw",
+      "category": "funding",
+      "description": "Reconnaître un retrait sans l’exécuter",
+      "examples": [
+        "Retire mes USDT."
+      ],
+      "synonyms": [
+        "\\b(retire|retirer|retrait|withdraw|withdrawal)\\b"
+      ],
+      "patterns": [
+        "\\b(retire|retirer|retrait|withdraw|withdrawal)\\b"
+      ],
+      "required": [],
+      "optional": [
+        "exchange",
+        "account",
+        "environment",
+        "market",
+        "asset",
+        "quote",
+        "instrument_candidate",
+        "amount",
+        "amount_unit",
+        "order_type",
+        "limit_price",
+        "trigger_price",
+        "order_id",
+        "position_id",
+        "position_side",
+        "close_fraction",
+        "leverage",
+        "timeframe"
+      ],
+      "okx_operation": "rest.post.asset.withdrawal",
+      "implementation": "RECOGNITION_ONLY",
+      "risk_level": "CRITICAL",
+      "confirmation": "NO_FINANCIAL_EXECUTION",
+      "parameters_contract": "intent.parameters/1.0",
+      "cp1": null,
+      "parameters_schema": "intent.parameters/1.0"
+    },
+    {
+      "id": "funding.deposit",
+      "category": "funding",
+      "description": "Consulter les dépôts",
+      "examples": [
+        "Historique de mes dépôts."
+      ],
+      "synonyms": [
+        "\\b(depots?|deposits|deposit)\\b"
+      ],
+      "patterns": [
+        "\\b(depots?|deposits|deposit)\\b"
+      ],
+      "required": [],
+      "optional": [
+        "exchange",
+        "account",
+        "environment",
+        "market",
+        "asset",
+        "quote",
+        "instrument_candidate",
+        "amount",
+        "amount_unit",
+        "order_type",
+        "limit_price",
+        "trigger_price",
+        "order_id",
+        "position_id",
+        "position_side",
+        "close_fraction",
+        "leverage",
+        "timeframe"
+      ],
+      "okx_operation": "rest.get.asset.deposit-history",
+      "implementation": "RECOGNITION_ONLY",
+      "risk_level": "CRITICAL",
+      "confirmation": "NO_FINANCIAL_EXECUTION",
+      "parameters_contract": "intent.parameters/1.0",
+      "cp1": null,
+      "parameters_schema": "intent.parameters/1.0"
+    }
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "version": "2.6.0-dev.5",
+  "catalog": {
+    "version": "2.6.0-dev.5",
+    "operations": 466,
+    "intents": 490,
+    "local_patterns": 24,
+    "execution_authority": false
+  },
+  "rows": [
+    {
+      "engine": "marketdata",
+      "declared": 42,
+      "verified": 5,
+      "agent_qualified": 5,
+      "blocked": 37
+    },
+    {
+      "engine": "indicator",
+      "declared": 26,
+      "verified": 3,
+      "agent_qualified": 3,
+      "blocked": 23
+    },
+    {
+      "engine": "fundamental",
+      "declared": 63,
+      "verified": 2,
+      "agent_qualified": 2,
+      "blocked": 61
+    },
+    {
+      "engine": "liquidity",
+      "declared": 15,
+      "verified": 2,
+      "agent_qualified": 2,
+      "blocked": 13
+    },
+    {
+      "engine": "strategy",
+      "declared": 13,
+      "verified": 3,
+      "agent_qualified": 3,
+      "blocked": 10
+    },
+    {
+      "engine": "risk",
+      "declared": 17,
+      "verified": 7,
+      "agent_qualified": 7,
+      "blocked": 10
+    },
+    {
+      "engine": "portfolio",
+      "declared": 20,
+      "verified": 2,
+      "agent_qualified": 2,
+      "blocked": 18
+    },
+    {
+      "engine": "firewall",
+      "declared": 3,
+      "verified": 1,
+      "agent_qualified": 1,
+      "blocked": 2
+    },
+    {
+      "engine": "trading",
+      "declared": 11,
+      "verified": 2,
+      "agent_qualified": 2,
+      "blocked": 9
+    },
+    {
+      "engine": "supervisor",
+      "declared": 34,
+      "verified": 10,
+      "agent_qualified": 1,
+      "blocked": 33
+    }
+  ],
+  "source": "local manifests verified by CP1 qualification",
+  "financial_execution": false
+}

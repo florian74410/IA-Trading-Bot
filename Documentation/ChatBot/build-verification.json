@@ -1,0 +1,9 @@
+{
+  "version": "2.6.0-dev.5",
+  "artifact": "artifacts/IA-TB-2.6.0-dev.5-debug-source.zip",
+  "sha256": "91f02f06d33fbfb3e8a92361fd864111a7550dfb0e74ba4b18f560c22a878da6",
+  "files_verified": 1043,
+  "deterministic_rebuild": true,
+  "deployment": "NONE",
+  "excluded_self": "Documentation/ChatBot/build-verification.json"
+}

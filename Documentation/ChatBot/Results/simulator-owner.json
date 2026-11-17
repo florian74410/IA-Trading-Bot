@@ -1,0 +1,148 @@
+{
+  "schema": "cp1.simulator-report/1.0",
+  "scenario": "owner-okx-risk-preparation",
+  "ok": true,
+  "discovery_ms": 21.308232999999746,
+  "engines": [
+    {
+      "id": "marketdata",
+      "online": true
+    },
+    {
+      "id": "indicator",
+      "online": false
+    },
+    {
+      "id": "fundamental",
+      "online": false
+    },
+    {
+      "id": "liquidity",
+      "online": false
+    },
+    {
+      "id": "strategy",
+      "online": false
+    },
+    {
+      "id": "risk",
+      "online": true
+    },
+    {
+      "id": "portfolio",
+      "online": true
+    },
+    {
+      "id": "firewall",
+      "online": true
+    },
+    {
+      "id": "trading",
+      "online": true
+    },
+    {
+      "id": "supervisor",
+      "online": true
+    }
+  ],
+  "commands_discovered": 127,
+  "permissions": {
+    "allow": 5,
+    "deny": 122
+  },
+  "latency_ms": {
+    "p50": 38.84084499999881,
+    "p95": 93.38356100000055,
+    "p99": 93.38356100000055
+  },
+  "steps": [
+    {
+      "id": "account",
+      "engine": "portfolio",
+      "command": "portfolio.account.snapshot",
+      "permission_validation_ms": 1.999735999999757,
+      "request_id": "cp-mwkyaf6d-3d9d67d64dc8fa44",
+      "response_schema": "portfolio.response/1.0",
+      "routing": {
+        "permission_ms": 2.797958000000108,
+        "engine_round_trip_ms": 36.18273000000045
+      },
+      "response_hash": "c8db12daf13d0abb192b7c26dfa934370141bdd6c85b492eb023133ee7b91865",
+      "audit_events": 3,
+      "status": "PASS",
+      "latency_ms": 56.91298300000017
+    },
+    {
+      "id": "candles",
+      "engine": "marketdata",
+      "command": "marketdata.candles",
+      "permission_validation_ms": 4.112386000000697,
+      "request_id": "cp-mwkyag2n-006507c9e195f918",
+      "response_schema": "marketdata.response/2.0",
+      "routing": {
+        "permission_ms": 3.074709000000439,
+        "engine_round_trip_ms": 16.037395999999717
+      },
+      "response_hash": "4c284aff192f19147be104a6bc77e2ccaa9a55b92b225d02908956b9ec7aead5",
+      "audit_events": 3,
+      "status": "PASS",
+      "latency_ms": 41.56610399999954
+    },
+    {
+      "id": "book",
+      "engine": "marketdata",
+      "command": "marketdata.microstructure.snapshot",
+      "permission_validation_ms": 1.545313999999962,
+      "request_id": "cp-mwkyag3q-8386b03e70b1b1c9",
+      "response_schema": "marketdata.response/2.0",
+      "routing": {
+        "permission_ms": 3.0031610000005458,
+        "engine_round_trip_ms": 9.76690299999973
+      },
+      "response_hash": "a09346ebd591f18d9776f2a553e5aee67959ccb92dabccc65163a4d639ffd030",
+      "audit_events": 3,
+      "status": "PASS",
+      "latency_ms": 30.36605299999883
+    },
+    {
+      "id": "risk",
+      "engine": "risk",
+      "command": "risk.snapshot.create",
+      "permission_validation_ms": 2.10725900000034,
+      "request_id": "cp-mwkyag4l-3da12c29753c851f",
+      "response_schema": "risk.snapshot/2.0",
+      "routing": {
+        "permission_ms": 8.285214000000451,
+        "engine_round_trip_ms": 54.553437999999915
+      },
+      "response_hash": "4b1ab7231c87a97f7810de5f3b4c3f08f42f4aded430413521fca1d63a0a4de9",
+      "audit_events": 3,
+      "status": "PASS",
+      "latency_ms": 93.38356100000055
+    },
+    {
+      "id": "saved",
+      "engine": "risk",
+      "command": "risk.snapshot.get",
+      "permission_validation_ms": 2.1375559999996767,
+      "request_id": "cp-mwkyag76-b06ac5a322f2bb8e",
+      "response_schema": "risk.snapshot/2.0",
+      "routing": {
+        "permission_ms": 2.80003299999953,
+        "engine_round_trip_ms": 16.559975000000122
+      },
+      "response_hash": "4b1ab7231c87a97f7810de5f3b4c3f08f42f4aded430413521fca1d63a0a4de9",
+      "audit_events": 3,
+      "status": "PASS",
+      "latency_ms": 38.84084499999881
+    },
+    {
+      "id": "order",
+      "engine": "trading",
+      "command": "trading.execute",
+      "error": "COMMAND_UNAVAILABLE",
+      "status": "EXPECTED_REFUSAL",
+      "latency_ms": 1.8034759999991365
+    }
+  ]
+}

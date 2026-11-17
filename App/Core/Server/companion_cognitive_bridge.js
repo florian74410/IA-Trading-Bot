@@ -20,6 +20,7 @@ function validateBridge(bridge,token){
 async function talk({bridge,token,input}={}){
  validateBridge(bridge,token);
  if(!input||typeof input!=='object'||Array.isArray(input)||typeof input.message!=='string'||!input.message.trim()||input.message.length>1400)throw Error('COMPANION_MESSAGE_INVALID');
+ if(input.mode==='hybrid'){const answer=await bridge.bridge(token,{target:'supervisor',action:'supervisor.chatbot.message',arguments:{message:require('../../Supervisor/ChatBot').scrub(input.message.trim()),...(input.forceOpenAI===true?{forceOpenAI:true}:{})}});return {...answer,mood:mood(answer.message),source:'supervisor-hybrid',routerActions:[],command:null};}
  const prompt=redactSecrets(input.message.trim());
  const args={prompt,sessionId:SESSION_ID,uiContext:sanitizeContext(input.context)};
  if(input.model!==undefined){
@@ -31,8 +32,9 @@ async function talk({bridge,token,input}={}){
  const msg=redactSecrets(answer.response.message);
  return {ok:true,source:'supervisor-cognitive',mode:'cognitive',execution:'NONE',message:msg,mood:mood(msg),model:answer.response.model||null,memory:{historyUsed:answer.memory?.historyUsed||0,proposals:(answer.memory?.proposals||[]).length},routerActions:[],command:null};
 }
-async function history({bridge,token}={}){
+async function history({bridge,token,mode}={}){
  validateBridge(bridge,token);
+ if(mode==='hybrid'){const r=await bridge.bridge(token,{target:'supervisor',action:'supervisor.chatbot.history',arguments:{}});return {ok:true,messages:r.messages.map(m=>({role:m.role,content:redactSecrets(m.content),createdAt:m.at}))};}
  const r=await bridge.bridge(token,{target:'supervisor',action:'supervisor.cognitive.history',arguments:{sessionId:SESSION_ID,limit:20}});
  if(r?.schema!=='supervisor.cognitive.history/1.0'||!Array.isArray(r.messages))throw Error('COMPANION_HISTORY_INVALID');
  return {ok:true,sessionId:SESSION_ID,messages:r.messages.filter(m=>['assistant','user'].includes(m.role)).slice(-20).map(m=>({role:m.role,content:redactSecrets(String(m.content||'').slice(0,12000)),createdAt:m.createdAt}))};

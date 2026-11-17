@@ -1,6 +1,7 @@
 'use strict';
 const fs=require('node:fs'),https=require('node:https'),CP=require('../../Core/Communication/communication_protocol_v1'),Manager=require('../LLM/llm_manager'),Settings=require('../../Core/Settings/sqlite_settings_store');
 function dispatch({root,client,cognitiveCore}){const storage=new Settings(root),data=new (require('./collector_data_v2_4_1').CollectorData)(client||new (require('./cp1_client'))(root,process.env.ROUTER_PORT),root);return async function(principal,action,args,envelope){
+ if(action.startsWith('supervisor.chatbot.')){const auth={principal,sessionHash:envelope.sessionHash},bot=cognitiveCore.hybridChatBot();if(action==='supervisor.chatbot.history')return bot.history(auth,args.conversation_id||'default');if(action==='supervisor.chatbot.confirm')return bot.confirm(args,auth);if(action==='supervisor.chatbot.cancel')return bot.cancel(args,auth);if(action!=='supervisor.chatbot.message'||!envelope.chatbot)throw Error('OWNER_OPERATION_DENIED');const gateway=envelope.chatbot.agentToken?cognitiveCore.agentEngineGateway(envelope.chatbot.agentToken):null;return bot.message(args,auth,{gateway,accounts:envelope.chatbot.accounts,settings:envelope.chatbot.settings,llm:require('../ChatBot/llm').ownerModel(root,principal,envelope)});}
  if(action==='supervisor.data.catalog')return data.catalog();
  if(action==='supervisor.data.read')return data.read(args);
  if(action==='supervisor.context')return data.collect(args);
