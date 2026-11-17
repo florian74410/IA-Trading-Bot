@@ -70,8 +70,8 @@
       "permission": "ALLOW",
       "assertions": [
         {
-          "path": "data.liveExecutionEnabled",
-          "equals": false
+          "path": "data.firewallForwardRequired",
+          "equals": true
         }
       ]
     },

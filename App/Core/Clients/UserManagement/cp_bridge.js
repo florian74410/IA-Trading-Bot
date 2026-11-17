@@ -80,6 +80,6 @@ if(target==='supervisor'){payload.configuration=configurationFor(token);if(actio
   // No fallthrough to global Custom registry, global settings or execution.
   throw Error('FORBIDDEN');
  }
- return {bridge,rpc,codec};
+ let manual=null;const api={bridge,rpc,codec,prepareOrder:(token,p)=>orders().prepare(token,p),confirmOrder:(token,p)=>orders().confirm(token,p),cancelOrder:(token,p)=>orders().cancel(token,p),orderHistory:token=>orders().history(token),close:()=>manual?.close()};function orders(){if(!manual)manual=new (require('../../Execution/manual_orders').ManualOrders)({root,sessions,bridge:api,vault:tradingVault});return manual;}return api;
 }
 module.exports={createBridge,PUBLIC,GUEST_READ};

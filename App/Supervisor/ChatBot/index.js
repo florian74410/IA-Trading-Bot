@@ -15,7 +15,7 @@ class HybridChatBot{
   response.message=scrub(response.message);state.messages.push({role:'user',content:message,at:this.now()},{role:'assistant',content:response.message,private_data:!!response.result||!!response.preparation?.sources?.length,at:this.now()});state.messages=state.messages.slice(-40);this.state.save(auth,room,state);return response;
  }finally{this.busy.delete(key);}}
  history(auth,room='default'){return {ok:true,messages:this.state.load(auth,room).messages};}
- confirm(input,auth){return this.state.confirm(auth,input.conversation_id||'default',input.preparation_id,input.digest);}
+ confirm(input,auth){return this.state.confirm(auth,input.conversation_id||'default',input.preparation_id,input.digest,input.claim===true);}
  cancel(input,auth){return this.state.cancel(auth,input.conversation_id||'default',input.preparation_id);}
  close(){this.state.close();}
 }

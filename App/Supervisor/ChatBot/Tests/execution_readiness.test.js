@@ -8,9 +8,9 @@ const {OkxExecutor}=require('../../../services/trading-engine/exchange-adapters/
 const {RiskGate}=require('../../../Risk/Engine/risk_gate');
 const Catalog=require('../../../Core/FunctionRegistry/Control/catalog');
 
-test('LIVE requested does not yet enable the actual Trading Engine / OKX adapter; no network call',async()=>{
+test('explicit LIVE=false override blocks actual Trading Engine / OKX adapter; no network call',async()=>{
  let brokerCalls=0,secretReads=0;
- const engine=new TradingEngine({liveExecutionEnabled:true,lifecycle:{canExecute:()=>true,snapshot:()=>({generation:1}),submit:(_,send)=>send()},secretProvider:{get:async()=>{secretReads++;return {}; }},transport:async()=>{brokerCalls++;throw Error('EXTERNAL_CALL_FORBIDDEN');}});
+ const engine=new TradingEngine({liveExecutionEnabled:false,lifecycle:{canExecute:()=>true,snapshot:()=>({generation:1}),submit:(_,send)=>send()},secretProvider:{get:async()=>{secretReads++;return {}; }},transport:async()=>{brokerCalls++;throw Error('EXTERNAL_CALL_FORBIDDEN');}});
  engine.registerExecutor('OKX',new OkxExecutor());
  assert.equal(engine.health().live_execution_enabled,false);
  await assert.rejects(engine.execute({risk_approval_id:'diagnostic-only',exchange:'OKX',symbol:'BTC-USDT',side:'BUY',quantity:'0.001'}),{code:'LIVE_EXECUTION_DISABLED'});

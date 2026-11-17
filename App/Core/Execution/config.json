@@ -1,0 +1,8 @@
+{
+  "live": true,
+  "exchange": "OKX",
+  "mode": "MANUAL_CONFIRMED",
+  "markets": [
+    "SPOT"
+  ]
+}

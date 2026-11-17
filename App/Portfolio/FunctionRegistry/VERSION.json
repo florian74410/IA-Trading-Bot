@@ -1,7 +1,7 @@
 {
   "engine_id": "portfolio",
-  "engine_version": "2.6.0-dev.5",
+  "engine_version": "2.6.0-dev.6",
   "registry_schema": "2.6.0",
   "source_sha256": "a141336e3613cbe6a9ec45c34420ac73f0177f65abbad478f8da69930c7cf047",
-  "revision_hash": "52cf6aaf81a2687bc72f8a105e6ce327f8473e485111b639c9faa8d3e02aebdb"
+  "revision_hash": "5b4b5d200fe00bf57b88ddeee81e26344d5b827dc6ed01aa8f8542977772cde2"
 }

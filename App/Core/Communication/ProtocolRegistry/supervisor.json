@@ -497,7 +497,8 @@
           "allowed": [
             "preparation_id",
             "digest",
-            "conversation_id"
+            "conversation_id",
+            "claim"
           ],
           "required": [
             "preparation_id",
@@ -518,6 +519,9 @@
             "conversation_id": {
               "type": "string",
               "maxLength": 64
+            },
+            "claim": {
+              "type": "boolean"
             }
           },
           "required": [

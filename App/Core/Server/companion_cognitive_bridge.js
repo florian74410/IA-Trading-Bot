@@ -20,7 +20,7 @@ function validateBridge(bridge,token){
 async function talk({bridge,token,input}={}){
  validateBridge(bridge,token);
  if(!input||typeof input!=='object'||Array.isArray(input)||typeof input.message!=='string'||!input.message.trim()||input.message.length>1400)throw Error('COMPANION_MESSAGE_INVALID');
- if(input.mode==='hybrid'){const answer=await bridge.bridge(token,{target:'supervisor',action:'supervisor.chatbot.message',arguments:{message:require('../../Supervisor/ChatBot').scrub(input.message.trim()),...(input.forceOpenAI===true?{forceOpenAI:true}:{})}});return {...answer,mood:mood(answer.message),source:'supervisor-hybrid',routerActions:[],command:null};}
+ if(input.mode==='hybrid'){const answer=await bridge.bridge(token,{target:'supervisor',action:'supervisor.chatbot.message',arguments:{message:require('../../Supervisor/ChatBot').scrub(input.message.trim()),...(input.forceOpenAI===true?{forceOpenAI:true}:{})}});if(answer.preparation&&bridge.prepareOrder){answer.preparation=await bridge.prepareOrder(token,answer.preparation);answer.message=answer.preparation.message||answer.message;answer.status=answer.preparation.confirmable?'AWAITING_CONFIRMATION':'PREPARED_UNAVAILABLE';}return {...answer,mood:mood(answer.message),source:'supervisor-hybrid',routerActions:[],command:null};}
  const prompt=redactSecrets(input.message.trim());
  const args={prompt,sessionId:SESSION_ID,uiContext:sanitizeContext(input.context)};
  if(input.model!==undefined){

@@ -4,9 +4,9 @@
 const path=require('node:path'),crypto=require('node:crypto');
 const ALLOWED=new Set(['STATUS','START','RESTART','DRAINING_STOP','EMERGENCY_STOP','RECOVER']);
 class TradingAdminController {
- constructor({lifecycle, verifyPrincipal, journalFile, draining=null, recoveryCheck=null, now=Date.now}={}){
+ constructor({lifecycle, verifyPrincipal, journalFile, draining=null, recoveryCheck=null, startCheck=null, now=Date.now}={}){
    if(!lifecycle||typeof lifecycle.snapshot!=='function')throw Error('LIFECYCLE_REQUIRED');
-   this.draining=draining;this.recoveryCheck=recoveryCheck;this.lifecycle=lifecycle;this.verifyPrincipal=verifyPrincipal;this.now=now;
+   this.startCheck=startCheck;this.draining=draining;this.recoveryCheck=recoveryCheck;this.lifecycle=lifecycle;this.verifyPrincipal=verifyPrincipal;this.now=now;
    this.journalFile=journalFile||path.join(path.dirname(lifecycle.file),'trading_admin_actions.jsonl');
    this.ledger=arguments[0]&&arguments[0].ledger||null;
  }
@@ -62,6 +62,7 @@ class TradingAdminController {
      return {ok:true,state:this.lifecycle.snapshot(),security};
     }catch(_){return {ok:false,error:'RECOVERY_BLOCKED'};}
    }
+   if(command==='START'&&this.startCheck){const prior=this.lifecycle.snapshot();if(prior.state!=='STOPPED')return {ok:false,error:'START_REQUIRES_STOPPED_STATE'};if(!await this.startCheck(identity))return {ok:false,error:'START_CHECKS_FAILED'};try{const state=this.lifecycle.db.transaction(()=>{if(this.lifecycle.snapshot().generation!==prior.generation)throw Error('STATE_CHANGED');if(this.lifecycle.db.prepare("SELECT count(*) AS n FROM trading_operations WHERE phase='UNCERTAIN'").get().n)throw Error('OPERATIONS_UNCERTAIN');return this.lifecycle.transition('RUNNING','ADMIN_START_VERIFIED',{recovery_required:false});}).immediate();return {ok:true,state,security:{...security,liveAuthorization:true}};}catch(_){return {ok:false,error:'START_RECONCILIATION_REQUIRED'};}}
    return {ok:false,error:'COMMAND_IMPLEMENTATION_PENDING',command};
  }
 }

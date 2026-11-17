@@ -90,31 +90,31 @@
     "risk": {
       "commands": {
         "risk.snapshot.create": {
-          "implementation_sha256": "a1a58fb63273e6a9f0a0bf646a05f067a9c5cc2a48f383532ba4cd88a489a373",
+          "implementation_sha256": "914ca0788362ce1482207874f91024b269119ec55fdf6d2145e4ca350869cb4d",
           "contract_sha256": "d2c96307b33832f494a43d05e7211b7774c5b7526c3b157d72830741cddd4122"
         },
         "risk.snapshot.get": {
-          "implementation_sha256": "a1a58fb63273e6a9f0a0bf646a05f067a9c5cc2a48f383532ba4cd88a489a373",
+          "implementation_sha256": "914ca0788362ce1482207874f91024b269119ec55fdf6d2145e4ca350869cb4d",
           "contract_sha256": "39841e2b0c0689d08a85bd866d99fc202b683f3dd25ec518baa7aa4190eb4cd6"
         },
         "risk.list_capabilities": {
-          "implementation_sha256": "a1a58fb63273e6a9f0a0bf646a05f067a9c5cc2a48f383532ba4cd88a489a373",
+          "implementation_sha256": "914ca0788362ce1482207874f91024b269119ec55fdf6d2145e4ca350869cb4d",
           "contract_sha256": "0e98fe2c8396b4e5e252558f3aee8ecdcfde755e4406eff5f858caed8e1424a0"
         },
         "risk.constraints.get": {
-          "implementation_sha256": "a1a58fb63273e6a9f0a0bf646a05f067a9c5cc2a48f383532ba4cd88a489a373",
+          "implementation_sha256": "914ca0788362ce1482207874f91024b269119ec55fdf6d2145e4ca350869cb4d",
           "contract_sha256": "4e17d2fd224a8ffb8bb36726ec01511dae930d8de9536c36899e4f69ea6dc245"
         },
         "risk.status": {
-          "implementation_sha256": "a1a58fb63273e6a9f0a0bf646a05f067a9c5cc2a48f383532ba4cd88a489a373",
+          "implementation_sha256": "914ca0788362ce1482207874f91024b269119ec55fdf6d2145e4ca350869cb4d",
           "contract_sha256": "b3eecb078062c75a72cfe80fc9b25ee6efc63d3e06bb261e0e86ee0cb6700c27"
         },
         "risk.r1.evaluate": {
-          "implementation_sha256": "a1a58fb63273e6a9f0a0bf646a05f067a9c5cc2a48f383532ba4cd88a489a373",
+          "implementation_sha256": "914ca0788362ce1482207874f91024b269119ec55fdf6d2145e4ca350869cb4d",
           "contract_sha256": "5afb918fe869bb3cffdd463a94f12d5c5720d3689f30e9f2f8affb837a64510c"
         },
         "risk.r2.evaluate": {
-          "implementation_sha256": "a1a58fb63273e6a9f0a0bf646a05f067a9c5cc2a48f383532ba4cd88a489a373",
+          "implementation_sha256": "914ca0788362ce1482207874f91024b269119ec55fdf6d2145e4ca350869cb4d",
           "contract_sha256": "6046fbaa3ad097d4684bbc47ae2074f5b19ce42733e91ac117ba617d192cc8b3"
         }
       }
@@ -134,7 +134,7 @@
     "firewall": {
       "commands": {
         "firewall.status": {
-          "implementation_sha256": "d32d195a10e5c3f7d3d9e13bd37d2abe018dfb4c919575d2e08d30e40992ed95",
+          "implementation_sha256": "8b752e8936e4fe7920065ee6ce4937efd538e88b7aef3da73fc212d28db074d3",
           "contract_sha256": "11b866db270c560eb869095299c2f5f2644a72dd7efddb9bac13b4f744727206"
         }
       }
@@ -142,11 +142,11 @@
     "trading": {
       "commands": {
         "trading.health": {
-          "implementation_sha256": "1be6d39de559bc63e3c88166b1b4fbf000a6fb9d89e9ed0993a34cffc06a3797",
+          "implementation_sha256": "eaea7a544ce4e15618fbcc9989b19042bb07b19551a17e137d0aabbb33f8c7fe",
           "contract_sha256": "b23ab46387711ec3e05b224254c4c83a3712cd22d3d02060e8105dc5926fec7c"
         },
         "trading.capabilities": {
-          "implementation_sha256": "1be6d39de559bc63e3c88166b1b4fbf000a6fb9d89e9ed0993a34cffc06a3797",
+          "implementation_sha256": "eaea7a544ce4e15618fbcc9989b19042bb07b19551a17e137d0aabbb33f8c7fe",
           "contract_sha256": "3b95beff89041877a3ff67ad91141f021ed94b57278dd199c5055925db10281d"
         }
       }
@@ -154,37 +154,37 @@
     "supervisor": {
       "commands": {
         "supervisor.status": {
-          "implementation_sha256": "ff64998859870fd79b06f2028fbca728327c8d7190cb2eb480f38d37f643b599",
+          "implementation_sha256": "21a4b072378c0c3540382d047b886ff6a41b74a1796a05fea375b6d69e89b95a",
           "contract_sha256": "1b81fe1ff246d009a1f7e84443e1286a9b9cbc371fe87fcff6363d5d6dea1a68"
         }
       },
       "native_verified": {
         "supervisor.chatbot.message": {
-          "implementation_sha256": "ff64998859870fd79b06f2028fbca728327c8d7190cb2eb480f38d37f643b599"
+          "implementation_sha256": "21a4b072378c0c3540382d047b886ff6a41b74a1796a05fea375b6d69e89b95a"
         },
         "supervisor.chatbot.history": {
-          "implementation_sha256": "ff64998859870fd79b06f2028fbca728327c8d7190cb2eb480f38d37f643b599"
+          "implementation_sha256": "21a4b072378c0c3540382d047b886ff6a41b74a1796a05fea375b6d69e89b95a"
         },
         "supervisor.chatbot.confirm": {
-          "implementation_sha256": "ff64998859870fd79b06f2028fbca728327c8d7190cb2eb480f38d37f643b599"
+          "implementation_sha256": "21a4b072378c0c3540382d047b886ff6a41b74a1796a05fea375b6d69e89b95a"
         },
         "supervisor.chatbot.cancel": {
-          "implementation_sha256": "ff64998859870fd79b06f2028fbca728327c8d7190cb2eb480f38d37f643b599"
+          "implementation_sha256": "21a4b072378c0c3540382d047b886ff6a41b74a1796a05fea375b6d69e89b95a"
         },
         "supervisor.cognitive.reason": {
-          "implementation_sha256": "ff64998859870fd79b06f2028fbca728327c8d7190cb2eb480f38d37f643b599"
+          "implementation_sha256": "21a4b072378c0c3540382d047b886ff6a41b74a1796a05fea375b6d69e89b95a"
         },
         "supervisor.cognitive.status": {
-          "implementation_sha256": "ff64998859870fd79b06f2028fbca728327c8d7190cb2eb480f38d37f643b599"
+          "implementation_sha256": "21a4b072378c0c3540382d047b886ff6a41b74a1796a05fea375b6d69e89b95a"
         },
         "supervisor.cognitive.history": {
-          "implementation_sha256": "ff64998859870fd79b06f2028fbca728327c8d7190cb2eb480f38d37f643b599"
+          "implementation_sha256": "21a4b072378c0c3540382d047b886ff6a41b74a1796a05fea375b6d69e89b95a"
         },
         "supervisor.llm.models": {
-          "implementation_sha256": "ff64998859870fd79b06f2028fbca728327c8d7190cb2eb480f38d37f643b599"
+          "implementation_sha256": "21a4b072378c0c3540382d047b886ff6a41b74a1796a05fea375b6d69e89b95a"
         },
         "supervisor.llm.select": {
-          "implementation_sha256": "ff64998859870fd79b06f2028fbca728327c8d7190cb2eb480f38d37f643b599"
+          "implementation_sha256": "21a4b072378c0c3540382d047b886ff6a41b74a1796a05fea375b6d69e89b95a"
         }
       }
     }

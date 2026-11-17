@@ -80,7 +80,7 @@ class TradingVault {
   if(operation==='bind'){if(t.claimed)throw Error('TRADING_TICKET_REPLAY');t.claimed=true;}else if(!t.claimed)throw Error('TRADING_TICKET_UNCLAIMED');
   const b=await context.routing().bind(t.intent,action);
   if(operation==='bind')return {identity:b.identity,account:b.account,kind:record.kind};
-  if(operation==='validate'&&action==='read')return {ok:true,identity:b.identity};
+  if(operation==='validate'&&ACTIONS.has(action))return {ok:true,identity:b.identity};
   if(operation==='credentials'&&record.kind==='CEX'){if(t.credentialRead)throw Error('TRADING_CREDENTIAL_REPLAY');t.credentialRead=true;return {credentials:await b.secretProvider.get(exchange)};}
   throw Error('TRADING_ACCESS_OPERATION_DENIED');
  }

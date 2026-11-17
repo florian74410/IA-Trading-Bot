@@ -56,6 +56,7 @@ var RISK_OWNER=require('../../Core/Clients/UserManagement/owner_receiver').recei
   if(payload.portfolioRead?.payload?.clientId!==principal.clientId||payload.portfolioRead?.payload?.args?.account!==args.portfolio_id)throw Error('RISK_OWNER_DELEGATION_REQUIRED');
   return SNAPSHOTS.create(args,{ownerContext:{ownerId:principal.clientId,portfolioRead:payload.portfolioRead}});
  }
+ if(action==='risk.order.authorize'){const s=SNAPSHOTS.get(args.snapshot_id,args.portfolio_id,principal.clientId);if(args.intent?.metadata?.ownerClientId!==principal.clientId||args.intent?.metadata?.account!==args.portfolio_id||args.intent?.source!=='supervisor.chatbot.manual')throw Error('RISK_ORDER_OWNER_MISMATCH');return RISK_GATE.evaluate(args.intent,{snapshot:s,ownerId:principal.clientId});}
  if(action==='risk.snapshot.get')return SNAPSHOTS.get(args.snapshot_id,args.portfolio_id,principal.clientId);
  if(action==='risk.constraints.get')return SNAPSHOTS.constraints();if(action==='risk.status')return SNAPSHOTS.status();
  throw Error('OWNER_OPERATION_DENIED');

@@ -30,5 +30,8 @@
   "tests/supervisor-cognitive-network-smoke.js",
   "tests/companion-supervisor-bridge.test.js",
   "Supervisor/ChatBot/Tests/hybrid.test.js",
-  "tests/companion-frontend-v1.2.test.js"
+  "tests/companion-frontend-v1.2.test.js",
+  "Core/Execution/manual_orders.test.js",
+  "Portfolio/Tests/manual_order_pipeline.integration.test.js",
+  "Supervisor/ChatBot/Tests/execution_readiness.test.js"
 ]

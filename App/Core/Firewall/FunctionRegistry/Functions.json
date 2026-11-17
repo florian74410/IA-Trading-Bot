@@ -1,7 +1,7 @@
 {
   "schema_version": "2.6.0",
   "engine_id": "firewall",
-  "engine_version": "2.6.0-dev.5",
+  "engine_version": "2.6.0-dev.6",
   "transport": "CP/1",
   "source_protocol_registry": "Core/Communication/ProtocolRegistry/firewall.json",
   "source_sha256": "7df07a1114fac1750e952be02d31260c1d5093d76cf484b18ac555d0dfb84861",
@@ -136,8 +136,8 @@
       "side_effects": false,
       "transport": "CP1",
       "authorization": "Authenticated service identity, authenticated agent session and effective per-command permission.",
-      "contract_version": "2.6.0-dev.5",
-      "handler_sha256": "d32d195a10e5c3f7d3d9e13bd37d2abe018dfb4c919575d2e08d30e40992ed95",
+      "contract_version": "2.6.0-dev.6",
+      "handler_sha256": "8b752e8936e4fe7920065ee6ce4937efd538e88b7aef3da73fc212d28db074d3",
       "availability_reason": null,
       "timeout_ms": 5000,
       "agent_qualified": true
@@ -166,8 +166,8 @@
       "side_effects": false,
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
-      "contract_version": "2.6.0-dev.5",
-      "handler_sha256": "d32d195a10e5c3f7d3d9e13bd37d2abe018dfb4c919575d2e08d30e40992ed95",
+      "contract_version": "2.6.0-dev.6",
+      "handler_sha256": "8b752e8936e4fe7920065ee6ce4937efd538e88b7aef3da73fc212d28db074d3",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -209,12 +209,12 @@
       "side_effects": false,
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
-      "contract_version": "2.6.0-dev.5",
-      "handler_sha256": "d32d195a10e5c3f7d3d9e13bd37d2abe018dfb4c919575d2e08d30e40992ed95",
+      "contract_version": "2.6.0-dev.6",
+      "handler_sha256": "8b752e8936e4fe7920065ee6ce4937efd538e88b7aef3da73fc212d28db074d3",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
     }
   ],
-  "revision_hash": "94caeac28ddb9958c223e1e2ceb854899b8e17395b84eef1f3709907851dc153"
+  "revision_hash": "c1aad2e112d62e772cc5d4d5beff1741780a137d528736630463f7f34ae3897a"
 }

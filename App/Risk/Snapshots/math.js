@@ -35,8 +35,8 @@ function portfolio(d){
  if(Array.isArray(positions)&&positions.length>32)return {available:false,reason:'PORTFOLIO_POSITION_LIMIT'};
  if(p.analysis_mode==='TRADING_ONLY'||!finite(p.equity)||p.equity<=0||!Array.isArray(positions))return {available:false,reason:'ACCOUNT_EQUITY_UNAVAILABLE'};
  let gross=0,stops=0;const assets={};
- for(const x of positions){if(!finite(x.notional)||!finite(x.estimatedStopRiskQuote)||x.estimatedStopRiskQuote<0||!x.symbol)return {available:false,reason:'POSITION_RISK_INCOMPLETE'};
-  const v=Math.abs(x.notional);gross+=v;stops+=x.estimatedStopRiskQuote;const key=String(x.symbol);if(!/^[A-Za-z0-9_./:-]{1,96}$/.test(key)||['__proto__','constructor','prototype'].includes(key))return {available:false,reason:'POSITION_SYMBOL_INVALID'};assets[key]=(assets[key]||0)+v;}
+ for(const x of positions){if(!finite(x.notional)||(!finite(x.estimatedStopRiskQuote)&&!(d.manual_order&&x.source==='OKX_SPOT_HOLDING'&&x.estimatedStopRiskQuote===null))||x.estimatedStopRiskQuote<0||!x.symbol)return {available:false,reason:'POSITION_RISK_INCOMPLETE'};
+  const v=Math.abs(x.notional);gross+=v;stops+=x.estimatedStopRiskQuote===null?v:x.estimatedStopRiskQuote;const key=String(x.symbol);if(!/^[A-Za-z0-9_./:-]{1,96}$/.test(key)||['__proto__','constructor','prototype'].includes(key))return {available:false,reason:'POSITION_SYMBOL_INVALID'};assets[key]=(assets[key]||0)+v;}
  const max=Math.max(0,...Object.values(assets)),history=d.assetCandles||{},keys=Object.keys(assets),pairs=[];
  for(let i=0;i<keys.length;i++)for(let j=i+1;j<keys.length;j++)pairs.push({a:keys[i],b:keys[j],pearson:correlation(history[keys[i]],history[keys[j]],d.timeframe)});
  return {available:true,equity:p.equity,gross_exposure:gross/p.equity,exposure_by_asset:assets,concentration:max/p.equity,
@@ -51,7 +51,7 @@ function execution(d){
  const valid=(a,asc)=>a.every((x,j)=>finite(x.price)&&x.price>0&&finite(x.quantity)&&x.quantity>0&&(!j||(asc?x.price>=a[j-1].price:x.price<=a[j-1].price)));
  // Collector size is denominated in base units.
  if(!valid(asks,true)||!valid(bids,false)||asks[0].price<bids[0].price)return {available:false,reason:'ORDERBOOK_INVALID'};
- const side=i.action||i.side,q=i.size??i.quantity,levels=side==='BUY'?asks:bids;
+ const side=i.action||i.side,quote=i.quoteQuantity??i.quote_quantity,quoteOrder=quote!==undefined&&quote!==null;let q=i.size??i.quantity;const levels=side==='BUY'?asks:bids;if(quoteOrder){if(!finite(quote)||quote<=0)return {available:false,reason:'ORDER_INTENT_REQUIRED'};let budget=quote;q=0;for(const l of levels){const cost=Math.min(budget,l.price*l.quantity);q+=cost/l.price;budget-=cost;if(budget<=1e-10)break;}if(budget>1e-8)return {available:false,reason:'INSUFFICIENT_BOOK_DEPTH'};}
  if(!['BUY','SELL'].includes(side)||!finite(q)||q<=0)return {available:false,reason:'ORDER_INTENT_REQUIRED'};
  const mid=(asks[0].price+bids[0].price)/2,spread=(asks[0].price-bids[0].price)/mid;
  let remaining=q,cost=0;for(const l of levels){const take=Math.min(remaining,l.quantity);cost+=take*l.price;remaining-=take;if(remaining<=0)break;}
@@ -59,10 +59,10 @@ function execution(d){
  return {available:true,spread,depth_base:levels.reduce((s,l)=>s+l.quantity,0),depth_quote:levels.reduce((s,l)=>s+l.quantity*l.price,0),
   filled_base:filled,partial_fill:remaining>1e-12,vwap:filled>0?cost/filled:null,slippage:filled>0?Math.max(0,side==='BUY'?(cost/filled-mid)/mid:(mid-cost/filled)/mid):null,
   fee_rate:finite(fee)&&fee>=0&&fee<=.1?fee:null,fees_quote:finite(fee)&&fee>=0&&fee<=.1?cost*fee:null,notional:q*mid,
-  exchange_constraints_valid:!!(d.exchangeConstraints&&finite(d.exchangeConstraints.minQuantity)&&finite(d.exchangeConstraints.maxQuantity)&&finite(d.exchangeConstraints.quantityStep)&&d.exchangeConstraints.quantityStep>0&&q>=d.exchangeConstraints.minQuantity&&q<=d.exchangeConstraints.maxQuantity&&Math.abs(q/d.exchangeConstraints.quantityStep-Math.round(q/d.exchangeConstraints.quantityStep))<1e-8)};
+  exchange_constraints_valid:!!(d.exchangeConstraints&&finite(d.exchangeConstraints.minQuantity)&&finite(d.exchangeConstraints.maxQuantity)&&finite(d.exchangeConstraints.quantityStep)&&d.exchangeConstraints.quantityStep>0&&q>=d.exchangeConstraints.minQuantity&&q<=d.exchangeConstraints.maxQuantity&&(quoteOrder||Math.abs(q/d.exchangeConstraints.quantityStep-Math.round(q/d.exchangeConstraints.quantityStep))<1e-8))};
 }
 function strategy(d){
- const t=d.trades;if(!Array.isArray(t)||!t.length||t.some(x=>!finite(x.netPnl)))return {available:false,reason:'CLOSED_NET_TRADE_HISTORY_UNAVAILABLE'};
+ const t=d.trades;if(!Array.isArray(t)||!t.length||t.some(x=>!finite(x.netPnl)))return {available:false,reason:'CLOSED_NET_TRADE_HISTORY_UNAVAILABLE',samples:Array.isArray(t)?t.length:null,expectancy:null,win_rate:null,profit_factor:null,distribution:null,gain:null,loss:null};
  const a=t.map(x=>x.netPnl),wins=a.filter(x=>x>0),losses=a.filter(x=>x<0),gain=wins.reduce((s,x)=>s+x,0),loss=-losses.reduce((s,x)=>s+x,0);
  return {available:true,samples:a.length,expectancy:mean(a),win_rate:wins.length/a.length,profit_factor:loss>0?gain/loss:null,
   distribution:{min:Math.min(...a),p05:quantile(a,.05),median:quantile(a,.5),p95:quantile(a,.95),max:Math.max(...a)},gain,loss};

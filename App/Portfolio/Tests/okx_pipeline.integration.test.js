@@ -56,6 +56,6 @@ test('profile key -> signed vault TLS -> Trading Firewall CP/1 -> Portfolio -> o
   const external=fs.readFileSync(externalLog,'utf8').trim().split('\n').filter(Boolean).map(x=>JSON.parse(x));assert(external.some(x=>x.path==='/api/v5/account/balance'));assert.equal(external.filter(x=>x.kind==='exchange'&&x.method!=='GET').length,0);assert(external.every(x=>x.path!=='/api/v5/trade/order'));
  }catch(e){throw Error(e.message+'; fixture diagnostics: '+logs.join('').slice(-1800));}finally{
   for(const c of children)c.kill('SIGTERM');await Promise.all(children.map(c=>new Promise(r=>{if(c.exitCode!==null)return r();c.once('exit',r);setTimeout(()=>{c.kill('SIGKILL');r();},2000).unref();})));
-  control.close();await Promise.all([core].map(s=>new Promise(r=>s.close(r))));fs.rmSync(temp,{recursive:true,force:true});
+  bridge.close();control.close();await Promise.all([core].map(s=>new Promise(r=>s.close(r))));fs.rmSync(temp,{recursive:true,force:true});
  }
 });

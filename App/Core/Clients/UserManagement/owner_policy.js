@@ -1,6 +1,6 @@
 'use strict';
 const policies=Object.freeze({
- risk:{read:['snapshot.create','snapshot.get','constraints.get','status'],write:[]},
+ risk:{read:['snapshot.create','snapshot.get','constraints.get','status'],write:['order.authorize']},
  supervisor:{read:['chatbot.history','health','status','capabilities','context','data.catalog','data.read','cognitive.status','cognitive.history','llm.models'],write:['chatbot.message','chatbot.confirm','chatbot.cancel','reason','structured','cognitive.reason','llm.select']},
  strategy:{read:['health','capabilities','catalog','stats','state'],write:['validate','evaluate','dry_run','reload','pause','resume','reset_stats','definition.save','definition.delete']},
  portfolio:{read:['health','overview','account.snapshot','settings.get','positions','position.health','trades','trade.detail','balances','history','statistics','events'],write:['settings.set','snapshot']}

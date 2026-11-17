@@ -16,10 +16,15 @@ class OkxExecutor {
     ensureLive(ctx);
     const s = await ctx.secretProvider.get("OKX");
     const key = s.api_key || s.apiKey;
-    const secret = s.api_secret || s.secret;
+    const secret = s.api_secret || s.apiSecret || s.secret;
     const passphrase = s.passphrase;
     if (!key || !secret || !passphrase) throw new Error("OKX API credentials missing");
 
+    const hosts={GLOBAL:'www.okx.com',EEA:'eea.okx.com',US:'us.okx.com'};
+    const host=hosts[s.apiRegion||'GLOBAL'];if(!host)throw Error('OKX_REGION_INVALID');
+    if(order.market_type!=='SPOT'||order.order_type!=='MARKET')throw Error('OKX_MANUAL_ORDER_UNSUPPORTED');
+    const hasBase=order.quantity!==null&&order.quantity!==undefined,hasQuote=order.quote_quantity!==null&&order.quote_quantity!==undefined;
+    if(hasBase===hasQuote||!(Number(hasBase?order.quantity:order.quote_quantity)>0))throw Error('OKX_ORDER_SIZE_INVALID');
     const path = "/api/v5/trade/order";
     const bodyObj = {
       instId: order.symbol.replace("/", "-"),
@@ -27,7 +32,9 @@ class OkxExecutor {
       clOrdId: String(order.client_order_id).replace(/[^A-Za-z0-9]/g,"").slice(0,32),
       side: order.side.toLowerCase(),
       ordType: order.order_type.toLowerCase(),
-      sz: order.quantity,
+      sz: hasBase?order.quantity:order.quote_quantity,
+      tgtCcy:hasBase?"base_ccy":"quote_ccy",
+      banAmend:true,
       px: order.price,
       reduceOnly: order.reduce_only || undefined,
       posSide: order.position_side ? order.position_side.toLowerCase() : undefined
@@ -47,9 +54,10 @@ class OkxExecutor {
     };
     if (s.demo_mode || s.demoMode) headers["x-simulated-trading"] = "1";
 
-    const res = await ctx.transport({ method:"POST", url:`https://www.okx.com${path}`, headers, body });
+    if(ctx.revalidate)await ctx.revalidate();
+    const res = await ctx.transport({ method:"POST", url:`https://${host}${path}`, headers, body });
     const first = res.body && Array.isArray(res.body.data) ? res.body.data[0] : null;
-    const ok = statusFromHttp(res.statusCode) && res.body && String(res.body.code) === "0" && (!first || String(first.sCode) === "0");
+    const ok = statusFromHttp(res.statusCode) && res.body && String(res.body.code) === "0" && (first && String(first.sCode) === "0" && typeof first.ordId === "string" && first.ordId.length>0);
 
     return {
       ok,
@@ -64,13 +72,14 @@ class OkxExecutor {
   async cancel(order, ctx) {
     ensureLive(ctx);
     const s = await ctx.secretProvider.get("OKX");
-    const key=s.api_key||s.apiKey, secret=s.api_secret||s.secret, passphrase=s.passphrase;
+    const key=s.api_key||s.apiKey, secret=s.api_secret||s.apiSecret||s.secret, passphrase=s.passphrase;
     if(!key||!secret||!passphrase) throw new Error("OKX API credentials missing");
+    const hosts={GLOBAL:'www.okx.com',EEA:'eea.okx.com',US:'us.okx.com'},host=hosts[s.apiRegion||'GLOBAL'];if(!host)throw Error('OKX_REGION_INVALID');
     const path="/api/v5/trade/cancel-order", bodyObj={instId:order.symbol.replace("/","-"),ordId:order.exchange_order_id||undefined,clOrdId:order.client_order_id||undefined};
     Object.keys(bodyObj).forEach(k=>bodyObj[k]===undefined&&delete bodyObj[k]);
     const body=JSON.stringify(bodyObj), timestamp=isoNow(), sign=crypto.createHmac("sha256",secret).update(timestamp+"POST"+path+body).digest("base64");
     const headers={"OK-ACCESS-KEY":key,"OK-ACCESS-SIGN":sign,"OK-ACCESS-TIMESTAMP":timestamp,"OK-ACCESS-PASSPHRASE":passphrase}; if(s.demo_mode||s.demoMode)headers["x-simulated-trading"]="1";
-    const res=await ctx.transport({method:"POST",url:`https://www.okx.com${path}`,headers,body}); const first=res.body&&Array.isArray(res.body.data)?res.body.data[0]:null;
+    const res=await ctx.transport({method:"POST",url:`https://${host}${path}`,headers,body}); const first=res.body&&Array.isArray(res.body.data)?res.body.data[0]:null;
     const ok=statusFromHttp(res.statusCode)&&res.body&&String(res.body.code)==="0"&&(!first||String(first.sCode)==="0");
     return {ok,status:ok?"CANCEL_REQUESTED":"REJECTED",exchange_order_id:first&&(first.ordId||first.clOrdId)||order.exchange_order_id||null,raw_status:first&&first.sMsg||null,error:ok?null:(first&&first.sMsg)||asError(res.body,`HTTP ${res.statusCode}`),diagnostics:{http_status:res.statusCode,code:res.body&&res.body.code}};
   }

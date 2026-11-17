@@ -15,7 +15,7 @@ class Element{
  querySelectorAll(tag){const all=[];function scan(x){for(const child of x.children){if(child.tagName===tag)all.push(child);scan(child);}}scan(this);return all;}
 }
 function find(node,predicate){if(predicate(node))return node;for(const child of node.children){const result=find(child,predicate);if(result)return result;}return null;}
-function create(role='USER'){
+function create(role='USER',chatReply=null){
  const requests=[],events=[],body=new Element('body');
  const document={readyState:'complete',body,activeElement:null,getElementById:id=>find(body,n=>n.id===id),createElement:tag=>new Element(tag),addEventListener(){},elementFromPoint:()=>null,querySelector:()=>null};
  const calls={confirm:0};
@@ -24,7 +24,8 @@ function create(role='USER'){
   let data={};if(url==='/auth21/csrf')data={csrfToken:'fixture-csrf'};
   if(url==='/router-health')data={ok:true,dependencies:{supervisor:{ok:true},marketData:{ok:true}}};
   if(url.split('?')[0]==='/api/companion/history')data={ok:true,messages:[{role:'user',content:'before restart'},{role:'assistant',content:'retained answer'}]};
-  if(url==='/api/companion/chat')data={ok:true,source:'supervisor-cognitive',mode:'cognitive',message:'Supervisor cognitive répond',model:'gpt-5-mini',routerActions:[],mood:7};
+  if(url==='/api/companion/chat')data=chatReply||{ok:true,source:'supervisor-cognitive',mode:'cognitive',message:'Supervisor cognitive répond',model:'gpt-5-mini',routerActions:[],mood:7};
+  if(url==='/api/companion/confirm')data={ok:true,status:'ACKNOWLEDGED',message:'Ordre accepté par OKX.'};
   if(url==='/communication/v1/ui/read')data={status:'OK',data:options.body&&JSON.parse(options.body).action==='supervisor.llm.models'?{available:['gpt-5-mini','gpt-5.6'],selected:'gpt-5-mini',provider:'OPENAI_API'}:{ok:true,service:'Supervisor'}};
   if(url==='/communication/v1/ui/write')data={status:'OK',data:options.body&&JSON.parse(options.body).action==='supervisor.llm.select'?{ok:true,selection:{persisted:true}}:{ok:true,mode:'PAUSED'}};
   return {ok:true,status:200,json:async()=>data};
@@ -80,3 +81,5 @@ test('ADMIN can load allowlisted models and explicitly persist selected Supervis
  assert.equal(args.arguments.model,'gpt-5-mini');
  assert.equal(args.arguments.provider,'OPENAI_API');
 });
+
+test('live notification confirms the exact preparation with CSRF once even after a double click',async()=>{const x=create('USER',{ok:true,mode:'LOCAL',message:'Ordre préparé',preparation:{id:'prep-live-1',digest:'d'.repeat(64),confirmable:true,operation:'trading.buy',expires_at:Date.now()+90000,warnings:[]}});await tick();await tick();const form=find(x.body,n=>n.className==='iatbCompForm');form.children.find(n=>n.tagName==='input').value='Achat confirmé';form.onsubmit({preventDefault(){}});await tick();await tick();const overlay=find(x.body,n=>n.id==='iatbTransactionOverlay'),button=find(overlay,n=>n.tagName==='button'&&n.textContent==='Confirmer');assert.equal(button.disabled,false);button.onclick();button.onclick();await tick();await tick();const requests=x.requests.filter(r=>r.url==='/api/companion/confirm');assert.equal(requests.length,1);assert.equal(requests[0].options.headers['X-IATB-CSRF'],'fixture-csrf');assert.deepEqual(JSON.parse(requests[0].options.body),{preparation_id:'prep-live-1',digest:'d'.repeat(64)});assert.equal(button.disabled,true);});
