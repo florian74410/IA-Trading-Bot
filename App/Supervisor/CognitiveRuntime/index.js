@@ -23,9 +23,9 @@ function tenantOf(auth){
  return crypto.createHash('sha256').update('iatb-cognitive-owner-v1:').update(x.clientId).digest('hex');
 }
 class CognitiveRuntime{
- constructor({root,llm,cp,settings,shortMemory,longMemory,protocolRegistry,functionRegistryDb}={}){
+ constructor({root,llm,cp,settings,shortMemory,longMemory,protocolRegistry,functionRegistryDb,workingMemory=null}={}){
   if(!root||!llm||!cp||!settings)throw Error('COGNITIVE_ADAPTERS_REQUIRED');
-  this.root=root;this.llm=llm;this.cp=cp;this.settings=settings;
+  this.root=root;this.llm=llm;this.cp=cp;this.settings=settings;this.workingMemory=workingMemory;
   const dir=path.join(process.env.IATB_RUNTIME_ROOT||path.join(root,'.runtime'),'cognitive');
   this.short=shortMemory||new ConversationMemory({filename:path.join(dir,'short.sqlite'),ttlSeconds:86400,maxMessages:40});
   this.long=longMemory||new PersonalMemory(path.join(dir,'long.sqlite'));
@@ -103,8 +103,12 @@ class CognitiveRuntime{
    const self=compact(this.long.readSelf('supervisor'),1200);
    const history=this.short.history({tenantId:tenant,sessionId,limit:8}).map(x=>({role:x.role,content:compact(x.content,800)}));
    const ram=this.ram.get(key)||{objective:null};
+   // The provider receives a sanitized snapshot; provider-specific sessions never own state.
+   const work=this.workingMemory&&/^[a-f0-9]{64}$/.test(auth.sessionHash||'')?
+     this.workingMemory.current({tenantId:tenant,sessionHash:auth.sessionHash,room:sessionId}):null;
+   const workContext=work?compact({objective:work.objective,revision:work.revision,observations:work.observations.slice(-4)},1200):null;
    const system=this.systemPrompt(),llm=auth.llm||this.llm;
-   const input=prepare({system,self,history,ram:{objective:compact(ram.objective,150),uiContext:compact(a.uiContext&&typeof a.uiContext==='object'?a.uiContext:{},450)},prompt});
+   const input=prepare({system,self,history,ram:{objective:compact(ram.objective,150),workingMemory:workContext,uiContext:compact(a.uiContext&&typeof a.uiContext==='object'?a.uiContext:{},450)},prompt});
    this.short.append({tenantId:tenant,sessionId,role:'user',content:prompt});
    const call=async prepared=>{
     const output=await llm.reason({system,prompt:prepared.prompt,model,maxTokens:1800});
@@ -125,7 +129,7 @@ class CognitiveRuntime{
    let latest=await call(input),observations=[],used=input.historyUsed;
    if(latest.parsed.tool_requests.length){
     observations=await this.tools(latest.parsed.tool_requests,tenant);
-    const followup=prepare({system,self,history:[],ram:{objective:compact(ram.objective,150),uiContext:compact(a.uiContext&&typeof a.uiContext==='object'?a.uiContext:{},450)},prompt,observations});
+    const followup=prepare({system,self,history:[],ram:{objective:compact(ram.objective,150),workingMemory:workContext,uiContext:compact(a.uiContext&&typeof a.uiContext==='object'?a.uiContext:{},450)},prompt,observations});
     latest=await call(followup);
    }
    const message=redactSecrets(latest.parsed.message);
