@@ -56,16 +56,15 @@ class OkxExecutor {
 
     if(ctx.revalidate)await ctx.revalidate();
     const res = await ctx.transport({ method:"POST", url:`https://${host}${path}`, headers, body });
-    const first = res.body && Array.isArray(res.body.data) ? res.body.data[0] : null;
-    const ok = statusFromHttp(res.statusCode) && res.body && String(res.body.code) === "0" && (first && String(first.sCode) === "0" && typeof first.ordId === "string" && first.ordId.length>0);
+    const outcome=require('./order-response').classifyOrderResponse(res),{first,ok}=outcome;
 
     return {
       ok,
-      status: ok ? "ACCEPTED" : "REJECTED",
-      exchange_order_id: first && (first.ordId || first.clOrdId) || null,
+      status: outcome.status,
+      exchange_order_id: outcome.orderId,
       raw_status: first && first.sMsg || null,
       error: ok ? null : (first && first.sMsg) || asError(res.body, `HTTP ${res.statusCode}`),
-      diagnostics: { http_status: res.statusCode, code: res.body && res.body.code }
+      diagnostics: { http_status: res?.statusCode, code: outcome.code, s_code: outcome.sCode }
     };
   }
 

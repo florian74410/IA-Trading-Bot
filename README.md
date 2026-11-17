@@ -1,8 +1,8 @@
-# IA-Trading-Bot — 2.6.0-dev.6 DEBUG
+# IA-Trading-Bot — 2.6.0-dev.7 DEBUG
 
 ChatBot hybride intégré : intentions locales, interprétation OpenAI explicite, préférences Auth21 et lectures via Supervisor/CP1. Ordres manuels OKX Spot Market confirmés : configuration LIVE=true, snapshot Risk propriétaire et Firewall obligatoires. Aucun ordre broker réel effectué pour cette livraison.
 
-[Livraison ordres manuels dev.6](Documentation/Execution/DEV6-MANUAL-ORDERS.md) · [Guide du ChatBot](Documentation/ChatBot/README.md) · [Rapport de livraison dev.5](Documentation/ChatBot/DELIVERY.md) · [Consolidation CP1 dev.4](Documentation/CP1/DELIVERY.md)
+[Simulations et corrections dev.7](Documentation/Execution/DEV7-SCENARIOS.md) · [Livraison ordres manuels dev.6](Documentation/Execution/DEV6-MANUAL-ORDERS.md) · [Guide du ChatBot](Documentation/ChatBot/README.md) · [Rapport de livraison dev.5](Documentation/ChatBot/DELIVERY.md) · [Consolidation CP1 dev.4](Documentation/CP1/DELIVERY.md)
 
 ## Historique du socle 2.6
 

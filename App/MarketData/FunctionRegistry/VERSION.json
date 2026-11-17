@@ -1,7 +1,7 @@
 {
   "engine_id": "marketdata",
-  "engine_version": "2.6.0-dev.6",
+  "engine_version": "2.6.0-dev.7",
   "registry_schema": "2.6.0",
   "source_sha256": "03f0d302e6090545c19c0d5034278996a492e0a1ea2d40669bc12fb0fab9c7de",
-  "revision_hash": "8ca3629dd4c489cf411c08b7d387c6db026cf82e53b060e017902a3881f16588"
+  "revision_hash": "dff7fa69791cf4d47ceea71ada6bb00a7d3a47fb105a9e52df96938f3b898248"
 }

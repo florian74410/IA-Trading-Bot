@@ -19,3 +19,6 @@ App/secrets_v2.dat
 *.sqlite
 
 /artifacts/
+
+# Test execution state must never be tracked with published reports.
+Documentation/**/runtime/

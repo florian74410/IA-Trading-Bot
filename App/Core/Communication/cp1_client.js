@@ -30,7 +30,7 @@ Client.prototype._post=function(pathname,obj,opt,cb){
      if(n>limit)return cb(new Error('CP_ROUTER_RESPONSE_TOO_LARGE'));
      var out;try{out=JSON.parse(Buffer.concat(a).toString('utf8')||'{}');}catch(e){return cb(new Error('CP_ROUTER_JSON_INVALID'));}
      if((r.statusCode||500)>=400||out.status==='ERROR'||out.ok===false){
-       var msg=out.error||(out.data&&out.data.error)||('CP_ROUTER_HTTP_'+r.statusCode),er=new Error(msg);er.statusCode=r.statusCode||500;er.response=out;return cb(er);
+       var msg=out.error||(out.data&&out.data.error)||('CP_ROUTER_HTTP_'+r.statusCode),er=new Error(msg);er.statusCode=r.statusCode||500;er.response=out;if(out.execution_result)er.execution_result=out.execution_result;return cb(er);
      }
      cb(null,out,r.statusCode||200);
    });

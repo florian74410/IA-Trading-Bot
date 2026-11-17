@@ -1,0 +1,38 @@
+(node:6) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+TAP version 13
+# (node:13) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Blob restores history, converses with cognitive mode, retains command mode and controls Engines via Core
+ok 1 - Blob restores history, converses with cognitive mode, retains command mode and controls Engines via Core
+  ---
+  duration_ms: 145.793101
+  type: 'test'
+  ...
+# Subtest: ADMIN can load allowlisted models and explicitly persist selected Supervisor provider
+ok 2 - ADMIN can load allowlisted models and explicitly persist selected Supervisor provider
+  ---
+  duration_ms: 4.415439
+  type: 'test'
+  ...
+# Subtest: live notification confirms the exact preparation with CSRF once even after a double click
+ok 3 - live notification confirms the exact preparation with CSRF once even after a double click
+  ---
+  duration_ms: 39.073512
+  type: 'test'
+  ...
+# Subtest: confirmation refusée : afficher le message utilisateur, sans retry ni code technique comme seul texte
+ok 4 - confirmation refusée : afficher le message utilisateur, sans retry ni code technique comme seul texte
+  ---
+  duration_ms: 7.758133
+  type: 'test'
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 4
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 574.196208

@@ -33,5 +33,8 @@
   "tests/companion-frontend-v1.2.test.js",
   "Core/Execution/manual_orders.test.js",
   "Portfolio/Tests/manual_order_pipeline.integration.test.js",
-  "Supervisor/ChatBot/Tests/execution_readiness.test.js"
+  "Supervisor/ChatBot/Tests/execution_readiness.test.js",
+  "Core/Execution/order_scenarios.test.js",
+  "Portfolio/Tests/test_portfolio_engine_v2.js",
+  "Core/Execution/rejection_transport.test.js"
 ]

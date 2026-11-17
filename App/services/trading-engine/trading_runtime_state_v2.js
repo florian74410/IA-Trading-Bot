@@ -65,7 +65,7 @@ class RuntimeState {
    result={promise:send()}; // synchronous invocation of the transport, no async queue here
   }).immediate();
   if(!result)throw Error('TRADING_SUBMISSION_REVOKED');
-  return Promise.resolve(result.promise).then(value=>{this.db.prepare('UPDATE trading_operations SET phase=?,updated_at=? WHERE id=?').run(value?.ok===true||value?.statusCode>=200&&value.statusCode<300&&value.body?.code==='0'&&value.body?.data?.[0]?.sCode==='0'&&value.body?.data?.[0]?.ordId?'ACKNOWLEDGED':value?.status==='REJECTED'||value?.body?.code&&value.body.code!=='0'?'REJECTED':'UNCERTAIN',this.now(),id);return value;});
+  return Promise.resolve(result.promise).then(value=>{const status=value?.statusCode!==undefined?require('./exchange-adapters/okx/order-response').classifyOrderResponse(value).status:value?.ok===true?'ACCEPTED':value?.status==='REJECTED'?'REJECTED':'UNKNOWN';this.db.prepare('UPDATE trading_operations SET phase=?,updated_at=? WHERE id=?').run(status==='ACCEPTED'?'ACKNOWLEDGED':status==='REJECTED'?'REJECTED':'UNCERTAIN',this.now(),id);return value;});
  }
  close(){if(this.db&&this.db.open)this.db.close();}
 }

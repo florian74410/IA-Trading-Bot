@@ -1,0 +1,95 @@
+(node:28) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+TAP version 13
+# (node:35) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: actual Engines publish and execute through authenticated TLS Core, Supervisor Gateway and Router
+ok 1 - actual Engines publish and execute through authenticated TLS Core, Supervisor Gateway and Router
+  ---
+  duration_ms: 17770.030713
+  type: 'test'
+  ...
+# (node:232) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: profile key -> signed vault TLS -> Trading Firewall CP/1 -> Portfolio -> owner Risk
+ok 2 - profile key -> signed vault TLS -> Trading Firewall CP/1 -> Portfolio -> owner Risk
+  ---
+  duration_ms: 10582.65089
+  type: 'test'
+  ...
+# (node:303) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: persistent cognitive memory, self first, scoped tools, reviewed-only proposals, model allowlist
+ok 3 - persistent cognitive memory, self first, scoped tools, reviewed-only proposals, model allowlist
+  ---
+  duration_ms: 51.687197
+  type: 'test'
+  ...
+# Subtest: CP1 registry matches real Supervisor handlers and manifest contracts
+ok 4 - CP1 registry matches real Supervisor handlers and manifest contracts
+  ---
+  duration_ms: 9.658918
+  type: 'test'
+  ...
+# Subtest: tool allowlist blocks model-command injection; no direct trade/tool execution
+ok 5 - tool allowlist blocks model-command injection; no direct trade/tool execution
+  ---
+  duration_ms: 9.702621
+  type: 'test'
+  ...
+# Subtest: existing OpenAI provider forwards chosen model through CP1 AI Gateway Responses API
+ok 6 - existing OpenAI provider forwards chosen model through CP1 AI Gateway Responses API
+  ---
+  duration_ms: 11.695989
+  type: 'test'
+  ...
+# Subtest: unverified CP1 identity cannot open cognitive memory, cross-account isolation
+ok 7 - unverified CP1 identity cannot open cognitive memory, cross-account isolation
+  ---
+  duration_ms: 11.503185
+  type: 'test'
+  ...
+# Subtest: malformed provider JSON retries once; failure stores a controlled turn without secrets
+ok 8 - malformed provider JSON retries once; failure stores a controlled turn without secrets
+  ---
+  duration_ms: 12.530412
+  type: 'test'
+  ...
+# Subtest: context budget drops old history, protects current prompt, and backup restores SQLite
+ok 9 - context budget drops old history, protects current prompt, and backup restores SQLite
+  ---
+  duration_ms: 26.419762
+  type: 'test'
+  ...
+# (node:315) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Core policy uses authenticated owner channel for cognitive reasoning and ADMIN configuration
+ok 10 - Core policy uses authenticated owner channel for cognitive reasoning and ADMIN configuration
+  ---
+  duration_ms: 1.115593
+  type: 'test'
+  ...
+# Subtest: Core owner AI checks model, signed original prompt, output token cap, store:false, current session
+ok 11 - Core owner AI checks model, signed original prompt, output token cap, store:false, current session
+  ---
+  duration_ms: 2.997521
+  type: 'test'
+  ...
+# Subtest: ADMIN model choice persists in canonical SQLite settings and USER cannot alter it
+ok 12 - ADMIN model choice persists in canonical SQLite settings and USER cannot alter it
+  ---
+  duration_ms: 24.113808
+  type: 'test'
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 29960.025043
+CP1 qualifications verified against isolated service processes and owner OKX fixtures.
+(node:20) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)

@@ -24,3 +24,11 @@ assert.equal(wout.closed[0].wallet_id,'W0001');
 assert.equal(wout.closed[0].wallet_public_key,'PUB_A');
 assert.equal(wout.closed[0].status,'CLOSED');
 console.log('PASS Portfolio wallet isolation + closed trade ledger');
+
+// Neither an acknowledgement nor an ambiguous response is evidence of a fill,
+// even when a provider includes an indicative price and requested quantity.
+for(const event_type of ['ORDER_ACCEPTED','ORDER_RESULT_UNKNOWN']){
+ const simulated=PE.buildPositions([{event_type,exchange:'OKX',symbol:'BTC-USDT',side:'BUY',quantity:.1,price:100,timestamp:1,payload_json:'{}'}],{});
+ assert.equal(simulated.positions.length,0);assert.equal(simulated.closed.length,0);
+}
+console.log('PASS no invented positions for ACK or unknown broker outcomes');

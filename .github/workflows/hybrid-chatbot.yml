@@ -1,7 +1,7 @@
-name: Hybrid ChatBot dev.6 qualification
+name: Hybrid ChatBot dev.7 qualification
 on:
   push:
-    branches: ['feature/iatb-2.6.0-dev.6-manual-orders']
+    branches: ['feature/iatb-2.6.0-dev.7-order-scenarios', 'feature/iatb-2.6.0-dev.7-order-scenarios-verified']
   pull_request:
     paths: ['App/Core/Execution/**', 'App/Supervisor/ChatBot/**', 'Documentation/ChatBot/**', '.github/workflows/hybrid-chatbot.yml']
 permissions:
@@ -28,13 +28,13 @@ jobs:
           IATB_PLAYWRIGHT_MODULE: /tmp/iatb-browser/node_modules/playwright
           IATB_UI_REPORT_DIR: /tmp/iatb-chatbot-ui-report
       - run: python3 Tools/Build/build_risk_snapshot.py
-      - run: python3 Tools/Build/verify_source_bundle.py artifacts/IA-TB-2.6.0-dev.6-debug-source.zip
+      - run: python3 Tools/Build/verify_source_bundle.py artifacts/IA-TB-2.6.0-dev.7-debug-source.zip
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: IA-TB-2.6.0-dev.6-DEBUG-source-validation-captures
+          name: IA-TB-2.6.0-dev.7-DEBUG-source-validation-captures
           path: |
-            artifacts/IA-TB-2.6.0-dev.6-debug-source.zip*
+            artifacts/IA-TB-2.6.0-dev.7-debug-source.zip*
             /tmp/iatb-chatbot-validation/*.json
             /tmp/iatb-chatbot-validation/*.tap
             /tmp/iatb-chatbot-validation/stderr.log

@@ -1,7 +1,7 @@
 {
   "engine_id": "strategy",
-  "engine_version": "2.6.0-dev.6",
+  "engine_version": "2.6.0-dev.7",
   "registry_schema": "2.6.0",
   "source_sha256": "437fa03034b0ccbb437e775edc9424cdd35334110dc6548aa09c95a5e8ac2399",
-  "revision_hash": "84ab3b4ffa4ef1dd8566ce8d8b38ee92e0f38c3817f65f19f69ff7d21032246a"
+  "revision_hash": "bad017d4a8daf11ef618cb4cf2b526e0c85899e0701bd37ac406fdff14d1fc80"
 }

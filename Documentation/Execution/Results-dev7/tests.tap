@@ -1,0 +1,1261 @@
+TAP version 13
+# Communication Router registry/security/events: OK
+# (node:338) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: /workspace/scratch/6bed0bea6f2d/iatb-dev7-verified/App/Core/Communication/Tests/test_communication_router_v1.js
+ok 1 - /workspace/scratch/6bed0bea6f2d/iatb-dev7-verified/App/Core/Communication/Tests/test_communication_router_v1.js
+  ---
+  duration_ms: 125.353908
+  type: 'test'
+  ...
+# Router normalization v1.8.12: OK
+# (node:346) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: /workspace/scratch/6bed0bea6f2d/iatb-dev7-verified/App/Core/Communication/Tests/test_router_normalization_v1.8.12.js
+ok 2 - /workspace/scratch/6bed0bea6f2d/iatb-dev7-verified/App/Core/Communication/Tests/test_router_normalization_v1.8.12.js
+  ---
+  duration_ms: 108.072005
+  type: 'test'
+  ...
+# test_runtime_registry_v1: OK
+# (node:354) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: /workspace/scratch/6bed0bea6f2d/iatb-dev7-verified/App/Core/Communication/Tests/test_runtime_registry_v1.js
+ok 3 - /workspace/scratch/6bed0bea6f2d/iatb-dev7-verified/App/Core/Communication/Tests/test_runtime_registry_v1.js
+  ---
+  duration_ms: 92.292303
+  type: 'test'
+  ...
+# (node:362) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: manual order accepts NULL historical statistics; fresh owner Risk -> approval -> bound signed EU OKX request; repeat confirms never resend
+ok 4 - manual order accepts NULL historical statistics; fresh owner Risk -> approval -> bound signed EU OKX request; repeat confirms never resend
+  ---
+  duration_ms: 39.296981
+  type: 'test'
+  ...
+# Subtest: manual Gate cannot be obtained without fresh owner snapshot or after mutation; binding rejects altered amount
+ok 5 - manual Gate cannot be obtained without fresh owner snapshot or after mutation; binding rejects altered amount
+  ---
+  duration_ms: 0.679441
+  type: 'test'
+  ...
+# Subtest: manual context preserves null history while missing fees and balance remain blocking
+ok 6 - manual context preserves null history while missing fees and balance remain blocking
+  ---
+  duration_ms: 7.239226
+  type: 'test'
+  ...
+# Subtest: LIVE configuration is true and an explicit false override is respected
+ok 7 - LIVE configuration is true and an explicit false override is respected
+  ---
+  duration_ms: 0.268767
+  type: 'test'
+  ...
+# Subtest: authenticated ADMIN START transitions actual durable lifecycle to RUNNING after checks
+ok 8 - authenticated ADMIN START transitions actual durable lifecycle to RUNNING after checks
+  ---
+  duration_ms: 8.566308
+  type: 'test'
+  ...
+# (node:370) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Demande incomplète : demander le montant, sans ordre ni préparation
+ok 9 - Demande incomplète : demander le montant, sans ordre ni préparation
+  ---
+  duration_ms: 42.801587
+  type: 'test'
+  ...
+# Subtest: Acheter ou vendre : demander une clarification sans exécuter
+ok 10 - Acheter ou vendre : demander une clarification sans exécuter
+  ---
+  duration_ms: 14.872327
+  type: 'test'
+  ...
+# Subtest: Montant négatif : invalider la demande sans réutiliser un ancien montant
+ok 11 - Montant négatif : invalider la demande sans réutiliser un ancien montant
+  ---
+  duration_ms: 55.764678
+  type: 'test'
+  ...
+# Subtest: Fonds insuffisants : bloquer et expliquer le manque de solde
+ok 12 - Fonds insuffisants : bloquer et expliquer le manque de solde
+  ---
+  duration_ms: 34.938114
+  type: 'test'
+  ...
+# Subtest: Montant disponible égal à l’achat, sans réserve pour les frais : bloquer
+ok 13 - Montant disponible égal à l’achat, sans réserve pour les frais : bloquer
+  ---
+  duration_ms: 24.293935
+  type: 'test'
+  ...
+# Subtest: Solde null : ne pas inventer un solde disponible
+ok 14 - Solde null : ne pas inventer un solde disponible
+  ---
+  duration_ms: 27.193041
+  type: 'test'
+  ...
+# Subtest: Frais null : rendre la préparation non confirmable
+ok 15 - Frais null : rendre la préparation non confirmable
+  ---
+  duration_ms: 29.165787
+  type: 'test'
+  ...
+# Subtest: Vente sans assez de crypto : bloquer sans envoyer de vente
+ok 16 - Vente sans assez de crypto : bloquer sans envoyer de vente
+  ---
+  duration_ms: 21.448253
+  type: 'test'
+  ...
+# Subtest: Montant inférieur au minimum d’instrument : bloquer
+ok 17 - Montant inférieur au minimum d’instrument : bloquer
+  ---
+  duration_ms: 27.558674
+  type: 'test'
+  ...
+# Subtest: Limite de taille/exposition Risk dépassée : refuser
+ok 18 - Limite de taille/exposition Risk dépassée : refuser
+  ---
+  duration_ms: 30.751129
+  type: 'test'
+  ...
+# Subtest: Spread excessif : refus Risk
+ok 19 - Spread excessif : refus Risk
+  ---
+  duration_ms: 41.382988
+  type: 'test'
+  ...
+# Subtest: Carnet sans profondeur suffisante : aucune exécution partielle implicite
+ok 20 - Carnet sans profondeur suffisante : aucune exécution partielle implicite
+  ---
+  duration_ms: 24.911181
+  type: 'test'
+  ...
+# Subtest: Carnet périmé : demander des données vérifiables
+ok 21 - Carnet périmé : demander des données vérifiables
+  ---
+  duration_ms: 38.944395
+  type: 'test'
+  ...
+# Subtest: Risk demande une révision : la confirmation utilisateur ne vaut pas autorisation
+ok 22 - Risk demande une révision : la confirmation utilisateur ne vaut pas autorisation
+  ---
+  duration_ms: 30.838901
+  type: 'test'
+  ...
+# Subtest: Risk indisponible : aucun accord de remplacement
+ok 23 - Risk indisponible : aucun accord de remplacement
+  ---
+  duration_ms: 26.581637
+  type: 'test'
+  ...
+# Subtest: Premier ordre sans historique : null conservés et préparation possible
+ok 24 - Premier ordre sans historique : null conservés et préparation possible
+  ---
+  duration_ms: 161.13348
+  type: 'test'
+  ...
+# Subtest: Ordre Limit hors périmètre : refus explicite sans changement silencieux en Market
+ok 25 - Ordre Limit hors périmètre : refus explicite sans changement silencieux en Market
+  ---
+  duration_ms: 20.198378
+  type: 'test'
+  ...
+# Subtest: Compte Demo sélectionné pour une demande Live : bloquer
+ok 26 - Compte Demo sélectionné pour une demande Live : bloquer
+  ---
+  duration_ms: 48.608266
+  type: 'test'
+  ...
+# Subtest: Compte en lecture seule : aucune demande d’ordre
+ok 27 - Compte en lecture seule : aucune demande d’ordre
+  ---
+  duration_ms: 21.544652
+  type: 'test'
+  ...
+# Subtest: Préparation expirée : confirmation refusée
+ok 28 - Préparation expirée : confirmation refusée
+  ---
+  duration_ms: 21.989897
+  type: 'test'
+  ...
+# Subtest: Digest modifié : refus et aucune mutation
+ok 29 - Digest modifié : refus et aucune mutation
+  ---
+  duration_ms: 26.697744
+  type: 'test'
+  ...
+# Subtest: Préparation annulée : répondre Annulée, sans prétendre à un résultat inconnu
+ok 30 - Préparation annulée : répondre Annulée, sans prétendre à un résultat inconnu
+  ---
+  duration_ms: 22.722691
+  type: 'test'
+  ...
+# Subtest: Compte modifié après préparation : nouvelle préparation requise
+ok 31 - Compte modifié après préparation : nouvelle préparation requise
+  ---
+  duration_ms: 42.270916
+  type: 'test'
+  ...
+# Subtest: Session révoquée : refus de confirmer
+ok 32 - Session révoquée : refus de confirmer
+  ---
+  duration_ms: 17.614426
+  type: 'test'
+  ...
+# Subtest: Solde diminué entre préparation et confirmation : nouveau Risk refuse
+ok 33 - Solde diminué entre préparation et confirmation : nouveau Risk refuse
+  ---
+  duration_ms: 16.993685
+  type: 'test'
+  ...
+# Subtest: Prix devenu trop différent : nouvelle confirmation nécessaire
+ok 34 - Prix devenu trop différent : nouvelle confirmation nécessaire
+  ---
+  duration_ms: 17.213159
+  type: 'test'
+  ...
+# Subtest: Identifiants indisponibles : blocage avant envoi au broker
+ok 35 - Identifiants indisponibles : blocage avant envoi au broker
+  ---
+  duration_ms: 25.874111
+  type: 'test'
+  ...
+# Subtest: Trading arrêté : blocage certain avant envoi, pas un ordre inconnu
+ok 36 - Trading arrêté : blocage certain avant envoi, pas un ordre inconnu
+  ---
+  duration_ms: 21.540249
+  type: 'test'
+  ...
+# Subtest: Firewall désactivé : ordre refusé
+ok 37 - Firewall désactivé : ordre refusé
+  ---
+  duration_ms: 16.31758
+  type: 'test'
+  ...
+# Subtest: Autorisation Risk expirée avant Firewall : refus sans ordre
+ok 38 - Autorisation Risk expirée avant Firewall : refus sans ordre
+  ---
+  duration_ms: 18.156037
+  type: 'test'
+  ...
+# Subtest: Montant altéré entre Risk et Trading : liaison refusée
+ok 39 - Montant altéré entre Risk et Trading : liaison refusée
+  ---
+  duration_ms: 22.066331
+  type: 'test'
+  ...
+# Subtest: Refus explicite OKX après vérification locale : REJECTED, sans retry
+ok 40 - Refus explicite OKX après vérification locale : REJECTED, sans retry
+  ---
+  duration_ms: 19.936978
+  type: 'test'
+  ...
+# Subtest: Résultat broker ambigu (timeout) : bloquer les retries et conserver l’état inconnu
+ok 41 - Résultat broker ambigu (timeout) : bloquer les retries et conserver l’état inconnu
+  ---
+  duration_ms: 32.190932
+  type: 'test'
+  ...
+# Subtest: Résultat broker ambigu (http503) : bloquer les retries et conserver l’état inconnu
+ok 42 - Résultat broker ambigu (http503) : bloquer les retries et conserver l’état inconnu
+  ---
+  duration_ms: 29.407689
+  type: 'test'
+  ...
+# Subtest: Résultat broker ambigu (ambiguous50004) : bloquer les retries et conserver l’état inconnu
+ok 43 - Résultat broker ambigu (ambiguous50004) : bloquer les retries et conserver l’état inconnu
+  ---
+  duration_ms: 26.714991
+  type: 'test'
+  ...
+# Subtest: Résultat broker ambigu (empty) : bloquer les retries et conserver l’état inconnu
+ok 44 - Résultat broker ambigu (empty) : bloquer les retries et conserver l’état inconnu
+  ---
+  duration_ms: 23.430763
+  type: 'test'
+  ...
+# Subtest: Résultat broker ambigu (noOrderId) : bloquer les retries et conserver l’état inconnu
+ok 45 - Résultat broker ambigu (noOrderId) : bloquer les retries et conserver l’état inconnu
+  ---
+  duration_ms: 27.964168
+  type: 'test'
+  ...
+# Subtest: Deux confirmations concurrentes : un seul ordre
+ok 46 - Deux confirmations concurrentes : un seul ordre
+  ---
+  duration_ms: 32.829984
+  type: 'test'
+  ...
+# Subtest: Redémarrage après ACK : résultat conservé, aucun renvoi
+ok 47 - Redémarrage après ACK : résultat conservé, aucun renvoi
+  ---
+  duration_ms: 26.607397
+  type: 'test'
+  ...
+# Subtest: Redémarrage après réponse perdue : compte bloqué jusqu’à réconciliation
+ok 48 - Redémarrage après réponse perdue : compte bloqué jusqu’à réconciliation
+  ---
+  duration_ms: 22.815383
+  type: 'test'
+  ...
+# Subtest: Un autre utilisateur ne confirme ni ne consulte cet ordre
+ok 49 - Un autre utilisateur ne confirme ni ne consulte cet ordre
+  ---
+  duration_ms: 19.403885
+  type: 'test'
+  ...
+# Subtest: Journal durable Trading : ack conserve ACKNOWLEDGED
+ok 50 - Journal durable Trading : ack conserve ACKNOWLEDGED
+  ---
+  duration_ms: 4.906732
+  type: 'test'
+  ...
+# Subtest: Journal durable Trading : rejected conserve REJECTED
+ok 51 - Journal durable Trading : rejected conserve REJECTED
+  ---
+  duration_ms: 3.565744
+  type: 'test'
+  ...
+# Subtest: Journal durable Trading : timeout_code conserve UNCERTAIN
+ok 52 - Journal durable Trading : timeout_code conserve UNCERTAIN
+  ---
+  duration_ms: 5.655485
+  type: 'test'
+  ...
+# Subtest: Journal durable Trading : http503 conserve UNCERTAIN
+ok 53 - Journal durable Trading : http503 conserve UNCERTAIN
+  ---
+  duration_ms: 1.884663
+  type: 'test'
+  ...
+# Subtest: Journal durable Trading : empty_ack conserve UNCERTAIN
+ok 54 - Journal durable Trading : empty_ack conserve UNCERTAIN
+  ---
+  duration_ms: 2.820058
+  type: 'test'
+  ...
+# (node:378) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Router preserves only validated, bounded manual-order rejection details; malformed or mismatched replies stay ambiguous
+ok 55 - Router preserves only validated, bounded manual-order rejection details; malformed or mismatched replies stay ambiguous
+  ---
+  duration_ms: 66.476154
+  type: 'test'
+  ...
+# PASS Trading Firewall whitelist + replay + configurable timestamp protection
+# (node:386) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: /workspace/scratch/6bed0bea6f2d/iatb-dev7-verified/App/Core/Firewall/Tests/trading_firewall.test.js
+ok 7 - /workspace/scratch/6bed0bea6f2d/iatb-dev7-verified/App/Core/Firewall/Tests/trading_firewall.test.js
+  ---
+  duration_ms: 148.222568
+  type: 'test'
+  ...
+# (node:394) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: actual Engines publish and execute through authenticated TLS Core, Supervisor Gateway and Router
+ok 57 - actual Engines publish and execute through authenticated TLS Core, Supervisor Gateway and Router
+  ---
+  duration_ms: 20585.827354
+  type: 'test'
+  ...
+# (node:591) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: default DENY; consistent legacy/permanent grants, reservation, admission and audit
+ok 58 - default DENY; consistent legacy/permanent grants, reservation, admission and audit
+  ---
+  duration_ms: 81.180769
+  type: 'test'
+  ...
+# Subtest: ONCE admits one concurrent request and cannot be reused; revocation before Engine admission wins
+ok 59 - ONCE admits one concurrent request and cannot be reused; revocation before Engine admission wins
+  ---
+  duration_ms: 41.80987
+  type: 'test'
+  ...
+# Subtest: temporary expiry, contract changes and session revocation are read from persistent state
+ok 60 - temporary expiry, contract changes and session revocation are read from persistent state
+  ---
+  duration_ms: 34.651229
+  type: 'test'
+  ...
+# Subtest: identity cannot be supplied in JSON; keys, publication ownership, schema and sensitive calls fail closed
+ok 61 - identity cannot be supplied in JSON; keys, publication ownership, schema and sensitive calls fail closed
+  ---
+  duration_ms: 37.575832
+  type: 'test'
+  ...
+# Subtest: malformed Engine result fails its contract and cannot be completed twice
+ok 62 - malformed Engine result fails its contract and cannot be completed twice
+  ---
+  duration_ms: 29.204648
+  type: 'test'
+  ...
+# (node:599) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: bounded recursive schemas check types, nested keys, ranges, enums, strings and limits
+ok 63 - bounded recursive schemas check types, nested keys, ranges, enums, strings and limits
+  ---
+  duration_ms: 8.502622
+  type: 'test'
+  ...
+# Subtest: managed services receive their own identity and UI never inherits a Core key
+ok 64 - managed services receive their own identity and UI never inherits a Core key
+  ---
+  duration_ms: 3.990797
+  type: 'test'
+  ...
+# (node:607) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: manual ChatBot confirmation -> real Router/Supervisor/Risk/Firewall/Trading -> signed simulated OKX EU request
+ok 65 - manual ChatBot confirmation -> real Router/Supervisor/Risk/Firewall/Trading -> signed simulated OKX EU request
+  ---
+  duration_ms: 54132.120627
+  type: 'test'
+  ...
+# (node:678) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: OKX reads use profile credentials, correct GET HMAC, selected region/demo and fee group
+ok 66 - OKX reads use profile credentials, correct GET HMAC, selected region/demo and fee group
+  ---
+  duration_ms: 15.591254
+  type: 'test'
+  ...
+# Subtest: profile ownership, replay, expiry, no ambient secret fallback and no write escalation
+ok 67 - profile ownership, replay, expiry, no ambient secret fallback and no write escalation
+  ---
+  duration_ms: 5.768666
+  type: 'test'
+  ...
+# Subtest: session revocation and assignment rotation during a read discard all account data
+ok 68 - session revocation and assignment rotation during a read discard all account data
+  ---
+  duration_ms: 6.834101
+  type: 'test'
+  ...
+# Subtest: missing fee group, quote FX, stale source timestamps and manual positions remain explicit
+ok 69 - missing fee group, quote FX, stale source timestamps and manual positions remain explicit
+  ---
+  duration_ms: 12.127705
+  type: 'test'
+  ...
+# Subtest: OKX transport, rate limits and API errors are sanitized; unbounded order pages fail closed
+ok 70 - OKX transport, rate limits and API errors are sanitized; unbounded order pages fail closed
+  ---
+  duration_ms: 18.532157
+  type: 'test'
+  ...
+# Subtest: legacy trading assignments can read without being re-entered
+ok 71 - legacy trading assignments can read without being re-entered
+  ---
+  duration_ms: 3.011297
+  type: 'test'
+  ...
+# Subtest: zero available balance is retained and partial balances never become reconciled
+ok 72 - zero available balance is retained and partial balances never become reconciled
+  ---
+  duration_ms: 11.242426
+  type: 'test'
+  ...
+# Subtest: read ticket expires and profile credential rotation invalidates a pending read
+ok 73 - read ticket expires and profile credential rotation invalidates a pending read
+  ---
+  duration_ms: 3.344456
+  type: 'test'
+  ...
+# (node:686) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: profile key -> signed vault TLS -> Trading Firewall CP/1 -> Portfolio -> owner Risk
+ok 74 - profile key -> signed vault TLS -> Trading Firewall CP/1 -> Portfolio -> owner Risk
+  ---
+  duration_ms: 10631.404268
+  type: 'test'
+  ...
+# PASS Portfolio Engine reconstruction + normalization
+# PASS Portfolio wallet isolation + closed trade ledger
+# PASS no invented positions for ACK or unknown broker outcomes
+# (node:757) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: /workspace/scratch/6bed0bea6f2d/iatb-dev7-verified/App/Portfolio/Tests/test_portfolio_engine_v2.js
+ok 14 - /workspace/scratch/6bed0bea6f2d/iatb-dev7-verified/App/Portfolio/Tests/test_portfolio_engine_v2.js
+  ---
+  duration_ms: 96.044514
+  type: 'test'
+  ...
+# Risk Engine pure calculations: OK
+# {
+#   "score": 34,
+#   "level": "LOW",
+#   "capitalAtRiskPct": 0.6,
+#   "projectedGrossExposurePct": 50,
+#   "historicalVaR95Pct": 3.563,
+#   "historicalES95Pct": 3.563
+# }
+# (node:765) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: /workspace/scratch/6bed0bea6f2d/iatb-dev7-verified/App/Risk/Tests/risk_engine.test.js
+ok 15 - /workspace/scratch/6bed0bea6f2d/iatb-dev7-verified/App/Risk/Tests/risk_engine.test.js
+  ---
+  duration_ms: 113.635113
+  type: 'test'
+  ...
+# (node:773) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: real Router + Risk processes, Supervisor facade, discovery, auth, compatibility and native recheck
+ok 77 - real Router + Risk processes, Supervisor facade, discovery, auth, compatibility and native recheck
+  ---
+  duration_ms: 697.157725
+  type: 'test'
+  ...
+# Subtest: new audited manifests remain DENY without an explicit administrator grant
+ok 78 - new audited manifests remain DENY without an explicit administrator grant
+  ---
+  duration_ms: 63.069408
+  type: 'test'
+  ...
+# (node:797) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: reference log returns, sample volatility, Gaussian VaR, empirical tail, drawdown
+ok 79 - reference log returns, sample volatility, Gaussian VaR, empirical tail, drawdown
+  ---
+  duration_ms: 3.569632
+  type: 'test'
+  ...
+# Subtest: zero volatility has undefined ratios; invalid/empty/gapped histories unavailable
+ok 80 - zero volatility has undefined ratios; invalid/empty/gapped histories unavailable
+  ---
+  duration_ms: 1.283441
+  type: 'test'
+  ...
+# Subtest: correlation aligns timestamps, rejects constant and desynchronised series
+ok 81 - correlation aligns timestamps, rejects constant and desynchronised series
+  ---
+  duration_ms: 1.645444
+  type: 'test'
+  ...
+# Subtest: portfolio reference exposure, concentration and stop budget; rejects TRADING_ONLY
+ok 82 - portfolio reference exposure, concentration and stop budget; rejects TRADING_ONLY
+  ---
+  duration_ms: 1.643239
+  type: 'test'
+  ...
+# Subtest: VWAP, spread, fees, partial fills, crossed/unsorted books and constraints
+ok 83 - VWAP, spread, fees, partial fills, crossed/unsorted books and constraints
+  ---
+  duration_ms: 1.606761
+  type: 'test'
+  ...
+# Subtest: strategy expectancy and profit factor use net closed trades
+ok 84 - strategy expectancy and profit factor use net closed trades
+  ---
+  duration_ms: 1.790116
+  type: 'test'
+  ...
+# Subtest: policy rejects invalid values; unavailable overall does not imply low risk
+ok 85 - policy rejects invalid values; unavailable overall does not imply low risk
+  ---
+  duration_ms: 0.906439
+  type: 'test'
+  ...
+# Subtest: complete immutable snapshot, unique identity, expiry and portfolio isolation
+ok 86 - complete immutable snapshot, unique identity, expiry and portfolio isolation
+  ---
+  duration_ms: 14.044709
+  type: 'test'
+  ...
+# Subtest: incomplete, stale, mismatched and untrusted data never grant permission
+ok 87 - incomplete, stale, mismatched and untrusted data never grant permission
+  ---
+  duration_ms: 34.872415
+  type: 'test'
+  ...
+# Subtest: hard limits and critical components cannot hide behind average scores
+ok 88 - hard limits and critical components cannot hide behind average scores
+  ---
+  duration_ms: 6.19244
+  type: 'test'
+  ...
+# Subtest: bounded simultaneous snapshots do not mix contexts; overload and cancellation
+ok 89 - bounded simultaneous snapshots do not mix contexts; overload and cancellation
+  ---
+  duration_ms: 5.459057
+  type: 'test'
+  ...
+# Subtest: source timeout returns incomplete result, no raw service error or late mutation
+ok 90 - source timeout returns incomplete result, no raw service error or late mutation
+  ---
+  duration_ms: 31.189245
+  type: 'test'
+  ...
+# (node:797) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:797) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: parallel and sequential calculations are identical apart from metadata
+ok 91 - parallel and sequential calculations are identical apart from metadata
+  ---
+  duration_ms: 131.747021
+  type: 'test'
+  ...
+# (node:797) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: worker timeout, failed job and queue saturation recover
+ok 92 - worker timeout, failed job and queue saturation recover
+  ---
+  duration_ms: 143.18264
+  type: 'test'
+  ...
+# Subtest: strict requests reject injected data, policy and incompatible horizons
+ok 93 - strict requests reject injected data, policy and incompatible horizons
+  ---
+  duration_ms: 0.433107
+  type: 'test'
+  ...
+# Subtest: cancellation during I/O clears active slot without caching a partial response
+ok 94 - cancellation during I/O clears active slot without caching a partial response
+  ---
+  duration_ms: 13.274008
+  type: 'test'
+  ...
+# Subtest: unsupported leverage, missing protection and mismatched quote currency fail closed
+ok 95 - unsupported leverage, missing protection and mismatched quote currency fail closed
+  ---
+  duration_ms: 7.64028
+  type: 'test'
+  ...
+# Subtest: component REVIEW and explicit policy violation are distinct decisions
+ok 96 - component REVIEW and explicit policy violation are distinct decisions
+  ---
+  duration_ms: 7.661601
+  type: 'test'
+  ...
+# Subtest: overflow is explicitly unavailable, capacity is bounded, market expiry is checked after CPU
+ok 97 - overflow is explicitly unavailable, capacity is bounded, market expiry is checked after CPU
+  ---
+  duration_ms: 5.523267
+  type: 'test'
+  ...
+# Subtest: book execution venue, market type, order type and trade scope cannot be substituted
+ok 98 - book execution venue, market type, order type and trade scope cannot be substituted
+  ---
+  duration_ms: 15.636692
+  type: 'test'
+  ...
+# Risk Gate tests: OK
+# (node:809) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: /workspace/scratch/6bed0bea6f2d/iatb-dev7-verified/App/Risk/Tests/test_risk_gate.js
+ok 18 - /workspace/scratch/6bed0bea6f2d/iatb-dev7-verified/App/Risk/Tests/test_risk_gate.js
+  ---
+  duration_ms: 346.770403
+  type: 'test'
+  ...
+# (node:817) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: R1 calculation A B C D and proportional resize
+ok 100 - R1 calculation A B C D and proportional resize
+  ---
+  duration_ms: 2.142792
+  type: 'test'
+  ...
+# Subtest: R1 missing data, wrong stops and modules
+ok 101 - R1 missing data, wrong stops and modules
+  ---
+  duration_ms: 1.775228
+  type: 'test'
+  ...
+# Subtest: R2 detects drawdown, aggregate risk, concentration and integrity
+ok 102 - R2 detects drawdown, aggregate risk, concentration and integrity
+  ---
+  duration_ms: 1.862513
+  type: 'test'
+  ...
+# Subtest: R2 stale data fail closed; disabled passive mode
+ok 103 - R2 stale data fail closed; disabled passive mode
+  ---
+  duration_ms: 0.356181
+  type: 'test'
+  ...
+# (node:825) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Risk v2.5 policy is restrictive and separates R1/R2
+ok 104 - Risk v2.5 policy is restrictive and separates R1/R2
+  ---
+  duration_ms: 2.226991
+  type: 'test'
+  ...
+# Subtest: Risk level changes R1 and R2 presets without modifying Risk Gate threshold
+ok 105 - Risk level changes R1 and R2 presets without modifying Risk Gate threshold
+  ---
+  duration_ms: 2.793117
+  type: 'test'
+  ...
+# Subtest: Unrecognized keys and invalid risk limits cannot broaden policy
+ok 106 - Unrecognized keys and invalid risk limits cannot broaden policy
+  ---
+  duration_ms: 1.268753
+  type: 'test'
+  ...
+# Subtest: Risk settings routes are ADMIN-only; UI does not use blocked CP1 UI writes
+ok 107 - Risk settings routes are ADMIN-only; UI does not use blocked CP1 UI writes
+  ---
+  duration_ms: 0.789028
+  type: 'test'
+  ...
+# (node:833) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: explicit LIVE=false override blocks actual Trading Engine / OKX adapter; no network call
+ok 108 - explicit LIVE=false override blocks actual Trading Engine / OKX adapter; no network call
+  ---
+  duration_ms: 2.487912
+  type: 'test'
+  ...
+# Subtest: financial commands and risk approval issuance remain outside the qualified agent command set
+ok 109 - financial commands and risk approval issuance remain outside the qualified agent command set
+  ---
+  duration_ms: 31.58846
+  type: 'test'
+  ...
+# Subtest: legacy Risk Gate approval alone is insufficient: scores and owner snapshot are not prerequisites of this low-level class
+ok 110 - legacy Risk Gate approval alone is insufficient: scores and owner snapshot are not prerequisites of this low-level class
+  ---
+  duration_ms: 1.810766
+  type: 'test'
+  ...
+# (node:841) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: official catalogue, natural requests, exact REST/WS identifiers and unimplemented operations are distinct
+ok 111 - official catalogue, natural requests, exact REST/WS identifiers and unimplemented operations are distinct
+  ---
+  duration_ms: 258.380004
+  type: 'test'
+  ...
+# Subtest: amount units, limit/trigger/protections and market types remain separate
+ok 112 - amount units, limit/trigger/protections and market types remain separate
+  ---
+  duration_ms: 18.582165
+  type: 'test'
+  ...
+# Subtest: LOCAL multi-turn clarification makes zero LLM calls and never enables financial confirmation
+ok 113 - LOCAL multi-turn clarification makes zero LLM calls and never enables financial confirmation
+  ---
+  duration_ms: 73.350834
+  type: 'test'
+  ...
+# Subtest: material changes, replacement, expiry and Auth21 session/owner isolation invalidate context
+ok 114 - material changes, replacement, expiry and Auth21 session/owner isolation invalidate context
+  ---
+  duration_ms: 52.238493
+  type: 'test'
+  ...
+# Subtest: HYBRID fallback is opt-in; explicit OPENAI and invalid output have no extra authority
+ok 115 - HYBRID fallback is opt-in; explicit OPENAI and invalid output have no extra authority
+  ---
+  duration_ms: 39.08085
+  type: 'test'
+  ...
+# Subtest: LOCAL and model intents use the same validation and actual Gateway permission boundary
+ok 116 - LOCAL and model intents use the same validation and actual Gateway permission boundary
+  ---
+  duration_ms: 24.442279
+  type: 'test'
+  ...
+# Subtest: catalogue loading rejects duplicates, traversal, unsafe regex and unknown parameter contracts
+ok 117 - catalogue loading rejects duplicates, traversal, unsafe regex and unknown parameter contracts
+  ---
+  duration_ms: 43.856371
+  type: 'test'
+  ...
+# Subtest: secrets are scrubbed before LLM context, response and history; environment mismatch cannot execute
+ok 118 - secrets are scrubbed before LLM context, response and history; environment mismatch cannot execute
+  ---
+  duration_ms: 24.016511
+  type: 'test'
+  ...
+# Subtest: asset corrections invalidate stale instruments, prices and base quantities; contradictory model pairs are rejected
+ok 119 - asset corrections invalidate stale instruments, prices and base quantities; contradictory model pairs are rejected
+  ---
+  duration_ms: 54.222345
+  type: 'test'
+  ...
+# (node:849) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Supervisor LLM provider tests: OK
+# Subtest: /workspace/scratch/6bed0bea6f2d/iatb-dev7-verified/App/Supervisor/LLM/Tests/test_llm_manager.js
+ok 23 - /workspace/scratch/6bed0bea6f2d/iatb-dev7-verified/App/Supervisor/LLM/Tests/test_llm_manager.js
+  ---
+  duration_ms: 130.69934
+  type: 'test'
+  ...
+# (node:857) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Supervisor architecture tests: OK
+# Subtest: /workspace/scratch/6bed0bea6f2d/iatb-dev7-verified/App/Supervisor/Tests/test_supervisor_architecture.js
+ok 24 - /workspace/scratch/6bed0bea6f2d/iatb-dev7-verified/App/Supervisor/Tests/test_supervisor_architecture.js
+  ---
+  duration_ms: 142.175807
+  type: 'test'
+  ...
+# (node:865) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: fictional market preload refuses real paths and unsupported vendor requests
+ok 122 - fictional market preload refuses real paths and unsupported vendor requests
+  ---
+  duration_ms: 2.515274
+  type: 'test'
+  ...
+# Subtest: real authenticated MarketData passes synthetic Binance candles through the real protection worker before cache
+ok 123 - real authenticated MarketData passes synthetic Binance candles through the real protection worker before cache
+  ---
+  duration_ms: 685.52486
+  type: 'test'
+  ...
+# (node:895) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: real canonical Portfolio SQLite ledger isolates events/trades/balances/snapshots in existing DB and preserves legacy
+ok 124 - real canonical Portfolio SQLite ledger isolates events/trades/balances/snapshots in existing DB and preserves legacy
+  ---
+  duration_ms: 27.138757
+  type: 'test'
+  ...
+# Subtest: actual Strategy owner dispatcher persists only own definitions, mode and canonical evaluations
+ok 125 - actual Strategy owner dispatcher persists only own definitions, mode and canonical evaluations
+  ---
+  duration_ms: 15.980841
+  type: 'test'
+  ...
+# (node:903) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: every historical route enforces the ADMIN/USER/GUEST boundary with live TLS sessions
+ok 126 - every historical route enforces the ADMIN/USER/GUEST boundary with live TLS sessions
+  ---
+  duration_ms: 13886.033854
+  type: 'test'
+  ...
+# Subtest: CP1 administration uses real Auth21 roles, HTTPS Origin and CSRF
+ok 127 - CP1 administration uses real Auth21 roles, HTTPS Origin and CSRF
+  ---
+  duration_ms: 1646.413201
+  type: 'test'
+  ...
+# (node:917) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: vault stores encrypted multi-owner assignments; scoped TLS client obtains only selected credential
+ok 128 - vault stores encrypted multi-owner assignments; scoped TLS client obtains only selected credential
+  ---
+  duration_ms: 1960.108672
+  type: 'test'
+  ...
+# Subtest: ticket binds exact order and expires; revoked sessions and rotated assignments cannot release credentials
+ok 129 - ticket binds exact order and expires; revoked sessions and rotated assignments cannot release credentials
+  ---
+  duration_ms: 438.911574
+  type: 'test'
+  ...
+# Subtest: invalid and ambiguous registry changes do not rotate secrets; broker of an existing ID cannot change
+ok 130 - invalid and ambiguous registry changes do not rotate secrets; broker of an existing ID cannot change
+  ---
+  duration_ms: 861.128533
+  type: 'test'
+  ...
+# Subtest: internal EVM signer creates verifiable EIP712 signature without exporting key or broadcasting
+ok 131 - internal EVM signer creates verifiable EIP712 signature without exporting key or broadcasting
+  ---
+  duration_ms: 822.898873
+  type: 'test'
+  ...
+# Subtest: signer checks revocation before releasing signature
+ok 132 - signer checks revocation before releasing signature
+  ---
+  duration_ms: 59.350269
+  type: 'test'
+  ...
+# Subtest: real HTTPS account routes enforce password, CSRF, origin, owner isolation and internal machine authentication
+ok 133 - real HTTPS account routes enforce password, CSRF, origin, owner isolation and internal machine authentication
+  ---
+  duration_ms: 1320.577566
+  type: 'test'
+  ...
+# Subtest: vault machine proof is domain-bound, fresh, exact-body and single-use
+ok 134 - vault machine proof is domain-bound, fresh, exact-body and single-use
+  ---
+  duration_ms: 5.872579
+  type: 'test'
+  ...
+# (node:930) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: CEX selection binds owner, market and broker; public identity contains no secret
+ok 135 - CEX selection binds owner, market and broker; public identity contains no secret
+  ---
+  duration_ms: 7.121349
+  type: 'test'
+  ...
+# Subtest: reject missing authorization, other owner, disabled, wrong market, ambiguous default and inline credentials
+ok 136 - reject missing authorization, other owner, disabled, wrong market, ambiguous default and inline credentials
+  ---
+  duration_ms: 1.887289
+  type: 'test'
+  ...
+# Subtest: explicit account selects among multiple assigned accounts without fallback
+ok 137 - explicit account selects among multiple assigned accounts without fallback
+  ---
+  duration_ms: 1.285073
+  type: 'test'
+  ...
+# Subtest: revocation and credential rotation invalidate prior binding before reading secrets
+ok 138 - revocation and credential rotation invalidate prior binding before reading secrets
+  ---
+  duration_ms: 0.323921
+  type: 'test'
+  ...
+# Subtest: GMX selects wallet by explicit chain and passes only bound signer
+ok 139 - GMX selects wallet by explicit chain and passes only bound signer
+  ---
+  duration_ms: 1.180436
+  type: 'test'
+  ...
+# Subtest: engine uses routing for execution and cancellation and rechecks halt after asynchronous resolution
+ok 140 - engine uses routing for execution and cancellation and rechecks halt after asynchronous resolution
+  ---
+  duration_ms: 2.926909
+  type: 'test'
+  ...
+# (node:938) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# PASS Trading execute/cancel/close normalization
+# Subtest: /workspace/scratch/6bed0bea6f2d/iatb-dev7-verified/App/services/trading-engine/tests/test_trading_core_v2.0.js
+ok 30 - /workspace/scratch/6bed0bea6f2d/iatb-dev7-verified/App/services/trading-engine/tests/test_trading_core_v2.0.js
+  ---
+  duration_ms: 170.939872
+  type: 'test'
+  ...
+# (node:946) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Blob restores history, converses with cognitive mode, retains command mode and controls Engines via Core
+ok 142 - Blob restores history, converses with cognitive mode, retains command mode and controls Engines via Core
+  ---
+  duration_ms: 25.121821
+  type: 'test'
+  ...
+# Subtest: ADMIN can load allowlisted models and explicitly persist selected Supervisor provider
+ok 143 - ADMIN can load allowlisted models and explicitly persist selected Supervisor provider
+  ---
+  duration_ms: 6.107458
+  type: 'test'
+  ...
+# Subtest: live notification confirms the exact preparation with CSRF once even after a double click
+ok 144 - live notification confirms the exact preparation with CSRF once even after a double click
+  ---
+  duration_ms: 36.70108
+  type: 'test'
+  ...
+# Subtest: confirmation refusée : afficher le message utilisateur, sans retry ni code technique comme seul texte
+ok 145 - confirmation refusée : afficher le message utilisateur, sans retry ni code technique comme seul texte
+  ---
+  duration_ms: 7.209701
+  type: 'test'
+  ...
+# (node:954) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Companion calls only Auth21 owner bridge; model and UI context sanitized
+ok 146 - Companion calls only Auth21 owner bridge; model and UI context sanitized
+  ---
+  duration_ms: 4.428351
+  type: 'test'
+  ...
+# Subtest: Chat history is retrieved only through owner-verified Supervisor action
+ok 147 - Chat history is retrieved only through owner-verified Supervisor action
+  ---
+  duration_ms: 0.928471
+  type: 'test'
+  ...
+# Subtest: Engine panel lists only Core-authorized read operations and explicit owner Strategy controls
+ok 148 - Engine panel lists only Core-authorized read operations and explicit owner Strategy controls
+  ---
+  duration_ms: 3.906607
+  type: 'test'
+  ...
+# Subtest: slow OpenAI conversation gets dedicated timeouts; regular Engines keep their normal limits
+ok 149 - slow OpenAI conversation gets dedicated timeouts; regular Engines keep their normal limits
+  ---
+  duration_ms: 0.910437
+  type: 'test'
+  ...
+# Subtest: delegated owner AI proof renewal is single-use and bounded to same verified owner
+ok 150 - delegated owner AI proof renewal is single-use and bounded to same verified owner
+  ---
+  duration_ms: 8.663557
+  type: 'test'
+  ...
+# (node:962) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Core polls each Engine and broker, scoped registry identities
+ok 151 - Core polls each Engine and broker, scoped registry identities
+  ---
+  duration_ms: 3.533133
+  type: 'test'
+  ...
+# Subtest: reject unauthenticated peer and do not import
+ok 152 - reject unauthenticated peer and do not import
+  ---
+  duration_ms: 0.249951
+  type: 'test'
+  ...
+# Subtest: reject cross-broker snapshots
+ok 153 - reject cross-broker snapshots
+  ---
+  duration_ms: 2.647422
+  type: 'test'
+  ...
+# Subtest: one failed Engine does not stop others
+ok 154 - one failed Engine does not stop others
+  ---
+  duration_ms: 0.432586
+  type: 'test'
+  ...
+# (node:970) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# {
+#   "mode": "separate_processes_loopback_HTTP_CP1",
+#   "note": "Engine ActionBlock startup adapters, not full production Engine boot",
+#   "reports": [
+#     {
+#       "engine": "core",
+#       "broker": null,
+#       "status": "PASS",
+#       "expected": 0,
+#       "received": 0,
+#       "exit": 0,
+#       "error": "(node:978) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.\\n(Use `node --trace-warnings ...` to show where the warning was created)\\n"
+#     },
+#     {
+#       "engine": "router",
+#       "broker": null,
+#       "status": "PASS",
+#       "expected": 2,
+#       "received": 2,
+#       "exit": 0,
+#       "error": "(node:986) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.\\n(Use `node --trace-warnings ...` to show where the warning was created)\\n"
+#     },
+#     {
+#       "engine": "supervisor",
+#       "broker": null,
+#       "status": "PASS",
+#       "expected": 34,
+#       "received": 34,
+#       "exit": 0,
+#       "error": "(node:994) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.\\n(Use `node --trace-warnings ...` to show where the warning was created)\\n"
+#     },
+#     {
+#       "engine": "marketdata",
+#       "broker": null,
+#       "status": "PASS",
+#       "expected": 42,
+#       "received": 42,
+#       "exit": 0,
+#       "error": "(node:1002) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.\\n(Use `node --trace-warnings ...` to show where the warning was created)\\n"
+#     },
+#     {
+#       "engine": "fundamental",
+#       "broker": null,
+#       "status": "PASS",
+#       "expected": 63,
+#       "received": 63,
+#       "exit": 0,
+#       "error": "(node:1010) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.\\n(Use `node --trace-warnings ...` to show where the warning was created)\\n"
+#     },
+#     {
+#       "engine": "indicator",
+#       "broker": null,
+#       "status": "PASS",
+#       "expected": 26,
+#       "received": 26,
+#       "exit": 0,
+#       "error": "(node:1018) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.\\n(Use `node --trace-warnings ...` to show where the warning was created)\\n"
+#     },
+#     {
+#       "engine": "liquidity",
+#       "broker": null,
+#       "status": "PASS",
+#       "expected": 15,
+#       "received": 15,
+#       "exit": 0,
+#       "error": "(node:1026) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.\\n(Use `node --trace-warnings ...` to show where the warning was created)\\n"
+#     },
+#     {
+#       "engine": "portfolio",
+#       "broker": null,
+#       "status": "PASS",
+#       "expected": 20,
+#       "received": 20,
+#       "exit": 0,
+#       "error": "(node:1034) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.\\n(Use `node --trace-warnings ...` to show where the warning was created)\\n"
+#     },
+#     {
+#       "engine": "risk",
+#       "broker": null,
+#       "status": "PASS",
+#       "expected": 17,
+#       "received": 17,
+#       "exit": 0,
+#       "error": "(node:1042) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.\\n(Use `node --trace-warnings ...` to show where the warning was created)\\n"
+#     },
+#     {
+#       "engine": "strategy",
+#       "broker": null,
+#       "status": "PASS",
+#       "expected": 13,
+#       "received": 13,
+#       "exit": 0,
+#       "error": "(node:1050) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.\\n(Use `node --trace-warnings ...` to show where the warning was created)\\n"
+#     },
+#     {
+#       "engine": "trading",
+#       "broker": null,
+#       "status": "PASS",
+#       "expected": 11,
+#       "received": 11,
+#       "exit": 0,
+#       "error": "(node:1058) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.\\n(Use `node --trace-warnings ...` to show where the warning was created)\\n"
+#     },
+#     {
+#       "engine": "trading",
+#       "broker": "binance",
+#       "status": "PASS",
+#       "expected": 11,
+#       "received": 11,
+#       "exit": 0,
+#       "error": "(node:1066) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.\\n(Use `node --trace-warnings ...` to show where the warning was created)\\n"
+#     },
+#     {
+#       "engine": "trading",
+#       "broker": "kraken",
+#       "status": "PASS",
+#       "expected": 11,
+#       "received": 11,
+#       "exit": 0,
+#       "error": "(node:1074) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.\\n(Use `node --trace-warnings ...` to show where the warning was created)\\n"
+#     },
+#     {
+#       "engine": "trading",
+#       "broker": "okx",
+#       "status": "PASS",
+#       "expected": 11,
+#       "received": 11,
+#       "exit": 0,
+#       "error": "(node:1082) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.\\n(Use `node --trace-warnings ...` to show where the warning was created)\\n"
+#     },
+#     {
+#       "engine": "firewall",
+#       "broker": null,
+#       "status": "PASS",
+#       "expected": 3,
+#       "received": 3,
+#       "exit": 0,
+#       "error": "(node:1090) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.\\n(Use `node --trace-warnings ...` to show where the warning was created)\\n"
+#     }
+#   ]
+# }
+# Subtest: /workspace/scratch/6bed0bea6f2d/iatb-dev7-verified/App/tests/registry-process-integration.js
+ok 34 - /workspace/scratch/6bed0bea6f2d/iatb-dev7-verified/App/tests/registry-process-integration.js
+  ---
+  duration_ms: 17072.119008
+  type: 'test'
+  ...
+# (node:1098) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: actual Router -> Supervisor -> verified owner receiver -> persistent cognitive memory (MOCK)
+ok 156 - actual Router -> Supervisor -> verified owner receiver -> persistent cognitive memory (MOCK)
+  ---
+  duration_ms: 1093.725537
+  type: 'test'
+  ...
+# (node:1131) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: persistent cognitive memory, self first, scoped tools, reviewed-only proposals, model allowlist
+ok 157 - persistent cognitive memory, self first, scoped tools, reviewed-only proposals, model allowlist
+  ---
+  duration_ms: 37.061159
+  type: 'test'
+  ...
+# Subtest: CP1 registry matches real Supervisor handlers and manifest contracts
+ok 158 - CP1 registry matches real Supervisor handlers and manifest contracts
+  ---
+  duration_ms: 5.681239
+  type: 'test'
+  ...
+# Subtest: tool allowlist blocks model-command injection; no direct trade/tool execution
+ok 159 - tool allowlist blocks model-command injection; no direct trade/tool execution
+  ---
+  duration_ms: 9.073234
+  type: 'test'
+  ...
+# Subtest: existing OpenAI provider forwards chosen model through CP1 AI Gateway Responses API
+ok 160 - existing OpenAI provider forwards chosen model through CP1 AI Gateway Responses API
+  ---
+  duration_ms: 11.712385
+  type: 'test'
+  ...
+# Subtest: unverified CP1 identity cannot open cognitive memory, cross-account isolation
+ok 161 - unverified CP1 identity cannot open cognitive memory, cross-account isolation
+  ---
+  duration_ms: 10.886068
+  type: 'test'
+  ...
+# Subtest: malformed provider JSON retries once; failure stores a controlled turn without secrets
+ok 162 - malformed provider JSON retries once; failure stores a controlled turn without secrets
+  ---
+  duration_ms: 8.820326
+  type: 'test'
+  ...
+# Subtest: context budget drops old history, protects current prompt, and backup restores SQLite
+ok 163 - context budget drops old history, protects current prompt, and backup restores SQLite
+  ---
+  duration_ms: 17.536114
+  type: 'test'
+  ...
+# (node:1143) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Core policy uses authenticated owner channel for cognitive reasoning and ADMIN configuration
+ok 164 - Core policy uses authenticated owner channel for cognitive reasoning and ADMIN configuration
+  ---
+  duration_ms: 2.513798
+  type: 'test'
+  ...
+# Subtest: Core owner AI checks model, signed original prompt, output token cap, store:false, current session
+ok 165 - Core owner AI checks model, signed original prompt, output token cap, store:false, current session
+  ---
+  duration_ms: 2.413989
+  type: 'test'
+  ...
+# Subtest: ADMIN model choice persists in canonical SQLite settings and USER cannot alter it
+ok 166 - ADMIN model choice persists in canonical SQLite settings and USER cannot alter it
+  ---
+  duration_ms: 16.38323
+  type: 'test'
+  ...
+# (node:1151) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: persist across process reopen, isolate tenants and sessions, enforce retention
+ok 167 - persist across process reopen, isolate tenants and sessions, enforce retention
+  ---
+  duration_ms: 17.58108
+  type: 'test'
+  ...
+# Subtest: expiry prevents reading and prune deletes expired sessions
+ok 168 - expiry prevents reading and prune deletes expired sessions
+  ---
+  duration_ms: 1.020747
+  type: 'test'
+  ...
+1..168
+# tests 168
+# suites 0
+# pass 168
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 138519.131294

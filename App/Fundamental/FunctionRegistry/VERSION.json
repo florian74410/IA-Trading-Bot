@@ -1,7 +1,7 @@
 {
   "engine_id": "fundamental",
-  "engine_version": "2.6.0-dev.6",
+  "engine_version": "2.6.0-dev.7",
   "registry_schema": "2.6.0",
   "source_sha256": "2291e9e01284542f0eb0e597490997d7e7a25e905a82f1d861b7c2de9f3a2d5d",
-  "revision_hash": "20820cf7f5102116523847aca2a841f33c07b94e5db8f34fd6e97424a37a63a7"
+  "revision_hash": "4e886901d4e3a6605606ec9b9c61c5673a0ea753dd5f3c56a27b21f61da5d048"
 }
