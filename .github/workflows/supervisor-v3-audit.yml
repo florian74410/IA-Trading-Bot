@@ -1,0 +1,62 @@
+name: Supervisor Engine 3.0 dev1 audit
+on:
+  push:
+    branches: ['test/iatb-3.0-dev1-supervisor-chaos']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  qualification:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install existing runtime deps
+        working-directory: App
+        run: npm ci --omit=dev --no-audit --no-fund
+      - name: Run targeted foundation tests (including expected-to-fail gap probes)
+        continue-on-error: true
+        shell: bash
+        run: |
+          mkdir -p artifacts/supervisor-v3-audit
+          set -o pipefail
+          node --test --test-concurrency=1 --test-reporter=tap App/Supervisor/Tests/SupervisorEngine/foundation.test.js 2>&1 | tee artifacts/supervisor-v3-audit/foundation.tap
+      - name: Run existing cognitive and memory regressions
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          node --test --test-concurrency=1 --test-reporter=tap App/tests/supervisor-short-term-memory.test.js App/tests/supervisor-cognitive-runtime.test.js 2>&1 | tee artifacts/supervisor-v3-audit/cognitive.tap
+      - name: Run existing CP1 validation suite
+        continue-on-error: true
+        shell: bash
+        run: |
+          node App/Tools/Tests/SupervisorSimulator/run_validation.js artifacts/supervisor-v3-audit/full-cp1-validation > artifacts/supervisor-v3-audit/simulator.log 2>&1
+      - name: Collect summary
+        if: always()
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import re,json,pathlib
+          out=pathlib.Path('artifacts/supervisor-v3-audit')
+          report={}
+          for name in ['foundation','cognitive']:
+            p=out/(name+'.tap')
+            txt=p.read_text(errors='replace') if p.exists() else ''
+            report[name]={k:int(m.group(1)) if (m:=re.search(r'^# '+k+r' (\d+)$',txt,re.M)) else None for k in ['tests','pass','fail','skipped']}
+            report[name]['failed_cases']=re.findall(r'^not ok \d+ - (.+)$',txt,re.M)
+          report_file=out/'full-cp1-validation'/'validation.json'
+          report['cp1']=json.loads(report_file.read_text()) if report_file.exists() else {'status':'NOT_EXECUTED'}
+          (out/'audit-summary.json').write_text(json.dumps(report,indent=2))
+          print(json.dumps(report,indent=2))
+          PY
+      - name: Upload inspectable evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: supervisor-v3-dev1-audit
+          path: artifacts/supervisor-v3-audit/
+          retention-days: 14
