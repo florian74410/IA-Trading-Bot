@@ -35,8 +35,7 @@ Authenticated owner requests (not public CP1 commands):
 All four actions travel inside the existing `supervisor.user.request` envelope.
 Core verifies the Auth21 session, role and owner proof. The Supervisor verifies
 the owner proof again at its ingress. `engine.observe` requires a valid
-owner-bound Gateway session and effective Function Registry grant. The
-implementation does not create grants.
+owner-bound Gateway session and effective Function Registry grant. A distinct `supervisor_engine` agent identity is registered for this purpose, separate from the ChatBot's `chatbot` identity. Existing gateway token caching has been scoped by both owner session and agent ID. The implementation does not create grants.
 
 Examples of the **inner request** (for a caller already using Core's authenticated
 bridge):
