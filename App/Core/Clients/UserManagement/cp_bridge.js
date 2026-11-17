@@ -49,7 +49,7 @@ if(target==='supervisor'&&action.startsWith('supervisor.engine.')){
  if(a.room!==undefined&&(typeof a.room!=='string'||!/^[-A-Za-z0-9_]{1,64}$/.test(a.room)))throw Error('INVALID_REQUEST');
  if(action==='supervisor.engine.objective'&&(typeof a.objective!=='string'||!a.objective.trim()||a.objective.length>1200))throw Error('INVALID_REQUEST');
  if(action==='supervisor.engine.observe'&&(!/^[a-z][a-z0-9_-]{0,40}$/.test(a.engine||'')||!/^[a-z][a-z0-9_.-]{0,95}$/.test(a.command||'')))throw Error('INVALID_REQUEST');
- const agent=functionRegistry?await functionRegistry.gatewaySession(token):null;
+ const agent=functionRegistry?await functionRegistry.gatewaySession(token,'supervisor_engine'):null;
  payload.engine={agentToken:agent?.token||null};
 }
 if(target==='supervisor'&&action.startsWith('supervisor.chatbot.')){
