@@ -2,13 +2,23 @@
 const fs=require('node:fs'),https=require('node:https'),CP=require('../../Core/Communication/communication_protocol_v1'),Manager=require('../LLM/llm_manager'),Settings=require('../../Core/Settings/sqlite_settings_store');
 function dispatch({root,client,cognitiveCore}){const storage=new Settings(root),data=new (require('./collector_data_v2_4_1').CollectorData)(client||new (require('./cp1_client'))(root,process.env.ROUTER_PORT),root);return async function(principal,action,args,envelope){
  if(action.startsWith('supervisor.chatbot.')){const auth={principal,sessionHash:envelope.sessionHash},bot=cognitiveCore.hybridChatBot();if(action==='supervisor.chatbot.history')return bot.history(auth,args.conversation_id||'default');if(action==='supervisor.chatbot.confirm')return bot.confirm(args,auth);if(action==='supervisor.chatbot.cancel')return bot.cancel(args,auth);if(action!=='supervisor.chatbot.message'||!envelope.chatbot)throw Error('OWNER_OPERATION_DENIED');const gateway=envelope.chatbot.agentToken?cognitiveCore.agentEngineGateway(envelope.chatbot.agentToken):null;return bot.message(args,auth,{gateway,accounts:envelope.chatbot.accounts,settings:envelope.chatbot.settings,llm:require('../ChatBot/llm').ownerModel(root,principal,envelope)});}
+ if(action.startsWith('supervisor.engine.')){
+  const auth={source:'AUTH21_OWNER',principal,sessionHash:envelope.sessionHash};
+  const engine=cognitiveCore.supervisorEngine();
+  const gateway=envelope.engine?.agentToken?cognitiveCore.agentEngineGateway(envelope.engine.agentToken):null;
+  if(action==='supervisor.engine.context')return engine.context(args,auth);
+  if(action==='supervisor.engine.objective')return engine.objective(args,auth);
+  if(action==='supervisor.engine.discover')return engine.discover(args,auth,gateway);
+  if(action==='supervisor.engine.observe')return engine.observe(args,auth,gateway);
+  throw Error('OWNER_OPERATION_DENIED');
+ }
  if(action==='supervisor.data.catalog')return data.catalog();
  if(action==='supervisor.data.read')return data.read(args);
  if(action==='supervisor.context')return data.collect(args);
  const configuration=envelope.configuration||{},scope='supervisor_owner:'+principal.clientId,state=storage.get(scope,'state',{reasoningCount:0,lastReasoning:null});
  const status=()=>({schema:'supervisor.status/1.0',mode:'ORCHESTRATOR',execution:'INTENTION_ONLY',ownerScoped:true,reasoningCount:state.reasoningCount,lastReasoning:state.lastReasoning,llm:{provider:configuration.provider||'OPENAI_API',configured:configuration.configured===true,model:configuration.model||'gpt-5.6'},autonomousTrading:{masterEnabled:false,mode:'OFF'},extensions:[],collectorData:{readOnly:true,catalog:'supervisor.data.catalog',read:'supervisor.data.read',context:'supervisor.context'}});
  if(['supervisor.health','supervisor.status','supervisor.capabilities'].includes(action))return status();
- if(action==='supervisor.cognitive.history')return cognitiveCore.cognitiveHistory(args,{source:'AUTH21_OWNER',principal});
+ if(action==='supervisor.cognitive.history')return cognitiveCore.cognitiveHistory(args,{source:'AUTH21_OWNER',principal,sessionHash:envelope.sessionHash});
  if(action==='supervisor.cognitive.status')return cognitiveCore.cognitiveRuntime().health();
  if(action==='supervisor.llm.models')return cognitiveCore.llmModels();
  if(action==='supervisor.llm.select'){
@@ -32,7 +42,7 @@ function dispatch({root,client,cognitiveCore}){const storage=new Settings(root),
   }
   const raw=JSON.stringify({delegation,payload}),q=https.request({host:'127.0.0.1',port:+process.env.CORE_PUBLIC_PORT||8001,servername:'localhost',ca:fs.readFileSync(process.env.IATB_AUTH_TLS_CERT),path:'/auth21/internal/ai-responses',method:'POST',timeout:65000,headers:{'Content-Type':'application/json','Content-Length':Buffer.byteLength(raw),'X-IATB-CP-Token':CP.ensureSecret(root)}},res=>{let n=0,parts=[];res.on('data',b=>{n+=b.length;if(n>4*1024*1024)q.destroy(Error('OWNER_AI_RESPONSE_TOO_LARGE'));else parts.push(b);});res.on('end',()=>{if(res.statusCode!==200)return reject(Error('OWNER_AI_GATEWAY_REFUSED'));try{resolve(JSON.parse(Buffer.concat(parts)));}catch(e){reject(e);}});});q.on('error',reject);q.on('timeout',()=>q.destroy(Error('OWNER_AI_TIMEOUT')));q.end(raw);});
  const preferred=action==='supervisor.cognitive.reason'?cognitiveCore.settings.llm().provider:(configuration.provider==='MOCK'?'MOCK':'OPENAI_API');
- const manager=new Manager({provider:preferred,fallbackEnabled:configuration.fallbackEnabled===true,fallbackProvider:configuration.fallbackProvider==='MOCK'?'MOCK':'OPENAI_API',openai:{model:configuration.model||'gpt-5.6',transport,context:async()=>configuration}}),response=action==='supervisor.cognitive.reason'?await cognitiveCore.cognitiveReason(args,{source:'AUTH21_OWNER',principal,llm:manager}):await manager[action==='supervisor.structured'?'structured':'reason'](args);
+ const manager=new Manager({provider:preferred,fallbackEnabled:configuration.fallbackEnabled===true,fallbackProvider:configuration.fallbackProvider==='MOCK'?'MOCK':'OPENAI_API',openai:{model:configuration.model||'gpt-5.6',transport,context:async()=>configuration}}),response=action==='supervisor.cognitive.reason'?await cognitiveCore.cognitiveReason(args,{source:'AUTH21_OWNER',principal,sessionHash:envelope.sessionHash,llm:manager}):await manager[action==='supervisor.structured'?'structured':'reason'](args);
  if(action==='supervisor.cognitive.reason')return response;
  state.reasoningCount++;state.lastReasoning={at:new Date().toISOString(),provider:response.provider,model:response.model||null};storage.set(scope,'state',state);return {schema:action==='supervisor.structured'?'supervisor.structured/1.0':'supervisor.reasoning/1.0',execution:'NONE',response};
 };}
