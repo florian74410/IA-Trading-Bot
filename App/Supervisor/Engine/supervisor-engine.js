@@ -68,7 +68,7 @@ class SupervisorEngine {
       this.memory.record(s,{engine,command,status:'OK',value:result,contractHash:contract.contract_hash});
       return {status:'OK',engine,command,result,context:this.context({room},auth)};
     }catch(e){
-      const error=safeError(e),status:error==='PERMISSION_DENIED'?'DENIED':'UNAVAILABLE';
+      const error=safeError(e),status=error==='PERMISSION_DENIED'?'DENIED':'UNAVAILABLE';
       this.memory.record(s,{engine,command,status,value:error,contractHash:contract?.contract_hash});
       return {status,error,engine,command,context:this.context({room},auth)};
     }
