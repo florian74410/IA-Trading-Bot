@@ -43,6 +43,15 @@ if(target==='risk'&&action==='risk.snapshot.create'){
  if(a.intent?.exchange&&a.intent.exchange!=='OKX')throw Error('INVALID_REQUEST');
  payload.portfolioRead=await require('./okx_read_delegation').issue({token,principal,args:a,vault:tradingVault,codec,kind:'risk'});
 }
+if(target==='supervisor'&&action.startsWith('supervisor.engine.')){
+ const fields=action==='supervisor.engine.objective'?['room','objective']:action==='supervisor.engine.observe'?['room','engine','command']:['room'];
+ if(Object.keys(a).some(k=>!fields.includes(k)))throw Error('INVALID_REQUEST');
+ if(a.room!==undefined&&(typeof a.room!=='string'||!/^[-A-Za-z0-9_]{1,64}$/.test(a.room)))throw Error('INVALID_REQUEST');
+ if(action==='supervisor.engine.objective'&&(typeof a.objective!=='string'||!a.objective.trim()||a.objective.length>1200))throw Error('INVALID_REQUEST');
+ if(action==='supervisor.engine.observe'&&(!/^[a-z][a-z0-9_-]{0,40}$/.test(a.engine||'')||!/^[a-z][a-z0-9_.-]{0,95}$/.test(a.command||'')))throw Error('INVALID_REQUEST');
+ const agent=functionRegistry?await functionRegistry.gatewaySession(token):null;
+ payload.engine={agentToken:agent?.token||null};
+}
 if(target==='supervisor'&&action.startsWith('supervisor.chatbot.')){
  const settings=require('./chatbot_settings').get(sessions,token),grant=functionRegistry?await functionRegistry.gatewaySession(token):null;payload.chatbot={settings,agentToken:grant?.token||null,accounts:tradingVault?tradingVault.list(token).map(a=>({id:a.id,exchange:a.exchange,enabled:a.enabled,demoMode:a.demoMode===true,markets:a.markets,default:a.default})):[]};
  if(action==='supervisor.chatbot.message'){if(typeof a.message!=='string'||!a.message.trim()||a.message.length>1400)throw Error('INVALID_REQUEST');if(!sessions.attempt(require('node:crypto').createHash('sha256').update('hybrid:'+principal.clientId).digest('hex'),30))throw Error('AUTH_THROTTLED');const spec=require('../../../Supervisor/ChatBot/llm').spec(require('../../../Supervisor/ChatBot').scrub(a.message.trim()));const gateway={clientId:principal.clientId,sessionHash:payload.sessionHash,operation:action,spec,configuration:configurationFor(token)};payload.delegation={gateway,proof:codec.issue({principal,audience:'ai_gateway',operation:'self.write',method:'POST',ownerClientId:principal.clientId,action:'ai_gateway.owner.responses',bodyDigest:CP.hashData(gateway)})};}
