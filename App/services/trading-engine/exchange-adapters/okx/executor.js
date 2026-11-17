@@ -6,6 +6,10 @@ const { ensureLive, statusFromHttp, asError } = require("../../executor-utils");
 function isoNow() { return new Date().toISOString(); }
 
 class OkxExecutor {
+  balances(input, ctx) { return require('./account-reader').read('balances', input, ctx); }
+  positions(input, ctx) { return require('./account-reader').read('positions', input, ctx); }
+  orders(input, ctx) { return require('./account-reader').read('orders', input, ctx); }
+  accountSnapshot(input, ctx) { return require('./account-reader').read('snapshot', input, ctx); }
   capabilities() { return require("./capabilities.json"); }
 
   async execute(order, ctx) {

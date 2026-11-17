@@ -11,6 +11,7 @@ if(/execute|place|cancel|close.position|swap|transfer|settings.set|delete|create
 if(/verify|gate|evaluate|validate|test|probe/i.test(name))return ['MEDIUM',false,'EVALUATION'];
 return ['LOW',false,'READ'];}
 function enrich(item,engine){const name=item.name, args=item.arguments||{},type=classify(name);
+const accountRead=require('../../Portfolio/Engine/okx_contracts').enrich(item,engine);if(accountRead)return accountRead;
 if(engine==='risk'){const audited=require('../../Risk/Snapshots/contracts').enrich(name);if(audited)return audited;}
 return {id:name,engine,type:type[2],risk_level:type[0],hard_deny:type[1],
   description:item.description||('Commande CP/1 '+name+' du composant '+engine+'. Contrat de sortie à compléter après inspection de son handler.'),

@@ -1,8 +1,10 @@
 {
   "engine_id": "portfolio",
-  "engine_version": "2.6.0",
+  "engine_version": "2.6.0-dev.3",
   "registry_schema": "2.6.0",
   "functions_count": 19,
   "source": "protocol_registry",
-  "release_state": "DEBUG_CANDIDATE"
+  "release_state": "DEBUG_CANDIDATE",
+  "source_sha256": "41543dfd1e602960c7f375f3f8d0face7c5e49a381b0c2724563f05033690fcb",
+  "revision_hash": "f114d0dd1c90ba43c888b04d875a59f958542a66a1d8b7aa50351f15a8605564"
 }

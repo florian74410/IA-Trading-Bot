@@ -191,6 +191,20 @@
           "allowed": [],
           "required": []
         }
+      },
+      {
+        "name": "risk.user.request",
+        "description": "Core-signed owner request, including delegated account reads.",
+        "arguments": {
+          "allowed": [
+            "payload",
+            "proof"
+          ],
+          "required": [
+            "payload",
+            "proof"
+          ]
+        }
       }
     ],
     "dataTypes": [

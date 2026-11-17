@@ -31,7 +31,7 @@ class AccountRouting {
     if (!Array.isArray(accounts)) throw Error('TRADING_ACCOUNT_REGISTRY_INVALID');
     const candidates = accounts.filter(a => a && a.owner === principal.clientId && a.enabled === true &&
       a.exchange === exchange && Array.isArray(a.markets) && a.markets.includes(market) &&
-      Array.isArray(a.actions) && a.actions.includes(action) &&
+      Array.isArray(a.actions) && (a.actions.includes(action)||(action==='read'&&a.actions.some(x=>['execute','cancel','close'].includes(x)))) &&
       (exchange === 'GMX' ? a.kind === 'DEX' && a.chain === chain : a.kind === 'CEX' && !chain));
     const matches = intent.account ? candidates.filter(a => a.id === intent.account) : candidates.filter(a => a.default === true);
     if (!matches.length) throw Error('TRADING_ACCOUNT_NOT_ASSIGNED');
@@ -49,11 +49,11 @@ class AccountRouting {
     };
     if (account.kind === 'CEX') {
       if (typeof this.readCredentials !== 'function' || !account.credentialRef) throw Error('TRADING_CREDENTIAL_BRIDGE_UNAVAILABLE');
-      return {identity, account: account.id, secretProvider: Object.freeze({get: async requested => {
+      return {identity, account: account.id, revalidate:recheck, secretProvider: Object.freeze({get: async requested => {
         if (requested !== exchange) throw Error('TRADING_CREDENTIAL_SCOPE_MISMATCH');
         await recheck();
         const secrets = await this.readCredentials(principal, account.credentialRef, identity);
-        if (!secrets || !(secrets.api_key || secrets.apiKey) || !(secrets.api_secret || secrets.apiSecret) ||
+        if (!secrets || !(secrets.api_key || secrets.apiKey) || !(secrets.api_secret || secrets.apiSecret || secrets.secret) ||
             (exchange === 'OKX' && !secrets.passphrase)) throw Error('TRADING_CREDENTIALS_INCOMPLETE');
         await recheck();
         return secrets;

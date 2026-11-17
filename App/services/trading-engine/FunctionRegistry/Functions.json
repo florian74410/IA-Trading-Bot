@@ -1,7 +1,7 @@
 {
   "schema_version": "2.6.0",
   "engine_id": "trading",
-  "engine_version": "2.6.0",
+  "engine_version": "2.6.0-dev.3",
   "transport": "CP/1",
   "source_protocol_registry": "App/Core/Communication/ProtocolRegistry/trading.json",
   "functions": [
@@ -60,127 +60,202 @@
       "id": "trading.account.positions",
       "engine": "trading",
       "type": "READ",
-      "risk_level": "LOW",
+      "risk_level": "MEDIUM",
       "hard_deny": false,
-      "description": "Read account positions through the selected exchange executor.",
+      "description": "Read OKX account data using a short-lived owner-bound vault ticket; no order or withdrawal.",
       "input": {
         "type": "object",
         "required": [
-          "exchange"
+          "exchange",
+          "metadata"
         ],
         "properties": {
           "exchange": {
-            "type": "unknown",
-            "description": "Type non vérifié"
-          },
-          "address": {
-            "type": "unknown",
-            "description": "Type non vérifié"
+            "const": "OKX"
           },
           "account": {
-            "type": "unknown",
-            "description": "Type non vérifié"
+            "type": "string"
           },
-          "chain": {
-            "type": "unknown",
-            "description": "Type non vérifié"
+          "symbol": {
+            "type": "string"
+          },
+          "market_type": {
+            "const": "SPOT"
+          },
+          "metadata": {
+            "type": "object",
+            "required": [
+              "account_ticket"
+            ],
+            "properties": {
+              "account_ticket": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
           }
         },
         "additionalProperties": false
       },
       "output": {
-        "type": "unknown",
-        "description": "Schéma à confirmer dans le handler réel"
+        "type": "object",
+        "description": "Normalized account data with verified account_identity; never returns credentials."
       },
-      "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/trading.json",
-      "verified_handler": false,
+      "errors": [
+        "OWNER_OPERATION_DENIED",
+        "TRADING_ACCOUNT_TICKET_REQUIRED",
+        "TRADING_TICKET_INVALID",
+        "OKX_ACCOUNT_READ_REJECTED",
+        "OKX_ACCOUNT_RATE_LIMITED"
+      ],
+      "source": "App/services/trading-engine/exchange-adapters/okx/account-reader.js",
+      "verified_handler": true,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "examples": [
+        {
+          "exchange": "OKX",
+          "account": "okx-main",
+          "symbol": "BTC-USDT",
+          "metadata": {
+            "account_ticket": "ISSUED_BY_CORE_ONLY"
+          }
+        }
+      ]
     },
     {
       "id": "trading.account.orders",
       "engine": "trading",
       "type": "READ",
-      "risk_level": "LOW",
+      "risk_level": "MEDIUM",
       "hard_deny": false,
-      "description": "Read account orders through the selected exchange executor.",
+      "description": "Read OKX account data using a short-lived owner-bound vault ticket; no order or withdrawal.",
       "input": {
         "type": "object",
         "required": [
-          "exchange"
+          "exchange",
+          "metadata"
         ],
         "properties": {
           "exchange": {
-            "type": "unknown",
-            "description": "Type non vérifié"
-          },
-          "address": {
-            "type": "unknown",
-            "description": "Type non vérifié"
+            "const": "OKX"
           },
           "account": {
-            "type": "unknown",
-            "description": "Type non vérifié"
+            "type": "string"
           },
-          "chain": {
-            "type": "unknown",
-            "description": "Type non vérifié"
+          "symbol": {
+            "type": "string"
+          },
+          "market_type": {
+            "const": "SPOT"
+          },
+          "metadata": {
+            "type": "object",
+            "required": [
+              "account_ticket"
+            ],
+            "properties": {
+              "account_ticket": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
           }
         },
         "additionalProperties": false
       },
       "output": {
-        "type": "unknown",
-        "description": "Schéma à confirmer dans le handler réel"
+        "type": "object",
+        "description": "Normalized account data with verified account_identity; never returns credentials."
       },
-      "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/trading.json",
-      "verified_handler": false,
+      "errors": [
+        "OWNER_OPERATION_DENIED",
+        "TRADING_ACCOUNT_TICKET_REQUIRED",
+        "TRADING_TICKET_INVALID",
+        "OKX_ACCOUNT_READ_REJECTED",
+        "OKX_ACCOUNT_RATE_LIMITED"
+      ],
+      "source": "App/services/trading-engine/exchange-adapters/okx/account-reader.js",
+      "verified_handler": true,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "examples": [
+        {
+          "exchange": "OKX",
+          "account": "okx-main",
+          "symbol": "BTC-USDT",
+          "metadata": {
+            "account_ticket": "ISSUED_BY_CORE_ONLY"
+          }
+        }
+      ]
     },
     {
       "id": "trading.account.balances",
       "engine": "trading",
       "type": "READ",
-      "risk_level": "LOW",
+      "risk_level": "MEDIUM",
       "hard_deny": false,
-      "description": "Read account balances through the selected exchange executor.",
+      "description": "Read OKX account data using a short-lived owner-bound vault ticket; no order or withdrawal.",
       "input": {
         "type": "object",
         "required": [
-          "exchange"
+          "exchange",
+          "metadata"
         ],
         "properties": {
           "exchange": {
-            "type": "unknown",
-            "description": "Type non vérifié"
-          },
-          "address": {
-            "type": "unknown",
-            "description": "Type non vérifié"
+            "const": "OKX"
           },
           "account": {
-            "type": "unknown",
-            "description": "Type non vérifié"
+            "type": "string"
           },
-          "chain": {
-            "type": "unknown",
-            "description": "Type non vérifié"
+          "symbol": {
+            "type": "string"
+          },
+          "market_type": {
+            "const": "SPOT"
+          },
+          "metadata": {
+            "type": "object",
+            "required": [
+              "account_ticket"
+            ],
+            "properties": {
+              "account_ticket": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
           }
         },
         "additionalProperties": false
       },
       "output": {
-        "type": "unknown",
-        "description": "Schéma à confirmer dans le handler réel"
+        "type": "object",
+        "description": "Normalized account data with verified account_identity; never returns credentials."
       },
-      "errors": [],
-      "source": "App/Core/Communication/ProtocolRegistry/trading.json",
-      "verified_handler": false,
+      "errors": [
+        "OWNER_OPERATION_DENIED",
+        "TRADING_ACCOUNT_TICKET_REQUIRED",
+        "TRADING_TICKET_INVALID",
+        "OKX_ACCOUNT_READ_REJECTED",
+        "OKX_ACCOUNT_RATE_LIMITED"
+      ],
+      "source": "App/services/trading-engine/exchange-adapters/okx/account-reader.js",
+      "verified_handler": true,
       "default_privilege": "DENY",
-      "side_effects": false
+      "side_effects": false,
+      "examples": [
+        {
+          "exchange": "OKX",
+          "account": "okx-main",
+          "symbol": "BTC-USDT",
+          "metadata": {
+            "account_ticket": "ISSUED_BY_CORE_ONLY"
+          }
+        }
+      ]
     },
     {
       "id": "trading.execute",
@@ -518,7 +593,77 @@
       "verified_handler": false,
       "default_privilege": "DENY",
       "side_effects": false
+    },
+    {
+      "id": "trading.account.snapshot",
+      "engine": "trading",
+      "type": "READ",
+      "risk_level": "MEDIUM",
+      "hard_deny": false,
+      "description": "Read OKX account data using a short-lived owner-bound vault ticket; no order or withdrawal.",
+      "input": {
+        "type": "object",
+        "required": [
+          "exchange",
+          "symbol",
+          "metadata"
+        ],
+        "properties": {
+          "exchange": {
+            "const": "OKX"
+          },
+          "account": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "market_type": {
+            "const": "SPOT"
+          },
+          "metadata": {
+            "type": "object",
+            "required": [
+              "account_ticket"
+            ],
+            "properties": {
+              "account_ticket": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "object",
+        "description": "Normalized account data with verified account_identity; never returns credentials."
+      },
+      "errors": [
+        "OWNER_OPERATION_DENIED",
+        "TRADING_ACCOUNT_TICKET_REQUIRED",
+        "TRADING_TICKET_INVALID",
+        "OKX_ACCOUNT_READ_REJECTED",
+        "OKX_ACCOUNT_RATE_LIMITED"
+      ],
+      "source": "App/services/trading-engine/exchange-adapters/okx/account-reader.js",
+      "verified_handler": true,
+      "default_privilege": "DENY",
+      "side_effects": false,
+      "examples": [
+        {
+          "exchange": "OKX",
+          "account": "okx-main",
+          "symbol": "BTC-USDT",
+          "metadata": {
+            "account_ticket": "ISSUED_BY_CORE_ONLY"
+          }
+        }
+      ]
     }
   ],
-  "verification_status": "PROTOCOL_DECLARED_UNVERIFIED_HANDLERS"
+  "verification_status": "PROTOCOL_DECLARED_UNVERIFIED_HANDLERS",
+  "source_sha256": "0a5745ce21d6a120d999640361b05391bbc29cdca9f2c02e0b66053abf012582",
+  "revision_hash": "1371ad118c7c93cfa1eae2bff48102075eb47e2b7d2575db99ccb96da00d4655"
 }

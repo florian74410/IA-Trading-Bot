@@ -3,7 +3,7 @@
 
 const https = require("https");
 
-function requestJson({ method = "GET", url, headers = {}, body = null, timeoutMs = 15000 }) {
+function requestJson({ method = "GET", url, headers = {}, body = null, timeoutMs = 15000, maxBytes = 2 * 1024 * 1024 }) {
   return new Promise((resolve, reject) => {
     const target = new URL(url);
     const data = body == null ? null : (typeof body === "string" ? body : JSON.stringify(body));
@@ -20,9 +20,10 @@ function requestJson({ method = "GET", url, headers = {}, body = null, timeoutMs
       },
       timeout: timeoutMs
     }, res => {
-      let chunks = "";
+      let chunks = "", bytes=0;
       res.setEncoding("utf8");
-      res.on("data", c => chunks += c);
+      res.on("data", c => {bytes+=Buffer.byteLength(c);if(bytes>maxBytes)req.destroy(new Error("HTTP_RESPONSE_TOO_LARGE"));else chunks+=c;});
+      res.on("error", reject);
       res.on("end", () => {
         let parsed = chunks;
         try { parsed = chunks ? JSON.parse(chunks) : null; } catch (_) {}

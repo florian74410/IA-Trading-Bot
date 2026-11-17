@@ -9,3 +9,5 @@ Les données absentes donnent UNAVAILABLE. Aucun snapshot n'est un ordre ni une
 approbation permanente. Aucun nouveau privilège IA n'est activé par défaut.
 
 Node 22 requis. Depuis App : `npm run test:risk` et `npm run bench:risk`.
+
+Complément de cette même version : [compte OKX du profil → Portfolio → Risk](../../Documentation/Risk/OKX_PROFILE_CONNECTION.md).

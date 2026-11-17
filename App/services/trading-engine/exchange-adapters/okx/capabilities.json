@@ -11,7 +11,11 @@
     "CANCEL_ORDER",
     "AMEND_ORDER",
     "GET_ORDER",
-    "OPEN_ORDERS"
+    "OPEN_ORDERS",
+    "ACCOUNT_BALANCES",
+    "ACCOUNT_POSITIONS",
+    "ACCOUNT_ORDERS",
+    "ACCOUNT_SNAPSHOT"
   ],
   "order_types": [
     "MARKET",
@@ -25,5 +29,6 @@
   ],
   "client_order_id": true,
   "reduce_only": true,
-  "auth": "HMAC_SHA256_BASE64"
+  "auth": "HMAC_SHA256_BASE64",
+  "account_reads": "OWNER_PROFILE_VAULT"
 }

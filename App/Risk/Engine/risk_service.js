@@ -47,10 +47,19 @@ var CAPABILITIES=[
 var SNAPSHOT_POLICY=process.env.IATB_RISK_POLICY_FILE?JSON.parse(require('fs').readFileSync(process.env.IATB_RISK_POLICY_FILE,'utf8')):{};
 var SNAPSHOTS=new (require('../Snapshots/orchestrator').Orchestrator)({
   authenticated:process.env.IATB_AUTH_MODE==='authenticated',config:SNAPSHOT_POLICY,
-  request:function(target,action,args){var client=new CPClient({root:APP_ROOT,routerPort:ROUTER_PORT,timeout:Math.min(5000,SNAPSHOT_POLICY.ioTimeoutMs||2500),maxBytes:4*1024*1024});return new Promise(function(resolve,reject){client.request(target,action,args,'analysis',function(e,d){e?reject(e):resolve(d);});});}
+  request:function(target,action,args){var client=new CPClient({root:APP_ROOT,routerPort:ROUTER_PORT,timeout:action==='portfolio.user.request'?7000:Math.min(5000,SNAPSHOT_POLICY.ioTimeoutMs||2500),maxBytes:4*1024*1024});return new Promise(function(resolve,reject){client.request(target,action,args,'analysis',function(e,d){e?reject(e):resolve(d);});});}
 });
-CAPABILITIES=CAPABILITIES.concat(['risk.snapshot.create','risk.snapshot.get','risk.constraints.get','risk.status']);
+CAPABILITIES=CAPABILITIES.concat(['risk.snapshot.create','risk.snapshot.get','risk.constraints.get','risk.status','risk.user.request']);
 var EVENTS=['risk.r2.alert'];
+var RISK_OWNER=require('../../Core/Clients/UserManagement/owner_receiver').receiver({root:APP_ROOT,engine:'risk',dispatch:async function(principal,action,args,payload){
+ if(action==='risk.snapshot.create'){
+  if(payload.portfolioRead?.payload?.clientId!==principal.clientId||payload.portfolioRead?.payload?.args?.account!==args.portfolio_id)throw Error('RISK_OWNER_DELEGATION_REQUIRED');
+  return SNAPSHOTS.create(args,{ownerContext:{ownerId:principal.clientId,portfolioRead:payload.portfolioRead}});
+ }
+ if(action==='risk.snapshot.get')return SNAPSHOTS.get(args.snapshot_id,args.portfolio_id,principal.clientId);
+ if(action==='risk.constraints.get')return SNAPSHOTS.constraints();if(action==='risk.status')return SNAPSHOTS.status();
+ throw Error('OWNER_OPERATION_DENIED');
+}});
 function nativeIntent(i){return !!(i&&i.metadata&&i.metadata.context==='native_scalping');}
 function nativeCheck(i,rid){return SNAPSHOTS.create({portfolio_id:i.metadata.portfolio_id,symbol:i.symbol,timeframe:i.metadata.timeframe||'1m',context:'native_scalping',correlation_id:rid,intent:i});}
 function nativeAllowed(s){return s.status==='COMPLETE'&&['ALLOW','ALLOW_WITH_LIMITS'].indexOf(s.decision)>=0;}
@@ -192,6 +201,8 @@ function r25MonitorTick(){
 
 function cpAction(m,cb){
   var a=m.arguments||{};
+  if(m.action==='risk.user.request')return RISK_OWNER(a).then(function(d){cb(null,d);},function(){cb(Error('OWNER_OPERATION_DENIED'));});
+  if(process.env.IATB_AUTH_MODE==='authenticated'&&['risk.snapshot.create','risk.snapshot.get'].indexOf(m.action)>=0)return cb(Error('OWNER_PROOF_REQUIRED'));
   if(m.action==='risk.snapshot.create')return SNAPSHOTS.create(a).then(function(d){cb(null,d);},cb);
   if(m.action==='risk.snapshot.get'){try{return cb(null,SNAPSHOTS.get(a.snapshot_id,a.portfolio_id));}catch(e){return cb(e);}}
   if(m.action==='risk.constraints.get')return cb(null,SNAPSHOTS.constraints());

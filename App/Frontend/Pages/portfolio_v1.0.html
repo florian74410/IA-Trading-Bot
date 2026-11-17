@@ -25,6 +25,14 @@
       </div>
     </section>
 
+    <section class="portfolioIntro" id="okxAccountPanel">
+      <div><h2>Compte OKX du profil</h2><p>Solde du compte de trading · lecture seule</p>
+      <label>Compte <select id="okxProfileAccount"></select></label>
+      <label>Marché <input id="okxAccountSymbol" value="BTC-USDT" maxlength="40"></label>
+      <button id="okxAccountRefresh" type="button">Actualiser le compte</button>
+      <p id="okxAccountStatus" role="status">Chargement des comptes du profil…</p>
+      <div id="okxAccountValues"></div><ul id="okxAccountBalances"></ul></div>
+    </section>
     <section class="kpis">
       <article><span>POSITIONS OUVERTES</span><strong id="openCount">0</strong><small>Trades actifs</small></article>
       <article><span>PNL LATENT</span><strong id="unrealized">--</strong><small>Positions ouvertes</small></article>
@@ -136,6 +144,7 @@
 </div>
 
 <script src="/assets/portfolio_controller_v1.0.js?v=2001"></script>
+<script src="/assets/portfolio_okx_account.js?v=2603okx"></script>
 <script src="/assets/companion_v1.0.js"></script>
 </body>
 </html>

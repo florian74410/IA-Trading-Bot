@@ -1,6 +1,7 @@
 'use strict';
 const Store=require('./portfolio_store'),PE=require('./portfolio_engine');
-function dispatch({root,dbPath}){return function(principal,action,args){
+function dispatch({root,dbPath,accountService}){return function(principal,action,args,payload){
+ if(action==='portfolio.account.snapshot'){if(!accountService)throw Error('PORTFOLIO_ACCOUNT_BRIDGE_UNAVAILABLE');return accountService.read(principal,args,payload?.accountRead);}
  const store=new Store(root,{dbPath,clientId:principal.clientId});
  try{
   let settings=store.getSetting('portfolio.settings',{snapshotRefreshSec:300,pnlRefreshSec:3,exchangeSyncSec:30,equityChangeTriggerPct:1,baseCurrency:'EUR',snapshotRetention:'AUTO'});

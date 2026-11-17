@@ -1,16 +1,21 @@
 {
   "schema": "risk.build-verification/1.0",
   "version": "2.6.0-dev.3",
+  "revision": "RISK-OKX-PROFILE",
   "artifact": "IA-TB-2.6.0-dev.3-debug-source.zip",
-  "sha256": "9d48c85d76e99c9409c0bc1eefefee8f98baaec5ad6db4cc10d6ccd6ca92fb27",
+  "sha256": "62e65008e5683b7b96a3813a837d933aa9749a4297d5abeb677087f219a2be85",
   "identical_independent_builds": true,
   "zip_integrity": true,
   "all_manifest_hashes_verified": true,
-  "source_files": 943,
+  "source_files": 953,
   "unpacked_version_guard": true,
-  "unpacked_changed_entrypoint_syntax": true,
-  "binary_build": false,
+  "local_tests": {
+    "passed": 69,
+    "failed": 0,
+    "runtime": "Node 22.23.5"
+  },
   "docker_image_built": false,
   "deployment": false,
-  "note": "This verification record is excluded from the source archive to avoid a self-referencing digest."
+  "live_account_access": false,
+  "note": "Record excluded from source bundle to avoid self-referencing digest."
 }

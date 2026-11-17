@@ -15,24 +15,27 @@ function validate(a){
  return clone({...a,timeframe:a.timeframe||'1m',context:a.context||'analysis'});
 }
 class Orchestrator{
- constructor({request,config={},pool,now=Date.now,authenticated=false}={}){this.request=request;this.policy=policy(config);this.pool=pool||new Pool();this.now=now;this.authenticated=authenticated;this.active=0;this.stored=new Map();}
+ constructor({request,config={},pool,now=Date.now,authenticated=false}={}){this.request=request;this.policy=policy(config);this.pool=pool||new Pool();this.now=now;this.authenticated=authenticated;this.active=0;this.stored=new Map();this.owners=new Map();}
  status(){return {schema:'risk.snapshot-status/1.0',active:this.active,stored:this.stored.size,max_concurrency:this.policy.maxSnapshotConcurrency,workers:this.pool.size,execution_authorization:false};}
  constraints(){return {schema:'risk.constraints/1.0',policy:clone(this.policy),provisional_calibration:true,modifiable_by_agent:false};}
- async fetch(target,action,args,signal){
+ async fetch(target,action,args,signal,timeoutMs=this.policy.ioTimeoutMs){
   if(signal?.aborted)throw Error('RISK_CANCELLED');
   return new Promise((resolve,reject)=>{let done=false;const end=(err,x)=>{if(done)return;done=true;clearTimeout(timer);signal?.removeEventListener('abort',abort);err?reject(err):resolve(clone(x));},abort=()=>end(Error('RISK_CANCELLED'));
-   const timer=setTimeout(()=>end(Error('RISK_SOURCE_TIMEOUT')),this.policy.ioTimeoutMs);signal?.addEventListener('abort',abort,{once:true});
+   const timer=setTimeout(()=>end(Error('RISK_SOURCE_TIMEOUT')),timeoutMs);signal?.addEventListener('abort',abort,{once:true});
    Promise.resolve().then(()=>this.request(target,action,args)).then(x=>end(null,x),()=>end(Error('RISK_SOURCE_UNAVAILABLE')));
   });
  }
- async collect(a,signal){
+ async collect(a,signal,ownerContext){
   // Existing Portfolio snapshot cannot select an owner/account. Never fall back to shared state under Auth21.
-  const tasks={market:['marketdata','marketdata.candles',{symbol:a.symbol,timeframe:a.timeframe,limit:500,force:false}],
-   book:['marketdata','marketdata.microstructure.snapshot',{symbol:a.symbol,depth:100,force:false}]};
-  if(!this.authenticated){tasks.portfolio=['portfolio','portfolio.snapshot',{force:false}];tasks.trades=['portfolio','portfolio.trades',{limit:100}];}
-  const out={},errors={};await Promise.all(Object.entries(tasks).map(async([k,v])=>{try{out[k]=await this.fetch(...v,signal);}catch(e){errors[k]=e.message;}}));
+  const tasks={market:['marketdata','marketdata.candles',{symbol:a.symbol,timeframe:a.timeframe,limit:500,force:false,...(ownerContext?{source:'OKX'}:{})}],
+   book:['marketdata','marketdata.microstructure.snapshot',{symbol:a.symbol,depth:100,force:false,...(ownerContext?{source:'OKX'}:{})}]};
+  if(ownerContext)tasks.portfolio=['portfolio','portfolio.user.request',ownerContext.portfolioRead];
+  else if(!this.authenticated){tasks.portfolio=['portfolio','portfolio.snapshot',{force:false}];tasks.trades=['portfolio','portfolio.trades',{limit:100}];}
+  const out={},errors={};await Promise.all(Object.entries(tasks).map(async([k,v])=>{try{out[k]=await this.fetch(...v,signal,k==='portfolio'&&ownerContext?6500:this.policy.ioTimeoutMs);}catch(e){errors[k]=e.message;}}));
   if(signal?.aborted)throw Error('RISK_CANCELLED');
-  const port=out.portfolio?.snapshot||out.portfolio||{},symbols=[...new Set((port.positions||[]).map(x=>x.symbol))];
+  const port=out.portfolio?.snapshot||out.portfolio||{};
+  if(ownerContext){out.trades={portfolio_id:port.portfolio_id,trades:port.closed_trades};const execution=port.execution_context;if(execution?.exchange==='OKX'&&execution.quoteCurrency&&execution.symbol.replace(/[^A-Z0-9]/g,'')===a.symbol.replace(/[^A-Z0-9]/g,''))out.book={...out.book,quoteCurrency:execution.quoteCurrency,feeRate:execution.feeRate,exchangeConstraints:execution.exchangeConstraints};}
+  const symbols=[...new Set((port.positions||[]).map(x=>x.symbol))];
   out.assetCandles={};
   if(symbols.length>this.policy.maxCorrelationAssets)errors.correlation='RISK_ASSET_LIMIT';
   else await Promise.all(symbols.map(async symbol=>{if(typeof symbol!=='string')return;try{
@@ -41,10 +44,10 @@ class Orchestrator{
   }catch(e){errors.correlation=e.message;}}));
   return {out,errors};
  }
- async create(args,{signal,mode='auto'}={}){
+ async create(args,{signal,mode='auto',ownerContext}={}){
   const a=validate(args);signal=AbortSignal.any([...(signal?[signal]:[]),AbortSignal.timeout(8000)]);if(this.active>=this.policy.maxSnapshotConcurrency)throw Error('RISK_OVERLOADED');this.active++;
   const started=performance.now();try{
-   const {out,errors}=await this.collect(a,signal),p=this.policy,now=this.now();
+   const {out,errors}=await this.collect(a,signal,ownerContext),p=this.policy,now=this.now();
    const market=out.market||{},portfolio=out.portfolio?.snapshot||out.portfolio||{},book=out.book||{};
    let candles=market.candles||market.data?.candles?.value||market.data?.ohlcv?.value||[];
    const rows=math.series(candles,a.timeframe),stamps={market:rows?.at(-1)?.t,portfolio:portfolio.timestamp??Date.parse(portfolio.asOf),book:book.observedAt};
@@ -54,7 +57,7 @@ class Orchestrator{
    }
    if(Number.isFinite(stamps.portfolio)&&Number.isFinite(stamps.book)&&Math.abs(stamps.portfolio-stamps.book)>p.maxSkewMs)issues.push('SOURCE_CLOCK_SKEW');
    if(portfolio.portfolio_id!==a.portfolio_id)issues.push('PORTFOLIO_SCOPE_UNVERIFIED');
-   if(this.authenticated)issues.push('OWNER_SCOPED_PORTFOLIO_UNAVAILABLE');
+   if(this.authenticated&&!ownerContext)issues.push('OWNER_SCOPED_PORTFOLIO_UNAVAILABLE');
    if(typeof portfolio.quoteCurrency!=='string'||portfolio.quoteCurrency!==book.quoteCurrency)issues.push('QUOTE_CURRENCY_UNVERIFIED');
    if(portfolio.reconciled!==true)issues.push('PORTFOLIO_UNRECONCILED');
    if(a.capital!==undefined&&a.capital>portfolio.equity)issues.push('CAPITAL_EXCEEDS_ACCOUNT_EQUITY');
@@ -65,6 +68,7 @@ class Orchestrator{
    if(typeof a.intent?.exchange!=='string'||book.source!==a.intent.exchange)issues.push('EXECUTION_VENUE_UNVERIFIED');
    if(a.intent?.orderType&&a.intent.orderType!=='MARKET')issues.push('ORDER_TYPE_MODEL_UNAVAILABLE');
    if(a.intent?.market_type&&a.intent.market_type!=='SPOT')issues.push('MARKET_TYPE_MODEL_UNAVAILABLE');
+   if(ownerContext&&book.market_type!=='SPOT')issues.push('SPOT_ORDERBOOK_UNVERIFIED');
    if(book.firewall?.decision!=='PASS')issues.push('MARKET_FIREWALL_PROOF_UNAVAILABLE');
    let trades=out.trades?.portfolio_id===a.portfolio_id?out.trades.trades:Array.isArray(out.trades)&&out.trades.every(t=>t.portfolio_id===a.portfolio_id)?out.trades:null;
    if(Array.isArray(trades)&&a.strategy_type)trades=trades.filter(t=>t.strategy_type===a.strategy_type);
@@ -108,10 +112,10 @@ class Orchestrator{
     missing_metrics:missing,data_quality:{ages_ms:ages,source_timestamps:stamps,coherent:!issues.length,coverage:(tasks.length-missing.filter(k=>tasks.includes(k)).length)/tasks.length},
     data_reference:crypto.createHash('sha256').update(JSON.stringify(dataset)).digest('hex'),intent_hash:crypto.createHash('sha256').update(JSON.stringify(intent)).digest('hex'),executor:useWorkers?'WORKERS':'INLINE',calculation_time_ms:performance.now()-started};
    // Sanitise NaN/Infinity to null; calculations expose unavailable reasons explicitly.
-   const safe=clone(result);this.stored.set(safe.snapshot_id,safe);while(this.stored.size>p.maxStored)this.stored.delete(this.stored.keys().next().value);return clone(safe);
+   const safe=clone(result);this.stored.set(safe.snapshot_id,safe);if(ownerContext)this.owners.set(safe.snapshot_id,ownerContext.ownerId);while(this.stored.size>p.maxStored){const id=this.stored.keys().next().value;this.stored.delete(id);this.owners.delete(id);}return clone(safe);
   }finally{this.active--;}
  }
- get(id,portfolioId){const s=this.stored.get(id);if(!s||s.portfolio_id!==portfolioId)throw Error('RISK_SNAPSHOT_NOT_FOUND');const r=clone(s);if(this.now()>Date.parse(r.valid_until_utc)){r.status='EXPIRED';r.decision='UNAVAILABLE';r.reasons.push('SNAPSHOT_EXPIRED');}return r;}
+ get(id,portfolioId,ownerId){if(this.owners.get(id)!==ownerId)throw Error('RISK_SNAPSHOT_NOT_FOUND');const s=this.stored.get(id);if(!s||s.portfolio_id!==portfolioId)throw Error('RISK_SNAPSHOT_NOT_FOUND');const r=clone(s);if(this.now()>Date.parse(r.valid_until_utc)){r.status='EXPIRED';r.decision='UNAVAILABLE';r.reasons.push('SNAPSHOT_EXPIRED');}return r;}
  async close(){await this.pool.close();}
 }
 module.exports={Orchestrator,validate};

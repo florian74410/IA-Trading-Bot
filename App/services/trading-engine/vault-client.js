@@ -14,7 +14,7 @@ function createVaultClient({root,env=process.env,request=null}){
   const b=await call({...payload,operation:'bind'});
   if(!b.identity||b.identity.exchange!==intent.exchange||!b.account||!['CEX','DEX'].includes(b.kind))throw Error('TRADING_VAULT_RESPONSE_INVALID');
   if(b.kind==='DEX')throw Error('DEX_PREPARED_POLICY_REQUIRED');
-  return {identity:b.identity,account:b.account,secretProvider:{get:async exchange=>{
+  return {identity:b.identity,account:b.account,revalidate:async()=>{const r=await call({...payload,operation:'validate'});if(!r.ok||r.identity?.owner!==b.identity.owner||r.identity?.id!==b.identity.id)throw Error('TRADING_ACCOUNT_REVOKED');},secretProvider:{get:async exchange=>{
    if(exchange!==b.identity.exchange)throw Error('TRADING_CREDENTIAL_SCOPE_MISMATCH');
    return (await call({...payload,operation:'credentials',exchange})).credentials;
   }}};

@@ -1,5 +1,7 @@
 # Risk Engine vNext — 2.6.0-dev.3 DEBUG
 
+La même version reçoit ensuite le [raccordement OKX du profil](OKX_PROFILE_CONNECTION.md). Ce complément remplace les constats initiaux concernant la lecture propriétaire OKX et précise les limites qui subsistent.
+
 ## Livraison et périmètre
 
 Base : `florian74410/IA-Trading-Bot`, branche `supervisor/iatb_v2.6.0.2`, commit `a4c86e6cae11eca04d90765255021dcccfd4f2cb` (5 novembre 2026). Les branches distantes et tags ont été inspectés ; cette branche est plus récente que `main`, `2.6`, les branches dev.2 et `2.5.3`. `IA-TB` est le nom du projet, le dépôt réel est `IA-Trading-Bot`.
@@ -157,7 +159,7 @@ Ces limites sont des refus explicites et des dépendances à qualifier, pas des 
 
 Node qualifié localement : **22.23.5**. Installation des dépendances réelles via npm ci, puis reconstruction des modules natifs pour Node 22. Les premiers essais techniques ont également tourné sous Node 24, mais les preuves finales portent sur Node 22, requis par le dépôt.
 
-Tests ciblés et de régression : **40 tests réussis, 0 échec**, résultat complet dans `validation.log`. Ils couvrent références indépendantes des équations, données vides/constantes/extrêmes/invalides, synchronisation, devises/venue/portée, stops/marge absents, overflow, seuils, cache immuable/expiré, contexte distinct par requête, timeouts, annulation en cours d'I/O, panne et saturation du pool, égalité séquentiel/parallèle, R1/R2/paramètres historiques, registre/anti-rejeu, architecture Supervisor et LLM MOCK.
+Validation initiale Risk (avant le complément OKX) : **40 tests réussis, 0 échec**, résultat complet dans `validation.log`. Ils couvrent références indépendantes des équations, données vides/constantes/extrêmes/invalides, synchronisation, devises/venue/portée, stops/marge absents, overflow, seuils, cache immuable/expiré, contexte distinct par requête, timeouts, annulation en cours d'I/O, panne et saturation du pool, égalité séquentiel/parallèle, R1/R2/paramètres historiques, registre/anti-rejeu, architecture Supervisor et LLM MOCK.
 
 L'intégration utilise de vrais processus Node Router et Risk sur des ports loopback éphémères, le vrai client et les vraies méthodes Supervisor, le client de vérification Firewall et de vrais messages CP/1. Les sources de données sont des serveurs fixtures ; aucun exchange ni LLM externe. Test du refus sans token, arguments inattendus, erreurs structurées, ancienne API, nouvelle découverte, approbation native puis panne de source avant consommation, refus sans consommation et consommation unique après rétablissement. Le manager réel SQLite confirme DENY par défaut même avec un handler vérifié. Pas de qualification bout-en-bout du Trading réel.
 

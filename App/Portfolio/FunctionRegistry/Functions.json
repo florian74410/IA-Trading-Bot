@@ -1,7 +1,7 @@
 {
   "schema_version": "2.6.0",
   "engine_id": "portfolio",
-  "engine_version": "2.6.0",
+  "engine_version": "2.6.0-dev.3",
   "transport": "CP/1",
   "source_protocol_registry": "App/Core/Communication/ProtocolRegistry/portfolio.json",
   "functions": [
@@ -701,7 +701,51 @@
       "verified_handler": false,
       "default_privilege": "DENY",
       "side_effects": false
+    },
+    {
+      "id": "portfolio.account.snapshot",
+      "engine": "portfolio",
+      "type": "READ",
+      "risk_level": "MEDIUM",
+      "hard_deny": true,
+      "description": "Owner-scoped profile read, accepted only through the authenticated Core owner bridge.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "exchange": {
+            "const": "OKX"
+          },
+          "account": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "object",
+        "description": "Owner-scoped portfolio.account/1.0 snapshot, balances, USD valuation, available quote and explicit risk quality."
+      },
+      "errors": [
+        "OWNER_OPERATION_DENIED",
+        "TRADING_ACCOUNT_TICKET_REQUIRED",
+        "TRADING_TICKET_INVALID",
+        "OKX_ACCOUNT_READ_REJECTED",
+        "OKX_ACCOUNT_RATE_LIMITED"
+      ],
+      "source": "App/Portfolio/Engine/okx_account.js",
+      "verified_handler": true,
+      "default_privilege": "DENY",
+      "side_effects": false,
+      "examples": [
+        {}
+      ]
     }
   ],
-  "verification_status": "PROTOCOL_DECLARED_UNVERIFIED_HANDLERS"
+  "verification_status": "PROTOCOL_DECLARED_UNVERIFIED_HANDLERS",
+  "source_sha256": "41543dfd1e602960c7f375f3f8d0face7c5e49a381b0c2724563f05033690fcb",
+  "revision_hash": "f114d0dd1c90ba43c888b04d875a59f958542a66a1d8b7aa50351f15a8605564"
 }

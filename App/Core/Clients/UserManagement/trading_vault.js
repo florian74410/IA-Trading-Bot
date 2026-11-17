@@ -4,10 +4,16 @@ const {AccountRouting}=require('../../../services/trading-engine/account-routing
 const {normalizeOrderIntent,normalizeCancelIntent}=require('../../../services/trading-engine/trading-engine');
 const {typedDigest,signTypedData}=require('../../../Bank/Core/dex_wallet_signer');
 const CP=require('../../Communication/communication_protocol_v1');
-const ACTIONS=new Set(['execute','cancel','close']);
+const ACTIONS=new Set(['execute','cancel','close','read']);
 const MARKETS={BINANCE:['SPOT','FUTURES_USDM'],KRAKEN:['SPOT','MARGIN'],OKX:['SPOT','SWAP','FUTURES'],GMX:['PERPETUAL']};
 function canonical(intent,action){
  if(!ACTIONS.has(action))throw Error('TRADING_ACTION_INVALID');
+ if(action==='read'){
+  const allowed=['exchange','market_type','symbol','account','metadata'];
+  if(!intent||Object.keys(intent).some(k=>!allowed.includes(k))||intent.exchange!=='OKX'||intent.market_type&&intent.market_type!=='SPOT'||intent.account!==undefined&&intent.account!==null&&(typeof intent.account!=='string'||!/^[a-z][a-z0-9_-]{0,39}$/.test(intent.account)))throw Error('TRADING_READ_SCOPE_INVALID');
+  if(intent.metadata&&Object.keys(intent.metadata).some(k=>k!=='account_ticket'))throw Error('TRADING_READ_SCOPE_INVALID');
+  return {exchange:'OKX',market_type:'SPOT',account:intent.account||null,symbol:require('../../../services/trading-engine/exchange-adapters/okx/account-reader').instrument(intent.symbol||'BTC-USDT')};
+ }
  let o=JSON.parse(JSON.stringify(intent));for(const k of Object.keys(o))if(o[k]===null)delete o[k];
  if(action==='close'){if(!['LONG','SHORT'].includes(o.position_side))throw Error('TRADING_POSITION_SIDE_INVALID');o.side=o.position_side==='LONG'?'SELL':'BUY';o.order_type='MARKET';o.reduce_only=true;}
  if(action!=='cancel'&&!o.client_order_id)throw Error('TRADING_CLIENT_ORDER_ID_REQUIRED');
@@ -20,8 +26,9 @@ class TradingVault {
  principal(token){const p=this.sessions.verifySession(token);if(!p||!['ADMIN','USER'].includes(p.role))throw Error('TRADING_ACCOUNT_UNAUTHORIZED');return p;}
  list(token){this.principal(token);const rows=JSON.parse(this.sessions.getPreference(token,'trading','accounts')||'[]');if(!Array.isArray(rows))throw Error('TRADING_ACCOUNT_REGISTRY_INVALID');return rows;}
  async save(token,input){
-  const p=this.principal(token);if(!input||Object.keys(input).some(k=>!['id','exchange','markets','actions','enabled','default','chain','walletRef','walletAccountId','contracts','credentials'].includes(k)))throw Error('INVALID_REQUEST');
+  const p=this.principal(token);if(!input||Object.keys(input).some(k=>!['id','exchange','markets','actions','enabled','default','chain','walletRef','walletAccountId','contracts','credentials','apiRegion','demoMode'].includes(k)))throw Error('INVALID_REQUEST');
   if(!/^[a-z][a-z0-9_-]{0,39}$/.test(input.id||'')||!Object.hasOwn(MARKETS,input.exchange)||!Array.isArray(input.markets)||!input.markets.length||input.markets.some(m=>!MARKETS[input.exchange].includes(m))||!Array.isArray(input.actions)||!input.actions.length||input.actions.some(a=>!ACTIONS.has(a))||typeof input.enabled!=='boolean'||typeof input.default!=='boolean')throw Error('INVALID_REQUEST');
+  if(input.apiRegion!==undefined&&!['GLOBAL','EEA','US'].includes(input.apiRegion)||input.demoMode!==undefined&&typeof input.demoMode!=='boolean')throw Error('INVALID_REQUEST');
   let pendingCredentials=null;const rows=this.list(token);if(rows.some(a=>a.id===input.id&&a.exchange!==input.exchange))throw Error('TRADING_ACCOUNT_BROKER_IMMUTABLE');const record={id:input.id,owner:p.clientId,exchange:input.exchange,markets:[...new Set(input.markets)],actions:[...new Set(input.actions)],enabled:input.enabled,default:input.default,kind:input.exchange==='GMX'?'DEX':'CEX',revision:crypto.randomUUID()};
   if(record.kind==='CEX'){
    if(input.chain||input.walletRef||input.walletAccountId||input.contracts)throw Error('INVALID_REQUEST');
@@ -30,6 +37,7 @@ class TradingVault {
    if(credentials){if(Object.keys(credentials).some(k=>!['apiKey','apiSecret','passphrase'].includes(k))||['apiKey','apiSecret'].some(k=>typeof credentials[k]!=='string'||!credentials[k]||credentials[k].length>2048)||credentials.passphrase!==undefined&&(typeof credentials.passphrase!=='string'||credentials.passphrase.length>2048)||record.exchange==='OKX'&&!credentials.passphrase)throw Error('TRADING_CREDENTIALS_INCOMPLETE');}
    const existing=this.sessions.secrets(token)[record.credentialRef];
    if(!credentials&&!existing)throw Error('TRADING_CREDENTIALS_INCOMPLETE');
+   const prior=rows.find(a=>a.id===record.id);record.apiRegion=input.apiRegion||prior?.apiRegion||'GLOBAL';record.demoMode=input.demoMode??prior?.demoMode??false;
    if(credentials)pendingCredentials={[record.credentialRef]:JSON.stringify(credentials)};
   }else{
    if(input.credentials||!['arbitrum','avalanche'].includes(input.chain)||typeof input.walletRef!=='string'||typeof input.walletAccountId!=='string'||!Array.isArray(input.contracts)||!input.contracts.length||input.contracts.length>8||input.contracts.some(a=>!/^0x[0-9a-fA-F]{40}$/.test(a)))throw Error('INVALID_REQUEST');
@@ -46,7 +54,7 @@ class TradingVault {
  routing(token,expected,action){return new AccountRouting({
   authorize:async ({intent,action:a})=>a===action&&CP.hashData(canonical(intent,a))===CP.hashData(expected)?this.principal(token):null,
   listAccounts:async()=>this.list(token),
-  readCredentials:async(p,ref)=>{if(this.principal(token).clientId!==p.clientId)throw Error('TRADING_ACCOUNT_UNAUTHORIZED');const raw=this.sessions.secrets(token)[ref];if(!raw)throw Error('TRADING_CREDENTIALS_INCOMPLETE');return JSON.parse(raw);},
+  readCredentials:async(p,ref)=>{if(this.principal(token).clientId!==p.clientId)throw Error('TRADING_ACCOUNT_UNAUTHORIZED');const raw=this.sessions.secrets(token)[ref];if(!raw)throw Error('TRADING_CREDENTIALS_INCOMPLETE');const credentials=JSON.parse(raw),record=this.list(token).find(a=>a.credentialRef===ref&&a.owner===p.clientId);return {...credentials,apiRegion:record?.apiRegion||'GLOBAL',demoMode:record?.demoMode===true};},
   walletSigner:async()=>{throw Error('DEX_PREPARED_POLICY_REQUIRED');}
  });}
  async issue(token,intent,action){
@@ -63,6 +71,7 @@ class TradingVault {
   if(operation==='bind'){if(t.claimed)throw Error('TRADING_TICKET_REPLAY');t.claimed=true;}else if(!t.claimed)throw Error('TRADING_TICKET_UNCLAIMED');
   const b=await this.routing(t.token,t.intent,action).bind(t.intent,action);
   if(operation==='bind')return {identity:b.identity,account:b.account,kind:record.kind};
+  if(operation==='validate'&&action==='read')return {ok:true,identity:b.identity};
   if(operation==='credentials'&&record.kind==='CEX'){if(t.credentialRead)throw Error('TRADING_CREDENTIAL_REPLAY');t.credentialRead=true;return {credentials:await b.secretProvider.get(exchange)};}
   throw Error('TRADING_ACCESS_OPERATION_DENIED');
  }

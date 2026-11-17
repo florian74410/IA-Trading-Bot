@@ -7,7 +7,11 @@
       "trading.close_position",
       "trading.health",
       "trading.capabilities",
-      "trading.history"
+      "trading.history",
+      "trading.account.balances",
+      "trading.account.positions",
+      "trading.account.orders",
+      "trading.account.snapshot"
     ]
   },
   "pairs": {

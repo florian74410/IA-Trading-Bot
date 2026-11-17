@@ -1117,9 +1117,52 @@
       ],
       "source": "App/Risk/Snapshots/orchestrator.js",
       "authorization": "Existing authenticated machine CP/1 only. No public route, agent grant, settings write or owner proof is created."
+    },
+    {
+      "id": "risk.user.request",
+      "engine": "risk",
+      "type": "READ",
+      "risk_level": "MEDIUM",
+      "hard_deny": true,
+      "description": "Owner-scoped profile read, accepted only through the authenticated Core owner bridge.",
+      "input": {
+        "type": "object",
+        "required": [
+          "payload",
+          "proof"
+        ],
+        "properties": {
+          "payload": {
+            "type": "object"
+          },
+          "proof": {
+            "type": "string",
+            "maxLength": 1024
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "object",
+        "description": "Structured owner Risk response."
+      },
+      "errors": [
+        "OWNER_OPERATION_DENIED",
+        "TRADING_ACCOUNT_TICKET_REQUIRED",
+        "TRADING_TICKET_INVALID",
+        "OKX_ACCOUNT_READ_REJECTED",
+        "OKX_ACCOUNT_RATE_LIMITED"
+      ],
+      "source": "App/Risk/Engine/risk_service.js",
+      "verified_handler": true,
+      "default_privilege": "DENY",
+      "side_effects": false,
+      "examples": [
+        {}
+      ]
     }
   ],
   "verification_status": "PROTOCOL_DECLARED_UNVERIFIED_HANDLERS",
-  "revision_hash": "80be55f704f460564487ac5535efdfae344b250f4e60f05466aff08aad8af262",
-  "source_sha256": "e7aa7a525edeba240d93ec1441ead5a216ecf0361bf06dd6e81611b732479c2d"
+  "revision_hash": "528e74684a79f3c3497c2e93e9f036de4f5b3914861040ff4c36d88d86eadf77",
+  "source_sha256": "b08a31bd2acb906d4c00352f1860caf86d2783c275e33ecb9b1c6fa0d93d3257"
 }

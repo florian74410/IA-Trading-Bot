@@ -32,7 +32,10 @@
             "exchange",
             "address",
             "account",
-            "chain"
+            "chain",
+            "market_type",
+            "symbol",
+            "metadata"
           ],
           "required": [
             "exchange"
@@ -47,7 +50,10 @@
             "exchange",
             "address",
             "account",
-            "chain"
+            "chain",
+            "market_type",
+            "symbol",
+            "metadata"
           ],
           "required": [
             "exchange"
@@ -62,7 +68,10 @@
             "exchange",
             "address",
             "account",
-            "chain"
+            "chain",
+            "market_type",
+            "symbol",
+            "metadata"
           ],
           "required": [
             "exchange"
@@ -179,6 +188,24 @@
           ]
         },
         "description": "Authenticated ADMIN maintenance with durable emergency halt. P5 real broker mutations and recovery remain unqualified and disabled. Optional params are bound to the signed proof."
+      },
+      {
+        "name": "trading.account.snapshot",
+        "description": "Read-only OKX snapshot with an owner-bound Core vault ticket.",
+        "arguments": {
+          "allowed": [
+            "exchange",
+            "account",
+            "market_type",
+            "symbol",
+            "metadata"
+          ],
+          "required": [
+            "exchange",
+            "symbol",
+            "metadata"
+          ]
+        }
       }
     ],
     "dataTypes": [

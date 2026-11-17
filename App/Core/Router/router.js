@@ -18,6 +18,8 @@ var RISK_HOST='127.0.0.1',RISK_PORT=+(process.env.IATB_RISK_ENGINE_PORT||8019);
 var PORTFOLIO_PORT=+(process.env.IATB_PORTFOLIO_PORT||8020);
 var SUPERVISOR_HOST='127.0.0.1',SUPERVISOR_PORT=+(process.env.IATB_SUPERVISOR_PORT||3000);
 var APP_ROOT=path.resolve(__dirname,'../..'),COMM=new CommRouter(APP_ROOT);
+// Keep the non-registerable Trading route on its configured Firewall boundary.
+if(COMM.registry.trading){COMM.registry.trading.port=FIREWALL_PORT;COMM.registry.trading.routing.processPort=TRADING_ENGINE_PORT;}
 var COMM_MAX_BODY=512*1024;
 
 function sendJson(res,code,obj){var b=Buffer.from(JSON.stringify(obj,null,2));res.writeHead(code,{'Content-Type':'application/json; charset=utf-8','Content-Length':b.length,'Cache-Control':'no-store'});res.end(b);}

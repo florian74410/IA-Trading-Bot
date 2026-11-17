@@ -22,7 +22,19 @@ TradingEngine.prototype.registerExecutor=function(name,ex){if(!name||!ex||typeof
 TradingEngine.prototype.capabilities=function(exchange){var ex=this.executors.get(String(exchange||'').toUpperCase());return ex&&typeof ex.capabilities==='function'?ex.capabilities():null;};
 TradingEngine.prototype.execute=async function(intent,ctx){if(!this.lifecycle.canExecute())throw Error('TRADING_ENGINE_RUNTIME_LOCKED');var o=normalizeOrderIntent(intent),ex=this.executors.get(o.exchange);if(!ex)throw new Error('Unsupported exchange: '+o.exchange);var bound=await bindAccount(this,o,'execute',ctx);return Object.assign(resultBase(o,await ex.execute(bound.order,bound.context)),{account_identity:bound.context.accountIdentity||null});};
 TradingEngine.prototype.cancel=async function(intent,ctx){if(!this.lifecycle.canExecute())throw Error('TRADING_ENGINE_RUNTIME_LOCKED');var o=normalizeCancelIntent(intent),ex=this.executors.get(o.exchange);if(!ex)throw new Error('Unsupported exchange: '+o.exchange);if(typeof ex.cancel!=='function')throw new Error('Cancel unsupported by executor: '+o.exchange);var bound=await bindAccount(this,o,'cancel',ctx);return Object.assign(resultBase(o,await ex.cancel(bound.order,bound.context)),{account_identity:bound.context.accountIdentity||null});};
-TradingEngine.prototype.readAccount=async function(kind,input,ctx){input=input||{};var exchange=String(input.exchange||'').toUpperCase();required({exchange:exchange},'exchange');var ex=this.executors.get(exchange);if(!ex)throw new Error('Unsupported exchange: '+exchange);var method=kind==='positions'?'positions':kind==='orders'?'orders':kind==='balances'?'balances':'';if(!method||typeof ex[method]!=='function')throw new Error('Account read unsupported by executor: '+exchange+' '+kind);return ex[method](Object.assign({},input,{exchange:exchange}),Object.assign({},ctx||{},{secretProvider:this.secretProvider,transport:this.transport,liveExecutionEnabled:false}));};
+TradingEngine.prototype.readAccount=async function(kind,input,ctx){
+ input=input||{};const exchange=String(input.exchange||'').toUpperCase();required({exchange},'exchange');
+ const ex=this.executors.get(exchange),method={positions:'positions',orders:'orders',balances:'balances',snapshot:'accountSnapshot'}[kind];
+ if(!ex||!method||typeof ex[method]!=='function')throw Error('TRADING_ACCOUNT_READ_UNSUPPORTED');
+ // Private OKX reads require the same owner-bound vault as execution, even while execution is halted.
+ if(exchange==='OKX'&&!this.accountRouting)throw Error('TRADING_ACCOUNT_AUTHORITY_UNAVAILABLE');
+ let bound=this.accountRouting?await this.accountRouting.bind(input,'read',ctx&&ctx.accountProof):null;
+ const readContext=Object.assign({},ctx||{},{secretProvider:bound?.secretProvider||this.secretProvider,transport:this.transport,liveExecutionEnabled:false,revalidate:bound?.revalidate});
+ const result=await ex[method](Object.assign({},input,{exchange}),readContext);
+ if(bound?.revalidate)await bound.revalidate();
+ return JSON.parse(JSON.stringify(Object.assign({},result,{account_identity:bound?.identity||null})));
+};
+TradingEngine.prototype.accountSnapshot=function(input,ctx){return this.readAccount('snapshot',input,ctx);};
 TradingEngine.prototype.positions=function(input,ctx){return this.readAccount('positions',input,ctx);};
 TradingEngine.prototype.orders=function(input,ctx){return this.readAccount('orders',input,ctx);};
 TradingEngine.prototype.balances=function(input,ctx){return this.readAccount('balances',input,ctx);};

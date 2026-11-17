@@ -1,8 +1,10 @@
 {
   "engine_id": "trading",
-  "engine_version": "2.6.0",
+  "engine_version": "2.6.0-dev.3",
   "registry_schema": "2.6.0",
   "functions_count": 10,
   "source": "protocol_registry",
-  "release_state": "DEBUG_CANDIDATE"
+  "release_state": "DEBUG_CANDIDATE",
+  "source_sha256": "0a5745ce21d6a120d999640361b05391bbc29cdca9f2c02e0b66053abf012582",
+  "revision_hash": "1371ad118c7c93cfa1eae2bff48102075eb47e2b7d2575db99ccb96da00d4655"
 }

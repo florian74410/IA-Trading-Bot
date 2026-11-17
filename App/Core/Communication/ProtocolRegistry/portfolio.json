@@ -207,6 +207,18 @@
           ]
         },
         "description": "Core-bound owner capability with live session revalidation; no browser identity authority"
+      },
+      {
+        "name": "portfolio.account.snapshot",
+        "transport": "OWNER",
+        "description": "Owner-scoped read-only OKX account using the key assigned to the active profile.",
+        "arguments": {
+          "allowed": [
+            "account",
+            "exchange",
+            "symbol"
+          ]
+        }
       }
     ],
     "dataTypes": [

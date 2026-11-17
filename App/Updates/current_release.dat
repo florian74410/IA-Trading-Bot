@@ -6,6 +6,6 @@
   "ui": "UI/Gateway/ui_service.js",
   "uiPort": 8000,
   "routerPort": 8021,
-  "revision": "RISK-SNAPSHOTS",
+  "revision": "RISK-OKX-PROFILE",
   "status": "DEBUG"
 }

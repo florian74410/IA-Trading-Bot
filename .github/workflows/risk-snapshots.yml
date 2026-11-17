@@ -3,7 +3,7 @@ on:
   push:
     branches: ['feature/risk-engine-parallel-snapshots']
   pull_request:
-    paths: ['App/Risk/**', 'App/Supervisor/Core/**', 'App/Core/Communication/**', 'App/Core/Firewall/risk_approval_client.js', 'App/Core/Shared/build_info.js', 'Tools/Build/**']
+    paths: ['App/Risk/**', 'App/Portfolio/**', 'App/services/trading-engine/**', 'App/Core/Clients/UserManagement/**', 'App/Frontend/JS/portfolio_okx_account.js', 'App/Supervisor/Core/**', 'App/Core/Communication/**', 'App/Core/Firewall/risk_approval_client.js', 'App/Core/Shared/build_info.js', 'Tools/Build/**']
 permissions:
   contents: read
 jobs:
@@ -20,7 +20,7 @@ jobs:
       - run: npm ci --omit=dev --no-audit --no-fund
         working-directory: App
       - run: node App/Tools_validate_release_version.js
-      - run: node --test --test-concurrency=1 App/Risk/Tests/snapshots.test.js App/Risk/Tests/snapshots.integration.test.js App/Risk/Tests/risk_engine.test.js App/Risk/Tests/test_risk_gate.js App/Risk/Tests/test_risk_r1_r2_v25.js App/Risk/Tests/test_risk_settings_v25.js App/Supervisor/Tests/test_supervisor_architecture.js App/Supervisor/LLM/Tests/test_llm_manager.js App/Core/Communication/Tests/test_communication_router_v1.js App/Core/Communication/Tests/test_router_normalization_v1.8.12.js App/tests/function-registry-discovery.test.js
+      - run: node --test --test-concurrency=1 App/Risk/Tests/snapshots.test.js App/Risk/Tests/snapshots.integration.test.js App/Risk/Tests/risk_engine.test.js App/Risk/Tests/test_risk_gate.js App/Risk/Tests/test_risk_r1_r2_v25.js App/Risk/Tests/test_risk_settings_v25.js App/Supervisor/Tests/test_supervisor_architecture.js App/Supervisor/LLM/Tests/test_llm_manager.js App/Core/Communication/Tests/test_communication_router_v1.js App/Core/Communication/Tests/test_router_normalization_v1.8.12.js App/tests/function-registry-discovery.test.js App/Portfolio/Tests/okx_account.test.js App/Portfolio/Tests/okx_pipeline.integration.test.js App/services/trading-engine/tests/test_account_routing_v253.js App/Tools/Tests/user_management_trading_vault.test.js App/Tools/Tests/user_management_owner_engines.test.js App/Tools/Tests/user_management_route_matrix.test.js App/Tools/Tests/user_management_market_pipeline.test.js App/services/trading-engine/tests/test_trading_core_v2.0.js App/Core/Firewall/Tests/trading_firewall.test.js
         env:
           IATB_RUNTIME_ROOT: /tmp/iatb-risk-runtime
           IATB_DATA_ROOT: /tmp/iatb-risk-data
