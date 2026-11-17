@@ -19,7 +19,7 @@ class WorkingMemory {
   constructor({root,filename,now=Date.now}={}){
     if(!root&&!filename)throw Error('SUPERVISOR_MEMORY_PATH_REQUIRED');
     this.now=now;
-    const directory=process.env.IATB_RUNTIME_ROOT||path.join(root,'.runtime');
+    const directory=filename?null:(process.env.IATB_RUNTIME_ROOT||path.join(root,'.runtime'));
     this.file=filename||path.join(directory,'supervisor-engine','working.sqlite');
     if(this.file===':memory:'&&process.env.NODE_ENV==='production')throw Error('SUPERVISOR_MEMORY_PATH_REQUIRED');
     if(this.file!==':memory:'){
