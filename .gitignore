@@ -22,3 +22,6 @@ App/secrets_v2.dat
 
 # Test execution state must never be tracked with published reports.
 Documentation/**/runtime/
+
+# Generated test inventories are not runtime sources.
+/App/artifacts/

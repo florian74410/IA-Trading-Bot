@@ -7,9 +7,9 @@ const PUBLIC=new Set([
  'fundamental.health','fundamental.summary','fundamental.news.search','fundamental.sources.search','fundamental.source.get','fundamental.feeds.search','fundamental.providers.status','fundamental.fedwatch.get','fundamental.calendar.upcoming','liquidity.zones']);
 const GUEST_READ=new Set(['marketdata.providers','marketdata.registry.search','marketdata.registry.list','marketdata.registry.asset']);
 const IND_READ=new Set(['indicator.registry.reload','indicator.registry.status','indicator.settings.get','indicator.list_indicators','indicator.definition.get','indicator.definition.validate','indicator.language.info','indicator.language.validate','indicator.language.compile']);
-function createBridge({root,sessions,routerPort,tradingVault=null,functionRegistry=null,configurationFor=()=>({})}){
- const client=new Client({root,routerPort,maxBytes:4*1024*1024,timeout:15000});
- const supervisorClient=new Client({root,routerPort,maxBytes:4*1024*1024,timeout:135000});
+function createBridge({root,sessions,routerPort,tradingVault=null,functionRegistry=null,configurationFor=()=>({}),env=process.env}){
+ const client=new Client({root,routerPort,serviceEnv:env,maxBytes:4*1024*1024,timeout:15000});
+ const supervisorClient=new Client({root,routerPort,serviceEnv:env,maxBytes:4*1024*1024,timeout:135000});
  const codec=proofCodec({secret:Buffer.from(CP.ensureSecret(root),'hex')});
  const rpc=(target,action,args)=>new Promise((resolve,reject)=>(target==='supervisor'&&action==='supervisor.user.request'?supervisorClient:client).request(target,action,args,'analysis',(e,o)=>e?reject(e):resolve(o)));
  async function bridge(token,input,{operatorAuthorized=false}={}){
@@ -44,12 +44,13 @@ if(target==='risk'&&action==='risk.snapshot.create'){
  payload.portfolioRead=await require('./okx_read_delegation').issue({token,principal,args:a,vault:tradingVault,codec,kind:'risk'});
 }
 if(target==='supervisor'&&action.startsWith('supervisor.engine.')){
- const fields=action==='supervisor.engine.objective'?['room','objective']:action==='supervisor.engine.observe'?['room','engine','command']:['room'];
+ const fields=action==='supervisor.engine.objective'?['room','workspace_id','objective']:action==='supervisor.engine.observe'?['room','workspace_id','engine','command']:action==='supervisor.engine.discover'?['room','workspace_id','recover']:['room','workspace_id'];
  if(Object.keys(a).some(k=>!fields.includes(k)))throw Error('INVALID_REQUEST');
  if(a.room!==undefined&&(typeof a.room!=='string'||!/^[-A-Za-z0-9_]{1,64}$/.test(a.room)))throw Error('INVALID_REQUEST');
+ if(a.workspace_id!==undefined&&!/^[-A-Za-z0-9_]{1,64}$/.test(a.workspace_id)||a.recover!==undefined&&typeof a.recover!=='boolean')throw Error('INVALID_REQUEST');
  if(action==='supervisor.engine.objective'&&(typeof a.objective!=='string'||!a.objective.trim()||a.objective.length>1200))throw Error('INVALID_REQUEST');
  if(action==='supervisor.engine.observe'&&(!/^[a-z][a-z0-9_-]{0,40}$/.test(a.engine||'')||!/^[a-z][a-z0-9_.-]{0,95}$/.test(a.command||'')))throw Error('INVALID_REQUEST');
- const agent=functionRegistry?await functionRegistry.gatewaySession(token,'supervisor_engine'):null;
+ let agent=null;if(functionRegistry&&['supervisor.engine.discover','supervisor.engine.observe'].includes(action)){try{agent=await functionRegistry.gatewaySession(token,'supervisor_engine');}catch(_){agent=null;}}
  payload.engine={agentToken:agent?.token||null};
 }
 if(target==='supervisor'&&action.startsWith('supervisor.chatbot.')){

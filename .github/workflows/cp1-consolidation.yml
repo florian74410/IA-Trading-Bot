@@ -22,13 +22,13 @@ jobs:
       - run: node App/Tools_validate_release_version.js
       - run: node App/Tools/Tests/SupervisorSimulator/run_validation.js /tmp/iatb-cp1-validation
       - run: python3 Tools/Build/build_risk_snapshot.py
-      - run: python3 Tools/Build/verify_source_bundle.py artifacts/IA-TB-2.6.0-dev.4-debug-source.zip
+      - run: python3 Tools/Build/verify_source_bundle.py "artifacts/IA-TB-$(cat App/VERSION)-debug-source.zip"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: IA-TB-2.6.0-dev.4-DEBUG-source-and-validation
+          name: IA-TB-DEBUG-source-and-validation
           path: |
-            artifacts/IA-TB-2.6.0-dev.4-debug-source.zip*
+            artifacts/IA-TB-*-debug-source.zip*
             /tmp/iatb-cp1-validation/*.json
             /tmp/iatb-cp1-validation/*.tap
             /tmp/iatb-cp1-validation/stderr.log

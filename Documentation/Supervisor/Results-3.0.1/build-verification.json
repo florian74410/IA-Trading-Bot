@@ -1,0 +1,12 @@
+{
+  "artifact": "/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/artifacts/IA-TB-3.0.1-dev.1-debug-source.zip",
+  "sha256": "d9559e55d19d55479d33f2032d95a14816328b4a9ab446d441b79add38064e3c",
+  "files": 1119,
+  "version": "3.0.1-dev.1",
+  "schema": "iatb.supervisor-build-verification/1.0",
+  "source_commit": "11759b474b7730e927dd3c339ba78191e881bf28",
+  "reproducible_twice": true,
+  "private_runtime_entries": [],
+  "per_file_hashes_verified": true,
+  "status": "PASS"
+}

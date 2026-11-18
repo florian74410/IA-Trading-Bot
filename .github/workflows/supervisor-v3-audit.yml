@@ -1,0 +1,44 @@
+name: Supervisor Engine 3.0.1 qualification
+on:
+  push:
+    branches: ['fix/iatb-3.0.1-supervisor-foundation']
+  pull_request:
+    paths: ['App/Supervisor/**', 'App/Core/FunctionRegistry/**', 'App/Core/Clients/UserManagement/**', 'App/Tools/qualify_supervisor_foundation.js', '.github/workflows/supervisor-v3-audit.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  qualification:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install existing runtime dependencies
+        working-directory: App
+        run: npm ci --omit=dev --no-audit --no-fund
+      - name: Version consistency
+        run: node App/Tools_validate_release_version.js
+      - name: Mandatory qualification, recovery, Auth21 and regression
+        run: node App/Tools/qualify_supervisor_foundation.js artifacts/supervisor-3.0.1
+      - name: Reproducible DEBUG source build
+        run: |
+          python3 Tools/Build/build_risk_snapshot.py
+          cp artifacts/IA-TB-3.0.1-dev.1-debug-source.zip /tmp/iatb-supervisor-first.zip
+          python3 Tools/Build/build_risk_snapshot.py
+          cmp artifacts/IA-TB-3.0.1-dev.1-debug-source.zip /tmp/iatb-supervisor-first.zip
+          python3 Tools/Build/verify_source_bundle.py artifacts/IA-TB-3.0.1-dev.1-debug-source.zip
+      - name: Upload reports without private runtime data
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: IA-TB-Supervisor-3.0.1-DEBUG-evidence
+          path: |
+            artifacts/supervisor-3.0.1/*.tap
+            artifacts/supervisor-3.0.1/*.json
+            artifacts/IA-TB-3.0.1-dev.1-debug-source.zip
+            artifacts/IA-TB-3.0.1-dev.1-debug-source.zip.sha256
+          if-no-files-found: warn
+          retention-days: 14

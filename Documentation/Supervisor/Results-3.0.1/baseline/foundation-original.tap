@@ -1,0 +1,717 @@
+(node:6) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+TAP version 13
+# (node:13) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: MEM-01: empty memory has no invented objective or observations
+not ok 1 - MEM-01: empty memory has no invented objective or observations
+  ---
+  duration_ms: 2.45235
+  type: 'test'
+  location: '/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:35:1'
+  failureType: 'testCodeFailure'
+  error: 'The "path" argument must be of type string. Received undefined'
+  code: 'ERR_INVALID_ARG_TYPE'
+  name: 'TypeError'
+  stack: |-
+    Object.join (node:path:1354:7)
+    new WorkingMemory (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Engine/working-memory.js:22:57)
+    fixture (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:31:15)
+    TestContext.<anonymous> (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:36:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.start (node:internal/test_runner/test:944:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+  ...
+# Subtest: MEM-02: objective persists across SQLite shutdown/reopen
+not ok 2 - MEM-02: objective persists across SQLite shutdown/reopen
+  ---
+  duration_ms: 0.303157
+  type: 'test'
+  location: '/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:38:1'
+  failureType: 'testCodeFailure'
+  error: 'The "path" argument must be of type string. Received undefined'
+  code: 'ERR_INVALID_ARG_TYPE'
+  name: 'TypeError'
+  stack: |-
+    Object.join (node:path:1354:7)
+    new WorkingMemory (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Engine/working-memory.js:22:57)
+    fixture (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:31:15)
+    TestContext.<anonymous> (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:39:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+  ...
+# Subtest: MEM-03: observations survive SQLite process reopening
+not ok 3 - MEM-03: observations survive SQLite process reopening
+  ---
+  duration_ms: 0.735797
+  type: 'test'
+  location: '/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:42:1'
+  failureType: 'testCodeFailure'
+  error: 'The "path" argument must be of type string. Received undefined'
+  code: 'ERR_INVALID_ARG_TYPE'
+  name: 'TypeError'
+  stack: |-
+    Object.join (node:path:1354:7)
+    new WorkingMemory (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Engine/working-memory.js:22:57)
+    fixture (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:31:15)
+    TestContext.<anonymous> (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:43:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+  ...
+# Subtest: MEM-04: objective replacement clears older observations
+not ok 4 - MEM-04: objective replacement clears older observations
+  ---
+  duration_ms: 0.376765
+  type: 'test'
+  location: '/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:46:1'
+  failureType: 'testCodeFailure'
+  error: 'The "path" argument must be of type string. Received undefined'
+  code: 'ERR_INVALID_ARG_TYPE'
+  name: 'TypeError'
+  stack: |-
+    Object.join (node:path:1354:7)
+    new WorkingMemory (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Engine/working-memory.js:22:57)
+    fixture (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:31:15)
+    TestContext.<anonymous> (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:47:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+  ...
+# Subtest: MEM-05: setting same objective preserves observations
+not ok 5 - MEM-05: setting same objective preserves observations
+  ---
+  duration_ms: 0.338784
+  type: 'test'
+  location: '/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:49:1'
+  failureType: 'testCodeFailure'
+  error: 'The "path" argument must be of type string. Received undefined'
+  code: 'ERR_INVALID_ARG_TYPE'
+  name: 'TypeError'
+  stack: |-
+    Object.join (node:path:1354:7)
+    new WorkingMemory (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Engine/working-memory.js:22:57)
+    fixture (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:31:15)
+    TestContext.<anonymous> (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:50:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+  ...
+# Subtest: MEM-06: owner isolation
+not ok 6 - MEM-06: owner isolation
+  ---
+  duration_ms: 0.361286
+  type: 'test'
+  location: '/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:52:1'
+  failureType: 'testCodeFailure'
+  error: 'The "path" argument must be of type string. Received undefined'
+  code: 'ERR_INVALID_ARG_TYPE'
+  name: 'TypeError'
+  stack: |-
+    Object.join (node:path:1354:7)
+    new WorkingMemory (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Engine/working-memory.js:22:57)
+    fixture (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:31:15)
+    TestContext.<anonymous> (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:53:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+  ...
+# Subtest: MEM-07: session isolation
+not ok 7 - MEM-07: session isolation
+  ---
+  duration_ms: 0.38477
+  type: 'test'
+  location: '/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:55:1'
+  failureType: 'testCodeFailure'
+  error: 'The "path" argument must be of type string. Received undefined'
+  code: 'ERR_INVALID_ARG_TYPE'
+  name: 'TypeError'
+  stack: |-
+    Object.join (node:path:1354:7)
+    new WorkingMemory (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Engine/working-memory.js:22:57)
+    fixture (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:31:15)
+    TestContext.<anonymous> (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:56:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+  ...
+# Subtest: MEM-08: room isolation
+not ok 8 - MEM-08: room isolation
+  ---
+  duration_ms: 0.349575
+  type: 'test'
+  location: '/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:58:1'
+  failureType: 'testCodeFailure'
+  error: 'The "path" argument must be of type string. Received undefined'
+  code: 'ERR_INVALID_ARG_TYPE'
+  name: 'TypeError'
+  stack: |-
+    Object.join (node:path:1354:7)
+    new WorkingMemory (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Engine/working-memory.js:22:57)
+    fixture (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:31:15)
+    TestContext.<anonymous> (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:59:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+  ...
+# Subtest: MEM-09: memory rejects bad tenant and room
+not ok 9 - MEM-09: memory rejects bad tenant and room
+  ---
+  duration_ms: 0.737651
+  type: 'test'
+  location: '/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:61:1'
+  failureType: 'testCodeFailure'
+  error: 'The "path" argument must be of type string. Received undefined'
+  code: 'ERR_INVALID_ARG_TYPE'
+  name: 'TypeError'
+  stack: |-
+    Object.join (node:path:1354:7)
+    new WorkingMemory (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Engine/working-memory.js:22:57)
+    fixture (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:31:15)
+    TestContext.<anonymous> (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:62:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+  ...
+# Subtest: MEM-10: memory retains 48 observations but returns at most 12
+not ok 10 - MEM-10: memory retains 48 observations but returns at most 12
+  ---
+  duration_ms: 0.75339
+  type: 'test'
+  location: '/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:64:1'
+  failureType: 'testCodeFailure'
+  error: 'The "path" argument must be of type string. Received undefined'
+  code: 'ERR_INVALID_ARG_TYPE'
+  name: 'TypeError'
+  stack: |-
+    Object.join (node:path:1354:7)
+    new WorkingMemory (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Engine/working-memory.js:22:57)
+    fixture (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:31:15)
+    TestContext.<anonymous> (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:65:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+  ...
+# Subtest: MEM-11: invalid status rejected
+not ok 11 - MEM-11: invalid status rejected
+  ---
+  duration_ms: 0.387064
+  type: 'test'
+  location: '/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:68:1'
+  failureType: 'testCodeFailure'
+  error: 'The "path" argument must be of type string. Received undefined'
+  code: 'ERR_INVALID_ARG_TYPE'
+  name: 'TypeError'
+  stack: |-
+    Object.join (node:path:1354:7)
+    new WorkingMemory (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Engine/working-memory.js:22:57)
+    fixture (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:31:15)
+    TestContext.<anonymous> (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:69:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+  ...
+# Subtest: MEM-12: memory file permissions are private on POSIX
+not ok 12 - MEM-12: memory file permissions are private on POSIX
+  ---
+  duration_ms: 0.297436
+  type: 'test'
+  location: '/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:71:1'
+  failureType: 'testCodeFailure'
+  error: 'The "path" argument must be of type string. Received undefined'
+  code: 'ERR_INVALID_ARG_TYPE'
+  name: 'TypeError'
+  stack: |-
+    Object.join (node:path:1354:7)
+    new WorkingMemory (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Engine/working-memory.js:22:57)
+    fixture (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:31:15)
+    TestContext.<anonymous> (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:72:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+  ...
+# Subtest: MEM-13: observations preserve structured JSON values (expected product requirement)
+not ok 13 - MEM-13: observations preserve structured JSON values (expected product requirement)
+  ---
+  duration_ms: 0.284012
+  type: 'test'
+  location: '/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:74:1'
+  failureType: 'testCodeFailure'
+  error: 'The "path" argument must be of type string. Received undefined'
+  code: 'ERR_INVALID_ARG_TYPE'
+  name: 'TypeError'
+  stack: |-
+    Object.join (node:path:1354:7)
+    new WorkingMemory (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Engine/working-memory.js:22:57)
+    fixture (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:31:15)
+    TestContext.<anonymous> (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:75:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+  ...
+# Subtest: MEM-14: short-term objective recoverable after owner renews Auth21 session (expected medium-term requirement)
+not ok 14 - MEM-14: short-term objective recoverable after owner renews Auth21 session (expected medium-term requirement)
+  ---
+  duration_ms: 0.232084
+  type: 'test'
+  location: '/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:78:1'
+  failureType: 'testCodeFailure'
+  error: 'The "path" argument must be of type string. Received undefined'
+  code: 'ERR_INVALID_ARG_TYPE'
+  name: 'TypeError'
+  stack: |-
+    Object.join (node:path:1354:7)
+    new WorkingMemory (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Engine/working-memory.js:22:57)
+    fixture (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:31:15)
+    TestContext.<anonymous> (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:79:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+  ...
+# Subtest: MEM-15: stale observations are marked before use (expected context recovery requirement)
+not ok 15 - MEM-15: stale observations are marked before use (expected context recovery requirement)
+  ---
+  duration_ms: 0.284332
+  type: 'test'
+  location: '/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:82:1'
+  failureType: 'testCodeFailure'
+  error: 'The "path" argument must be of type string. Received undefined'
+  code: 'ERR_INVALID_ARG_TYPE'
+  name: 'TypeError'
+  stack: |-
+    Object.join (node:path:1354:7)
+    new WorkingMemory (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Engine/working-memory.js:22:57)
+    TestContext.<anonymous> (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:83:89)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: CP1-01: discover queries a gateway and returns capabilities
+not ok 16 - CP1-01: discover queries a gateway and returns capabilities
+  ---
+  duration_ms: 0.4172
+  type: 'test'
+  location: '/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:88:1'
+  failureType: 'testCodeFailure'
+  error: 'The "path" argument must be of type string. Received undefined'
+  code: 'ERR_INVALID_ARG_TYPE'
+  name: 'TypeError'
+  stack: |-
+    Object.join (node:path:1354:7)
+    new WorkingMemory (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Engine/working-memory.js:22:57)
+    fixture (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:31:15)
+    TestContext.<anonymous> (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:89:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+  ...
+# Subtest: CP1-02: allowed read command traverses gateway and writes observation
+not ok 17 - CP1-02: allowed read command traverses gateway and writes observation
+  ---
+  duration_ms: 0.335689
+  type: 'test'
+  location: '/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:92:1'
+  failureType: 'testCodeFailure'
+  error: 'The "path" argument must be of type string. Received undefined'
+  code: 'ERR_INVALID_ARG_TYPE'
+  name: 'TypeError'
+  stack: |-
+    Object.join (node:path:1354:7)
+    new WorkingMemory (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Engine/working-memory.js:22:57)
+    fixture (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:31:15)
+    TestContext.<anonymous> (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:93:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+  ...
+# Subtest: CP1-03: dangerous financial command rejected before transport
+not ok 18 - CP1-03: dangerous financial command rejected before transport
+  ---
+  duration_ms: 0.361387
+  type: 'test'
+  location: '/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:96:1'
+  failureType: 'testCodeFailure'
+  error: 'The "path" argument must be of type string. Received undefined'
+  code: 'ERR_INVALID_ARG_TYPE'
+  name: 'TypeError'
+  stack: |-
+    Object.join (node:path:1354:7)
+    new WorkingMemory (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Engine/working-memory.js:22:57)
+    fixture (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:31:15)
+    TestContext.<anonymous> (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:97:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+  ...
+# Subtest: CP1-04: DENY privilege is blocked before transport
+not ok 19 - CP1-04: DENY privilege is blocked before transport
+  ---
+  duration_ms: 0.334256
+  type: 'test'
+  location: '/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:106:2'
+  failureType: 'testCodeFailure'
+  error: 'The "path" argument must be of type string. Received undefined'
+  code: 'ERR_INVALID_ARG_TYPE'
+  name: 'TypeError'
+  stack: |-
+    Object.join (node:path:1354:7)
+    new WorkingMemory (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Engine/working-memory.js:22:57)
+    fixture (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:31:15)
+    TestContext.<anonymous> (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:107:12)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+  ...
+# Subtest: CP1-05: offline engine is blocked before transport
+not ok 20 - CP1-05: offline engine is blocked before transport
+  ---
+  duration_ms: 0.414145
+  type: 'test'
+  location: '/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:106:2'
+  failureType: 'testCodeFailure'
+  error: 'The "path" argument must be of type string. Received undefined'
+  code: 'ERR_INVALID_ARG_TYPE'
+  name: 'TypeError'
+  stack: |-
+    Object.join (node:path:1354:7)
+    new WorkingMemory (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Engine/working-memory.js:22:57)
+    fixture (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:31:15)
+    TestContext.<anonymous> (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:107:12)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+  ...
+# Subtest: CP1-06: hard-deny contract is blocked before transport
+not ok 21 - CP1-06: hard-deny contract is blocked before transport
+  ---
+  duration_ms: 0.288921
+  type: 'test'
+  location: '/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:106:2'
+  failureType: 'testCodeFailure'
+  error: 'The "path" argument must be of type string. Received undefined'
+  code: 'ERR_INVALID_ARG_TYPE'
+  name: 'TypeError'
+  stack: |-
+    Object.join (node:path:1354:7)
+    new WorkingMemory (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Engine/working-memory.js:22:57)
+    fixture (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:31:15)
+    TestContext.<anonymous> (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:107:12)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+  ...
+# Subtest: CP1-07: unqualified contract is blocked before transport
+not ok 22 - CP1-07: unqualified contract is blocked before transport
+  ---
+  duration_ms: 0.264796
+  type: 'test'
+  location: '/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:106:2'
+  failureType: 'testCodeFailure'
+  error: 'The "path" argument must be of type string. Received undefined'
+  code: 'ERR_INVALID_ARG_TYPE'
+  name: 'TypeError'
+  stack: |-
+    Object.join (node:path:1354:7)
+    new WorkingMemory (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Engine/working-memory.js:22:57)
+    fixture (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:31:15)
+    TestContext.<anonymous> (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:107:12)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+  ...
+# Subtest: CP1-08: side-effect contract is blocked before transport
+not ok 23 - CP1-08: side-effect contract is blocked before transport
+  ---
+  duration_ms: 0.255999
+  type: 'test'
+  location: '/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:106:2'
+  failureType: 'testCodeFailure'
+  error: 'The "path" argument must be of type string. Received undefined'
+  code: 'ERR_INVALID_ARG_TYPE'
+  name: 'TypeError'
+  stack: |-
+    Object.join (node:path:1354:7)
+    new WorkingMemory (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Engine/working-memory.js:22:57)
+    fixture (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:31:15)
+    TestContext.<anonymous> (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:107:12)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+  ...
+# Subtest: CP1-09: gateway temporarily absent does not lose objective
+not ok 24 - CP1-09: gateway temporarily absent does not lose objective
+  ---
+  duration_ms: 0.328765
+  type: 'test'
+  location: '/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:111:1'
+  failureType: 'testCodeFailure'
+  error: 'The "path" argument must be of type string. Received undefined'
+  code: 'ERR_INVALID_ARG_TYPE'
+  name: 'TypeError'
+  stack: |-
+    Object.join (node:path:1354:7)
+    new WorkingMemory (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Engine/working-memory.js:22:57)
+    fixture (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:31:15)
+    TestContext.<anonymous> (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:112:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+  ...
+# Subtest: CP1-10: timeout produces explicit unknown observation
+not ok 25 - CP1-10: timeout produces explicit unknown observation
+  ---
+  duration_ms: 0.514563
+  type: 'test'
+  location: '/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:115:1'
+  failureType: 'testCodeFailure'
+  error: 'The "path" argument must be of type string. Received undefined'
+  code: 'ERR_INVALID_ARG_TYPE'
+  name: 'TypeError'
+  stack: |-
+    Object.join (node:path:1354:7)
+    new WorkingMemory (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Engine/working-memory.js:22:57)
+    fixture (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:31:15)
+    TestContext.<anonymous> (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:116:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+  ...
+# Subtest: CP1-11: unavailable discovery does not invent engines
+not ok 26 - CP1-11: unavailable discovery does not invent engines
+  ---
+  duration_ms: 0.359352
+  type: 'test'
+  location: '/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:118:1'
+  failureType: 'testCodeFailure'
+  error: 'The "path" argument must be of type string. Received undefined'
+  code: 'ERR_INVALID_ARG_TYPE'
+  name: 'TypeError'
+  stack: |-
+    Object.join (node:path:1354:7)
+    new WorkingMemory (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Engine/working-memory.js:22:57)
+    fixture (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:31:15)
+    TestContext.<anonymous> (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:119:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+  ...
+# Subtest: CP1-12: gateway throws on discovery; no stale connected claim
+not ok 27 - CP1-12: gateway throws on discovery; no stale connected claim
+  ---
+  duration_ms: 0.307977
+  type: 'test'
+  location: '/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:121:1'
+  failureType: 'testCodeFailure'
+  error: 'The "path" argument must be of type string. Received undefined'
+  code: 'ERR_INVALID_ARG_TYPE'
+  name: 'TypeError'
+  stack: |-
+    Object.join (node:path:1354:7)
+    new WorkingMemory (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Engine/working-memory.js:22:57)
+    fixture (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:31:15)
+    TestContext.<anonymous> (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:122:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+  ...
+# Subtest: SEC-01: unverified principal refused
+not ok 28 - SEC-01: unverified principal refused
+  ---
+  duration_ms: 0.216525
+  type: 'test'
+  location: '/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:124:1'
+  failureType: 'testCodeFailure'
+  error: 'The "path" argument must be of type string. Received undefined'
+  code: 'ERR_INVALID_ARG_TYPE'
+  name: 'TypeError'
+  stack: |-
+    Object.join (node:path:1354:7)
+    new WorkingMemory (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Engine/working-memory.js:22:57)
+    fixture (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:31:15)
+    TestContext.<anonymous> (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:125:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+  ...
+# Subtest: SEC-02: missing session hash refused
+not ok 29 - SEC-02: missing session hash refused
+  ---
+  duration_ms: 0.333695
+  type: 'test'
+  location: '/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:127:1'
+  failureType: 'testCodeFailure'
+  error: 'The "path" argument must be of type string. Received undefined'
+  code: 'ERR_INVALID_ARG_TYPE'
+  name: 'TypeError'
+  stack: |-
+    Object.join (node:path:1354:7)
+    new WorkingMemory (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Engine/working-memory.js:22:57)
+    fixture (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:31:15)
+    TestContext.<anonymous> (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:128:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+  ...
+# Subtest: CTX-01: working objective included in cognitive context facade
+not ok 30 - CTX-01: working objective included in cognitive context facade
+  ---
+  duration_ms: 0.347941
+  type: 'test'
+  location: '/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:130:1'
+  failureType: 'testCodeFailure'
+  error: 'The "path" argument must be of type string. Received undefined'
+  code: 'ERR_INVALID_ARG_TYPE'
+  name: 'TypeError'
+  stack: |-
+    Object.join (node:path:1354:7)
+    new WorkingMemory (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Engine/working-memory.js:22:57)
+    fixture (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:31:15)
+    TestContext.<anonymous> (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:131:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+  ...
+# Subtest: CTX-02: observation refresh follows changed gateway data
+not ok 31 - CTX-02: observation refresh follows changed gateway data
+  ---
+  duration_ms: 0.434704
+  type: 'test'
+  location: '/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:135:1'
+  failureType: 'testCodeFailure'
+  error: 'The "path" argument must be of type string. Received undefined'
+  code: 'ERR_INVALID_ARG_TYPE'
+  name: 'TypeError'
+  stack: |-
+    Object.join (node:path:1354:7)
+    new WorkingMemory (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Engine/working-memory.js:22:57)
+    fixture (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:31:15)
+    TestContext.<anonymous> (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:136:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+  ...
+# Subtest: SEC-03: changing objective resets old sensitive observations
+not ok 32 - SEC-03: changing objective resets old sensitive observations
+  ---
+  duration_ms: 0.277549
+  type: 'test'
+  location: '/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:140:1'
+  failureType: 'testCodeFailure'
+  error: 'The "path" argument must be of type string. Received undefined'
+  code: 'ERR_INVALID_ARG_TYPE'
+  name: 'TypeError'
+  stack: |-
+    Object.join (node:path:1354:7)
+    new WorkingMemory (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Engine/working-memory.js:22:57)
+    fixture (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:31:15)
+    TestContext.<anonymous> (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:141:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+  ...
+1..32
+# tests 32
+# suites 0
+# pass 0
+# fail 32
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 222.424278

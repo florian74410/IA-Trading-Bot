@@ -154,37 +154,62 @@
     "supervisor": {
       "commands": {
         "supervisor.status": {
-          "implementation_sha256": "6719660648c47e7fc3744868679a5520c5607f4a48f64287a5b165b412b051d6",
+          "implementation_sha256": "37602bc1cbcc9c0fe2716a7f0f5216f9bcb326853ee7b96bef79bb969aaa68ae",
           "contract_sha256": "1b81fe1ff246d009a1f7e84443e1286a9b9cbc371fe87fcff6363d5d6dea1a68"
         }
       },
       "native_verified": {
+        "supervisor.engine.context": {
+          "implementation_sha256": "37602bc1cbcc9c0fe2716a7f0f5216f9bcb326853ee7b96bef79bb969aaa68ae",
+          "contract_sha256": "dc824812ff723fb3bdcdb23e69f84b229d6c1feef80e3c261cb21ddb5e48d795"
+        },
+        "supervisor.engine.objective": {
+          "implementation_sha256": "37602bc1cbcc9c0fe2716a7f0f5216f9bcb326853ee7b96bef79bb969aaa68ae",
+          "contract_sha256": "0bdf85d416a192b4ad24cb26b5efd604f2977712206879c71932017cba62f798"
+        },
+        "supervisor.engine.discover": {
+          "implementation_sha256": "37602bc1cbcc9c0fe2716a7f0f5216f9bcb326853ee7b96bef79bb969aaa68ae",
+          "contract_sha256": "26d59af8c33ae2fc10129b1fcb35c64db9c77d1a7d0fbd9afee558e2d29643c5"
+        },
+        "supervisor.engine.observe": {
+          "implementation_sha256": "37602bc1cbcc9c0fe2716a7f0f5216f9bcb326853ee7b96bef79bb969aaa68ae",
+          "contract_sha256": "9c48ce9ed00b193afab05b2428779a43f7b5d00635da2477708fac872821ccb2"
+        },
         "supervisor.chatbot.message": {
-          "implementation_sha256": "6719660648c47e7fc3744868679a5520c5607f4a48f64287a5b165b412b051d6"
+          "implementation_sha256": "37602bc1cbcc9c0fe2716a7f0f5216f9bcb326853ee7b96bef79bb969aaa68ae",
+          "contract_sha256": "ea111b30e74bb433b1da856c1af91111557bba01a4778c8d92f4074f10d6f1af"
         },
         "supervisor.chatbot.history": {
-          "implementation_sha256": "6719660648c47e7fc3744868679a5520c5607f4a48f64287a5b165b412b051d6"
+          "implementation_sha256": "37602bc1cbcc9c0fe2716a7f0f5216f9bcb326853ee7b96bef79bb969aaa68ae",
+          "contract_sha256": "284e07477f2c2bff30cfe52e68340e47a96a0224c6c48f5dfdf1c57b4c18101a"
         },
         "supervisor.chatbot.confirm": {
-          "implementation_sha256": "6719660648c47e7fc3744868679a5520c5607f4a48f64287a5b165b412b051d6"
+          "implementation_sha256": "37602bc1cbcc9c0fe2716a7f0f5216f9bcb326853ee7b96bef79bb969aaa68ae",
+          "contract_sha256": "4e775ab4c2d5c6886c36ba9cf1838ba914b613c9eb0f8445cd747b57ad212909"
         },
         "supervisor.chatbot.cancel": {
-          "implementation_sha256": "6719660648c47e7fc3744868679a5520c5607f4a48f64287a5b165b412b051d6"
+          "implementation_sha256": "37602bc1cbcc9c0fe2716a7f0f5216f9bcb326853ee7b96bef79bb969aaa68ae",
+          "contract_sha256": "b684efc096bfcfcff8a5f3a04807aaad3fefed708cc22cdb16d3b6eb68bbdcbd"
         },
         "supervisor.cognitive.reason": {
-          "implementation_sha256": "6719660648c47e7fc3744868679a5520c5607f4a48f64287a5b165b412b051d6"
+          "implementation_sha256": "37602bc1cbcc9c0fe2716a7f0f5216f9bcb326853ee7b96bef79bb969aaa68ae",
+          "contract_sha256": "71e6a45c95c9b2dbe45705d7597b8b18404a3f2d8c64ad97d4320db60bbec999"
         },
         "supervisor.cognitive.status": {
-          "implementation_sha256": "6719660648c47e7fc3744868679a5520c5607f4a48f64287a5b165b412b051d6"
+          "implementation_sha256": "37602bc1cbcc9c0fe2716a7f0f5216f9bcb326853ee7b96bef79bb969aaa68ae",
+          "contract_sha256": "28c8f5bd83618bc11a1edb531bbaf8420949c23615d74f1f6e9797a3b4396d58"
         },
         "supervisor.cognitive.history": {
-          "implementation_sha256": "6719660648c47e7fc3744868679a5520c5607f4a48f64287a5b165b412b051d6"
+          "implementation_sha256": "37602bc1cbcc9c0fe2716a7f0f5216f9bcb326853ee7b96bef79bb969aaa68ae",
+          "contract_sha256": "f479ce8966dcdc91e439bbc504e00068933125d206f19f00a493d1cca8962324"
         },
         "supervisor.llm.models": {
-          "implementation_sha256": "6719660648c47e7fc3744868679a5520c5607f4a48f64287a5b165b412b051d6"
+          "implementation_sha256": "37602bc1cbcc9c0fe2716a7f0f5216f9bcb326853ee7b96bef79bb969aaa68ae",
+          "contract_sha256": "28c8f5bd83618bc11a1edb531bbaf8420949c23615d74f1f6e9797a3b4396d58"
         },
         "supervisor.llm.select": {
-          "implementation_sha256": "6719660648c47e7fc3744868679a5520c5607f4a48f64287a5b165b412b051d6"
+          "implementation_sha256": "37602bc1cbcc9c0fe2716a7f0f5216f9bcb326853ee7b96bef79bb969aaa68ae",
+          "contract_sha256": "2b1167ebc799d5b4f36fc1295c12d18e341e698549bc9ba1ceb76f770f67874a"
         }
       }
     }
