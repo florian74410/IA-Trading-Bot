@@ -20,7 +20,7 @@ if VERSION != "3.0.1-dev.1":
 OUTPUT = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else ROOT / "artifacts" / f"IA-TB-{REVISION}_FULL-SOURCE_VPS.zip"
 SOURCE_COMMIT = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
 TRACKED = subprocess.check_output(["git", "ls-files", "-z"], cwd=ROOT).decode("utf-8").split("\0")
-ALLOWED_TOP = {"App", "Tools", "Documentation", ".github"}
+ALLOWED_TOP = {"App", "Tools", "Documentation", ".github", "Deploy"}
 ALLOWED_ROOT = {"README.md", "ROADMAP.md", "compose.debug.yml", "compose.debug.stack.yml", "compose.auth21.qualification.yml", ".dockerignore"}
 PRIVATE_BASENAMES = {"user.dat", "secrets_v2.dat", "communication_protocol_key.dat", "client_master.key", "wallet_master.key"}
 
