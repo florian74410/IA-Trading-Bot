@@ -41,7 +41,12 @@ def allowed(name):
     if any(x in p.name.lower() for x in ("secrets_v2.dat", "communication_protocol_key.dat")) or p.name == "user.dat":
         raise RuntimeError("Refusing sensitive tracked file: " + name)
     if p.name.startswith(".env") or p.name.endswith((".pem", ".key", ".p12", ".pfx")):
-        raise RuntimeError("Refusing credential-like tracked file: " + name)
+        if name != "App/Core/Certificates/cacert.pem":
+            raise RuntimeError("Refusing credential-like tracked file: " + name)
+        # The public CA trust bundle is used for TLS; never allow private keys inside it.
+        raw = (ROOT / name).read_bytes()
+        if b"BEGIN CERTIFICATE" not in raw or b"PRIVATE KEY" in raw:
+            raise RuntimeError("Unexpected CA bundle content")
     return True
 
 tracked = subprocess.check_output(["git", "ls-files", "-z"], cwd=ROOT).decode("utf-8").split("\0")
