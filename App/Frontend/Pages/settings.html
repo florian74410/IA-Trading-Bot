@@ -1,8 +1,8 @@
-<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Paramètres · IA-TB</title><link rel="stylesheet" href="/assets/settings.css?v=2002"><link rel="stylesheet" href="/assets/companion_v1.0.css"><link rel="stylesheet" href="/assets/global_navigation_v2.0.css?v=2013"><script defer src="/assets/global_navigation_v2.0.js?v=3020"></script></head><body>
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Paramètres · IA-TB</title><link rel="stylesheet" href="/assets/settings.css?v=3102"><link rel="stylesheet" href="/assets/companion_v1.0.css"><link rel="stylesheet" href="/assets/global_navigation_v2.0.css?v=2013"><script defer src="/assets/global_navigation_v2.0.js?v=3020"></script></head><body>
 <header class="top settingsAppNav"><nav class="settingsMainNav" aria-label="Navigation principale"><a href="/ia-trading">Trading IA</a><a href="/chart-viewer">Chart Viewer</a><a href="/portfolio">Portfolio</a><a href="/fundamental">Fondamental</a><a class="active" href="/settings">Paramètres</a><a href="/strategy">Stratégies</a></nav><div id="engineStrip" class="engineStrip"></div><div class="clock" id="clock">--:--:--</div></header>
 <div class="shell"><aside class="side settingsSectionBar"><nav id="nav" aria-label="Sections des paramètres">
 <button data-view="overview" class="active">⌂ <span>Vue d'ensemble</span></button>
-<button data-view="ai">✦ <span>IA</span></button>
+<button data-view="ai-supervisor">✦ <span>AI Supervisor</span></button>
 <button data-view="profile">♙ <span>Profile</span></button>
 <button data-view="api">▣ <span>API & Data</span></button>
 <button data-view="credits">◈ <span>Crédits / Tokens</span></button>
@@ -69,6 +69,12 @@
 
 <section class="panel apiCard"><div class="apiHead"><span class="apiLogo">𝕏</span><div><h3>X API</h3><p>Bearer Token · collecte Fundamental via X API v2.</p></div><span id="xApiState" class="apiState">ABSENT</span></div><div class="apiBody"><label>Bearer Token</label><div class="secretLine"><input id="xBearerToken" type="password" autocomplete="off" placeholder="AAAAAAAA..."><button class="ghost eyeBtn" data-eye="xBearerToken">👁</button></div><small>Le test utilise une requête X API v2 sans afficher le token.</small><div class="apiActions"><button class="ghost apiTest" data-test="x">⌁ Tester</button><button class="danger apiClear" data-clear="X_BEARER_TOKEN">Supprimer</button><button class="primary apiSave" data-kind="x">▣ Enregistrer</button></div><div id="xApiMsg" class="apiMsg"></div></div></section>
 <section class="panel apiCard" id="zeroxAdminCard" hidden><div class="apiHead"><span class="apiLogo">0x</span><div><h3>0x Cross-Chain API</h3><p>Moteur réel de quotes Swap & Bridge multi-providers.</p></div><span id="zeroxApiState" class="apiState">ABSENTE</span></div><div class="apiBody"><label>Clé API 0x</label><div class="secretLine"><input id="zeroxApiKey" type="password" autocomplete="off" placeholder="0x API key"><button class="ghost eyeBtn" data-eye="zeroxApiKey">👁</button></div><label>Adresse destinataire des frais IA-TB (1 %)</label><input id="iatbFeeRecipient" placeholder="0x..."><small>Le moteur refuse toute signature si le 1 % IA-TB n'est pas appliqué à la quote.</small><div class="rpcGrid"><label>RPC Ethereum<input id="rpcEthereum" placeholder="https://..."></label><label>RPC Arbitrum<input id="rpcArbitrum" placeholder="https://..."></label><label>RPC Polygon<input id="rpcPolygon" placeholder="https://..."></label><label>RPC BNB Chain<input id="rpcBnb" placeholder="https://..."></label><label>RPC Base<input id="rpcBase" placeholder="https://..."></label></div><small>Les RPC servent au contrôle du solde natif disponible pour le gas avant signature.</small><div class="apiActions"><button class="ghost apiTest" data-test="zerox">⌁ Tester</button><button class="danger apiClear" data-clear="ZEROX_API_KEY">Supprimer</button><button class="primary apiSave" data-kind="zerox">▣ Enregistrer</button></div><div id="zeroxApiMsg" class="apiMsg"></div></div></section>
+<section class="panel apiCard"><div class="apiHead"><span class="apiLogo">⇄</span><div><h3>Comptes d’exécution</h3><p>Configurez les accès broker et marchés.</p></div></div><div class="apiBody"><button type="button" class="ghost" data-open-settings="trading">Ouvrir les paramètres Trading</button></div></section>
+<section class="panel apiCard apiInfoCard"><div class="apiHead"><span class="apiLogo">◇</span><div><h3>Coffre & profil</h3><p>État du stockage des secrets.</p></div></div><div class="apiBody"><dl class="apiFacts"><dt>Profil actif</dt><dd id="apiProfile">--</dd><dt>Stockage</dt><dd>Coffre RSA chiffré</dd><dt>Affichage</dt><dd>Secrets masqués</dd><dt>Base paramètres</dt><dd>SQLite utilisateur</dd></dl><div class="tabInfo">Les paramètres de profil restent dans la DB utilisateur. Les secrets sensibles restent dans le coffre chiffré et la DB ne reçoit jamais leur valeur en clair.</div></div></section>
+</div></section>
+<section id="view-trading" class="view hide">
+ <div class="titleRow"><div><h2>↯ Trading</h2><p>Gérez les comptes d’exécution, les marchés et les permissions des brokers.</p></div></div>
+ <div class="tradingSettingsLayout">
 <section class="panel apiCard" id="tradingAccountCard"><div class="apiHead"><span class="apiLogo">⇄</span><div><h3>Comptes d’exécution</h3><p>Affectez une clé CEX ou un wallet interne à un broker.</p></div></div><div class="apiBody">
 <p>Ces affectations préparent l’exécution. Le trading LIVE et P5 réel restent désactivés dans cette version.</p>
 <label>Compte enregistré<select id="taExisting"><option value="">Nouveau compte</option></select></label>
@@ -83,8 +89,40 @@
 <label>Mot de passe IA-TB<input id="taPassword" type="password" autocomplete="current-password" required></label>
 <button class="primary" type="submit">Enregistrer l’affectation</button>
 </form><p id="taStatus" role="status" aria-live="polite"></p></div></section>
-<section class="panel apiCard apiInfoCard"><div class="apiHead"><span class="apiLogo">◇</span><div><h3>Coffre & profil</h3><p>État du stockage des secrets.</p></div></div><div class="apiBody"><dl class="apiFacts"><dt>Profil actif</dt><dd id="apiProfile">--</dd><dt>Stockage</dt><dd>Coffre RSA chiffré</dd><dt>Affichage</dt><dd>Secrets masqués</dd><dt>Base paramètres</dt><dd>SQLite utilisateur</dd></dl><div class="tabInfo">Les paramètres de profil restent dans la DB utilisateur. Les secrets sensibles restent dans le coffre chiffré et la DB ne reçoit jamais leur valeur en clair.</div></div></section>
-</div></section>
+  <aside class="panel simple"><h3>Contrôles d’exécution</h3><p>Configurez le budget de risque, le précontrôle des ordres et la surveillance du portefeuille.</p><button type="button" class="ghost" data-open-settings="risk">Ouvrir Risk Engine</button></aside>
+ </div>
+</section>
+<section id="view-ai-supervisor" class="view hide">
+ <div class="titleRow"><div><h2>✦ AI Supervisor</h2><p>Configurez le moteur d’IA et le mode d’interprétation du ChatBot pour votre profil.</p></div></div>
+ <div class="aiSettingsLayout">
+  <section class="panel simple">
+   <h3>Supervisor</h3>
+   <form id="supervisorSettingsForm">
+    <fieldset id="supervisorSettingsFields" class="aiSettingsFields" disabled>
+     <label class="row"><span><b>Fournisseur principal</b></span><select id="supervisorProvider" required><option value="">Sélectionner</option><option value="OPENAI_API">OpenAI API</option><option value="MOCK">Simulation MOCK</option></select></label>
+     <label class="row"><span><b>Modèle OpenAI</b></span><input id="supervisorModel" type="text" maxlength="80" pattern="gpt-[A-Za-z0-9._\-]{2,76}" required></label>
+     <label class="row"><span><b>Délai OpenAI (ms)</b></span><input id="supervisorTimeout" type="number" min="5000" max="120000" step="1" required></label>
+     <label class="row"><span><b>Activer le fournisseur de secours</b></span><input id="supervisorFallbackEnabled" type="checkbox"></label>
+     <label class="row"><span><b>Fournisseur de secours</b></span><select id="supervisorFallbackProvider"><option value="">Sélectionner</option><option value="MOCK">Simulation MOCK</option><option value="OPENAI_API">OpenAI API</option></select></label>
+     <div class="saveLine"><button class="primary" type="submit">Enregistrer le Supervisor</button></div>
+    </fieldset>
+   </form>
+   <p id="supervisorSettingsStatus" class="apiMsg" role="status"></p>
+   <button type="button" class="ghost" data-open-settings="api">Gérer la clé OpenAI</button>
+  </section>
+  <section class="panel simple">
+   <h3>ChatBot</h3>
+   <form id="chatbotSettingsForm">
+    <fieldset id="chatbotSettingsFields" class="aiSettingsFields" disabled>
+     <label class="row"><span><b>Mode d’interprétation</b></span><select id="chatbotMode"><option value="LOCAL">LOCAL — intentions programmées</option><option value="HYBRID">HYBRID — local + OpenAI</option><option value="OPENAI">OPENAI — interprétation IA</option></select></label>
+     <label class="row"><span><b>Fallback automatique OpenAI</b><small>Utilisé en mode HYBRID si le mode local ne reconnaît pas la demande.</small></span><input id="chatbotFallback" type="checkbox"></label>
+     <div class="saveLine"><button class="primary" type="submit">Enregistrer le ChatBot</button></div>
+    </fieldset>
+   </form>
+   <p id="chatbotSettingsStatus" class="apiMsg" role="status"></p>
+  </section>
+ </div>
+</section>
 <section id="view-notifications" class="view hide"><div class="titleRow"><div><h2>🔔 Notifications</h2><p>Choisissez précisément quels événements IA-TB doivent vous prévenir et sur quel canal.</p></div><span id="notifState" class="profileBadge">ACTIVES</span></div>
 <div class="notifLayout"><section class="panel notifPanel"><div class="notifHead"><div><h3>Réglages généraux</h3><p>Les événements techniques restent dans les logs même lorsqu'une notification utilisateur est coupée.</p></div><label class="notifMaster">Notifications <input id="notifEnabled" type="checkbox"></label></div>
 <div class="notifGeneral"><label><span>Priorité minimale<small>Ignore les événements moins importants.</small></span><select id="notifMinSeverity"><option>INFO</option><option>NOTICE</option><option>WARNING</option><option>CRITICAL</option></select></label><label><span>Anti-spam<small>Regroupe les événements identiques.</small></span><select id="notifDedupe"><option value="15">15 secondes</option><option value="30">30 secondes</option><option value="60">1 minute</option><option value="300">5 minutes</option></select></label><label><span>Historique<small>Nombre maximal conservé.</small></span><select id="notifHistory"><option value="100">100</option><option value="250">250</option><option value="500">500</option><option value="1000">1000</option></select></label></div>
@@ -144,8 +182,8 @@
  <section class="panel simple" style="margin-bottom:16px"><h3>Contrôle général</h3><label style="display:flex;align-items:center;gap:12px"><input id="r25Enabled" type="checkbox"> Activer Risk Engine</label>
  <p>La désactivation ne contourne pas le Risk Gate, le Trading Firewall ni les interdictions LIVE.</p></section>
  <section class="panel simple" style="margin-bottom:16px"><h3>R1 — Précontrôle des ordres</h3>
- <label><input id="r25R1Enabled" type="checkbox"> Activer R1</label>
- <label>Niveau de risque <select id="r25Level"><option value="conservative">Prudent — 0,5 %</option><option value="balanced">Équilibré — 1 %</option><option value="active">Dynamique — 1,5 %</option><option value="aggressive">Agressif — 2 %</option></select></label>
+ <label class="riskEnable"><input id="r25R1Enabled" type="checkbox"> Activer R1</label>
+ <label class="row riskLevel"><span><b>Niveau de risque</b></span><select id="r25Level"><option value="conservative">Prudent — 0,5 %</option><option value="balanced">Équilibré — 1 %</option><option value="active">Dynamique — 1,5 %</option><option value="aggressive">Agressif — 2 %</option></select></label>
  <div id="r25R1Modules" class="riskModuleControls"></div></section>
  <section class="panel simple" style="margin-bottom:16px"><h3>R2 — Surveillance du portefeuille</h3>
  <label><input id="r25R2Enabled" type="checkbox"> Activer R2</label>
@@ -155,4 +193,4 @@
  <p id="r25Message" role="status">Chargement des paramètres Risk Engine…</p></section>
 </section>
 <section id="view-generic" class="view hide"><div class="titleRow"><div><h2 id="genericTitle">Paramètres</h2><p id="genericText">Cette section réutilise les réglages existants d'IA-TB.</p></div></div><div id="legacyMount" class="panel simple"></div></section>
-</main></div><div id="help" class="help hide"><button id="helpClose">×</button><h3>ⓘ Aide</h3><p id="helpText"></p></div><script src="/assets/settings.js?v=2500"></script><script src="/assets/trading_accounts.js?v=2603okx"></script><script src="/assets/user_profile.js"></script><script src="/assets/companion_v1.0.js"></script><script src="/assets/calendar_events_v2_2_5.js?v=25102"></script><script src="/assets/chart_economic_events_v2_2_5.js?v=25102"></script></body></html>
+</main></div><div id="help" class="help hide"><button id="helpClose">×</button><h3>ⓘ Aide</h3><p id="helpText"></p></div><script src="/assets/settings_ai_supervisor.js"></script><script src="/assets/settings.js?v=3102"></script><script src="/assets/trading_accounts.js?v=2603okx"></script><script src="/assets/user_profile.js"></script><script src="/assets/companion_v1.0.js"></script><script src="/assets/calendar_events_v2_2_5.js?v=25102"></script><script src="/assets/chart_economic_events_v2_2_5.js?v=25102"></script></body></html>

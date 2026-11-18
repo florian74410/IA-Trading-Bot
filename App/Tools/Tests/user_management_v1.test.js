@@ -107,6 +107,13 @@ test('actual Core and Gateway processes authenticate over pinned TLS, isolate la
  assert.equal(atlas.data.report.meta.commit,'6bdfd3626d19b37790202a66007b90d121007703');
  assert.equal(atlas.data.installed.version,require('../../Core/Shared/build_info').version);
  assert.equal(atlas.data.deployed,null);
+ const originalPath=atlasPath+'/explorateur';
+ assert.equal((await call(originalPath)).status,401);
+ assert.equal((await call(originalPath,'GET',null,ha)).status,403);
+ const original=await call(originalPath,'GET',null,adminHeaders);
+ assert.equal(original.status,200);
+ assert.match(original.text,/Atlas des fonctionnalités/);
+ assert.doesNotMatch(original.text,/__IATB_ATLAS_(JSON|NONCE)__/);
  if(process.env.IATB_ATLAS_BROWSER==='1'){
   const playwright=require(process.env.IATB_PLAYWRIGHT_MODULE||'playwright');
   const browser=await playwright.chromium.launch({executablePath:process.env.IATB_CHROMIUM_EXECUTABLE||undefined,args:['--no-sandbox']});
@@ -116,7 +123,42 @@ test('actual Core and Gateway processes authenticate over pinned TLS, isolate la
   await context.addCookies([{name,value,url:origin}]);
   const page=await context.newPage(),errors=[];
   page.on('pageerror',e=>errors.push(e.message));
+  await page.goto(origin+'/settings?section=IA');
+  await page.locator('#view-ai-supervisor').waitFor();
+  await page.waitForFunction(()=>!document.querySelector('#chatbotSettingsFields').disabled &&
+    !document.querySelector('#supervisorSettingsFields').disabled);
+  await page.selectOption('#supervisorProvider','MOCK');
+  await page.fill('#supervisorModel','gpt-5.6');
+  await page.fill('#supervisorTimeout','12500');
+  await page.locator('#supervisorSettingsForm button[type=submit]').click();
+  await page.waitForFunction(()=>document.querySelector('#supervisorSettingsStatus').textContent==='Réglages du Supervisor enregistrés.');
+  const savedSupervisor=await call('/api/settings','GET',null,adminHeaders);
+  assert.equal(savedSupervisor.data.supervisor.llm.provider,'MOCK');
+  assert.equal(savedSupervisor.data.supervisor.llm.openai.timeoutMs,12500);
+  await page.selectOption('#chatbotMode','HYBRID');
+  await page.check('#chatbotFallback');
+  await page.locator('#chatbotSettingsForm button[type=submit]').click();
+  await page.waitForFunction(()=>document.querySelector('#chatbotSettingsStatus').textContent==='Réglages du ChatBot enregistrés.');
+  assert.deepEqual((await call('/api/settings/chatbot','GET',null,adminHeaders)).data.settings,
+    {mode:'HYBRID',autoFallback:true});
+  await page.locator('#nav [data-view=trading]').click();
+  await page.locator('#view-trading #tradingAccountCard').waitFor();
+  assert.match(page.url(),/section=Trading$/);
+  await page.locator('[data-open-settings="risk"]').click();
+  assert.equal(await page.locator('#r25Level').evaluate(node=>getComputedStyle(node).colorScheme),'dark');
+  await page.goBack();
+  await page.locator('#view-trading').waitFor();
+  await page.setViewportSize({width:1280,height:800});
   await page.goto(origin+'/admin');
+  await page.locator('#iatbServiceStrip').waitFor();
+  assert.equal(await page.locator('.sideBrand').count(),0);
+  assert(await page.evaluate(()=>{
+    const footer=document.querySelector('#iatbServiceStrip').getBoundingClientRect().top;
+    return ['.adminMain','.adminSidebar'].every(sel=>document.querySelector(sel).getBoundingClientRect().bottom<=footer);
+  }));
+  await page.locator('[data-target="diagnostics"]').click();
+  await page.waitForFunction(()=>document.querySelector('.adminContent').scrollTop>0);
+  assert(await page.evaluate(()=>scrollY===0));
   await page.locator('#navStructuralAnalysis').click();
   await page.waitForURL('**'+atlasPath);
   await page.locator('#atlasReport').waitFor();
@@ -145,6 +187,10 @@ test('actual Core and Gateway processes authenticate over pinned TLS, isolate la
   assert.equal(await page.locator('#atlasRows [data-status="C"]').count(),0);
   await page.setViewportSize({width:390,height:844});
   assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+  await page.getByRole('link',{name:'Ouvrir l’explorateur HTML'}).click();
+  await page.waitForURL('**'+originalPath);
+  await page.locator('#tree').waitFor();
+  assert(await page.evaluate(()=>document.querySelector('#tree').children.length>0));
   assert.deepEqual(errors,[]);
   await context.close();
  }

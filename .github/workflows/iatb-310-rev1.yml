@@ -1,9 +1,9 @@
 name: IA-TB 3.1.0 Rev1 complete build qualification
 on:
   push:
-    branches: ['release/iatb-3.1.0-Rev1-full-source']
+    branches: ['release/iatb-3.1.0-Rev1-full-source', 'release/iatb-3.1.0-Rev1-ui-fixes']
   pull_request:
-    branches: ['release/iatb-3.0.2-Rev-X-full-source']
+    branches: ['release/iatb-3.0.2-Rev-X-full-source', 'release/iatb-3.1.0-Rev1-full-source']
   workflow_dispatch:
 permissions:
   contents: read
@@ -58,7 +58,7 @@ jobs:
           node Tools/Architecture/Rev3/compare.js artifacts/consolidation-validation/cp1-comparison.json
       - name: Existing Engine unit suites with loopback-only network
         run: node App/Tools/qualify_engine_units.js artifacts/consolidation-validation/engine-units
-      - name: Verify Auth21 roles and ADMIN Atlas in Chromium
+      - name: Verify Auth21 roles, Settings and ADMIN Atlas in Chromium
         env:
           IATB_ATLAS_BROWSER: '1'
         run: node --test --test-concurrency=1 App/Tools/Tests/user_management_v1.test.js App/Engines/Supervisor/ChatBot/Tests/hybrid.test.js
