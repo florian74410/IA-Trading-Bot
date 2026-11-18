@@ -48,6 +48,7 @@ function build(p, id, pre) {
   }
   if(!['1','2','3','4'].includes(String(pre.configuration?.acctLv)))throw Error('MANUAL_ACCOUNT_MODE_UNQUALIFIED');
   if(p.market!=='SPOT'&&['3','4'].includes(String(pre.configuration.acctLv))&&p.margin_mode==='isolated')throw Error('MANUAL_ISOLATED_MODE_UNAVAILABLE');
+  if(p.market==='MARGIN'&&String(pre.configuration.acctLv)!=='2')throw Error('MANUAL_MARGIN_ACCOUNT_MODE_UNQUALIFIED');
   const inst = pre.instrument,
     cfg = pre.configuration,
     derivative = ["SWAP", "FUTURES"].includes(p.market),

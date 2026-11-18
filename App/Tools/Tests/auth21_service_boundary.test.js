@@ -37,7 +37,7 @@ test('real service HTTP entrypoints invoke the isolated boundary before legacy h
  ];
  for(const [relative,proof] of specs){
   const source=fs.readFileSync(path.resolve(__dirname,relative),'utf8');
-  const gate=source.indexOf(proof),legacyServer=source.indexOf('createServer('),engineServer=source.indexOf('createEngineServer('),server=legacyServer>=0?legacyServer:engineServer;
+  const gate=source.search(new RegExp('decision\\(\\s*process\\.env\\s*,\\s*[\"\']'+(relative.includes('Gateway/')?'gateway':relative.includes('Router/')?'router':'engine')+'[\"\']')),legacyServer=source.indexOf('createServer('),engineServer=source.indexOf('createEngineServer('),server=legacyServer>=0?legacyServer:engineServer;
   if(engineServer>=0)assert.match(source,/auth21_engine_ingress/,'The recognized wrapper must be the authenticated Engine ingress');
   if(relative.includes('Gateway/')){
    const handler=source.indexOf('var handler=function(req,res){');

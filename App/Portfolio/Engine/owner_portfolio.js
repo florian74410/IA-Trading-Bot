@@ -6,6 +6,7 @@ function dispatch({root,dbPath,accountService}){return function(principal,action
  try{
   let settings=store.getSetting('portfolio.settings',{snapshotRefreshSec:300,pnlRefreshSec:3,exchangeSyncSec:30,equityChangeTriggerPct:1,baseCurrency:'EUR',snapshotRetention:'AUTO'});
   const engine=new PE.PortfolioEngine(store,{settings:()=>settings});
+  if(action==='portfolio.event.record'){if(args.event?.metadata?.ownerClientId!==principal.clientId)throw Error('PORTFOLIO_EVENT_OWNER_MISMATCH');return store.db.transaction(()=>{const r=engine.recordEvent(args.event);if(r.inserted)engine.snapshot(true);return r;}).immediate();}
   if(action==='portfolio.health')return {ok:true,ownerScoped:true,storage:{ready:true},execution:'INTENTION_ONLY'};
   if(action==='portfolio.settings.get')return {settings};
   if(action==='portfolio.settings.set'){const patch=args.settings||args;if(Object.keys(patch).some(k=>!Object.hasOwn(settings,k)))throw Error('PORTFOLIO_SETTINGS_INVALID');const next={...settings,...patch};for(const key of ['snapshotRefreshSec','pnlRefreshSec','exchangeSyncSec','equityChangeTriggerPct'])if(!Number.isFinite(next[key])||next[key]<0||next[key]>86400)throw Error('PORTFOLIO_SETTINGS_INVALID');if(!['EUR','USD'].includes(next.baseCurrency)||next.snapshotRetention!=='AUTO')throw Error('PORTFOLIO_SETTINGS_INVALID');settings=next;store.setSetting('portfolio.settings',settings);return {settings};}

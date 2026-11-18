@@ -137,7 +137,7 @@
       "transport": "CP1",
       "authorization": "Authenticated service identity, authenticated agent session and effective per-command permission.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "8b752e8936e4fe7920065ee6ce4937efd538e88b7aef3da73fc212d28db074d3",
+      "handler_sha256": "2aa28b5c65f7546563b90f9e5f0b93eebfaeb73e47fa2da9d8971deefedd3340",
       "availability_reason": null,
       "timeout_ms": 5000,
       "agent_qualified": true
@@ -167,7 +167,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "8b752e8936e4fe7920065ee6ce4937efd538e88b7aef3da73fc212d28db074d3",
+      "handler_sha256": "2aa28b5c65f7546563b90f9e5f0b93eebfaeb73e47fa2da9d8971deefedd3340",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -210,11 +210,11 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "8b752e8936e4fe7920065ee6ce4937efd538e88b7aef3da73fc212d28db074d3",
+      "handler_sha256": "2aa28b5c65f7546563b90f9e5f0b93eebfaeb73e47fa2da9d8971deefedd3340",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
     }
   ],
-  "revision_hash": "6f85e14299cf07cb45d84585bbb0827b4a2fbcc74020ca8cba2e1f7576b6133b"
+  "revision_hash": "c745b40355bf45fd93e5773b75b0faaff8a58587584dfbec5006b9a90a3d7e4b"
 }

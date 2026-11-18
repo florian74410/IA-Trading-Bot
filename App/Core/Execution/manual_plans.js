@@ -8,6 +8,18 @@ async function preparePlan(token, p) {
     steps = p.intent_parameters.steps;
   if (!Array.isArray(steps) || !steps.length || steps.length > 20)
     throw Error("MANUAL_PLAN_SIZE_INVALID");
+  const old = this.db
+    .prepare("SELECT * FROM manual_orders WHERE id=?")
+    .get(p.id);
+  if (
+    old &&
+    (old.owner !== actor.owner ||
+      old.session !== actor.session ||
+      JSON.parse(old.data).sourceDigest !== p.digest)
+  )
+    throw Error("PREPARATION_CONFLICT");
+  if (old && old.phase !== "PREPARED")
+    throw Error("PREPARATION_ALREADY_CLAIMED");
   const prepared = [];
   for (let i = 0; i < steps.length; i++) {
     const step = steps[i];
@@ -21,14 +33,28 @@ async function preparePlan(token, p) {
       environment:
         step.parameters.environment || p.intent_parameters.environment,
     };
-    const child = await this.advancedPrepare(token, {
-      id: crypto.randomUUID(),
-      digest: C.hash(step),
-      route_version: 2,
-      operation: step.intent_id,
-      intent_parameters: params,
-      expires_at: p.expires_at,
-    },{leverageDependency:step.depends_on.some(n=>steps[n].intent_id==='account.leverage'&&steps[n].parameters.account===params.account&&steps[n].parameters.instrument_candidate===params.instrument_candidate&&steps[n].parameters.margin_mode===params.margin_mode&&steps[n].parameters.leverage===params.leverage)});
+    const child = await this.advancedPrepare(
+      token,
+      {
+        id: crypto.randomUUID(),
+        digest: C.hash(step),
+        route_version: 2,
+        operation: step.intent_id,
+        intent_parameters: params,
+        expires_at: p.expires_at,
+      },
+      {
+        leverageDependency: step.depends_on.some(
+          (n) =>
+            steps[n].intent_id === "account.leverage" &&
+            steps[n].parameters.account === params.account &&
+            steps[n].parameters.instrument_candidate ===
+              params.instrument_candidate &&
+            steps[n].parameters.margin_mode === params.margin_mode &&
+            steps[n].parameters.leverage === params.leverage,
+        ),
+      },
+    );
     if (!child.confirmable) throw Error("MANUAL_PLAN_STEP_UNAVAILABLE");
     prepared.push({
       preparation: child,
@@ -63,6 +89,24 @@ async function preparePlan(token, p) {
   const row = { id: p.id, ...actor, digest: out.digest };
   this.db
     .transaction(() => {
+      const current = this.db
+        .prepare("SELECT * FROM manual_orders WHERE id=?")
+        .get(p.id);
+      if (
+        current &&
+        (current.owner !== actor.owner ||
+          current.session !== actor.session ||
+          current.phase !== "PREPARED")
+      )
+        throw Error("PREPARATION_ALREADY_CLAIMED");
+      for (const step of prepared) {
+        const child = W.lookup(this, actor, step.preparation.id);
+        if (!child || child.phase !== "PREPARED")
+          throw Error("PLAN_STEP_CHANGED");
+        const d = JSON.parse(child.data);
+        d.parent_plan_id = p.id;
+        W.save(this, child, d, "PREPARED");
+      }
       W.save(
         this,
         row,
@@ -106,6 +150,7 @@ async function confirmPlan(token, input) {
       arguments: {
         preparation_id: row.id,
         digest: data.sourceDigest,
+        conversation_id: data.preparation.conversation_id || "default",
         claim: true,
       },
     });
@@ -188,15 +233,28 @@ async function advancePlan(token, planId) {
         step.status = "AWAITING_DEPENDENCY";
         continue;
       }
-      step.result = await this.advancedConfirm(
-        token,
-        {
-          preparation_id: step.preparation.id,
-          digest: step.preparation.digest,
-          acknowledge_warnings: true,
-        },
-        { planConfirmed: true },
-      );
+      try {
+        step.result = await this.advancedConfirm(
+          token,
+          {
+            preparation_id: step.preparation.id,
+            digest: step.preparation.digest,
+            acknowledge_warnings: true,
+          },
+          { parentPlanId: planId },
+        );
+      } catch (e) {
+        step.result = {
+          ok: false,
+          status: "FAILED",
+          execution: "NONE",
+          reason: /^[A-Z0-9_]+$/.test(e.message)
+            ? e.message
+            : "PLAN_STEP_FAILED",
+          message: "Étape refusée avant soumission.",
+        };
+        this.finish(child, step.result);
+      }
       step.status = step.result.status;
     }
     const terminal = d.steps.every(
@@ -228,4 +286,55 @@ async function advancePlan(token, planId) {
     this.planBusy.delete(planId);
   }
 }
-module.exports = { preparePlan, confirmPlan, advancePlan };
+async function reconcilePlan(token, planId) {
+  const actor = this.actor(token),
+    row = this.db
+      .prepare("SELECT * FROM manual_orders WHERE id=? AND owner=?")
+      .get(planId, actor.owner);
+  if (!row) throw Error("PREPARATION_NOT_FOUND");
+  const d = JSON.parse(row.data);
+  if (!d.plan) throw Error("PLAN_REQUIRED");
+  if (!d.confirmed)
+    return row.result
+      ? JSON.parse(row.result)
+      : { status: row.phase, plan_id: planId, execution: "NONE" };
+  this.planBusy ||= new Set();
+  if (this.planBusy.has(planId))
+    return row.result
+      ? JSON.parse(row.result)
+      : { status: row.phase, terminal: false };
+  this.planBusy.add(planId);
+  try {
+    for (const s of d.steps) {
+      const child = this.db
+        .prepare("SELECT * FROM manual_orders WHERE id=? AND owner=?")
+        .get(s.preparation.id, actor.owner);
+      if (child && child.phase !== "PREPARED") {
+        s.result = await this.reconcileAdvanced(token, s.preparation.id);
+        s.status = s.result.status;
+      }
+    }
+    const terminal = d.steps.every(
+        (s) => W.TERMINAL.has(s.status) || s.status === "BATCH_COMPLETED",
+      ),
+      out = {
+        ok: !d.steps.some((s) => ["FAILED", "REJECTED"].includes(s.status)),
+        status: terminal ? "COMPLETED" : "AWAITING_DEPENDENCY",
+        terminal,
+        plan_id: planId,
+        steps: d.steps.map((s, i) => ({
+          index: i,
+          id: s.preparation.id,
+          status: s.status,
+          depends_on: s.depends_on,
+          result: s.result || null,
+        })),
+        message: "États des étapes vérifiés sans nouvelle soumission.",
+      };
+    W.save(this, row, d, out.status, out);
+    return out;
+  } finally {
+    this.planBusy.delete(planId);
+  }
+}
+module.exports = { preparePlan, confirmPlan, advancePlan, reconcilePlan };

@@ -4,7 +4,7 @@
   "engine_version": "3.0.1-dev.1",
   "transport": "CP/1",
   "source_protocol_registry": "Core/Communication/ProtocolRegistry/risk.json",
-  "source_sha256": "99d7ac8d8f6b2a7e52f56b9b4628a8bb98da21fc3dd8d270185cc4cfc81fb5be",
+  "source_sha256": "2e348d8bfc957b524435ece9c8165cf1637503ac51dffa0bc50253a607072912",
   "functions": [
     {
       "id": "risk.list_capabilities",
@@ -72,7 +72,7 @@
       "transport": "CP1",
       "authorization": "Authenticated service identity, authenticated agent session and effective per-command permission.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "914ca0788362ce1482207874f91024b269119ec55fdf6d2145e4ca350869cb4d",
+      "handler_sha256": "6b787a4fe67015fc2f70733a14e37ab5d4e3407a321e2c5f4f38c43be7f239cc",
       "availability_reason": null,
       "timeout_ms": 5000,
       "agent_qualified": true
@@ -119,7 +119,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "914ca0788362ce1482207874f91024b269119ec55fdf6d2145e4ca350869cb4d",
+      "handler_sha256": "6b787a4fe67015fc2f70733a14e37ab5d4e3407a321e2c5f4f38c43be7f239cc",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -162,7 +162,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "914ca0788362ce1482207874f91024b269119ec55fdf6d2145e4ca350869cb4d",
+      "handler_sha256": "6b787a4fe67015fc2f70733a14e37ab5d4e3407a321e2c5f4f38c43be7f239cc",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -209,7 +209,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "914ca0788362ce1482207874f91024b269119ec55fdf6d2145e4ca350869cb4d",
+      "handler_sha256": "6b787a4fe67015fc2f70733a14e37ab5d4e3407a321e2c5f4f38c43be7f239cc",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -239,7 +239,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "914ca0788362ce1482207874f91024b269119ec55fdf6d2145e4ca350869cb4d",
+      "handler_sha256": "6b787a4fe67015fc2f70733a14e37ab5d4e3407a321e2c5f4f38c43be7f239cc",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -269,7 +269,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "914ca0788362ce1482207874f91024b269119ec55fdf6d2145e4ca350869cb4d",
+      "handler_sha256": "6b787a4fe67015fc2f70733a14e37ab5d4e3407a321e2c5f4f38c43be7f239cc",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -299,7 +299,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "914ca0788362ce1482207874f91024b269119ec55fdf6d2145e4ca350869cb4d",
+      "handler_sha256": "6b787a4fe67015fc2f70733a14e37ab5d4e3407a321e2c5f4f38c43be7f239cc",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -442,7 +442,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "914ca0788362ce1482207874f91024b269119ec55fdf6d2145e4ca350869cb4d",
+      "handler_sha256": "6b787a4fe67015fc2f70733a14e37ab5d4e3407a321e2c5f4f38c43be7f239cc",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -488,7 +488,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "914ca0788362ce1482207874f91024b269119ec55fdf6d2145e4ca350869cb4d",
+      "handler_sha256": "6b787a4fe67015fc2f70733a14e37ab5d4e3407a321e2c5f4f38c43be7f239cc",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -637,7 +637,7 @@
       "transport": "CP1",
       "authorization": "Authenticated service identity, authenticated agent session and effective per-command permission.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "914ca0788362ce1482207874f91024b269119ec55fdf6d2145e4ca350869cb4d",
+      "handler_sha256": "6b787a4fe67015fc2f70733a14e37ab5d4e3407a321e2c5f4f38c43be7f239cc",
       "availability_reason": null,
       "timeout_ms": 5000,
       "agent_qualified": true
@@ -742,7 +742,7 @@
       "transport": "CP1",
       "authorization": "Authenticated service identity, authenticated agent session and effective per-command permission.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "914ca0788362ce1482207874f91024b269119ec55fdf6d2145e4ca350869cb4d",
+      "handler_sha256": "6b787a4fe67015fc2f70733a14e37ab5d4e3407a321e2c5f4f38c43be7f239cc",
       "availability_reason": null,
       "timeout_ms": 5000,
       "agent_qualified": true
@@ -772,7 +772,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "914ca0788362ce1482207874f91024b269119ec55fdf6d2145e4ca350869cb4d",
+      "handler_sha256": "6b787a4fe67015fc2f70733a14e37ab5d4e3407a321e2c5f4f38c43be7f239cc",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -1072,7 +1072,7 @@
       "authorization": "Core-issued owner delegation, authenticated agent session and effective per-command permission.",
       "transport": "OWNER",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "914ca0788362ce1482207874f91024b269119ec55fdf6d2145e4ca350869cb4d",
+      "handler_sha256": "6b787a4fe67015fc2f70733a14e37ab5d4e3407a321e2c5f4f38c43be7f239cc",
       "availability_reason": null,
       "timeout_ms": 5000,
       "agent_qualified": true
@@ -1321,7 +1321,7 @@
       "authorization": "Core-issued owner delegation, authenticated agent session and effective per-command permission.",
       "transport": "OWNER",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "914ca0788362ce1482207874f91024b269119ec55fdf6d2145e4ca350869cb4d",
+      "handler_sha256": "6b787a4fe67015fc2f70733a14e37ab5d4e3407a321e2c5f4f38c43be7f239cc",
       "availability_reason": null,
       "timeout_ms": 5000,
       "agent_qualified": true
@@ -1390,7 +1390,7 @@
       "authorization": "Authenticated service identity, authenticated agent session and effective per-command permission.",
       "transport": "CP1",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "914ca0788362ce1482207874f91024b269119ec55fdf6d2145e4ca350869cb4d",
+      "handler_sha256": "6b787a4fe67015fc2f70733a14e37ab5d4e3407a321e2c5f4f38c43be7f239cc",
       "availability_reason": null,
       "timeout_ms": 5000,
       "agent_qualified": true
@@ -1471,7 +1471,7 @@
       "authorization": "Authenticated service identity, authenticated agent session and effective per-command permission.",
       "transport": "CP1",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "914ca0788362ce1482207874f91024b269119ec55fdf6d2145e4ca350869cb4d",
+      "handler_sha256": "6b787a4fe67015fc2f70733a14e37ab5d4e3407a321e2c5f4f38c43be7f239cc",
       "availability_reason": null,
       "timeout_ms": 5000,
       "agent_qualified": true
@@ -1521,11 +1521,147 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "914ca0788362ce1482207874f91024b269119ec55fdf6d2145e4ca350869cb4d",
+      "handler_sha256": "6b787a4fe67015fc2f70733a14e37ab5d4e3407a321e2c5f4f38c43be7f239cc",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
+    },
+    {
+      "id": "risk.manual.authorize",
+      "engine": "risk",
+      "type": "MUTATION",
+      "risk_level": "HIGH",
+      "input": {
+        "type": "object",
+        "properties": {
+          "exchange": {
+            "const": "OKX"
+          },
+          "account": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 40
+          },
+          "symbol": {
+            "type": "string",
+            "pattern": "^[-A-Z0-9]{3,64}$"
+          },
+          "market_type": {
+            "enum": [
+              "SPOT",
+              "MARGIN",
+              "FUTURES",
+              "SWAP"
+            ]
+          },
+          "spec": {
+            "type": "object",
+            "required": [
+              "kind",
+              "market",
+              "body"
+            ],
+            "properties": {
+              "kind": {
+                "enum": [
+                  "ORDER",
+                  "ALGO",
+                  "CANCEL",
+                  "AMEND",
+                  "CANCEL_ALGO",
+                  "AMEND_ALGO",
+                  "LEVERAGE",
+                  "BATCH"
+                ]
+              },
+              "market": {
+                "enum": [
+                  "SPOT",
+                  "MARGIN",
+                  "SWAP",
+                  "FUTURES"
+                ]
+              },
+              "body": {
+                "type": "object"
+              },
+              "position_id": {
+                "type": "string"
+              },
+              "valuation": {
+                "type": "object",
+                "required": [
+                  "contract_value",
+                  "contract_value_currency",
+                  "contract_type"
+                ],
+                "properties": {
+                  "contract_value": {
+                    "type": "string"
+                  },
+                  "contract_value_currency": {
+                    "type": "string"
+                  },
+                  "contract_type": {
+                    "const": "linear"
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          },
+          "owner": {
+            "type": "string",
+            "pattern": "^CL[A-Za-z0-9_-]{1,64}$"
+          },
+          "plan_id": {
+            "type": "string",
+            "maxLength": 96
+          },
+          "proof": {
+            "type": "string",
+            "maxLength": 1024
+          },
+          "confirmation_digest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "diagnostic_digest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "required": [
+          "exchange",
+          "account",
+          "symbol",
+          "market_type",
+          "spec",
+          "owner",
+          "plan_id",
+          "proof",
+          "confirmation_digest",
+          "diagnostic_digest"
+        ],
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "object"
+      },
+      "transport": "OWNER",
+      "description": "Unqualified legacy command",
+      "verified_handler": true,
+      "agent_qualified": false,
+      "hard_deny": true,
+      "authorization": "Unavailable to agents until independently qualified.",
+      "default_privilege": "DENY",
+      "contract_version": "3.0.1-dev.1",
+      "handler_sha256": "6b787a4fe67015fc2f70733a14e37ab5d4e3407a321e2c5f4f38c43be7f239cc",
+      "source": "Risk/Engine/risk_service.js",
+      "availability_reason": "OWNER_ONLY",
+      "timeout_ms": 8000
     }
   ],
-  "revision_hash": "c58cf4d36058df13b1cbf0ef7ad42209d4ac9182effeb66adc6f171d60634efd"
+  "revision_hash": "d3870f1785199cba4d3da277544aee5d6f16cef3f7d37403eb0eccbc7cbf9f65"
 }

@@ -197,6 +197,7 @@ async function advancedPrepare(token, p,{leverageDependency=false}={}) {
     }
     const spec = P.build({...params,...(leverageDependency?{_preparing_dependency:true}:{})}, p.id, pre),
       account = this.account(token, params);
+    if(!require('./manual_qualification').qualified(require('node:path').resolve(__dirname,'../..'),C.actionFor(spec)))throw Error('MANUAL_CONTRACT_UNQUALIFIED');
     let risk = null;
     try {
       if (["ORDER", "ALGO"].includes(spec.kind)) {
@@ -285,7 +286,7 @@ async function advancedPrepare(token, p,{leverageDependency=false}={}) {
     };
   }
 }
-async function advancedConfirm(token, input, { planConfirmed = false } = {}) {
+async function advancedConfirm(token, input, { parentPlanId = null } = {}) {
   if (
     !input ||
     Object.keys(input).some(
@@ -306,6 +307,10 @@ async function advancedConfirm(token, input, { planConfirmed = false } = {}) {
   const saved = JSON.parse(row.data),
     p = saved.preparation;
   if (saved.plan) return this.confirmPlan(token, input);
+  if(saved.parent_plan_id){
+   const parent=lookup(this,actor,saved.parent_plan_id),pd=parent&&JSON.parse(parent.data);
+   if(parentPlanId!==saved.parent_plan_id||!pd?.confirmed||pd.preparation.expires_at<=Date.now()||!pd.steps.some(s=>s.preparation.id===row.id&&s.preparation.digest===row.digest))throw Error('PLAN_CONFIRMATION_REQUIRED');
+  }else if(parentPlanId)throw Error('PLAN_CONFIRMATION_REQUIRED');
   if (row.phase !== "PREPARED")
     return row.result
       ? JSON.parse(row.result)
@@ -328,10 +333,11 @@ async function advancedConfirm(token, input, { planConfirmed = false } = {}) {
     this.account(token, p.intent_parameters).revision !== saved.accountRevision
   )
     throw Error("ACCOUNT_CHANGED");
+  if(!require('./manual_qualification').qualified(require('node:path').resolve(__dirname,'../..'),C.actionFor(saved.spec)))throw Error('MANUAL_CONTRACT_UNQUALIFIED');
   reserve(this, row, saved);
   let submitted = false;
   try {
-    if (!planConfirmed) {
+    if (!parentPlanId) {
       const confirmation = await this.bridge.bridge(token, {
         target: "supervisor",
         action: "supervisor.chatbot.confirm",
@@ -468,17 +474,18 @@ async function advancedConfirm(token, input, { planConfirmed = false } = {}) {
       const checked = await inspect.call(this, token, params, {
         kind: "PREFLIGHT",
         margin_mode: params.margin_mode,
+        plan_id:row.id,
       });
-      const actual = checked.leverage?.find(
+      const actual = checked.leverage?.filter(
         (x) =>
           x.instId === params.instrument_candidate &&x.mgnMode===params.margin_mode&&
           (!saved.spec.body.posSide || x.posSide === saved.spec.body.posSide),
       );
-      if (Number(actual?.lever) === Number(saved.spec.body.lever))
+      if (actual?.length&&actual.every(x=>Number(x.lever)===Number(saved.spec.body.lever)))
         out = finish(this, row, {
           ...out,
           status: "LEVERAGE_VERIFIED",
-          verified_leverage: Number(actual.lever),
+          verified_leverage: Number(actual[0].lever),
           message:
             "Levier vérifié. Aucune position ouverte par cette opération.",
         });
@@ -514,7 +521,8 @@ async function reconcileAdvanced(token, orderId) {
     prior = row.result
       ? JSON.parse(row.result)
       : { ok: false, status: row.phase, plan_id: row.id };
-  if (!saved.advanced || saved.plan || TERMINAL.has(prior.status)&&!(prior.status==="FILLED"&&saved.spec.body.attachAlgoOrds&&!prior.protection_active)) return prior;
+  if(saved.plan)return this.reconcilePlan(token,orderId);
+  if (!saved.advanced || TERMINAL.has(prior.status)&&!(prior.status==="FILLED"&&saved.spec.body.attachAlgoOrds&&!prior.protection_active)) return prior;
   const spec = saved.spec,
     p = saved.preparation.intent_parameters,
     algo = spec.kind.includes("ALGO"),
@@ -525,7 +533,7 @@ async function reconcileAdvanced(token, orderId) {
    const done=items.every(x=>TERMINAL.has(x.status)),out={...prior,items,status:done?'BATCH_COMPLETED':'BATCH_PENDING',terminal:done,message:'Groupe non atomique : consulte chaque résultat.'};if(done)this.db.prepare('DELETE FROM manual_reservations WHERE id=?').run(row.id);return finish(this,row,out);
   }
   if(spec.kind==='LEVERAGE'){
-    try{const pre=await inspect.call(this,token,p,{kind:'PREFLIGHT',margin_mode:p.margin_mode});const actual=pre.leverage?.filter(x=>x.instId===p.instrument_candidate&&x.mgnMode===p.margin_mode&&(!spec.body.posSide||x.posSide===spec.body.posSide));if(actual?.length===1&&Number(actual[0].lever)===Number(spec.body.lever))return finish(this,row,{...prior,ok:true,status:'LEVERAGE_VERIFIED',verified_leverage:Number(actual[0].lever),message:'Levier vérifié. Aucune position ouverte.'});}catch(_){}return prior;
+    try{const pre=await inspect.call(this,token,p,{kind:'PREFLIGHT',margin_mode:p.margin_mode,plan_id:row.id});const actual=pre.leverage?.filter(x=>x.instId===p.instrument_candidate&&x.mgnMode===p.margin_mode&&(!spec.body.posSide||x.posSide===spec.body.posSide));if(actual?.length&&actual.every(x=>Number(x.lever)===Number(spec.body.lever)))return finish(this,row,{...prior,ok:true,status:'LEVERAGE_VERIFIED',verified_leverage:Number(actual[0].lever),message:'Levier vérifié. Aucune position ouverte.'});}catch(_){}return prior;
   }
   if (!targetId && !client) return prior;
   try {
@@ -547,7 +555,7 @@ async function reconcileAdvanced(token, orderId) {
     )
       throw Error("MANUAL_RECONCILIATION_MISMATCH");
     let status = mapState(broker.state);
-    if(algo&&broker.state==='effective'&&broker.ordId){const child=await inspect.call(this,token,p,{kind:'ORDER',order_id:broker.ordId});if(child.rows.length===1)status=mapState(child.rows[0].state)||'TRIGGERED';}
+    let resulting=null;if(algo&&broker.state==='effective'&&broker.ordId){const child=await inspect.call(this,token,p,{kind:'ORDER',order_id:broker.ordId,plan_id:row.id});if(child.rows.length===1){resulting=child.rows[0];status=mapState(resulting.state)||'TRIGGERED';if(Number(resulting.accFillSz)>0)await inspect.call(this,token,p,{kind:'FILLS',order_id:broker.ordId,plan_id:row.id});}}
     if(!algo&&Number(broker.accFillSz)>0)await inspect.call(this,token,p,{kind:'FILLS',order_id:broker.ordId,plan_id:row.id});
     if(!status)return prior;
     if(spec.kind==='AMEND'&&status==='OPEN'&&(spec.body.newPx&&broker.px!==spec.body.newPx||spec.body.newSz&&broker.sz!==spec.body.newSz))return prior;
@@ -556,9 +564,10 @@ async function reconcileAdvanced(token, orderId) {
       ...prior,
       ok: !["REJECTED"].includes(status),
       status,
-      order_id: broker.ordId || broker.algoId,
-      filled_quantity: numberOrNull(broker.accFillSz || broker.actualSz),
-      average_price: numberOrNull(broker.avgPx || broker.actualPx),
+      order_id: algo?broker.algoId:broker.ordId,
+      resulting_order_id:resulting?.ordId||null,
+      filled_quantity: numberOrNull(resulting?.accFillSz||broker.accFillSz || broker.actualSz),
+      average_price: numberOrNull(resulting?.avgPx||broker.avgPx || broker.actualPx),
       protection_active: algo&&broker.state==='live'&&(broker.ordType!=='move_order_stop'||!broker.activePx||Number(broker.moveTriggerPx)>0),
       parent_order_id:!algo?broker.ordId:null,algo_id:algo?broker.algoId:null,
       protection_status:algo&&broker.state==='live'?'ARMED':'UNVERIFIED',

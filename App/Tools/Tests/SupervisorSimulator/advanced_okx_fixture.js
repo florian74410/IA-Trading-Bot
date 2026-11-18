@@ -5,13 +5,13 @@ function fixture(){
  const server=http.createServer(async(req,res)=>{let raw='';for await(const c of req)raw+=c;const u=new URL(req.url,'http://localhost'),b=raw?JSON.parse(raw):{},q=Object.fromEntries(u.searchParams);state.requests.push({method:req.method,path:u.pathname,query:q,body:b});
  function reply(data,code='0'){res.writeHead(200,{'content-type':'application/json'});res.end(JSON.stringify({code,msg:'fixture',data}));}
  const sign=crypto.createHmac('sha256','PROFILE_SECRET_FIXTURE').update(req.headers['ok-access-timestamp']+req.method+req.url+raw).digest('base64');
- if(req.headers['x-fixture-original-host']!=='eea.okx.com'||req.headers['ok-access-key']!=='PROFILE_FIXTURE'||req.headers['ok-access-sign']!==sign)return reply([],'50113');
+ if(req.headers['x-fixture-original-host']!=='eea.okx.com'||!['PROFILE_FIXTURE','PROFILE_CRASH_FIXTURE'].includes(req.headers['ok-access-key'])||req.headers['ok-access-sign']!==sign)return reply([],'50113');
  const id=q.instId||b.instId||'BTC-USDT',type=q.instType||(/SWAP$/.test(id)?'SWAP':/\d{6}$/.test(id)?'FUTURES':'SPOT');
  if(req.method==='GET'){
   const instrument={instId:id,instType:type,instFamily:'BTC-USDT',baseCcy:'BTC',quoteCcy:'USDT',settleCcy:'USDT',state:'live',lotSz:['SWAP','FUTURES'].includes(type)?'1':'0.001',minSz:['SWAP','FUTURES'].includes(type)?'1':'0.001',tickSz:'0.01',lever:'10',groupId:'4',ctVal:'0.01',ctValCcy:'BTC',ctType:'linear'};
   switch(u.pathname){
    case '/api/v5/account/instruments':case '/api/v5/public/instruments':return reply(state.fault==='unavailable'?[]:[instrument]);
-   case '/api/v5/account/config':return reply([{acctLv:'2',posMode:state.posMode}]);
+   case '/api/v5/account/config':return reply([{acctLv:state.acctLv||'2',posMode:state.posMode}]);
    case '/api/v5/account/balance':return reply([{totalEq:'2000',uTime:String(Date.now()),adjEq:'2000',imr:'0',details:[{ccy:'USDT',availBal:state.balance,availEq:state.balance,eq:'1000',eqUsd:'1000',cashBal:'1000',frozenBal:'100',liab:'0',uTime:String(Date.now())},{ccy:'BTC',availBal:'10',eq:'10',cashBal:'10',eqUsd:'1000',uTime:String(Date.now())}]}]);
    case '/api/v5/account/positions':return reply(state.positions);
    case '/api/v5/account/trade-fee':return reply(state.omitFees?[]:[{taker:'-0.001',ts:String(Date.now()),feeGroup:[{groupId:'4',taker:'-0.001'}]}]);

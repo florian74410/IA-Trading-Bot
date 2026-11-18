@@ -13,7 +13,9 @@ import sys
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[2]
-REVISION = "3.0.1_Rev1"
+REVISION = (ROOT / "App/REVISION").read_text(encoding="utf-8").strip() if (ROOT / "App/REVISION").exists() else "3.0.1_Rev1"
+if REVISION not in {"3.0.1_Rev1", "3.0.1_Rev2"}:
+    raise RuntimeError("Unknown complete source revision")
 VERSION = (ROOT / "App/VERSION").read_text(encoding="utf-8").strip()
 if VERSION != "3.0.1-dev.1":
     raise RuntimeError(f"Unexpected source version for Rev1: {VERSION}")
@@ -30,7 +32,7 @@ def is_regenerable_report(path):
         return True
     if path.startswith("Documentation/Supervisor/Results-3.0.1/"):
         return True
-    if any(component in {"Results", "Results-dev6", "Results-dev7", "IndependentAudit"} for component in p.parts[:-1]):
+    if any(component.startswith("Results") or component == "IndependentAudit" for component in p.parts[:-1]):
         return True
     if path in {"Documentation/Risk/build-verification.json", "Documentation/CP1/build-verification.json", "Documentation/ChatBot/build-verification.json"}:
         return True

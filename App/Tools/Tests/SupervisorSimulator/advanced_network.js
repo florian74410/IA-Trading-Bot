@@ -8,6 +8,7 @@ net.Socket.prototype.connect=function(...args){let a=Array.isArray(args[0])?args
 process.env.IATB_SIMULATOR_EXTERNAL_FIXTURES='1';
 require('./external_fixtures');
 require('../../../services/trading-engine/http-transport').requestJson=async request=>{
+ if(request.method==='POST'&&process.env.IATB_OKX_BEFORE_SEND_PAUSE&&fs.existsSync(process.env.IATB_OKX_BEFORE_SEND_PAUSE)){fs.writeFileSync(process.env.IATB_OKX_BEFORE_SEND_PAUSE+'.entered','reserved before HTTP send');await new Promise(()=>{});}
  const u=new URL(request.url);if(!['eea.okx.com','www.okx.com','us.okx.com'].includes(u.hostname))throw Error('SIMULATOR_UNKNOWN_PROVIDER');
  return new Promise((resolve,reject)=>{const q=require('node:http').request({host:'127.0.0.1',port:Number(process.env.IATB_OKX_FIXTURE_PORT),method:request.method||'GET',path:u.pathname+u.search,headers:{...request.headers,'x-fixture-original-host':u.host,...(request.body?{'content-length':Buffer.byteLength(request.body)}:{})},timeout:1000},r=>{let text='';r.on('data',x=>text+=x);r.on('end',()=>{try{resolve({statusCode:r.statusCode,body:JSON.parse(text)})}catch(e){reject(e)}})});q.on('error',reject);q.on('timeout',()=>q.destroy(Error('SIMULATED_BROKER_TIMEOUT')));q.end(request.body);});
 };

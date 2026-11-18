@@ -4,7 +4,7 @@
   "engine_version": "3.0.1-dev.1",
   "transport": "CP/1",
   "source_protocol_registry": "Core/Communication/ProtocolRegistry/trading.json",
-  "source_sha256": "274871b00f5ced314cdfa9abb787d9afad84807d970dd66630a38d39a036ab23",
+  "source_sha256": "7962836724426f106e305dee256ada245da79ad5c919e9c9ca3f327c7399e835",
   "functions": [
     {
       "id": "trading.health",
@@ -238,7 +238,7 @@
       "transport": "CP1",
       "authorization": "Authenticated service identity, authenticated agent session and effective per-command permission.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "825422e6e1a8ec7295ac15dcbe8fffa57ea4aa3af295af71df841a64a6e54062",
+      "handler_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
       "availability_reason": null,
       "timeout_ms": 5000,
       "agent_qualified": true
@@ -278,7 +278,7 @@
       "transport": "CP1",
       "authorization": "Authenticated service identity, authenticated agent session and effective per-command permission.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "825422e6e1a8ec7295ac15dcbe8fffa57ea4aa3af295af71df841a64a6e54062",
+      "handler_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
       "availability_reason": null,
       "timeout_ms": 5000,
       "agent_qualified": true
@@ -352,7 +352,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "825422e6e1a8ec7295ac15dcbe8fffa57ea4aa3af295af71df841a64a6e54062",
+      "handler_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -426,7 +426,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "825422e6e1a8ec7295ac15dcbe8fffa57ea4aa3af295af71df841a64a6e54062",
+      "handler_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -500,7 +500,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "825422e6e1a8ec7295ac15dcbe8fffa57ea4aa3af295af71df841a64a6e54062",
+      "handler_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -612,7 +612,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "825422e6e1a8ec7295ac15dcbe8fffa57ea4aa3af295af71df841a64a6e54062",
+      "handler_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -683,7 +683,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "825422e6e1a8ec7295ac15dcbe8fffa57ea4aa3af295af71df841a64a6e54062",
+      "handler_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -764,7 +764,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "825422e6e1a8ec7295ac15dcbe8fffa57ea4aa3af295af71df841a64a6e54062",
+      "handler_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -811,7 +811,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "825422e6e1a8ec7295ac15dcbe8fffa57ea4aa3af295af71df841a64a6e54062",
+      "handler_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -872,7 +872,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "825422e6e1a8ec7295ac15dcbe8fffa57ea4aa3af295af71df841a64a6e54062",
+      "handler_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -947,11 +947,1250 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "825422e6e1a8ec7295ac15dcbe8fffa57ea4aa3af295af71df841a64a6e54062",
+      "handler_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
+    },
+    {
+      "id": "trading.account.inspect",
+      "engine": "trading",
+      "type": "READ",
+      "risk_level": "HIGH",
+      "input": {
+        "type": "object",
+        "properties": {
+          "exchange": {
+            "const": "OKX"
+          },
+          "account": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 40
+          },
+          "symbol": {
+            "type": "string",
+            "pattern": "^[-A-Z0-9]{3,64}$"
+          },
+          "market_type": {
+            "enum": [
+              "SPOT",
+              "MARGIN",
+              "FUTURES",
+              "SWAP"
+            ]
+          },
+          "metadata": {
+            "type": "object",
+            "required": [
+              "account_ticket"
+            ],
+            "properties": {
+              "account_ticket": {
+                "type": "string",
+                "maxLength": 128
+              }
+            },
+            "additionalProperties": false
+          },
+          "query": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "exchange",
+          "account",
+          "symbol",
+          "market_type",
+          "metadata",
+          "query"
+        ],
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "object"
+      },
+      "transport": "CP1",
+      "description": "Unqualified legacy command",
+      "verified_handler": true,
+      "agent_qualified": false,
+      "hard_deny": true,
+      "authorization": "Unavailable to agents until independently qualified.",
+      "default_privilege": "DENY",
+      "contract_version": "3.0.1-dev.1",
+      "handler_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
+      "source": "services/trading-engine/trading_service.js",
+      "availability_reason": "OWNER_ONLY",
+      "timeout_ms": 8000
+    },
+    {
+      "id": "trading.manual.order",
+      "engine": "trading",
+      "type": "MUTATION",
+      "risk_level": "HIGH",
+      "input": {
+        "type": "object",
+        "properties": {
+          "exchange": {
+            "const": "OKX"
+          },
+          "account": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 40
+          },
+          "symbol": {
+            "type": "string",
+            "pattern": "^[-A-Z0-9]{3,64}$"
+          },
+          "market_type": {
+            "enum": [
+              "SPOT",
+              "MARGIN",
+              "FUTURES",
+              "SWAP"
+            ]
+          },
+          "metadata": {
+            "type": "object",
+            "required": [
+              "account_ticket"
+            ],
+            "properties": {
+              "account_ticket": {
+                "type": "string",
+                "maxLength": 128
+              }
+            },
+            "additionalProperties": false
+          },
+          "spec": {
+            "type": "object",
+            "required": [
+              "kind",
+              "market",
+              "body"
+            ],
+            "properties": {
+              "kind": {
+                "const": "ORDER"
+              },
+              "market": {
+                "enum": [
+                  "SPOT",
+                  "MARGIN",
+                  "SWAP",
+                  "FUTURES"
+                ]
+              },
+              "body": {
+                "type": "object"
+              },
+              "position_id": {
+                "type": "string"
+              },
+              "valuation": {
+                "type": "object",
+                "required": [
+                  "contract_value",
+                  "contract_value_currency",
+                  "contract_type"
+                ],
+                "properties": {
+                  "contract_value": {
+                    "type": "string"
+                  },
+                  "contract_value_currency": {
+                    "type": "string"
+                  },
+                  "contract_type": {
+                    "const": "linear"
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          },
+          "owner": {
+            "type": "string",
+            "pattern": "^CL[A-Za-z0-9_-]{1,64}$"
+          },
+          "plan_id": {
+            "type": "string",
+            "maxLength": 96
+          },
+          "proof": {
+            "type": "string",
+            "maxLength": 1024
+          },
+          "confirmation_digest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "diagnostic_digest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "risk_approval_id": {
+            "type": "string",
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "exchange",
+          "account",
+          "symbol",
+          "market_type",
+          "metadata",
+          "spec",
+          "owner",
+          "plan_id",
+          "proof",
+          "confirmation_digest",
+          "diagnostic_digest",
+          "risk_approval_id"
+        ],
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "object"
+      },
+      "transport": "CP1",
+      "description": "Unqualified legacy command",
+      "verified_handler": true,
+      "agent_qualified": false,
+      "hard_deny": true,
+      "authorization": "Unavailable to agents until independently qualified.",
+      "default_privilege": "DENY",
+      "contract_version": "3.0.1-dev.1",
+      "handler_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
+      "source": "services/trading-engine/trading_service.js",
+      "availability_reason": "OWNER_ONLY",
+      "timeout_ms": 8000
+    },
+    {
+      "id": "trading.manual.algo",
+      "engine": "trading",
+      "type": "MUTATION",
+      "risk_level": "HIGH",
+      "input": {
+        "type": "object",
+        "properties": {
+          "exchange": {
+            "const": "OKX"
+          },
+          "account": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 40
+          },
+          "symbol": {
+            "type": "string",
+            "pattern": "^[-A-Z0-9]{3,64}$"
+          },
+          "market_type": {
+            "enum": [
+              "SPOT",
+              "MARGIN",
+              "FUTURES",
+              "SWAP"
+            ]
+          },
+          "metadata": {
+            "type": "object",
+            "required": [
+              "account_ticket"
+            ],
+            "properties": {
+              "account_ticket": {
+                "type": "string",
+                "maxLength": 128
+              }
+            },
+            "additionalProperties": false
+          },
+          "spec": {
+            "type": "object",
+            "required": [
+              "kind",
+              "market",
+              "body"
+            ],
+            "properties": {
+              "kind": {
+                "const": "ALGO"
+              },
+              "market": {
+                "enum": [
+                  "SPOT",
+                  "MARGIN",
+                  "SWAP",
+                  "FUTURES"
+                ]
+              },
+              "body": {
+                "type": "object"
+              },
+              "position_id": {
+                "type": "string"
+              },
+              "valuation": {
+                "type": "object",
+                "required": [
+                  "contract_value",
+                  "contract_value_currency",
+                  "contract_type"
+                ],
+                "properties": {
+                  "contract_value": {
+                    "type": "string"
+                  },
+                  "contract_value_currency": {
+                    "type": "string"
+                  },
+                  "contract_type": {
+                    "const": "linear"
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          },
+          "owner": {
+            "type": "string",
+            "pattern": "^CL[A-Za-z0-9_-]{1,64}$"
+          },
+          "plan_id": {
+            "type": "string",
+            "maxLength": 96
+          },
+          "proof": {
+            "type": "string",
+            "maxLength": 1024
+          },
+          "confirmation_digest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "diagnostic_digest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "risk_approval_id": {
+            "type": "string",
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "exchange",
+          "account",
+          "symbol",
+          "market_type",
+          "metadata",
+          "spec",
+          "owner",
+          "plan_id",
+          "proof",
+          "confirmation_digest",
+          "diagnostic_digest",
+          "risk_approval_id"
+        ],
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "object"
+      },
+      "transport": "CP1",
+      "description": "Unqualified legacy command",
+      "verified_handler": true,
+      "agent_qualified": false,
+      "hard_deny": true,
+      "authorization": "Unavailable to agents until independently qualified.",
+      "default_privilege": "DENY",
+      "contract_version": "3.0.1-dev.1",
+      "handler_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
+      "source": "services/trading-engine/trading_service.js",
+      "availability_reason": "OWNER_ONLY",
+      "timeout_ms": 8000
+    },
+    {
+      "id": "trading.manual.cancel",
+      "engine": "trading",
+      "type": "MUTATION",
+      "risk_level": "HIGH",
+      "input": {
+        "type": "object",
+        "properties": {
+          "exchange": {
+            "const": "OKX"
+          },
+          "account": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 40
+          },
+          "symbol": {
+            "type": "string",
+            "pattern": "^[-A-Z0-9]{3,64}$"
+          },
+          "market_type": {
+            "enum": [
+              "SPOT",
+              "MARGIN",
+              "FUTURES",
+              "SWAP"
+            ]
+          },
+          "metadata": {
+            "type": "object",
+            "required": [
+              "account_ticket"
+            ],
+            "properties": {
+              "account_ticket": {
+                "type": "string",
+                "maxLength": 128
+              }
+            },
+            "additionalProperties": false
+          },
+          "spec": {
+            "type": "object",
+            "required": [
+              "kind",
+              "market",
+              "body"
+            ],
+            "properties": {
+              "kind": {
+                "const": "CANCEL"
+              },
+              "market": {
+                "enum": [
+                  "SPOT",
+                  "MARGIN",
+                  "SWAP",
+                  "FUTURES"
+                ]
+              },
+              "body": {
+                "type": "object"
+              },
+              "position_id": {
+                "type": "string"
+              },
+              "valuation": {
+                "type": "object",
+                "required": [
+                  "contract_value",
+                  "contract_value_currency",
+                  "contract_type"
+                ],
+                "properties": {
+                  "contract_value": {
+                    "type": "string"
+                  },
+                  "contract_value_currency": {
+                    "type": "string"
+                  },
+                  "contract_type": {
+                    "const": "linear"
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          },
+          "owner": {
+            "type": "string",
+            "pattern": "^CL[A-Za-z0-9_-]{1,64}$"
+          },
+          "plan_id": {
+            "type": "string",
+            "maxLength": 96
+          },
+          "proof": {
+            "type": "string",
+            "maxLength": 1024
+          },
+          "confirmation_digest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "diagnostic_digest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "risk_approval_id": {
+            "type": "string",
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "exchange",
+          "account",
+          "symbol",
+          "market_type",
+          "metadata",
+          "spec",
+          "owner",
+          "plan_id",
+          "proof",
+          "confirmation_digest",
+          "diagnostic_digest",
+          "risk_approval_id"
+        ],
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "object"
+      },
+      "transport": "CP1",
+      "description": "Unqualified legacy command",
+      "verified_handler": true,
+      "agent_qualified": false,
+      "hard_deny": true,
+      "authorization": "Unavailable to agents until independently qualified.",
+      "default_privilege": "DENY",
+      "contract_version": "3.0.1-dev.1",
+      "handler_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
+      "source": "services/trading-engine/trading_service.js",
+      "availability_reason": "OWNER_ONLY",
+      "timeout_ms": 8000
+    },
+    {
+      "id": "trading.manual.amend",
+      "engine": "trading",
+      "type": "MUTATION",
+      "risk_level": "HIGH",
+      "input": {
+        "type": "object",
+        "properties": {
+          "exchange": {
+            "const": "OKX"
+          },
+          "account": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 40
+          },
+          "symbol": {
+            "type": "string",
+            "pattern": "^[-A-Z0-9]{3,64}$"
+          },
+          "market_type": {
+            "enum": [
+              "SPOT",
+              "MARGIN",
+              "FUTURES",
+              "SWAP"
+            ]
+          },
+          "metadata": {
+            "type": "object",
+            "required": [
+              "account_ticket"
+            ],
+            "properties": {
+              "account_ticket": {
+                "type": "string",
+                "maxLength": 128
+              }
+            },
+            "additionalProperties": false
+          },
+          "spec": {
+            "type": "object",
+            "required": [
+              "kind",
+              "market",
+              "body"
+            ],
+            "properties": {
+              "kind": {
+                "const": "AMEND"
+              },
+              "market": {
+                "enum": [
+                  "SPOT",
+                  "MARGIN",
+                  "SWAP",
+                  "FUTURES"
+                ]
+              },
+              "body": {
+                "type": "object"
+              },
+              "position_id": {
+                "type": "string"
+              },
+              "valuation": {
+                "type": "object",
+                "required": [
+                  "contract_value",
+                  "contract_value_currency",
+                  "contract_type"
+                ],
+                "properties": {
+                  "contract_value": {
+                    "type": "string"
+                  },
+                  "contract_value_currency": {
+                    "type": "string"
+                  },
+                  "contract_type": {
+                    "const": "linear"
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          },
+          "owner": {
+            "type": "string",
+            "pattern": "^CL[A-Za-z0-9_-]{1,64}$"
+          },
+          "plan_id": {
+            "type": "string",
+            "maxLength": 96
+          },
+          "proof": {
+            "type": "string",
+            "maxLength": 1024
+          },
+          "confirmation_digest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "diagnostic_digest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "risk_approval_id": {
+            "type": "string",
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "exchange",
+          "account",
+          "symbol",
+          "market_type",
+          "metadata",
+          "spec",
+          "owner",
+          "plan_id",
+          "proof",
+          "confirmation_digest",
+          "diagnostic_digest",
+          "risk_approval_id"
+        ],
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "object"
+      },
+      "transport": "CP1",
+      "description": "Unqualified legacy command",
+      "verified_handler": true,
+      "agent_qualified": false,
+      "hard_deny": true,
+      "authorization": "Unavailable to agents until independently qualified.",
+      "default_privilege": "DENY",
+      "contract_version": "3.0.1-dev.1",
+      "handler_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
+      "source": "services/trading-engine/trading_service.js",
+      "availability_reason": "OWNER_ONLY",
+      "timeout_ms": 8000
+    },
+    {
+      "id": "trading.manual.cancel_algo",
+      "engine": "trading",
+      "type": "MUTATION",
+      "risk_level": "HIGH",
+      "input": {
+        "type": "object",
+        "properties": {
+          "exchange": {
+            "const": "OKX"
+          },
+          "account": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 40
+          },
+          "symbol": {
+            "type": "string",
+            "pattern": "^[-A-Z0-9]{3,64}$"
+          },
+          "market_type": {
+            "enum": [
+              "SPOT",
+              "MARGIN",
+              "FUTURES",
+              "SWAP"
+            ]
+          },
+          "metadata": {
+            "type": "object",
+            "required": [
+              "account_ticket"
+            ],
+            "properties": {
+              "account_ticket": {
+                "type": "string",
+                "maxLength": 128
+              }
+            },
+            "additionalProperties": false
+          },
+          "spec": {
+            "type": "object",
+            "required": [
+              "kind",
+              "market",
+              "body"
+            ],
+            "properties": {
+              "kind": {
+                "const": "CANCEL_ALGO"
+              },
+              "market": {
+                "enum": [
+                  "SPOT",
+                  "MARGIN",
+                  "SWAP",
+                  "FUTURES"
+                ]
+              },
+              "body": {
+                "type": "object"
+              },
+              "position_id": {
+                "type": "string"
+              },
+              "valuation": {
+                "type": "object",
+                "required": [
+                  "contract_value",
+                  "contract_value_currency",
+                  "contract_type"
+                ],
+                "properties": {
+                  "contract_value": {
+                    "type": "string"
+                  },
+                  "contract_value_currency": {
+                    "type": "string"
+                  },
+                  "contract_type": {
+                    "const": "linear"
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          },
+          "owner": {
+            "type": "string",
+            "pattern": "^CL[A-Za-z0-9_-]{1,64}$"
+          },
+          "plan_id": {
+            "type": "string",
+            "maxLength": 96
+          },
+          "proof": {
+            "type": "string",
+            "maxLength": 1024
+          },
+          "confirmation_digest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "diagnostic_digest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "risk_approval_id": {
+            "type": "string",
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "exchange",
+          "account",
+          "symbol",
+          "market_type",
+          "metadata",
+          "spec",
+          "owner",
+          "plan_id",
+          "proof",
+          "confirmation_digest",
+          "diagnostic_digest",
+          "risk_approval_id"
+        ],
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "object"
+      },
+      "transport": "CP1",
+      "description": "Unqualified legacy command",
+      "verified_handler": true,
+      "agent_qualified": false,
+      "hard_deny": true,
+      "authorization": "Unavailable to agents until independently qualified.",
+      "default_privilege": "DENY",
+      "contract_version": "3.0.1-dev.1",
+      "handler_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
+      "source": "services/trading-engine/trading_service.js",
+      "availability_reason": "OWNER_ONLY",
+      "timeout_ms": 8000
+    },
+    {
+      "id": "trading.manual.amend_algo",
+      "engine": "trading",
+      "type": "MUTATION",
+      "risk_level": "HIGH",
+      "input": {
+        "type": "object",
+        "properties": {
+          "exchange": {
+            "const": "OKX"
+          },
+          "account": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 40
+          },
+          "symbol": {
+            "type": "string",
+            "pattern": "^[-A-Z0-9]{3,64}$"
+          },
+          "market_type": {
+            "enum": [
+              "SPOT",
+              "MARGIN",
+              "FUTURES",
+              "SWAP"
+            ]
+          },
+          "metadata": {
+            "type": "object",
+            "required": [
+              "account_ticket"
+            ],
+            "properties": {
+              "account_ticket": {
+                "type": "string",
+                "maxLength": 128
+              }
+            },
+            "additionalProperties": false
+          },
+          "spec": {
+            "type": "object",
+            "required": [
+              "kind",
+              "market",
+              "body"
+            ],
+            "properties": {
+              "kind": {
+                "const": "AMEND_ALGO"
+              },
+              "market": {
+                "enum": [
+                  "SPOT",
+                  "MARGIN",
+                  "SWAP",
+                  "FUTURES"
+                ]
+              },
+              "body": {
+                "type": "object"
+              },
+              "position_id": {
+                "type": "string"
+              },
+              "valuation": {
+                "type": "object",
+                "required": [
+                  "contract_value",
+                  "contract_value_currency",
+                  "contract_type"
+                ],
+                "properties": {
+                  "contract_value": {
+                    "type": "string"
+                  },
+                  "contract_value_currency": {
+                    "type": "string"
+                  },
+                  "contract_type": {
+                    "const": "linear"
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          },
+          "owner": {
+            "type": "string",
+            "pattern": "^CL[A-Za-z0-9_-]{1,64}$"
+          },
+          "plan_id": {
+            "type": "string",
+            "maxLength": 96
+          },
+          "proof": {
+            "type": "string",
+            "maxLength": 1024
+          },
+          "confirmation_digest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "diagnostic_digest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "risk_approval_id": {
+            "type": "string",
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "exchange",
+          "account",
+          "symbol",
+          "market_type",
+          "metadata",
+          "spec",
+          "owner",
+          "plan_id",
+          "proof",
+          "confirmation_digest",
+          "diagnostic_digest",
+          "risk_approval_id"
+        ],
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "object"
+      },
+      "transport": "CP1",
+      "description": "Unqualified legacy command",
+      "verified_handler": true,
+      "agent_qualified": false,
+      "hard_deny": true,
+      "authorization": "Unavailable to agents until independently qualified.",
+      "default_privilege": "DENY",
+      "contract_version": "3.0.1-dev.1",
+      "handler_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
+      "source": "services/trading-engine/trading_service.js",
+      "availability_reason": "OWNER_ONLY",
+      "timeout_ms": 8000
+    },
+    {
+      "id": "trading.manual.leverage",
+      "engine": "trading",
+      "type": "MUTATION",
+      "risk_level": "HIGH",
+      "input": {
+        "type": "object",
+        "properties": {
+          "exchange": {
+            "const": "OKX"
+          },
+          "account": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 40
+          },
+          "symbol": {
+            "type": "string",
+            "pattern": "^[-A-Z0-9]{3,64}$"
+          },
+          "market_type": {
+            "enum": [
+              "SPOT",
+              "MARGIN",
+              "FUTURES",
+              "SWAP"
+            ]
+          },
+          "metadata": {
+            "type": "object",
+            "required": [
+              "account_ticket"
+            ],
+            "properties": {
+              "account_ticket": {
+                "type": "string",
+                "maxLength": 128
+              }
+            },
+            "additionalProperties": false
+          },
+          "spec": {
+            "type": "object",
+            "required": [
+              "kind",
+              "market",
+              "body"
+            ],
+            "properties": {
+              "kind": {
+                "const": "LEVERAGE"
+              },
+              "market": {
+                "enum": [
+                  "SPOT",
+                  "MARGIN",
+                  "SWAP",
+                  "FUTURES"
+                ]
+              },
+              "body": {
+                "type": "object"
+              },
+              "position_id": {
+                "type": "string"
+              },
+              "valuation": {
+                "type": "object",
+                "required": [
+                  "contract_value",
+                  "contract_value_currency",
+                  "contract_type"
+                ],
+                "properties": {
+                  "contract_value": {
+                    "type": "string"
+                  },
+                  "contract_value_currency": {
+                    "type": "string"
+                  },
+                  "contract_type": {
+                    "const": "linear"
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          },
+          "owner": {
+            "type": "string",
+            "pattern": "^CL[A-Za-z0-9_-]{1,64}$"
+          },
+          "plan_id": {
+            "type": "string",
+            "maxLength": 96
+          },
+          "proof": {
+            "type": "string",
+            "maxLength": 1024
+          },
+          "confirmation_digest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "diagnostic_digest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "risk_approval_id": {
+            "type": "string",
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "exchange",
+          "account",
+          "symbol",
+          "market_type",
+          "metadata",
+          "spec",
+          "owner",
+          "plan_id",
+          "proof",
+          "confirmation_digest",
+          "diagnostic_digest",
+          "risk_approval_id"
+        ],
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "object"
+      },
+      "transport": "CP1",
+      "description": "Unqualified legacy command",
+      "verified_handler": true,
+      "agent_qualified": false,
+      "hard_deny": true,
+      "authorization": "Unavailable to agents until independently qualified.",
+      "default_privilege": "DENY",
+      "contract_version": "3.0.1-dev.1",
+      "handler_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
+      "source": "services/trading-engine/trading_service.js",
+      "availability_reason": "OWNER_ONLY",
+      "timeout_ms": 8000
+    },
+    {
+      "id": "trading.manual.batch",
+      "engine": "trading",
+      "type": "MUTATION",
+      "risk_level": "HIGH",
+      "input": {
+        "type": "object",
+        "properties": {
+          "exchange": {
+            "const": "OKX"
+          },
+          "account": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 40
+          },
+          "symbol": {
+            "type": "string",
+            "pattern": "^[-A-Z0-9]{3,64}$"
+          },
+          "market_type": {
+            "enum": [
+              "SPOT",
+              "MARGIN",
+              "FUTURES",
+              "SWAP"
+            ]
+          },
+          "metadata": {
+            "type": "object",
+            "required": [
+              "account_ticket"
+            ],
+            "properties": {
+              "account_ticket": {
+                "type": "string",
+                "maxLength": 128
+              }
+            },
+            "additionalProperties": false
+          },
+          "spec": {
+            "type": "object",
+            "required": [
+              "kind",
+              "market",
+              "body"
+            ],
+            "properties": {
+              "kind": {
+                "const": "BATCH"
+              },
+              "market": {
+                "enum": [
+                  "SPOT",
+                  "MARGIN",
+                  "SWAP",
+                  "FUTURES"
+                ]
+              },
+              "body": {
+                "type": "object"
+              },
+              "position_id": {
+                "type": "string"
+              },
+              "valuation": {
+                "type": "object",
+                "required": [
+                  "contract_value",
+                  "contract_value_currency",
+                  "contract_type"
+                ],
+                "properties": {
+                  "contract_value": {
+                    "type": "string"
+                  },
+                  "contract_value_currency": {
+                    "type": "string"
+                  },
+                  "contract_type": {
+                    "const": "linear"
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          },
+          "owner": {
+            "type": "string",
+            "pattern": "^CL[A-Za-z0-9_-]{1,64}$"
+          },
+          "plan_id": {
+            "type": "string",
+            "maxLength": 96
+          },
+          "proof": {
+            "type": "string",
+            "maxLength": 1024
+          },
+          "confirmation_digest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "diagnostic_digest": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "risk_approval_id": {
+            "type": "string",
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "exchange",
+          "account",
+          "symbol",
+          "market_type",
+          "metadata",
+          "spec",
+          "owner",
+          "plan_id",
+          "proof",
+          "confirmation_digest",
+          "diagnostic_digest",
+          "risk_approval_id"
+        ],
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "object"
+      },
+      "transport": "CP1",
+      "description": "Unqualified legacy command",
+      "verified_handler": true,
+      "agent_qualified": false,
+      "hard_deny": true,
+      "authorization": "Unavailable to agents until independently qualified.",
+      "default_privilege": "DENY",
+      "contract_version": "3.0.1-dev.1",
+      "handler_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
+      "source": "services/trading-engine/trading_service.js",
+      "availability_reason": "OWNER_ONLY",
+      "timeout_ms": 8000
     }
   ],
-  "revision_hash": "5e720fcf0dad6d47d41389135e27f89430e79e08406c737c4edf3b4707f37c08"
+  "revision_hash": "d35fc338d0a8d1f9ebd5f7ac11f53209b907af9d033c31c32b89c80584a56483"
 }
