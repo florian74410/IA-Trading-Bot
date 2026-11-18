@@ -7,8 +7,8 @@ const assert=require('node:assert/strict');
 const path=require('node:path');
 const Module=require('node:module');
 const {LocalSnapshotWriter}=require('../../Core/Backup/snapshot_coordinator');
-const bridgePath=require.resolve('../../Fundamental/Engine/database');
-const legacyDb=path.resolve(__dirname,'../../Fundamental/Data/fundamental.db');
+const bridgePath=require.resolve("../../Engines/Fundamental/Engine/database");
+const legacyDb=path.resolve(__dirname,"../../Engines/Fundamental/Data/fundamental.db");
 const targetDir='/fictional-iatb-data/Fundamental';
 const targetDb=targetDir+'/fundamental.db';
 

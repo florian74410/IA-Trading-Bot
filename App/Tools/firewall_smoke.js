@@ -18,7 +18,7 @@ const env={...process.env,
  IATB_TRADING_LIVE:'0',IATB_DEBUG_BOOTSTRAP:'0',IATB_DEBUG_MODE:'0'
 };
 let logs='';
-const child=cp.spawn(process.execPath,['Core/Firewall/firewall_service.js'],{
+const child=cp.spawn(process.execPath,["Engines/Firewall/firewall_service.js"],{
  cwd:path.resolve(__dirname,'..'),env,stdio:['ignore','pipe','pipe']
 });
 child.stdout.on('data',x=>logs+=x.toString());
@@ -68,7 +68,7 @@ function request(method,uri,data){return new Promise((resolve,reject)=>{
   const changed=await request('POST','/api/thread/config',{thread:'data',patch:{maxPayloadBytes:500000}});
   assert.equal(changed.code,200,'Config HTTP '+changed.code+' '+JSON.stringify(changed.data));
   assert.equal(JSON.parse(fs.readFileSync(config,'utf8')).maxPayloadBytes,500000);
-  assert.equal(fs.existsSync(path.resolve(__dirname,'../Core/Firewall/Config/MarketData/rules.json')),true);
+  assert.equal(fs.existsSync(path.resolve(__dirname,"../Engines/Firewall/Config/MarketData/rules.json")),true);
   console.log('FIREWALL EXTERNAL CONFIG WRITE: OK');
   const restart=await request('POST','/api/thread/restart',{thread:'data'});
   assert.equal(restart.code,200,'Restart HTTP '+restart.code);

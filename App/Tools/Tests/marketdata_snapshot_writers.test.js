@@ -16,9 +16,9 @@ class FakeSqliteCompat {
   close() {this.closed=true;operations.push({kind:'close'});}
 }
 require.cache[adapterPath]={id:adapterPath,filename:adapterPath,loaded:true,exports:FakeSqliteCompat};
-const Registry=require('../../MarketData/Registry/market_registry');
-const Telemetry=require('../../MarketData/Storage/api_telemetry_store');
-const Microstructure=require('../../MarketData/Storage/microstructure_store');
+const Registry=require("../../Engines/MarketData/Registry/market_registry");
+const Telemetry=require("../../Engines/MarketData/Storage/api_telemetry_store");
+const Microstructure=require("../../Engines/MarketData/Storage/microstructure_store");
 
 const cases=[
   {id:'registry',Class:Registry,fileKey:'dbPath',writeName:'upsertAssets',writeArgs:[[{id:'fictional',symbol:'TEST',name:'Fixture'}]],methods:['init','upsertAssets','upsertDetail','get','search','list','query','status','close','run']},

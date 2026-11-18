@@ -8,7 +8,7 @@
   "marker": "IA-TB Indicator Engine",
   "restartable": true,
   "defaultEnabled": true,
-  "script": "Indicators/Engine/indicator_service.js",
+  "script": "Engines/Indicators/Engine/indicator_service.js",
   "log": ".runtime/logs/indicator.log",
   "env": {
     "IATB_INDICATOR_PORT": "8012",

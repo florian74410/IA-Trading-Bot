@@ -1,0 +1,1067 @@
+{
+  "checkpoint": "c7a7841c7c47ac63edf19f0a7973ec3ecf5a1ab3",
+  "stages": [
+    {
+      "source_report": "Documentation/Architecture/Rev3/Results/rev3-firewall-commands.json",
+      "original_sha256": "6f478293b5a203b5b54e808865b08474c7e2c6c0d6f209e2842075ada4d5ae45",
+      "recovery_commit": "c7a7841c7c47ac63edf19f0a7973ec3ecf5a1ab3",
+      "result": "PASS",
+      "engines": [
+        {
+          "engine": "trading",
+          "commands_before": 20,
+          "commands_after": 20,
+          "qualified_before": 11,
+          "qualified_after": 11,
+          "implementation_before": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
+          "implementation_after": "3df3d388b7ade17d22e3dfad53139ad1d7c7828d04ffb9c7b1c4a59ca29134ee",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "firewall",
+          "commands_before": 3,
+          "commands_after": 3,
+          "qualified_before": 1,
+          "qualified_after": 1,
+          "implementation_before": "2aa28b5c65f7546563b90f9e5f0b93eebfaeb73e47fa2da9d8971deefedd3340",
+          "implementation_after": "cc054bb65937ec1e76ba5c6e52f3216ab1de16ba90d12f131df70826628af551",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "fundamental",
+          "commands_before": 63,
+          "commands_after": 63,
+          "qualified_before": 2,
+          "qualified_after": 2,
+          "implementation_before": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+          "implementation_after": "167f034f5cd427e8d7a3354d55122243602850521dfe7ac7d6798482d6441ada",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "indicator",
+          "commands_before": 26,
+          "commands_after": 26,
+          "qualified_before": 3,
+          "qualified_after": 3,
+          "implementation_before": "dab54601e6177b1be05f6e3e1f0566edffb0ebf1eed834a274ba95906fbb8cf9",
+          "implementation_after": "a7c4b6e2675b4dc91b063cce41082c6199d750e1353fbc45ea979dc258cd8e51",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "liquidity",
+          "commands_before": 15,
+          "commands_after": 15,
+          "qualified_before": 2,
+          "qualified_after": 2,
+          "implementation_before": "266962aa83a44cb53215618b78e43b739ffacabb9417412efa28bc537468cc68",
+          "implementation_after": "4f9b436171b2957f6ffa20521e39ad30646e8cdeed8fe66b2c1711f2d9be4928",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "marketdata",
+          "commands_before": 42,
+          "commands_after": 42,
+          "qualified_before": 5,
+          "qualified_after": 5,
+          "implementation_before": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+          "implementation_after": "ddc8c7e8ab5beae1903e421e30a035c5afa0c9664fac428d72dbfea08dfb177a",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "portfolio",
+          "commands_before": 20,
+          "commands_after": 20,
+          "qualified_before": 2,
+          "qualified_after": 2,
+          "implementation_before": "800e2c78be5036ee2be0e80145187643192902343dae4719b8c8b94cc8adbe61",
+          "implementation_after": "d299f81c90dc43217a21024929d348818cb1b8e8b18498ed28772c6d0928c270",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "risk",
+          "commands_before": 18,
+          "commands_after": 18,
+          "qualified_before": 8,
+          "qualified_after": 8,
+          "implementation_before": "6b787a4fe67015fc2f70733a14e37ab5d4e3407a321e2c5f4f38c43be7f239cc",
+          "implementation_after": "741946fa6a36561b2d4937612952b09e26f5eec7cb33a5b215988273bf3efca9",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "strategy",
+          "commands_before": 13,
+          "commands_after": 13,
+          "qualified_before": 3,
+          "qualified_after": 3,
+          "implementation_before": "272d8b8c0d5d1139c0b52d8f6f47783b30dadbbc3ffbe7ab5f520ab9ce65ee0b",
+          "implementation_after": "00d9f7e485d55af7dae97feed339a8c77056986a82f41e116c34d6186043e324",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "supervisor",
+          "commands_before": 38,
+          "commands_after": 38,
+          "qualified_before": 14,
+          "qualified_after": 14,
+          "implementation_before": "8c217a7f82569ece1ed57bfece2a4f8b4c8cd8c83d1fbbbb7025b1c952c64b1d",
+          "implementation_after": "585d62715ae3ae364b915f436a2c6b36a09952d19f21bd222bca750c65ba0172",
+          "changed": true,
+          "result": "PASS"
+        }
+      ]
+    },
+    {
+      "source_report": "Documentation/Architecture/Rev3/Results/rev3-fundamental-commands.json",
+      "original_sha256": "dd1fa671d97484f51cfb6630d8966b9f830aac05faec7d87d5c8127eaab03443",
+      "recovery_commit": "c7a7841c7c47ac63edf19f0a7973ec3ecf5a1ab3",
+      "result": "PASS",
+      "engines": [
+        {
+          "engine": "trading",
+          "commands_before": 20,
+          "commands_after": 20,
+          "qualified_before": 11,
+          "qualified_after": 11,
+          "implementation_before": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
+          "implementation_after": "3df3d388b7ade17d22e3dfad53139ad1d7c7828d04ffb9c7b1c4a59ca29134ee",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "firewall",
+          "commands_before": 3,
+          "commands_after": 3,
+          "qualified_before": 1,
+          "qualified_after": 1,
+          "implementation_before": "2aa28b5c65f7546563b90f9e5f0b93eebfaeb73e47fa2da9d8971deefedd3340",
+          "implementation_after": "cc054bb65937ec1e76ba5c6e52f3216ab1de16ba90d12f131df70826628af551",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "fundamental",
+          "commands_before": 63,
+          "commands_after": 63,
+          "qualified_before": 2,
+          "qualified_after": 2,
+          "implementation_before": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+          "implementation_after": "0ec3aa481c41f68d385143e59a010a1edb4329f5fcab6e8898e2a2a4ab2acc6f",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "indicator",
+          "commands_before": 26,
+          "commands_after": 26,
+          "qualified_before": 3,
+          "qualified_after": 3,
+          "implementation_before": "dab54601e6177b1be05f6e3e1f0566edffb0ebf1eed834a274ba95906fbb8cf9",
+          "implementation_after": "a7c4b6e2675b4dc91b063cce41082c6199d750e1353fbc45ea979dc258cd8e51",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "liquidity",
+          "commands_before": 15,
+          "commands_after": 15,
+          "qualified_before": 2,
+          "qualified_after": 2,
+          "implementation_before": "266962aa83a44cb53215618b78e43b739ffacabb9417412efa28bc537468cc68",
+          "implementation_after": "4f9b436171b2957f6ffa20521e39ad30646e8cdeed8fe66b2c1711f2d9be4928",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "marketdata",
+          "commands_before": 42,
+          "commands_after": 42,
+          "qualified_before": 5,
+          "qualified_after": 5,
+          "implementation_before": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+          "implementation_after": "ddc8c7e8ab5beae1903e421e30a035c5afa0c9664fac428d72dbfea08dfb177a",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "portfolio",
+          "commands_before": 20,
+          "commands_after": 20,
+          "qualified_before": 2,
+          "qualified_after": 2,
+          "implementation_before": "800e2c78be5036ee2be0e80145187643192902343dae4719b8c8b94cc8adbe61",
+          "implementation_after": "d299f81c90dc43217a21024929d348818cb1b8e8b18498ed28772c6d0928c270",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "risk",
+          "commands_before": 18,
+          "commands_after": 18,
+          "qualified_before": 8,
+          "qualified_after": 8,
+          "implementation_before": "6b787a4fe67015fc2f70733a14e37ab5d4e3407a321e2c5f4f38c43be7f239cc",
+          "implementation_after": "741946fa6a36561b2d4937612952b09e26f5eec7cb33a5b215988273bf3efca9",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "strategy",
+          "commands_before": 13,
+          "commands_after": 13,
+          "qualified_before": 3,
+          "qualified_after": 3,
+          "implementation_before": "272d8b8c0d5d1139c0b52d8f6f47783b30dadbbc3ffbe7ab5f520ab9ce65ee0b",
+          "implementation_after": "00d9f7e485d55af7dae97feed339a8c77056986a82f41e116c34d6186043e324",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "supervisor",
+          "commands_before": 38,
+          "commands_after": 38,
+          "qualified_before": 14,
+          "qualified_after": 14,
+          "implementation_before": "8c217a7f82569ece1ed57bfece2a4f8b4c8cd8c83d1fbbbb7025b1c952c64b1d",
+          "implementation_after": "585d62715ae3ae364b915f436a2c6b36a09952d19f21bd222bca750c65ba0172",
+          "changed": true,
+          "result": "PASS"
+        }
+      ]
+    },
+    {
+      "source_report": "Documentation/Architecture/Rev3/Results/rev3-indicator-commands.json",
+      "original_sha256": "aaad8371811712c5d0563f446b84c4b16785fa4306eb63f289fc3a5e442b25e6",
+      "recovery_commit": "c7a7841c7c47ac63edf19f0a7973ec3ecf5a1ab3",
+      "result": "PASS",
+      "engines": [
+        {
+          "engine": "trading",
+          "commands_before": 20,
+          "commands_after": 20,
+          "qualified_before": 11,
+          "qualified_after": 11,
+          "implementation_before": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
+          "implementation_after": "3df3d388b7ade17d22e3dfad53139ad1d7c7828d04ffb9c7b1c4a59ca29134ee",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "firewall",
+          "commands_before": 3,
+          "commands_after": 3,
+          "qualified_before": 1,
+          "qualified_after": 1,
+          "implementation_before": "2aa28b5c65f7546563b90f9e5f0b93eebfaeb73e47fa2da9d8971deefedd3340",
+          "implementation_after": "cc054bb65937ec1e76ba5c6e52f3216ab1de16ba90d12f131df70826628af551",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "fundamental",
+          "commands_before": 63,
+          "commands_after": 63,
+          "qualified_before": 2,
+          "qualified_after": 2,
+          "implementation_before": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+          "implementation_after": "0ec3aa481c41f68d385143e59a010a1edb4329f5fcab6e8898e2a2a4ab2acc6f",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "indicator",
+          "commands_before": 26,
+          "commands_after": 26,
+          "qualified_before": 3,
+          "qualified_after": 3,
+          "implementation_before": "dab54601e6177b1be05f6e3e1f0566edffb0ebf1eed834a274ba95906fbb8cf9",
+          "implementation_after": "285589717ad9e8d3e9b2ea8ccf865ac1e853ff7aabdc4ea980e3211342829b31",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "liquidity",
+          "commands_before": 15,
+          "commands_after": 15,
+          "qualified_before": 2,
+          "qualified_after": 2,
+          "implementation_before": "266962aa83a44cb53215618b78e43b739ffacabb9417412efa28bc537468cc68",
+          "implementation_after": "4f9b436171b2957f6ffa20521e39ad30646e8cdeed8fe66b2c1711f2d9be4928",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "marketdata",
+          "commands_before": 42,
+          "commands_after": 42,
+          "qualified_before": 5,
+          "qualified_after": 5,
+          "implementation_before": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+          "implementation_after": "ddc8c7e8ab5beae1903e421e30a035c5afa0c9664fac428d72dbfea08dfb177a",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "portfolio",
+          "commands_before": 20,
+          "commands_after": 20,
+          "qualified_before": 2,
+          "qualified_after": 2,
+          "implementation_before": "800e2c78be5036ee2be0e80145187643192902343dae4719b8c8b94cc8adbe61",
+          "implementation_after": "d299f81c90dc43217a21024929d348818cb1b8e8b18498ed28772c6d0928c270",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "risk",
+          "commands_before": 18,
+          "commands_after": 18,
+          "qualified_before": 8,
+          "qualified_after": 8,
+          "implementation_before": "6b787a4fe67015fc2f70733a14e37ab5d4e3407a321e2c5f4f38c43be7f239cc",
+          "implementation_after": "741946fa6a36561b2d4937612952b09e26f5eec7cb33a5b215988273bf3efca9",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "strategy",
+          "commands_before": 13,
+          "commands_after": 13,
+          "qualified_before": 3,
+          "qualified_after": 3,
+          "implementation_before": "272d8b8c0d5d1139c0b52d8f6f47783b30dadbbc3ffbe7ab5f520ab9ce65ee0b",
+          "implementation_after": "00d9f7e485d55af7dae97feed339a8c77056986a82f41e116c34d6186043e324",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "supervisor",
+          "commands_before": 38,
+          "commands_after": 38,
+          "qualified_before": 14,
+          "qualified_after": 14,
+          "implementation_before": "8c217a7f82569ece1ed57bfece2a4f8b4c8cd8c83d1fbbbb7025b1c952c64b1d",
+          "implementation_after": "585d62715ae3ae364b915f436a2c6b36a09952d19f21bd222bca750c65ba0172",
+          "changed": true,
+          "result": "PASS"
+        }
+      ]
+    },
+    {
+      "source_report": "Documentation/Architecture/Rev3/Results/rev3-liquidity-commands.json",
+      "original_sha256": "58ca1684ef3c14663e1b940924a74eb0f1636e3f7b7103e90312d38ce617e93b",
+      "recovery_commit": "c7a7841c7c47ac63edf19f0a7973ec3ecf5a1ab3",
+      "result": "PASS",
+      "engines": [
+        {
+          "engine": "trading",
+          "commands_before": 20,
+          "commands_after": 20,
+          "qualified_before": 11,
+          "qualified_after": 11,
+          "implementation_before": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
+          "implementation_after": "1c455923cb5087859e479ade24535fe355e68e86074188f08f768d315fcd8064",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "firewall",
+          "commands_before": 3,
+          "commands_after": 3,
+          "qualified_before": 1,
+          "qualified_after": 1,
+          "implementation_before": "2aa28b5c65f7546563b90f9e5f0b93eebfaeb73e47fa2da9d8971deefedd3340",
+          "implementation_after": "a1464c5bec1bb22918c416b94a833004533ca25218004ef7e2cdc5ddd5815d40",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "fundamental",
+          "commands_before": 63,
+          "commands_after": 63,
+          "qualified_before": 2,
+          "qualified_after": 2,
+          "implementation_before": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+          "implementation_after": "b4fbf7e7fe36729f43abff81ab499feede0f03062d71d60be25fc07803c0f725",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "indicator",
+          "commands_before": 26,
+          "commands_after": 26,
+          "qualified_before": 3,
+          "qualified_after": 3,
+          "implementation_before": "dab54601e6177b1be05f6e3e1f0566edffb0ebf1eed834a274ba95906fbb8cf9",
+          "implementation_after": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "liquidity",
+          "commands_before": 15,
+          "commands_after": 15,
+          "qualified_before": 2,
+          "qualified_after": 2,
+          "implementation_before": "266962aa83a44cb53215618b78e43b739ffacabb9417412efa28bc537468cc68",
+          "implementation_after": "ffe79eabbc239047d991246155f80c39aec8dc30b5e56bf279ba89d11b908602",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "marketdata",
+          "commands_before": 42,
+          "commands_after": 42,
+          "qualified_before": 5,
+          "qualified_after": 5,
+          "implementation_before": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+          "implementation_after": "0bd24663b5effb1c6713e4e3bce58e5c3efb0e7eb7dbba88e4293fd6502e8e61",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "portfolio",
+          "commands_before": 20,
+          "commands_after": 20,
+          "qualified_before": 2,
+          "qualified_after": 2,
+          "implementation_before": "800e2c78be5036ee2be0e80145187643192902343dae4719b8c8b94cc8adbe61",
+          "implementation_after": "331534e245b4e3fdd06bed77b9660f3a45b2f789c3ddceb1b7f6028fefc01ddd",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "risk",
+          "commands_before": 18,
+          "commands_after": 18,
+          "qualified_before": 8,
+          "qualified_after": 8,
+          "implementation_before": "6b787a4fe67015fc2f70733a14e37ab5d4e3407a321e2c5f4f38c43be7f239cc",
+          "implementation_after": "4048fa438c7a0814a28d28abcc9d505c99f79004e3bb838f6a2aa5caf4c894f0",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "strategy",
+          "commands_before": 13,
+          "commands_after": 13,
+          "qualified_before": 3,
+          "qualified_after": 3,
+          "implementation_before": "272d8b8c0d5d1139c0b52d8f6f47783b30dadbbc3ffbe7ab5f520ab9ce65ee0b",
+          "implementation_after": "12250d1390bcae922e08d9d8ce8e6c69836d2eee1bfa22e1d8cb0f632f5b2a50",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "supervisor",
+          "commands_before": 38,
+          "commands_after": 38,
+          "qualified_before": 14,
+          "qualified_after": 14,
+          "implementation_before": "8c217a7f82569ece1ed57bfece2a4f8b4c8cd8c83d1fbbbb7025b1c952c64b1d",
+          "implementation_after": "32b9fe0f4bbc72c93e78f84891fab25c1ef25e1d5128382d8e5e445bc2758acf",
+          "changed": true,
+          "result": "PASS"
+        }
+      ]
+    },
+    {
+      "source_report": "Documentation/Architecture/Rev3/Results/rev3-marketdata-commands.json",
+      "original_sha256": "4b761a45ca1b2a25cc247b1d01300300cfc89bfca1ae3e60117d90597c46a087",
+      "recovery_commit": "c7a7841c7c47ac63edf19f0a7973ec3ecf5a1ab3",
+      "result": "PASS",
+      "engines": [
+        {
+          "engine": "trading",
+          "commands_before": 20,
+          "commands_after": 20,
+          "qualified_before": 11,
+          "qualified_after": 11,
+          "implementation_before": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
+          "implementation_after": "1c455923cb5087859e479ade24535fe355e68e86074188f08f768d315fcd8064",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "firewall",
+          "commands_before": 3,
+          "commands_after": 3,
+          "qualified_before": 1,
+          "qualified_after": 1,
+          "implementation_before": "2aa28b5c65f7546563b90f9e5f0b93eebfaeb73e47fa2da9d8971deefedd3340",
+          "implementation_after": "a1464c5bec1bb22918c416b94a833004533ca25218004ef7e2cdc5ddd5815d40",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "fundamental",
+          "commands_before": 63,
+          "commands_after": 63,
+          "qualified_before": 2,
+          "qualified_after": 2,
+          "implementation_before": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+          "implementation_after": "b4fbf7e7fe36729f43abff81ab499feede0f03062d71d60be25fc07803c0f725",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "indicator",
+          "commands_before": 26,
+          "commands_after": 26,
+          "qualified_before": 3,
+          "qualified_after": 3,
+          "implementation_before": "dab54601e6177b1be05f6e3e1f0566edffb0ebf1eed834a274ba95906fbb8cf9",
+          "implementation_after": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "liquidity",
+          "commands_before": 15,
+          "commands_after": 15,
+          "qualified_before": 2,
+          "qualified_after": 2,
+          "implementation_before": "266962aa83a44cb53215618b78e43b739ffacabb9417412efa28bc537468cc68",
+          "implementation_after": "ffe79eabbc239047d991246155f80c39aec8dc30b5e56bf279ba89d11b908602",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "marketdata",
+          "commands_before": 42,
+          "commands_after": 42,
+          "qualified_before": 5,
+          "qualified_after": 5,
+          "implementation_before": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+          "implementation_after": "b49cc2b749acd4d8b633b889fef2b4e52215ea929ea449412c3cf56489e95f7a",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "portfolio",
+          "commands_before": 20,
+          "commands_after": 20,
+          "qualified_before": 2,
+          "qualified_after": 2,
+          "implementation_before": "800e2c78be5036ee2be0e80145187643192902343dae4719b8c8b94cc8adbe61",
+          "implementation_after": "331534e245b4e3fdd06bed77b9660f3a45b2f789c3ddceb1b7f6028fefc01ddd",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "risk",
+          "commands_before": 18,
+          "commands_after": 18,
+          "qualified_before": 8,
+          "qualified_after": 8,
+          "implementation_before": "6b787a4fe67015fc2f70733a14e37ab5d4e3407a321e2c5f4f38c43be7f239cc",
+          "implementation_after": "4048fa438c7a0814a28d28abcc9d505c99f79004e3bb838f6a2aa5caf4c894f0",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "strategy",
+          "commands_before": 13,
+          "commands_after": 13,
+          "qualified_before": 3,
+          "qualified_after": 3,
+          "implementation_before": "272d8b8c0d5d1139c0b52d8f6f47783b30dadbbc3ffbe7ab5f520ab9ce65ee0b",
+          "implementation_after": "12250d1390bcae922e08d9d8ce8e6c69836d2eee1bfa22e1d8cb0f632f5b2a50",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "supervisor",
+          "commands_before": 38,
+          "commands_after": 38,
+          "qualified_before": 14,
+          "qualified_after": 14,
+          "implementation_before": "8c217a7f82569ece1ed57bfece2a4f8b4c8cd8c83d1fbbbb7025b1c952c64b1d",
+          "implementation_after": "32b9fe0f4bbc72c93e78f84891fab25c1ef25e1d5128382d8e5e445bc2758acf",
+          "changed": true,
+          "result": "PASS"
+        }
+      ]
+    },
+    {
+      "source_report": "Documentation/Architecture/Rev3/Results/rev3-portfolio-commands.json",
+      "original_sha256": "c29a0e8f149fe6ccc696df834db925ad3e2be3e7621b9785d8097a94f68f7751",
+      "recovery_commit": "c7a7841c7c47ac63edf19f0a7973ec3ecf5a1ab3",
+      "result": "PASS",
+      "engines": [
+        {
+          "engine": "trading",
+          "commands_before": 20,
+          "commands_after": 20,
+          "qualified_before": 11,
+          "qualified_after": 11,
+          "implementation_before": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
+          "implementation_after": "1c455923cb5087859e479ade24535fe355e68e86074188f08f768d315fcd8064",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "firewall",
+          "commands_before": 3,
+          "commands_after": 3,
+          "qualified_before": 1,
+          "qualified_after": 1,
+          "implementation_before": "2aa28b5c65f7546563b90f9e5f0b93eebfaeb73e47fa2da9d8971deefedd3340",
+          "implementation_after": "a1464c5bec1bb22918c416b94a833004533ca25218004ef7e2cdc5ddd5815d40",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "fundamental",
+          "commands_before": 63,
+          "commands_after": 63,
+          "qualified_before": 2,
+          "qualified_after": 2,
+          "implementation_before": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+          "implementation_after": "b4fbf7e7fe36729f43abff81ab499feede0f03062d71d60be25fc07803c0f725",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "indicator",
+          "commands_before": 26,
+          "commands_after": 26,
+          "qualified_before": 3,
+          "qualified_after": 3,
+          "implementation_before": "dab54601e6177b1be05f6e3e1f0566edffb0ebf1eed834a274ba95906fbb8cf9",
+          "implementation_after": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "liquidity",
+          "commands_before": 15,
+          "commands_after": 15,
+          "qualified_before": 2,
+          "qualified_after": 2,
+          "implementation_before": "266962aa83a44cb53215618b78e43b739ffacabb9417412efa28bc537468cc68",
+          "implementation_after": "ffe79eabbc239047d991246155f80c39aec8dc30b5e56bf279ba89d11b908602",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "marketdata",
+          "commands_before": 42,
+          "commands_after": 42,
+          "qualified_before": 5,
+          "qualified_after": 5,
+          "implementation_before": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+          "implementation_after": "b49cc2b749acd4d8b633b889fef2b4e52215ea929ea449412c3cf56489e95f7a",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "portfolio",
+          "commands_before": 20,
+          "commands_after": 20,
+          "qualified_before": 2,
+          "qualified_after": 2,
+          "implementation_before": "800e2c78be5036ee2be0e80145187643192902343dae4719b8c8b94cc8adbe61",
+          "implementation_after": "8eb6742bcc01e121838dd777d5ae0ead4014a351771d76e266556046cb73ea68",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "risk",
+          "commands_before": 18,
+          "commands_after": 18,
+          "qualified_before": 8,
+          "qualified_after": 8,
+          "implementation_before": "6b787a4fe67015fc2f70733a14e37ab5d4e3407a321e2c5f4f38c43be7f239cc",
+          "implementation_after": "4048fa438c7a0814a28d28abcc9d505c99f79004e3bb838f6a2aa5caf4c894f0",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "strategy",
+          "commands_before": 13,
+          "commands_after": 13,
+          "qualified_before": 3,
+          "qualified_after": 3,
+          "implementation_before": "272d8b8c0d5d1139c0b52d8f6f47783b30dadbbc3ffbe7ab5f520ab9ce65ee0b",
+          "implementation_after": "12250d1390bcae922e08d9d8ce8e6c69836d2eee1bfa22e1d8cb0f632f5b2a50",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "supervisor",
+          "commands_before": 38,
+          "commands_after": 38,
+          "qualified_before": 14,
+          "qualified_after": 14,
+          "implementation_before": "8c217a7f82569ece1ed57bfece2a4f8b4c8cd8c83d1fbbbb7025b1c952c64b1d",
+          "implementation_after": "32b9fe0f4bbc72c93e78f84891fab25c1ef25e1d5128382d8e5e445bc2758acf",
+          "changed": true,
+          "result": "PASS"
+        }
+      ]
+    },
+    {
+      "source_report": "Documentation/Architecture/Rev3/Results/rev3-risk-commands.json",
+      "original_sha256": "259c76df9c001332ab6092985dcc3d0001130a8fbda3af151d9a27f47f3c981f",
+      "recovery_commit": "c7a7841c7c47ac63edf19f0a7973ec3ecf5a1ab3",
+      "result": "PASS",
+      "engines": [
+        {
+          "engine": "trading",
+          "commands_before": 20,
+          "commands_after": 20,
+          "qualified_before": 11,
+          "qualified_after": 11,
+          "implementation_before": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
+          "implementation_after": "9fa1a7c3365a84cd7bdaf552df2646d2c1f975620031f4aced5b9a325935d679",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "firewall",
+          "commands_before": 3,
+          "commands_after": 3,
+          "qualified_before": 1,
+          "qualified_after": 1,
+          "implementation_before": "2aa28b5c65f7546563b90f9e5f0b93eebfaeb73e47fa2da9d8971deefedd3340",
+          "implementation_after": "99aeb315d1707229e6687b88c6ea633be19aa17e4b86750fcf312c67d1be6dec",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "fundamental",
+          "commands_before": 63,
+          "commands_after": 63,
+          "qualified_before": 2,
+          "qualified_after": 2,
+          "implementation_before": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+          "implementation_after": "b4fbf7e7fe36729f43abff81ab499feede0f03062d71d60be25fc07803c0f725",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "indicator",
+          "commands_before": 26,
+          "commands_after": 26,
+          "qualified_before": 3,
+          "qualified_after": 3,
+          "implementation_before": "dab54601e6177b1be05f6e3e1f0566edffb0ebf1eed834a274ba95906fbb8cf9",
+          "implementation_after": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "liquidity",
+          "commands_before": 15,
+          "commands_after": 15,
+          "qualified_before": 2,
+          "qualified_after": 2,
+          "implementation_before": "266962aa83a44cb53215618b78e43b739ffacabb9417412efa28bc537468cc68",
+          "implementation_after": "ffe79eabbc239047d991246155f80c39aec8dc30b5e56bf279ba89d11b908602",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "marketdata",
+          "commands_before": 42,
+          "commands_after": 42,
+          "qualified_before": 5,
+          "qualified_after": 5,
+          "implementation_before": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+          "implementation_after": "b49cc2b749acd4d8b633b889fef2b4e52215ea929ea449412c3cf56489e95f7a",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "portfolio",
+          "commands_before": 20,
+          "commands_after": 20,
+          "qualified_before": 2,
+          "qualified_after": 2,
+          "implementation_before": "800e2c78be5036ee2be0e80145187643192902343dae4719b8c8b94cc8adbe61",
+          "implementation_after": "0bdb1b294103dc4b0c3c95b5e0b590a76c8ce9cb2bd5165f5c94c557922aadf2",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "risk",
+          "commands_before": 18,
+          "commands_after": 18,
+          "qualified_before": 8,
+          "qualified_after": 8,
+          "implementation_before": "6b787a4fe67015fc2f70733a14e37ab5d4e3407a321e2c5f4f38c43be7f239cc",
+          "implementation_after": "5e997d4b70a28e013480574cb4cbab96a1bbaebca0a05f12976c663be0993e6b",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "strategy",
+          "commands_before": 13,
+          "commands_after": 13,
+          "qualified_before": 3,
+          "qualified_after": 3,
+          "implementation_before": "272d8b8c0d5d1139c0b52d8f6f47783b30dadbbc3ffbe7ab5f520ab9ce65ee0b",
+          "implementation_after": "12250d1390bcae922e08d9d8ce8e6c69836d2eee1bfa22e1d8cb0f632f5b2a50",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "supervisor",
+          "commands_before": 38,
+          "commands_after": 38,
+          "qualified_before": 14,
+          "qualified_after": 14,
+          "implementation_before": "8c217a7f82569ece1ed57bfece2a4f8b4c8cd8c83d1fbbbb7025b1c952c64b1d",
+          "implementation_after": "92ac2eb1bd4713bc57fe5c9864928c636725cc7fc78fc45360507117e0c61081",
+          "changed": true,
+          "result": "PASS"
+        }
+      ]
+    },
+    {
+      "source_report": "Documentation/Architecture/Rev3/Results/rev3-strategy-commands.json",
+      "original_sha256": "52f19ebc6f9a75b96438909c81f152b511aa2ae934966db537111d1de5105a44",
+      "recovery_commit": "c7a7841c7c47ac63edf19f0a7973ec3ecf5a1ab3",
+      "result": "PASS",
+      "engines": [
+        {
+          "engine": "trading",
+          "commands_before": 20,
+          "commands_after": 20,
+          "qualified_before": 11,
+          "qualified_after": 11,
+          "implementation_before": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
+          "implementation_after": "9fa1a7c3365a84cd7bdaf552df2646d2c1f975620031f4aced5b9a325935d679",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "firewall",
+          "commands_before": 3,
+          "commands_after": 3,
+          "qualified_before": 1,
+          "qualified_after": 1,
+          "implementation_before": "2aa28b5c65f7546563b90f9e5f0b93eebfaeb73e47fa2da9d8971deefedd3340",
+          "implementation_after": "99aeb315d1707229e6687b88c6ea633be19aa17e4b86750fcf312c67d1be6dec",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "fundamental",
+          "commands_before": 63,
+          "commands_after": 63,
+          "qualified_before": 2,
+          "qualified_after": 2,
+          "implementation_before": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+          "implementation_after": "b4fbf7e7fe36729f43abff81ab499feede0f03062d71d60be25fc07803c0f725",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "indicator",
+          "commands_before": 26,
+          "commands_after": 26,
+          "qualified_before": 3,
+          "qualified_after": 3,
+          "implementation_before": "dab54601e6177b1be05f6e3e1f0566edffb0ebf1eed834a274ba95906fbb8cf9",
+          "implementation_after": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "liquidity",
+          "commands_before": 15,
+          "commands_after": 15,
+          "qualified_before": 2,
+          "qualified_after": 2,
+          "implementation_before": "266962aa83a44cb53215618b78e43b739ffacabb9417412efa28bc537468cc68",
+          "implementation_after": "ffe79eabbc239047d991246155f80c39aec8dc30b5e56bf279ba89d11b908602",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "marketdata",
+          "commands_before": 42,
+          "commands_after": 42,
+          "qualified_before": 5,
+          "qualified_after": 5,
+          "implementation_before": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+          "implementation_after": "b49cc2b749acd4d8b633b889fef2b4e52215ea929ea449412c3cf56489e95f7a",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "portfolio",
+          "commands_before": 20,
+          "commands_after": 20,
+          "qualified_before": 2,
+          "qualified_after": 2,
+          "implementation_before": "800e2c78be5036ee2be0e80145187643192902343dae4719b8c8b94cc8adbe61",
+          "implementation_after": "0bdb1b294103dc4b0c3c95b5e0b590a76c8ce9cb2bd5165f5c94c557922aadf2",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "risk",
+          "commands_before": 18,
+          "commands_after": 18,
+          "qualified_before": 8,
+          "qualified_after": 8,
+          "implementation_before": "6b787a4fe67015fc2f70733a14e37ab5d4e3407a321e2c5f4f38c43be7f239cc",
+          "implementation_after": "5e997d4b70a28e013480574cb4cbab96a1bbaebca0a05f12976c663be0993e6b",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "strategy",
+          "commands_before": 13,
+          "commands_after": 13,
+          "qualified_before": 3,
+          "qualified_after": 3,
+          "implementation_before": "272d8b8c0d5d1139c0b52d8f6f47783b30dadbbc3ffbe7ab5f520ab9ce65ee0b",
+          "implementation_after": "5bcd2fde5b4d6d521b2aab0af7bd5109f5f9717141ba7be8034ddf7284d02fa5",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "supervisor",
+          "commands_before": 38,
+          "commands_after": 38,
+          "qualified_before": 14,
+          "qualified_after": 14,
+          "implementation_before": "8c217a7f82569ece1ed57bfece2a4f8b4c8cd8c83d1fbbbb7025b1c952c64b1d",
+          "implementation_after": "92ac2eb1bd4713bc57fe5c9864928c636725cc7fc78fc45360507117e0c61081",
+          "changed": true,
+          "result": "PASS"
+        }
+      ]
+    },
+    {
+      "source_report": "Documentation/Architecture/Rev3/Results/rev3-trading-commands.json",
+      "original_sha256": "79a02d0d6ef99c42e5c6f628a5ed26c7973da9b6fabc4341cd98f4410f0d2ef0",
+      "recovery_commit": "c7a7841c7c47ac63edf19f0a7973ec3ecf5a1ab3",
+      "result": "PASS",
+      "engines": [
+        {
+          "engine": "trading",
+          "commands_before": 20,
+          "commands_after": 20,
+          "qualified_before": 11,
+          "qualified_after": 11,
+          "implementation_before": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
+          "implementation_after": "3df3d388b7ade17d22e3dfad53139ad1d7c7828d04ffb9c7b1c4a59ca29134ee",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "firewall",
+          "commands_before": 3,
+          "commands_after": 3,
+          "qualified_before": 1,
+          "qualified_after": 1,
+          "implementation_before": "2aa28b5c65f7546563b90f9e5f0b93eebfaeb73e47fa2da9d8971deefedd3340",
+          "implementation_after": "684b56857d62bac2e49a15d3573c25f5b41141e3c81784314f09045bbb2d19ab",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "fundamental",
+          "commands_before": 63,
+          "commands_after": 63,
+          "qualified_before": 2,
+          "qualified_after": 2,
+          "implementation_before": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+          "implementation_after": "167f034f5cd427e8d7a3354d55122243602850521dfe7ac7d6798482d6441ada",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "indicator",
+          "commands_before": 26,
+          "commands_after": 26,
+          "qualified_before": 3,
+          "qualified_after": 3,
+          "implementation_before": "dab54601e6177b1be05f6e3e1f0566edffb0ebf1eed834a274ba95906fbb8cf9",
+          "implementation_after": "a7c4b6e2675b4dc91b063cce41082c6199d750e1353fbc45ea979dc258cd8e51",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "liquidity",
+          "commands_before": 15,
+          "commands_after": 15,
+          "qualified_before": 2,
+          "qualified_after": 2,
+          "implementation_before": "266962aa83a44cb53215618b78e43b739ffacabb9417412efa28bc537468cc68",
+          "implementation_after": "4f9b436171b2957f6ffa20521e39ad30646e8cdeed8fe66b2c1711f2d9be4928",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "marketdata",
+          "commands_before": 42,
+          "commands_after": 42,
+          "qualified_before": 5,
+          "qualified_after": 5,
+          "implementation_before": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+          "implementation_after": "ddc8c7e8ab5beae1903e421e30a035c5afa0c9664fac428d72dbfea08dfb177a",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "portfolio",
+          "commands_before": 20,
+          "commands_after": 20,
+          "qualified_before": 2,
+          "qualified_after": 2,
+          "implementation_before": "800e2c78be5036ee2be0e80145187643192902343dae4719b8c8b94cc8adbe61",
+          "implementation_after": "d299f81c90dc43217a21024929d348818cb1b8e8b18498ed28772c6d0928c270",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "risk",
+          "commands_before": 18,
+          "commands_after": 18,
+          "qualified_before": 8,
+          "qualified_after": 8,
+          "implementation_before": "6b787a4fe67015fc2f70733a14e37ab5d4e3407a321e2c5f4f38c43be7f239cc",
+          "implementation_after": "741946fa6a36561b2d4937612952b09e26f5eec7cb33a5b215988273bf3efca9",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "strategy",
+          "commands_before": 13,
+          "commands_after": 13,
+          "qualified_before": 3,
+          "qualified_after": 3,
+          "implementation_before": "272d8b8c0d5d1139c0b52d8f6f47783b30dadbbc3ffbe7ab5f520ab9ce65ee0b",
+          "implementation_after": "00d9f7e485d55af7dae97feed339a8c77056986a82f41e116c34d6186043e324",
+          "changed": true,
+          "result": "PASS"
+        },
+        {
+          "engine": "supervisor",
+          "commands_before": 38,
+          "commands_after": 38,
+          "qualified_before": 14,
+          "qualified_after": 14,
+          "implementation_before": "8c217a7f82569ece1ed57bfece2a4f8b4c8cd8c83d1fbbbb7025b1c952c64b1d",
+          "implementation_after": "585d62715ae3ae364b915f436a2c6b36a09952d19f21bd222bca750c65ba0172",
+          "changed": true,
+          "result": "PASS"
+        }
+      ]
+    }
+  ]
+}

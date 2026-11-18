@@ -10,14 +10,14 @@ const path=require('node:path');
 const WRITERS=Object.freeze([
  ['Core/Clients/client_repository.js','sqlite','clients'],
  ['Core/Settings/sqlite_settings_store.js','sqlite','settings'],
- ['Portfolio/Engine/portfolio_store.js','sqlite','portfolio'],
- ['Fundamental/Engine/database_core.js','sqlite','fundamental-core'],
- ['Fundamental/Engine/database.js','sqlite','fundamental-legacy'],
- ['MarketData/Registry/market_registry.js','sqlite','registry'],
- ['MarketData/Storage/api_telemetry_store.js','sqlite','telemetry'],
- ['MarketData/Storage/microstructure_store.js','sqlite','microstructure'],
- ['MarketData/Financial/financial_store.js','jsonl','financial'],
- ['services/trading-engine/history-store.js','jsonl','trading-history'],
+ ["Engines/Portfolio/Engine/portfolio_store.js",'sqlite','portfolio'],
+ ["Engines/Fundamental/Engine/database_core.js",'sqlite','fundamental-core'],
+ ["Engines/Fundamental/Engine/database.js",'sqlite','fundamental-legacy'],
+ ["Engines/MarketData/Registry/market_registry.js",'sqlite','registry'],
+ ["Engines/MarketData/Storage/api_telemetry_store.js",'sqlite','telemetry'],
+ ["Engines/MarketData/Storage/microstructure_store.js",'sqlite','microstructure'],
+ ["Engines/MarketData/Financial/financial_store.js",'jsonl','financial'],
+ ["Engines/Trading/history-store.js",'jsonl','trading-history'],
  ['Core/Services/usage_ledger_v1.js','jsonl','usage-ledger'],
  ['Core/Mosaics/mosaic_store_v1.0.js','annex','mosaics']
 ].map(([file,kind,id])=>Object.freeze({file,kind,id,gate:'snapshotGate'})));

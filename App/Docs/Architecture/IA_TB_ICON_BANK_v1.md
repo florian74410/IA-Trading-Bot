@@ -46,7 +46,7 @@ The inventory was derived from the active v2.0 DEBUG tree and covers:
 - Market Data and Liquidity;
 - Portfolio;
 - Risk, Firewall, Router and CP/1;
-- Supervisor/AI;
+- Engines/Supervisor/AI;
 - Admin/debug/service lifecycle;
 - server/network/cache/database/API infrastructure.
 

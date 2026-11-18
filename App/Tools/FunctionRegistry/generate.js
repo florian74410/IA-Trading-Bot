@@ -3,7 +3,7 @@
 const fs=require('fs'),path=require('path'),crypto=require('crypto');
 const root=path.resolve(__dirname,'../..');
 const registry=path.join(root,'Core/Communication/ProtocolRegistry');
-const map={core:'Core',router:'Core/Router',supervisor:'Supervisor',marketdata:'MarketData',fundamental:'Fundamental',indicator:'Indicators',liquidity:'Liquidity',portfolio:'Portfolio',risk:'Risk',strategy:'Strategy',trading:'services/trading-engine',firewall:'Core/Firewall'};
+const map={core:'Core',router:'Core/Router',supervisor:"Engines/Supervisor",marketdata:"Engines/MarketData",fundamental:"Engines/Fundamental",indicator:"Engines/Indicators",liquidity:"Engines/Liquidity",portfolio:"Engines/Portfolio",risk:"Engines/Risk",strategy:"Engines/Strategy",trading:"Engines/Trading",firewall:"Engines/Firewall"};
 const version=require('../../Core/Shared/build_info').version;
 const checksum=v=>crypto.createHash('sha256').update(JSON.stringify(v)).digest('hex');
 function classify(name){if(/private.key|secret|seed|withdraw|export.key/i.test(name))return ['CRITICAL',true,'SECRET'];
@@ -11,8 +11,8 @@ if(/execute|place|cancel|close.position|swap|transfer|settings.set|delete|create
 if(/verify|gate|evaluate|validate|test|probe/i.test(name))return ['MEDIUM',false,'EVALUATION'];
 return ['LOW',false,'READ'];}
 function enrich(item,engine){const control=require('../../Core/FunctionRegistry/Control/catalog');if(control.folders[engine]){const row=control.manifest(root,engine).functions.find(f=>f.id===item.name);if(row)return row;}const name=item.name, args=item.arguments||{},type=classify(name);
-const accountRead=require('../../Portfolio/Engine/okx_contracts').enrich(item,engine);if(accountRead)return accountRead;
-if(engine==='risk'){const audited=require('../../Risk/Snapshots/contracts').enrich(name);if(audited)return audited;}
+const accountRead=require("../../Engines/Portfolio/Engine/okx_contracts").enrich(item,engine);if(accountRead)return accountRead;
+if(engine==='risk'){const audited=require("../../Engines/Risk/Snapshots/contracts").enrich(name);if(audited)return audited;}
 return {id:name,engine,type:type[2],risk_level:type[0],hard_deny:type[1],
   description:item.description||('Commande CP/1 '+name+' du composant '+engine+'. Contrat de sortie à compléter après inspection de son handler.'),
   input:{type:'object',required:args.required||[],properties:Object.fromEntries((args.allowed||[]).map(n=>[n,{type:'unknown',description:'Type à vérifier dans le handler de '+name}])),additionalProperties:!!args.allowUnknown},

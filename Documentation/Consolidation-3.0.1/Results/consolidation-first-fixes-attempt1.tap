@@ -1,0 +1,100 @@
+(node:14) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+TAP version 13
+# (node:21) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: trial boundary cannot be activated by partial flags
+ok 1 - trial boundary cannot be activated by partial flags
+  ---
+  duration_ms: 1.629298
+  type: 'test'
+  ...
+# Subtest: Gateway forwards only Auth21 routes and denies legacy pages and API
+ok 2 - Gateway forwards only Auth21 routes and denies legacy pages and API
+  ---
+  duration_ms: 1.365317
+  type: 'test'
+  ...
+# Subtest: Router denies CP1, market data and fallback-to-Core in isolated mode
+ok 3 - Router denies CP1, market data and fallback-to-Core in isolated mode
+  ---
+  duration_ms: 1.586368
+  type: 'test'
+  ...
+# Subtest: Engine direct HTTP paths default deny in isolated mode
+ok 4 - Engine direct HTTP paths default deny in isolated mode
+  ---
+  duration_ms: 0.261706
+  type: 'test'
+  ...
+# Subtest: real service HTTP entrypoints invoke the isolated boundary before legacy handlers
+ok 5 - real service HTTP entrypoints invoke the isolated boundary before legacy handlers
+  ---
+  duration_ms: 1.67853
+  type: 'test'
+  ...
+# Subtest: gateway method allowlist never forwards writes as reads or unknown operations
+ok 6 - gateway method allowlist never forwards writes as reads or unknown operations
+  ---
+  duration_ms: 0.380588
+  type: 'test'
+  ...
+# (node:22) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Engine layout preserves the existing Fundamental SQLite database and private roots
+ok 7 - Engine layout preserves the existing Fundamental SQLite database and private roots
+  ---
+  duration_ms: 157.40223
+  type: 'test'
+  ...
+# Subtest: relocated Indicator code keeps preexisting shared custom definitions in their data directory
+not ok 8 - relocated Indicator code keeps preexisting shared custom definitions in their data directory
+  ---
+  duration_ms: 7.487724
+  type: 'test'
+  location: '/workspace/scratch/6bed0bea6f2d/iatb-advanced/App/Tools/Tests/engines_persistent_layout.test.js:20:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + undefined
+    - '/tmp/iatb-indicator-layout-OVHzoG/App/Indicators/Custom/preexisting_rsi.indicator.json'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: '/tmp/iatb-indicator-layout-OVHzoG/App/Indicators/Custom/preexisting_rsi.indicator.json'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/workspace/scratch/6bed0bea6f2d/iatb-advanced/App/Tools/Tests/engines_persistent_layout.test.js:25:58)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# (node:28) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: path migration distinguishes code prefixes from storage segments
+ok 9 - path migration distinguishes code prefixes from storage segments
+  ---
+  duration_ms: 8.121343
+  type: 'test'
+  ...
+# Subtest: path arrays used dynamically are migrated with their owning file
+ok 10 - path arrays used dynamically are migrated with their owning file
+  ---
+  duration_ms: 1.184471
+  type: 'test'
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 9
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 402.176868

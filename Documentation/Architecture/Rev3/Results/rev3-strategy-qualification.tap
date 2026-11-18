@@ -1,0 +1,584 @@
+(node:1914) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+TAP version 13
+# (node:1921) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: actual Engines publish and execute through authenticated TLS Core, Supervisor Gateway and Router
+ok 1 - actual Engines publish and execute through authenticated TLS Core, Supervisor Gateway and Router
+  ---
+  duration_ms: 21797.164537
+  type: 'test'
+  ...
+# (node:2118) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: advanced manual trading through Auth21, real services and isolated HTTP OKX V5
+    # Subtest: T01 Market Buy
+    ok 1 - T01 Market Buy
+      ---
+      duration_ms: 721.813231
+      type: 'test'
+      ...
+    # Subtest: T02 Market Sell
+    ok 2 - T02 Market Sell
+      ---
+      duration_ms: 481.888816
+      type: 'test'
+      ...
+    # Subtest: T03 Limit Buy OPEN
+    ok 3 - T03 Limit Buy OPEN
+      ---
+      duration_ms: 483.447366
+      type: 'test'
+      ...
+    # Subtest: T04 Limit Sell later FILLED
+    ok 4 - T04 Limit Sell later FILLED
+      ---
+      duration_ms: 455.787715
+      type: 'test'
+      ...
+    # Subtest: T05 Post only rejection
+    ok 5 - T05 Post only rejection
+      ---
+      duration_ms: 368.627441
+      type: 'test'
+      ...
+    # Subtest: T06 IOC partial fill
+    ok 6 - T06 IOC partial fill
+      ---
+      duration_ms: 509.69314
+      type: 'test'
+      ...
+    # Subtest: T07 FOK rejection
+    ok 7 - T07 FOK rejection
+      ---
+      duration_ms: 375.642523
+      type: 'test'
+      ...
+    # Subtest: T08 Cancel open order
+    ok 8 - T08 Cancel open order
+      ---
+      duration_ms: 904.454583
+      type: 'test'
+      ...
+    # Subtest: T09 Cancel filled order
+    ok 9 - T09 Cancel filled order
+      ---
+      duration_ms: 652.348426
+      type: 'test'
+      ...
+    # Subtest: T10 Amend price
+    ok 10 - T10 Amend price
+      ---
+      duration_ms: 970.935195
+      type: 'test'
+      ...
+    # Subtest: T11 Amend size refused
+    ok 11 - T11 Amend size refused
+      ---
+      duration_ms: 1112.29376
+      type: 'test'
+      ...
+    # Subtest: T12 Independent Take Profit
+    ok 12 - T12 Independent Take Profit
+      ---
+      duration_ms: 608.565689
+      type: 'test'
+      ...
+    # Subtest: T13 Independent Stop Loss
+    ok 13 - T13 Independent Stop Loss
+      ---
+      duration_ms: 469.81228
+      type: 'test'
+      ...
+    # Subtest: T14 Parent attached TP SL
+    ok 14 - T14 Parent attached TP SL
+      ---
+      duration_ms: 532.665035
+      type: 'test'
+      ...
+    # Subtest: T15 Parent partial protection inactive
+    ok 15 - T15 Parent partial protection inactive
+      ---
+      duration_ms: 651.742572
+      type: 'test'
+      ...
+    # Subtest: T16 Parent filled protection verified
+    ok 16 - T16 Parent filled protection verified
+      ---
+      duration_ms: 689.426792
+      type: 'test'
+      ...
+    # Subtest: T17 Trailing ratio
+    ok 17 - T17 Trailing ratio
+      ---
+      duration_ms: 524.969342
+      type: 'test'
+      ...
+    # Subtest: T18 Trailing spread
+    ok 18 - T18 Trailing spread
+      ---
+      duration_ms: 559.498915
+      type: 'test'
+      ...
+    # Subtest: T19 Trailing deferred activation
+    ok 19 - T19 Trailing deferred activation
+      ---
+      duration_ms: 531.129742
+      type: 'test'
+      ...
+    # Subtest: T20 Cancel algo
+    ok 20 - T20 Cancel algo
+      ---
+      duration_ms: 908.923222
+      type: 'test'
+      ...
+    # Subtest: T21 Unsupported trailing amendment
+    ok 21 - T21 Unsupported trailing amendment
+      ---
+      duration_ms: 601.758574
+      type: 'test'
+      ...
+    # Subtest: T22 Triggered child rejected
+    ok 22 - T22 Triggered child rejected
+      ---
+      duration_ms: 581.327225
+      type: 'test'
+      ...
+    # Subtest: T23 Read leverage
+    ok 23 - T23 Read leverage
+      ---
+      duration_ms: 196.136392
+      type: 'test'
+      ...
+    # Subtest: T24 Leverage verified independently
+    ok 24 - T24 Leverage verified independently
+      ---
+      duration_ms: 494.379107
+      type: 'test'
+      ...
+    # Subtest: T25 Leverage broker reject
+    ok 25 - T25 Leverage broker reject
+      ---
+      duration_ms: 537.907562
+      type: 'test'
+      ...
+    # Subtest: T26 LONG open
+    ok 26 - T26 LONG open
+      ---
+      duration_ms: 462.694851
+      type: 'test'
+      ...
+    # Subtest: T27 SHORT open
+    ok 27 - T27 SHORT open
+      ---
+      duration_ms: 476.57332
+      type: 'test'
+      ...
+    # Subtest: T28 Partial close
+    ok 28 - T28 Partial close
+      ---
+      duration_ms: 436.560428
+      type: 'test'
+      ...
+    # Subtest: T29 Full close verified
+    ok 29 - T29 Full close verified
+      ---
+      duration_ms: 501.975028
+      type: 'test'
+      ...
+    # Subtest: T30 Hedge mode close
+    ok 30 - T30 Hedge mode close
+      ---
+      duration_ms: 475.667953
+      type: 'test'
+      ...
+    # Subtest: T31 Isolated vs cross
+    ok 31 - T31 Isolated vs cross
+      ---
+      duration_ms: 536.370649
+      type: 'test'
+      ...
+    # Subtest: T32 Contract quantity exact
+    ok 32 - T32 Contract quantity exact
+      ---
+      duration_ms: 497.113411
+      type: 'test'
+      ...
+    # Subtest: T33 Invalid Auth21 session
+    ok 33 - T33 Invalid Auth21 session
+      ---
+      duration_ms: 167.253976
+      type: 'test'
+      ...
+    # Subtest: T34 Other owner account
+    ok 34 - T34 Other owner account
+      ---
+      duration_ms: 171.873466
+      type: 'test'
+      ...
+    # Subtest: T35 Missing confirmation
+    ok 35 - T35 Missing confirmation
+      ---
+      duration_ms: 327.325031
+      type: 'test'
+      ...
+    # Subtest: T36 Mutated confirmation
+    ok 36 - T36 Mutated confirmation
+      ---
+      duration_ms: 332.296121
+      type: 'test'
+      ...
+    # Subtest: T37 Confirmation replay
+    ok 37 - T37 Confirmation replay
+      ---
+      duration_ms: 589.523371
+      type: 'test'
+      ...
+    # Subtest: T38 Approval bound to exact spec
+    ok 38 - T38 Approval bound to exact spec
+      ---
+      duration_ms: 378.11337
+      type: 'test'
+      ...
+    # Subtest: T39 Firewall unavailable
+    ok 39 - T39 Firewall unavailable
+      ---
+      duration_ms: 722.58224
+      type: 'test'
+      ...
+    # Subtest: T40 Emergency halt
+    ok 40 - T40 Emergency halt
+      ---
+      duration_ms: 497.569318
+      type: 'test'
+      ...
+    # Subtest: T41 Cognitive gateway cannot mutate
+    ok 41 - T41 Cognitive gateway cannot mutate
+      ---
+      duration_ms: 192.299905
+      type: 'test'
+      ...
+    # Subtest: T42 Real OKX network denied
+    ok 42 - T42 Real OKX network denied
+      ---
+      duration_ms: 381.699017
+      type: 'test'
+      ...
+    # Subtest: T43 Timeout after accepted submission
+    ok 43 - T43 Timeout after accepted submission
+      ---
+      duration_ms: 1590.840109
+      type: 'test'
+      ...
+    # Subtest: T44 Lost broker response
+    ok 44 - T44 Lost broker response
+      ---
+      duration_ms: 617.772628
+      type: 'test'
+      ...
+    # Subtest: T45 Crash after durable reservation before HTTP send
+    ok 45 - T45 Crash after durable reservation before HTTP send
+      ---
+      duration_ms: 1039.902156
+      type: 'test'
+      ...
+    # Subtest: T46 Crash after send before ACK
+    ok 46 - T46 Crash after send before ACK
+      ---
+      duration_ms: 1035.542596
+      type: 'test'
+      ...
+    # Subtest: T47 Late broker result
+    ok 47 - T47 Late broker result
+      ---
+      duration_ms: 765.083477
+      type: 'test'
+      ...
+    # Subtest: T48 Core coordinator reopen reconciliation
+    ok 48 - T48 Core coordinator reopen reconciliation
+      ---
+      duration_ms: 684.542159
+      type: 'test'
+      ...
+    # Subtest: T49 Portfolio unavailable durable queue
+    ok 49 - T49 Portfolio unavailable durable queue
+      ---
+      duration_ms: 3172.903191
+      type: 'test'
+      ...
+    # Subtest: T50 Portfolio events idempotent
+    ok 50 - T50 Portfolio events idempotent
+      ---
+      duration_ms: 5227.731183
+      type: 'test'
+      ...
+    # Subtest: T51 Concurrent same balance
+    ok 51 - T51 Concurrent same balance
+      ---
+      duration_ms: 1616.961548
+      type: 'test'
+      ...
+    # Subtest: T52 Same order simultaneous confirmations
+    ok 52 - T52 Same order simultaneous confirmations
+      ---
+      duration_ms: 859.402479
+      type: 'test'
+      ...
+    # Subtest: T53 Independent request after rejection
+    ok 53 - T53 Independent request after rejection
+      ---
+      duration_ms: 1217.744421
+      type: 'test'
+      ...
+    # Subtest: T54 Essential step rejects dependent chain
+    ok 54 - T54 Essential step rejects dependent chain
+      ---
+      duration_ms: 777.022773
+      type: 'test'
+      ...
+    # Subtest: T55 Batch partial acceptance per item
+    ok 55 - T55 Batch partial acceptance per item
+      ---
+      duration_ms: 773.20951
+      type: 'test'
+      ...
+    # Subtest: T56 LOCAL Limit
+    ok 56 - T56 LOCAL Limit
+      ---
+      duration_ms: 824.186247
+      type: 'test'
+      ...
+    # Subtest: T57 LOCAL TP SL
+    ok 57 - T57 LOCAL TP SL
+      ---
+      duration_ms: 562.175026
+      type: 'test'
+      ...
+    # Subtest: T58 LOCAL trailing 2 percent
+    ok 58 - T58 LOCAL trailing 2 percent
+      ---
+      duration_ms: 569.804268
+      type: 'test'
+      ...
+    # Subtest: T59 LOCAL leverage
+    ok 59 - T59 LOCAL leverage
+      ---
+      duration_ms: 620.914646
+      type: 'test'
+      ...
+    # Subtest: T60 Missing target clarification
+    ok 60 - T60 Missing target clarification
+      ---
+      duration_ms: 484.89082
+      type: 'test'
+      ...
+    # Subtest: T61 Unknown metrics remain null
+    ok 61 - T61 Unknown metrics remain null
+      ---
+      duration_ms: 840.318055
+      type: 'test'
+      ...
+    # Subtest: T62 Exact confirmation and risk consent
+    ok 62 - T62 Exact confirmation and risk consent
+      ---
+      duration_ms: 874.900908
+      type: 'test'
+      ...
+    # Subtest: T63 Rejection notification
+    ok 63 - T63 Rejection notification
+      ---
+      duration_ms: 934.371451
+      type: 'test'
+      ...
+    # Subtest: T64 Partial execution notification
+    ok 64 - T64 Partial execution notification
+      ---
+      duration_ms: 1113.82748
+      type: 'test'
+      ...
+    # Subtest: T65 History exact owner and states
+    ok 65 - T65 History exact owner and states
+      ---
+      duration_ms: 982.849473
+      type: 'test'
+      ...
+    # Subtest: Q01 MARGIN account-mode and currency
+    ok 66 - Q01 MARGIN account-mode and currency
+      ---
+      duration_ms: 961.718214
+      type: 'test'
+      ...
+    # Subtest: Q02 FUTURES linear contracts
+    ok 67 - Q02 FUTURES linear contracts
+      ---
+      duration_ms: 967.62847
+      type: 'test'
+      ...
+    # Subtest: Q03 Trigger amendment
+    ok 68 - Q03 Trigger amendment
+      ---
+      duration_ms: 1417.967625
+      type: 'test'
+      ...
+    # Subtest: Q04 Fees unavailable accepted only after consent
+    ok 69 - Q04 Fees unavailable accepted only after consent
+      ---
+      duration_ms: 911.609258
+      type: 'test'
+      ...
+    # Subtest: Q05 Known insufficient funds remain mandatory
+    ok 70 - Q05 Known insufficient funds remain mandatory
+      ---
+      duration_ms: 457.427941
+      type: 'test'
+      ...
+    # Subtest: Q06 Known fee reserve prevents overspending
+    ok 71 - Q06 Known fee reserve prevents overspending
+      ---
+      duration_ms: 542.030367
+      type: 'test'
+      ...
+    # Subtest: Q07 Account instrument unavailable
+    ok 72 - Q07 Account instrument unavailable
+      ---
+      duration_ms: 487.294959
+      type: 'test'
+      ...
+    # Subtest: Q08 Price precision mandatory
+    ok 73 - Q08 Price precision mandatory
+      ---
+      duration_ms: 497.654419
+      type: 'test'
+      ...
+    # Subtest: Q09 Unknown position never substituted
+    ok 74 - Q09 Unknown position never substituted
+      ---
+      duration_ms: 545.070872
+      type: 'test'
+      ...
+    # Subtest: Q10 Distinct leverage and LONG plan
+    ok 75 - Q10 Distinct leverage and LONG plan
+      ---
+      duration_ms: 1023.161297
+      type: 'test'
+      ...
+    # Subtest: Q11 Dependent protection waits for fill
+    ok 76 - Q11 Dependent protection waits for fill
+      ---
+      duration_ms: 1173.356369
+      type: 'test'
+      ...
+    # Subtest: Q12 Portfolio derivative contract multiplier
+    ok 77 - Q12 Portfolio derivative contract multiplier
+      ---
+      duration_ms: 3067.48607
+      type: 'test'
+      ...
+    # Subtest: Q13 Independent plan step continues after broker rejection
+    ok 78 - Q13 Independent plan step continues after broker rejection
+      ---
+      duration_ms: 1050.828965
+      type: 'test'
+      ...
+    # Subtest: Q14 Child cannot bypass unconfirmed parent and conversation is preserved
+    ok 79 - Q14 Child cannot bypass unconfirmed parent and conversation is preserved
+      ---
+      duration_ms: 789.740051
+      type: 'test'
+      ...
+    # Subtest: Q15 Unqualified Margin account mode refuses before broker submission
+    ok 80 - Q15 Unqualified Margin account mode refuses before broker submission
+      ---
+      duration_ms: 411.294094
+      type: 'test'
+      ...
+    1..80
+ok 2 - advanced manual trading through Auth21, real services and isolated HTTP OKX V5
+  ---
+  duration_ms: 65872.465835
+  type: 'test'
+  ...
+# (node:2239) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: profile key -> signed vault TLS -> Trading Firewall CP/1 -> Portfolio -> owner Risk
+ok 3 - profile key -> signed vault TLS -> Trading Firewall CP/1 -> Portfolio -> owner Risk
+  ---
+  duration_ms: 9834.993435
+  type: 'test'
+  ...
+# (node:2310) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: persistent cognitive memory, self first, scoped tools, reviewed-only proposals, model allowlist
+ok 4 - persistent cognitive memory, self first, scoped tools, reviewed-only proposals, model allowlist
+  ---
+  duration_ms: 31.107839
+  type: 'test'
+  ...
+# Subtest: CP1 registry matches real Supervisor handlers and manifest contracts
+ok 5 - CP1 registry matches real Supervisor handlers and manifest contracts
+  ---
+  duration_ms: 5.943404
+  type: 'test'
+  ...
+# Subtest: tool allowlist blocks model-command injection; no direct trade/tool execution
+ok 6 - tool allowlist blocks model-command injection; no direct trade/tool execution
+  ---
+  duration_ms: 11.177783
+  type: 'test'
+  ...
+# Subtest: existing OpenAI provider forwards chosen model through CP1 AI Gateway Responses API
+ok 7 - existing OpenAI provider forwards chosen model through CP1 AI Gateway Responses API
+  ---
+  duration_ms: 10.994328
+  type: 'test'
+  ...
+# Subtest: unverified CP1 identity cannot open cognitive memory, cross-account isolation
+ok 8 - unverified CP1 identity cannot open cognitive memory, cross-account isolation
+  ---
+  duration_ms: 8.296274
+  type: 'test'
+  ...
+# Subtest: malformed provider JSON retries once; failure stores a controlled turn without secrets
+ok 9 - malformed provider JSON retries once; failure stores a controlled turn without secrets
+  ---
+  duration_ms: 7.152771
+  type: 'test'
+  ...
+# Subtest: context budget drops old history, protects current prompt, and backup restores SQLite
+ok 10 - context budget drops old history, protects current prompt, and backup restores SQLite
+  ---
+  duration_ms: 22.064685
+  type: 'test'
+  ...
+# (node:2322) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Core policy uses authenticated owner channel for cognitive reasoning and ADMIN configuration
+ok 11 - Core policy uses authenticated owner channel for cognitive reasoning and ADMIN configuration
+  ---
+  duration_ms: 1.143946
+  type: 'test'
+  ...
+# Subtest: Core owner AI checks model, signed original prompt, output token cap, store:false, current session
+ok 12 - Core owner AI checks model, signed original prompt, output token cap, store:false, current session
+  ---
+  duration_ms: 2.052443
+  type: 'test'
+  ...
+# Subtest: ADMIN model choice persists in canonical SQLite settings and USER cannot alter it
+ok 13 - ADMIN model choice persists in canonical SQLite settings and USER cannot alter it
+  ---
+  duration_ms: 11.403036
+  type: 'test'
+  ...
+1..13
+# tests 93
+# suites 0
+# pass 93
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 98700.603565
+CP1 qualifications verified against isolated service processes and owner OKX fixtures.
+(node:1906) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)

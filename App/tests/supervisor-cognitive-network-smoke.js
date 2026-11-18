@@ -30,7 +30,7 @@ test('actual Router -> Supervisor -> verified owner receiver -> persistent cogni
   });await new Promise((ok,no)=>core.listen(corePort,'127.0.0.1',ok).on('error',no));
   router=launch(path.join(appRoot,'Core','Router','router.js'));
   await waitFor(async()=>await get(routerPort,'/router-health-internal')===200);
-  supervisor=launch(path.join(appRoot,'Supervisor','supervisor_service.js'));
+  supervisor=launch(path.join(appRoot,"Engines/Supervisor",'supervisor_service.js'));
   await waitFor(async()=>await get(supervisorPort,'/health')===200);
   const client=new Client({root:appRoot,routerPort,timeout:5000});
   const rpc=(action,args)=>new Promise((ok,no)=>client.request('supervisor',action,args,'analysis',(e,d)=>e?no(e):ok(d)));
@@ -49,7 +49,7 @@ test('actual Router -> Supervisor -> verified owner receiver -> persistent cogni
   const b=await owner('CLbob','same','Other owner');
   assert.equal(b.memory.historyUsed,0,'another owner must not inherit history');
   await stop(supervisor);supervisor=null;
-  supervisor=launch(path.join(appRoot,'Supervisor','supervisor_service.js'));
+  supervisor=launch(path.join(appRoot,"Engines/Supervisor",'supervisor_service.js'));
   await waitFor(async()=>await get(supervisorPort,'/health')===200);
   await waitFor(async()=>{const x=await rpc('supervisor.health',{});return x?.execution==='INTENTION_ONLY';});
   const continued=await owner('CLalice','same','Continue conversation');

@@ -1,0 +1,2365 @@
+{
+  "source_commit": "ef425e04182619e9992aa8a7368db2a30b2a0f87",
+  "moved_files": 393,
+  "files": [
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/ARCHITECTURE.md",
+      "after": "App/Engines/Trading/ARCHITECTURE.md",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/FunctionRegistry/Functions.json",
+      "after": "App/Engines/Trading/FunctionRegistry/Functions.json",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/FunctionRegistry/VERSION.json",
+      "after": "App/Engines/Trading/FunctionRegistry/VERSION.json",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/FunctionRegistry/startup.js",
+      "after": "App/Engines/Trading/FunctionRegistry/startup.js",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/account-routing.js",
+      "after": "App/Engines/Trading/account-routing.js",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/delivery-outbox.js",
+      "after": "App/Engines/Trading/delivery-outbox.js",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/exchange-adapters/binance/capabilities.json",
+      "after": "App/Engines/Trading/exchange-adapters/binance/capabilities.json",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/exchange-adapters/binance/executor.js",
+      "after": "App/Engines/Trading/exchange-adapters/binance/executor.js",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/exchange-adapters/binance/orders/requests.json",
+      "after": "App/Engines/Trading/exchange-adapters/binance/orders/requests.json",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/exchange-adapters/binance/positions/requests.json",
+      "after": "App/Engines/Trading/exchange-adapters/binance/positions/requests.json",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/exchange-adapters/gmx/capabilities.json",
+      "after": "App/Engines/Trading/exchange-adapters/gmx/capabilities.json",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/exchange-adapters/gmx/executor.js",
+      "after": "App/Engines/Trading/exchange-adapters/gmx/executor.js",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/exchange-adapters/gmx/orders/requests.json",
+      "after": "App/Engines/Trading/exchange-adapters/gmx/orders/requests.json",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/exchange-adapters/kraken/capabilities.json",
+      "after": "App/Engines/Trading/exchange-adapters/kraken/capabilities.json",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/exchange-adapters/kraken/executor.js",
+      "after": "App/Engines/Trading/exchange-adapters/kraken/executor.js",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/exchange-adapters/kraken/orders/requests.json",
+      "after": "App/Engines/Trading/exchange-adapters/kraken/orders/requests.json",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/exchange-adapters/okx/account-reader.js",
+      "after": "App/Engines/Trading/exchange-adapters/okx/account-reader.js",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/exchange-adapters/okx/capabilities.json",
+      "after": "App/Engines/Trading/exchange-adapters/okx/capabilities.json",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/exchange-adapters/okx/executor.js",
+      "after": "App/Engines/Trading/exchange-adapters/okx/executor.js",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/exchange-adapters/okx/manual.js",
+      "after": "App/Engines/Trading/exchange-adapters/okx/manual.js",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/exchange-adapters/okx/order-model.js",
+      "after": "App/Engines/Trading/exchange-adapters/okx/order-model.js",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/exchange-adapters/okx/order-response.js",
+      "after": "App/Engines/Trading/exchange-adapters/okx/order-response.js",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/exchange-adapters/okx/orders/requests.json",
+      "after": "App/Engines/Trading/exchange-adapters/okx/orders/requests.json",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/executor-utils.js",
+      "after": "App/Engines/Trading/executor-utils.js",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/executor_catalog.json",
+      "after": "App/Engines/Trading/executor_catalog.json",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/history-store.js",
+      "after": "App/Engines/Trading/history-store.js",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/http-transport.js",
+      "after": "App/Engines/Trading/http-transport.js",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/manual-lifecycle.js",
+      "after": "App/Engines/Trading/manual-lifecycle.js",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/registry.js",
+      "after": "App/Engines/Trading/registry.js",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/secret-provider.js",
+      "after": "App/Engines/Trading/secret-provider.js",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/self-test.js",
+      "after": "App/Engines/Trading/self-test.js",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/tests/manual_outbox.test.js",
+      "after": "App/Engines/Trading/tests/manual_outbox.test.js",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/tests/test_account_routing_v253.js",
+      "after": "App/Engines/Trading/tests/test_account_routing_v253.js",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/tests/test_trading_admin_auth21_binding_v2.js",
+      "after": "App/Engines/Trading/tests/test_trading_admin_auth21_binding_v2.js",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/tests/test_trading_admin_bridge_key_v2.js",
+      "after": "App/Engines/Trading/tests/test_trading_admin_bridge_key_v2.js",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/tests/test_trading_admin_controller_v2.js",
+      "after": "App/Engines/Trading/tests/test_trading_admin_controller_v2.js",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/tests/test_trading_admin_core_firewall_v2.js",
+      "after": "App/Engines/Trading/tests/test_trading_admin_core_firewall_v2.js",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/tests/test_trading_admin_p3_security.js",
+      "after": "App/Engines/Trading/tests/test_trading_admin_p3_security.js",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/tests/test_trading_core_v2.0.js",
+      "after": "App/Engines/Trading/tests/test_trading_core_v2.0.js",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/tests/test_trading_health_monitor_v2.js",
+      "after": "App/Engines/Trading/tests/test_trading_health_monitor_v2.js",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/tests/test_trading_logs_v2.js",
+      "after": "App/Engines/Trading/tests/test_trading_logs_v2.js",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/tests/test_trading_p3_multiprocess_v252.js",
+      "after": "App/Engines/Trading/tests/test_trading_p3_multiprocess_v252.js",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/tests/test_trading_p3_qualification_v252.js",
+      "after": "App/Engines/Trading/tests/test_trading_p3_qualification_v252.js",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/tests/test_trading_p4_p5_v253.js",
+      "after": "App/Engines/Trading/tests/test_trading_p4_p5_v253.js",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/tests/test_trading_runtime_state_v2.js",
+      "after": "App/Engines/Trading/tests/test_trading_runtime_state_v2.js",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/trading-engine.js",
+      "after": "App/Engines/Trading/trading-engine.js",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/trading_admin_controller_v2.js",
+      "after": "App/Engines/Trading/trading_admin_controller_v2.js",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/trading_admin_ledger_v2.js",
+      "after": "App/Engines/Trading/trading_admin_ledger_v2.js",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/trading_auth21_admin_v2.js",
+      "after": "App/Engines/Trading/trading_auth21_admin_v2.js",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/trading_draining_v2.js",
+      "after": "App/Engines/Trading/trading_draining_v2.js",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/trading_health_monitor_v2.js",
+      "after": "App/Engines/Trading/trading_health_monitor_v2.js",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/trading_logs_formatter_v2.js",
+      "after": "App/Engines/Trading/trading_logs_formatter_v2.js",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/trading_logs_v2.js",
+      "after": "App/Engines/Trading/trading_logs_v2.js",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/trading_runtime_state_v2.js",
+      "after": "App/Engines/Trading/trading_runtime_state_v2.js",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/trading_service.js",
+      "after": "App/Engines/Trading/trading_service.js",
+      "exists": true
+    },
+    {
+      "engine": "trading",
+      "before": "App/services/trading-engine/vault-client.js",
+      "after": "App/Engines/Trading/vault-client.js",
+      "exists": true
+    },
+    {
+      "engine": "firewall",
+      "before": "App/Core/Firewall/Config/MarketData/rules.json",
+      "after": "App/Engines/Firewall/Config/MarketData/rules.json",
+      "exists": true
+    },
+    {
+      "engine": "firewall",
+      "before": "App/Core/Firewall/Config/MarketData/whitelist.json",
+      "after": "App/Engines/Firewall/Config/MarketData/whitelist.json",
+      "exists": true
+    },
+    {
+      "engine": "firewall",
+      "before": "App/Core/Firewall/Config/Trading/rules.json",
+      "after": "App/Engines/Firewall/Config/Trading/rules.json",
+      "exists": true
+    },
+    {
+      "engine": "firewall",
+      "before": "App/Core/Firewall/Config/Trading/whitelist.json",
+      "after": "App/Engines/Firewall/Config/Trading/whitelist.json",
+      "exists": true
+    },
+    {
+      "engine": "firewall",
+      "before": "App/Core/Firewall/FunctionRegistry/Functions.json",
+      "after": "App/Engines/Firewall/FunctionRegistry/Functions.json",
+      "exists": true
+    },
+    {
+      "engine": "firewall",
+      "before": "App/Core/Firewall/FunctionRegistry/VERSION.json",
+      "after": "App/Engines/Firewall/FunctionRegistry/VERSION.json",
+      "exists": true
+    },
+    {
+      "engine": "firewall",
+      "before": "App/Core/Firewall/FunctionRegistry/startup.js",
+      "after": "App/Engines/Firewall/FunctionRegistry/startup.js",
+      "exists": true
+    },
+    {
+      "engine": "firewall",
+      "before": "App/Core/Firewall/Protection/market_data_firewall.js",
+      "after": "App/Engines/Firewall/Protection/market_data_firewall.js",
+      "exists": true
+    },
+    {
+      "engine": "firewall",
+      "before": "App/Core/Firewall/Protection/trading_firewall.js",
+      "after": "App/Engines/Firewall/Protection/trading_firewall.js",
+      "exists": true
+    },
+    {
+      "engine": "firewall",
+      "before": "App/Core/Firewall/README.md",
+      "after": "App/Engines/Firewall/README.md",
+      "exists": true
+    },
+    {
+      "engine": "firewall",
+      "before": "App/Core/Firewall/Tests/firewall_fast_path_debug.js",
+      "after": "App/Engines/Firewall/Tests/firewall_fast_path_debug.js",
+      "exists": true
+    },
+    {
+      "engine": "firewall",
+      "before": "App/Core/Firewall/Tests/market_data_firewall.test.js",
+      "after": "App/Engines/Firewall/Tests/market_data_firewall.test.js",
+      "exists": true
+    },
+    {
+      "engine": "firewall",
+      "before": "App/Core/Firewall/Tests/test_risk_gate_boundary.js",
+      "after": "App/Engines/Firewall/Tests/test_risk_gate_boundary.js",
+      "exists": true
+    },
+    {
+      "engine": "firewall",
+      "before": "App/Core/Firewall/Tests/trading_firewall.test.js",
+      "after": "App/Engines/Firewall/Tests/trading_firewall.test.js",
+      "exists": true
+    },
+    {
+      "engine": "firewall",
+      "before": "App/Core/Firewall/Workers/protection_worker.js",
+      "after": "App/Engines/Firewall/Workers/protection_worker.js",
+      "exists": true
+    },
+    {
+      "engine": "firewall",
+      "before": "App/Core/Firewall/firewall_service.js",
+      "after": "App/Engines/Firewall/firewall_service.js",
+      "exists": true
+    },
+    {
+      "engine": "firewall",
+      "before": "App/Core/Firewall/risk_approval_client.js",
+      "after": "App/Engines/Firewall/risk_approval_client.js",
+      "exists": true
+    },
+    {
+      "engine": "fundamental",
+      "before": "App/Fundamental/Data/.gitkeep",
+      "after": "App/Engines/Fundamental/Data/.gitkeep",
+      "exists": true
+    },
+    {
+      "engine": "fundamental",
+      "before": "App/Fundamental/Database/migration_event_engine_v3.sql",
+      "after": "App/Engines/Fundamental/Database/migration_event_engine_v3.sql",
+      "exists": true
+    },
+    {
+      "engine": "fundamental",
+      "before": "App/Fundamental/Database/migration_memory_v3.sql",
+      "after": "App/Engines/Fundamental/Database/migration_memory_v3.sql",
+      "exists": true
+    },
+    {
+      "engine": "fundamental",
+      "before": "App/Fundamental/Database/migration_synthesis_v3.sql",
+      "after": "App/Engines/Fundamental/Database/migration_synthesis_v3.sql",
+      "exists": true
+    },
+    {
+      "engine": "fundamental",
+      "before": "App/Fundamental/Database/schema_v3.sql",
+      "after": "App/Engines/Fundamental/Database/schema_v3.sql",
+      "exists": true
+    },
+    {
+      "engine": "fundamental",
+      "before": "App/Fundamental/Database/seed_sources_v3.sql",
+      "after": "App/Engines/Fundamental/Database/seed_sources_v3.sql",
+      "exists": true
+    },
+    {
+      "engine": "fundamental",
+      "before": "App/Fundamental/Engine/ai_synthesis.js",
+      "after": "App/Engines/Fundamental/Engine/ai_synthesis.js",
+      "exists": true
+    },
+    {
+      "engine": "fundamental",
+      "before": "App/Fundamental/Engine/bias_engine.js",
+      "after": "App/Engines/Fundamental/Engine/bias_engine.js",
+      "exists": true
+    },
+    {
+      "engine": "fundamental",
+      "before": "App/Fundamental/Engine/bootstrap_sqlite.js",
+      "after": "App/Engines/Fundamental/Engine/bootstrap_sqlite.js",
+      "exists": true
+    },
+    {
+      "engine": "fundamental",
+      "before": "App/Fundamental/Engine/collector.js",
+      "after": "App/Engines/Fundamental/Engine/collector.js",
+      "exists": true
+    },
+    {
+      "engine": "fundamental",
+      "before": "App/Fundamental/Engine/corroboration_scoring.js",
+      "after": "App/Engines/Fundamental/Engine/corroboration_scoring.js",
+      "exists": true
+    },
+    {
+      "engine": "fundamental",
+      "before": "App/Fundamental/Engine/database.js",
+      "after": "App/Engines/Fundamental/Engine/database.js",
+      "exists": true
+    },
+    {
+      "engine": "fundamental",
+      "before": "App/Fundamental/Engine/database_core.js",
+      "after": "App/Engines/Fundamental/Engine/database_core.js",
+      "exists": true
+    },
+    {
+      "engine": "fundamental",
+      "before": "App/Fundamental/Engine/diagnostic_core.js",
+      "after": "App/Engines/Fundamental/Engine/diagnostic_core.js",
+      "exists": true
+    },
+    {
+      "engine": "fundamental",
+      "before": "App/Fundamental/Engine/event_engine.js",
+      "after": "App/Engines/Fundamental/Engine/event_engine.js",
+      "exists": true
+    },
+    {
+      "engine": "fundamental",
+      "before": "App/Fundamental/Engine/fundamental_service.js",
+      "after": "App/Engines/Fundamental/Engine/fundamental_service.js",
+      "exists": true
+    },
+    {
+      "engine": "fundamental",
+      "before": "App/Fundamental/Engine/observability_v3.js",
+      "after": "App/Engines/Fundamental/Engine/observability_v3.js",
+      "exists": true
+    },
+    {
+      "engine": "fundamental",
+      "before": "App/Fundamental/Engine/source_discovery.js",
+      "after": "App/Engines/Fundamental/Engine/source_discovery.js",
+      "exists": true
+    },
+    {
+      "engine": "fundamental",
+      "before": "App/Fundamental/Engine/synthesis_helper.js",
+      "after": "App/Engines/Fundamental/Engine/synthesis_helper.js",
+      "exists": true
+    },
+    {
+      "engine": "fundamental",
+      "before": "App/Fundamental/Engine/translation_service.js",
+      "after": "App/Engines/Fundamental/Engine/translation_service.js",
+      "exists": true
+    },
+    {
+      "engine": "fundamental",
+      "before": "App/Fundamental/FUNDAMENTAL_V3_UI_CONTRACT.md",
+      "after": "App/Engines/Fundamental/FUNDAMENTAL_V3_UI_CONTRACT.md",
+      "exists": true
+    },
+    {
+      "engine": "fundamental",
+      "before": "App/Fundamental/FunctionRegistry/Functions.json",
+      "after": "App/Engines/Fundamental/FunctionRegistry/Functions.json",
+      "exists": true
+    },
+    {
+      "engine": "fundamental",
+      "before": "App/Fundamental/FunctionRegistry/VERSION.json",
+      "after": "App/Engines/Fundamental/FunctionRegistry/VERSION.json",
+      "exists": true
+    },
+    {
+      "engine": "fundamental",
+      "before": "App/Fundamental/FunctionRegistry/startup.js",
+      "after": "App/Engines/Fundamental/FunctionRegistry/startup.js",
+      "exists": true
+    },
+    {
+      "engine": "fundamental",
+      "before": "App/Fundamental/Providers/calendar_provider.js",
+      "after": "App/Engines/Fundamental/Providers/calendar_provider.js",
+      "exists": true
+    },
+    {
+      "engine": "fundamental",
+      "before": "App/Fundamental/Providers/fedwatch_provider.js",
+      "after": "App/Engines/Fundamental/Providers/fedwatch_provider.js",
+      "exists": true
+    },
+    {
+      "engine": "fundamental",
+      "before": "App/Fundamental/Providers/finance_calendar_provider_v2_4.js",
+      "after": "App/Engines/Fundamental/Providers/finance_calendar_provider_v2_4.js",
+      "exists": true
+    },
+    {
+      "engine": "fundamental",
+      "before": "App/Fundamental/Providers/rss_provider.js",
+      "after": "App/Engines/Fundamental/Providers/rss_provider.js",
+      "exists": true
+    },
+    {
+      "engine": "fundamental",
+      "before": "App/Fundamental/Providers/web_provider.js",
+      "after": "App/Engines/Fundamental/Providers/web_provider.js",
+      "exists": true
+    },
+    {
+      "engine": "fundamental",
+      "before": "App/Fundamental/Providers/x_provider.js",
+      "after": "App/Engines/Fundamental/Providers/x_provider.js",
+      "exists": true
+    },
+    {
+      "engine": "fundamental",
+      "before": "App/Fundamental/Tests/Debug/debug_fundamental_v3.js",
+      "after": "App/Engines/Fundamental/Tests/Debug/debug_fundamental_v3.js",
+      "exists": true
+    },
+    {
+      "engine": "fundamental",
+      "before": "App/Fundamental/Tests/Debug/run_fundamental_v3_debug.command",
+      "after": "App/Engines/Fundamental/Tests/Debug/run_fundamental_v3_debug.command",
+      "exists": true
+    },
+    {
+      "engine": "fundamental",
+      "before": "App/Fundamental/Tests/test_cp1_router_fundamental_v3.js",
+      "after": "App/Engines/Fundamental/Tests/test_cp1_router_fundamental_v3.js",
+      "exists": true
+    },
+    {
+      "engine": "fundamental",
+      "before": "App/Fundamental/Tests/test_event_engine_mock_v3.js",
+      "after": "App/Engines/Fundamental/Tests/test_event_engine_mock_v3.js",
+      "exists": true
+    },
+    {
+      "engine": "fundamental",
+      "before": "App/Fundamental/Tests/test_fundamental_v3.js",
+      "after": "App/Engines/Fundamental/Tests/test_fundamental_v3.js",
+      "exists": true
+    },
+    {
+      "engine": "fundamental",
+      "before": "App/Fundamental/Tests/test_news_latest_v2_0_1.js",
+      "after": "App/Engines/Fundamental/Tests/test_news_latest_v2_0_1.js",
+      "exists": true
+    },
+    {
+      "engine": "fundamental",
+      "before": "App/Fundamental/Tests/test_synthesis_helper_v3.js",
+      "after": "App/Engines/Fundamental/Tests/test_synthesis_helper_v3.js",
+      "exists": true
+    },
+    {
+      "engine": "fundamental",
+      "before": "App/Fundamental/install_sqlite.command",
+      "after": "App/Engines/Fundamental/install_sqlite.command",
+      "exists": true
+    },
+    {
+      "engine": "fundamental",
+      "before": "App/Fundamental/package-lock.json",
+      "after": "App/Engines/Fundamental/package-lock.json",
+      "exists": true
+    },
+    {
+      "engine": "fundamental",
+      "before": "App/Fundamental/package.json",
+      "after": "App/Engines/Fundamental/package.json",
+      "exists": true
+    },
+    {
+      "engine": "indicator",
+      "before": "App/Indicators/BuiltIn/ADX.indicator.json",
+      "after": "App/Engines/Indicators/BuiltIn/ADX.indicator.json",
+      "exists": true
+    },
+    {
+      "engine": "indicator",
+      "before": "App/Indicators/BuiltIn/ATR.indicator.json",
+      "after": "App/Engines/Indicators/BuiltIn/ATR.indicator.json",
+      "exists": true
+    },
+    {
+      "engine": "indicator",
+      "before": "App/Indicators/BuiltIn/Bollinger_Bands.indicator.json",
+      "after": "App/Engines/Indicators/BuiltIn/Bollinger_Bands.indicator.json",
+      "exists": true
+    },
+    {
+      "engine": "indicator",
+      "before": "App/Indicators/BuiltIn/CCI.indicator.json",
+      "after": "App/Engines/Indicators/BuiltIn/CCI.indicator.json",
+      "exists": true
+    },
+    {
+      "engine": "indicator",
+      "before": "App/Indicators/BuiltIn/EMA.indicator.json",
+      "after": "App/Engines/Indicators/BuiltIn/EMA.indicator.json",
+      "exists": true
+    },
+    {
+      "engine": "indicator",
+      "before": "App/Indicators/BuiltIn/HMA.indicator.json",
+      "after": "App/Engines/Indicators/BuiltIn/HMA.indicator.json",
+      "exists": true
+    },
+    {
+      "engine": "indicator",
+      "before": "App/Indicators/BuiltIn/Ichimoku_Cloud.indicator.json",
+      "after": "App/Engines/Indicators/BuiltIn/Ichimoku_Cloud.indicator.json",
+      "exists": true
+    },
+    {
+      "engine": "indicator",
+      "before": "App/Indicators/BuiltIn/Liquidity_HeatMap.indicator.json",
+      "after": "App/Engines/Indicators/BuiltIn/Liquidity_HeatMap.indicator.json",
+      "exists": true
+    },
+    {
+      "engine": "indicator",
+      "before": "App/Indicators/BuiltIn/MACD.indicator.json",
+      "after": "App/Engines/Indicators/BuiltIn/MACD.indicator.json",
+      "exists": true
+    },
+    {
+      "engine": "indicator",
+      "before": "App/Indicators/BuiltIn/MFI.indicator.json",
+      "after": "App/Engines/Indicators/BuiltIn/MFI.indicator.json",
+      "exists": true
+    },
+    {
+      "engine": "indicator",
+      "before": "App/Indicators/BuiltIn/OBV.indicator.json",
+      "after": "App/Engines/Indicators/BuiltIn/OBV.indicator.json",
+      "exists": true
+    },
+    {
+      "engine": "indicator",
+      "before": "App/Indicators/BuiltIn/Parabolic_SAR.indicator.json",
+      "after": "App/Engines/Indicators/BuiltIn/Parabolic_SAR.indicator.json",
+      "exists": true
+    },
+    {
+      "engine": "indicator",
+      "before": "App/Indicators/BuiltIn/ROC.indicator.json",
+      "after": "App/Engines/Indicators/BuiltIn/ROC.indicator.json",
+      "exists": true
+    },
+    {
+      "engine": "indicator",
+      "before": "App/Indicators/BuiltIn/RSI.indicator.json",
+      "after": "App/Engines/Indicators/BuiltIn/RSI.indicator.json",
+      "exists": true
+    },
+    {
+      "engine": "indicator",
+      "before": "App/Indicators/BuiltIn/SMA.indicator.json",
+      "after": "App/Engines/Indicators/BuiltIn/SMA.indicator.json",
+      "exists": true
+    },
+    {
+      "engine": "indicator",
+      "before": "App/Indicators/BuiltIn/Stochastic.indicator.json",
+      "after": "App/Engines/Indicators/BuiltIn/Stochastic.indicator.json",
+      "exists": true
+    },
+    {
+      "engine": "indicator",
+      "before": "App/Indicators/BuiltIn/Stochastic_RSI.indicator.json",
+      "after": "App/Engines/Indicators/BuiltIn/Stochastic_RSI.indicator.json",
+      "exists": true
+    },
+    {
+      "engine": "indicator",
+      "before": "App/Indicators/BuiltIn/Supertrend.indicator.json",
+      "after": "App/Engines/Indicators/BuiltIn/Supertrend.indicator.json",
+      "exists": true
+    },
+    {
+      "engine": "indicator",
+      "before": "App/Indicators/BuiltIn/VWAP.indicator.json",
+      "after": "App/Engines/Indicators/BuiltIn/VWAP.indicator.json",
+      "exists": true
+    },
+    {
+      "engine": "indicator",
+      "before": "App/Indicators/BuiltIn/VWMA.indicator.json",
+      "after": "App/Engines/Indicators/BuiltIn/VWMA.indicator.json",
+      "exists": true
+    },
+    {
+      "engine": "indicator",
+      "before": "App/Indicators/BuiltIn/Williams_R.indicator.json",
+      "after": "App/Engines/Indicators/BuiltIn/Williams_R.indicator.json",
+      "exists": true
+    },
+    {
+      "engine": "indicator",
+      "before": "App/Indicators/Custom/README.txt",
+      "after": "App/Engines/Indicators/Custom/README.txt",
+      "exists": true
+    },
+    {
+      "engine": "indicator",
+      "before": "App/Indicators/Engine/indicator_analysis_v1.js",
+      "after": "App/Engines/Indicators/Engine/indicator_analysis_v1.js",
+      "exists": true
+    },
+    {
+      "engine": "indicator",
+      "before": "App/Indicators/Engine/indicator_engine.js",
+      "after": "App/Engines/Indicators/Engine/indicator_engine.js",
+      "exists": true
+    },
+    {
+      "engine": "indicator",
+      "before": "App/Indicators/Engine/indicator_ir.js",
+      "after": "App/Engines/Indicators/Engine/indicator_ir.js",
+      "exists": true
+    },
+    {
+      "engine": "indicator",
+      "before": "App/Indicators/Engine/indicator_language.js",
+      "after": "App/Engines/Indicators/Engine/indicator_language.js",
+      "exists": true
+    },
+    {
+      "engine": "indicator",
+      "before": "App/Indicators/Engine/indicator_registry.js",
+      "after": "App/Engines/Indicators/Engine/indicator_registry.js",
+      "exists": true
+    },
+    {
+      "engine": "indicator",
+      "before": "App/Indicators/Engine/indicator_service.js",
+      "after": "App/Engines/Indicators/Engine/indicator_service.js",
+      "exists": true
+    },
+    {
+      "engine": "indicator",
+      "before": "App/Indicators/Engine/indicator_settings.js",
+      "after": "App/Engines/Indicators/Engine/indicator_settings.js",
+      "exists": true
+    },
+    {
+      "engine": "indicator",
+      "before": "App/Indicators/Engine/user_compute.js",
+      "after": "App/Engines/Indicators/Engine/user_compute.js",
+      "exists": true
+    },
+    {
+      "engine": "indicator",
+      "before": "App/Indicators/FunctionRegistry/Functions.json",
+      "after": "App/Engines/Indicators/FunctionRegistry/Functions.json",
+      "exists": true
+    },
+    {
+      "engine": "indicator",
+      "before": "App/Indicators/FunctionRegistry/VERSION.json",
+      "after": "App/Engines/Indicators/FunctionRegistry/VERSION.json",
+      "exists": true
+    },
+    {
+      "engine": "indicator",
+      "before": "App/Indicators/FunctionRegistry/startup.js",
+      "after": "App/Engines/Indicators/FunctionRegistry/startup.js",
+      "exists": true
+    },
+    {
+      "engine": "indicator",
+      "before": "App/Indicators/Quarantine/README.txt",
+      "after": "App/Engines/Indicators/Quarantine/README.txt",
+      "exists": true
+    },
+    {
+      "engine": "indicator",
+      "before": "App/Indicators/README.txt",
+      "after": "App/Engines/Indicators/README.txt",
+      "exists": true
+    },
+    {
+      "engine": "indicator",
+      "before": "App/Indicators/Tests/test_indicator_analysis_v1.js",
+      "after": "App/Engines/Indicators/Tests/test_indicator_analysis_v1.js",
+      "exists": true
+    },
+    {
+      "engine": "indicator",
+      "before": "App/Indicators/Tests/test_indicator_complete_v2.js",
+      "after": "App/Engines/Indicators/Tests/test_indicator_complete_v2.js",
+      "exists": true
+    },
+    {
+      "engine": "indicator",
+      "before": "App/Indicators/Tests/test_indicator_cp1_v2.js",
+      "after": "App/Engines/Indicators/Tests/test_indicator_cp1_v2.js",
+      "exists": true
+    },
+    {
+      "engine": "indicator",
+      "before": "App/Indicators/Tests/test_indicator_engine.js",
+      "after": "App/Engines/Indicators/Tests/test_indicator_engine.js",
+      "exists": true
+    },
+    {
+      "engine": "indicator",
+      "before": "App/Indicators/Tests/test_indicator_ir_v2.js",
+      "after": "App/Engines/Indicators/Tests/test_indicator_ir_v2.js",
+      "exists": true
+    },
+    {
+      "engine": "indicator",
+      "before": "App/Indicators/Tests/test_indicator_language_v2.js",
+      "after": "App/Engines/Indicators/Tests/test_indicator_language_v2.js",
+      "exists": true
+    },
+    {
+      "engine": "indicator",
+      "before": "App/Indicators/Tests/test_indicator_settings_v1.js",
+      "after": "App/Engines/Indicators/Tests/test_indicator_settings_v1.js",
+      "exists": true
+    },
+    {
+      "engine": "indicator",
+      "before": "App/Indicators/Tests/validate_trading_indicators_gen1.js",
+      "after": "App/Engines/Indicators/Tests/validate_trading_indicators_gen1.js",
+      "exists": true
+    },
+    {
+      "engine": "liquidity",
+      "before": "App/Liquidity/Cache/liquidation_buffer.js",
+      "after": "App/Engines/Liquidity/Cache/liquidation_buffer.js",
+      "exists": true
+    },
+    {
+      "engine": "liquidity",
+      "before": "App/Liquidity/Cache/liquidity_cache.js",
+      "after": "App/Engines/Liquidity/Cache/liquidity_cache.js",
+      "exists": true
+    },
+    {
+      "engine": "liquidity",
+      "before": "App/Liquidity/Engine/liquidity_engine.js",
+      "after": "App/Engines/Liquidity/Engine/liquidity_engine.js",
+      "exists": true
+    },
+    {
+      "engine": "liquidity",
+      "before": "App/Liquidity/Engine/liquidity_metrics.js",
+      "after": "App/Engines/Liquidity/Engine/liquidity_metrics.js",
+      "exists": true
+    },
+    {
+      "engine": "liquidity",
+      "before": "App/Liquidity/Engine/liquidity_service.js",
+      "after": "App/Engines/Liquidity/Engine/liquidity_service.js",
+      "exists": true
+    },
+    {
+      "engine": "liquidity",
+      "before": "App/Liquidity/FunctionRegistry/Functions.json",
+      "after": "App/Engines/Liquidity/FunctionRegistry/Functions.json",
+      "exists": true
+    },
+    {
+      "engine": "liquidity",
+      "before": "App/Liquidity/FunctionRegistry/VERSION.json",
+      "after": "App/Engines/Liquidity/FunctionRegistry/VERSION.json",
+      "exists": true
+    },
+    {
+      "engine": "liquidity",
+      "before": "App/Liquidity/FunctionRegistry/startup.js",
+      "after": "App/Engines/Liquidity/FunctionRegistry/startup.js",
+      "exists": true
+    },
+    {
+      "engine": "liquidity",
+      "before": "App/Liquidity/Provider/market_data_provider.js",
+      "after": "App/Engines/Liquidity/Provider/market_data_provider.js",
+      "exists": true
+    },
+    {
+      "engine": "liquidity",
+      "before": "App/Liquidity/README.txt",
+      "after": "App/Engines/Liquidity/README.txt",
+      "exists": true
+    },
+    {
+      "engine": "liquidity",
+      "before": "App/Liquidity/Tests/test_liquidity_engine.js",
+      "after": "App/Engines/Liquidity/Tests/test_liquidity_engine.js",
+      "exists": true
+    },
+    {
+      "engine": "liquidity",
+      "before": "App/Liquidity/Tests/test_liquidity_metrics.js",
+      "after": "App/Engines/Liquidity/Tests/test_liquidity_metrics.js",
+      "exists": true
+    },
+    {
+      "engine": "liquidity",
+      "before": "App/Liquidity/Tests/test_market_data_provider_static.js",
+      "after": "App/Engines/Liquidity/Tests/test_market_data_provider_static.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Cache/market_cache.js",
+      "after": "App/Engines/MarketData/Cache/market_cache.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Collectors/dex_liquidity_collector.js",
+      "after": "App/Engines/MarketData/Collectors/dex_liquidity_collector.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Collectors/liquidation_stream_manager.js",
+      "after": "App/Engines/MarketData/Collectors/liquidation_stream_manager.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Collectors/microstructure_collector.js",
+      "after": "App/Engines/MarketData/Collectors/microstructure_collector.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Config/market_data_settings.js",
+      "after": "App/Engines/MarketData/Config/market_data_settings.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Financial/financial_collector.js",
+      "after": "App/Engines/MarketData/Financial/financial_collector.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Financial/financial_policy.js",
+      "after": "App/Engines/MarketData/Financial/financial_policy.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Financial/financial_quality_v2.js",
+      "after": "App/Engines/MarketData/Financial/financial_quality_v2.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Financial/financial_store.js",
+      "after": "App/Engines/MarketData/Financial/financial_store.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Firewall/data_firewall_client.js",
+      "after": "App/Engines/MarketData/Firewall/data_firewall_client.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/FunctionRegistry/Functions.json",
+      "after": "App/Engines/MarketData/FunctionRegistry/Functions.json",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/FunctionRegistry/VERSION.json",
+      "after": "App/Engines/MarketData/FunctionRegistry/VERSION.json",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/FunctionRegistry/startup.js",
+      "after": "App/Engines/MarketData/FunctionRegistry/startup.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Normalizer/candles.js",
+      "after": "App/Engines/MarketData/Normalizer/candles.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Normalizer/financial_data.js",
+      "after": "App/Engines/MarketData/Normalizer/financial_data.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Normalizer/liquidations.js",
+      "after": "App/Engines/MarketData/Normalizer/liquidations.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Normalizer/symbols.js",
+      "after": "App/Engines/MarketData/Normalizer/symbols.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Normalizer/timeframes.js",
+      "after": "App/Engines/MarketData/Normalizer/timeframes.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Orchestrator/alternate_provider_policy_v1.js",
+      "after": "App/Engines/MarketData/Orchestrator/alternate_provider_policy_v1.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Orchestrator/api_request_orchestrator.js",
+      "after": "App/Engines/MarketData/Orchestrator/api_request_orchestrator.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Orchestrator/api_telemetry.js",
+      "after": "App/Engines/MarketData/Orchestrator/api_telemetry.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Orchestrator/coingecko_policy_v1.js",
+      "after": "App/Engines/MarketData/Orchestrator/coingecko_policy_v1.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Orchestrator/data_source_policy.js",
+      "after": "App/Engines/MarketData/Orchestrator/data_source_policy.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Orchestrator/native_request_dispatcher.js",
+      "after": "App/Engines/MarketData/Orchestrator/native_request_dispatcher.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Orchestrator/phase1_provider_policy_v1.js",
+      "after": "App/Engines/MarketData/Orchestrator/phase1_provider_policy_v1.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Orchestrator/phase2_provider_policy_v1.js",
+      "after": "App/Engines/MarketData/Orchestrator/phase2_provider_policy_v1.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Orchestrator/phase3_provider_policy_v1.js",
+      "after": "App/Engines/MarketData/Orchestrator/phase3_provider_policy_v1.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Orchestrator/provider_passport_v1.js",
+      "after": "App/Engines/MarketData/Orchestrator/provider_passport_v1.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Orchestrator/request_broker.js",
+      "after": "App/Engines/MarketData/Orchestrator/request_broker.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Orchestrator/request_budget.js",
+      "after": "App/Engines/MarketData/Orchestrator/request_budget.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Orchestrator/request_limit_profile_v1.js",
+      "after": "App/Engines/MarketData/Orchestrator/request_limit_profile_v1.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Orchestrator/shadow_decision_engine_v1.js",
+      "after": "App/Engines/MarketData/Orchestrator/shadow_decision_engine_v1.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Orchestrator/shadow_provider_proxy.js",
+      "after": "App/Engines/MarketData/Orchestrator/shadow_provider_proxy.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Orchestrator/transport_orchestrator_bridge.js",
+      "after": "App/Engines/MarketData/Orchestrator/transport_orchestrator_bridge.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Orchestrator/weighted_request_profile_v1.js",
+      "after": "App/Engines/MarketData/Orchestrator/weighted_request_profile_v1.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Provider/Custom/README.txt",
+      "after": "App/Engines/MarketData/Provider/Custom/README.txt",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Provider/binance_provider.js",
+      "after": "App/Engines/MarketData/Provider/binance_provider.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Provider/bybit_provider.js",
+      "after": "App/Engines/MarketData/Provider/bybit_provider.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Provider/coingecko_provider.js",
+      "after": "App/Engines/MarketData/Provider/coingecko_provider.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Provider/defi_adapter.js",
+      "after": "App/Engines/MarketData/Provider/defi_adapter.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Provider/defillama_provider.js",
+      "after": "App/Engines/MarketData/Provider/defillama_provider.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Provider/dexscreener_provider.js",
+      "after": "App/Engines/MarketData/Provider/dexscreener_provider.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Provider/exchange_catalog.json",
+      "after": "App/Engines/MarketData/Provider/exchange_catalog.json",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Provider/gmx_provider.js",
+      "after": "App/Engines/MarketData/Provider/gmx_provider.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Provider/http_json.js",
+      "after": "App/Engines/MarketData/Provider/http_json.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Provider/hyperliquid_provider.js",
+      "after": "App/Engines/MarketData/Provider/hyperliquid_provider.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Provider/kraken_provider.js",
+      "after": "App/Engines/MarketData/Provider/kraken_provider.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Provider/microstructure_provider.js",
+      "after": "App/Engines/MarketData/Provider/microstructure_provider.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Provider/okx_provider.js",
+      "after": "App/Engines/MarketData/Provider/okx_provider.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Provider/onchain_rpc_provider.js",
+      "after": "App/Engines/MarketData/Provider/onchain_rpc_provider.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Provider/provider_catalog.js",
+      "after": "App/Engines/MarketData/Provider/provider_catalog.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Provider/reference_provider.js",
+      "after": "App/Engines/MarketData/Provider/reference_provider.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Registry/currency_registry_v1.js",
+      "after": "App/Engines/MarketData/Registry/currency_registry_v1.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Registry/market_registry.js",
+      "after": "App/Engines/MarketData/Registry/market_registry.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Storage/api_telemetry_store.js",
+      "after": "App/Engines/MarketData/Storage/api_telemetry_store.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Storage/microstructure_store.js",
+      "after": "App/Engines/MarketData/Storage/microstructure_store.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Tests/analyze_shadow_workload_telemetry_v1.js",
+      "after": "App/Engines/MarketData/Tests/analyze_shadow_workload_telemetry_v1.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Tests/market_data_v2_debug.js",
+      "after": "App/Engines/MarketData/Tests/market_data_v2_debug.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Tests/runtime_shadow_long_observation_v1.js",
+      "after": "App/Engines/MarketData/Tests/runtime_shadow_long_observation_v1.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Tests/runtime_workload_shadow_v1.js",
+      "after": "App/Engines/MarketData/Tests/runtime_workload_shadow_v1.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Tests/test_alternate_provider_policy_v1.js",
+      "after": "App/Engines/MarketData/Tests/test_alternate_provider_policy_v1.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Tests/test_api_request_orchestrator_shadow_v1.js",
+      "after": "App/Engines/MarketData/Tests/test_api_request_orchestrator_shadow_v1.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Tests/test_cex_providers_v2.js",
+      "after": "App/Engines/MarketData/Tests/test_cex_providers_v2.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Tests/test_coingecko_global_volume_hotfix_v201.js",
+      "after": "App/Engines/MarketData/Tests/test_coingecko_global_volume_hotfix_v201.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Tests/test_coingecko_limits_v2.js",
+      "after": "App/Engines/MarketData/Tests/test_coingecko_limits_v2.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Tests/test_currency_registry_v1.js",
+      "after": "App/Engines/MarketData/Tests/test_currency_registry_v1.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Tests/test_defillama_public_surface_v2.js",
+      "after": "App/Engines/MarketData/Tests/test_defillama_public_surface_v2.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Tests/test_dex_liquidity_boundary_v2.js",
+      "after": "App/Engines/MarketData/Tests/test_dex_liquidity_boundary_v2.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Tests/test_dynamic_symbol_catalog_v1.js",
+      "after": "App/Engines/MarketData/Tests/test_dynamic_symbol_catalog_v1.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Tests/test_financial_async_fastlane_v1.js",
+      "after": "App/Engines/MarketData/Tests/test_financial_async_fastlane_v1.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Tests/test_financial_cached_read_v2.js",
+      "after": "App/Engines/MarketData/Tests/test_financial_cached_read_v2.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Tests/test_financial_data_contract_v2.js",
+      "after": "App/Engines/MarketData/Tests/test_financial_data_contract_v2.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Tests/test_financial_family_scheduler_v1.js",
+      "after": "App/Engines/MarketData/Tests/test_financial_family_scheduler_v1.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Tests/test_firewall_cache_boundary_v1.js",
+      "after": "App/Engines/MarketData/Tests/test_firewall_cache_boundary_v1.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Tests/test_liquidations_usd_v2.js",
+      "after": "App/Engines/MarketData/Tests/test_liquidations_usd_v2.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Tests/test_liquidity_pipeline_v1.js",
+      "after": "App/Engines/MarketData/Tests/test_liquidity_pipeline_v1.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Tests/test_market_data_collector_v2_lock.js",
+      "after": "App/Engines/MarketData/Tests/test_market_data_collector_v2_lock.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Tests/test_market_data_runtime_v2.js",
+      "after": "App/Engines/MarketData/Tests/test_market_data_runtime_v2.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Tests/test_market_liquidity_layer_v2.js",
+      "after": "App/Engines/MarketData/Tests/test_market_liquidity_layer_v2.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Tests/test_microstructure_missing_oi.js",
+      "after": "App/Engines/MarketData/Tests/test_microstructure_missing_oi.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Tests/test_native_budget_admission_v1.js",
+      "after": "App/Engines/MarketData/Tests/test_native_budget_admission_v1.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Tests/test_native_budget_safety_v1.js",
+      "after": "App/Engines/MarketData/Tests/test_native_budget_safety_v1.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Tests/test_native_dispatcher_priority_v1.js",
+      "after": "App/Engines/MarketData/Tests/test_native_dispatcher_priority_v1.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Tests/test_native_dispatcher_v1.js",
+      "after": "App/Engines/MarketData/Tests/test_native_dispatcher_v1.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Tests/test_native_http_429_cooldown_v1.js",
+      "after": "App/Engines/MarketData/Tests/test_native_http_429_cooldown_v1.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Tests/test_native_http_429_interrupted_v1.js",
+      "after": "App/Engines/MarketData/Tests/test_native_http_429_interrupted_v1.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Tests/test_native_http_dispatcher_v1.js",
+      "after": "App/Engines/MarketData/Tests/test_native_http_dispatcher_v1.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Tests/test_native_http_enforcement_v1.js",
+      "after": "App/Engines/MarketData/Tests/test_native_http_enforcement_v1.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Tests/test_native_http_failclosed_v1.js",
+      "after": "App/Engines/MarketData/Tests/test_native_http_failclosed_v1.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Tests/test_native_lite_cache_dedup_v1.js",
+      "after": "App/Engines/MarketData/Tests/test_native_lite_cache_dedup_v1.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Tests/test_native_lite_data_integrity_v1.js",
+      "after": "App/Engines/MarketData/Tests/test_native_lite_data_integrity_v1.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Tests/test_native_retry_after_v1.js",
+      "after": "App/Engines/MarketData/Tests/test_native_retry_after_v1.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Tests/test_native_transport_bridge_v1.js",
+      "after": "App/Engines/MarketData/Tests/test_native_transport_bridge_v1.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Tests/test_open_interest_currency_normalization_v1.js",
+      "after": "App/Engines/MarketData/Tests/test_open_interest_currency_normalization_v1.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Tests/test_phase1_provider_profiles_v1.js",
+      "after": "App/Engines/MarketData/Tests/test_phase1_provider_profiles_v1.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Tests/test_phase2_weighted_budget_v1.js",
+      "after": "App/Engines/MarketData/Tests/test_phase2_weighted_budget_v1.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Tests/test_phase3_special_limits_v1.js",
+      "after": "App/Engines/MarketData/Tests/test_phase3_special_limits_v1.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Tests/test_provider_passports_v1.js",
+      "after": "App/Engines/MarketData/Tests/test_provider_passports_v1.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Tests/test_shadow_decision_engine_v1.js",
+      "after": "App/Engines/MarketData/Tests/test_shadow_decision_engine_v1.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Tests/test_shadow_runtime_orchestrator_v1.js",
+      "after": "App/Engines/MarketData/Tests/test_shadow_runtime_orchestrator_v1.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Tests/test_transport_budget_bridge_v1.js",
+      "after": "App/Engines/MarketData/Tests/test_transport_budget_bridge_v1.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Tests/test_unknown_quota_nonblocking_v1.js",
+      "after": "App/Engines/MarketData/Tests/test_unknown_quota_nonblocking_v1.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Tests/validate_dex_liquidity_gen1.js",
+      "after": "App/Engines/MarketData/Tests/validate_dex_liquidity_gen1.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Tests/validate_step4_gen1.js",
+      "after": "App/Engines/MarketData/Tests/validate_step4_gen1.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Transport/simple_websocket.js",
+      "after": "App/Engines/MarketData/Transport/simple_websocket.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Workers/binance_liquidations_worker.js",
+      "after": "App/Engines/MarketData/Workers/binance_liquidations_worker.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Workers/bybit_liquidations_worker.js",
+      "after": "App/Engines/MarketData/Workers/bybit_liquidations_worker.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/Workers/okx_liquidations_worker.js",
+      "after": "App/Engines/MarketData/Workers/okx_liquidations_worker.js",
+      "exists": true
+    },
+    {
+      "engine": "marketdata",
+      "before": "App/MarketData/market_data_service.js",
+      "after": "App/Engines/MarketData/market_data_service.js",
+      "exists": true
+    },
+    {
+      "engine": "portfolio",
+      "before": "App/Portfolio/Engine/execution_projection.js",
+      "after": "App/Engines/Portfolio/Engine/execution_projection.js",
+      "exists": true
+    },
+    {
+      "engine": "portfolio",
+      "before": "App/Portfolio/Engine/okx_account.js",
+      "after": "App/Engines/Portfolio/Engine/okx_account.js",
+      "exists": true
+    },
+    {
+      "engine": "portfolio",
+      "before": "App/Portfolio/Engine/okx_contracts.js",
+      "after": "App/Engines/Portfolio/Engine/okx_contracts.js",
+      "exists": true
+    },
+    {
+      "engine": "portfolio",
+      "before": "App/Portfolio/Engine/owner_portfolio.js",
+      "after": "App/Engines/Portfolio/Engine/owner_portfolio.js",
+      "exists": true
+    },
+    {
+      "engine": "portfolio",
+      "before": "App/Portfolio/Engine/portfolio_engine.js",
+      "after": "App/Engines/Portfolio/Engine/portfolio_engine.js",
+      "exists": true
+    },
+    {
+      "engine": "portfolio",
+      "before": "App/Portfolio/Engine/portfolio_service.js",
+      "after": "App/Engines/Portfolio/Engine/portfolio_service.js",
+      "exists": true
+    },
+    {
+      "engine": "portfolio",
+      "before": "App/Portfolio/Engine/portfolio_store.js",
+      "after": "App/Engines/Portfolio/Engine/portfolio_store.js",
+      "exists": true
+    },
+    {
+      "engine": "portfolio",
+      "before": "App/Portfolio/FunctionRegistry/Functions.json",
+      "after": "App/Engines/Portfolio/FunctionRegistry/Functions.json",
+      "exists": true
+    },
+    {
+      "engine": "portfolio",
+      "before": "App/Portfolio/FunctionRegistry/VERSION.json",
+      "after": "App/Engines/Portfolio/FunctionRegistry/VERSION.json",
+      "exists": true
+    },
+    {
+      "engine": "portfolio",
+      "before": "App/Portfolio/FunctionRegistry/startup.js",
+      "after": "App/Engines/Portfolio/FunctionRegistry/startup.js",
+      "exists": true
+    },
+    {
+      "engine": "portfolio",
+      "before": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "after": "App/Engines/Portfolio/Tests/advanced_orders.integration.test.js",
+      "exists": true
+    },
+    {
+      "engine": "portfolio",
+      "before": "App/Portfolio/Tests/manual_order_pipeline.integration.test.js",
+      "after": "App/Engines/Portfolio/Tests/manual_order_pipeline.integration.test.js",
+      "exists": true
+    },
+    {
+      "engine": "portfolio",
+      "before": "App/Portfolio/Tests/manual_projection.test.js",
+      "after": "App/Engines/Portfolio/Tests/manual_projection.test.js",
+      "exists": true
+    },
+    {
+      "engine": "portfolio",
+      "before": "App/Portfolio/Tests/okx_account.test.js",
+      "after": "App/Engines/Portfolio/Tests/okx_account.test.js",
+      "exists": true
+    },
+    {
+      "engine": "portfolio",
+      "before": "App/Portfolio/Tests/okx_fixture.js",
+      "after": "App/Engines/Portfolio/Tests/okx_fixture.js",
+      "exists": true
+    },
+    {
+      "engine": "portfolio",
+      "before": "App/Portfolio/Tests/okx_pipeline.integration.test.js",
+      "after": "App/Engines/Portfolio/Tests/okx_pipeline.integration.test.js",
+      "exists": true
+    },
+    {
+      "engine": "portfolio",
+      "before": "App/Portfolio/Tests/test_portfolio_engine_v2.js",
+      "after": "App/Engines/Portfolio/Tests/test_portfolio_engine_v2.js",
+      "exists": true
+    },
+    {
+      "engine": "risk",
+      "before": "App/Risk/Engine/risk_engine.js",
+      "after": "App/Engines/Risk/Engine/risk_engine.js",
+      "exists": true
+    },
+    {
+      "engine": "risk",
+      "before": "App/Risk/Engine/risk_gate.js",
+      "after": "App/Engines/Risk/Engine/risk_gate.js",
+      "exists": true
+    },
+    {
+      "engine": "risk",
+      "before": "App/Risk/Engine/risk_r1_modules.js",
+      "after": "App/Engines/Risk/Engine/risk_r1_modules.js",
+      "exists": true
+    },
+    {
+      "engine": "risk",
+      "before": "App/Risk/Engine/risk_r2_modules.js",
+      "after": "App/Engines/Risk/Engine/risk_r2_modules.js",
+      "exists": true
+    },
+    {
+      "engine": "risk",
+      "before": "App/Risk/Engine/risk_service.js",
+      "after": "App/Engines/Risk/Engine/risk_service.js",
+      "exists": true
+    },
+    {
+      "engine": "risk",
+      "before": "App/Risk/Engine/risk_settings_v25.js",
+      "after": "App/Engines/Risk/Engine/risk_settings_v25.js",
+      "exists": true
+    },
+    {
+      "engine": "risk",
+      "before": "App/Risk/FunctionRegistry/Functions.json",
+      "after": "App/Engines/Risk/FunctionRegistry/Functions.json",
+      "exists": true
+    },
+    {
+      "engine": "risk",
+      "before": "App/Risk/FunctionRegistry/VERSION.json",
+      "after": "App/Engines/Risk/FunctionRegistry/VERSION.json",
+      "exists": true
+    },
+    {
+      "engine": "risk",
+      "before": "App/Risk/FunctionRegistry/startup.js",
+      "after": "App/Engines/Risk/FunctionRegistry/startup.js",
+      "exists": true
+    },
+    {
+      "engine": "risk",
+      "before": "App/Risk/INTEGRATION_CONTRACT.md",
+      "after": "App/Engines/Risk/INTEGRATION_CONTRACT.md",
+      "exists": true
+    },
+    {
+      "engine": "risk",
+      "before": "App/Risk/README.md",
+      "after": "App/Engines/Risk/README.md",
+      "exists": true
+    },
+    {
+      "engine": "risk",
+      "before": "App/Risk/Snapshots/contracts.js",
+      "after": "App/Engines/Risk/Snapshots/contracts.js",
+      "exists": true
+    },
+    {
+      "engine": "risk",
+      "before": "App/Risk/Snapshots/math.js",
+      "after": "App/Engines/Risk/Snapshots/math.js",
+      "exists": true
+    },
+    {
+      "engine": "risk",
+      "before": "App/Risk/Snapshots/orchestrator.js",
+      "after": "App/Engines/Risk/Snapshots/orchestrator.js",
+      "exists": true
+    },
+    {
+      "engine": "risk",
+      "before": "App/Risk/Snapshots/policy.js",
+      "after": "App/Engines/Risk/Snapshots/policy.js",
+      "exists": true
+    },
+    {
+      "engine": "risk",
+      "before": "App/Risk/Snapshots/pool.js",
+      "after": "App/Engines/Risk/Snapshots/pool.js",
+      "exists": true
+    },
+    {
+      "engine": "risk",
+      "before": "App/Risk/Snapshots/worker.js",
+      "after": "App/Engines/Risk/Snapshots/worker.js",
+      "exists": true
+    },
+    {
+      "engine": "risk",
+      "before": "App/Risk/Tests/benchmark_snapshots.js",
+      "after": "App/Engines/Risk/Tests/benchmark_snapshots.js",
+      "exists": true
+    },
+    {
+      "engine": "risk",
+      "before": "App/Risk/Tests/risk_engine.test.js",
+      "after": "App/Engines/Risk/Tests/risk_engine.test.js",
+      "exists": true
+    },
+    {
+      "engine": "risk",
+      "before": "App/Risk/Tests/snapshot_fixture.js",
+      "after": "App/Engines/Risk/Tests/snapshot_fixture.js",
+      "exists": true
+    },
+    {
+      "engine": "risk",
+      "before": "App/Risk/Tests/snapshots.integration.test.js",
+      "after": "App/Engines/Risk/Tests/snapshots.integration.test.js",
+      "exists": true
+    },
+    {
+      "engine": "risk",
+      "before": "App/Risk/Tests/snapshots.test.js",
+      "after": "App/Engines/Risk/Tests/snapshots.test.js",
+      "exists": true
+    },
+    {
+      "engine": "risk",
+      "before": "App/Risk/Tests/test_risk_gate.js",
+      "after": "App/Engines/Risk/Tests/test_risk_gate.js",
+      "exists": true
+    },
+    {
+      "engine": "risk",
+      "before": "App/Risk/Tests/test_risk_r1_r2_v25.js",
+      "after": "App/Engines/Risk/Tests/test_risk_r1_r2_v25.js",
+      "exists": true
+    },
+    {
+      "engine": "risk",
+      "before": "App/Risk/Tests/test_risk_settings_v25.js",
+      "after": "App/Engines/Risk/Tests/test_risk_settings_v25.js",
+      "exists": true
+    },
+    {
+      "engine": "strategy",
+      "before": "App/Strategy/Engine/evaluate_strategy.js",
+      "after": "App/Engines/Strategy/Engine/evaluate_strategy.js",
+      "exists": true
+    },
+    {
+      "engine": "strategy",
+      "before": "App/Strategy/Engine/owner_strategy.js",
+      "after": "App/Engines/Strategy/Engine/owner_strategy.js",
+      "exists": true
+    },
+    {
+      "engine": "strategy",
+      "before": "App/Strategy/Engine/strategy_registry_v2.js",
+      "after": "App/Engines/Strategy/Engine/strategy_registry_v2.js",
+      "exists": true
+    },
+    {
+      "engine": "strategy",
+      "before": "App/Strategy/Engine/strategy_service.js",
+      "after": "App/Engines/Strategy/Engine/strategy_service.js",
+      "exists": true
+    },
+    {
+      "engine": "strategy",
+      "before": "App/Strategy/Engine/strategy_stats_v2.js",
+      "after": "App/Engines/Strategy/Engine/strategy_stats_v2.js",
+      "exists": true
+    },
+    {
+      "engine": "strategy",
+      "before": "App/Strategy/Engine/strategy_v2_core.js",
+      "after": "App/Engines/Strategy/Engine/strategy_v2_core.js",
+      "exists": true
+    },
+    {
+      "engine": "strategy",
+      "before": "App/Strategy/FunctionRegistry/Functions.json",
+      "after": "App/Engines/Strategy/FunctionRegistry/Functions.json",
+      "exists": true
+    },
+    {
+      "engine": "strategy",
+      "before": "App/Strategy/FunctionRegistry/VERSION.json",
+      "after": "App/Engines/Strategy/FunctionRegistry/VERSION.json",
+      "exists": true
+    },
+    {
+      "engine": "strategy",
+      "before": "App/Strategy/FunctionRegistry/startup.js",
+      "after": "App/Engines/Strategy/FunctionRegistry/startup.js",
+      "exists": true
+    },
+    {
+      "engine": "strategy",
+      "before": "App/Strategy/Schemas/strategy_signal_v2.json",
+      "after": "App/Engines/Strategy/Schemas/strategy_signal_v2.json",
+      "exists": true
+    },
+    {
+      "engine": "strategy",
+      "before": "App/Strategy/Tests/test_strategy_engine_v2.js",
+      "after": "App/Engines/Strategy/Tests/test_strategy_engine_v2.js",
+      "exists": true
+    },
+    {
+      "engine": "strategy",
+      "before": "App/Strategy/Tests/test_strategy_ui_router_readonly_v1.9.js",
+      "after": "App/Engines/Strategy/Tests/test_strategy_ui_router_readonly_v1.9.js",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/ChatBot/Contracts/index.js",
+      "after": "App/Engines/Supervisor/ChatBot/Contracts/index.js",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/ChatBot/Contracts/intent.parameters.schema.json",
+      "after": "App/Engines/Supervisor/ChatBot/Contracts/intent.parameters.schema.json",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/ChatBot/Intents/account.json",
+      "after": "App/Engines/Supervisor/ChatBot/Intents/account.json",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/ChatBot/Intents/algorithms.json",
+      "after": "App/Engines/Supervisor/ChatBot/Intents/algorithms.json",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/ChatBot/Intents/funding.json",
+      "after": "App/Engines/Supervisor/ChatBot/Intents/funding.json",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/ChatBot/Intents/manifest.json",
+      "after": "App/Engines/Supervisor/ChatBot/Intents/manifest.json",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/ChatBot/Intents/market.json",
+      "after": "App/Engines/Supervisor/ChatBot/Intents/market.json",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/ChatBot/Intents/okx-api-catalog.json",
+      "after": "App/Engines/Supervisor/ChatBot/Intents/okx-api-catalog.json",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/ChatBot/Intents/orders.json",
+      "after": "App/Engines/Supervisor/ChatBot/Intents/orders.json",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/ChatBot/Intents/positions.json",
+      "after": "App/Engines/Supervisor/ChatBot/Intents/positions.json",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/ChatBot/Intents/trading.json",
+      "after": "App/Engines/Supervisor/ChatBot/Intents/trading.json",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/ChatBot/Resolver/advanced.js",
+      "after": "App/Engines/Supervisor/ChatBot/Resolver/advanced.js",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/ChatBot/Resolver/index.js",
+      "after": "App/Engines/Supervisor/ChatBot/Resolver/index.js",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/ChatBot/Tests/browser_rev2.js",
+      "after": "App/Engines/Supervisor/ChatBot/Tests/browser_rev2.js",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/ChatBot/Tests/browser_ui.js",
+      "after": "App/Engines/Supervisor/ChatBot/Tests/browser_ui.js",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/ChatBot/Tests/execution_readiness.test.js",
+      "after": "App/Engines/Supervisor/ChatBot/Tests/execution_readiness.test.js",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/ChatBot/Tests/hybrid.test.js",
+      "after": "App/Engines/Supervisor/ChatBot/Tests/hybrid.test.js",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/ChatBot/Tests/ui_fixture.js",
+      "after": "App/Engines/Supervisor/ChatBot/Tests/ui_fixture.js",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/ChatBot/catalog.js",
+      "after": "App/Engines/Supervisor/ChatBot/catalog.js",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/ChatBot/index.js",
+      "after": "App/Engines/Supervisor/ChatBot/index.js",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/ChatBot/llm.js",
+      "after": "App/Engines/Supervisor/ChatBot/llm.js",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/ChatBot/procedures.js",
+      "after": "App/Engines/Supervisor/ChatBot/procedures.js",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/ChatBot/state.js",
+      "after": "App/Engines/Supervisor/ChatBot/state.js",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/CognitiveRuntime/context-budget.js",
+      "after": "App/Engines/Supervisor/CognitiveRuntime/context-budget.js",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/CognitiveRuntime/index.js",
+      "after": "App/Engines/Supervisor/CognitiveRuntime/index.js",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/Core/collector_data_v2_4_1.js",
+      "after": "App/Engines/Supervisor/Core/collector_data_v2_4_1.js",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/Core/context_orchestrator.js",
+      "after": "App/Engines/Supervisor/Core/context_orchestrator.js",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/Core/cp1_client.js",
+      "after": "App/Engines/Supervisor/Core/cp1_client.js",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/Core/extension_manager.js",
+      "after": "App/Engines/Supervisor/Core/extension_manager.js",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/Core/owner_supervisor.js",
+      "after": "App/Engines/Supervisor/Core/owner_supervisor.js",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/Core/settings.js",
+      "after": "App/Engines/Supervisor/Core/settings.js",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/Core/supervisor_core.js",
+      "after": "App/Engines/Supervisor/Core/supervisor_core.js",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/Engine/supervisor-engine.js",
+      "after": "App/Engines/Supervisor/Engine/supervisor-engine.js",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/Engine/working-memory.js",
+      "after": "App/Engines/Supervisor/Engine/working-memory.js",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/Extensions/AutonomousTrading/README.md",
+      "after": "App/Engines/Supervisor/Extensions/AutonomousTrading/README.md",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/Extensions/AutonomousTrading/context_builder.js",
+      "after": "App/Engines/Supervisor/Extensions/AutonomousTrading/context_builder.js",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/Extensions/AutonomousTrading/decision_engine.js",
+      "after": "App/Engines/Supervisor/Extensions/AutonomousTrading/decision_engine.js",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/Extensions/AutonomousTrading/manifest.json",
+      "after": "App/Engines/Supervisor/Extensions/AutonomousTrading/manifest.json",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/Extensions/AutonomousTrading/state_manager.js",
+      "after": "App/Engines/Supervisor/Extensions/AutonomousTrading/state_manager.js",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/Extensions/AutonomousTrading/trade_intent.js",
+      "after": "App/Engines/Supervisor/Extensions/AutonomousTrading/trade_intent.js",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/FunctionRegistry/Functions.json",
+      "after": "App/Engines/Supervisor/FunctionRegistry/Functions.json",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/FunctionRegistry/VERSION.json",
+      "after": "App/Engines/Supervisor/FunctionRegistry/VERSION.json",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/FunctionRegistry/startup.js",
+      "after": "App/Engines/Supervisor/FunctionRegistry/startup.js",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/Gateway/agent_engine_gateway.js",
+      "after": "App/Engines/Supervisor/Gateway/agent_engine_gateway.js",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/LLM/README.md",
+      "after": "App/Engines/Supervisor/LLM/README.md",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/LLM/Tests/test_llm_manager.js",
+      "after": "App/Engines/Supervisor/LLM/Tests/test_llm_manager.js",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/LLM/http_json.js",
+      "after": "App/Engines/Supervisor/LLM/http_json.js",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/LLM/llm_manager.js",
+      "after": "App/Engines/Supervisor/LLM/llm_manager.js",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/LLM/provider_contract.js",
+      "after": "App/Engines/Supervisor/LLM/provider_contract.js",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/LLM/providers/mock_provider.js",
+      "after": "App/Engines/Supervisor/LLM/providers/mock_provider.js",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/LLM/providers/openai_provider.js",
+      "after": "App/Engines/Supervisor/LLM/providers/openai_provider.js",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/LLM/providers/remote_llm_provider.js",
+      "after": "App/Engines/Supervisor/LLM/providers/remote_llm_provider.js",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/Memory/personal-memory.js",
+      "after": "App/Engines/Supervisor/Memory/personal-memory.js",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/Memory/short-term.js",
+      "after": "App/Engines/Supervisor/Memory/short-term.js",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/README.md",
+      "after": "App/Engines/Supervisor/README.md",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/Soul/identity.md",
+      "after": "App/Engines/Supervisor/Soul/identity.md",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/Tests/SupervisorEngine/foundation.test.js",
+      "after": "App/Engines/Supervisor/Tests/SupervisorEngine/foundation.test.js",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/Tests/SupervisorEngine/recovery.test.js",
+      "after": "App/Engines/Supervisor/Tests/SupervisorEngine/recovery.test.js",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/Tests/test_supervisor_architecture.js",
+      "after": "App/Engines/Supervisor/Tests/test_supervisor_architecture.js",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/Tests/test_supervisor_pipeline_smoke.js",
+      "after": "App/Engines/Supervisor/Tests/test_supervisor_pipeline_smoke.js",
+      "exists": true
+    },
+    {
+      "engine": "supervisor",
+      "before": "App/Supervisor/supervisor_service.js",
+      "after": "App/Engines/Supervisor/supervisor_service.js",
+      "exists": true
+    }
+  ],
+  "data_policy": "Source paths changed; persistent roots and owner namespaces preserved separately."
+}

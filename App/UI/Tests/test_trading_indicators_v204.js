@@ -2,8 +2,8 @@
 // Local fixtures only. Real HTML/CSS/JS and Indicator Engine math; no external requests or live orders.
 var test=require('node:test'),assert=require('assert'),fs=require('fs'),path=require('path'),http=require('http');
 var firefox=require('playwright').firefox,root=path.resolve(__dirname,'../..');
-var Engine=require('../../Indicators/Engine/indicator_engine'),Registry=require('../../Indicators/Engine/indicator_registry').Registry;
-var registry=new Registry(path.join(root,'Indicators')),browser,server,base,FIXTURE_NOW=Date.now();
+var Engine=require("../../Engines/Indicators/Engine/indicator_engine"),Registry=require("../../Engines/Indicators/Engine/indicator_registry").Registry;
+var registry=new Registry(path.join(root,"Engines/Indicators")),browser,server,base,FIXTURE_NOW=Date.now();
 function candles(symbol,tf){var step=tf==='5m'?300000:60000,at=Math.floor(FIXTURE_NOW/step)*step-239*step,price=symbol==='ETHUSD'?3000:60000;
  return Array.from({length:240},function(_,i){var p=price+i*2+Math.sin(i/5)*30;return[at+i*step,p,p+12,p-12,p+Math.sin(i/3)*9,100+i];});}
 test.before(async function(){

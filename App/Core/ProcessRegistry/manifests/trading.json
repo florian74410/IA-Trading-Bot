@@ -8,7 +8,7 @@
   "marker": "IA-TB Trading Engine",
   "restartable": true,
   "defaultEnabled": true,
-  "script": "services/trading-engine/trading_service.js",
+  "script": "Engines/Trading/trading_service.js",
   "log": ".runtime/logs/trading.log",
   "env": {
     "IATB_TRADING_ENGINE_PORT": "8016",

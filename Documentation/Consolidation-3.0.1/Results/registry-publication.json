@@ -1,0 +1,141 @@
+{
+  "mode": "separate_processes_loopback_HTTP_CP1",
+  "note": "Engine ActionBlock startup adapters, not full production Engine boot",
+  "reports": [
+    {
+      "engine": "core",
+      "broker": null,
+      "status": "PASS",
+      "expected": 0,
+      "received": 0,
+      "exit": 0,
+      "error": "(node:1642) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+    },
+    {
+      "engine": "router",
+      "broker": null,
+      "status": "PASS",
+      "expected": 2,
+      "received": 2,
+      "exit": 0,
+      "error": "(node:1650) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+    },
+    {
+      "engine": "supervisor",
+      "broker": null,
+      "status": "PASS",
+      "expected": 38,
+      "received": 38,
+      "exit": 0,
+      "error": "(node:1658) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+    },
+    {
+      "engine": "marketdata",
+      "broker": null,
+      "status": "PASS",
+      "expected": 42,
+      "received": 42,
+      "exit": 0,
+      "error": "(node:1666) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+    },
+    {
+      "engine": "fundamental",
+      "broker": null,
+      "status": "PASS",
+      "expected": 63,
+      "received": 63,
+      "exit": 0,
+      "error": "(node:1674) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+    },
+    {
+      "engine": "indicator",
+      "broker": null,
+      "status": "PASS",
+      "expected": 26,
+      "received": 26,
+      "exit": 0,
+      "error": "(node:1682) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+    },
+    {
+      "engine": "liquidity",
+      "broker": null,
+      "status": "PASS",
+      "expected": 15,
+      "received": 15,
+      "exit": 0,
+      "error": "(node:1690) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+    },
+    {
+      "engine": "portfolio",
+      "broker": null,
+      "status": "PASS",
+      "expected": 20,
+      "received": 20,
+      "exit": 0,
+      "error": "(node:1698) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+    },
+    {
+      "engine": "risk",
+      "broker": null,
+      "status": "PASS",
+      "expected": 18,
+      "received": 18,
+      "exit": 0,
+      "error": "(node:1706) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+    },
+    {
+      "engine": "strategy",
+      "broker": null,
+      "status": "PASS",
+      "expected": 13,
+      "received": 13,
+      "exit": 0,
+      "error": "(node:1714) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+    },
+    {
+      "engine": "trading",
+      "broker": null,
+      "status": "PASS",
+      "expected": 20,
+      "received": 20,
+      "exit": 0,
+      "error": "(node:1722) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+    },
+    {
+      "engine": "trading",
+      "broker": "binance",
+      "status": "PASS",
+      "expected": 20,
+      "received": 20,
+      "exit": 0,
+      "error": "(node:1730) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+    },
+    {
+      "engine": "trading",
+      "broker": "kraken",
+      "status": "PASS",
+      "expected": 20,
+      "received": 20,
+      "exit": 0,
+      "error": "(node:1738) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+    },
+    {
+      "engine": "trading",
+      "broker": "okx",
+      "status": "PASS",
+      "expected": 20,
+      "received": 20,
+      "exit": 0,
+      "error": "(node:1746) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+    },
+    {
+      "engine": "firewall",
+      "broker": null,
+      "status": "PASS",
+      "expected": 3,
+      "received": 3,
+      "exit": 0,
+      "error": "(node:1754) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+    }
+  ]
+}

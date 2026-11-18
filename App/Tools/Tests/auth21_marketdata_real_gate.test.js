@@ -2,7 +2,7 @@
 const test=require('node:test'),assert=require('node:assert/strict');
 const fs=require('node:fs'),os=require('node:os'),path=require('node:path');
 const {openEngineSnapshotTrial}=require('../../Core/Backup/auth21_engine_snapshot_trial');
-const src=fs.readFileSync(path.resolve(__dirname,'../../MarketData/market_data_service.js'),'utf8');
+const src=fs.readFileSync(path.resolve(__dirname,"../../Engines/MarketData/market_data_service.js"),'utf8');
 test('actual MarketData service passes snapshot gate to every reviewed store',()=>{
  assert.match(src,/new ApiTelemetryStore\(\{retentionDays:[^}]+snapshotGate:AUTH21_MARKETDATA_SNAPSHOT\}\)/);
  assert.match(src,/registry=new Registry\(\{snapshotGate:AUTH21_MARKETDATA_SNAPSHOT\}\)/);

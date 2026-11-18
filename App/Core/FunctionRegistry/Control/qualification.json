@@ -2,32 +2,32 @@
   "schema": "cp1.qualification/1.0",
   "tests": [
     "Core/FunctionRegistry/Tests/control_http.integration.test.js",
-    "Portfolio/Tests/okx_pipeline.integration.test.js",
+    "Engines/Portfolio/Tests/okx_pipeline.integration.test.js",
     "tests/supervisor-cognitive-runtime.test.js",
     "tests/supervisor-owner-cognitive-auth.test.js",
-    "Portfolio/Tests/advanced_orders.integration.test.js"
+    "Engines/Portfolio/Tests/advanced_orders.integration.test.js"
   ],
   "engines": {
     "marketdata": {
       "commands": {
         "marketdata.candles": {
-          "implementation_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+          "implementation_sha256": "0ed392f6924af359a6e8ab3c1c8d4add111b2f89049dac5b546b7b88205ae62e",
           "contract_sha256": "2f625354acbd9427ad9bfb74d1928f36ae453810cf3ef584a7e8c5ec91289993"
         },
         "marketdata.microstructure.snapshot": {
-          "implementation_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+          "implementation_sha256": "0ed392f6924af359a6e8ab3c1c8d4add111b2f89049dac5b546b7b88205ae62e",
           "contract_sha256": "695f5ec1b3894dac43b7333d6d608da597c33285c8291db65be5cd8cb5e6912b"
         },
         "marketdata.health": {
-          "implementation_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+          "implementation_sha256": "0ed392f6924af359a6e8ab3c1c8d4add111b2f89049dac5b546b7b88205ae62e",
           "contract_sha256": "0e227f42bc20d47b2b9a88b17493acf70b7733f316cc568313b89a32ff9ac0bc"
         },
         "marketdata.providers": {
-          "implementation_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+          "implementation_sha256": "0ed392f6924af359a6e8ab3c1c8d4add111b2f89049dac5b546b7b88205ae62e",
           "contract_sha256": "9bdfc1cfe71fa4da26636556024c1e6adbe111073d936e27d40e19f410b4ea3e"
         },
         "marketdata.financial.capabilities": {
-          "implementation_sha256": "401af4804665f3d9c8a7b7d14a868f3a5b31b31ebad658e97737af90929ff935",
+          "implementation_sha256": "0ed392f6924af359a6e8ab3c1c8d4add111b2f89049dac5b546b7b88205ae62e",
           "contract_sha256": "4fc95c596ba7b04f10bbdb6b5e5d5128ca43f6eca346e7498fa119ecbd7af97e"
         }
       }
@@ -35,15 +35,15 @@
     "indicator": {
       "commands": {
         "indicator.list_indicators": {
-          "implementation_sha256": "dab54601e6177b1be05f6e3e1f0566edffb0ebf1eed834a274ba95906fbb8cf9",
+          "implementation_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
           "contract_sha256": "5313a6a709fdbd8b3751d90674c8c151eda597669da3bb4dd824f284c915e33e"
         },
         "indicator.language.info": {
-          "implementation_sha256": "dab54601e6177b1be05f6e3e1f0566edffb0ebf1eed834a274ba95906fbb8cf9",
+          "implementation_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
           "contract_sha256": "ce3e24aeeada3e35035325d8b20cc7a40494d2407b1b466ed1dd1aaf824f5bb4"
         },
         "indicator.compute_batch_data": {
-          "implementation_sha256": "dab54601e6177b1be05f6e3e1f0566edffb0ebf1eed834a274ba95906fbb8cf9",
+          "implementation_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
           "contract_sha256": "0cc25b32e705b08578c645710940561091c2399ba00802c16e57a9f738f897cb"
         }
       }
@@ -51,11 +51,11 @@
     "fundamental": {
       "commands": {
         "fundamental.health": {
-          "implementation_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+          "implementation_sha256": "b4fbf7e7fe36729f43abff81ab499feede0f03062d71d60be25fc07803c0f725",
           "contract_sha256": "a0336a7240c4f9f5b8e1c8b9b8d047b1d4dfbb868b529d9a5425ae48c15510a5"
         },
         "fundamental.summary": {
-          "implementation_sha256": "ea42e7638055a1f79a33c60a44b0fa0fe789b6953946dac3e80db7911325239c",
+          "implementation_sha256": "b4fbf7e7fe36729f43abff81ab499feede0f03062d71d60be25fc07803c0f725",
           "contract_sha256": "c206c3cc1d104074d43fa91ab41ce7bb7c9e03cdb8ce33f512b244afd7b78595"
         }
       }
@@ -63,11 +63,11 @@
     "liquidity": {
       "commands": {
         "liquidity.health": {
-          "implementation_sha256": "266962aa83a44cb53215618b78e43b739ffacabb9417412efa28bc537468cc68",
+          "implementation_sha256": "ffe79eabbc239047d991246155f80c39aec8dc30b5e56bf279ba89d11b908602",
           "contract_sha256": "68f13ea67811ba0dc197ee140a3976e8ef4c5d3011dafd6b06f2096d2170f463"
         },
         "liquidity.capabilities": {
-          "implementation_sha256": "266962aa83a44cb53215618b78e43b739ffacabb9417412efa28bc537468cc68",
+          "implementation_sha256": "ffe79eabbc239047d991246155f80c39aec8dc30b5e56bf279ba89d11b908602",
           "contract_sha256": "e6fc9fa0aaa671c334cd7474cfbbf4c8fa2b736f6eb84a188daf7e743e5c19d2"
         }
       }
@@ -75,15 +75,15 @@
     "strategy": {
       "commands": {
         "strategy.health": {
-          "implementation_sha256": "272d8b8c0d5d1139c0b52d8f6f47783b30dadbbc3ffbe7ab5f520ab9ce65ee0b",
+          "implementation_sha256": "5bcd2fde5b4d6d521b2aab0af7bd5109f5f9717141ba7be8034ddf7284d02fa5",
           "contract_sha256": "c50d756a970561175e53150765a710285d4b30b2456bb83c6e794ae6fc4b2ba2"
         },
         "strategy.catalog": {
-          "implementation_sha256": "272d8b8c0d5d1139c0b52d8f6f47783b30dadbbc3ffbe7ab5f520ab9ce65ee0b",
+          "implementation_sha256": "5bcd2fde5b4d6d521b2aab0af7bd5109f5f9717141ba7be8034ddf7284d02fa5",
           "contract_sha256": "8bad56333849b812be7ca9e64bf65813849cedc680411061f0c6fa0f01d7ae4b"
         },
         "strategy.dry_run": {
-          "implementation_sha256": "272d8b8c0d5d1139c0b52d8f6f47783b30dadbbc3ffbe7ab5f520ab9ce65ee0b",
+          "implementation_sha256": "5bcd2fde5b4d6d521b2aab0af7bd5109f5f9717141ba7be8034ddf7284d02fa5",
           "contract_sha256": "15f84d77ad02b1a5a96baef4ed7fa3a3621958127967608f3ae6c401ae9b78aa"
         }
       }
@@ -91,37 +91,37 @@
     "risk": {
       "commands": {
         "risk.snapshot.create": {
-          "implementation_sha256": "6b787a4fe67015fc2f70733a14e37ab5d4e3407a321e2c5f4f38c43be7f239cc",
+          "implementation_sha256": "adea20d4697e1d6fabf2b150405ffffc8c1ee27fd3d566ded55d0bcf3852abfc",
           "contract_sha256": "d2c96307b33832f494a43d05e7211b7774c5b7526c3b157d72830741cddd4122"
         },
         "risk.snapshot.get": {
-          "implementation_sha256": "6b787a4fe67015fc2f70733a14e37ab5d4e3407a321e2c5f4f38c43be7f239cc",
+          "implementation_sha256": "adea20d4697e1d6fabf2b150405ffffc8c1ee27fd3d566ded55d0bcf3852abfc",
           "contract_sha256": "39841e2b0c0689d08a85bd866d99fc202b683f3dd25ec518baa7aa4190eb4cd6"
         },
         "risk.list_capabilities": {
-          "implementation_sha256": "6b787a4fe67015fc2f70733a14e37ab5d4e3407a321e2c5f4f38c43be7f239cc",
+          "implementation_sha256": "adea20d4697e1d6fabf2b150405ffffc8c1ee27fd3d566ded55d0bcf3852abfc",
           "contract_sha256": "0e98fe2c8396b4e5e252558f3aee8ecdcfde755e4406eff5f858caed8e1424a0"
         },
         "risk.constraints.get": {
-          "implementation_sha256": "6b787a4fe67015fc2f70733a14e37ab5d4e3407a321e2c5f4f38c43be7f239cc",
+          "implementation_sha256": "adea20d4697e1d6fabf2b150405ffffc8c1ee27fd3d566ded55d0bcf3852abfc",
           "contract_sha256": "4e17d2fd224a8ffb8bb36726ec01511dae930d8de9536c36899e4f69ea6dc245"
         },
         "risk.status": {
-          "implementation_sha256": "6b787a4fe67015fc2f70733a14e37ab5d4e3407a321e2c5f4f38c43be7f239cc",
+          "implementation_sha256": "adea20d4697e1d6fabf2b150405ffffc8c1ee27fd3d566ded55d0bcf3852abfc",
           "contract_sha256": "b3eecb078062c75a72cfe80fc9b25ee6efc63d3e06bb261e0e86ee0cb6700c27"
         },
         "risk.r1.evaluate": {
-          "implementation_sha256": "6b787a4fe67015fc2f70733a14e37ab5d4e3407a321e2c5f4f38c43be7f239cc",
+          "implementation_sha256": "adea20d4697e1d6fabf2b150405ffffc8c1ee27fd3d566ded55d0bcf3852abfc",
           "contract_sha256": "5afb918fe869bb3cffdd463a94f12d5c5720d3689f30e9f2f8affb837a64510c"
         },
         "risk.r2.evaluate": {
-          "implementation_sha256": "6b787a4fe67015fc2f70733a14e37ab5d4e3407a321e2c5f4f38c43be7f239cc",
+          "implementation_sha256": "adea20d4697e1d6fabf2b150405ffffc8c1ee27fd3d566ded55d0bcf3852abfc",
           "contract_sha256": "6046fbaa3ad097d4684bbc47ae2074f5b19ce42733e91ac117ba617d192cc8b3"
         }
       },
       "native_verified": {
         "risk.manual.authorize": {
-          "implementation_sha256": "6b787a4fe67015fc2f70733a14e37ab5d4e3407a321e2c5f4f38c43be7f239cc",
+          "implementation_sha256": "adea20d4697e1d6fabf2b150405ffffc8c1ee27fd3d566ded55d0bcf3852abfc",
           "contract_sha256": "85156f4e16301b6d24fda8d460b2669520e98e9ec156aa113bfc2ecc656b0d8a"
         }
       }
@@ -129,11 +129,11 @@
     "portfolio": {
       "commands": {
         "portfolio.health": {
-          "implementation_sha256": "800e2c78be5036ee2be0e80145187643192902343dae4719b8c8b94cc8adbe61",
+          "implementation_sha256": "0bdb1b294103dc4b0c3c95b5e0b590a76c8ce9cb2bd5165f5c94c557922aadf2",
           "contract_sha256": "f20ab3efb766af42b772d185d098fc9bc62946df1ca6189f88a90c2488e44dfa"
         },
         "portfolio.account.snapshot": {
-          "implementation_sha256": "800e2c78be5036ee2be0e80145187643192902343dae4719b8c8b94cc8adbe61",
+          "implementation_sha256": "0bdb1b294103dc4b0c3c95b5e0b590a76c8ce9cb2bd5165f5c94c557922aadf2",
           "contract_sha256": "91ddda11d459efb3b202641106148f47a877226fc82e9b5c3017506c77f60f0e"
         }
       }
@@ -141,7 +141,7 @@
     "firewall": {
       "commands": {
         "firewall.status": {
-          "implementation_sha256": "2aa28b5c65f7546563b90f9e5f0b93eebfaeb73e47fa2da9d8971deefedd3340",
+          "implementation_sha256": "b5c386fdc7de992baedde37de9a5c797439251d3b9eb7b696027b96ff2827c19",
           "contract_sha256": "11b866db270c560eb869095299c2f5f2644a72dd7efddb9bac13b4f744727206"
         }
       }
@@ -149,49 +149,49 @@
     "trading": {
       "commands": {
         "trading.health": {
-          "implementation_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
+          "implementation_sha256": "ab67ec207c78bf20dd1d135839c9b6cd0c2cbff038b120c9b8dbac822ed2663b",
           "contract_sha256": "b23ab46387711ec3e05b224254c4c83a3712cd22d3d02060e8105dc5926fec7c"
         },
         "trading.capabilities": {
-          "implementation_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
+          "implementation_sha256": "ab67ec207c78bf20dd1d135839c9b6cd0c2cbff038b120c9b8dbac822ed2663b",
           "contract_sha256": "3b95beff89041877a3ff67ad91141f021ed94b57278dd199c5055925db10281d"
         }
       },
       "native_verified": {
         "trading.account.inspect": {
-          "implementation_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
+          "implementation_sha256": "ab67ec207c78bf20dd1d135839c9b6cd0c2cbff038b120c9b8dbac822ed2663b",
           "contract_sha256": "7f69c4b28e037d203c56d144498789f3a91b3d94ab7b8be71b00e24271d09e30"
         },
         "trading.manual.batch": {
-          "implementation_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
+          "implementation_sha256": "ab67ec207c78bf20dd1d135839c9b6cd0c2cbff038b120c9b8dbac822ed2663b",
           "contract_sha256": "439e19be6125d4e78dcacec3389e8b0c2d527ea3f489c446c779d1aff859e152"
         },
         "trading.manual.order": {
-          "implementation_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
+          "implementation_sha256": "ab67ec207c78bf20dd1d135839c9b6cd0c2cbff038b120c9b8dbac822ed2663b",
           "contract_sha256": "efd76aed44afc60ce9abe7d6020df849e099eda38e17e0bff2159a614480d666"
         },
         "trading.manual.algo": {
-          "implementation_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
+          "implementation_sha256": "ab67ec207c78bf20dd1d135839c9b6cd0c2cbff038b120c9b8dbac822ed2663b",
           "contract_sha256": "fbb2c8ab4fdcd430201fd014de220a5ca4ac0b9da73ef1739849afefed32515d"
         },
         "trading.manual.cancel": {
-          "implementation_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
+          "implementation_sha256": "ab67ec207c78bf20dd1d135839c9b6cd0c2cbff038b120c9b8dbac822ed2663b",
           "contract_sha256": "f653cfd5cb4d800fef2d9cd204157e02d78f6148012d7fcc600564a61918f13d"
         },
         "trading.manual.amend": {
-          "implementation_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
+          "implementation_sha256": "ab67ec207c78bf20dd1d135839c9b6cd0c2cbff038b120c9b8dbac822ed2663b",
           "contract_sha256": "a0bef210bd4e249e07bd106d2fec8bc732ac513af7783e8f20ef6011c9972dc0"
         },
         "trading.manual.cancel_algo": {
-          "implementation_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
+          "implementation_sha256": "ab67ec207c78bf20dd1d135839c9b6cd0c2cbff038b120c9b8dbac822ed2663b",
           "contract_sha256": "670443d92bf35d6ffdd109fcec83ceccffd74a81f255815723a2b4df53e61a86"
         },
         "trading.manual.amend_algo": {
-          "implementation_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
+          "implementation_sha256": "ab67ec207c78bf20dd1d135839c9b6cd0c2cbff038b120c9b8dbac822ed2663b",
           "contract_sha256": "e5a2d7f23f1a36ff48977b5bd343efa0c3ad8f1bee2749a957a816c6710ef829"
         },
         "trading.manual.leverage": {
-          "implementation_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
+          "implementation_sha256": "ab67ec207c78bf20dd1d135839c9b6cd0c2cbff038b120c9b8dbac822ed2663b",
           "contract_sha256": "96904de3e77048e2c4a71046c823e50bf4c0b5a39d37199638ac5d6e0b8b42c5"
         }
       }
@@ -199,61 +199,61 @@
     "supervisor": {
       "commands": {
         "supervisor.status": {
-          "implementation_sha256": "8c217a7f82569ece1ed57bfece2a4f8b4c8cd8c83d1fbbbb7025b1c952c64b1d",
+          "implementation_sha256": "53c8860d448f0b64d39763e91507770eafd3ce4988ec6e291191f2539007484f",
           "contract_sha256": "1b81fe1ff246d009a1f7e84443e1286a9b9cbc371fe87fcff6363d5d6dea1a68"
         }
       },
       "native_verified": {
         "supervisor.engine.context": {
-          "implementation_sha256": "8c217a7f82569ece1ed57bfece2a4f8b4c8cd8c83d1fbbbb7025b1c952c64b1d",
+          "implementation_sha256": "53c8860d448f0b64d39763e91507770eafd3ce4988ec6e291191f2539007484f",
           "contract_sha256": "dc824812ff723fb3bdcdb23e69f84b229d6c1feef80e3c261cb21ddb5e48d795"
         },
         "supervisor.engine.objective": {
-          "implementation_sha256": "8c217a7f82569ece1ed57bfece2a4f8b4c8cd8c83d1fbbbb7025b1c952c64b1d",
+          "implementation_sha256": "53c8860d448f0b64d39763e91507770eafd3ce4988ec6e291191f2539007484f",
           "contract_sha256": "0bdf85d416a192b4ad24cb26b5efd604f2977712206879c71932017cba62f798"
         },
         "supervisor.engine.discover": {
-          "implementation_sha256": "8c217a7f82569ece1ed57bfece2a4f8b4c8cd8c83d1fbbbb7025b1c952c64b1d",
+          "implementation_sha256": "53c8860d448f0b64d39763e91507770eafd3ce4988ec6e291191f2539007484f",
           "contract_sha256": "26d59af8c33ae2fc10129b1fcb35c64db9c77d1a7d0fbd9afee558e2d29643c5"
         },
         "supervisor.engine.observe": {
-          "implementation_sha256": "8c217a7f82569ece1ed57bfece2a4f8b4c8cd8c83d1fbbbb7025b1c952c64b1d",
+          "implementation_sha256": "53c8860d448f0b64d39763e91507770eafd3ce4988ec6e291191f2539007484f",
           "contract_sha256": "9c48ce9ed00b193afab05b2428779a43f7b5d00635da2477708fac872821ccb2"
         },
         "supervisor.chatbot.message": {
-          "implementation_sha256": "8c217a7f82569ece1ed57bfece2a4f8b4c8cd8c83d1fbbbb7025b1c952c64b1d",
+          "implementation_sha256": "53c8860d448f0b64d39763e91507770eafd3ce4988ec6e291191f2539007484f",
           "contract_sha256": "ea111b30e74bb433b1da856c1af91111557bba01a4778c8d92f4074f10d6f1af"
         },
         "supervisor.chatbot.history": {
-          "implementation_sha256": "8c217a7f82569ece1ed57bfece2a4f8b4c8cd8c83d1fbbbb7025b1c952c64b1d",
+          "implementation_sha256": "53c8860d448f0b64d39763e91507770eafd3ce4988ec6e291191f2539007484f",
           "contract_sha256": "284e07477f2c2bff30cfe52e68340e47a96a0224c6c48f5dfdf1c57b4c18101a"
         },
         "supervisor.chatbot.confirm": {
-          "implementation_sha256": "8c217a7f82569ece1ed57bfece2a4f8b4c8cd8c83d1fbbbb7025b1c952c64b1d",
+          "implementation_sha256": "53c8860d448f0b64d39763e91507770eafd3ce4988ec6e291191f2539007484f",
           "contract_sha256": "4e775ab4c2d5c6886c36ba9cf1838ba914b613c9eb0f8445cd747b57ad212909"
         },
         "supervisor.chatbot.cancel": {
-          "implementation_sha256": "8c217a7f82569ece1ed57bfece2a4f8b4c8cd8c83d1fbbbb7025b1c952c64b1d",
+          "implementation_sha256": "53c8860d448f0b64d39763e91507770eafd3ce4988ec6e291191f2539007484f",
           "contract_sha256": "b684efc096bfcfcff8a5f3a04807aaad3fefed708cc22cdb16d3b6eb68bbdcbd"
         },
         "supervisor.cognitive.reason": {
-          "implementation_sha256": "8c217a7f82569ece1ed57bfece2a4f8b4c8cd8c83d1fbbbb7025b1c952c64b1d",
+          "implementation_sha256": "53c8860d448f0b64d39763e91507770eafd3ce4988ec6e291191f2539007484f",
           "contract_sha256": "71e6a45c95c9b2dbe45705d7597b8b18404a3f2d8c64ad97d4320db60bbec999"
         },
         "supervisor.cognitive.status": {
-          "implementation_sha256": "8c217a7f82569ece1ed57bfece2a4f8b4c8cd8c83d1fbbbb7025b1c952c64b1d",
+          "implementation_sha256": "53c8860d448f0b64d39763e91507770eafd3ce4988ec6e291191f2539007484f",
           "contract_sha256": "28c8f5bd83618bc11a1edb531bbaf8420949c23615d74f1f6e9797a3b4396d58"
         },
         "supervisor.cognitive.history": {
-          "implementation_sha256": "8c217a7f82569ece1ed57bfece2a4f8b4c8cd8c83d1fbbbb7025b1c952c64b1d",
+          "implementation_sha256": "53c8860d448f0b64d39763e91507770eafd3ce4988ec6e291191f2539007484f",
           "contract_sha256": "f479ce8966dcdc91e439bbc504e00068933125d206f19f00a493d1cca8962324"
         },
         "supervisor.llm.models": {
-          "implementation_sha256": "8c217a7f82569ece1ed57bfece2a4f8b4c8cd8c83d1fbbbb7025b1c952c64b1d",
+          "implementation_sha256": "53c8860d448f0b64d39763e91507770eafd3ce4988ec6e291191f2539007484f",
           "contract_sha256": "28c8f5bd83618bc11a1edb531bbaf8420949c23615d74f1f6e9797a3b4396d58"
         },
         "supervisor.llm.select": {
-          "implementation_sha256": "8c217a7f82569ece1ed57bfece2a4f8b4c8cd8c83d1fbbbb7025b1c952c64b1d",
+          "implementation_sha256": "53c8860d448f0b64d39763e91507770eafd3ce4988ec6e291191f2539007484f",
           "contract_sha256": "2b1167ebc799d5b4f36fc1295c12d18e341e698549bc9ba1ceb76f770f67874a"
         }
       }

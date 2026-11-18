@@ -7,7 +7,7 @@ async function envelope(runtime,session,message){
  const codec=proofCodec({secret:Buffer.from(CP.ensureSecret(runtime.root),'hex')}),payload={clientId:principal.clientId,sessionHash:session.session_hash,action:message.action,args};
  if(['portfolio.account.snapshot','risk.snapshot.create'].includes(message.action)){
   if(scope.exchange&&scope.exchange!=='OKX'||scope.markets&&!scope.markets.includes('SPOT')||args.exchange&&args.exchange!=='OKX'||args.intent?.exchange&&args.intent.exchange!=='OKX'||!runtime.tradingVault)throw Error('OKX_PROFILE_ACCOUNT_REQUIRED');
-  if(message.action==='risk.snapshot.create')require('../../../Risk/Snapshots/orchestrator').validate(args);
+  if(message.action==='risk.snapshot.create')require("../../../Engines/Risk/Snapshots/orchestrator").validate(args);
   const intent={exchange:'OKX',market_type:'SPOT',symbol:args.symbol||'BTC-USDT',account:args.portfolio_id||args.account};if(!intent.account)delete intent.account;
   const grant=await runtime.tradingVault.issueReadForSession(session.session_hash,intent),accountRead={owner:principal.clientId,account:grant.account.id,ticket:grant.ticket,intent};
   if(message.target==='portfolio')payload.accountRead=accountRead;else{const portfolio={clientId:principal.clientId,sessionHash:session.session_hash,action:'portfolio.account.snapshot',args:{account:grant.account.id,exchange:'OKX',symbol:intent.symbol},accountRead};payload.portfolioRead={payload:portfolio,proof:codec.issue({principal,audience:'portfolio',operation:'self.read',method:'POST',ownerClientId:principal.clientId,action:'portfolio.user.request',bodyDigest:CP.hashData(portfolio)})};}

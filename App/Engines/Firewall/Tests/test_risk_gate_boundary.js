@@ -1,0 +1,12 @@
+'use strict';
+var assert=require('assert'),fs=require('fs'),path=require('path');
+var root=path.resolve(__dirname,'../../..'),svc=fs.readFileSync(path.join(root,"Engines/Firewall","",'firewall_service.js'),'utf8'),client=fs.readFileSync(path.join(root,"Engines/Firewall","",'risk_approval_client.js'),'utf8');
+assert(svc.indexOf("risk.gate.verify")<0,'Firewall service must use Risk client abstraction');
+assert(client.indexOf("'risk.gate.verify'")>=0,'Risk client must call risk.gate.verify');
+const cp1=fs.readFileSync(path.join(root,'Core/Communication/cp1_client.js'),'utf8');
+assert(client.includes("require(\"../../Core/Communication/cp1_client\")")&&client.includes("this.client.request('risk','risk.gate.verify'"),'Risk verification must use shared CP1 Router client');
+assert(cp1.includes('/communication/v1/request'),'Shared CP1 client must route through Router');
+assert(svc.indexOf('MUTATING_TRADING_BLOCKED_IN_FIREWALL_BYPASS')>=0,'Mutating trading must fail closed in bypass');
+assert(svc.indexOf("RISK_APPROVAL_REQUIRED")>=0,'Missing approval must be rejected');
+assert(svc.indexOf("APPROVAL_CONSUMED")>=0,'Approval must be consumed before Trading forwarding');
+console.log('Firewall Risk boundary tests: OK');

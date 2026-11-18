@@ -5,7 +5,7 @@ if(process.env.IATB_AUTH21_LOCAL_SNAPSHOT_TRIAL==='1'&&process.env.IATB_AUTH21_S
 // Static-only audit. Never require() trading modules or start Trading Engine.
 const fs=require('node:fs'),assert=require('node:assert/strict');
 const {spawnSync}=require('node:child_process');
-const paths=['services/trading-engine/trading_service.js','services/trading-engine/trading-engine.js','services/trading-engine/http-transport.js','services/trading-engine/secret-provider.js','services/trading-engine/registry.js'];
+const paths=["Engines/Trading/trading_service.js","Engines/Trading/trading-engine.js","Engines/Trading/http-transport.js","Engines/Trading/secret-provider.js","Engines/Trading/registry.js"];
 let bad=0;
 function check(label,fn){try{fn();console.log(label+': OK');}catch(e){bad++;console.error(label+': FAILED '+e.message);}}
 for(const p of paths)check('SYNTAX '+p,()=>{assert(fs.existsSync(p),'MISSING');const r=spawnSync(process.execPath,['--check',p],{encoding:'utf8',timeout:5000});assert.equal(r.status,0,(r.stderr||r.error||'NODE_CHECK_FAILED').toString().slice(0,500));});

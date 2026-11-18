@@ -8,7 +8,7 @@
   "marker": "IA-TB Firewall Service",
   "restartable": true,
   "defaultEnabled": true,
-  "script": "Core/Firewall/firewall_service.js",
+  "script": "Engines/Firewall/firewall_service.js",
   "log": ".runtime/logs/firewall.log",
   "env": {
     "IATB_FIREWALL_PORT": "8017",
@@ -27,14 +27,14 @@
       "thread": 1,
       "label": "Trading Engine Protection",
       "toggleable": true,
-      "securityFolder": "Core/Firewall/Config/Trading"
+      "securityFolder": "Engines/Firewall/Config/Trading"
     },
     {
       "id": "data",
       "thread": 2,
       "label": "Market Data Collector Protection",
       "toggleable": true,
-      "securityFolder": "Core/Firewall/Config/MarketData"
+      "securityFolder": "Engines/Firewall/Config/MarketData"
     }
   ],
   "versionSource": "RUNTIME_HEALTH",

@@ -1,0 +1,98 @@
+TAP version 13
+# (node:547) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: actual Router -> Supervisor -> verified owner receiver -> persistent cognitive memory (MOCK)
+ok 1 - actual Router -> Supervisor -> verified owner receiver -> persistent cognitive memory (MOCK)
+  ---
+  duration_ms: 2788.701503
+  type: 'test'
+  ...
+# (node:580) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: persistent cognitive memory, self first, scoped tools, reviewed-only proposals, model allowlist
+ok 2 - persistent cognitive memory, self first, scoped tools, reviewed-only proposals, model allowlist
+  ---
+  duration_ms: 82.590387
+  type: 'test'
+  ...
+# Subtest: CP1 registry matches real Supervisor handlers and manifest contracts
+ok 3 - CP1 registry matches real Supervisor handlers and manifest contracts
+  ---
+  duration_ms: 17.987565
+  type: 'test'
+  ...
+# Subtest: tool allowlist blocks model-command injection; no direct trade/tool execution
+ok 4 - tool allowlist blocks model-command injection; no direct trade/tool execution
+  ---
+  duration_ms: 20.983421
+  type: 'test'
+  ...
+# Subtest: existing OpenAI provider forwards chosen model through CP1 AI Gateway Responses API
+ok 5 - existing OpenAI provider forwards chosen model through CP1 AI Gateway Responses API
+  ---
+  duration_ms: 34.334
+  type: 'test'
+  ...
+# Subtest: unverified CP1 identity cannot open cognitive memory, cross-account isolation
+ok 6 - unverified CP1 identity cannot open cognitive memory, cross-account isolation
+  ---
+  duration_ms: 30.877748
+  type: 'test'
+  ...
+# Subtest: malformed provider JSON retries once; failure stores a controlled turn without secrets
+ok 7 - malformed provider JSON retries once; failure stores a controlled turn without secrets
+  ---
+  duration_ms: 22.97739
+  type: 'test'
+  ...
+# Subtest: context budget drops old history, protects current prompt, and backup restores SQLite
+ok 8 - context budget drops old history, protects current prompt, and backup restores SQLite
+  ---
+  duration_ms: 45.268206
+  type: 'test'
+  ...
+# (node:592) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Core policy uses authenticated owner channel for cognitive reasoning and ADMIN configuration
+ok 9 - Core policy uses authenticated owner channel for cognitive reasoning and ADMIN configuration
+  ---
+  duration_ms: 3.156325
+  type: 'test'
+  ...
+# Subtest: Core owner AI checks model, signed original prompt, output token cap, store:false, current session
+ok 10 - Core owner AI checks model, signed original prompt, output token cap, store:false, current session
+  ---
+  duration_ms: 3.915766
+  type: 'test'
+  ...
+# Subtest: ADMIN model choice persists in canonical SQLite settings and USER cannot alter it
+ok 11 - ADMIN model choice persists in canonical SQLite settings and USER cannot alter it
+  ---
+  duration_ms: 21.939319
+  type: 'test'
+  ...
+# (node:600) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: persist across process reopen, isolate tenants and sessions, enforce retention
+ok 12 - persist across process reopen, isolate tenants and sessions, enforce retention
+  ---
+  duration_ms: 17.353144
+  type: 'test'
+  ...
+# Subtest: expiry prevents reading and prune deletes expired sessions
+ok 13 - expiry prevents reading and prune deletes expired sessions
+  ---
+  duration_ms: 2.656106
+  type: 'test'
+  ...
+1..13
+# tests 13
+# suites 0
+# pass 13
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 6301.513394
+(node:540) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)

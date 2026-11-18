@@ -6,7 +6,7 @@ const fs=require('node:fs');
 const os=require('node:os');
 const path=require('node:path');
 const Module=require('node:module');
-const PortfolioStore=require('../../Portfolio/Engine/portfolio_store');
+const PortfolioStore=require("../../Engines/Portfolio/Engine/portfolio_store");
 const {SnapshotCoordinator,LocalSnapshotWriter}=require('../../Core/Backup/snapshot_coordinator');
 
 class FixtureDatabase {

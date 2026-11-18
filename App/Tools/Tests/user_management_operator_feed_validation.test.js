@@ -1,5 +1,5 @@
 'use strict';
-const test=require('node:test'),assert=require('node:assert/strict'),Storage=require('../../Fundamental/Engine/database_core');
+const test=require('node:test'),assert=require('node:assert/strict'),Storage=require("../../Engines/Fundamental/Engine/database_core");
 test('operator feed creation rejects literal private IPv6 and endpoint credentials through the canonical validator',()=>{
  const storage=Object.create(Storage.prototype);storage.q={sourceByCode:{get:()=>({id:1,code:'FIXTURE'})}};
  const input={sourceCode:'FIXTURE',provider:'RSS',label:'Fictional source'};

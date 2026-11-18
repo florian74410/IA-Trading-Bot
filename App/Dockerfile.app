@@ -11,5 +11,5 @@ ENV NODE_ENV=production
 COPY --from=dependencies /opt/iatb/App/node_modules ./node_modules
 COPY . .
 # No service starts implicitly; compose provides explicit service commands.
-# QA/preflight scripts remain in Git but are not copied into this image.
+# Unit suites are excluded; Compose smoke/preflight helpers remain available.
 CMD ["node", "-e", "console.log('IA-TB GEN-1 runtime image: start services through compose only')"]

@@ -31,6 +31,6 @@ Cette limite est volontaire afin de ne pas transformer un fichier charge par un 
 
 Test
 ----
-node Indicators/Tests/test_indicator_engine.js
-node Indicators/Tests/test_indicator_cp1_v112.js
+node Engines/Indicators/Tests/test_indicator_engine.js
+node Engines/Indicators/Tests/test_indicator_cp1_v112.js
 Le second test exige que Router, Market Data et Indicator Engine soient demarres.

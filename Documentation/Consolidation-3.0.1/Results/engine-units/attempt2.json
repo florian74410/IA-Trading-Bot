@@ -1,0 +1,14 @@
+{
+  "status": "FAIL",
+  "exit_code": 1,
+  "error": null,
+  "files": 69,
+  "passed": 132,
+  "failed": 1,
+  "skipped": 0,
+  "real_orders": 0,
+  "network": "loopback only; no real exchange domains",
+  "failed_cases": [
+    "P3.3 real multiprocess ADMIN chain, denial matrix, key agreement, durable replay and interruptions"
+  ]
+}

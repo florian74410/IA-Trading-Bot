@@ -1,0 +1,82 @@
+{
+  "schema": "iatb.consolidation-deletions/1.0",
+  "removed_files": 9,
+  "removed_tracked_bytes": 1740614,
+  "records": [
+    {
+      "path": "Documentation/Architecture/Rev3/Results/rev3-firewall-commands.json",
+      "bytes": 192559,
+      "sha256": "6f478293b5a203b5b54e808865b08474c7e2c6c0d6f209e2842075ada4d5ae45",
+      "reason": "Redundant full per-command matrix; final full matrix and all stage TAP/digest summaries retained",
+      "recovery_commit": "c7a7841c7c47ac63edf19f0a7973ec3ecf5a1ab3",
+      "validation": "258 command contracts compared at every stage; final comparison repeated after cleanup"
+    },
+    {
+      "path": "Documentation/Architecture/Rev3/Results/rev3-fundamental-commands.json",
+      "bytes": 193063,
+      "sha256": "dd1fa671d97484f51cfb6630d8966b9f830aac05faec7d87d5c8127eaab03443",
+      "reason": "Redundant full per-command matrix; final full matrix and all stage TAP/digest summaries retained",
+      "recovery_commit": "c7a7841c7c47ac63edf19f0a7973ec3ecf5a1ab3",
+      "validation": "258 command contracts compared at every stage; final comparison repeated after cleanup"
+    },
+    {
+      "path": "Documentation/Architecture/Rev3/Results/rev3-indicator-commands.json",
+      "bytes": 193271,
+      "sha256": "aaad8371811712c5d0563f446b84c4b16785fa4306eb63f289fc3a5e442b25e6",
+      "reason": "Redundant full per-command matrix; final full matrix and all stage TAP/digest summaries retained",
+      "recovery_commit": "c7a7841c7c47ac63edf19f0a7973ec3ecf5a1ab3",
+      "validation": "258 command contracts compared at every stage; final comparison repeated after cleanup"
+    },
+    {
+      "path": "Documentation/Architecture/Rev3/Results/rev3-liquidity-commands.json",
+      "bytes": 193391,
+      "sha256": "58ca1684ef3c14663e1b940924a74eb0f1636e3f7b7103e90312d38ce617e93b",
+      "reason": "Redundant full per-command matrix; final full matrix and all stage TAP/digest summaries retained",
+      "recovery_commit": "c7a7841c7c47ac63edf19f0a7973ec3ecf5a1ab3",
+      "validation": "258 command contracts compared at every stage; final comparison repeated after cleanup"
+    },
+    {
+      "path": "Documentation/Architecture/Rev3/Results/rev3-marketdata-commands.json",
+      "bytes": 193727,
+      "sha256": "4b761a45ca1b2a25cc247b1d01300300cfc89bfca1ae3e60117d90597c46a087",
+      "reason": "Redundant full per-command matrix; final full matrix and all stage TAP/digest summaries retained",
+      "recovery_commit": "c7a7841c7c47ac63edf19f0a7973ec3ecf5a1ab3",
+      "validation": "258 command contracts compared at every stage; final comparison repeated after cleanup"
+    },
+    {
+      "path": "Documentation/Architecture/Rev3/Results/rev3-portfolio-commands.json",
+      "bytes": 193887,
+      "sha256": "c29a0e8f149fe6ccc696df834db925ad3e2be3e7621b9785d8097a94f68f7751",
+      "reason": "Redundant full per-command matrix; final full matrix and all stage TAP/digest summaries retained",
+      "recovery_commit": "c7a7841c7c47ac63edf19f0a7973ec3ecf5a1ab3",
+      "validation": "258 command contracts compared at every stage; final comparison repeated after cleanup"
+    },
+    {
+      "path": "Documentation/Architecture/Rev3/Results/rev3-risk-commands.json",
+      "bytes": 194031,
+      "sha256": "259c76df9c001332ab6092985dcc3d0001130a8fbda3af151d9a27f47f3c981f",
+      "reason": "Redundant full per-command matrix; final full matrix and all stage TAP/digest summaries retained",
+      "recovery_commit": "c7a7841c7c47ac63edf19f0a7973ec3ecf5a1ab3",
+      "validation": "258 command contracts compared at every stage; final comparison repeated after cleanup"
+    },
+    {
+      "path": "Documentation/Architecture/Rev3/Results/rev3-strategy-commands.json",
+      "bytes": 194135,
+      "sha256": "52f19ebc6f9a75b96438909c81f152b511aa2ae934966db537111d1de5105a44",
+      "reason": "Redundant full per-command matrix; final full matrix and all stage TAP/digest summaries retained",
+      "recovery_commit": "c7a7841c7c47ac63edf19f0a7973ec3ecf5a1ab3",
+      "validation": "258 command contracts compared at every stage; final comparison repeated after cleanup"
+    },
+    {
+      "path": "Documentation/Architecture/Rev3/Results/rev3-trading-commands.json",
+      "bytes": 192550,
+      "sha256": "79a02d0d6ef99c42e5c6f628a5ed26c7973da9b6fabc4341cd98f4410f0d2ef0",
+      "reason": "Redundant full per-command matrix; final full matrix and all stage TAP/digest summaries retained",
+      "recovery_commit": "c7a7841c7c47ac63edf19f0a7973ec3ecf5a1ab3",
+      "validation": "258 command contracts compared at every stage; final comparison repeated after cleanup"
+    }
+  ],
+  "note": "Gross removed tracked bytes; final metrics account for replacement summaries and new evidence separately. Git history is unchanged.",
+  "deletion_commit_resolution": "Deletion commit containing this record; exact source commit is in final BUILD.json and CI. Recovery references are not deletion commits.",
+  "ignored_generated_output": "App/artifacts/cp1-registry-report.json was already untracked/ignored and is regenerated by tests. Not counted as a Git deletion, net disk saving or recoverable tracked file at c7a7841c; publication proof is outside App."
+}

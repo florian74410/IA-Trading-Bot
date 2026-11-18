@@ -10,9 +10,9 @@
 const fs = require('fs');
 const path = require('path');
 const assert = require('assert');
-const sourceFile = path.join(__dirname, '..', 'Server', 'server.js');
+const sourceFile = path.join(__dirname, "../Server/server.js", "", "");
 const source = fs.readFileSync(sourceFile, 'utf8');
-const gateFile = path.join(__dirname, '..', 'Clients', 'auth21_core_route_gate.js');
+const gateFile = path.join(__dirname, "../Clients/auth21_core_route_gate.js", "", "");
 const gate = fs.readFileSync(gateFile, 'utf8');
 assert(gate.includes("deny(res,404,'NOT_FOUND')"), 'Fail-closed Auth21 Core gate missing');
 assert(source.includes('AUTH21_CORE_AUTH.handler'), 'Core is not wired to Auth21 isolated gate');

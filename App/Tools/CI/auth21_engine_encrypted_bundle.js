@@ -33,7 +33,7 @@ function capture({env,root,resources,transportKey,coordinator,epoch}={}){
  const required=new Set(resources.map(rel=>rel==='userdata/Security/client_master.key'||rel.startsWith('userdata/Database/')?'clients':
   rel.startsWith('annexes/Strategies/')?'annex-root':
   rel.startsWith('annexes/Mosaics/')?'mosaics':
-  rel.startsWith('App/Indicators/Custom/')?'indicators':
+  rel.startsWith("App/Engines/Indicators/Custom/")?'indicators':
   rel.endsWith('/user_data.db')?'settings':
   rel==='runtime/config/market_data_settings.json'?'marketdata':
   rel==='runtime/state/strategy/strategy_stats.json'?'strategy':

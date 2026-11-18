@@ -1,0 +1,52 @@
+TAP version 13
+# (node:1861) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: path migration distinguishes code prefixes from storage segments
+ok 1 - path migration distinguishes code prefixes from storage segments
+  ---
+  duration_ms: 9.85845
+  type: 'test'
+  ...
+# Subtest: path arrays used dynamically are migrated with their owning file
+ok 2 - path arrays used dynamically are migrated with their owning file
+  ---
+  duration_ms: 1.826194
+  type: 'test'
+  ...
+# Subtest: moving code preserves dot separators used by CP1 commands and data selectors
+ok 3 - moving code preserves dot separators used by CP1 commands and data selectors
+  ---
+  duration_ms: 1.15697
+  type: 'test'
+  ...
+# Subtest: JSON migration preserves descriptions and rewrites only whole resource paths
+ok 4 - JSON migration preserves descriptions and rewrites only whole resource paths
+  ---
+  duration_ms: 0.891677
+  type: 'test'
+  ...
+# (node:1862) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Engine layout preserves the existing Fundamental SQLite database and private roots
+ok 5 - Engine layout preserves the existing Fundamental SQLite database and private roots
+  ---
+  duration_ms: 149.040034
+  type: 'test'
+  ...
+# Subtest: relocated Indicator code keeps preexisting shared custom definitions in their data directory
+ok 6 - relocated Indicator code keeps preexisting shared custom definitions in their data directory
+  ---
+  duration_ms: 7.054559
+  type: 'test'
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 345.514749
+(node:1854) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)

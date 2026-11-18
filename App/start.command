@@ -222,9 +222,9 @@ SUPERVISOR_LOG="$LOG_DIR/supervisor.log"
 # Fundamental Engine V3: SQLite native dependency tested with the local Node runtime.
 # Echec non bloquant: IA-TB reste disponible et le FE apparaitra OFFLINE dans ADMIN.
 FUNDAMENTAL_READY=0
-if [ -f "$PWD/Fundamental/install_sqlite.command" ]; then
+if [ -f "$PWD/Engines/Fundamental/install_sqlite.command" ]; then
   status_wait "SQLite / Fundamental" "checking"
-  if /bin/bash "$PWD/Fundamental/install_sqlite.command"; then
+  if /bin/bash "$PWD/Engines/Fundamental/install_sqlite.command"; then
     FUNDAMENTAL_READY=1
     status_ok "SQLite / Fundamental" "ready"
   else
@@ -282,7 +282,7 @@ trap cleanup EXIT INT TERM
 : > "$INDICATOR_LOG"
 : > "$MARKET_DATA_LOG"
 : > "$LIQUIDITY_LOG"
-mkdir -p Fundamental/Data
+mkdir -p Engines/Fundamental/Data
 : > "$FUNDAMENTAL_LOG"
 : > "$TRADING_LOG"
 : > "$FIREWALL_LOG"
@@ -340,7 +340,7 @@ require_service "Router" "$ROUTER_PORT" "/router-health" "\"router\"" "$ROUTER_L
 
 # 3. Security boundary before Market Data or Trading.
 status_wait "Firewall" "before data/trading"
-IATB_FIREWALL_PORT="$FIREWALL_PORT" IATB_TRADING_ENGINE_PORT="$TRADING_ENGINE_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Core/Firewall/firewall_service.js >> "$FIREWALL_LOG" 2>&1 &
+IATB_FIREWALL_PORT="$FIREWALL_PORT" IATB_TRADING_ENGINE_PORT="$TRADING_ENGINE_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Engines/Firewall/firewall_service.js >> "$FIREWALL_LOG" 2>&1 &
 FIREWALL_PID=$!
 require_service "Firewall" "$FIREWALL_PORT" "/health" "IA-TB Firewall Service" "$FIREWALL_LOG" 10
 fw_threads_ok=0
@@ -360,19 +360,19 @@ status_ok "Firewall workers" "Trading + Market Data"
 
 # 4. Universal Market Data Collector (native CEX/DEX providers).
 status_wait "Market Data Collector" "CEX/DEX registry"
-IATB_MARKET_DATA_PORT="$MARKET_DATA_PORT" IATB_FIREWALL_PORT="$FIREWALL_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" MarketData/market_data_service.js >> "$MARKET_DATA_LOG" 2>&1 &
+IATB_MARKET_DATA_PORT="$MARKET_DATA_PORT" IATB_FIREWALL_PORT="$FIREWALL_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Engines/MarketData/market_data_service.js >> "$MARKET_DATA_LOG" 2>&1 &
 MARKET_DATA_PID=$!
 require_service "Market Data Collector" "$MARKET_DATA_PORT" "/health" "IA-TB Market Data" "$MARKET_DATA_LOG" 12
 
 # 5. Read/analysis engines consume Router + Market Data.
 status_wait "Indicator Engine" "after Market Data"
-IATB_INDICATOR_PORT="$INDICATOR_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Indicators/Engine/indicator_service.js >> "$INDICATOR_LOG" 2>&1 &
+IATB_INDICATOR_PORT="$INDICATOR_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Engines/Indicators/Engine/indicator_service.js >> "$INDICATOR_LOG" 2>&1 &
 INDICATOR_PID=$!
 require_service "Indicator Engine" "$INDICATOR_PORT" "/health" "IA-TB Indicator Engine" "$INDICATOR_LOG" 10
 
 if [ "$FUNDAMENTAL_READY" -eq 1 ]; then
   status_wait "Fundamental Engine" "after Router"
-  IATB_FUNDAMENTAL_PORT="$FUNDAMENTAL_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Fundamental/Engine/fundamental_service.js >> "$FUNDAMENTAL_LOG" 2>&1 &
+  IATB_FUNDAMENTAL_PORT="$FUNDAMENTAL_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Engines/Fundamental/Engine/fundamental_service.js >> "$FUNDAMENTAL_LOG" 2>&1 &
   FUNDAMENTAL_PID=$!
   if ! wait_service "Fundamental Engine" "$FUNDAMENTAL_PORT" "/health" "IA-TB Fundamental Engine" "$FUNDAMENTAL_LOG" 12; then
     status_warn "Fundamental Engine" "disabled after failed boot"
@@ -385,36 +385,36 @@ else
 fi
 
 status_wait "Liquidity Engine" "after Market Data"
-IATB_LIQUIDITY_PORT="$LIQUIDITY_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Liquidity/Engine/liquidity_service.js >> "$LIQUIDITY_LOG" 2>&1 &
+IATB_LIQUIDITY_PORT="$LIQUIDITY_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Engines/Liquidity/Engine/liquidity_service.js >> "$LIQUIDITY_LOG" 2>&1 &
 LIQUIDITY_PID=$!
 require_service "Liquidity Engine" "$LIQUIDITY_PORT" "/health" "IA-TB Liquidity Engine" "$LIQUIDITY_LOG" 10
 
 # 6. Risk is online before Trading accepts any mutating path.
 status_wait "Risk Engine" "before Trading"
-IATB_RISK_ENGINE_PORT="$RISK_ENGINE_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Risk/Engine/risk_service.js >> "$RISK_LOG" 2>&1 &
+IATB_RISK_ENGINE_PORT="$RISK_ENGINE_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Engines/Risk/Engine/risk_service.js >> "$RISK_LOG" 2>&1 &
 RISK_ENGINE_PID=$!
 require_service "Risk Engine" "$RISK_ENGINE_PORT" "/health" "IA-TB Risk Engine" "$RISK_LOG" 10
 
 status_wait "Trading Engine" "after Firewall + Risk"
-IATB_TRADING_ENGINE_PORT="$TRADING_ENGINE_PORT" ROUTER_PORT="$ROUTER_PORT" IATB_TRADING_LIVE="0" "$NODE_BIN" services/trading-engine/trading_service.js >> "$TRADING_LOG" 2>&1 &
+IATB_TRADING_ENGINE_PORT="$TRADING_ENGINE_PORT" ROUTER_PORT="$ROUTER_PORT" IATB_TRADING_LIVE="0" "$NODE_BIN" Engines/Trading/trading_service.js >> "$TRADING_LOG" 2>&1 &
 TRADING_ENGINE_PID=$!
 require_service "Trading Engine" "$TRADING_ENGINE_PORT" "/health" "IA-TB Trading Engine" "$TRADING_LOG" 10
 
 # 7. Portfolio can now sync Trading history and marks through Router.
 status_wait "Portfolio Engine" "after Trading"
-IATB_PORTFOLIO_PORT="$PORTFOLIO_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Portfolio/Engine/portfolio_service.js >> "$PORTFOLIO_LOG" 2>&1 &
+IATB_PORTFOLIO_PORT="$PORTFOLIO_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Engines/Portfolio/Engine/portfolio_service.js >> "$PORTFOLIO_LOG" 2>&1 &
 PORTFOLIO_PID=$!
 require_service "Portfolio Engine" "$PORTFOLIO_PORT" "/health" "IA-TB Portfolio Engine" "$PORTFOLIO_LOG" 10
 
 # 8. Strategy sees all analysis/risk/portfolio dependencies.
 status_wait "Strategy Engine" "after Risk + Portfolio"
-IATB_STRATEGY_PORT="$STRATEGY_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Strategy/Engine/strategy_service.js >> "$STRATEGY_LOG" 2>&1 &
+IATB_STRATEGY_PORT="$STRATEGY_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Engines/Strategy/Engine/strategy_service.js >> "$STRATEGY_LOG" 2>&1 &
 STRATEGY_PID=$!
 require_service "Strategy Engine" "$STRATEGY_PORT" "/health" "IA-TB Strategy Engine v2" "$STRATEGY_LOG" 10
 
 # 9. Supervisor orchestrates only once the runtime topology is ready.
 status_wait "IA Supervisor" "last backend service"
-IATB_SUPERVISOR_PORT="$SUPERVISOR_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Supervisor/supervisor_service.js >> "$SUPERVISOR_LOG" 2>&1 &
+IATB_SUPERVISOR_PORT="$SUPERVISOR_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Engines/Supervisor/supervisor_service.js >> "$SUPERVISOR_LOG" 2>&1 &
 SUPERVISOR_PID=$!
 require_service "IA Supervisor" "$SUPERVISOR_PORT" "/health" "IA-TB Supervisor" "$SUPERVISOR_LOG" 10
 

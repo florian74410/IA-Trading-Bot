@@ -3,7 +3,7 @@ on:
   push:
     branches: ['fix/iatb-3.0.1-supervisor-foundation']
   pull_request:
-    paths: ['App/Supervisor/**', 'App/Core/FunctionRegistry/**', 'App/Core/Clients/UserManagement/**', 'App/Tools/qualify_supervisor_foundation.js', '.github/workflows/supervisor-v3-audit.yml']
+    paths: ['App/Engines/Supervisor/**', 'App/Core/FunctionRegistry/**', 'App/Core/Clients/UserManagement/**', 'App/Tools/qualify_supervisor_foundation.js', '.github/workflows/supervisor-v3-audit.yml']
   workflow_dispatch:
 permissions:
   contents: read

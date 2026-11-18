@@ -10,7 +10,7 @@ const {FunctionRegistryManager}=require('../Core/FunctionRegistry/manager');
 const {receivePublication}=require('../Core/FunctionRegistry/receiver');
 const {RegistryDiscovery}=require('../Core/FunctionRegistry/discovery');
 const root=path.resolve(__dirname,'..');
-const components={core:'Core',router:'Core/Router',supervisor:'Supervisor',marketdata:'MarketData',fundamental:'Fundamental',indicator:'Indicators',liquidity:'Liquidity',portfolio:'Portfolio',risk:'Risk',strategy:'Strategy',trading:'services/trading-engine',firewall:'Core/Firewall'};
+const components={core:'Core',router:'Core/Router',supervisor:"Engines/Supervisor",marketdata:"Engines/MarketData",fundamental:"Engines/Fundamental",indicator:"Engines/Indicators",liquidity:"Engines/Liquidity",portfolio:"Engines/Portfolio",risk:"Engines/Risk",strategy:"Engines/Strategy",trading:"Engines/Trading",firewall:"Engines/Firewall"};
 async function main(){
  const manager=new FunctionRegistryManager(':memory:');
  const secret=require('node:crypto').randomBytes(32).toString('hex');
@@ -34,7 +34,7 @@ async function main(){
    if(!fs.existsSync(manifestPath)){reports.push({engine,status:'MISSING_MANIFEST'});continue;}
    const brokers=engine==='trading'?[null,'binance','kraken','okx']:[null];
    for(const broker of brokers){
-    const child=fork(path.join(__dirname,'registry-engine-child.js'),[],{env:{...process.env,REGISTRY_URL:url,REGISTRY_SECRET:secret,ENGINE_ID:engine,BROKER_ID:broker||'',ACTION_BLOCK:path.join(root,folder,'FunctionRegistry/startup.js')},stdio:['ignore','pipe','pipe','ipc']});
+    const child=fork(path.join(__dirname,"./registry-engine-child.js"),[],{env:{...process.env,REGISTRY_URL:url,REGISTRY_SECRET:secret,ENGINE_ID:engine,BROKER_ID:broker||'',ACTION_BLOCK:path.join(root,folder,'FunctionRegistry/startup.js')},stdio:['ignore','pipe','pipe','ipc']});
     let stderr='';child.stderr.on('data',x=>stderr+=x);
     const result=await Promise.race([new Promise(resolve=>child.on('exit',(code)=>resolve({code}))),new Promise(resolve=>setTimeout(()=>{child.kill();resolve({code:124});},15000))]);
     const identity=broker?engine+'@'+broker:engine;

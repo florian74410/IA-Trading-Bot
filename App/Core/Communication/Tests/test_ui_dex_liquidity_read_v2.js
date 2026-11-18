@@ -6,7 +6,7 @@ var http=require('http'),crypto=require('crypto'),Module=require('module');
 var temp=fs.mkdtempSync(path.join(os.tmpdir(),'iatb-ui-dex-'));
 ['RUNTIME','DATA','STATE','ANNEX','UPDATES'].forEach(function(k){process.env['IATB_'+k+'_ROOT']=path.join(temp,k);});
 var Router=require('../communication_router_v1'),CP=require('../communication_protocol_v1');
-var Collector=require('../../../MarketData/Collectors/dex_liquidity_collector');
+var Collector=require("../../../Engines/MarketData/Collectors/dex_liquidity_collector");
 var root=path.resolve(__dirname,'../../..'),server,engine,received=[],inspections=0;
 var snapshot={ok:true,symbol:'ETHUSD',canonicalSymbol:'ETHUSD',provider:'DEXSCREENER',
  provenance:'LOCAL_TEST_FIXTURE',observedAt:Date.now(),weightedPriceUsd:2000,

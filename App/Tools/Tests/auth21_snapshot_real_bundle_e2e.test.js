@@ -13,12 +13,12 @@ const {createSnapshotCoreClient}=require('../../Core/Backup/auth21_snapshot_core
 const {capture,restore}=require('../CI/auth21_engine_encrypted_bundle');
 const APP=path.resolve(__dirname,'../..');
 const SPEC=[
- ['portfolio','Portfolio/Engine/portfolio_service.js','IATB_PORTFOLIO_PORT'],
- ['marketdata','MarketData/market_data_service.js','IATB_MARKET_DATA_PORT'],
- ['fundamental','Fundamental/Engine/fundamental_service.js','IATB_FUNDAMENTAL_PORT'],
- ['trading','services/trading-engine/trading_service.js','IATB_TRADING_ENGINE_PORT'],
- ['indicators','Indicators/Engine/indicator_service.js','IATB_INDICATOR_PORT'],
- ['strategy','Strategy/Engine/strategy_service.js','IATB_STRATEGY_PORT']
+ ['portfolio',"Engines/Portfolio/Engine/portfolio_service.js",'IATB_PORTFOLIO_PORT'],
+ ['marketdata',"Engines/MarketData/market_data_service.js",'IATB_MARKET_DATA_PORT'],
+ ['fundamental',"Engines/Fundamental/Engine/fundamental_service.js",'IATB_FUNDAMENTAL_PORT'],
+ ['trading',"Engines/Trading/trading_service.js",'IATB_TRADING_ENGINE_PORT'],
+ ['indicators',"Engines/Indicators/Engine/indicator_service.js",'IATB_INDICATOR_PORT'],
+ ['strategy',"Engines/Strategy/Engine/strategy_service.js",'IATB_STRATEGY_PORT']
 ];
 async function unusedPort(){const s=net.createServer();s.listen(0,'127.0.0.1');await once(s,'listening');const p=s.address().port;await new Promise(ok=>s.close(ok));return p;}
 async function probe(port){return new Promise(resolve=>{
@@ -48,7 +48,7 @@ test('Core freezes three real Engines, captures encrypted WAL/JSONL, restores in
   'annexes/Mosaics/fixture.moz.json',
   'userdata/Shared Data/MarketData/api_telemetry.db',
   'userdata/Shared Data/MarketData/market_microstructure.db',
-  'App/Indicators/Custom/p22_fixture.indicator.json',
+  "App/Engines/Indicators/Custom/p22_fixture.indicator.json",
   'runtime/state/strategy/strategy_stats.json'
  ];
  const fpath=path.join(root,resources[3]);fs.mkdirSync(path.dirname(fpath),{recursive:true,mode:0o700});
@@ -205,7 +205,7 @@ test('Core freezes three real Engines, captures encrypted WAL/JSONL, restores in
  assert.equal(coordinator.state,'BLOCKED');
  await assert.rejects(coordinator.execute(async()=>{}),/SNAPSHOT_COORDINATOR_BUSY/);
  // Start the genuine Trading service again with the SAME isolated journal.
- const restarted=spawn(process.execPath,[path.join(app,'services/trading-engine/trading_service.js')],
+ const restarted=spawn(process.execPath,[path.join(app,"Engines/Trading/trading_service.js")],
   {cwd:app,env,stdio:['ignore','pipe','pipe']});
  let restartLog='';restarted.stdout.on('data',x=>restartLog+=x);
  restarted.stderr.on('data',x=>restartLog+=x);children.push(restarted);
@@ -249,7 +249,7 @@ test('Core freezes three real Engines, captures encrypted WAL/JSONL, restores in
  assert.equal(coordinator.state,'IDLE');
  if(helper.exitCode===null)await once(helper,'exit');
  assert.equal(helper.exitCode,0);
- const marketRestart=spawn(process.execPath,[path.join(app,'MarketData/market_data_service.js')],
+ const marketRestart=spawn(process.execPath,[path.join(app,"Engines/MarketData/market_data_service.js")],
   {cwd:app,env,stdio:['ignore','pipe','pipe']});
  let marketLog='';marketRestart.stdout.on('data',x=>marketLog+=x);
  marketRestart.stderr.on('data',x=>marketLog+=x);children.push(marketRestart);

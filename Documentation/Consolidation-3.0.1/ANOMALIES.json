@@ -1,0 +1,323 @@
+{
+  "schema": "iatb.consolidation-anomalies/1.0",
+  "source": "1b6a01f012169bfd4d1034c0d9d19b20b2fc9284",
+  "anomalies": [
+    {
+      "id": "ERR-001",
+      "priority": "P0",
+      "error": "Fundamental persistent root retargeted with source",
+      "files": [
+        "App/Core/Shared/paths.js"
+      ],
+      "first_solution": "Restore the established Shared Data/Fundamental path without moving data",
+      "latest_solution": "Restore the established Shared Data/Fundamental path without moving data",
+      "status": "RESOLVED",
+      "proofs": [
+        "Results/persistent-layout-before.tap",
+        "Results/persistent-layout-after.tap",
+        "Results/consolidation-first-cp1.tap",
+        "Results/consolidation-first-commands.json",
+        "Results/final-local/summary.json",
+        "../Architecture/Rev3/CP1_FINAL_COMPARISON.json"
+      ],
+      "attempts": [
+        {
+          "result": "PASS",
+          "details": "10 targeted tests, 93 CP1 executions, all 258 serialized contracts/permissions unchanged."
+        }
+      ],
+      "commits": [
+        "c7a7841c7c47ac63edf19f0a7973ec3ecf5a1ab3"
+      ]
+    },
+    {
+      "id": "ERR-002",
+      "priority": "P1",
+      "error": "Migration tool confuses data labels and source prefixes",
+      "files": [
+        "Tools/Architecture/Rev3/migrate.js"
+      ],
+      "first_solution": "Root-sensitive path prefixes; protect persistent path module; migration unit tests",
+      "latest_solution": "Root-sensitive path prefixes; protect persistent path module; migration unit tests",
+      "status": "RESOLVED",
+      "proofs": [
+        "Results/consolidation-first-fixes.tap",
+        "Results/consolidation-first-cp1.tap",
+        "Results/consolidation-first-commands.json",
+        "Results/final-local/summary.json",
+        "../Architecture/Rev3/CP1_FINAL_COMPARISON.json"
+      ],
+      "attempts": [
+        {
+          "result": "PASS",
+          "details": "10 targeted tests, 93 CP1 executions, all 258 serialized contracts/permissions unchanged."
+        }
+      ],
+      "commits": [
+        "c7a7841c7c47ac63edf19f0a7973ec3ecf5a1ab3"
+      ]
+    },
+    {
+      "id": "ERR-003",
+      "priority": "P1",
+      "error": "Derived Indicator roots and mutable custom resources follow relocated code",
+      "files": [
+        "App/Engines/Indicators/Engine/indicator_service.js"
+      ],
+      "first_solution": "Use canonical App root and explicit historical data directories; keep BuiltIn under code",
+      "latest_solution": "Use canonical App root and explicit historical data directories; keep BuiltIn under code",
+      "status": "RESOLVED",
+      "proofs": [
+        "IMPACT_REPORTS/IMPACT-001-PERSISTENT-ROOTS.md",
+        "Results/consolidation-first-fixes.tap",
+        "Results/consolidation-first-cp1.tap",
+        "Results/consolidation-first-commands.json",
+        "Results/final-local/summary.json",
+        "../Architecture/Rev3/CP1_FINAL_COMPARISON.json"
+      ],
+      "attempts": [
+        {
+          "result": "PASS",
+          "details": "10 targeted tests, 93 CP1 executions, all 258 serialized contracts/permissions unchanged."
+        }
+      ],
+      "commits": [
+        "c7a7841c7c47ac63edf19f0a7973ec3ecf5a1ab3"
+      ]
+    },
+    {
+      "id": "ERR-004",
+      "priority": "P1",
+      "error": "Auth21 service-boundary test still reads removed Trading entry",
+      "files": [
+        "App/Tools/Tests/auth21_service_boundary.test.js"
+      ],
+      "first_solution": "Resolve relative strings stored in dynamic path tables without relaxing assertions",
+      "latest_solution": "Resolve relative strings stored in dynamic path tables without relaxing assertions",
+      "status": "RESOLVED",
+      "proofs": [
+        "Results/baseline/foundation/auth21.tap",
+        "Results/consolidation-first-fixes.tap",
+        "Results/consolidation-first-cp1.tap",
+        "Results/consolidation-first-commands.json",
+        "Results/final-local/summary.json",
+        "../Architecture/Rev3/CP1_FINAL_COMPARISON.json"
+      ],
+      "attempts": [
+        {
+          "result": "PASS",
+          "details": "10 targeted tests, 93 CP1 executions, all 258 serialized contracts/permissions unchanged."
+        }
+      ],
+      "commits": [
+        "c7a7841c7c47ac63edf19f0a7973ec3ecf5a1ab3"
+      ]
+    },
+    {
+      "id": "ERR-005",
+      "priority": "P1",
+      "error": "Six Engines still outside canonical Engines directory",
+      "files": [
+        "App/"
+      ],
+      "first_solution": "Migrate each Engine and requalify existing CP1 contracts",
+      "latest_solution": "Migrate each Engine and requalify existing CP1 contracts",
+      "status": "RESOLVED",
+      "proofs": [
+        "Results/final-local/summary.json",
+        "../Architecture/Rev3/CP1_FINAL_COMPARISON.json"
+      ],
+      "attempts": [],
+      "commits": [
+        "c7a7841c7c47ac63edf19f0a7973ec3ecf5a1ab3"
+      ]
+    },
+    {
+      "id": "ERR-006",
+      "priority": "P1",
+      "error": "Launchers, dynamic paths and old build prerequisites need post-migration audit",
+      "files": [
+        "Deploy/ Tools/ .github/ App/"
+      ],
+      "first_solution": "Second whole-tree audit and global regression after all moves",
+      "latest_solution": "Second whole-tree audit and global regression after all moves",
+      "status": "RESOLVED",
+      "proofs": [
+        "Results/final-local/summary.json",
+        "../Architecture/Rev3/CP1_FINAL_COMPARISON.json"
+      ],
+      "attempts": [],
+      "commits": [
+        "c7a7841c7c47ac63edf19f0a7973ec3ecf5a1ab3"
+      ]
+    },
+    {
+      "id": "ERR-007",
+      "priority": "P3",
+      "error": "Repeated intermediate tracked snapshots and ignored generated test outputs",
+      "files": [
+        "App/artifacts/ Documentation/Architecture/Rev3/Results/"
+      ],
+      "first_solution": "Remove regenerable outputs after preserving canonical evidence and recovery refs",
+      "latest_solution": "Remove redundant tracked matrices after preserving evidence; keep ignored outputs outside the runtime image, do not count regenerating caches as Git deletions",
+      "status": "RESOLVED",
+      "proofs": [
+        "Results/final-local/summary.json",
+        "../Architecture/Rev3/CP1_FINAL_COMPARISON.json"
+      ],
+      "attempts": [],
+      "commits": [],
+      "commit_resolution": "Deletion commit containing this report; c7a7841c is the recovery checkpoint, not the deletion commit."
+    },
+    {
+      "id": "ERR-008",
+      "priority": "P1",
+      "error": "Dot separators interpreted as paths during migration",
+      "files": [
+        "Tools/Architecture/Rev3/migrate.js",
+        "App/Engines/Supervisor/Engine/supervisor-engine.js",
+        "App/Engines/MarketData/Financial/financial_policy.js"
+      ],
+      "first_solution": "Collect original stack and refused owner response; compare AST literal nodes to Rev2",
+      "latest_solution": "Preserve standalone dot separators; restore 19 protocol/data separators from original AST; add migration regression",
+      "status": "RESOLVED",
+      "proofs": [
+        "Results/final-local/rev3-protocol-separator-fixes.json",
+        "Results/final-local/consolidation-separators-unit.tap",
+        "../Architecture/Rev3/Results/rev3-supervisor-qualification.tap"
+      ],
+      "attempts": [
+        {
+          "result": "FAIL",
+          "evidence": "Supervisor CP1 attempts 1 and 2 retained"
+        },
+        {
+          "result": "PASS",
+          "evidence": "56 targeted tests and 93 CP1 executions"
+        }
+      ],
+      "commits": [
+        "c7a7841c7c47ac63edf19f0a7973ec3ecf5a1ab3"
+      ]
+    },
+    {
+      "id": "ERR-009",
+      "priority": "P2",
+      "error": "Natural-language protocol descriptions rewritten as source paths",
+      "files": [
+        "App/Core/Communication/ProtocolRegistry/liquidity.json",
+        "App/Core/Communication/ProtocolRegistry/marketdata.json"
+      ],
+      "first_solution": "Normalize description references as paths",
+      "latest_solution": "Restore the original descriptors exactly and restrict JSON migration to whole resource paths; preserve schemas and permissions",
+      "status": "RESOLVED",
+      "proofs": [
+        "../Architecture/Rev3/CP1_FINAL_COMPARISON.json",
+        "Results/final-local/summary.json"
+      ],
+      "attempts": [
+        {
+          "result": "TEST_FAILED",
+          "evidence": "Strict baseline comparison exposed description drift"
+        },
+        {
+          "result": "PASS",
+          "evidence": "All 258 serialized contracts match apart from source paths and implementation digests"
+        }
+      ],
+      "commits": [
+        "c7a7841c7c47ac63edf19f0a7973ec3ecf5a1ab3"
+      ]
+    },
+    {
+      "id": "ERR-010",
+      "priority": "P2",
+      "error": "Existing Firewall/P3/P5 tests still expect superseded implementations",
+      "files": [
+        "App/Engines/Firewall/Tests/test_risk_gate_boundary.js",
+        "App/Engines/Trading/tests/test_trading_p3_multiprocess_v252.js",
+        "App/Engines/Trading/tests/test_trading_p4_p5_v253.js"
+      ],
+      "first_solution": "Preserve old assertions and reproduce failures under isolated network guard",
+      "latest_solution": "Assert shared Router CP1 abstraction; assert current START safety refusal and STOPPED; test disabled LIVE before credential access. Preserve loopback fence in sanitized fixture child environment.",
+      "status": "RESOLVED",
+      "proofs": [
+        "Results/engine-units/attempt1.tap",
+        "Results/engine-units/attempt2.tap",
+        "Results/engine-units/summary.json",
+        "Results/final-local/summary.json"
+      ],
+      "attempts": [
+        {
+          "result": "FAIL",
+          "details": "Three old assumptions and child network fence configuration prevented broader coverage; no application permission changed."
+        },
+        {
+          "result": "PASS",
+          "details": "133 Engine unit executions, 414 global executions / 0 FAIL / 1 environmental SKIP; 80/80 Advanced scenarios; 258 unchanged contracts."
+        }
+      ],
+      "commits": [
+        "0707a8ba422ccdd6b4e44000d65a380e72c2a1e3"
+      ]
+    },
+    {
+      "id": "ERR-011",
+      "priority": "P1",
+      "error": "Trading process crashes when the lifecycle journal cannot open and the outbox dereferences absent db",
+      "files": [
+        "App/Engines/Trading/trading_service.js"
+      ],
+      "first_solution": "Record impact before modifying a durable execution dependency",
+      "latest_solution": "Keep service diagnostics available, leave outbox unavailable and refuse mutations before execution; no memory fallback or new database",
+      "status": "RESOLVED",
+      "proofs": [
+        "IMPACT_REPORTS/IMPACT-002-UNAVAILABLE-JOURNAL.md",
+        "Results/engine-units/trading-multiprocess-attempt.tap",
+        "Results/engine-units/trading-multiprocess-after-fix.tap",
+        "Results/engine-units/summary.json",
+        "Results/final-local/summary.json"
+      ],
+      "attempts": [
+        {
+          "result": "FAIL",
+          "details": "Original fixture reaches the preexisting journal crash after correcting its stale START assertion."
+        },
+        {
+          "result": "PASS",
+          "details": "Real multiprocess fixture: journal inaccessible, lifecycle ERROR, execution false, ADMIN 503; restoration, key mismatches, replay and crash/restart checks pass."
+        },
+        {
+          "result": "PASS",
+          "details": "133 Engine unit executions, 414 global executions / 0 FAIL / 1 environmental SKIP; 80/80 Advanced scenarios; 258 unchanged contracts."
+        }
+      ],
+      "commits": [
+        "0707a8ba422ccdd6b4e44000d65a380e72c2a1e3"
+      ]
+    },
+    {
+      "id": "ERR-012",
+      "priority": "P1",
+      "error": "Broad preexisting Docker exclusions remove production trading attestation and required Compose/preflight helpers",
+      "files": [
+        "App/.dockerignore",
+        "App/Dockerfile.app"
+      ],
+      "first_solution": "Trace ignored names against production requires, COPY and Compose commands before changing exclusions",
+      "latest_solution": "Use precise test globs; preserve required CLI helpers; keep runtime/artifact/private exclusions; build and inspect both Docker images in CI without starting services",
+      "status": "LOCAL_CORRECTED_CI_REQUIRED",
+      "proofs": [
+        "IMPACT_REPORTS/IMPACT-003-DOCKER-CONTEXT.md",
+        "Results/docker-source-payload.json"
+      ],
+      "attempts": [
+        {
+          "result": "PASS",
+          "details": "Local payload scanner: 374 production JavaScript files, 728 relative imports and all canonical manifest entries; Docker executable unavailable locally, actual Docker build mandatory in CI."
+        }
+      ],
+      "commits": []
+    }
+  ]
+}

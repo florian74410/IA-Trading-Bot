@@ -4,9 +4,9 @@ const fs=require('node:fs'),assert=require('node:assert/strict');
 let failed=0;
 const read=p=>fs.readFileSync(p,'utf8');
 const registry=JSON.parse(read('Core/Communication/ProtocolRegistry/trading.json'));
-const firewall=read('Core/Firewall/firewall_service.js');
-const riskClient=read('Core/Firewall/risk_approval_client.js');
-const trading=read('services/trading-engine/trading_service.js');
+const firewall=read("Engines/Firewall/firewall_service.js");
+const riskClient=read("Engines/Firewall/risk_approval_client.js");
+const trading=read("Engines/Trading/trading_service.js");
 const router=read('Core/Communication/communication_router_v1.js');
 const check=(label,fn)=>{try{fn();console.log(label+': OK');}catch(e){failed++;console.log(label+': FAILED '+e.message)}};
 check('ROUTER TO FIREWALL CP1 BOUNDARY',()=>{

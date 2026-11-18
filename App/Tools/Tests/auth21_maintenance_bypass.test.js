@@ -5,7 +5,7 @@ const tools=['core_router_smoke','firewall_smoke','marketdata_smoke','orchestrat
  'storage_preflight','trading_static_audit','ui_core_router_smoke'];
 test('all independent maintenance entrypoints reject isolated snapshots before operations',()=>{
  for(const name of tools){
-  const src=fs.readFileSync(path.resolve(__dirname,'../',name+'.js'),'utf8');
+  const src=fs.readFileSync(path.resolve(__dirname,"..",name+'.js'),'utf8');
   assert.ok(src.slice(0,650).includes("AUTH21_MAINTENANCE_BLOCKED_DURING_SNAPSHOT"),name);
   assert.ok(src.slice(0,650).includes("IATB_AUTH21_SNAPSHOT_IPC_TRIAL"),name);
  }

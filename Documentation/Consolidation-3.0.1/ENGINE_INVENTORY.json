@@ -1,0 +1,2619 @@
+{
+  "engines": [
+    {
+      "id": "marketdata",
+      "folder": "App/Engines/MarketData",
+      "entry": "App/Engines/MarketData/market_data_service.js",
+      "entry_exists": true,
+      "process": {
+        "id": "marketdata",
+        "label": "Market Data Collector V2.2",
+        "type": "SERVICE",
+        "order": 50,
+        "port": 8013,
+        "healthPath": "/health",
+        "marker": "IA-TB Market Data",
+        "restartable": true,
+        "defaultEnabled": true,
+        "script": "Engines/MarketData/market_data_service.js",
+        "log": ".runtime/logs/market_data.log",
+        "env": {
+          "IATB_MARKET_DATA_PORT": "8013",
+          "IATB_FIREWALL_PORT": "8017",
+          "ROUTER_PORT": "8021"
+        },
+        "versionSource": "RUNTIME_HEALTH",
+        "dependencies": [
+          "router",
+          "firewall"
+        ],
+        "optionalDependencies": []
+      },
+      "commands": [
+        {
+          "id": "marketdata.audit",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/MarketData/market_data_service.js"
+        },
+        {
+          "id": "marketdata.health",
+          "qualified": true,
+          "agent_qualified": true,
+          "hard_deny": false,
+          "availability": null,
+          "source": "Engines/MarketData/market_data_service.js"
+        },
+        {
+          "id": "marketdata.candles",
+          "qualified": true,
+          "agent_qualified": true,
+          "hard_deny": false,
+          "availability": null,
+          "source": "Engines/MarketData/market_data_service.js"
+        },
+        {
+          "id": "marketdata.symbols",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/MarketData/market_data_service.js"
+        },
+        {
+          "id": "marketdata.providers",
+          "qualified": true,
+          "agent_qualified": true,
+          "hard_deny": false,
+          "availability": null,
+          "source": "Engines/MarketData/market_data_service.js"
+        },
+        {
+          "id": "marketdata.provider.test",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/MarketData/market_data_service.js"
+        },
+        {
+          "id": "marketdata.financial.capabilities",
+          "qualified": true,
+          "agent_qualified": true,
+          "hard_deny": false,
+          "availability": null,
+          "source": "Engines/MarketData/market_data_service.js"
+        },
+        {
+          "id": "marketdata.registry.status",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/MarketData/market_data_service.js"
+        },
+        {
+          "id": "marketdata.registry.asset",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/MarketData/market_data_service.js"
+        },
+        {
+          "id": "marketdata.registry.search",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/MarketData/market_data_service.js"
+        },
+        {
+          "id": "marketdata.registry.list",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/MarketData/market_data_service.js"
+        },
+        {
+          "id": "marketdata.registry.query",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/MarketData/market_data_service.js"
+        },
+        {
+          "id": "marketdata.financial.snapshot",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/MarketData/market_data_service.js"
+        },
+        {
+          "id": "marketdata.financial.history",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/MarketData/market_data_service.js"
+        },
+        {
+          "id": "marketdata.financial.ai_context",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/MarketData/market_data_service.js"
+        },
+        {
+          "id": "marketdata.financial.storage",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/MarketData/market_data_service.js"
+        },
+        {
+          "id": "marketdata.financial.status",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/MarketData/market_data_service.js"
+        },
+        {
+          "id": "marketdata.financial.refresh",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/MarketData/market_data_service.js"
+        },
+        {
+          "id": "marketdata.derivatives.open_interest",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/MarketData/market_data_service.js"
+        },
+        {
+          "id": "marketdata.liquidations.recent",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/MarketData/market_data_service.js"
+        },
+        {
+          "id": "marketdata.liquidations.stats",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/MarketData/market_data_service.js"
+        },
+        {
+          "id": "marketdata.microstructure.capabilities",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/MarketData/market_data_service.js"
+        },
+        {
+          "id": "marketdata.microstructure.snapshot",
+          "qualified": true,
+          "agent_qualified": true,
+          "hard_deny": false,
+          "availability": null,
+          "source": "Engines/MarketData/market_data_service.js"
+        },
+        {
+          "id": "marketdata.microstructure.history",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/MarketData/market_data_service.js"
+        },
+        {
+          "id": "marketdata.microstructure.storage",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/MarketData/market_data_service.js"
+        },
+        {
+          "id": "marketdata.microstructure.refresh",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/MarketData/market_data_service.js"
+        },
+        {
+          "id": "marketdata.liquidations.streams",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/MarketData/market_data_service.js"
+        },
+        {
+          "id": "marketdata.derivatives.open_interest.history",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/MarketData/market_data_service.js"
+        },
+        {
+          "id": "marketdata.dex.liquidity.capabilities",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/MarketData/market_data_service.js"
+        },
+        {
+          "id": "marketdata.dex.liquidity.snapshot",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/MarketData/market_data_service.js"
+        },
+        {
+          "id": "marketdata.dex.liquidity.history",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/MarketData/market_data_service.js"
+        },
+        {
+          "id": "marketdata.ticker",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/MarketData/market_data_service.js"
+        },
+        {
+          "id": "marketdata.refresh",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/MarketData/market_data_service.js"
+        },
+        {
+          "id": "marketdata.active",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/MarketData/market_data_service.js"
+        },
+        {
+          "id": "marketdata.cache.clear",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/MarketData/market_data_service.js"
+        },
+        {
+          "id": "marketdata.settings.get",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/MarketData/market_data_service.js"
+        },
+        {
+          "id": "marketdata.settings.set",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/MarketData/market_data_service.js"
+        },
+        {
+          "id": "marketdata.registry.refresh",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/MarketData/market_data_service.js"
+        },
+        {
+          "id": "marketdata.asset.price",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/MarketData/market_data_service.js"
+        },
+        {
+          "id": "marketdata.catalog",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/MarketData/market_data_service.js"
+        },
+        {
+          "id": "marketdata.asset.resolve",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/MarketData/market_data_service.js"
+        },
+        {
+          "id": "marketdata.operator.request",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/MarketData/market_data_service.js"
+        }
+      ],
+      "test_files": [
+        "App/Engines/MarketData/Tests/analyze_shadow_workload_telemetry_v1.js",
+        "App/Engines/MarketData/Tests/market_data_v2_debug.js",
+        "App/Engines/MarketData/Tests/runtime_shadow_long_observation_v1.js",
+        "App/Engines/MarketData/Tests/runtime_workload_shadow_v1.js",
+        "App/Engines/MarketData/Tests/test_alternate_provider_policy_v1.js",
+        "App/Engines/MarketData/Tests/test_api_request_orchestrator_shadow_v1.js",
+        "App/Engines/MarketData/Tests/test_cex_providers_v2.js",
+        "App/Engines/MarketData/Tests/test_coingecko_global_volume_hotfix_v201.js",
+        "App/Engines/MarketData/Tests/test_coingecko_limits_v2.js",
+        "App/Engines/MarketData/Tests/test_currency_registry_v1.js",
+        "App/Engines/MarketData/Tests/test_defillama_public_surface_v2.js",
+        "App/Engines/MarketData/Tests/test_dex_liquidity_boundary_v2.js",
+        "App/Engines/MarketData/Tests/test_dynamic_symbol_catalog_v1.js",
+        "App/Engines/MarketData/Tests/test_financial_async_fastlane_v1.js",
+        "App/Engines/MarketData/Tests/test_financial_cached_read_v2.js",
+        "App/Engines/MarketData/Tests/test_financial_data_contract_v2.js",
+        "App/Engines/MarketData/Tests/test_financial_family_scheduler_v1.js",
+        "App/Engines/MarketData/Tests/test_firewall_cache_boundary_v1.js",
+        "App/Engines/MarketData/Tests/test_liquidations_usd_v2.js",
+        "App/Engines/MarketData/Tests/test_liquidity_pipeline_v1.js",
+        "App/Engines/MarketData/Tests/test_market_data_collector_v2_lock.js",
+        "App/Engines/MarketData/Tests/test_market_data_runtime_v2.js",
+        "App/Engines/MarketData/Tests/test_market_liquidity_layer_v2.js",
+        "App/Engines/MarketData/Tests/test_microstructure_missing_oi.js",
+        "App/Engines/MarketData/Tests/test_native_budget_admission_v1.js",
+        "App/Engines/MarketData/Tests/test_native_budget_safety_v1.js",
+        "App/Engines/MarketData/Tests/test_native_dispatcher_priority_v1.js",
+        "App/Engines/MarketData/Tests/test_native_dispatcher_v1.js",
+        "App/Engines/MarketData/Tests/test_native_http_429_cooldown_v1.js",
+        "App/Engines/MarketData/Tests/test_native_http_429_interrupted_v1.js",
+        "App/Engines/MarketData/Tests/test_native_http_dispatcher_v1.js",
+        "App/Engines/MarketData/Tests/test_native_http_enforcement_v1.js",
+        "App/Engines/MarketData/Tests/test_native_http_failclosed_v1.js",
+        "App/Engines/MarketData/Tests/test_native_lite_cache_dedup_v1.js",
+        "App/Engines/MarketData/Tests/test_native_lite_data_integrity_v1.js",
+        "App/Engines/MarketData/Tests/test_native_retry_after_v1.js",
+        "App/Engines/MarketData/Tests/test_native_transport_bridge_v1.js",
+        "App/Engines/MarketData/Tests/test_open_interest_currency_normalization_v1.js",
+        "App/Engines/MarketData/Tests/test_phase1_provider_profiles_v1.js",
+        "App/Engines/MarketData/Tests/test_phase2_weighted_budget_v1.js",
+        "App/Engines/MarketData/Tests/test_phase3_special_limits_v1.js",
+        "App/Engines/MarketData/Tests/test_provider_passports_v1.js",
+        "App/Engines/MarketData/Tests/test_shadow_decision_engine_v1.js",
+        "App/Engines/MarketData/Tests/test_shadow_runtime_orchestrator_v1.js",
+        "App/Engines/MarketData/Tests/test_transport_budget_bridge_v1.js",
+        "App/Engines/MarketData/Tests/test_unknown_quota_nonblocking_v1.js",
+        "App/Engines/MarketData/Tests/validate_dex_liquidity_gen1.js",
+        "App/Engines/MarketData/Tests/validate_step4_gen1.js"
+      ]
+    },
+    {
+      "id": "indicator",
+      "folder": "App/Engines/Indicators",
+      "entry": "App/Engines/Indicators/Engine/indicator_service.js",
+      "entry_exists": true,
+      "process": {
+        "id": "indicator",
+        "label": "Indicator Engine",
+        "type": "ENGINE",
+        "order": 60,
+        "port": 8012,
+        "healthPath": "/health",
+        "marker": "IA-TB Indicator Engine",
+        "restartable": true,
+        "defaultEnabled": true,
+        "script": "Engines/Indicators/Engine/indicator_service.js",
+        "log": ".runtime/logs/indicator.log",
+        "env": {
+          "IATB_INDICATOR_PORT": "8012",
+          "ROUTER_PORT": "8021"
+        },
+        "versionSource": "RUNTIME_HEALTH",
+        "dependencies": [
+          "router"
+        ],
+        "optionalDependencies": [
+          "marketdata"
+        ]
+      },
+      "commands": [
+        {
+          "id": "indicator.custom.delete",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Indicators/Engine/indicator_service.js"
+        },
+        {
+          "id": "indicator.registry.reload",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Indicators/Engine/indicator_service.js"
+        },
+        {
+          "id": "indicator.registry.status",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Indicators/Engine/indicator_service.js"
+        },
+        {
+          "id": "indicator.settings.set",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Indicators/Engine/indicator_service.js"
+        },
+        {
+          "id": "indicator.settings.get",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Indicators/Engine/indicator_service.js"
+        },
+        {
+          "id": "indicator.language.info",
+          "qualified": true,
+          "agent_qualified": true,
+          "hard_deny": false,
+          "availability": null,
+          "source": "Engines/Indicators/Engine/indicator_service.js"
+        },
+        {
+          "id": "indicator.language.compile",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Indicators/Engine/indicator_service.js"
+        },
+        {
+          "id": "indicator.language.validate",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Indicators/Engine/indicator_service.js"
+        },
+        {
+          "id": "indicator.language.create",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Indicators/Engine/indicator_service.js"
+        },
+        {
+          "id": "indicator.definition.validate",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Indicators/Engine/indicator_service.js"
+        },
+        {
+          "id": "indicator.definition.create",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Indicators/Engine/indicator_service.js"
+        },
+        {
+          "id": "indicator.compute_batch_data",
+          "qualified": true,
+          "agent_qualified": true,
+          "hard_deny": false,
+          "availability": null,
+          "source": "Engines/Indicators/Engine/indicator_service.js"
+        },
+        {
+          "id": "indicator.compute_data",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Indicators/Engine/indicator_service.js"
+        },
+        {
+          "id": "indicator.financial_context",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Indicators/Engine/indicator_service.js"
+        },
+        {
+          "id": "indicator.financial_series",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Indicators/Engine/indicator_service.js"
+        },
+        {
+          "id": "indicator.financial_analyze",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Indicators/Engine/indicator_service.js"
+        },
+        {
+          "id": "indicator.definition.get",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Indicators/Engine/indicator_service.js"
+        },
+        {
+          "id": "indicator.compute",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Indicators/Engine/indicator_service.js"
+        },
+        {
+          "id": "indicator.compute_batch",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Indicators/Engine/indicator_service.js"
+        },
+        {
+          "id": "indicator.analyze",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Indicators/Engine/indicator_service.js"
+        },
+        {
+          "id": "indicator.get_state",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Indicators/Engine/indicator_service.js"
+        },
+        {
+          "id": "indicator.get_levels",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Indicators/Engine/indicator_service.js"
+        },
+        {
+          "id": "indicator.get_signals",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Indicators/Engine/indicator_service.js"
+        },
+        {
+          "id": "indicator.list_capabilities",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Indicators/Engine/indicator_service.js"
+        },
+        {
+          "id": "indicator.list_indicators",
+          "qualified": true,
+          "agent_qualified": true,
+          "hard_deny": false,
+          "availability": null,
+          "source": "Engines/Indicators/Engine/indicator_service.js"
+        },
+        {
+          "id": "indicator.user.compute",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Indicators/Engine/indicator_service.js"
+        }
+      ],
+      "test_files": [
+        "App/Engines/Indicators/Tests/test_indicator_analysis_v1.js",
+        "App/Engines/Indicators/Tests/test_indicator_complete_v2.js",
+        "App/Engines/Indicators/Tests/test_indicator_cp1_v2.js",
+        "App/Engines/Indicators/Tests/test_indicator_engine.js",
+        "App/Engines/Indicators/Tests/test_indicator_ir_v2.js",
+        "App/Engines/Indicators/Tests/test_indicator_language_v2.js",
+        "App/Engines/Indicators/Tests/test_indicator_settings_v1.js",
+        "App/Engines/Indicators/Tests/validate_trading_indicators_gen1.js"
+      ]
+    },
+    {
+      "id": "fundamental",
+      "folder": "App/Engines/Fundamental",
+      "entry": "App/Engines/Fundamental/Engine/fundamental_service.js",
+      "entry_exists": true,
+      "process": {
+        "id": "fundamental",
+        "label": "Fundamental Engine",
+        "type": "ENGINE",
+        "order": 70,
+        "port": 8015,
+        "healthPath": "/health",
+        "marker": "IA-TB Fundamental Engine",
+        "restartable": true,
+        "defaultEnabled": true,
+        "script": "Engines/Fundamental/Engine/fundamental_service.js",
+        "log": ".runtime/logs/fundamental.log",
+        "env": {
+          "IATB_FUNDAMENTAL_PORT": "8015",
+          "ROUTER_PORT": "8021"
+        },
+        "versionSource": "RUNTIME_HEALTH",
+        "dependencies": [
+          "router"
+        ],
+        "optionalDependencies": []
+      },
+      "commands": [
+        {
+          "id": "fundamental.health",
+          "qualified": true,
+          "agent_qualified": true,
+          "hard_deny": false,
+          "availability": null,
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.status",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.capabilities",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.fedwatch.get",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.fedwatch.history",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.calendar.cme",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.calendar.cme.expirations",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.calendar.fed",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.calendar.upcoming",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.news.search",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.news.get",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.events.search",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.event.get",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.event.evidence",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.sources.search",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.collect",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.synthesis.news",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.synthesis.event",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.synthesis.market",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.synthesis.history",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.logs.purge",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.logs.stats",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.logs.history",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.logs.recent",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.summary",
+          "qualified": true,
+          "agent_qualified": true,
+          "hard_deny": false,
+          "availability": null,
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.context",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.sources",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.events",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.get_state",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.get_events",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.get_sources",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.get_context",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.get_evidence",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.list_capabilities",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.latest_news",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.event_process",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.source.get",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.feeds.search",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.providers.status",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.diagnostic.feed",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.diagnostic.draft",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.timeline.get",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.timeline.context",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.timeline.rebuild",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.discovery.inspect",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.discovery.prepare",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.discovery.test",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.synthesis.import",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.translation.get",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.translation.pending",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.translation.save",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.provider.test",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.feed.test_draft",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.feed.create",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.feed.update",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.feed.toggle",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.feed.delete",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.news.purge",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.fedwatch.refresh",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.ai_summary.state",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.ai_summary.generate",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.translate",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        },
+        {
+          "id": "fundamental.operator.request",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Fundamental/Engine/fundamental_service.js"
+        }
+      ],
+      "test_files": [
+        "App/Engines/Fundamental/Tests/Debug/debug_fundamental_v3.js",
+        "App/Engines/Fundamental/Tests/Debug/run_fundamental_v3_debug.command",
+        "App/Engines/Fundamental/Tests/test_cp1_router_fundamental_v3.js",
+        "App/Engines/Fundamental/Tests/test_event_engine_mock_v3.js",
+        "App/Engines/Fundamental/Tests/test_fundamental_v3.js",
+        "App/Engines/Fundamental/Tests/test_news_latest_v2_0_1.js",
+        "App/Engines/Fundamental/Tests/test_synthesis_helper_v3.js"
+      ]
+    },
+    {
+      "id": "liquidity",
+      "folder": "App/Engines/Liquidity",
+      "entry": "App/Engines/Liquidity/Engine/liquidity_service.js",
+      "entry_exists": true,
+      "process": {
+        "id": "liquidity",
+        "label": "Liquidity Engine V2.0",
+        "type": "ENGINE",
+        "order": 80,
+        "port": 8014,
+        "healthPath": "/health",
+        "marker": "IA-TB Liquidity Engine",
+        "restartable": true,
+        "defaultEnabled": true,
+        "script": "Engines/Liquidity/Engine/liquidity_service.js",
+        "log": ".runtime/logs/liquidity.log",
+        "env": {
+          "IATB_LIQUIDITY_PORT": "8014",
+          "ROUTER_PORT": "8021"
+        },
+        "dependencies": [
+          "router"
+        ],
+        "versionSource": "RUNTIME_HEALTH",
+        "optionalDependencies": [
+          "marketdata"
+        ]
+      },
+      "commands": [
+        {
+          "id": "liquidity.health",
+          "qualified": true,
+          "agent_qualified": true,
+          "hard_deny": false,
+          "availability": null,
+          "source": "Engines/Liquidity/Engine/liquidity_service.js"
+        },
+        {
+          "id": "liquidity.zones",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Liquidity/Engine/liquidity_service.js"
+        },
+        {
+          "id": "liquidity.realtime",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Liquidity/Engine/liquidity_service.js"
+        },
+        {
+          "id": "liquidity.snapshot",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Liquidity/Engine/liquidity_service.js"
+        },
+        {
+          "id": "liquidity.financial",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Liquidity/Engine/liquidity_service.js"
+        },
+        {
+          "id": "liquidity.liquidations",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Liquidity/Engine/liquidity_service.js"
+        },
+        {
+          "id": "liquidity.capabilities",
+          "qualified": true,
+          "agent_qualified": true,
+          "hard_deny": false,
+          "availability": null,
+          "source": "Engines/Liquidity/Engine/liquidity_service.js"
+        },
+        {
+          "id": "liquidity.raw",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Liquidity/Engine/liquidity_service.js"
+        },
+        {
+          "id": "liquidity.history",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Liquidity/Engine/liquidity_service.js"
+        },
+        {
+          "id": "liquidity.context",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Liquidity/Engine/liquidity_service.js"
+        },
+        {
+          "id": "liquidity.cache.clear",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Liquidity/Engine/liquidity_service.js"
+        },
+        {
+          "id": "liquidity.open_interest",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Liquidity/Engine/liquidity_service.js"
+        },
+        {
+          "id": "liquidity.open_interest.history",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Liquidity/Engine/liquidity_service.js"
+        },
+        {
+          "id": "liquidity.dex_liquidity",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Liquidity/Engine/liquidity_service.js"
+        },
+        {
+          "id": "liquidity.dex_liquidity.history",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Liquidity/Engine/liquidity_service.js"
+        }
+      ],
+      "test_files": [
+        "App/Engines/Liquidity/Tests/test_liquidity_engine.js",
+        "App/Engines/Liquidity/Tests/test_liquidity_metrics.js",
+        "App/Engines/Liquidity/Tests/test_market_data_provider_static.js"
+      ]
+    },
+    {
+      "id": "strategy",
+      "folder": "App/Engines/Strategy",
+      "entry": "App/Engines/Strategy/Engine/strategy_service.js",
+      "entry_exists": true,
+      "process": {
+        "id": "strategy",
+        "label": "Strategy Engine v2",
+        "type": "ENGINE",
+        "order": 120,
+        "port": 8018,
+        "healthPath": "/health",
+        "marker": "IA-TB Strategy Engine v2",
+        "restartable": true,
+        "defaultEnabled": true,
+        "script": "Engines/Strategy/Engine/strategy_service.js",
+        "log": ".runtime/logs/strategy.log",
+        "env": {
+          "IATB_STRATEGY_PORT": "8018",
+          "ROUTER_PORT": "8021"
+        },
+        "dependencies": [
+          "router"
+        ],
+        "optionalDependencies": [
+          "risk",
+          "portfolio",
+          "marketdata",
+          "indicator",
+          "fundamental"
+        ],
+        "versionSource": "RUNTIME_HEALTH"
+      },
+      "commands": [
+        {
+          "id": "strategy.health",
+          "qualified": true,
+          "agent_qualified": true,
+          "hard_deny": false,
+          "availability": null,
+          "source": "Engines/Strategy/Engine/strategy_service.js"
+        },
+        {
+          "id": "strategy.capabilities",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Strategy/Engine/strategy_service.js"
+        },
+        {
+          "id": "strategy.catalog",
+          "qualified": true,
+          "agent_qualified": true,
+          "hard_deny": false,
+          "availability": null,
+          "source": "Engines/Strategy/Engine/strategy_service.js"
+        },
+        {
+          "id": "strategy.validate",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Strategy/Engine/strategy_service.js"
+        },
+        {
+          "id": "strategy.evaluate",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Strategy/Engine/strategy_service.js"
+        },
+        {
+          "id": "strategy.dry_run",
+          "qualified": true,
+          "agent_qualified": true,
+          "hard_deny": false,
+          "availability": null,
+          "source": "Engines/Strategy/Engine/strategy_service.js"
+        },
+        {
+          "id": "strategy.stats",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Strategy/Engine/strategy_service.js"
+        },
+        {
+          "id": "strategy.state",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Strategy/Engine/strategy_service.js"
+        },
+        {
+          "id": "strategy.reload",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Strategy/Engine/strategy_service.js"
+        },
+        {
+          "id": "strategy.pause",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Strategy/Engine/strategy_service.js"
+        },
+        {
+          "id": "strategy.resume",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Strategy/Engine/strategy_service.js"
+        },
+        {
+          "id": "strategy.reset_stats",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Strategy/Engine/strategy_service.js"
+        },
+        {
+          "id": "strategy.user.request",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Strategy/Engine/strategy_service.js"
+        }
+      ],
+      "test_files": [
+        "App/Engines/Strategy/Tests/test_strategy_engine_v2.js",
+        "App/Engines/Strategy/Tests/test_strategy_ui_router_readonly_v1.9.js"
+      ]
+    },
+    {
+      "id": "risk",
+      "folder": "App/Engines/Risk",
+      "entry": "App/Engines/Risk/Engine/risk_service.js",
+      "entry_exists": true,
+      "process": {
+        "id": "risk",
+        "label": "Risk Manager Engine",
+        "type": "ENGINE",
+        "order": 90,
+        "port": 8019,
+        "healthPath": "/health",
+        "marker": "IA-TB Risk Engine",
+        "restartable": true,
+        "defaultEnabled": true,
+        "script": "Engines/Risk/Engine/risk_service.js",
+        "log": ".runtime/logs/risk.log",
+        "env": {
+          "IATB_RISK_ENGINE_PORT": "8019",
+          "ROUTER_PORT": "8021"
+        },
+        "dependencies": [
+          "router"
+        ],
+        "optionalDependencies": [
+          "marketdata",
+          "indicator",
+          "portfolio"
+        ],
+        "versionSource": "RUNTIME_HEALTH"
+      },
+      "commands": [
+        {
+          "id": "risk.list_capabilities",
+          "qualified": true,
+          "agent_qualified": true,
+          "hard_deny": false,
+          "availability": null,
+          "source": "Engines/Risk/Engine/risk_service.js"
+        },
+        {
+          "id": "risk.position.analyze",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Risk/Engine/risk_service.js"
+        },
+        {
+          "id": "risk.portfolio.analyze",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Risk/Engine/risk_service.js"
+        },
+        {
+          "id": "risk.strategy.analyze",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Risk/Engine/risk_service.js"
+        },
+        {
+          "id": "risk.snapshot",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Risk/Engine/risk_service.js"
+        },
+        {
+          "id": "risk.settings.get",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Risk/Engine/risk_service.js"
+        },
+        {
+          "id": "risk.settings.set",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Risk/Engine/risk_service.js"
+        },
+        {
+          "id": "risk.gate.evaluate",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Risk/Engine/risk_service.js"
+        },
+        {
+          "id": "risk.gate.verify",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Risk/Engine/risk_service.js"
+        },
+        {
+          "id": "risk.r1.evaluate",
+          "qualified": true,
+          "agent_qualified": true,
+          "hard_deny": false,
+          "availability": null,
+          "source": "Engines/Risk/Engine/risk_service.js"
+        },
+        {
+          "id": "risk.r2.evaluate",
+          "qualified": true,
+          "agent_qualified": true,
+          "hard_deny": false,
+          "availability": null,
+          "source": "Engines/Risk/Engine/risk_service.js"
+        },
+        {
+          "id": "risk.r2.monitor",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Risk/Engine/risk_service.js"
+        },
+        {
+          "id": "risk.snapshot.create",
+          "qualified": true,
+          "agent_qualified": true,
+          "hard_deny": false,
+          "availability": null,
+          "source": "Engines/Risk/Engine/risk_service.js"
+        },
+        {
+          "id": "risk.snapshot.get",
+          "qualified": true,
+          "agent_qualified": true,
+          "hard_deny": false,
+          "availability": null,
+          "source": "Engines/Risk/Engine/risk_service.js"
+        },
+        {
+          "id": "risk.constraints.get",
+          "qualified": true,
+          "agent_qualified": true,
+          "hard_deny": false,
+          "availability": null,
+          "source": "Engines/Risk/Engine/risk_service.js"
+        },
+        {
+          "id": "risk.status",
+          "qualified": true,
+          "agent_qualified": true,
+          "hard_deny": false,
+          "availability": null,
+          "source": "Engines/Risk/Engine/risk_service.js"
+        },
+        {
+          "id": "risk.user.request",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Risk/Engine/risk_service.js"
+        },
+        {
+          "id": "risk.manual.authorize",
+          "qualified": true,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "OWNER_ONLY",
+          "source": "Engines/Risk/Engine/risk_service.js"
+        }
+      ],
+      "test_files": [
+        "App/Engines/Risk/Tests/benchmark_snapshots.js",
+        "App/Engines/Risk/Tests/risk_engine.test.js",
+        "App/Engines/Risk/Tests/snapshot_fixture.js",
+        "App/Engines/Risk/Tests/snapshots.integration.test.js",
+        "App/Engines/Risk/Tests/snapshots.test.js",
+        "App/Engines/Risk/Tests/test_risk_gate.js",
+        "App/Engines/Risk/Tests/test_risk_r1_r2_v25.js",
+        "App/Engines/Risk/Tests/test_risk_settings_v25.js"
+      ]
+    },
+    {
+      "id": "portfolio",
+      "folder": "App/Engines/Portfolio",
+      "entry": "App/Engines/Portfolio/Engine/portfolio_service.js",
+      "entry_exists": true,
+      "process": {
+        "id": "portfolio",
+        "label": "Portfolio Engine",
+        "type": "ENGINE",
+        "order": 110,
+        "port": 8020,
+        "healthPath": "/health",
+        "marker": "IA-TB Portfolio Engine",
+        "restartable": true,
+        "defaultEnabled": true,
+        "script": "Engines/Portfolio/Engine/portfolio_service.js",
+        "log": ".runtime/logs/portfolio.log",
+        "env": {
+          "IATB_PORTFOLIO_PORT": "8020",
+          "ROUTER_PORT": "8021"
+        },
+        "dependencies": [
+          "router"
+        ],
+        "optionalDependencies": [
+          "trading",
+          "marketdata"
+        ],
+        "versionSource": "RUNTIME_HEALTH"
+      },
+      "commands": [
+        {
+          "id": "portfolio.health",
+          "qualified": true,
+          "agent_qualified": true,
+          "hard_deny": false,
+          "availability": null,
+          "source": "Engines/Portfolio/Engine/portfolio_service.js"
+        },
+        {
+          "id": "portfolio.overview",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Portfolio/Engine/portfolio_service.js"
+        },
+        {
+          "id": "portfolio.settings.get",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Portfolio/Engine/portfolio_service.js"
+        },
+        {
+          "id": "portfolio.settings.set",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Portfolio/Engine/portfolio_service.js"
+        },
+        {
+          "id": "portfolio.event.record",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Portfolio/Engine/portfolio_service.js"
+        },
+        {
+          "id": "portfolio.balance.record",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Portfolio/Engine/portfolio_service.js"
+        },
+        {
+          "id": "portfolio.snapshot",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Portfolio/Engine/portfolio_service.js"
+        },
+        {
+          "id": "portfolio.positions",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Portfolio/Engine/portfolio_service.js"
+        },
+        {
+          "id": "portfolio.balances",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Portfolio/Engine/portfolio_service.js"
+        },
+        {
+          "id": "portfolio.history",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Portfolio/Engine/portfolio_service.js"
+        },
+        {
+          "id": "portfolio.statistics",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Portfolio/Engine/portfolio_service.js"
+        },
+        {
+          "id": "portfolio.events",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Portfolio/Engine/portfolio_service.js"
+        },
+        {
+          "id": "portfolio.sync",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Portfolio/Engine/portfolio_service.js"
+        },
+        {
+          "id": "portfolio.cost.summary",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Portfolio/Engine/portfolio_service.js"
+        },
+        {
+          "id": "portfolio.cost.history",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Portfolio/Engine/portfolio_service.js"
+        },
+        {
+          "id": "portfolio.position.health",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Portfolio/Engine/portfolio_service.js"
+        },
+        {
+          "id": "portfolio.trades",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Portfolio/Engine/portfolio_service.js"
+        },
+        {
+          "id": "portfolio.trade.detail",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Portfolio/Engine/portfolio_service.js"
+        },
+        {
+          "id": "portfolio.user.request",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Portfolio/Engine/portfolio_service.js"
+        },
+        {
+          "id": "portfolio.account.snapshot",
+          "qualified": true,
+          "agent_qualified": true,
+          "hard_deny": false,
+          "availability": null,
+          "source": "Engines/Portfolio/Engine/portfolio_service.js"
+        }
+      ],
+      "test_files": [
+        "App/Engines/Portfolio/Tests/advanced_orders.integration.test.js",
+        "App/Engines/Portfolio/Tests/manual_order_pipeline.integration.test.js",
+        "App/Engines/Portfolio/Tests/manual_projection.test.js",
+        "App/Engines/Portfolio/Tests/okx_account.test.js",
+        "App/Engines/Portfolio/Tests/okx_fixture.js",
+        "App/Engines/Portfolio/Tests/okx_pipeline.integration.test.js",
+        "App/Engines/Portfolio/Tests/test_portfolio_engine_v2.js"
+      ]
+    },
+    {
+      "id": "firewall",
+      "folder": "App/Engines/Firewall",
+      "entry": "App/Engines/Firewall/firewall_service.js",
+      "entry_exists": true,
+      "process": {
+        "id": "firewall",
+        "label": "Firewall",
+        "type": "FIREWALL",
+        "order": 30,
+        "port": 8017,
+        "healthPath": "/health",
+        "marker": "IA-TB Firewall Service",
+        "restartable": true,
+        "defaultEnabled": true,
+        "script": "Engines/Firewall/firewall_service.js",
+        "log": ".runtime/logs/firewall.log",
+        "env": {
+          "IATB_FIREWALL_PORT": "8017",
+          "IATB_TRADING_ENGINE_PORT": "8016",
+          "ROUTER_PORT": "8021"
+        },
+        "workers": [
+          {
+            "id": "router",
+            "thread": 0,
+            "label": "Router Firewall",
+            "toggleable": false
+          },
+          {
+            "id": "trading",
+            "thread": 1,
+            "label": "Trading Engine Protection",
+            "toggleable": true,
+            "securityFolder": "Engines/Firewall/Config/Trading"
+          },
+          {
+            "id": "data",
+            "thread": 2,
+            "label": "Market Data Collector Protection",
+            "toggleable": true,
+            "securityFolder": "Engines/Firewall/Config/MarketData"
+          }
+        ],
+        "versionSource": "RUNTIME_HEALTH",
+        "dependencies": [
+          "router"
+        ]
+      },
+      "commands": [
+        {
+          "id": "firewall.status",
+          "qualified": true,
+          "agent_qualified": true,
+          "hard_deny": false,
+          "availability": null,
+          "source": "Engines/Firewall/firewall_service.js"
+        },
+        {
+          "id": "firewall.threads",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Firewall/firewall_service.js"
+        },
+        {
+          "id": "firewall.events",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Firewall/firewall_service.js"
+        }
+      ],
+      "test_files": [
+        "App/Engines/Firewall/Tests/firewall_fast_path_debug.js",
+        "App/Engines/Firewall/Tests/market_data_firewall.test.js",
+        "App/Engines/Firewall/Tests/test_risk_gate_boundary.js",
+        "App/Engines/Firewall/Tests/trading_firewall.test.js"
+      ]
+    },
+    {
+      "id": "trading",
+      "folder": "App/Engines/Trading",
+      "entry": "App/Engines/Trading/trading_service.js",
+      "entry_exists": true,
+      "process": {
+        "id": "trading",
+        "label": "Trading Engine",
+        "type": "ENGINE",
+        "order": 100,
+        "port": 8016,
+        "healthPath": "/health",
+        "marker": "IA-TB Trading Engine",
+        "restartable": true,
+        "defaultEnabled": true,
+        "script": "Engines/Trading/trading_service.js",
+        "log": ".runtime/logs/trading.log",
+        "env": {
+          "IATB_TRADING_ENGINE_PORT": "8016",
+          "IATB_TRADING_LIVE": "0",
+          "ROUTER_PORT": "8021"
+        },
+        "dependencies": [
+          "router",
+          "firewall",
+          "risk"
+        ],
+        "versionSource": "RUNTIME_HEALTH",
+        "communication": {
+          "protocol": "CP/1",
+          "logicalTarget": "trading",
+          "routeVia": "firewall",
+          "routePort": 8017,
+          "runtimePort": 8016
+        },
+        "optionalDependencies": []
+      },
+      "commands": [
+        {
+          "id": "trading.health",
+          "qualified": true,
+          "agent_qualified": true,
+          "hard_deny": false,
+          "availability": null,
+          "source": "Engines/Trading/trading_service.js"
+        },
+        {
+          "id": "trading.capabilities",
+          "qualified": true,
+          "agent_qualified": true,
+          "hard_deny": false,
+          "availability": null,
+          "source": "Engines/Trading/trading_service.js"
+        },
+        {
+          "id": "trading.account.positions",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Trading/trading_service.js"
+        },
+        {
+          "id": "trading.account.orders",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Trading/trading_service.js"
+        },
+        {
+          "id": "trading.account.balances",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Trading/trading_service.js"
+        },
+        {
+          "id": "trading.execute",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Trading/trading_service.js"
+        },
+        {
+          "id": "trading.cancel",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Trading/trading_service.js"
+        },
+        {
+          "id": "trading.close_position",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Trading/trading_service.js"
+        },
+        {
+          "id": "trading.history",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Trading/trading_service.js"
+        },
+        {
+          "id": "trading.admin.command",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Trading/trading_service.js"
+        },
+        {
+          "id": "trading.account.snapshot",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Trading/trading_service.js"
+        },
+        {
+          "id": "trading.account.inspect",
+          "qualified": true,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "OWNER_ONLY",
+          "source": "Engines/Trading/trading_service.js"
+        },
+        {
+          "id": "trading.manual.order",
+          "qualified": true,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "OWNER_ONLY",
+          "source": "Engines/Trading/trading_service.js"
+        },
+        {
+          "id": "trading.manual.algo",
+          "qualified": true,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "OWNER_ONLY",
+          "source": "Engines/Trading/trading_service.js"
+        },
+        {
+          "id": "trading.manual.cancel",
+          "qualified": true,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "OWNER_ONLY",
+          "source": "Engines/Trading/trading_service.js"
+        },
+        {
+          "id": "trading.manual.amend",
+          "qualified": true,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "OWNER_ONLY",
+          "source": "Engines/Trading/trading_service.js"
+        },
+        {
+          "id": "trading.manual.cancel_algo",
+          "qualified": true,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "OWNER_ONLY",
+          "source": "Engines/Trading/trading_service.js"
+        },
+        {
+          "id": "trading.manual.amend_algo",
+          "qualified": true,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "OWNER_ONLY",
+          "source": "Engines/Trading/trading_service.js"
+        },
+        {
+          "id": "trading.manual.leverage",
+          "qualified": true,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "OWNER_ONLY",
+          "source": "Engines/Trading/trading_service.js"
+        },
+        {
+          "id": "trading.manual.batch",
+          "qualified": true,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "OWNER_ONLY",
+          "source": "Engines/Trading/trading_service.js"
+        }
+      ],
+      "test_files": [
+        "App/Engines/Trading/tests/manual_outbox.test.js",
+        "App/Engines/Trading/tests/test_account_routing_v253.js",
+        "App/Engines/Trading/tests/test_trading_admin_auth21_binding_v2.js",
+        "App/Engines/Trading/tests/test_trading_admin_bridge_key_v2.js",
+        "App/Engines/Trading/tests/test_trading_admin_controller_v2.js",
+        "App/Engines/Trading/tests/test_trading_admin_core_firewall_v2.js",
+        "App/Engines/Trading/tests/test_trading_admin_p3_security.js",
+        "App/Engines/Trading/tests/test_trading_core_v2.0.js",
+        "App/Engines/Trading/tests/test_trading_health_monitor_v2.js",
+        "App/Engines/Trading/tests/test_trading_logs_v2.js",
+        "App/Engines/Trading/tests/test_trading_p3_multiprocess_v252.js",
+        "App/Engines/Trading/tests/test_trading_p3_qualification_v252.js",
+        "App/Engines/Trading/tests/test_trading_p4_p5_v253.js",
+        "App/Engines/Trading/tests/test_trading_runtime_state_v2.js"
+      ]
+    },
+    {
+      "id": "supervisor",
+      "folder": "App/Engines/Supervisor",
+      "entry": "App/Engines/Supervisor/supervisor_service.js",
+      "entry_exists": true,
+      "process": {
+        "id": "supervisor",
+        "label": "IA Supervisor",
+        "type": "SERVICE",
+        "order": 130,
+        "port": 3000,
+        "healthPath": "/health",
+        "marker": "IA-TB Supervisor",
+        "restartable": true,
+        "defaultEnabled": true,
+        "script": "Engines/Supervisor/supervisor_service.js",
+        "log": ".runtime/logs/supervisor.log",
+        "env": {
+          "IATB_SUPERVISOR_PORT": "3000",
+          "ROUTER_PORT": "8021"
+        },
+        "dependencies": [
+          "router"
+        ],
+        "optionalDependencies": [
+          "marketdata",
+          "indicator",
+          "fundamental",
+          "liquidity",
+          "portfolio",
+          "strategy",
+          "risk",
+          "trading",
+          "firewall"
+        ],
+        "versionSource": "RUNTIME_HEALTH"
+      },
+      "commands": [
+        {
+          "id": "supervisor.health",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Supervisor/supervisor_service.js"
+        },
+        {
+          "id": "supervisor.capabilities",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Supervisor/supervisor_service.js"
+        },
+        {
+          "id": "supervisor.status",
+          "qualified": true,
+          "agent_qualified": true,
+          "hard_deny": false,
+          "availability": null,
+          "source": "Engines/Supervisor/supervisor_service.js"
+        },
+        {
+          "id": "supervisor.reload",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Supervisor/supervisor_service.js"
+        },
+        {
+          "id": "supervisor.extensions",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Supervisor/supervisor_service.js"
+        },
+        {
+          "id": "supervisor.llm.health",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Supervisor/supervisor_service.js"
+        },
+        {
+          "id": "supervisor.context",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Supervisor/supervisor_service.js"
+        },
+        {
+          "id": "supervisor.analyze",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Supervisor/supervisor_service.js"
+        },
+        {
+          "id": "supervisor.indicators",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Supervisor/supervisor_service.js"
+        },
+        {
+          "id": "supervisor.indicator.language",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Supervisor/supervisor_service.js"
+        },
+        {
+          "id": "supervisor.indicator.validate",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Supervisor/supervisor_service.js"
+        },
+        {
+          "id": "supervisor.indicator.create",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Supervisor/supervisor_service.js"
+        },
+        {
+          "id": "supervisor.indicator.definition",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Supervisor/supervisor_service.js"
+        },
+        {
+          "id": "supervisor.indicators.compute",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Supervisor/supervisor_service.js"
+        },
+        {
+          "id": "supervisor.risk.evaluate",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Supervisor/supervisor_service.js"
+        },
+        {
+          "id": "supervisor.reason",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Supervisor/supervisor_service.js"
+        },
+        {
+          "id": "supervisor.structured",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Supervisor/supervisor_service.js"
+        },
+        {
+          "id": "supervisor.calendar",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Supervisor/supervisor_service.js"
+        },
+        {
+          "id": "supervisor.calendar.fed",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Supervisor/supervisor_service.js"
+        },
+        {
+          "id": "supervisor.calendar.cme",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Supervisor/supervisor_service.js"
+        },
+        {
+          "id": "supervisor.fedwatch",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Supervisor/supervisor_service.js"
+        },
+        {
+          "id": "supervisor.calendar.cme.expirations",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Supervisor/supervisor_service.js"
+        },
+        {
+          "id": "supervisor.user.request",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Supervisor/supervisor_service.js"
+        },
+        {
+          "id": "supervisor.data.catalog",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Supervisor/supervisor_service.js"
+        },
+        {
+          "id": "supervisor.data.read",
+          "qualified": false,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "NOT_QUALIFIED_FOR_AGENT",
+          "source": "Engines/Supervisor/supervisor_service.js"
+        },
+        {
+          "id": "supervisor.cognitive.reason",
+          "qualified": true,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "OWNER_ONLY",
+          "source": "Engines/Supervisor/supervisor_service.js"
+        },
+        {
+          "id": "supervisor.cognitive.status",
+          "qualified": true,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "OWNER_ONLY",
+          "source": "Engines/Supervisor/supervisor_service.js"
+        },
+        {
+          "id": "supervisor.llm.models",
+          "qualified": true,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "OWNER_ONLY",
+          "source": "Engines/Supervisor/supervisor_service.js"
+        },
+        {
+          "id": "supervisor.llm.select",
+          "qualified": true,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "OWNER_ONLY",
+          "source": "Engines/Supervisor/supervisor_service.js"
+        },
+        {
+          "id": "supervisor.cognitive.history",
+          "qualified": true,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "OWNER_ONLY",
+          "source": "Engines/Supervisor/supervisor_service.js"
+        },
+        {
+          "id": "supervisor.chatbot.message",
+          "qualified": true,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "OWNER_ONLY",
+          "source": "Engines/Supervisor/supervisor_service.js"
+        },
+        {
+          "id": "supervisor.chatbot.history",
+          "qualified": true,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "OWNER_ONLY",
+          "source": "Engines/Supervisor/supervisor_service.js"
+        },
+        {
+          "id": "supervisor.chatbot.confirm",
+          "qualified": true,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "OWNER_ONLY",
+          "source": "Engines/Supervisor/supervisor_service.js"
+        },
+        {
+          "id": "supervisor.chatbot.cancel",
+          "qualified": true,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "OWNER_ONLY",
+          "source": "Engines/Supervisor/supervisor_service.js"
+        },
+        {
+          "id": "supervisor.engine.context",
+          "qualified": true,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "OWNER_ONLY",
+          "source": "Engines/Supervisor/supervisor_service.js"
+        },
+        {
+          "id": "supervisor.engine.objective",
+          "qualified": true,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "OWNER_ONLY",
+          "source": "Engines/Supervisor/supervisor_service.js"
+        },
+        {
+          "id": "supervisor.engine.discover",
+          "qualified": true,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "OWNER_ONLY",
+          "source": "Engines/Supervisor/supervisor_service.js"
+        },
+        {
+          "id": "supervisor.engine.observe",
+          "qualified": true,
+          "agent_qualified": false,
+          "hard_deny": true,
+          "availability": "OWNER_ONLY",
+          "source": "Engines/Supervisor/supervisor_service.js"
+        }
+      ],
+      "test_files": [
+        "App/Engines/Supervisor/ChatBot/Tests/browser_rev2.js",
+        "App/Engines/Supervisor/ChatBot/Tests/browser_ui.js",
+        "App/Engines/Supervisor/ChatBot/Tests/execution_readiness.test.js",
+        "App/Engines/Supervisor/ChatBot/Tests/hybrid.test.js",
+        "App/Engines/Supervisor/ChatBot/Tests/ui_fixture.js",
+        "App/Engines/Supervisor/LLM/Tests/test_llm_manager.js",
+        "App/Engines/Supervisor/Tests/SupervisorEngine/foundation.test.js",
+        "App/Engines/Supervisor/Tests/SupervisorEngine/recovery.test.js",
+        "App/Engines/Supervisor/Tests/test_supervisor_architecture.js",
+        "App/Engines/Supervisor/Tests/test_supervisor_pipeline_smoke.js"
+      ]
+    }
+  ],
+  "core_components": [
+    {
+      "id": "core",
+      "label": "Core Server",
+      "type": "CORE",
+      "order": 10,
+      "port": 8001,
+      "healthPath": "/api/health",
+      "marker": "IA-Trading-Bot",
+      "restartable": false,
+      "defaultEnabled": true,
+      "versionSource": "RUNTIME_HEALTH"
+    },
+    {
+      "id": "router",
+      "label": "Router",
+      "type": "CORE",
+      "order": 20,
+      "port": 8021,
+      "healthPath": "/router-health",
+      "marker": "router",
+      "restartable": false,
+      "defaultEnabled": true,
+      "versionSource": "RUNTIME_HEALTH",
+      "dependencies": [
+        "core"
+      ]
+    },
+    {
+      "id": "ui",
+      "label": "Graphical UI Service",
+      "type": "UI",
+      "order": 140,
+      "port": 8000,
+      "healthPath": "/ui-health",
+      "marker": "IA-TB UI Service",
+      "restartable": true,
+      "defaultEnabled": true,
+      "script": "UI/Gateway/ui_service.js",
+      "log": "UI/Logs/ui.log",
+      "env": {
+        "IATB_UI_PORT": "8000",
+        "CORE_PUBLIC_PORT": "8001",
+        "ROUTER_PORT": "8021",
+        "IATB_AUTH_MODE": "disabled",
+        "IATB_UI_BYPASS_ROLE": "SUPERADMIN",
+        "IATB_FIREWALL_PORT": "8017"
+      },
+      "dependencies": [
+        "core",
+        "router"
+      ],
+      "versionSource": "RUNTIME_HEALTH",
+      "optionalDependencies": [
+        "supervisor"
+      ]
+    }
+  ],
+  "note": "Bank/WalletConnector/AI Gateway and Core Auth21 are shared components, not additional parallel Engines."
+}

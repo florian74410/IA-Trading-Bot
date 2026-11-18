@@ -1,7 +1,7 @@
 'use strict';
 // Only the Core process opens owner credentials. Engines receive model output,
 // never an API key. The canonical provider reconstructs the exact request body.
-const crypto=require('node:crypto'),CP=require('../../Communication/communication_protocol_v1'),OpenAI=require('../../../Supervisor/LLM/providers/openai_provider');
+const crypto=require('node:crypto'),CP=require('../../Communication/communication_protocol_v1'),OpenAI=require("../../../Engines/Supervisor/LLM/providers/openai_provider");
 const {redactSecrets}=require('../../Shared/cognitive_text_safety');
 function transport({sessions,request,recordUsage=()=>{}}){
  return async function(gateway,payload){
@@ -19,8 +19,8 @@ function transport({sessions,request,recordUsage=()=>{}}){
    const result=await request({url:'https://api.openai.com/v1/responses',headers:{Authorization:'Bearer '+key},body:payload});
    recordUsage(current,result?.usage||{},payload.model);return result;
   }
-  let actualSpec=gateway.spec;if(method==='hybrid'){if(gateway.spec.schema_ref!=='iatb.intent/2.0')throw Error('OWNER_HYBRID_SCHEMA_INVALID');actualSpec={...gateway.spec,schema:require('../../../Supervisor/ChatBot/Contracts').modelSchema()};
-   if(!payload||typeof payload.input!=='string'||Buffer.byteLength(JSON.stringify(payload))>32000)throw Error('OWNER_HYBRID_PAYLOAD_DENIED');let context;try{context=JSON.parse(payload.input);}catch(e){throw Error('OWNER_HYBRID_CONTEXT_INVALID');}const {scrub}=require('../../../Supervisor/ChatBot');if(!context||Object.keys(context).sort().join(',')!=='pending,recent_messages,user_prompt'||context.user_prompt!==gateway.spec.prompt||!Array.isArray(context.recent_messages)||context.recent_messages.length>6||context.recent_messages.some(m=>Object.keys(m).sort().join(',')!=='content,role'||!['user','assistant'].includes(m.role)||typeof m.content!=='string'||m.content.length>3000||scrub(m.content)!==m.content))throw Error('OWNER_HYBRID_CONTEXT_INVALID');if(context.pending!==null){const {Catalog}=require('../../../Supervisor/ChatBot/catalog'),Contracts=require('../../../Supervisor/ChatBot/Contracts');Contracts.validate(context.pending,new Catalog());if(context.pending.parameters.account)throw Error('OWNER_HYBRID_PRIVATE_CONTEXT_DENIED');}actualSpec={...actualSpec,prompt:JSON.stringify(context)};
+  let actualSpec=gateway.spec;if(method==='hybrid'){if(gateway.spec.schema_ref!=='iatb.intent/2.0')throw Error('OWNER_HYBRID_SCHEMA_INVALID');actualSpec={...gateway.spec,schema:require("../../../Engines/Supervisor/ChatBot/Contracts").modelSchema()};
+   if(!payload||typeof payload.input!=='string'||Buffer.byteLength(JSON.stringify(payload))>32000)throw Error('OWNER_HYBRID_PAYLOAD_DENIED');let context;try{context=JSON.parse(payload.input);}catch(e){throw Error('OWNER_HYBRID_CONTEXT_INVALID');}const {scrub}=require("../../../Engines/Supervisor/ChatBot");if(!context||Object.keys(context).sort().join(',')!=='pending,recent_messages,user_prompt'||context.user_prompt!==gateway.spec.prompt||!Array.isArray(context.recent_messages)||context.recent_messages.length>6||context.recent_messages.some(m=>Object.keys(m).sort().join(',')!=='content,role'||!['user','assistant'].includes(m.role)||typeof m.content!=='string'||m.content.length>3000||scrub(m.content)!==m.content))throw Error('OWNER_HYBRID_CONTEXT_INVALID');if(context.pending!==null){const {Catalog}=require("../../../Engines/Supervisor/ChatBot/catalog"),Contracts=require("../../../Engines/Supervisor/ChatBot/Contracts");Contracts.validate(context.pending,new Catalog());if(context.pending.parameters.account)throw Error('OWNER_HYBRID_PRIVATE_CONTEXT_DENIED');}actualSpec={...actualSpec,prompt:JSON.stringify(context)};
   }
   let response;
   const provider=new OpenAI({model:gateway.configuration?.model||'gpt-5.6',transport:async expected=>{

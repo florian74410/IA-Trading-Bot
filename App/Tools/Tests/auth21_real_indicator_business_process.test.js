@@ -35,7 +35,7 @@ test('genuine Indicator Engine permits only Core-signed fixture settings write',
  for(const [key,dir] of [['RUNTIME','runtime'],['DATA','userdata'],
   ['ANNEX','annexes'],['UPDATES','updates'],['STATE','legacy']])env['IATB_'+key+'_ROOT']=path.join(root,dir);
  delete env.IATB_USER_DB;
- const child=spawn(process.execPath,[path.join(app,'Indicators/Engine/indicator_service.js')],
+ const child=spawn(process.execPath,[path.join(app,"Engines/Indicators/Engine/indicator_service.js")],
   {cwd:app,env,stdio:['ignore','pipe','pipe']});
  let logs='';child.stdout.on('data',b=>logs+=b);child.stderr.on('data',b=>logs+=b);
  t.after(async()=>{

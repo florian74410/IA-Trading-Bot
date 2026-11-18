@@ -1,10 +1,10 @@
 'use strict';
 const test=require('node:test'),assert=require('node:assert/strict'),path=require('node:path'),fs=require('node:fs');
-const {CollectorData}=require('../Supervisor/Core/collector_data_v2_4_1'),root=path.resolve(__dirname,'..');
+const {CollectorData}=require("../Engines/Supervisor/Core/collector_data_v2_4_1"),root=path.resolve(__dirname,'..');
 const policy=require('../Bank/Core/feature_policy_v2_4_1');
 test('all normalized collector products have explicit CP/1 schemas and real service handlers',()=>{
  const c=new CollectorData({},root),catalog=c.catalog();assert(catalog.items.length>50);
- for(const e of catalog.items){assert(e.registered,e.action);assert(!/settings|refresh|purge|create|delete|execute|registry.query/.test(e.action),e.action);const sources={marketdata:'MarketData/market_data_service.js',fundamental:'Fundamental/Engine/fundamental_service.js',liquidity:'Liquidity/Engine/liquidity_service.js'};assert(fs.readFileSync(path.join(root,sources[e.target]),'utf8').includes(e.action),'handler '+e.action);}
+ for(const e of catalog.items){assert(e.registered,e.action);assert(!/settings|refresh|purge|create|delete|execute|registry.query/.test(e.action),e.action);const sources={marketdata:"Engines/MarketData/market_data_service.js",fundamental:"Engines/Fundamental/Engine/fundamental_service.js",liquidity:"Engines/Liquidity/Engine/liquidity_service.js"};assert(fs.readFileSync(path.join(root,sources[e.target]),'utf8').includes(e.action),'handler '+e.action);}
 });
 test('Supervisor context includes collector families and keeps unavailable sources explicit',async()=>{
  const calls=[],client={async request(target,action,args){calls.push({target,action,args});if(action==='marketdata.dex.liquidity.snapshot')throw Error('upstream password=do-not-leak');return {ok:true,provider:'FIXTURE',timestamp:123,apiKey:'SECRET',sourceUrl:'https://example.invalid/?token=SECRET',events:[{actual:0}]};}};

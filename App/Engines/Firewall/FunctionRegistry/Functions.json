@@ -1,0 +1,220 @@
+{
+  "schema_version": "2.6.0",
+  "engine_id": "firewall",
+  "engine_version": "3.0.1-dev.1",
+  "transport": "CP/1",
+  "source_protocol_registry": "Core/Communication/ProtocolRegistry/firewall.json",
+  "source_sha256": "7df07a1114fac1750e952be02d31260c1d5093d76cf484b18ac555d0dfb84861",
+  "functions": [
+    {
+      "id": "firewall.status",
+      "engine": "firewall",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Read or evaluate firewall.status from firewall. No financial side effect.",
+      "input": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "object",
+        "required": [
+          "ok"
+        ],
+        "properties": {
+          "healthLevel": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "metrics": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "ok": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "version": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "pid": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "host": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "port": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "uptimeSec": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "firewallEnabled": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "bypassMode": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "protectionInitialized": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "threadCount": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "workerCount": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "threads": {
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "securityFolders": {
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "log": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "errors": [],
+      "source": "Engines/Firewall/firewall_service.js",
+      "verified_handler": true,
+      "default_privilege": "DENY",
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Authenticated service identity, authenticated agent session and effective per-command permission.",
+      "contract_version": "3.0.1-dev.1",
+      "handler_sha256": "b5c386fdc7de992baedde37de9a5c797439251d3b9eb7b696027b96ff2827c19",
+      "availability_reason": null,
+      "timeout_ms": 5000,
+      "agent_qualified": true
+    },
+    {
+      "id": "firewall.threads",
+      "engine": "firewall",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": true,
+      "description": "Read Firewall protection thread states.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "Engines/Firewall/firewall_service.js",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "3.0.1-dev.1",
+      "handler_sha256": "b5c386fdc7de992baedde37de9a5c797439251d3b9eb7b696027b96ff2827c19",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
+    },
+    {
+      "id": "firewall.events",
+      "engine": "firewall",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": true,
+      "description": "Read bounded Firewall event feed.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "audience": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "limit": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "since": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "Engines/Firewall/firewall_service.js",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "3.0.1-dev.1",
+      "handler_sha256": "b5c386fdc7de992baedde37de9a5c797439251d3b9eb7b696027b96ff2827c19",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
+    }
+  ],
+  "revision_hash": "711d6b93463e00079b3565b93ff2880995eaf409a67dd8623de0c1368c594544"
+}

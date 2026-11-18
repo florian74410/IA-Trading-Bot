@@ -2,7 +2,7 @@
 const test=require('node:test'),assert=require('node:assert/strict');
 const fs=require('node:fs'),os=require('node:os'),path=require('node:path');
 const {openEngineSnapshotTrial}=require('../../Core/Backup/auth21_engine_snapshot_trial');
-const source=fs.readFileSync(path.resolve(__dirname,'../../Portfolio/Engine/portfolio_service.js'),'utf8');
+const source=fs.readFileSync(path.resolve(__dirname,"../../Engines/Portfolio/Engine/portfolio_service.js"),'utf8');
 function fixture(t){
  const root=fs.mkdtempSync(path.join(os.tmpdir(),'iatb-auth21-core-runtime-'));
  fs.chmodSync(root,0o700);

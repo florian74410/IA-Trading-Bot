@@ -1,0 +1,43 @@
+{
+  "tap_executions": {
+    "passed": 407,
+    "failed": 1,
+    "skipped": 1,
+    "note": "Executions across groups; some files overlap; scenario parent is included."
+  },
+  "schema": "iatb.revision2-qualification/1.0",
+  "revision": "3.0.1_Rev2",
+  "commit": "1b6a01f012169bfd4d1034c0d9d19b20b2fc9284",
+  "node": "v22.23.0",
+  "live_orders": 0,
+  "paid_ai_calls": 0,
+  "browser_required": false,
+  "groups": [
+    {
+      "name": "foundation-runner",
+      "ok": false,
+      "exit_code": 1,
+      "error": null,
+      "tests": 0,
+      "passed": 0,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "rev2-unit",
+      "ok": true,
+      "exit_code": 0,
+      "error": null,
+      "tests": 12,
+      "passed": 12,
+      "failed": 0,
+      "skipped": 0
+    }
+  ],
+  "scenarios": {
+    "total": 80,
+    "passed": 80,
+    "failed": 0
+  },
+  "status": "FAIL"
+}

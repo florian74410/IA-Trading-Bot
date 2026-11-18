@@ -8,7 +8,7 @@
   "marker": "IA-TB Fundamental Engine",
   "restartable": true,
   "defaultEnabled": true,
-  "script": "Fundamental/Engine/fundamental_service.js",
+  "script": "Engines/Fundamental/Engine/fundamental_service.js",
   "log": ".runtime/logs/fundamental.log",
   "env": {
     "IATB_FUNDAMENTAL_PORT": "8015",

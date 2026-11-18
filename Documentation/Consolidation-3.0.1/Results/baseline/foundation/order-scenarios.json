@@ -1,0 +1,1234 @@
+{
+  "schema": "iatb.order-scenarios/1.0",
+  "version": "3.0.1-dev.1",
+  "broker": "simulated",
+  "live_orders": 0,
+  "passed": 41,
+  "failed": 0,
+  "scenarios": [
+    {
+      "id": "missing_amount",
+      "case": "Demande incomplète : demander le montant, sans ordre ni préparation",
+      "user_request": "Achète du BTC",
+      "status": "PASS",
+      "broker_requests": 0,
+      "user_response": "Quel montant ou quelle quantité souhaites-tu engager ?",
+      "journal": [],
+      "trace": []
+    },
+    {
+      "id": "ambiguous",
+      "case": "Acheter ou vendre : demander une clarification sans exécuter",
+      "user_request": "Achète ou vends du BTC",
+      "status": "PASS",
+      "broker_requests": 0,
+      "user_response": "La demande est ambiguë. Précise une seule opération, son sens et son marché.",
+      "journal": [],
+      "trace": []
+    },
+    {
+      "id": "negative_amount",
+      "case": "Montant négatif : invalider la demande sans réutiliser un ancien montant",
+      "user_request": "-5 USDT",
+      "status": "PASS",
+      "broker_requests": 0,
+      "user_response": "Un paramètre est invalide. Précise un montant positif et des paramètres cohérents.",
+      "journal": [
+        {
+          "phase": "PREPARED",
+          "result": null
+        }
+      ],
+      "trace": [
+        {
+          "phase": "PREPARED",
+          "code": null
+        }
+      ]
+    },
+    {
+      "id": "insufficient_quote",
+      "case": "Fonds insuffisants : bloquer et expliquer le manque de solde",
+      "user_request": "Achète 5 USDT de BTC-USDT Spot Market Live sur OKX compte okx-main",
+      "status": "PASS",
+      "broker_requests": 0,
+      "user_response": "Cette préparation est expirée ou bloquée. Demande un nouveau récapitulatif.",
+      "journal": [
+        {
+          "phase": "PREPARED",
+          "result": null
+        }
+      ],
+      "trace": [
+        {
+          "phase": "PREPARED",
+          "code": null
+        },
+        {
+          "phase": "CONFIRMATION_REFUSED",
+          "code": "PREPARATION_EXPIRED_OR_BLOCKED"
+        }
+      ]
+    },
+    {
+      "id": "fees_reserve",
+      "case": "Montant disponible égal à l’achat, sans réserve pour les frais : bloquer",
+      "user_request": "Achète 5 USDT de BTC-USDT Spot Market Live sur OKX compte okx-main",
+      "status": "PASS",
+      "broker_requests": 0,
+      "user_response": "Fonds insuffisants ou solde disponible non vérifiable pour couvrir le montant et les frais. Aucun ordre n’a été envoyé.",
+      "journal": [
+        {
+          "phase": "PREPARED",
+          "result": null
+        }
+      ],
+      "trace": [
+        {
+          "phase": "PREPARED",
+          "code": null
+        }
+      ]
+    },
+    {
+      "id": "unknown_balance",
+      "case": "Solde null : ne pas inventer un solde disponible",
+      "user_request": "Achète 5 USDT de BTC-USDT Spot Market Live sur OKX compte okx-main",
+      "status": "PASS",
+      "broker_requests": 0,
+      "user_response": "Fonds insuffisants ou solde disponible non vérifiable pour couvrir le montant et les frais. Aucun ordre n’a été envoyé.",
+      "journal": [
+        {
+          "phase": "PREPARED",
+          "result": null
+        }
+      ],
+      "trace": [
+        {
+          "phase": "PREPARED",
+          "code": null
+        }
+      ]
+    },
+    {
+      "id": "missing_fees",
+      "case": "Frais null : rendre la préparation non confirmable",
+      "user_request": "Achète 5 USDT de BTC-USDT Spot Market Live sur OKX compte okx-main",
+      "status": "PASS",
+      "broker_requests": 0,
+      "user_response": "Les frais du compte ne sont pas disponibles. Une nouvelle vérification est nécessaire. Aucun ordre n’a été envoyé.",
+      "journal": [
+        {
+          "phase": "PREPARED",
+          "result": null
+        }
+      ],
+      "trace": [
+        {
+          "phase": "PREPARED",
+          "code": null
+        }
+      ]
+    },
+    {
+      "id": "insufficient_base",
+      "case": "Vente sans assez de crypto : bloquer sans envoyer de vente",
+      "user_request": "Vends 0,05 BTC de BTC-USDT Spot Market Live sur OKX compte okx-main",
+      "status": "PASS",
+      "broker_requests": 0,
+      "user_response": "Quantité de crypto disponible insuffisante ou non vérifiable pour cette vente. Aucun ordre n’a été envoyé.",
+      "journal": [
+        {
+          "phase": "PREPARED",
+          "result": null
+        }
+      ],
+      "trace": [
+        {
+          "phase": "PREPARED",
+          "code": null
+        }
+      ]
+    },
+    {
+      "id": "minimum_size",
+      "case": "Montant inférieur au minimum d’instrument : bloquer",
+      "user_request": "Achète 5 USDT de BTC-USDT Spot Market Live sur OKX compte okx-main",
+      "status": "PASS",
+      "broker_requests": 0,
+      "user_response": "Le montant ne respecte pas les contraintes vérifiées de l’instrument, ou ces contraintes sont indisponibles. Aucun ordre n’a été envoyé.",
+      "journal": [
+        {
+          "phase": "PREPARED",
+          "result": null
+        }
+      ],
+      "trace": [
+        {
+          "phase": "PREPARED",
+          "code": null
+        }
+      ]
+    },
+    {
+      "id": "exposure_limit",
+      "case": "Limite de taille/exposition Risk dépassée : refuser",
+      "user_request": "Achète 5 USDT de BTC-USDT Spot Market Live sur OKX compte okx-main",
+      "status": "PASS",
+      "broker_requests": 0,
+      "user_response": "Le montant dépasse la limite de taille de position définie par Risk. Aucun ordre n’a été envoyé.",
+      "journal": [
+        {
+          "phase": "PREPARED",
+          "result": null
+        }
+      ],
+      "trace": [
+        {
+          "phase": "PREPARED",
+          "code": null
+        }
+      ]
+    },
+    {
+      "id": "wide_spread",
+      "case": "Spread excessif : refus Risk",
+      "user_request": "Achète 5 USDT de BTC-USDT Spot Market Live sur OKX compte okx-main",
+      "status": "PASS",
+      "broker_requests": 0,
+      "user_response": "L’écart entre les prix acheteur et vendeur est trop élevé. Aucun ordre n’a été envoyé.",
+      "journal": [
+        {
+          "phase": "PREPARED",
+          "result": null
+        }
+      ],
+      "trace": [
+        {
+          "phase": "PREPARED",
+          "code": null
+        }
+      ]
+    },
+    {
+      "id": "shallow_book",
+      "case": "Carnet sans profondeur suffisante : aucune exécution partielle implicite",
+      "user_request": "Achète 5 USDT de BTC-USDT Spot Market Live sur OKX compte okx-main",
+      "status": "PASS",
+      "broker_requests": 0,
+      "user_response": "Risk ne permet pas cet ordre : des données indispensables sont manquantes ou une limite est dépassée. Aucun ordre n’a été envoyé.",
+      "journal": [
+        {
+          "phase": "PREPARED",
+          "result": null
+        }
+      ],
+      "trace": [
+        {
+          "phase": "PREPARED",
+          "code": null
+        }
+      ]
+    },
+    {
+      "id": "stale_data",
+      "case": "Carnet périmé : demander des données vérifiables",
+      "user_request": "Achète 5 USDT de BTC-USDT Spot Market Live sur OKX compte okx-main",
+      "status": "PASS",
+      "broker_requests": 0,
+      "user_response": "Les données sont trop anciennes ou non datées. Une nouvelle vérification est nécessaire ; aucun ordre n’a été envoyé.",
+      "journal": [
+        {
+          "phase": "PREPARED",
+          "result": null
+        }
+      ],
+      "trace": [
+        {
+          "phase": "PREPARED",
+          "code": null
+        }
+      ]
+    },
+    {
+      "id": "review",
+      "case": "Risk demande une révision : la confirmation utilisateur ne vaut pas autorisation",
+      "user_request": "Achète 5 USDT de BTC-USDT Spot Market Live sur OKX compte okx-main",
+      "status": "PASS",
+      "broker_requests": 0,
+      "user_response": "Risk demande une révision : cet ordre ne peut pas être confirmé.",
+      "journal": [
+        {
+          "phase": "PREPARED",
+          "result": null
+        }
+      ],
+      "trace": [
+        {
+          "phase": "PREPARED",
+          "code": null
+        }
+      ]
+    },
+    {
+      "id": "risk_down",
+      "case": "Risk indisponible : aucun accord de remplacement",
+      "user_request": "Achète 5 USDT de BTC-USDT Spot Market Live sur OKX compte okx-main",
+      "status": "PASS",
+      "broker_requests": 0,
+      "user_response": "La demande ne peut pas être exécutée pour le moment.",
+      "journal": [],
+      "trace": []
+    },
+    {
+      "id": "null_history",
+      "case": "Premier ordre sans historique : null conservés et préparation possible",
+      "user_request": "Achète 5 USDT de BTC-USDT Spot Market Live sur OKX compte okx-main",
+      "status": "PASS",
+      "broker_requests": 0,
+      "user_response": "Ordre Spot réel préparé ; confirmation requise.",
+      "journal": [
+        {
+          "phase": "PREPARED",
+          "result": null
+        }
+      ],
+      "trace": [
+        {
+          "phase": "PREPARED",
+          "code": null
+        }
+      ]
+    },
+    {
+      "id": "unsupported_limit",
+      "case": "Ordre Limit hors périmètre : refus explicite sans changement silencieux en Market",
+      "user_request": "Achète 5 USDT de BTC-USDT Spot Limit au prix de 90 Live",
+      "status": "PASS",
+      "broker_requests": 0,
+      "user_response": "Cette version accepte uniquement les achats et ventes Spot Market simples, sans levier ni protections attachées.",
+      "journal": [],
+      "trace": []
+    },
+    {
+      "id": "demo_account",
+      "case": "Compte Demo sélectionné pour une demande Live : bloquer",
+      "user_request": "Achète 5 USDT de BTC-USDT Spot Market Live sur OKX compte okx-main",
+      "status": "PASS",
+      "broker_requests": 0,
+      "user_response": "Ce compte ne permet pas cet ordre réel : vérifie son activation, ses permissions et le mode Demo/Live.",
+      "journal": [],
+      "trace": []
+    },
+    {
+      "id": "read_only",
+      "case": "Compte en lecture seule : aucune demande d’ordre",
+      "user_request": "Achète 5 USDT de BTC-USDT Spot Market Live sur OKX compte okx-main",
+      "status": "PASS",
+      "broker_requests": 0,
+      "user_response": "Ce compte ne permet pas cet ordre réel : vérifie son activation, ses permissions et le mode Demo/Live.",
+      "journal": [],
+      "trace": []
+    },
+    {
+      "id": "expired_confirmation",
+      "case": "Préparation expirée : confirmation refusée",
+      "user_request": "Achète 5 USDT de BTC-USDT Spot Market Live sur OKX compte okx-main",
+      "status": "PASS",
+      "broker_requests": 0,
+      "user_response": "Cette préparation est expirée ou bloquée. Demande un nouveau récapitulatif.",
+      "journal": [
+        {
+          "phase": "PREPARED",
+          "result": null
+        }
+      ],
+      "trace": [
+        {
+          "phase": "PREPARED",
+          "code": null
+        },
+        {
+          "phase": "CONFIRMATION_REFUSED",
+          "code": "PREPARATION_EXPIRED_OR_BLOCKED"
+        }
+      ]
+    },
+    {
+      "id": "tampered_confirmation",
+      "case": "Digest modifié : refus et aucune mutation",
+      "user_request": "Achète 5 USDT de BTC-USDT Spot Market Live sur OKX compte okx-main",
+      "status": "PASS",
+      "broker_requests": 0,
+      "user_response": "Cette préparation ne correspond pas à ta session ou à la confirmation reçue.",
+      "journal": [
+        {
+          "phase": "PREPARED",
+          "result": null
+        }
+      ],
+      "trace": [
+        {
+          "phase": "PREPARED",
+          "code": null
+        },
+        {
+          "phase": "CONFIRMATION_REFUSED",
+          "code": "PREPARATION_NOT_FOUND"
+        }
+      ]
+    },
+    {
+      "id": "cancelled",
+      "case": "Préparation annulée : répondre Annulée, sans prétendre à un résultat inconnu",
+      "user_request": "Achète 5 USDT de BTC-USDT Spot Market Live sur OKX compte okx-main",
+      "status": "PASS",
+      "broker_requests": 0,
+      "user_response": "Préparation annulée. Aucun ordre n’a été envoyé.",
+      "journal": [
+        {
+          "phase": "CANCELLED",
+          "result": null
+        }
+      ],
+      "trace": [
+        {
+          "phase": "PREPARED",
+          "code": null
+        },
+        {
+          "phase": "CANCELLED",
+          "code": null
+        }
+      ]
+    },
+    {
+      "id": "account_changed",
+      "case": "Compte modifié après préparation : nouvelle préparation requise",
+      "user_request": "Achète 5 USDT de BTC-USDT Spot Market Live sur OKX compte okx-main",
+      "status": "PASS",
+      "broker_requests": 0,
+      "user_response": "Le compte a été modifié depuis la préparation. Demande un nouveau récapitulatif.",
+      "journal": [
+        {
+          "phase": "PREPARED",
+          "result": null
+        }
+      ],
+      "trace": [
+        {
+          "phase": "PREPARED",
+          "code": null
+        },
+        {
+          "phase": "CONFIRMATION_REFUSED",
+          "code": "ACCOUNT_CHANGED"
+        }
+      ]
+    },
+    {
+      "id": "session_revoked",
+      "case": "Session révoquée : refus de confirmer",
+      "user_request": "Achète 5 USDT de BTC-USDT Spot Market Live sur OKX compte okx-main",
+      "status": "PASS",
+      "broker_requests": 0,
+      "user_response": "Ta session est expirée ou révoquée. Reconnecte-toi avant de continuer.",
+      "journal": [
+        {
+          "phase": "PREPARED",
+          "result": null
+        }
+      ],
+      "trace": [
+        {
+          "phase": "PREPARED",
+          "code": null
+        }
+      ]
+    },
+    {
+      "id": "funds_changed",
+      "case": "Solde diminué entre préparation et confirmation : nouveau Risk refuse",
+      "user_request": "Achète 5 USDT de BTC-USDT Spot Market Live sur OKX compte okx-main",
+      "status": "PASS",
+      "broker_requests": 0,
+      "user_response": "Fonds insuffisants ou solde disponible non vérifiable pour couvrir le montant et les frais. Aucun ordre n’a été envoyé.",
+      "journal": [
+        {
+          "phase": "BLOCKED",
+          "result": {
+            "ok": false,
+            "status": "BLOCKED",
+            "execution": "NONE",
+            "plan_id": "099325a2-b273-42ce-9300-66875094bd3b",
+            "reason": "RISK_ORDER_BLOCKED",
+            "message": "Fonds insuffisants ou solde disponible non vérifiable pour couvrir le montant et les frais. Aucun ordre n’a été envoyé."
+          }
+        }
+      ],
+      "trace": [
+        {
+          "phase": "PREPARED",
+          "code": null
+        },
+        {
+          "phase": "CONFIRMING",
+          "code": null
+        },
+        {
+          "phase": "RISK_RECHECK",
+          "code": null
+        },
+        {
+          "phase": "BLOCKED",
+          "code": null
+        }
+      ]
+    },
+    {
+      "id": "price_changed",
+      "case": "Prix devenu trop différent : nouvelle confirmation nécessaire",
+      "user_request": "Achète 5 USDT de BTC-USDT Spot Market Live sur OKX compte okx-main",
+      "status": "PASS",
+      "broker_requests": 0,
+      "user_response": "Le prix ou les frais ont changé. Prépare et confirme un nouveau récapitulatif.",
+      "journal": [
+        {
+          "phase": "BLOCKED",
+          "result": {
+            "ok": false,
+            "status": "BLOCKED",
+            "execution": "NONE",
+            "plan_id": "45f87d39-e9d2-4b67-adf0-ed6316388ce4",
+            "reason": "ORDER_CHANGED_RECONFIRM_REQUIRED",
+            "message": "Le prix ou les frais ont changé. Prépare et confirme un nouveau récapitulatif."
+          }
+        }
+      ],
+      "trace": [
+        {
+          "phase": "PREPARED",
+          "code": null
+        },
+        {
+          "phase": "CONFIRMING",
+          "code": null
+        },
+        {
+          "phase": "RISK_RECHECK",
+          "code": null
+        },
+        {
+          "phase": "BLOCKED",
+          "code": null
+        }
+      ]
+    },
+    {
+      "id": "credentials_missing",
+      "case": "Identifiants indisponibles : blocage avant envoi au broker",
+      "user_request": "Achète 5 USDT de BTC-USDT Spot Market Live sur OKX compte okx-main",
+      "status": "PASS",
+      "broker_requests": 0,
+      "user_response": "Les identifiants du compte sont indisponibles ou incomplets. Aucun ordre n’a été envoyé à OKX.",
+      "journal": [
+        {
+          "phase": "BLOCKED",
+          "result": {
+            "ok": false,
+            "status": "BLOCKED",
+            "execution": "NONE",
+            "plan_id": "d9fe37bf-4b40-449f-9768-21161a90e05d",
+            "reason": "TRADING_CREDENTIALS_INCOMPLETE",
+            "message": "Les identifiants du compte sont indisponibles ou incomplets. Aucun ordre n’a été envoyé à OKX."
+          }
+        }
+      ],
+      "trace": [
+        {
+          "phase": "PREPARED",
+          "code": null
+        },
+        {
+          "phase": "CONFIRMING",
+          "code": null
+        },
+        {
+          "phase": "RISK_RECHECK",
+          "code": null
+        },
+        {
+          "phase": "RISK_APPROVED",
+          "code": null
+        },
+        {
+          "phase": "SUBMITTING",
+          "code": null
+        },
+        {
+          "phase": "BLOCKED",
+          "code": null
+        }
+      ]
+    },
+    {
+      "id": "trading_stopped",
+      "case": "Trading arrêté : blocage certain avant envoi, pas un ordre inconnu",
+      "user_request": "Achète 5 USDT de BTC-USDT Spot Market Live sur OKX compte okx-main",
+      "status": "PASS",
+      "broker_requests": 0,
+      "user_response": "Le moteur Trading est arrêté ou verrouillé. Aucun ordre n’a été envoyé à OKX.",
+      "journal": [
+        {
+          "phase": "BLOCKED",
+          "result": {
+            "ok": false,
+            "status": "BLOCKED",
+            "execution": "NONE",
+            "plan_id": "bd5909fc-e472-450a-b7b9-6dd8b5eca4ab",
+            "reason": "TRADING_ENGINE_RUNTIME_LOCKED",
+            "message": "Le moteur Trading est arrêté ou verrouillé. Aucun ordre n’a été envoyé à OKX."
+          }
+        }
+      ],
+      "trace": [
+        {
+          "phase": "PREPARED",
+          "code": null
+        },
+        {
+          "phase": "CONFIRMING",
+          "code": null
+        },
+        {
+          "phase": "RISK_RECHECK",
+          "code": null
+        },
+        {
+          "phase": "RISK_APPROVED",
+          "code": null
+        },
+        {
+          "phase": "SUBMITTING",
+          "code": null
+        },
+        {
+          "phase": "BLOCKED",
+          "code": null
+        }
+      ]
+    },
+    {
+      "id": "firewall_off",
+      "case": "Firewall désactivé : ordre refusé",
+      "user_request": "Achète 5 USDT de BTC-USDT Spot Market Live sur OKX compte okx-main",
+      "status": "PASS",
+      "broker_requests": 0,
+      "user_response": "Le pare-feu est désactivé : l’ordre est bloqué.",
+      "journal": [
+        {
+          "phase": "BLOCKED",
+          "result": {
+            "ok": false,
+            "status": "BLOCKED",
+            "execution": "NONE",
+            "plan_id": "92f5ab9e-a13b-4fb9-909f-cf9378c63a6b",
+            "reason": "MUTATING_TRADING_BLOCKED_IN_FIREWALL_BYPASS",
+            "message": "Le pare-feu est désactivé : l’ordre est bloqué."
+          }
+        }
+      ],
+      "trace": [
+        {
+          "phase": "PREPARED",
+          "code": null
+        },
+        {
+          "phase": "CONFIRMING",
+          "code": null
+        },
+        {
+          "phase": "RISK_RECHECK",
+          "code": null
+        },
+        {
+          "phase": "RISK_APPROVED",
+          "code": null
+        },
+        {
+          "phase": "SUBMITTING",
+          "code": null
+        },
+        {
+          "phase": "BLOCKED",
+          "code": null
+        }
+      ]
+    },
+    {
+      "id": "approval_expired",
+      "case": "Autorisation Risk expirée avant Firewall : refus sans ordre",
+      "user_request": "Achète 5 USDT de BTC-USDT Spot Market Live sur OKX compte okx-main",
+      "status": "PASS",
+      "broker_requests": 0,
+      "user_response": "L’autorisation Risk est invalide ou expirée. Aucun ordre n’a été envoyé.",
+      "journal": [
+        {
+          "phase": "BLOCKED",
+          "result": {
+            "ok": false,
+            "status": "BLOCKED",
+            "execution": "NONE",
+            "plan_id": "116628c1-44f2-42cd-8897-494e62b61514",
+            "reason": "RISK_APPROVAL_NOT_FOUND_OR_EXPIRED",
+            "message": "L’autorisation Risk est invalide ou expirée. Aucun ordre n’a été envoyé."
+          }
+        }
+      ],
+      "trace": [
+        {
+          "phase": "PREPARED",
+          "code": null
+        },
+        {
+          "phase": "CONFIRMING",
+          "code": null
+        },
+        {
+          "phase": "RISK_RECHECK",
+          "code": null
+        },
+        {
+          "phase": "RISK_APPROVED",
+          "code": null
+        },
+        {
+          "phase": "SUBMITTING",
+          "code": null
+        },
+        {
+          "phase": "BLOCKED",
+          "code": null
+        }
+      ]
+    },
+    {
+      "id": "binding_tampered",
+      "case": "Montant altéré entre Risk et Trading : liaison refusée",
+      "user_request": "Achète 5 USDT de BTC-USDT Spot Market Live sur OKX compte okx-main",
+      "status": "PASS",
+      "broker_requests": 0,
+      "user_response": "Les paramètres ne correspondent plus à l’ordre approuvé. L’envoi est refusé.",
+      "journal": [
+        {
+          "phase": "BLOCKED",
+          "result": {
+            "ok": false,
+            "status": "BLOCKED",
+            "execution": "NONE",
+            "plan_id": "55641d01-818b-426b-8db6-cc97dceef416",
+            "reason": "MANUAL_ORDER_BINDING_MISMATCH",
+            "message": "Les paramètres ne correspondent plus à l’ordre approuvé. L’envoi est refusé."
+          }
+        }
+      ],
+      "trace": [
+        {
+          "phase": "PREPARED",
+          "code": null
+        },
+        {
+          "phase": "CONFIRMING",
+          "code": null
+        },
+        {
+          "phase": "RISK_RECHECK",
+          "code": null
+        },
+        {
+          "phase": "RISK_APPROVED",
+          "code": null
+        },
+        {
+          "phase": "SUBMITTING",
+          "code": null
+        },
+        {
+          "phase": "BLOCKED",
+          "code": null
+        }
+      ]
+    },
+    {
+      "id": "broker_reject",
+      "case": "Refus explicite OKX après vérification locale : REJECTED, sans retry",
+      "user_request": "Achète 5 USDT de BTC-USDT Spot Market Live sur OKX compte okx-main",
+      "status": "PASS",
+      "broker_requests": 1,
+      "user_response": "Ordre rejeté par OKX.",
+      "journal": [
+        {
+          "phase": "REJECTED",
+          "result": {
+            "ok": false,
+            "status": "REJECTED",
+            "execution": "NONE",
+            "broker_code": "51008",
+            "reason": null,
+            "order_id": null,
+            "client_order_id": "iatbb9a942a9d0374e3e86265d2e454d",
+            "plan_id": "b9a942a9-d037-4e3e-8626-5d2e454db152",
+            "portfolio_recorded": false,
+            "message": "Ordre rejeté par OKX."
+          }
+        }
+      ],
+      "trace": [
+        {
+          "phase": "PREPARED",
+          "code": null
+        },
+        {
+          "phase": "CONFIRMING",
+          "code": null
+        },
+        {
+          "phase": "RISK_RECHECK",
+          "code": null
+        },
+        {
+          "phase": "RISK_APPROVED",
+          "code": null
+        },
+        {
+          "phase": "SUBMITTING",
+          "code": null
+        },
+        {
+          "phase": "REJECTED",
+          "code": null
+        }
+      ]
+    },
+    {
+      "id": "broker_timeout",
+      "case": "Résultat broker ambigu (timeout) : bloquer les retries et conserver l’état inconnu",
+      "user_request": "Achète 5 USDT de BTC-USDT Spot Market Live sur OKX compte okx-main",
+      "status": "PASS",
+      "broker_requests": 1,
+      "user_response": "Résultat à réconcilier avec OKX ; aucun renvoi automatique.",
+      "journal": [
+        {
+          "phase": "UNKNOWN_RECONCILIATION_REQUIRED",
+          "result": {
+            "ok": false,
+            "status": "UNKNOWN_RECONCILIATION_REQUIRED",
+            "execution": "NONE",
+            "plan_id": "56460671-593d-4dfc-8b60-0817533eded1",
+            "reason": "BROKER_TIMEOUT",
+            "message": "Résultat à réconcilier avec OKX ; aucun renvoi automatique."
+          }
+        }
+      ],
+      "trace": [
+        {
+          "phase": "PREPARED",
+          "code": null
+        },
+        {
+          "phase": "CONFIRMING",
+          "code": null
+        },
+        {
+          "phase": "RISK_RECHECK",
+          "code": null
+        },
+        {
+          "phase": "RISK_APPROVED",
+          "code": null
+        },
+        {
+          "phase": "SUBMITTING",
+          "code": null
+        },
+        {
+          "phase": "UNKNOWN_RECONCILIATION_REQUIRED",
+          "code": null
+        }
+      ]
+    },
+    {
+      "id": "broker_http503",
+      "case": "Résultat broker ambigu (http503) : bloquer les retries et conserver l’état inconnu",
+      "user_request": "Achète 5 USDT de BTC-USDT Spot Market Live sur OKX compte okx-main",
+      "status": "PASS",
+      "broker_requests": 1,
+      "user_response": "Résultat à réconcilier avec OKX ; aucun renvoi automatique.",
+      "journal": [
+        {
+          "phase": "UNKNOWN_RECONCILIATION_REQUIRED",
+          "result": {
+            "ok": false,
+            "status": "UNKNOWN_RECONCILIATION_REQUIRED",
+            "execution": "NONE",
+            "broker_code": "50001",
+            "reason": null,
+            "order_id": null,
+            "client_order_id": "iatbf7ee1ac0b1624b399ed6ea80bd7d",
+            "plan_id": "f7ee1ac0-b162-4b39-9ed6-ea80bd7d538d",
+            "portfolio_recorded": false,
+            "message": "Résultat à réconcilier avec OKX ; aucun renvoi automatique."
+          }
+        }
+      ],
+      "trace": [
+        {
+          "phase": "PREPARED",
+          "code": null
+        },
+        {
+          "phase": "CONFIRMING",
+          "code": null
+        },
+        {
+          "phase": "RISK_RECHECK",
+          "code": null
+        },
+        {
+          "phase": "RISK_APPROVED",
+          "code": null
+        },
+        {
+          "phase": "SUBMITTING",
+          "code": null
+        },
+        {
+          "phase": "UNKNOWN_RECONCILIATION_REQUIRED",
+          "code": null
+        }
+      ]
+    },
+    {
+      "id": "broker_ambiguous50004",
+      "case": "Résultat broker ambigu (ambiguous50004) : bloquer les retries et conserver l’état inconnu",
+      "user_request": "Achète 5 USDT de BTC-USDT Spot Market Live sur OKX compte okx-main",
+      "status": "PASS",
+      "broker_requests": 1,
+      "user_response": "Résultat à réconcilier avec OKX ; aucun renvoi automatique.",
+      "journal": [
+        {
+          "phase": "UNKNOWN_RECONCILIATION_REQUIRED",
+          "result": {
+            "ok": false,
+            "status": "UNKNOWN_RECONCILIATION_REQUIRED",
+            "execution": "NONE",
+            "broker_code": "50004",
+            "reason": null,
+            "order_id": null,
+            "client_order_id": "iatb230f7e95f6f04cc8a1263fa3adc2",
+            "plan_id": "230f7e95-f6f0-4cc8-a126-3fa3adc28bfc",
+            "portfolio_recorded": false,
+            "message": "Résultat à réconcilier avec OKX ; aucun renvoi automatique."
+          }
+        }
+      ],
+      "trace": [
+        {
+          "phase": "PREPARED",
+          "code": null
+        },
+        {
+          "phase": "CONFIRMING",
+          "code": null
+        },
+        {
+          "phase": "RISK_RECHECK",
+          "code": null
+        },
+        {
+          "phase": "RISK_APPROVED",
+          "code": null
+        },
+        {
+          "phase": "SUBMITTING",
+          "code": null
+        },
+        {
+          "phase": "UNKNOWN_RECONCILIATION_REQUIRED",
+          "code": null
+        }
+      ]
+    },
+    {
+      "id": "broker_empty",
+      "case": "Résultat broker ambigu (empty) : bloquer les retries et conserver l’état inconnu",
+      "user_request": "Achète 5 USDT de BTC-USDT Spot Market Live sur OKX compte okx-main",
+      "status": "PASS",
+      "broker_requests": 1,
+      "user_response": "Résultat à réconcilier avec OKX ; aucun renvoi automatique.",
+      "journal": [
+        {
+          "phase": "UNKNOWN_RECONCILIATION_REQUIRED",
+          "result": {
+            "ok": false,
+            "status": "UNKNOWN_RECONCILIATION_REQUIRED",
+            "execution": "NONE",
+            "broker_code": "0",
+            "reason": null,
+            "order_id": null,
+            "client_order_id": "iatbdba10fece03343278addadfe5348",
+            "plan_id": "dba10fec-e033-4327-8add-adfe53485940",
+            "portfolio_recorded": false,
+            "message": "Résultat à réconcilier avec OKX ; aucun renvoi automatique."
+          }
+        }
+      ],
+      "trace": [
+        {
+          "phase": "PREPARED",
+          "code": null
+        },
+        {
+          "phase": "CONFIRMING",
+          "code": null
+        },
+        {
+          "phase": "RISK_RECHECK",
+          "code": null
+        },
+        {
+          "phase": "RISK_APPROVED",
+          "code": null
+        },
+        {
+          "phase": "SUBMITTING",
+          "code": null
+        },
+        {
+          "phase": "UNKNOWN_RECONCILIATION_REQUIRED",
+          "code": null
+        }
+      ]
+    },
+    {
+      "id": "broker_noOrderId",
+      "case": "Résultat broker ambigu (noOrderId) : bloquer les retries et conserver l’état inconnu",
+      "user_request": "Achète 5 USDT de BTC-USDT Spot Market Live sur OKX compte okx-main",
+      "status": "PASS",
+      "broker_requests": 1,
+      "user_response": "Résultat à réconcilier avec OKX ; aucun renvoi automatique.",
+      "journal": [
+        {
+          "phase": "UNKNOWN_RECONCILIATION_REQUIRED",
+          "result": {
+            "ok": false,
+            "status": "UNKNOWN_RECONCILIATION_REQUIRED",
+            "execution": "NONE",
+            "broker_code": "0",
+            "reason": null,
+            "order_id": null,
+            "client_order_id": "iatb284fd2b5795c4c009a4594696d8f",
+            "plan_id": "284fd2b5-795c-4c00-9a45-94696d8fa33c",
+            "portfolio_recorded": false,
+            "message": "Résultat à réconcilier avec OKX ; aucun renvoi automatique."
+          }
+        }
+      ],
+      "trace": [
+        {
+          "phase": "PREPARED",
+          "code": null
+        },
+        {
+          "phase": "CONFIRMING",
+          "code": null
+        },
+        {
+          "phase": "RISK_RECHECK",
+          "code": null
+        },
+        {
+          "phase": "RISK_APPROVED",
+          "code": null
+        },
+        {
+          "phase": "SUBMITTING",
+          "code": null
+        },
+        {
+          "phase": "UNKNOWN_RECONCILIATION_REQUIRED",
+          "code": null
+        }
+      ]
+    },
+    {
+      "id": "concurrent_confirm",
+      "case": "Deux confirmations concurrentes : un seul ordre",
+      "user_request": "Achète 5 USDT de BTC-USDT Spot Market Live sur OKX compte okx-main",
+      "status": "PASS",
+      "broker_requests": 1,
+      "user_response": "Ordre accepté par OKX. Cela ne confirme pas encore son exécution complète.",
+      "journal": [
+        {
+          "phase": "ACKNOWLEDGED",
+          "result": {
+            "ok": true,
+            "status": "ACKNOWLEDGED",
+            "execution": "SUBMITTED",
+            "broker_code": "0",
+            "reason": null,
+            "order_id": "simulated-order",
+            "client_order_id": "iatbe6dac23fd55542caa562207140f2",
+            "plan_id": "e6dac23f-d555-42ca-a562-207140f2b1fc",
+            "portfolio_recorded": false,
+            "message": "Ordre accepté par OKX. Cela ne confirme pas encore son exécution complète."
+          }
+        }
+      ],
+      "trace": [
+        {
+          "phase": "PREPARED",
+          "code": null
+        },
+        {
+          "phase": "CONFIRMING",
+          "code": null
+        },
+        {
+          "phase": "RISK_RECHECK",
+          "code": null
+        },
+        {
+          "phase": "RISK_APPROVED",
+          "code": null
+        },
+        {
+          "phase": "SUBMITTING",
+          "code": null
+        },
+        {
+          "phase": "ACKNOWLEDGED",
+          "code": null
+        }
+      ]
+    },
+    {
+      "id": "restart_after_ack",
+      "case": "Redémarrage après ACK : résultat conservé, aucun renvoi",
+      "user_request": "Achète 5 USDT de BTC-USDT Spot Market Live sur OKX compte okx-main",
+      "status": "PASS",
+      "broker_requests": 1,
+      "user_response": "Ordre accepté par OKX. Cela ne confirme pas encore son exécution complète.",
+      "journal": [
+        {
+          "phase": "ACKNOWLEDGED",
+          "result": {
+            "ok": true,
+            "status": "ACKNOWLEDGED",
+            "execution": "SUBMITTED",
+            "broker_code": "0",
+            "reason": null,
+            "order_id": "simulated-order",
+            "client_order_id": "iatb70724fd7c6ce4205ae1652cc8eb3",
+            "plan_id": "70724fd7-c6ce-4205-ae16-52cc8eb3876c",
+            "portfolio_recorded": false,
+            "message": "Ordre accepté par OKX. Cela ne confirme pas encore son exécution complète."
+          }
+        }
+      ],
+      "trace": [
+        {
+          "phase": "PREPARED",
+          "code": null
+        },
+        {
+          "phase": "CONFIRMING",
+          "code": null
+        },
+        {
+          "phase": "RISK_RECHECK",
+          "code": null
+        },
+        {
+          "phase": "RISK_APPROVED",
+          "code": null
+        },
+        {
+          "phase": "SUBMITTING",
+          "code": null
+        },
+        {
+          "phase": "ACKNOWLEDGED",
+          "code": null
+        }
+      ]
+    },
+    {
+      "id": "restart_uncertain",
+      "case": "Redémarrage après réponse perdue : compte bloqué jusqu’à réconciliation",
+      "user_request": "Achète 5 USDT de BTC-USDT Spot Market Live sur OKX compte okx-main",
+      "status": "PASS",
+      "broker_requests": 1,
+      "user_response": "Résultat à réconcilier avec OKX ; aucun renvoi automatique.",
+      "journal": [
+        {
+          "phase": "UNKNOWN_RECONCILIATION_REQUIRED",
+          "result": {
+            "ok": false,
+            "status": "UNKNOWN_RECONCILIATION_REQUIRED",
+            "execution": "NONE",
+            "plan_id": "f65b3d59-5000-4430-b9a0-662a1c93bbd2",
+            "reason": "BROKER_TIMEOUT",
+            "message": "Résultat à réconcilier avec OKX ; aucun renvoi automatique."
+          }
+        }
+      ],
+      "trace": [
+        {
+          "phase": "PREPARED",
+          "code": null
+        },
+        {
+          "phase": "CONFIRMING",
+          "code": null
+        },
+        {
+          "phase": "RISK_RECHECK",
+          "code": null
+        },
+        {
+          "phase": "RISK_APPROVED",
+          "code": null
+        },
+        {
+          "phase": "SUBMITTING",
+          "code": null
+        },
+        {
+          "phase": "UNKNOWN_RECONCILIATION_REQUIRED",
+          "code": null
+        }
+      ]
+    },
+    {
+      "id": "other_owner",
+      "case": "Un autre utilisateur ne confirme ni ne consulte cet ordre",
+      "user_request": "Achète 5 USDT de BTC-USDT Spot Market Live sur OKX compte okx-main",
+      "status": "PASS",
+      "broker_requests": 0,
+      "user_response": "Ordre Spot réel préparé ; confirmation requise.",
+      "journal": [
+        {
+          "phase": "PREPARED",
+          "result": null
+        }
+      ],
+      "trace": [
+        {
+          "phase": "PREPARED",
+          "code": null
+        }
+      ]
+    }
+  ]
+}

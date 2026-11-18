@@ -1,7 +1,7 @@
 'use strict';
 const crypto=require('node:crypto');
-const {AccountRouting}=require('../../../services/trading-engine/account-routing');
-const {normalizeOrderIntent,normalizeCancelIntent}=require('../../../services/trading-engine/trading-engine');
+const {AccountRouting}=require("../../../Engines/Trading/account-routing");
+const {normalizeOrderIntent,normalizeCancelIntent}=require("../../../Engines/Trading/trading-engine");
 const {typedDigest,signTypedData}=require('../../../Bank/Core/dex_wallet_signer');
 const CP=require('../../Communication/communication_protocol_v1');
 const ACTIONS=new Set(['execute','cancel','close','read']);
@@ -14,7 +14,7 @@ function canonical(intent,action){
   const allowed=['exchange','market_type','symbol','account','metadata'];
   if(!intent||Object.keys(intent).some(k=>!allowed.includes(k))||intent.exchange!=='OKX'||intent.market_type&&intent.market_type!=='SPOT'||intent.account!==undefined&&intent.account!==null&&(typeof intent.account!=='string'||!/^[a-z][a-z0-9_-]{0,39}$/.test(intent.account)))throw Error('TRADING_READ_SCOPE_INVALID');
   if(intent.metadata&&Object.keys(intent.metadata).some(k=>k!=='account_ticket'))throw Error('TRADING_READ_SCOPE_INVALID');
-  return {exchange:'OKX',market_type:'SPOT',account:intent.account||null,symbol:require('../../../services/trading-engine/exchange-adapters/okx/account-reader').instrument(intent.symbol||'BTC-USDT')};
+  return {exchange:'OKX',market_type:'SPOT',account:intent.account||null,symbol:require("../../../Engines/Trading/exchange-adapters/okx/account-reader").instrument(intent.symbol||'BTC-USDT')};
  }
  let o=JSON.parse(JSON.stringify(intent));for(const k of Object.keys(o))if(o[k]===null)delete o[k];
  if(action==='close'){if(!['LONG','SHORT'].includes(o.position_side))throw Error('TRADING_POSITION_SIDE_INVALID');o.side=o.position_side==='LONG'?'SELL':'BUY';o.order_type='MARKET';o.reduce_only=true;}

@@ -1,0 +1,1253 @@
+{
+  "schema_version": "2.6.0",
+  "engine_id": "indicator",
+  "engine_version": "3.0.1-dev.1",
+  "transport": "CP/1",
+  "source_protocol_registry": "Core/Communication/ProtocolRegistry/indicator.json",
+  "source_sha256": "bcec8d6a9944c534fe328688f6d11cf9b7e02927bf2b79b8c400d8cf5809172c",
+  "functions": [
+    {
+      "id": "indicator.custom.delete",
+      "engine": "indicator",
+      "type": "MUTATION",
+      "risk_level": "HIGH",
+      "hard_deny": true,
+      "description": "Delete a Custom indicator definition. Built-ins remain protected.",
+      "input": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "Engines/Indicators/Engine/indicator_service.js",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": true,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "3.0.1-dev.1",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
+    },
+    {
+      "id": "indicator.registry.reload",
+      "engine": "indicator",
+      "type": "MUTATION",
+      "risk_level": "HIGH",
+      "hard_deny": true,
+      "description": "Reload Indicator Engine registry and reconcile settings.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "Engines/Indicators/Engine/indicator_service.js",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": true,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "3.0.1-dev.1",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
+    },
+    {
+      "id": "indicator.registry.status",
+      "engine": "indicator",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": true,
+      "description": "Read Indicator Registry counts, quarantine state and current items.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "Engines/Indicators/Engine/indicator_service.js",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "3.0.1-dev.1",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
+    },
+    {
+      "id": "indicator.settings.set",
+      "engine": "indicator",
+      "type": "MUTATION",
+      "risk_level": "HIGH",
+      "hard_deny": true,
+      "description": "Update Indicator Engine settings through CP/1.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "settings": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "refreshMs": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "enabled": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "Engines/Indicators/Engine/indicator_service.js",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": true,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "3.0.1-dev.1",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
+    },
+    {
+      "id": "indicator.settings.get",
+      "engine": "indicator",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": true,
+      "description": "Read Indicator Engine settings through CP/1.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "Engines/Indicators/Engine/indicator_service.js",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "3.0.1-dev.1",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
+    },
+    {
+      "id": "indicator.language.info",
+      "engine": "indicator",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Read or evaluate indicator.language.info from indicator. No financial side effect.",
+      "input": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "schema": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "version": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "owner": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "purpose": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "syntax": {
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "security": {
+            "type": [
+              "object",
+              "null"
+            ]
+          }
+        }
+      },
+      "errors": [],
+      "source": "Engines/Indicators/Engine/indicator_service.js",
+      "verified_handler": true,
+      "default_privilege": "DENY",
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Authenticated service identity, authenticated agent session and effective per-command permission.",
+      "contract_version": "3.0.1-dev.1",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
+      "availability_reason": null,
+      "timeout_ms": 5000,
+      "agent_qualified": true
+    },
+    {
+      "id": "indicator.language.compile",
+      "engine": "indicator",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": true,
+      "description": "Commande CP/1 indicator.language.compile. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [
+          "source"
+        ],
+        "properties": {
+          "source": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "Engines/Indicators/Engine/indicator_service.js",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "3.0.1-dev.1",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
+    },
+    {
+      "id": "indicator.language.validate",
+      "engine": "indicator",
+      "type": "EVALUATION",
+      "risk_level": "MEDIUM",
+      "hard_deny": true,
+      "description": "Commande CP/1 indicator.language.validate. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [
+          "source"
+        ],
+        "properties": {
+          "source": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "Engines/Indicators/Engine/indicator_service.js",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "3.0.1-dev.1",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
+    },
+    {
+      "id": "indicator.language.create",
+      "engine": "indicator",
+      "type": "MUTATION",
+      "risk_level": "HIGH",
+      "hard_deny": true,
+      "description": "Commande CP/1 indicator.language.create. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [
+          "source"
+        ],
+        "properties": {
+          "source": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "overwrite": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "Engines/Indicators/Engine/indicator_service.js",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": true,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "3.0.1-dev.1",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
+    },
+    {
+      "id": "indicator.definition.validate",
+      "engine": "indicator",
+      "type": "EVALUATION",
+      "risk_level": "MEDIUM",
+      "hard_deny": true,
+      "description": "Commande CP/1 indicator.definition.validate. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [
+          "definition"
+        ],
+        "properties": {
+          "definition": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "Engines/Indicators/Engine/indicator_service.js",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "3.0.1-dev.1",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
+    },
+    {
+      "id": "indicator.definition.create",
+      "engine": "indicator",
+      "type": "MUTATION",
+      "risk_level": "HIGH",
+      "hard_deny": true,
+      "description": "Commande CP/1 indicator.definition.create. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [
+          "definition"
+        ],
+        "properties": {
+          "definition": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "overwrite": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "Engines/Indicators/Engine/indicator_service.js",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": true,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "3.0.1-dev.1",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
+    },
+    {
+      "id": "indicator.compute_batch_data",
+      "engine": "indicator",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Read or evaluate indicator.compute_batch_data from indicator. No financial side effect.",
+      "input": {
+        "type": "object",
+        "required": [
+          "candles",
+          "requests"
+        ],
+        "properties": {
+          "candles": {
+            "type": "array",
+            "minItems": 20,
+            "maxItems": 1200,
+            "items": {
+              "type": "array",
+              "minItems": 5,
+              "maxItems": 6,
+              "items": {
+                "type": "number"
+              }
+            }
+          },
+          "requests": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 32,
+            "items": {
+              "type": "object",
+              "required": [
+                "id"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 64
+                },
+                "params": {
+                  "type": "object"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "symbol": {
+            "type": "string",
+            "maxLength": 40
+          },
+          "timeframe": {
+            "enum": [
+              "1m",
+              "5m",
+              "15m",
+              "30m",
+              "1h",
+              "4h",
+              "1d"
+            ]
+          },
+          "source": {
+            "type": "string",
+            "maxLength": 64
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "schema": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "engine": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "input": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "symbol": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "timeframe": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "source": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "generatedAt": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "requested": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "succeeded": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "failed": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "results": {
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "provenance": {
+            "type": [
+              "object",
+              "null"
+            ]
+          }
+        }
+      },
+      "errors": [],
+      "source": "Engines/Indicators/Engine/indicator_service.js",
+      "verified_handler": true,
+      "default_privilege": "DENY",
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Authenticated service identity, authenticated agent session and effective per-command permission.",
+      "contract_version": "3.0.1-dev.1",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
+      "availability_reason": null,
+      "timeout_ms": 5000,
+      "agent_qualified": true
+    },
+    {
+      "id": "indicator.compute_data",
+      "engine": "indicator",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": true,
+      "description": "Commande CP/1 indicator.compute_data. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [
+          "id",
+          "candles"
+        ],
+        "properties": {
+          "id": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "candles": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "params": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "symbol": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "timeframe": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "source": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "Engines/Indicators/Engine/indicator_service.js",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "3.0.1-dev.1",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
+    },
+    {
+      "id": "indicator.financial_context",
+      "engine": "indicator",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": true,
+      "description": "Read-only current CeFi/DeFi financial context from Market Data Collector via Router.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "scope": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "Engines/Indicators/Engine/indicator_service.js",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "3.0.1-dev.1",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
+    },
+    {
+      "id": "indicator.financial_series",
+      "engine": "indicator",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": true,
+      "description": "Read-only numeric financial time series extracted from persisted Market Data snapshots.",
+      "input": {
+        "type": "object",
+        "required": [
+          "metric"
+        ],
+        "properties": {
+          "family": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "metric": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "limit": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "since": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "Engines/Indicators/Engine/indicator_service.js",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "3.0.1-dev.1",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
+    },
+    {
+      "id": "indicator.financial_analyze",
+      "engine": "indicator",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": true,
+      "description": "Calculate change, min/max, mean, SMA and EMA from persisted Market Data financial series.",
+      "input": {
+        "type": "object",
+        "required": [
+          "metric"
+        ],
+        "properties": {
+          "family": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "metric": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "limit": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "since": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "period": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "Engines/Indicators/Engine/indicator_service.js",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "3.0.1-dev.1",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
+    },
+    {
+      "id": "indicator.definition.get",
+      "engine": "indicator",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": true,
+      "description": "Commande CP/1 indicator.definition.get. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "Engines/Indicators/Engine/indicator_service.js",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "3.0.1-dev.1",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
+    },
+    {
+      "id": "indicator.compute",
+      "engine": "indicator",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": true,
+      "description": "Commande CP/1 indicator.compute. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [
+          "id",
+          "symbol",
+          "timeframe"
+        ],
+        "properties": {
+          "id": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "symbol": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "timeframe": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "params": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "force": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "Engines/Indicators/Engine/indicator_service.js",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "3.0.1-dev.1",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
+    },
+    {
+      "id": "indicator.compute_batch",
+      "engine": "indicator",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": true,
+      "description": "Commande CP/1 indicator.compute_batch. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [
+          "symbol",
+          "timeframe",
+          "requests"
+        ],
+        "properties": {
+          "symbol": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "timeframe": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "requests": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "force": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "Engines/Indicators/Engine/indicator_service.js",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "3.0.1-dev.1",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
+    },
+    {
+      "id": "indicator.analyze",
+      "engine": "indicator",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": true,
+      "description": "Commande CP/1 indicator.analyze. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [
+          "symbol",
+          "timeframe"
+        ],
+        "properties": {
+          "symbol": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "timeframe": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "force": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "Engines/Indicators/Engine/indicator_service.js",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "3.0.1-dev.1",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
+    },
+    {
+      "id": "indicator.get_state",
+      "engine": "indicator",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": true,
+      "description": "Commande CP/1 indicator.get_state. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "symbol": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "timeframe": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "Engines/Indicators/Engine/indicator_service.js",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "3.0.1-dev.1",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
+    },
+    {
+      "id": "indicator.get_levels",
+      "engine": "indicator",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": true,
+      "description": "Commande CP/1 indicator.get_levels. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [
+          "symbol",
+          "timeframe"
+        ],
+        "properties": {
+          "symbol": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "timeframe": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "Engines/Indicators/Engine/indicator_service.js",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "3.0.1-dev.1",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
+    },
+    {
+      "id": "indicator.get_signals",
+      "engine": "indicator",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": true,
+      "description": "Commande CP/1 indicator.get_signals. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [
+          "symbol",
+          "timeframe"
+        ],
+        "properties": {
+          "symbol": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "timeframe": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "Engines/Indicators/Engine/indicator_service.js",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "3.0.1-dev.1",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
+    },
+    {
+      "id": "indicator.list_capabilities",
+      "engine": "indicator",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": true,
+      "description": "Commande CP/1 indicator.list_capabilities. La description du handler doit être validée.",
+      "input": {
+        "type": "object",
+        "required": [],
+        "properties": {},
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "Engines/Indicators/Engine/indicator_service.js",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "3.0.1-dev.1",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
+    },
+    {
+      "id": "indicator.list_indicators",
+      "engine": "indicator",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": false,
+      "description": "Read or evaluate indicator.list_indicators from indicator. No financial side effect.",
+      "input": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "object",
+        "required": [
+          "indicators"
+        ],
+        "properties": {
+          "schema": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "refreshMs": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "refreshPresets": {
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "indicators": {
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "updatedAt": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "errors": [],
+      "source": "Engines/Indicators/Engine/indicator_service.js",
+      "verified_handler": true,
+      "default_privilege": "DENY",
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Authenticated service identity, authenticated agent session and effective per-command permission.",
+      "contract_version": "3.0.1-dev.1",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
+      "availability_reason": null,
+      "timeout_ms": 5000,
+      "agent_qualified": true
+    },
+    {
+      "id": "indicator.user.compute",
+      "engine": "indicator",
+      "type": "READ",
+      "risk_level": "LOW",
+      "hard_deny": true,
+      "description": "Core authorized per-user indicator computation with current-session revalidation.",
+      "input": {
+        "type": "object",
+        "required": [
+          "payload",
+          "proof"
+        ],
+        "properties": {
+          "payload": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          },
+          "proof": {
+            "type": "unknown",
+            "description": "Type non vérifié"
+          }
+        },
+        "additionalProperties": false
+      },
+      "output": {
+        "type": "unknown",
+        "description": "Schéma à confirmer dans le handler réel"
+      },
+      "errors": [],
+      "source": "Engines/Indicators/Engine/indicator_service.js",
+      "verified_handler": false,
+      "default_privilege": "DENY",
+      "side_effects": false,
+      "transport": "CP1",
+      "authorization": "Unavailable to agents until independently qualified.",
+      "contract_version": "3.0.1-dev.1",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
+      "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
+      "timeout_ms": 8000,
+      "agent_qualified": false
+    }
+  ],
+  "revision_hash": "ce87a097ad4af44343bf3295b4b59987f90a4f8ff9cc63403e928e348e32194c"
+}

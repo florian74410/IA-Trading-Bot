@@ -1,0 +1,227 @@
+{
+  "name": "foundation",
+  "exit_code": 0,
+  "error": null,
+  "duration_ms": 3573,
+  "tests": 53,
+  "passed": 53,
+  "failed": 0,
+  "skipped": 0,
+  "cancelled": 0,
+  "failed_cases": [],
+  "cases": [
+    {
+      "name": "MEM-01: empty memory has no invented objective or observations",
+      "status": "PASS"
+    },
+    {
+      "name": "MEM-02: objective persists across SQLite shutdown/reopen",
+      "status": "PASS"
+    },
+    {
+      "name": "MEM-03: observations survive SQLite process reopening",
+      "status": "PASS"
+    },
+    {
+      "name": "MEM-04: objective replacement clears older observations",
+      "status": "PASS"
+    },
+    {
+      "name": "MEM-05: setting same objective preserves observations",
+      "status": "PASS"
+    },
+    {
+      "name": "MEM-06: owner isolation",
+      "status": "PASS"
+    },
+    {
+      "name": "MEM-07: authenticated owner continuity across session renewal (3.0.1 policy)",
+      "status": "PASS"
+    },
+    {
+      "name": "MEM-08: room isolation",
+      "status": "PASS"
+    },
+    {
+      "name": "MEM-09: memory rejects bad tenant and room",
+      "status": "PASS"
+    },
+    {
+      "name": "MEM-10: memory retains 48 observations but returns at most 12",
+      "status": "PASS"
+    },
+    {
+      "name": "MEM-11: invalid status rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "MEM-12: memory file permissions are private on POSIX",
+      "status": "PASS"
+    },
+    {
+      "name": "MEM-13: observations preserve structured JSON values (expected product requirement)",
+      "status": "PASS"
+    },
+    {
+      "name": "MEM-14: short-term objective recoverable after owner renews Auth21 session (expected medium-term requirement)",
+      "status": "PASS"
+    },
+    {
+      "name": "MEM-15: stale observations are marked before use (expected context recovery requirement)",
+      "status": "PASS"
+    },
+    {
+      "name": "CP1-01: discover queries a gateway and returns capabilities",
+      "status": "PASS"
+    },
+    {
+      "name": "CP1-02: allowed read command traverses gateway and writes observation",
+      "status": "PASS"
+    },
+    {
+      "name": "CP1-03: dangerous financial command rejected before transport",
+      "status": "PASS"
+    },
+    {
+      "name": "CP1-04: DENY privilege is blocked before transport",
+      "status": "PASS"
+    },
+    {
+      "name": "CP1-05: offline engine is blocked before transport",
+      "status": "PASS"
+    },
+    {
+      "name": "CP1-06: hard-deny contract is blocked before transport",
+      "status": "PASS"
+    },
+    {
+      "name": "CP1-07: unqualified contract is blocked before transport",
+      "status": "PASS"
+    },
+    {
+      "name": "CP1-08: side-effect contract is blocked before transport",
+      "status": "PASS"
+    },
+    {
+      "name": "CP1-09: gateway temporarily absent does not lose objective",
+      "status": "PASS"
+    },
+    {
+      "name": "CP1-10: timeout produces explicit unknown observation",
+      "status": "PASS"
+    },
+    {
+      "name": "CP1-11: unavailable discovery does not invent engines",
+      "status": "PASS"
+    },
+    {
+      "name": "CP1-12: gateway throws on discovery; no stale connected claim",
+      "status": "PASS"
+    },
+    {
+      "name": "SEC-01: unverified principal refused",
+      "status": "PASS"
+    },
+    {
+      "name": "SEC-02: missing session hash refused",
+      "status": "PASS"
+    },
+    {
+      "name": "CTX-01: working objective included in cognitive context facade",
+      "status": "PASS"
+    },
+    {
+      "name": "CTX-02: observation refresh follows changed gateway data",
+      "status": "PASS"
+    },
+    {
+      "name": "SEC-03: changing objective resets old sensitive observations",
+      "status": "PASS"
+    },
+    {
+      "name": "typed observation round trip: {\"a\":1,\"nested\":{\"b\":false,\"c\":null}}",
+      "status": "PASS"
+    },
+    {
+      "name": "typed observation round trip: [1,\"string\",false,null]",
+      "status": "PASS"
+    },
+    {
+      "name": "typed observation round trip: \"not JSON: {x}\"",
+      "status": "PASS"
+    },
+    {
+      "name": "typed observation round trip: 123",
+      "status": "PASS"
+    },
+    {
+      "name": "typed observation round trip: false",
+      "status": "PASS"
+    },
+    {
+      "name": "typed observation round trip: null",
+      "status": "PASS"
+    },
+    {
+      "name": "recursive sanitizer rejects malformed, cyclic and excessive input without changing revision",
+      "status": "PASS"
+    },
+    {
+      "name": "secrets, grants and session material are removed recursively before SQLite storage",
+      "status": "PASS"
+    },
+    {
+      "name": "workspace objective survives session renewal; owner and context isolation stay strict",
+      "status": "PASS"
+    },
+    {
+      "name": "per-command TTL, unknown availability and future observations are explicit",
+      "status": "PASS"
+    },
+    {
+      "name": "dev1 migration is atomic, idempotent and never guesses the type of a legacy string",
+      "status": "PASS"
+    },
+    {
+      "name": "unknown future schema is rejected without destructive migration",
+      "status": "PASS"
+    },
+    {
+      "name": "100 writes and interleaved owners/contexts preserve integrity and limits",
+      "status": "PASS"
+    },
+    {
+      "name": "SIGKILL recovery committed retains committed data only",
+      "status": "PASS"
+    },
+    {
+      "name": "SIGKILL recovery transaction retains committed data only",
+      "status": "PASS"
+    },
+    {
+      "name": "late CP1 observation cannot attach to a replaced goal",
+      "status": "PASS"
+    },
+    {
+      "name": "context recovery refreshes stale observations with current grants; failures retain objective",
+      "status": "PASS"
+    },
+    {
+      "name": "CognitiveRuntime MOCK receives exact typed fresh/stale/unknown data and a persistent goal",
+      "status": "PASS"
+    },
+    {
+      "name": "parallel SQLite writers keep separate owner contexts and atomic revisions",
+      "status": "PASS"
+    },
+    {
+      "name": "migration creates a private consistent dev1 backup usable for rollback",
+      "status": "PASS"
+    },
+    {
+      "name": "observation data resembling instructions never enters the model system instructions",
+      "status": "PASS"
+    }
+  ],
+  "ok": true
+}

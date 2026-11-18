@@ -1,0 +1,90 @@
+TAP version 13
+# (node:1814) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: manual schemas reject unknown fields, fields from another command and callback ambiguities
+ok 1 - manual schemas reject unknown fields, fields from another command and callback ambiguities
+  ---
+  duration_ms: 3.618561
+  type: 'test'
+  ...
+# Subtest: every qualified mutation maps to its own CP1 command and exact OKX endpoint
+ok 2 - every qualified mutation maps to its own CP1 command and exact OKX endpoint
+  ---
+  duration_ms: 0.580058
+  type: 'test'
+  ...
+# Subtest: exact decimal lot/tick arithmetic does not round an invalid financial amount
+ok 3 - exact decimal lot/tick arithmetic does not round an invalid financial amount
+  ---
+  duration_ms: 1.046114
+  type: 'test'
+  ...
+# Subtest: wire response digest matches the actual JSON payload when optional values are absent
+ok 4 - wire response digest matches the actual JSON payload when optional values are absent
+  ---
+  duration_ms: 2.437378
+  type: 'test'
+  ...
+# Subtest: missing analytic fees remain null and a sale preview is net of known fees
+ok 5 - missing analytic fees remain null and a sale preview is net of known fees
+  ---
+  duration_ms: 1.6629
+  type: 'test'
+  ...
+# (node:1822) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: durable outbox retries failed SQLite history independently of Portfolio without duplicate JSONL
+ok 6 - durable outbox retries failed SQLite history independently of Portfolio without duplicate JSONL
+  ---
+  duration_ms: 18.462071
+  type: 'test'
+  ...
+# Subtest: outbox result survives reopen and Portfolio replay carries the original stable event ID
+ok 7 - outbox result survives reopen and Portfolio replay carries the original stable event ID
+  ---
+  duration_ms: 3.502728
+  type: 'test'
+  ...
+# (node:1830) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: fills reach the existing private owner ledger exactly once and do not mix owners/accounts
+ok 8 - fills reach the existing private owner ledger exactly once and do not mix owners/accounts
+  ---
+  duration_ms: 37.339659
+  type: 'test'
+  ...
+# Subtest: owner projection retries after a partial global write without duplicating either destination
+ok 9 - owner projection retries after a partial global write without duplicating either destination
+  ---
+  duration_ms: 6.205379
+  type: 'test'
+  ...
+# Subtest: OKX fee sign, base-currency fees and unknown FX remain explicit
+ok 10 - OKX fee sign, base-currency fees and unknown FX remain explicit
+  ---
+  duration_ms: 9.806506
+  type: 'test'
+  ...
+# Subtest: same exchange fill retains its identity through a different management plan
+ok 11 - same exchange fill retains its identity through a different management plan
+  ---
+  duration_ms: 0.40888
+  type: 'test'
+  ...
+# Subtest: Spot sale reduces known inventory and never invents an unbacked short
+ok 12 - Spot sale reduces known inventory and never invents an unbacked short
+  ---
+  duration_ms: 14.746139
+  type: 'test'
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 532.271485
+(node:1807) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)

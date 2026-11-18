@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Complete IA-TB 3.0.1_Rev1 SOURCE/VPS package.
+"""Complete IA-TB 3.0.1 revision SOURCE/VPS package.
 
 All tracked application source, tests, CI, documentation, setup and Compose files
 are retained, except regenerable test-output logs and private/runtime files.
@@ -14,12 +14,12 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parents[2]
 REVISION = (ROOT / "App/REVISION").read_text(encoding="utf-8").strip() if (ROOT / "App/REVISION").exists() else "3.0.1_Rev1"
-if REVISION not in {"3.0.1_Rev1", "3.0.1_Rev2"}:
+if REVISION not in {"3.0.1_Rev1", "3.0.1_Rev2", "3.0.1_Rev3"}:
     raise RuntimeError("Unknown complete source revision")
 VERSION = (ROOT / "App/VERSION").read_text(encoding="utf-8").strip()
 if VERSION != "3.0.1-dev.1":
-    raise RuntimeError(f"Unexpected source version for Rev1: {VERSION}")
-OUTPUT = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else ROOT / "artifacts" / f"IA-TB-{REVISION}_FULL-SOURCE_VPS.zip"
+    raise RuntimeError(f"Unexpected source version: {VERSION}")
+OUTPUT = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else ROOT / "artifacts" / f"IA-TB-{REVISION}{'_Consolidated' if REVISION == '3.0.1_Rev3' else ''}_FULL-SOURCE_VPS.zip"
 SOURCE_COMMIT = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
 TRACKED = subprocess.check_output(["git", "ls-files", "-z"], cwd=ROOT).decode("utf-8").split("\0")
 ALLOWED_TOP = {"App", "Tools", "Documentation", ".github", "Deploy", "Assets", "Infrastructure", "tests"}
@@ -75,10 +75,10 @@ included = {name for name, _ in files}
 required = {
     "App/VERSION", "App/package.json", "App/package-lock.json", "App/manifest.json",
     "App/Core/Server/server.js", "App/Core/Router/router.js",
-    "App/Supervisor/supervisor_service.js", "App/Supervisor/Engine/supervisor-engine.js",
-    "App/Supervisor/Engine/working-memory.js", "App/services/trading-engine/trading_service.js",
-    "App/UI/Gateway/ui_service.js", "App/Risk/Engine/risk_service.js",
-    "App/Portfolio/Engine/portfolio_service.js", "App/Core/FunctionRegistry/Control/qualification.json",
+    "App/Engines/Supervisor/supervisor_service.js", "App/Engines/Supervisor/Engine/supervisor-engine.js",
+    "App/Engines/Supervisor/Engine/working-memory.js", "App/Engines/Trading/trading_service.js",
+    "App/UI/Gateway/ui_service.js", "App/Engines/Risk/Engine/risk_service.js",
+    "App/Engines/Portfolio/Engine/portfolio_service.js", "App/Core/FunctionRegistry/Control/qualification.json",
     "Deploy/VPS/README-3.0.1_Rev1.md", "Deploy/VPS/preflight.sh",
     "Deploy/VPS/launch_vps.sh",
 }

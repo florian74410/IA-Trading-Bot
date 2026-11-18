@@ -8,17 +8,17 @@ if [[ "${1:-}" == "--source-only" ]]; then SOURCE_ONLY=1; elif [[ $# -gt 0 ]]; t
 required=(
   App/VERSION App/manifest.json App/package.json App/package-lock.json
   App/Core/Server/server.js App/Core/Router/router.js
-  App/Supervisor/supervisor_service.js App/Supervisor/Engine/supervisor-engine.js
-  App/Supervisor/Engine/working-memory.js
-  App/Core/Firewall/firewall_service.js
-  App/MarketData/market_data_service.js
-  App/Indicators/Engine/indicator_service.js
-  App/Liquidity/Engine/liquidity_service.js
-  App/Fundamental/Engine/fundamental_service.js
-  App/Risk/Engine/risk_service.js
-  App/Portfolio/Engine/portfolio_service.js
-  App/Strategy/Engine/strategy_service.js
-  App/services/trading-engine/trading_service.js
+  App/Engines/Supervisor/supervisor_service.js App/Engines/Supervisor/Engine/supervisor-engine.js
+  App/Engines/Supervisor/Engine/working-memory.js
+  App/Engines/Firewall/firewall_service.js
+  App/Engines/MarketData/market_data_service.js
+  App/Engines/Indicators/Engine/indicator_service.js
+  App/Engines/Liquidity/Engine/liquidity_service.js
+  App/Engines/Fundamental/Engine/fundamental_service.js
+  App/Engines/Risk/Engine/risk_service.js
+  App/Engines/Portfolio/Engine/portfolio_service.js
+  App/Engines/Strategy/Engine/strategy_service.js
+  App/Engines/Trading/trading_service.js
   App/UI/Gateway/ui_service.js
   App/start_auth21_local_safe.command
 )

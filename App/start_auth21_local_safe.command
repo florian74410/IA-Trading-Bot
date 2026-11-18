@@ -69,16 +69,16 @@ launch core Core/Server/server.js
 sleep 2
 curl --cacert "$IATB_AUTH_TLS_CERT" -fsS --max-time 5 https://localhost:8001/api/health >/dev/null || { echo "Core Auth21 ne répond pas en HTTPS"; exit 1; }
 launch router Core/Router/router.js
-launch firewall Core/Firewall/firewall_service.js
-launch marketdata MarketData/market_data_service.js
-launch indicator Indicators/Engine/indicator_service.js
-launch fundamental Fundamental/Engine/fundamental_service.js
-launch liquidity Liquidity/Engine/liquidity_service.js
-launch risk Risk/Engine/risk_service.js
-launch trading services/trading-engine/trading_service.js
-launch portfolio Portfolio/Engine/portfolio_service.js
-launch strategy Strategy/Engine/strategy_service.js
-launch supervisor Supervisor/supervisor_service.js
+launch firewall Engines/Firewall/firewall_service.js
+launch marketdata Engines/MarketData/market_data_service.js
+launch indicator Engines/Indicators/Engine/indicator_service.js
+launch fundamental Engines/Fundamental/Engine/fundamental_service.js
+launch liquidity Engines/Liquidity/Engine/liquidity_service.js
+launch risk Engines/Risk/Engine/risk_service.js
+launch trading Engines/Trading/trading_service.js
+launch portfolio Engines/Portfolio/Engine/portfolio_service.js
+launch strategy Engines/Strategy/Engine/strategy_service.js
+launch supervisor Engines/Supervisor/supervisor_service.js
 launch ui UI/Gateway/ui_service.js
 sleep 2
 curl --cacert "$IATB_AUTH_TLS_CERT" -fsS --max-time 5 https://localhost:8000/ui-health || { echo "UI indisponible, consulter les logs"; exit 1; }

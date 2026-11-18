@@ -6,9 +6,9 @@ if(process.env.IATB_AUTH21_LOCAL_SNAPSHOT_TRIAL==='1'&&process.env.IATB_AUTH21_S
 // No HTTP calls, providers, exchange streams, or Trading Engine.
 const assert=require('node:assert/strict');
 const fs=require('node:fs'),path=require('node:path');
-const Store=require('../MarketData/Storage/api_telemetry_store');
-const Telemetry=require('../MarketData/Orchestrator/api_telemetry');
-const Orchestrator=require('../MarketData/Orchestrator/api_request_orchestrator');
+const Store=require("../Engines/MarketData/Storage/api_telemetry_store");
+const Telemetry=require("../Engines/MarketData/Orchestrator/api_telemetry");
+const Orchestrator=require("../Engines/MarketData/Orchestrator/api_request_orchestrator");
 const root='/tmp/iatb-orchestrator-smoke';
 fs.mkdirSync(root,{recursive:true});
 const file=path.join(root,'api_telemetry.db');

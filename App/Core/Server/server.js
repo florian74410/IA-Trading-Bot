@@ -503,12 +503,12 @@ function legacyRoute(req,res){var u=new URL(req.url,'http://'+HOST+':'+PORT),p=u
  if(req.method==='GET'&&p==='/api/admin/session')return json(res,200,{ok:true,role:sess.role,email:sess.email,version:CURRENT_VERSION});
  // Risk settings are ADMIN-only under Auth21. The general CP/1 UI-write gateway is intentionally blocked.
  if(req.method==='GET'&&p==='/api/admin/risk/settings'){try{
-  var r25=require('../../Risk/Engine/risk_settings_v25');
+  var r25=require("../../Engines/Risk/Engine/risk_settings_v25");
   return json(res,200,{ok:true,settings:r25.merge(SETTINGS_DB.get('risk','settings',{}))});
  }catch(ree){return json(res,503,{ok:false,error:'RISK_SETTINGS_UNAVAILABLE'});}}
  if(req.method==='POST'&&p==='/api/admin/risk/settings')return body(req,function(err,patch){
   if(err||!patch||typeof patch!=='object'||Array.isArray(patch))return json(res,400,{ok:false,error:'RISK_SETTINGS_INVALID'});
-  try{var r25=require('../../Risk/Engine/risk_settings_v25');
+  try{var r25=require("../../Engines/Risk/Engine/risk_settings_v25");
    var saved=r25.apply(SETTINGS_DB.get('risk','settings',{}),patch);
    SETTINGS_DB.set('risk','settings',saved);
    log('ADMIN','Risk configuration modifiée','R1/R2 levels and modules');

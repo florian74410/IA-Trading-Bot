@@ -15,7 +15,7 @@ const env={...process.env,
  IATB_UPDATES_ROOT:root+'/updates',IATB_TRADING_LIVE:'0',
  IATB_DEBUG_BOOTSTRAP:'0'};
 let logs='';
-const child=cp.spawn(process.execPath,['MarketData/market_data_service.js'],{
+const child=cp.spawn(process.execPath,["Engines/MarketData/market_data_service.js"],{
  cwd:path.resolve(__dirname,'..'),env,stdio:['ignore','pipe','pipe']
 });
 child.stdout.on('data',b=>logs+=b.toString());

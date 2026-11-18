@@ -28,12 +28,12 @@ jobs:
           python3 -W error::ResourceWarning -m unittest discover -s Tools/CI -p 'test_auth_storage_preflight.py' -v
           python3 -m unittest discover -s Tools/Deploy -p 'test_*.py' -v
       - name: Finance Calendar, lifecycle, ADMIN, logs and SQLite regressions
-        run: node --test --test-concurrency=1 App/services/trading-engine/tests/*.js App/tests/*.js tests/calendar_events_v2_2_5.test.cjs tests/chart_events_v251.test.cjs App/Supervisor/Tests/test_supervisor_architecture.js
+        run: node --test --test-concurrency=1 App/Engines/Trading/tests/*.js App/tests/*.js tests/calendar_events_v2_2_5.test.cjs tests/chart_events_v251.test.cjs App/Engines/Supervisor/Tests/test_supervisor_architecture.js
       - name: Collector, Liquidity, Fundamental, Portfolio, Strategy and Risk fixtures
         working-directory: App
         run: |
-          mapfile -t tests < <(find MarketData/Tests -maxdepth 1 -name 'test_*.js' ! -name 'test_market_data_runtime_v2.js' ! -name 'test_market_liquidity_layer_v2.js' ! -name 'test_shadow_runtime_orchestrator_v1.js' | sort)
-          node --test --test-concurrency=1 "${tests[@]}" Liquidity/Tests/*.js Portfolio/Tests/test_portfolio_engine_v2.js Strategy/Tests/test_strategy_engine_v2.js Strategy/Tests/test_strategy_ui_router_readonly_v1.9.js Risk/Tests/*.js Bank/Tests/test_transfer_network_modules_v1.js Fundamental/Tests/test_fundamental_v3.js Fundamental/Tests/test_event_engine_mock_v3.js Fundamental/Tests/test_news_latest_v2_0_1.js Fundamental/Tests/test_synthesis_helper_v3.js
+          mapfile -t tests < <(find Engines/MarketData/Tests -maxdepth 1 -name 'test_*.js' ! -name 'test_market_data_runtime_v2.js' ! -name 'test_market_liquidity_layer_v2.js' ! -name 'test_shadow_runtime_orchestrator_v1.js' | sort)
+          node --test --test-concurrency=1 "${tests[@]}" Engines/Liquidity/Tests/*.js Engines/Portfolio/Tests/test_portfolio_engine_v2.js Engines/Strategy/Tests/test_strategy_engine_v2.js Engines/Strategy/Tests/test_strategy_ui_router_readonly_v1.9.js Engines/Risk/Tests/*.js Bank/Tests/test_transfer_network_modules_v1.js Engines/Fundamental/Tests/test_fundamental_v3.js Engines/Fundamental/Tests/test_event_engine_mock_v3.js Engines/Fundamental/Tests/test_news_latest_v2_0_1.js Engines/Fundamental/Tests/test_synthesis_helper_v3.js
       - name: Real service snapshot and ingress regressions
         run: node --test --test-concurrency=1 App/Tools/Tests/trading_usage_jsonl_snapshot_writers.test.js App/Tools/Tests/auth21_snapshot_real_service_ipc.test.js App/Tools/Tests/auth21_real_engines_ingress.test.js
       - name: Install isolated browser QA

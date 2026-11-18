@@ -7,7 +7,7 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const os=require('node:os');
 const path=require('node:path');
-const Store=require('../../MarketData/Financial/financial_store');
+const Store=require("../../Engines/MarketData/Financial/financial_store");
 const {SnapshotCoordinator,LocalSnapshotWriter}=require('../../Core/Backup/snapshot_coordinator');
 
 function fixture(t,gate) {

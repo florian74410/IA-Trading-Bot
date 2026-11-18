@@ -67,8 +67,8 @@ run("qualification", ["Tools/qualify_cp1_control.js"]);
 run(
   "foundation",
   testArgs([
-    "Supervisor/Tests/SupervisorEngine/foundation.test.js",
-    "Supervisor/Tests/SupervisorEngine/recovery.test.js",
+    "Engines/Supervisor/Tests/SupervisorEngine/foundation.test.js",
+    "Engines/Supervisor/Tests/SupervisorEngine/recovery.test.js",
   ]),
 );
 run(

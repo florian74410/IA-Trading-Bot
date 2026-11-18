@@ -3,6 +3,10 @@ node_modules
 **/node_modules
 .runtime
 **/.runtime
+artifacts
+**/artifacts
+__pycache__
+**/__pycache__
 .node
 **/.node
 .git
@@ -38,15 +42,13 @@ logs.dat
 # This tracked PEM is a public CA trust bundle, not a private key.
 !Core/Certificates/cacert.pem
 
-# GEN-1 clean runtime image: QA scripts stay versioned in Git, never packaged.
-# All engine/unit/integration suites and diagnostic CLI tooling are source-only.
+# GEN-1 validation image: unit suites stay versioned in Git, outside the image.
+# Unit/integration suites are source-only. Compose smoke/preflight helpers
+# remain available in the DEBUG validation image; none starts implicitly.
 **/Tests/
 **/tests/
-**/*test*.js
-Tools/*smoke*.js
-Tools/*audit*.js
-Tools/*preflight*.js
-Tools/provider_policy_smoke.js
-Tools/persistence_volume_smoke.js
+**/*.test.js
+**/test_*.js
+**/self-test.js
 # Debug-only isolated launchers and archived report artifacts
 **/Reports/

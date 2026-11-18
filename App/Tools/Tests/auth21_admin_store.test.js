@@ -517,7 +517,7 @@ test('native offline CLI uses real non-root TTY, Unicode input and shared runtim
  for(const [k,p] of [['RUNTIME','runtime'],['DATA','userdata'],['ANNEX','annexes'],['UPDATES','updates'],['STATE','legacy']])env['IATB_'+k+'_ROOT']=path.join(runtime,p);
  delete env.IATB_USER_DB;
  const {spawnSync}=require('node:child_process');
- const out=spawnSync('python3',[path.join(__dirname,'auth21_cli_pty_driver.py')],{encoding:'utf8',timeout:35000,
+ const out=spawnSync('python3',[path.join(__dirname,"./auth21_cli_pty_driver.py")],{encoding:'utf8',timeout:35000,
   input:JSON.stringify({uid,env,argv:[node,path.resolve(__dirname,'../CLI/iatb-users.js'),'admin','CL000001','create'],steps:[
    ['ADMIN password: ',PASSWORD],['First name: ','Élodie'],['Last name: ','Test'],
    ['Email: ','elodie@example.invalid'],['Username: ','ELODIE_TEST'],['Role ADMIN USER GUEST: ','USER'],
