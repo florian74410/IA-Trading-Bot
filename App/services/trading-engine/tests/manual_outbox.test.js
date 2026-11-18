@@ -1,0 +1,11 @@
+'use strict';
+const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),os=require('node:os'),path=require('node:path'),Database=require('better-sqlite3'),{DeliveryOutbox}=require('../delivery-outbox'),{TradingLogsV2}=require('../trading_logs_v2');
+test('durable outbox retries failed SQLite history independently of Portfolio without duplicate JSONL',async t=>{
+ const dir=fs.mkdtempSync(path.join(os.tmpdir(),'iatb-advanced-outbox-')),db=new Database(path.join(dir,'outbox.db')),history=new TradingLogsV2(dir,{file:path.join(dir,'history.jsonl')}),outbox=new DeliveryOutbox(db);t.after(()=>{history.close();db.close();fs.rmSync(dir,{recursive:true,force:true});});
+ const event={event_id:'stable-fixture-1',timestamp:Date.now(),event_type:'ORDER_ACCEPTED',exchange:'OKX',symbol:'BTC-USDT',metadata:{ownerClientId:'CLalice'}},sql=history.writeSqlite;history.writeSqlite=()=>{throw Error('FICTIONAL_DISK_FAILURE')};let calls=0;outbox.persist(event.event_id,event,{ok:true});await outbox.flush(history,async()=>calls++);
+ assert.equal(calls,1);let row=db.prepare('SELECT * FROM trading_delivery').get();assert.equal(row.history_done,0);assert.equal(row.portfolio_done,1);assert.equal(row.last_error,'HISTORY_PENDING');
+ history.writeSqlite=sql;await outbox.flush(history,async()=>calls++);row=db.prepare('SELECT * FROM trading_delivery').get();assert.equal(row.history_done,1);assert.equal(row.last_error,null);assert.equal(calls,1);assert.equal(fs.readFileSync(history.file,'utf8').trim().split('\n').length,1);
+});
+test('outbox result survives reopen and Portfolio replay carries the original stable event ID',async t=>{
+ const dir=fs.mkdtempSync(path.join(os.tmpdir(),'iatb-advanced-replay-')),file=path.join(dir,'outbox.db');let db=new Database(file),outbox=new DeliveryOutbox(db);outbox.persist('exact1',{event_id:'exact1'},{status:'ACKNOWLEDGED'});await outbox.flush({append:()=>true},async()=>{throw Error('PORTFOLIO_OFFLINE')});db.close();db=new Database(file);outbox=new DeliveryOutbox(db);t.after(()=>{db.close();fs.rmSync(dir,{recursive:true,force:true})});let id=null;await outbox.flush({append:()=>{throw Error('HISTORY_ALREADY_DONE')}},async e=>id=e.event_id);assert.equal(id,'exact1');assert.equal(JSON.parse(db.prepare('SELECT result FROM trading_delivery').get().result).status,'ACKNOWLEDGED');
+});

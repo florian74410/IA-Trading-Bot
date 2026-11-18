@@ -5,9 +5,11 @@ const {normalizeOrderIntent,normalizeCancelIntent}=require('../../../services/tr
 const {typedDigest,signTypedData}=require('../../../Bank/Core/dex_wallet_signer');
 const CP=require('../../Communication/communication_protocol_v1');
 const ACTIONS=new Set(['execute','cancel','close','read']);
-const MARKETS={BINANCE:['SPOT','FUTURES_USDM'],KRAKEN:['SPOT','MARGIN'],OKX:['SPOT','SWAP','FUTURES'],GMX:['PERPETUAL']};
+const MARKETS={BINANCE:['SPOT','FUTURES_USDM'],KRAKEN:['SPOT','MARGIN'],OKX:['SPOT','MARGIN','SWAP','FUTURES'],GMX:['PERPETUAL']};
 function canonical(intent,action){
  if(!ACTIONS.has(action))throw Error('TRADING_ACTION_INVALID');
+ if(intent.spec){if(action!==(intent.spec.kind.startsWith('CANCEL')?'cancel':intent.spec.position_id?'close':'execute'))throw Error('TRADING_ACTION_INVALID');return require('../../Execution/manual_contract').canonical(intent);}
+ if(intent.query){if(action!=='read')throw Error('TRADING_ACTION_INVALID');return require('../../Execution/manual_authority').query(intent);}
  if(action==='read'){
   const allowed=['exchange','market_type','symbol','account','metadata'];
   if(!intent||Object.keys(intent).some(k=>!allowed.includes(k))||intent.exchange!=='OKX'||intent.market_type&&intent.market_type!=='SPOT'||intent.account!==undefined&&intent.account!==null&&(typeof intent.account!=='string'||!/^[a-z][a-z0-9_-]{0,39}$/.test(intent.account)))throw Error('TRADING_READ_SCOPE_INVALID');
@@ -76,6 +78,7 @@ class TradingVault {
  }
  async access({ticket,intent,action,operation,exchange}){
   const t=this.tickets.get(ticket);if(!t||t.expires<=this.now()||t.action!==action||CP.hashData(canonical(intent,action))!==CP.hashData(t.intent))throw Error('TRADING_TICKET_INVALID');
+  if(operation==='release'){this.tickets.delete(ticket);return {ok:true};}
   const context=t.sessionHash?this.readSessionContext(t.sessionHash,t.intent):{list:()=>this.list(t.token),routing:()=>this.routing(t.token,t.intent,action)};const record=context.list().find(a=>a.id===t.account);if(!record||record.revision!==t.revision)throw Error('TRADING_ACCOUNT_REVOKED');
   if(operation==='bind'){if(t.claimed)throw Error('TRADING_TICKET_REPLAY');t.claimed=true;}else if(!t.claimed)throw Error('TRADING_TICKET_UNCLAIMED');
   const b=await context.routing().bind(t.intent,action);

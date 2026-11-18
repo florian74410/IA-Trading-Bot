@@ -445,6 +445,1404 @@
             "metadata"
           ]
         }
+      },
+      {
+        "name": "trading.account.inspect",
+        "transport": "CP1",
+        "description": "Owner private instrument/order inspection",
+        "arguments": {
+          "allowed": [
+            "exchange",
+            "account",
+            "symbol",
+            "market_type",
+            "metadata",
+            "query"
+          ],
+          "required": [
+            "exchange",
+            "account",
+            "symbol",
+            "market_type",
+            "metadata",
+            "query"
+          ],
+          "allowUnknown": false
+        },
+        "input": {
+          "type": "object",
+          "properties": {
+            "exchange": {
+              "const": "OKX"
+            },
+            "account": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 40
+            },
+            "symbol": {
+              "type": "string",
+              "pattern": "^[-A-Z0-9]{3,64}$"
+            },
+            "market_type": {
+              "enum": [
+                "SPOT",
+                "MARGIN",
+                "FUTURES",
+                "SWAP"
+              ]
+            },
+            "metadata": {
+              "type": "object",
+              "required": [
+                "account_ticket"
+              ],
+              "properties": {
+                "account_ticket": {
+                  "type": "string",
+                  "maxLength": 128
+                }
+              },
+              "additionalProperties": false
+            },
+            "query": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "exchange",
+            "account",
+            "symbol",
+            "market_type",
+            "metadata",
+            "query"
+          ],
+          "additionalProperties": false
+        },
+        "output": {
+          "type": "object"
+        },
+        "contractVersion": "2.6.0-dev.7"
+      },
+      {
+        "name": "trading.manual.order",
+        "transport": "CP1",
+        "description": "Owner confirmed manual operation",
+        "arguments": {
+          "allowed": [
+            "exchange",
+            "account",
+            "symbol",
+            "market_type",
+            "metadata",
+            "spec",
+            "owner",
+            "plan_id",
+            "proof",
+            "confirmation_digest",
+            "diagnostic_digest",
+            "risk_approval_id"
+          ],
+          "required": [
+            "exchange",
+            "account",
+            "symbol",
+            "market_type",
+            "metadata",
+            "spec",
+            "owner",
+            "plan_id",
+            "proof",
+            "confirmation_digest",
+            "diagnostic_digest",
+            "risk_approval_id"
+          ],
+          "allowUnknown": false
+        },
+        "input": {
+          "type": "object",
+          "properties": {
+            "exchange": {
+              "const": "OKX"
+            },
+            "account": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 40
+            },
+            "symbol": {
+              "type": "string",
+              "pattern": "^[-A-Z0-9]{3,64}$"
+            },
+            "market_type": {
+              "enum": [
+                "SPOT",
+                "MARGIN",
+                "FUTURES",
+                "SWAP"
+              ]
+            },
+            "metadata": {
+              "type": "object",
+              "required": [
+                "account_ticket"
+              ],
+              "properties": {
+                "account_ticket": {
+                  "type": "string",
+                  "maxLength": 128
+                }
+              },
+              "additionalProperties": false
+            },
+            "spec": {
+              "type": "object",
+              "required": [
+                "kind",
+                "market",
+                "body"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "ORDER"
+                },
+                "market": {
+                  "enum": [
+                    "SPOT",
+                    "MARGIN",
+                    "SWAP",
+                    "FUTURES"
+                  ]
+                },
+                "body": {
+                  "type": "object"
+                },
+                "position_id": {
+                  "type": "string"
+                },
+                "valuation": {
+                  "type": "object",
+                  "required": [
+                    "contract_value",
+                    "contract_value_currency",
+                    "contract_type"
+                  ],
+                  "properties": {
+                    "contract_value": {
+                      "type": "string"
+                    },
+                    "contract_value_currency": {
+                      "type": "string"
+                    },
+                    "contract_type": {
+                      "const": "linear"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "additionalProperties": false
+            },
+            "owner": {
+              "type": "string",
+              "pattern": "^CL[A-Za-z0-9_-]{1,64}$"
+            },
+            "plan_id": {
+              "type": "string",
+              "maxLength": 96
+            },
+            "proof": {
+              "type": "string",
+              "maxLength": 1024
+            },
+            "confirmation_digest": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "diagnostic_digest": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "risk_approval_id": {
+              "type": "string",
+              "maxLength": 128
+            }
+          },
+          "required": [
+            "exchange",
+            "account",
+            "symbol",
+            "market_type",
+            "metadata",
+            "spec",
+            "owner",
+            "plan_id",
+            "proof",
+            "confirmation_digest",
+            "diagnostic_digest",
+            "risk_approval_id"
+          ],
+          "additionalProperties": false
+        },
+        "output": {
+          "type": "object"
+        },
+        "contractVersion": "3.0.1-Rev1-AdvancedOKX"
+      },
+      {
+        "name": "trading.manual.algo",
+        "transport": "CP1",
+        "description": "Owner confirmed manual operation",
+        "arguments": {
+          "allowed": [
+            "exchange",
+            "account",
+            "symbol",
+            "market_type",
+            "metadata",
+            "spec",
+            "owner",
+            "plan_id",
+            "proof",
+            "confirmation_digest",
+            "diagnostic_digest",
+            "risk_approval_id"
+          ],
+          "required": [
+            "exchange",
+            "account",
+            "symbol",
+            "market_type",
+            "metadata",
+            "spec",
+            "owner",
+            "plan_id",
+            "proof",
+            "confirmation_digest",
+            "diagnostic_digest",
+            "risk_approval_id"
+          ],
+          "allowUnknown": false
+        },
+        "input": {
+          "type": "object",
+          "properties": {
+            "exchange": {
+              "const": "OKX"
+            },
+            "account": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 40
+            },
+            "symbol": {
+              "type": "string",
+              "pattern": "^[-A-Z0-9]{3,64}$"
+            },
+            "market_type": {
+              "enum": [
+                "SPOT",
+                "MARGIN",
+                "FUTURES",
+                "SWAP"
+              ]
+            },
+            "metadata": {
+              "type": "object",
+              "required": [
+                "account_ticket"
+              ],
+              "properties": {
+                "account_ticket": {
+                  "type": "string",
+                  "maxLength": 128
+                }
+              },
+              "additionalProperties": false
+            },
+            "spec": {
+              "type": "object",
+              "required": [
+                "kind",
+                "market",
+                "body"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "ALGO"
+                },
+                "market": {
+                  "enum": [
+                    "SPOT",
+                    "MARGIN",
+                    "SWAP",
+                    "FUTURES"
+                  ]
+                },
+                "body": {
+                  "type": "object"
+                },
+                "position_id": {
+                  "type": "string"
+                },
+                "valuation": {
+                  "type": "object",
+                  "required": [
+                    "contract_value",
+                    "contract_value_currency",
+                    "contract_type"
+                  ],
+                  "properties": {
+                    "contract_value": {
+                      "type": "string"
+                    },
+                    "contract_value_currency": {
+                      "type": "string"
+                    },
+                    "contract_type": {
+                      "const": "linear"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "additionalProperties": false
+            },
+            "owner": {
+              "type": "string",
+              "pattern": "^CL[A-Za-z0-9_-]{1,64}$"
+            },
+            "plan_id": {
+              "type": "string",
+              "maxLength": 96
+            },
+            "proof": {
+              "type": "string",
+              "maxLength": 1024
+            },
+            "confirmation_digest": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "diagnostic_digest": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "risk_approval_id": {
+              "type": "string",
+              "maxLength": 128
+            }
+          },
+          "required": [
+            "exchange",
+            "account",
+            "symbol",
+            "market_type",
+            "metadata",
+            "spec",
+            "owner",
+            "plan_id",
+            "proof",
+            "confirmation_digest",
+            "diagnostic_digest",
+            "risk_approval_id"
+          ],
+          "additionalProperties": false
+        },
+        "output": {
+          "type": "object"
+        },
+        "contractVersion": "3.0.1-Rev1-AdvancedOKX"
+      },
+      {
+        "name": "trading.manual.cancel",
+        "transport": "CP1",
+        "description": "Owner confirmed manual operation",
+        "arguments": {
+          "allowed": [
+            "exchange",
+            "account",
+            "symbol",
+            "market_type",
+            "metadata",
+            "spec",
+            "owner",
+            "plan_id",
+            "proof",
+            "confirmation_digest",
+            "diagnostic_digest",
+            "risk_approval_id"
+          ],
+          "required": [
+            "exchange",
+            "account",
+            "symbol",
+            "market_type",
+            "metadata",
+            "spec",
+            "owner",
+            "plan_id",
+            "proof",
+            "confirmation_digest",
+            "diagnostic_digest",
+            "risk_approval_id"
+          ],
+          "allowUnknown": false
+        },
+        "input": {
+          "type": "object",
+          "properties": {
+            "exchange": {
+              "const": "OKX"
+            },
+            "account": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 40
+            },
+            "symbol": {
+              "type": "string",
+              "pattern": "^[-A-Z0-9]{3,64}$"
+            },
+            "market_type": {
+              "enum": [
+                "SPOT",
+                "MARGIN",
+                "FUTURES",
+                "SWAP"
+              ]
+            },
+            "metadata": {
+              "type": "object",
+              "required": [
+                "account_ticket"
+              ],
+              "properties": {
+                "account_ticket": {
+                  "type": "string",
+                  "maxLength": 128
+                }
+              },
+              "additionalProperties": false
+            },
+            "spec": {
+              "type": "object",
+              "required": [
+                "kind",
+                "market",
+                "body"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "CANCEL"
+                },
+                "market": {
+                  "enum": [
+                    "SPOT",
+                    "MARGIN",
+                    "SWAP",
+                    "FUTURES"
+                  ]
+                },
+                "body": {
+                  "type": "object"
+                },
+                "position_id": {
+                  "type": "string"
+                },
+                "valuation": {
+                  "type": "object",
+                  "required": [
+                    "contract_value",
+                    "contract_value_currency",
+                    "contract_type"
+                  ],
+                  "properties": {
+                    "contract_value": {
+                      "type": "string"
+                    },
+                    "contract_value_currency": {
+                      "type": "string"
+                    },
+                    "contract_type": {
+                      "const": "linear"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "additionalProperties": false
+            },
+            "owner": {
+              "type": "string",
+              "pattern": "^CL[A-Za-z0-9_-]{1,64}$"
+            },
+            "plan_id": {
+              "type": "string",
+              "maxLength": 96
+            },
+            "proof": {
+              "type": "string",
+              "maxLength": 1024
+            },
+            "confirmation_digest": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "diagnostic_digest": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "risk_approval_id": {
+              "type": "string",
+              "maxLength": 128
+            }
+          },
+          "required": [
+            "exchange",
+            "account",
+            "symbol",
+            "market_type",
+            "metadata",
+            "spec",
+            "owner",
+            "plan_id",
+            "proof",
+            "confirmation_digest",
+            "diagnostic_digest",
+            "risk_approval_id"
+          ],
+          "additionalProperties": false
+        },
+        "output": {
+          "type": "object"
+        },
+        "contractVersion": "3.0.1-Rev1-AdvancedOKX"
+      },
+      {
+        "name": "trading.manual.amend",
+        "transport": "CP1",
+        "description": "Owner confirmed manual operation",
+        "arguments": {
+          "allowed": [
+            "exchange",
+            "account",
+            "symbol",
+            "market_type",
+            "metadata",
+            "spec",
+            "owner",
+            "plan_id",
+            "proof",
+            "confirmation_digest",
+            "diagnostic_digest",
+            "risk_approval_id"
+          ],
+          "required": [
+            "exchange",
+            "account",
+            "symbol",
+            "market_type",
+            "metadata",
+            "spec",
+            "owner",
+            "plan_id",
+            "proof",
+            "confirmation_digest",
+            "diagnostic_digest",
+            "risk_approval_id"
+          ],
+          "allowUnknown": false
+        },
+        "input": {
+          "type": "object",
+          "properties": {
+            "exchange": {
+              "const": "OKX"
+            },
+            "account": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 40
+            },
+            "symbol": {
+              "type": "string",
+              "pattern": "^[-A-Z0-9]{3,64}$"
+            },
+            "market_type": {
+              "enum": [
+                "SPOT",
+                "MARGIN",
+                "FUTURES",
+                "SWAP"
+              ]
+            },
+            "metadata": {
+              "type": "object",
+              "required": [
+                "account_ticket"
+              ],
+              "properties": {
+                "account_ticket": {
+                  "type": "string",
+                  "maxLength": 128
+                }
+              },
+              "additionalProperties": false
+            },
+            "spec": {
+              "type": "object",
+              "required": [
+                "kind",
+                "market",
+                "body"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "AMEND"
+                },
+                "market": {
+                  "enum": [
+                    "SPOT",
+                    "MARGIN",
+                    "SWAP",
+                    "FUTURES"
+                  ]
+                },
+                "body": {
+                  "type": "object"
+                },
+                "position_id": {
+                  "type": "string"
+                },
+                "valuation": {
+                  "type": "object",
+                  "required": [
+                    "contract_value",
+                    "contract_value_currency",
+                    "contract_type"
+                  ],
+                  "properties": {
+                    "contract_value": {
+                      "type": "string"
+                    },
+                    "contract_value_currency": {
+                      "type": "string"
+                    },
+                    "contract_type": {
+                      "const": "linear"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "additionalProperties": false
+            },
+            "owner": {
+              "type": "string",
+              "pattern": "^CL[A-Za-z0-9_-]{1,64}$"
+            },
+            "plan_id": {
+              "type": "string",
+              "maxLength": 96
+            },
+            "proof": {
+              "type": "string",
+              "maxLength": 1024
+            },
+            "confirmation_digest": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "diagnostic_digest": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "risk_approval_id": {
+              "type": "string",
+              "maxLength": 128
+            }
+          },
+          "required": [
+            "exchange",
+            "account",
+            "symbol",
+            "market_type",
+            "metadata",
+            "spec",
+            "owner",
+            "plan_id",
+            "proof",
+            "confirmation_digest",
+            "diagnostic_digest",
+            "risk_approval_id"
+          ],
+          "additionalProperties": false
+        },
+        "output": {
+          "type": "object"
+        },
+        "contractVersion": "3.0.1-Rev1-AdvancedOKX"
+      },
+      {
+        "name": "trading.manual.cancel_algo",
+        "transport": "CP1",
+        "description": "Owner confirmed manual operation",
+        "arguments": {
+          "allowed": [
+            "exchange",
+            "account",
+            "symbol",
+            "market_type",
+            "metadata",
+            "spec",
+            "owner",
+            "plan_id",
+            "proof",
+            "confirmation_digest",
+            "diagnostic_digest",
+            "risk_approval_id"
+          ],
+          "required": [
+            "exchange",
+            "account",
+            "symbol",
+            "market_type",
+            "metadata",
+            "spec",
+            "owner",
+            "plan_id",
+            "proof",
+            "confirmation_digest",
+            "diagnostic_digest",
+            "risk_approval_id"
+          ],
+          "allowUnknown": false
+        },
+        "input": {
+          "type": "object",
+          "properties": {
+            "exchange": {
+              "const": "OKX"
+            },
+            "account": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 40
+            },
+            "symbol": {
+              "type": "string",
+              "pattern": "^[-A-Z0-9]{3,64}$"
+            },
+            "market_type": {
+              "enum": [
+                "SPOT",
+                "MARGIN",
+                "FUTURES",
+                "SWAP"
+              ]
+            },
+            "metadata": {
+              "type": "object",
+              "required": [
+                "account_ticket"
+              ],
+              "properties": {
+                "account_ticket": {
+                  "type": "string",
+                  "maxLength": 128
+                }
+              },
+              "additionalProperties": false
+            },
+            "spec": {
+              "type": "object",
+              "required": [
+                "kind",
+                "market",
+                "body"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "CANCEL_ALGO"
+                },
+                "market": {
+                  "enum": [
+                    "SPOT",
+                    "MARGIN",
+                    "SWAP",
+                    "FUTURES"
+                  ]
+                },
+                "body": {
+                  "type": "object"
+                },
+                "position_id": {
+                  "type": "string"
+                },
+                "valuation": {
+                  "type": "object",
+                  "required": [
+                    "contract_value",
+                    "contract_value_currency",
+                    "contract_type"
+                  ],
+                  "properties": {
+                    "contract_value": {
+                      "type": "string"
+                    },
+                    "contract_value_currency": {
+                      "type": "string"
+                    },
+                    "contract_type": {
+                      "const": "linear"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "additionalProperties": false
+            },
+            "owner": {
+              "type": "string",
+              "pattern": "^CL[A-Za-z0-9_-]{1,64}$"
+            },
+            "plan_id": {
+              "type": "string",
+              "maxLength": 96
+            },
+            "proof": {
+              "type": "string",
+              "maxLength": 1024
+            },
+            "confirmation_digest": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "diagnostic_digest": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "risk_approval_id": {
+              "type": "string",
+              "maxLength": 128
+            }
+          },
+          "required": [
+            "exchange",
+            "account",
+            "symbol",
+            "market_type",
+            "metadata",
+            "spec",
+            "owner",
+            "plan_id",
+            "proof",
+            "confirmation_digest",
+            "diagnostic_digest",
+            "risk_approval_id"
+          ],
+          "additionalProperties": false
+        },
+        "output": {
+          "type": "object"
+        },
+        "contractVersion": "3.0.1-Rev1-AdvancedOKX"
+      },
+      {
+        "name": "trading.manual.amend_algo",
+        "transport": "CP1",
+        "description": "Owner confirmed manual operation",
+        "arguments": {
+          "allowed": [
+            "exchange",
+            "account",
+            "symbol",
+            "market_type",
+            "metadata",
+            "spec",
+            "owner",
+            "plan_id",
+            "proof",
+            "confirmation_digest",
+            "diagnostic_digest",
+            "risk_approval_id"
+          ],
+          "required": [
+            "exchange",
+            "account",
+            "symbol",
+            "market_type",
+            "metadata",
+            "spec",
+            "owner",
+            "plan_id",
+            "proof",
+            "confirmation_digest",
+            "diagnostic_digest",
+            "risk_approval_id"
+          ],
+          "allowUnknown": false
+        },
+        "input": {
+          "type": "object",
+          "properties": {
+            "exchange": {
+              "const": "OKX"
+            },
+            "account": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 40
+            },
+            "symbol": {
+              "type": "string",
+              "pattern": "^[-A-Z0-9]{3,64}$"
+            },
+            "market_type": {
+              "enum": [
+                "SPOT",
+                "MARGIN",
+                "FUTURES",
+                "SWAP"
+              ]
+            },
+            "metadata": {
+              "type": "object",
+              "required": [
+                "account_ticket"
+              ],
+              "properties": {
+                "account_ticket": {
+                  "type": "string",
+                  "maxLength": 128
+                }
+              },
+              "additionalProperties": false
+            },
+            "spec": {
+              "type": "object",
+              "required": [
+                "kind",
+                "market",
+                "body"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "AMEND_ALGO"
+                },
+                "market": {
+                  "enum": [
+                    "SPOT",
+                    "MARGIN",
+                    "SWAP",
+                    "FUTURES"
+                  ]
+                },
+                "body": {
+                  "type": "object"
+                },
+                "position_id": {
+                  "type": "string"
+                },
+                "valuation": {
+                  "type": "object",
+                  "required": [
+                    "contract_value",
+                    "contract_value_currency",
+                    "contract_type"
+                  ],
+                  "properties": {
+                    "contract_value": {
+                      "type": "string"
+                    },
+                    "contract_value_currency": {
+                      "type": "string"
+                    },
+                    "contract_type": {
+                      "const": "linear"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "additionalProperties": false
+            },
+            "owner": {
+              "type": "string",
+              "pattern": "^CL[A-Za-z0-9_-]{1,64}$"
+            },
+            "plan_id": {
+              "type": "string",
+              "maxLength": 96
+            },
+            "proof": {
+              "type": "string",
+              "maxLength": 1024
+            },
+            "confirmation_digest": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "diagnostic_digest": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "risk_approval_id": {
+              "type": "string",
+              "maxLength": 128
+            }
+          },
+          "required": [
+            "exchange",
+            "account",
+            "symbol",
+            "market_type",
+            "metadata",
+            "spec",
+            "owner",
+            "plan_id",
+            "proof",
+            "confirmation_digest",
+            "diagnostic_digest",
+            "risk_approval_id"
+          ],
+          "additionalProperties": false
+        },
+        "output": {
+          "type": "object"
+        },
+        "contractVersion": "3.0.1-Rev1-AdvancedOKX"
+      },
+      {
+        "name": "trading.manual.leverage",
+        "transport": "CP1",
+        "description": "Owner confirmed manual operation",
+        "arguments": {
+          "allowed": [
+            "exchange",
+            "account",
+            "symbol",
+            "market_type",
+            "metadata",
+            "spec",
+            "owner",
+            "plan_id",
+            "proof",
+            "confirmation_digest",
+            "diagnostic_digest",
+            "risk_approval_id"
+          ],
+          "required": [
+            "exchange",
+            "account",
+            "symbol",
+            "market_type",
+            "metadata",
+            "spec",
+            "owner",
+            "plan_id",
+            "proof",
+            "confirmation_digest",
+            "diagnostic_digest",
+            "risk_approval_id"
+          ],
+          "allowUnknown": false
+        },
+        "input": {
+          "type": "object",
+          "properties": {
+            "exchange": {
+              "const": "OKX"
+            },
+            "account": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 40
+            },
+            "symbol": {
+              "type": "string",
+              "pattern": "^[-A-Z0-9]{3,64}$"
+            },
+            "market_type": {
+              "enum": [
+                "SPOT",
+                "MARGIN",
+                "FUTURES",
+                "SWAP"
+              ]
+            },
+            "metadata": {
+              "type": "object",
+              "required": [
+                "account_ticket"
+              ],
+              "properties": {
+                "account_ticket": {
+                  "type": "string",
+                  "maxLength": 128
+                }
+              },
+              "additionalProperties": false
+            },
+            "spec": {
+              "type": "object",
+              "required": [
+                "kind",
+                "market",
+                "body"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "LEVERAGE"
+                },
+                "market": {
+                  "enum": [
+                    "SPOT",
+                    "MARGIN",
+                    "SWAP",
+                    "FUTURES"
+                  ]
+                },
+                "body": {
+                  "type": "object"
+                },
+                "position_id": {
+                  "type": "string"
+                },
+                "valuation": {
+                  "type": "object",
+                  "required": [
+                    "contract_value",
+                    "contract_value_currency",
+                    "contract_type"
+                  ],
+                  "properties": {
+                    "contract_value": {
+                      "type": "string"
+                    },
+                    "contract_value_currency": {
+                      "type": "string"
+                    },
+                    "contract_type": {
+                      "const": "linear"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "additionalProperties": false
+            },
+            "owner": {
+              "type": "string",
+              "pattern": "^CL[A-Za-z0-9_-]{1,64}$"
+            },
+            "plan_id": {
+              "type": "string",
+              "maxLength": 96
+            },
+            "proof": {
+              "type": "string",
+              "maxLength": 1024
+            },
+            "confirmation_digest": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "diagnostic_digest": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "risk_approval_id": {
+              "type": "string",
+              "maxLength": 128
+            }
+          },
+          "required": [
+            "exchange",
+            "account",
+            "symbol",
+            "market_type",
+            "metadata",
+            "spec",
+            "owner",
+            "plan_id",
+            "proof",
+            "confirmation_digest",
+            "diagnostic_digest",
+            "risk_approval_id"
+          ],
+          "additionalProperties": false
+        },
+        "output": {
+          "type": "object"
+        },
+        "contractVersion": "3.0.1-Rev1-AdvancedOKX"
+      },
+      {
+        "name": "trading.manual.batch",
+        "transport": "CP1",
+        "description": "Owner confirmed manual operation",
+        "arguments": {
+          "allowed": [
+            "exchange",
+            "account",
+            "symbol",
+            "market_type",
+            "metadata",
+            "spec",
+            "owner",
+            "plan_id",
+            "proof",
+            "confirmation_digest",
+            "diagnostic_digest",
+            "risk_approval_id"
+          ],
+          "required": [
+            "exchange",
+            "account",
+            "symbol",
+            "market_type",
+            "metadata",
+            "spec",
+            "owner",
+            "plan_id",
+            "proof",
+            "confirmation_digest",
+            "diagnostic_digest",
+            "risk_approval_id"
+          ],
+          "allowUnknown": false
+        },
+        "input": {
+          "type": "object",
+          "properties": {
+            "exchange": {
+              "const": "OKX"
+            },
+            "account": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 40
+            },
+            "symbol": {
+              "type": "string",
+              "pattern": "^[-A-Z0-9]{3,64}$"
+            },
+            "market_type": {
+              "enum": [
+                "SPOT",
+                "MARGIN",
+                "FUTURES",
+                "SWAP"
+              ]
+            },
+            "metadata": {
+              "type": "object",
+              "required": [
+                "account_ticket"
+              ],
+              "properties": {
+                "account_ticket": {
+                  "type": "string",
+                  "maxLength": 128
+                }
+              },
+              "additionalProperties": false
+            },
+            "spec": {
+              "type": "object",
+              "required": [
+                "kind",
+                "market",
+                "body"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "BATCH"
+                },
+                "market": {
+                  "enum": [
+                    "SPOT",
+                    "MARGIN",
+                    "SWAP",
+                    "FUTURES"
+                  ]
+                },
+                "body": {
+                  "type": "object"
+                },
+                "position_id": {
+                  "type": "string"
+                },
+                "valuation": {
+                  "type": "object",
+                  "required": [
+                    "contract_value",
+                    "contract_value_currency",
+                    "contract_type"
+                  ],
+                  "properties": {
+                    "contract_value": {
+                      "type": "string"
+                    },
+                    "contract_value_currency": {
+                      "type": "string"
+                    },
+                    "contract_type": {
+                      "const": "linear"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "additionalProperties": false
+            },
+            "owner": {
+              "type": "string",
+              "pattern": "^CL[A-Za-z0-9_-]{1,64}$"
+            },
+            "plan_id": {
+              "type": "string",
+              "maxLength": 96
+            },
+            "proof": {
+              "type": "string",
+              "maxLength": 1024
+            },
+            "confirmation_digest": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "diagnostic_digest": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "risk_approval_id": {
+              "type": "string",
+              "maxLength": 128
+            }
+          },
+          "required": [
+            "exchange",
+            "account",
+            "symbol",
+            "market_type",
+            "metadata",
+            "spec",
+            "owner",
+            "plan_id",
+            "proof",
+            "confirmation_digest",
+            "diagnostic_digest",
+            "risk_approval_id"
+          ],
+          "additionalProperties": false
+        },
+        "output": {
+          "type": "object"
+        },
+        "contractVersion": "3.0.1-Rev1-AdvancedOKX"
       }
     ],
     "dataTypes": [

@@ -71,7 +71,10 @@
       ],
       "required": [
         "account",
-        "position_id"
+        "position_id",
+        "environment",
+        "market",
+        "instrument_candidate"
       ],
       "optional": [
         "exchange",

@@ -1045,6 +1045,157 @@
             "proof"
           ]
         }
+      },
+      {
+        "name": "risk.manual.authorize",
+        "transport": "OWNER",
+        "description": "Risk enable fence and one-use exact manual diagnostic acknowledgement capability",
+        "arguments": {
+          "allowed": [
+            "exchange",
+            "account",
+            "symbol",
+            "market_type",
+            "spec",
+            "owner",
+            "plan_id",
+            "proof",
+            "confirmation_digest",
+            "diagnostic_digest"
+          ],
+          "required": [
+            "exchange",
+            "account",
+            "symbol",
+            "market_type",
+            "spec",
+            "owner",
+            "plan_id",
+            "proof",
+            "confirmation_digest",
+            "diagnostic_digest"
+          ],
+          "allowUnknown": false
+        },
+        "input": {
+          "type": "object",
+          "properties": {
+            "exchange": {
+              "const": "OKX"
+            },
+            "account": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 40
+            },
+            "symbol": {
+              "type": "string",
+              "pattern": "^[-A-Z0-9]{3,64}$"
+            },
+            "market_type": {
+              "enum": [
+                "SPOT",
+                "MARGIN",
+                "FUTURES",
+                "SWAP"
+              ]
+            },
+            "spec": {
+              "type": "object",
+              "required": [
+                "kind",
+                "market",
+                "body"
+              ],
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "ORDER",
+                    "ALGO",
+                    "CANCEL",
+                    "AMEND",
+                    "CANCEL_ALGO",
+                    "AMEND_ALGO",
+                    "LEVERAGE",
+                    "BATCH"
+                  ]
+                },
+                "market": {
+                  "enum": [
+                    "SPOT",
+                    "MARGIN",
+                    "SWAP",
+                    "FUTURES"
+                  ]
+                },
+                "body": {
+                  "type": "object"
+                },
+                "position_id": {
+                  "type": "string"
+                },
+                "valuation": {
+                  "type": "object",
+                  "required": [
+                    "contract_value",
+                    "contract_value_currency",
+                    "contract_type"
+                  ],
+                  "properties": {
+                    "contract_value": {
+                      "type": "string"
+                    },
+                    "contract_value_currency": {
+                      "type": "string"
+                    },
+                    "contract_type": {
+                      "const": "linear"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "additionalProperties": false
+            },
+            "owner": {
+              "type": "string",
+              "pattern": "^CL[A-Za-z0-9_-]{1,64}$"
+            },
+            "plan_id": {
+              "type": "string",
+              "maxLength": 96
+            },
+            "proof": {
+              "type": "string",
+              "maxLength": 1024
+            },
+            "confirmation_digest": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "diagnostic_digest": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          "required": [
+            "exchange",
+            "account",
+            "symbol",
+            "market_type",
+            "spec",
+            "owner",
+            "plan_id",
+            "proof",
+            "confirmation_digest",
+            "diagnostic_digest"
+          ],
+          "additionalProperties": false
+        },
+        "output": {
+          "type": "object"
+        },
+        "contractVersion": "3.0.1-Rev1-AdvancedOKX"
       }
     ],
     "dataTypes": [

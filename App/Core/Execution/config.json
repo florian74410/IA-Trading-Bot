@@ -3,6 +3,10 @@
   "exchange": "OKX",
   "mode": "MANUAL_CONFIRMED",
   "markets": [
-    "SPOT"
-  ]
+    "SPOT",
+    "MARGIN",
+    "SWAP",
+    "FUTURES"
+  ],
+  "manual_policy": "DIAGNOSTIC_WITH_EXPLICIT_ACKNOWLEDGEMENT"
 }

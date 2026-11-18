@@ -15,7 +15,14 @@
     "ACCOUNT_BALANCES",
     "ACCOUNT_POSITIONS",
     "ACCOUNT_ORDERS",
-    "ACCOUNT_SNAPSHOT"
+    "ACCOUNT_SNAPSHOT",
+    "PLACE_ALGO",
+    "AMEND_ALGO_CONDITIONAL_ONLY",
+    "CANCEL_ALGO",
+    "GET_ALGO",
+    "GET_FILLS",
+    "SET_LEVERAGE_VERIFIED",
+    "BATCH_SPOT_MANUAL"
   ],
   "order_types": [
     "MARKET",
@@ -25,10 +32,33 @@
     "IOC",
     "TRIGGER",
     "CONDITIONAL",
-    "TRAILING"
+    "OCO",
+    "MOVE_ORDER_STOP"
   ],
   "client_order_id": true,
   "reduce_only": true,
   "auth": "HMAC_SHA256_BASE64",
-  "account_reads": "OWNER_PROFILE_VAULT"
+  "account_reads": "OWNER_PROFILE_VAULT",
+  "manual_route": {
+    "authority": "CORE_AUTH21_EXACT_CONFIRMATION",
+    "risk": "DIAGNOSTIC_ACKNOWLEDGED_AND_ENABLE_FENCE",
+    "firewall": "MANDATORY",
+    "agent_financial_access": false,
+    "derivative_contracts": "LINEAR_ONLY",
+    "margin_account_modes": [
+      "2"
+    ],
+    "batch_markets": [
+      "SPOT"
+    ],
+    "broker_account_availability_required": true
+  },
+  "legacy_execute_route": {
+    "markets": [
+      "SPOT"
+    ],
+    "order_types": [
+      "MARKET"
+    ]
+  }
 }
