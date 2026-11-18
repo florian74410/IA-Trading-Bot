@@ -44,3 +44,5 @@ Le rollback consiste à arrêter la nouvelle release et repointer vers le réper
 La CI Rev2 fixe Ubuntu 24.04 : le premier essai sur `ubuntu-latest` a révélé Ubuntu 26.04, incompatible avec la version Playwright épinglée. Ce correctif de reproductibilité conserve la version testée du navigateur.
 
 Non-régression complémentaire : l’ancien test du calendrier exigeait `calendarUnifiedEvents`, remplacé dans l’interface existante par les panneaux FED et Finance Calendar. L’assertion contrôle maintenant leurs grilles, listes et appels de rendu. Aucun changement de l’interface du calendrier ; les 23 tests associés passent.
+
+La CI navigateur a également exposé une lecture prématurée de la géométrie du graphique après navigation. Le helper de dessin attend maintenant un rendu valide avant de calculer les coordonnées, sans retry ni modification des assertions de conservation des dessins. Les captures Companion attendent la fin de l’animation d’ouverture pour montrer une boîte opaque et lisible.

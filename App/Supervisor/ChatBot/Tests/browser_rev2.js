@@ -47,6 +47,9 @@ async function main() {
       confirm = d.getByRole("button", { name: "Confirmer", exact: true }),
       ack = d.getByRole("checkbox");
     await d.waitFor();
+    await page.locator("#iatbTransactionOverlay").evaluate((el) =>
+      Promise.all(el.getAnimations().map((a) => a.finished)),
+    );
     check(await confirm.isDisabled(), "Risk gate blocks initially");
     check(
       (await d.textContent()).includes("N/C"),
