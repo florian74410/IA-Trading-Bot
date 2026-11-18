@@ -1,0 +1,59 @@
+name: IA-TB 3.0.1 runtime package cleanup and verification
+on:
+  push:
+    branches: ['chore/iatb-3.0.1-runtime-cleanup-audit']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install runtime dependencies
+        working-directory: App
+        run: npm ci --omit=dev --no-audit --no-fund
+      - name: Check current product version
+        run: node App/Tools_validate_release_version.js
+      - name: Create deterministic runtime archive twice
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 Tools/Build/build_runtime_bundle.py
+          cp artifacts/IA-TB-3.0.1-dev.1-runtime.zip /tmp/iatb-runtime-first.zip
+          python3 Tools/Build/build_runtime_bundle.py
+          cmp artifacts/IA-TB-3.0.1-dev.1-runtime.zip /tmp/iatb-runtime-first.zip
+          python3 Tools/Build/verify_runtime_bundle.py artifacts/IA-TB-3.0.1-dev.1-runtime.zip
+      - name: Runtime archive smoke test
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/iatb301-runtime
+          python3 - <<'PY'
+          import zipfile
+          with zipfile.ZipFile('artifacts/IA-TB-3.0.1-dev.1-runtime.zip') as z:
+              z.extractall('/tmp/iatb301-runtime')
+          PY
+          node /tmp/iatb301-runtime/App/Tools_validate_release_version.js
+          NODE_PATH="$GITHUB_WORKSPACE/App/node_modules" node - <<'JS'
+          const root='/tmp/iatb301-runtime/App';
+          for(const name of ['Supervisor/Engine/working-memory','Supervisor/Engine/supervisor-engine','Supervisor/CognitiveRuntime','Core/Communication/cp1_client','Core/FunctionRegistry/Control/catalog','Supervisor/Gateway/agent_engine_gateway']){
+            const exported=require(root+'/'+name);
+            if(!exported)throw Error('RUNTIME_MODULE_FAILED:'+name);
+            console.log('OK '+name);
+          }
+          JS
+      - name: Publish runtime artifact only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: IA-TB-3.0.1-dev.1-RUNTIME-CLEAN
+          path: |
+            artifacts/IA-TB-3.0.1-dev.1-runtime.zip
+            artifacts/IA-TB-3.0.1-dev.1-runtime.zip.sha256
+          if-no-files-found: error
+          retention-days: 14
