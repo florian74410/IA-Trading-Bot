@@ -1,6 +1,6 @@
 'use strict';
 /* C3 / v2.0.1 — real Fundamental Storage regression, isolated temporary SQLite DB.
-   Run from App: node Fundamental/Tests/test_news_latest_v2_0_1.js
+   Run from App: node Engines/Fundamental/Tests/test_news_latest_v2_0_1.js
    Requires the application's better-sqlite3 dependency; never touches GEN-1 production data. */
 const assert=require('assert'),fs=require('fs'),os=require('os'),path=require('path'),crypto=require('crypto');
 const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'iatb-c3-news-'));

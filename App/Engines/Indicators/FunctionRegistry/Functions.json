@@ -38,7 +38,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "285589717ad9e8d3e9b2ea8ccf865ac1e853ff7aabdc4ea980e3211342829b31",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -68,7 +68,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "285589717ad9e8d3e9b2ea8ccf865ac1e853ff7aabdc4ea980e3211342829b31",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -98,7 +98,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "285589717ad9e8d3e9b2ea8ccf865ac1e853ff7aabdc4ea980e3211342829b31",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -141,7 +141,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "285589717ad9e8d3e9b2ea8ccf865ac1e853ff7aabdc4ea980e3211342829b31",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -171,7 +171,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "285589717ad9e8d3e9b2ea8ccf865ac1e853ff7aabdc4ea980e3211342829b31",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -245,7 +245,7 @@
       "transport": "CP1",
       "authorization": "Authenticated service identity, authenticated agent session and effective per-command permission.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "285589717ad9e8d3e9b2ea8ccf865ac1e853ff7aabdc4ea980e3211342829b31",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
       "availability_reason": null,
       "timeout_ms": 5000,
       "agent_qualified": true
@@ -282,7 +282,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "285589717ad9e8d3e9b2ea8ccf865ac1e853ff7aabdc4ea980e3211342829b31",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -319,7 +319,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "285589717ad9e8d3e9b2ea8ccf865ac1e853ff7aabdc4ea980e3211342829b31",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -360,7 +360,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "285589717ad9e8d3e9b2ea8ccf865ac1e853ff7aabdc4ea980e3211342829b31",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -397,7 +397,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "285589717ad9e8d3e9b2ea8ccf865ac1e853ff7aabdc4ea980e3211342829b31",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -438,7 +438,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "285589717ad9e8d3e9b2ea8ccf865ac1e853ff7aabdc4ea980e3211342829b31",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -600,7 +600,7 @@
       "transport": "CP1",
       "authorization": "Authenticated service identity, authenticated agent session and effective per-command permission.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "285589717ad9e8d3e9b2ea8ccf865ac1e853ff7aabdc4ea980e3211342829b31",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
       "availability_reason": null,
       "timeout_ms": 5000,
       "agent_qualified": true
@@ -658,7 +658,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "285589717ad9e8d3e9b2ea8ccf865ac1e853ff7aabdc4ea980e3211342829b31",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -693,7 +693,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "285589717ad9e8d3e9b2ea8ccf865ac1e853ff7aabdc4ea980e3211342829b31",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -742,7 +742,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "285589717ad9e8d3e9b2ea8ccf865ac1e853ff7aabdc4ea980e3211342829b31",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -795,7 +795,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "285589717ad9e8d3e9b2ea8ccf865ac1e853ff7aabdc4ea980e3211342829b31",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -832,7 +832,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "285589717ad9e8d3e9b2ea8ccf865ac1e853ff7aabdc4ea980e3211342829b31",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -887,7 +887,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "285589717ad9e8d3e9b2ea8ccf865ac1e853ff7aabdc4ea980e3211342829b31",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -938,7 +938,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "285589717ad9e8d3e9b2ea8ccf865ac1e853ff7aabdc4ea980e3211342829b31",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -984,7 +984,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "285589717ad9e8d3e9b2ea8ccf865ac1e853ff7aabdc4ea980e3211342829b31",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -1023,7 +1023,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "285589717ad9e8d3e9b2ea8ccf865ac1e853ff7aabdc4ea980e3211342829b31",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -1065,7 +1065,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "285589717ad9e8d3e9b2ea8ccf865ac1e853ff7aabdc4ea980e3211342829b31",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -1107,7 +1107,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "285589717ad9e8d3e9b2ea8ccf865ac1e853ff7aabdc4ea980e3211342829b31",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -1137,7 +1137,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "285589717ad9e8d3e9b2ea8ccf865ac1e853ff7aabdc4ea980e3211342829b31",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -1201,7 +1201,7 @@
       "transport": "CP1",
       "authorization": "Authenticated service identity, authenticated agent session and effective per-command permission.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "285589717ad9e8d3e9b2ea8ccf865ac1e853ff7aabdc4ea980e3211342829b31",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
       "availability_reason": null,
       "timeout_ms": 5000,
       "agent_qualified": true
@@ -1243,11 +1243,11 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "285589717ad9e8d3e9b2ea8ccf865ac1e853ff7aabdc4ea980e3211342829b31",
+      "handler_sha256": "676fab97b103d871d8f850457788a9841ad4f9ee25fb4ea8637df21efc547038",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
     }
   ],
-  "revision_hash": "05658b30bc012a13c8fd9808b5ec560e228d94f96579257e54bbb4636d0cc81f"
+  "revision_hash": "ce87a097ad4af44343bf3295b4b59987f90a4f8ff9cc63403e928e348e32194c"
 }

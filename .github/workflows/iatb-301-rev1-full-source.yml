@@ -44,7 +44,7 @@ jobs:
               m=json.loads(z.read('BUILD.json'))
               assert m['revision']=='3.0.1_Rev1'
               assert m['distribution']=='FULL_SOURCE_FOR_VPS'
-              assert 'App/Supervisor/Tests/SupervisorEngine/foundation.test.js' in contents
+              assert 'App/Engines/Supervisor/Tests/SupervisorEngine/foundation.test.js' in contents
               assert 'App/Core/Execution/manual_orders.js' in contents
               assert 'App/Tools/qualify_supervisor_foundation.js' in contents
               assert 'Deploy/VPS/launch_vps.sh' in contents

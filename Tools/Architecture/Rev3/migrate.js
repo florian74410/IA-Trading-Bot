@@ -30,13 +30,14 @@ function rewriteJS(text,oldFile,newFile,pairs,changes){
    }else{
     // Explicit engine directory segments in joins rooted at App. Directory
     // names are rewritten only within path calls, never arbitrary labels.
-    for(let i=1;i<args.length;i++)if(literal(args[i])){
-     let v=args[i].value;
+    const first=args[0],rooted=first?.type==='Identifier'&&['root','ROOT','APP','APP_ROOT','appRoot','app','ROOT_APP'].includes(first.name)||first?.type==='MemberExpression'&&['root','appRoot','app'].includes(first.property.name);
+    const offset=literal(args[1])&&args[1].value==='App'?2:1;
+    for(let i=offset;rooted&&i===offset&&i<args.length;i++)if(literal(args[i])){
      for(const [from,to] of pairs){const parts=from.split('/');if(parts.every((x,j)=>literal(args[i+j])&&args[i+j].value===x)){put(args[i],to,'engine resource segments');for(let j=1;j<parts.length;j++)put(args[i+j],'','combined engine segment');break;}}
     }
    }
   },
-  Literal(n,ancestors){if(typeof n.value==='string'){let v=prefixValue(n.value,pairs);const parent=ancestors.at(-2);for(const [from,to]of pairs)if(n.value===from&&parent?.type==='Property'&&parent.value===n&&Object.entries(layout).some(([id,p])=>p[0]===from&&(parent.key.name||parent.key.value)===id))v=to;if(v!==n.value)put(n,v,'explicit App-relative source');}},
+  Literal(n,ancestors){if(typeof n.value==='string'){let v=prefixValue(n.value,pairs);if(v.startsWith('./')||v.startsWith('../')){const original=path.resolve(path.dirname(oldFile),v),mapped=remapAbsolute(original,pairs);if(original!==mapped)v=rel(path.dirname(newFile),mapped);}const parent=ancestors.at(-2);for(const [from,to]of pairs)if(n.value===from&&parent?.type==='Property'&&parent.value===n&&Object.entries(layout).some(([id,p])=>p[0]===from&&(parent.key.name||parent.key.value)===id))v=to;if(v!==n.value)put(n,v,'explicit App-relative source');}},
  });
  // Relative paths in static imports are uncommon but remain first-class.
  walk.simple(ast,{ImportDeclaration(n){if(n.source.value.startsWith('.'))put(n.source,rel(path.dirname(newFile),remapAbsolute(path.resolve(path.dirname(oldFile),n.source.value),pairs)),'static import');}});
@@ -64,7 +65,7 @@ function step(id){
  if(!layout[id]||state.completed.includes(id))throw Error('Invalid/already migrated Engine '+id);
  const [from,to]=layout[id],pairs=[[from,to]],oldDir=path.join(app,from),newDir=path.join(app,to),changes=[];
  if(fs.existsSync(newDir))throw Error('Destination exists');
- const files=tracked().filter(p=>!p.startsWith('Documentation/')&&!p.startsWith('Tools/Architecture/Rev3/')&&!p.startsWith('Tools/CI/baselines/'));
+ const files=activeFiles();
  fs.cpSync(oldDir,newDir,{recursive:true});
  for(const p of files){const oldFile=path.join(root,p),newFile=remapAbsolute(oldFile,pairs);if(!fs.existsSync(oldFile)||fs.lstatSync(oldFile).isSymbolicLink())continue;
   if(!/\.(js|cjs|mjs|json|py|sh|yml|yaml|command|md|txt)$/.test(p)&&!/(Dockerfile|\.dockerignore)$/.test(p))continue;
@@ -74,4 +75,7 @@ function step(id){
  }
  state.completed.push(id);state.steps.push({id,from,to,changes,old_directory_retained:true});fs.mkdirSync(path.dirname(stateFile),{recursive:true});fs.writeFileSync(stateFile,JSON.stringify(state,null,2)+'\n');console.log(JSON.stringify({engine:id,changes:changes.length,source:from,destination:to,old_directory_retained:true}));
 }
-if(process.argv[2]==='inventory')inventory();else if(process.argv[2]==='step')step(process.argv[3]);else throw Error('Use inventory or step <engine>');
+function activeFiles(){return tracked().filter(p=>!p.startsWith('Documentation/')&&!p.startsWith('Tools/Architecture/Rev3/')&&!p.startsWith('Tools/CI/baselines/')&&p!=='App/Core/Shared/paths.js');}
+function rewriteCurrent(){const pairs=state.completed.map(id=>layout[id]),changes=[];for(const p of activeFiles().filter(p=>/\.(js|cjs)$/.test(p))){const file=path.join(root,p);if(!fs.existsSync(file))continue;const before=fs.readFileSync(file,'utf8'),after=rewriteJS(before,file,file,pairs,changes);if(before!==after)fs.writeFileSync(file,after);}fs.writeFileSync(path.join(root,'artifacts/rev3-current-path-fixes.json'),JSON.stringify(changes,null,2)+'\n');console.log(JSON.stringify({current_path_fixes:changes.length}));}
+if(require.main===module){if(process.argv[2]==='inventory')inventory();else if(process.argv[2]==='step')step(process.argv[3]);else if(process.argv[2]==='rewrite-current')rewriteCurrent();else throw Error('Use inventory, rewrite-current or step <engine>');}
+module.exports={rewriteJS,remapAbsolute};

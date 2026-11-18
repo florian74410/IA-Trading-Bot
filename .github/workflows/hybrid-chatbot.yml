@@ -3,7 +3,7 @@ on:
   push:
     branches: ['feature/iatb-2.6.0-dev.7-order-scenarios', 'feature/iatb-2.6.0-dev.7-order-scenarios-verified']
   pull_request:
-    paths: ['App/Core/Execution/**', 'App/Supervisor/ChatBot/**', 'Documentation/ChatBot/**', '.github/workflows/hybrid-chatbot.yml']
+    paths: ['App/Core/Execution/**', 'App/Engines/Supervisor/ChatBot/**', 'Documentation/ChatBot/**', '.github/workflows/hybrid-chatbot.yml']
 permissions:
   contents: read
 jobs:
@@ -23,7 +23,7 @@ jobs:
       - run: node App/Tools/Tests/SupervisorSimulator/run_validation.js /tmp/iatb-chatbot-validation
       - run: npm install --prefix /tmp/iatb-browser --no-audit --no-fund playwright@1.62.1
       - run: /tmp/iatb-browser/node_modules/.bin/playwright install --with-deps chromium
-      - run: node App/Supervisor/ChatBot/Tests/browser_ui.js
+      - run: node App/Engines/Supervisor/ChatBot/Tests/browser_ui.js
         env:
           IATB_PLAYWRIGHT_MODULE: /tmp/iatb-browser/node_modules/playwright
           IATB_UI_REPORT_DIR: /tmp/iatb-chatbot-ui-report

@@ -8,7 +8,7 @@
   "marker": "IA-TB Risk Engine",
   "restartable": true,
   "defaultEnabled": true,
-  "script": "Risk/Engine/risk_service.js",
+  "script": "Engines/Risk/Engine/risk_service.js",
   "log": ".runtime/logs/risk.log",
   "env": {
     "IATB_RISK_ENGINE_PORT": "8019",

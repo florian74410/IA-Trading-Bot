@@ -17,13 +17,13 @@ jobs:
           node-version: '22'
       - name: Validate source syntax
         run: |
-          node --check App/Risk/Engine/risk_r1_modules.js
-          node --check App/Risk/Engine/risk_r2_modules.js
-          node --check App/Risk/Engine/risk_settings_v25.js
-          node --check App/Risk/Engine/risk_service.js
+          node --check App/Engines/Risk/Engine/risk_r1_modules.js
+          node --check App/Engines/Risk/Engine/risk_r2_modules.js
+          node --check App/Engines/Risk/Engine/risk_settings_v25.js
+          node --check App/Engines/Risk/Engine/risk_service.js
           node --check App/Core/Server/server.js
           node --check App/Frontend/JS/settings.js
       - name: Unit and security contract tests
-        run: node --test --test-concurrency=1 App/Risk/Tests/test_risk_r1_r2_v25.js App/Risk/Tests/test_risk_settings_v25.js
+        run: node --test --test-concurrency=1 App/Engines/Risk/Tests/test_risk_r1_r2_v25.js App/Engines/Risk/Tests/test_risk_settings_v25.js
       - name: Metadata coherence
         run: node App/Tools_validate_release_version.js

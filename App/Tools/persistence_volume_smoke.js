@@ -7,8 +7,8 @@ if(process.env.IATB_AUTH21_LOCAL_SNAPSHOT_TRIAL==='1'&&process.env.IATB_AUTH21_S
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 const Better=require('better-sqlite3');
 const Settings=require('../Core/Settings/sqlite_settings_store');
-const Portfolio=require('../Portfolio/Engine/portfolio_store');
-const Telemetry=require('../MarketData/Storage/api_telemetry_store');
+const Portfolio=require("../Engines/Portfolio/Engine/portfolio_store");
+const Telemetry=require("../Engines/MarketData/Storage/api_telemetry_store");
 const mode=process.argv[2]||'';
 const root=path.resolve(process.env.IATB_DATA_ROOT||'/tmp','_iatb_persistence_probe_v1');
 const expected=path.resolve(process.env.IATB_DATA_ROOT||'/tmp');

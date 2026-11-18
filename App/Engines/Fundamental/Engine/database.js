@@ -4,7 +4,7 @@
    storage implementation without monkey-patching Node path functions. */
 var fs=require('fs'),path=require('path'),PATHS=require("../../../Core/Shared/paths");
 var FUNDAMENTAL_ROOT=path.resolve(__dirname,'..');
-var LEGACY_DATA=path.join(FUNDAMENTAL_ROOT,'Data');
+var LEGACY_DATA=PATHS.LegacyEngineData.fundamental;
 var LEGACY_DB=path.join(LEGACY_DATA,'fundamental.db');
 var TARGET_DATA=PATHS.PersistentData.fundamental;
 var TARGET_DB=PATHS.PersistentData.fundamentalDb;

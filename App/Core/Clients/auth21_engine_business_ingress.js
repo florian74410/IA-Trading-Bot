@@ -35,7 +35,7 @@ function openBusinessIngress({env,businessHandlers=null}={}){
    const expected=path.join(root,'runtime','config','market_data_settings.json');
    if(env.IATB_MARKET_SETTINGS!==expected)
     throw Error('AUTH21_MARKETDATA_SETTINGS_OUTSIDE_TRIAL');
-   const settings=require('../../MarketData/Config/market_data_settings');
+   const settings=require("../../Engines/MarketData/Config/market_data_settings");
    if(path.resolve(settings.file)!==expected)throw Error('AUTH21_MARKETDATA_SETTINGS_OUTSIDE_TRIAL');
    settings.setSnapshotGate(trial.gate);
    const updated=settings.save({...settings.load(),refreshMs:input.refreshMs});
@@ -64,7 +64,7 @@ function openBusinessIngress({env,businessHandlers=null}={}){
    const db=env.IATB_PORTFOLIO_DB&&path.resolve(env.IATB_PORTFOLIO_DB);
    if(!db||!db.startsWith(base+path.sep)||!db.endsWith('.db'))
     throw Error('AUTH21_PORTFOLIO_DB_OUTSIDE_TRIAL');
-   const Store=require('../../Portfolio/Engine/portfolio_store');
+   const Store=require("../../Engines/Portfolio/Engine/portfolio_store");
    const store=new Store(path.join(root,'App'),
      {dbPath:db,username:'fixture',snapshotGate:trial.gate});
    try{store.setSetting('auth21.preference.'+principal.clientId+'.'+input.key,input.value);}

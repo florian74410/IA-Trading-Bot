@@ -8,7 +8,7 @@
   "marker": "IA-TB Strategy Engine v2",
   "restartable": true,
   "defaultEnabled": true,
-  "script": "Strategy/Engine/strategy_service.js",
+  "script": "Engines/Strategy/Engine/strategy_service.js",
   "log": ".runtime/logs/strategy.log",
   "env": {
     "IATB_STRATEGY_PORT": "8018",

@@ -8,7 +8,7 @@
   "marker": "IA-TB Supervisor",
   "restartable": true,
   "defaultEnabled": true,
-  "script": "Supervisor/supervisor_service.js",
+  "script": "Engines/Supervisor/supervisor_service.js",
   "log": ".runtime/logs/supervisor.log",
   "env": {
     "IATB_SUPERVISOR_PORT": "3000",

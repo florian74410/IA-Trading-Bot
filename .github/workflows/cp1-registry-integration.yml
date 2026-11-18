@@ -31,12 +31,12 @@ jobs:
           node --check App/tests/registry-process-integration.js
       - name: Check Supervisor service, Core and cognitive runtime syntax
         run: |
-          node --check App/Supervisor/supervisor_service.js
-          node --check App/Supervisor/Core/supervisor_core.js
-          node --check App/Supervisor/CognitiveRuntime/index.js
-          node --check App/Supervisor/Memory/short-term.js
-          node --check App/Supervisor/Memory/personal-memory.js
-          node App/Supervisor/Tests/test_supervisor_architecture.js
+          node --check App/Engines/Supervisor/supervisor_service.js
+          node --check App/Engines/Supervisor/Core/supervisor_core.js
+          node --check App/Engines/Supervisor/CognitiveRuntime/index.js
+          node --check App/Engines/Supervisor/Memory/short-term.js
+          node --check App/Engines/Supervisor/Memory/personal-memory.js
+          node App/Engines/Supervisor/Tests/test_supervisor_architecture.js
       - name: Run CP1 interprocess startup publication test
         run: node App/tests/registry-process-integration.js
       - name: Run discovery contract tests
@@ -52,8 +52,8 @@ jobs:
           node --check App/Frontend/JS/companion_v1.0.js
           node --check App/Core/Server/server.js
           node --check App/Core/Server/companion_cognitive_bridge.js
-          node --check App/Supervisor/CognitiveRuntime/index.js
-          node --check App/Supervisor/Core/owner_supervisor.js
+          node --check App/Engines/Supervisor/CognitiveRuntime/index.js
+          node --check App/Engines/Supervisor/Core/owner_supervisor.js
       - name: Test Blob to Supervisor cognitive chat and engine control boundaries
         run: node --test App/tests/companion-supervisor-bridge.test.js
       - name: Exercise real Companion frontend interactions with simulated DOM and authenticated Core responses

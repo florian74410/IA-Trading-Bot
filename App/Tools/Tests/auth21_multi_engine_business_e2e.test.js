@@ -11,10 +11,10 @@ const {proofCodec}=require('../../Core/Clients/auth21_ipc_proof');
 const {createCoreBusinessHttp}=require('../../Core/Clients/auth21_core_business_http');
 const APP=path.resolve(__dirname,'../..');
 const ENGINES=[
- ['marketdata','MarketData/market_data_service.js','IATB_MARKET_DATA_PORT'],
+ ['marketdata',"Engines/MarketData/market_data_service.js",'IATB_MARKET_DATA_PORT'],
  ['fundamental',"Engines/Fundamental/Engine/fundamental_service.js",'IATB_FUNDAMENTAL_PORT'],
- ['portfolio','Portfolio/Engine/portfolio_service.js','IATB_PORTFOLIO_PORT'],
- ['strategy','Strategy/Engine/strategy_service.js','IATB_STRATEGY_PORT']
+ ['portfolio',"Engines/Portfolio/Engine/portfolio_service.js",'IATB_PORTFOLIO_PORT'],
+ ['strategy',"Engines/Strategy/Engine/strategy_service.js",'IATB_STRATEGY_PORT']
 ];
 const allocatedPorts=new Set();
 async function freePort(){const s=net.createServer();s.listen(0,'127.0.0.1');await once(s,'listening');const p=s.address().port;await new Promise(ok=>s.close(ok));if(allocatedPorts.has(p))return freePort();allocatedPorts.add(p);return p;}

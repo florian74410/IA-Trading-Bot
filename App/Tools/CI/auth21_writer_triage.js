@@ -82,10 +82,10 @@ const GROUPS=Object.freeze({
   "Engines/Fundamental/Providers/rss_provider.js","Engines/Fundamental/Providers/web_provider.js",
   "Engines/Indicators/Engine/indicator_language.js","Engines/Indicators/Engine/indicator_registry.js",
   "Engines/Indicators/Engine/indicator_service.js",
-  'MarketData/Config/market_data_settings.js',
-  'MarketData/Orchestrator/weighted_request_profile_v1.js',
-  'Strategy/Engine/strategy_service.js','Strategy/Engine/strategy_stats_v2.js',
-  'Supervisor/supervisor_service.js'
+  "Engines/MarketData/Config/market_data_settings.js",
+  "Engines/MarketData/Orchestrator/weighted_request_profile_v1.js",
+  "Engines/Strategy/Engine/strategy_service.js","Engines/Strategy/Engine/strategy_stats_v2.js",
+  "Engines/Supervisor/supervisor_service.js"
  ]
 });
 const map=new Map();

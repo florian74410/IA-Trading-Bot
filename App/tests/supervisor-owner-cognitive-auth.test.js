@@ -3,13 +3,13 @@ const {test}=require('node:test'),assert=require('node:assert/strict');
 const fs=require('node:fs'),os=require('node:os'),path=require('node:path');
 const {permission}=require('../Core/Clients/UserManagement/owner_policy');
 const {transport}=require('../Core/Clients/UserManagement/owner_ai');
-const SupervisorSettings=require('../Supervisor/Core/settings');
+const SupervisorSettings=require("../Engines/Supervisor/Core/settings");
 test('Core policy uses authenticated owner channel for cognitive reasoning and ADMIN configuration',()=>{
  assert.equal(permission('supervisor','supervisor.cognitive.reason'),'self.write');
  assert.equal(permission('supervisor','supervisor.cognitive.status'),'self.read');
  assert.equal(permission('supervisor','supervisor.llm.models'),'self.read');
  assert.equal(permission('supervisor','supervisor.llm.select'),'self.write');
- const service=fs.readFileSync(path.join(__dirname,'../Supervisor/supervisor_service.js'),'utf8');
+ const service=fs.readFileSync(path.join(__dirname,"../Engines/Supervisor/supervisor_service.js"),'utf8');
  assert.ok(service.includes('cognitiveCore:core'),'Owner receiver must use real Core');
  assert.ok(!service.includes("'supervisor.cognitive.reason':function"),'Direct CP1 cognitive reasoning forbidden');
 });

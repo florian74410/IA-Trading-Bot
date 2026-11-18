@@ -2,7 +2,7 @@
 
 [Correctif Supervisor Engine 3.0.1](Documentation/Supervisor/FOUNDATION-3.0.1.md) : mémoire propriétaire persistante, migration SQLite, fraîcheur et récupération CP1. Candidat DEBUG ; aucune exécution financière par le Supervisor.
 
-ChatBot hybride intégré : intentions locales, interprétation OpenAI explicite, préférences Auth21 et lectures via Supervisor/CP1. Ordres manuels OKX Spot Market confirmés : configuration LIVE=true, snapshot Risk propriétaire et Firewall obligatoires. Aucun ordre broker réel effectué pour cette livraison.
+ChatBot hybride intégré : intentions locales, interprétation OpenAI explicite, préférences Auth21 et lectures via Engines/Supervisor/CP1. Ordres manuels OKX Spot Market confirmés : configuration LIVE=true, snapshot Risk propriétaire et Firewall obligatoires. Aucun ordre broker réel effectué pour cette livraison.
 
 [Simulations et corrections dev.7](Documentation/Execution/DEV7-SCENARIOS.md) · [Livraison ordres manuels dev.6](Documentation/Execution/DEV6-MANUAL-ORDERS.md) · [Guide du ChatBot](Documentation/ChatBot/README.md) · [Rapport de livraison dev.5](Documentation/ChatBot/DELIVERY.md) · [Consolidation CP1 dev.4](Documentation/CP1/DELIVERY.md)
 

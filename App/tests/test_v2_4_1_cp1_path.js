@@ -3,7 +3,7 @@ const test=require('node:test'),assert=require('node:assert/strict'),http=requir
 // Isolate CP secret/audit; no real user data or provider calls.
 const temp=fs.mkdtempSync(path.join(os.tmpdir(),'iatb241-cp1-'));process.env.IATB_DATA_ROOT=path.join(temp,'data');process.env.IATB_RUNTIME_ROOT=path.join(temp,'runtime');
 const root=path.resolve(__dirname,'..'),PATHS=require('../Core/Shared/paths');PATHS.ensureAppRuntimeDirs();
-const CP=require('../Core/Communication/communication_protocol_v1'),Router=require('../Core/Communication/communication_router_v1'),Adapter=require('../Core/Communication/component_cp1_adapter'),Client=require('../Supervisor/Core/cp1_client'),{CollectorData}=require('../Supervisor/Core/collector_data_v2_4_1');
+const CP=require('../Core/Communication/communication_protocol_v1'),Router=require('../Core/Communication/communication_router_v1'),Adapter=require('../Core/Communication/component_cp1_adapter'),Client=require("../Engines/Supervisor/Core/cp1_client"),{CollectorData}=require("../Engines/Supervisor/Core/collector_data_v2_4_1");
 test.after(()=>fs.rmSync(temp,{recursive:true,force:true}));
 test('Supervisor reads every declared collector product through real HTTP Router and signed CP/1 adapters',async t=>{
  const router=new Router(root),servers=[],calls=[];

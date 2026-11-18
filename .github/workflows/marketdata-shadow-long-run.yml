@@ -77,11 +77,11 @@ jobs:
           node Engines/Firewall/firewall_service.js > .runtime/long-shadow/logs/firewall.log 2>&1 & echo $! > .runtime/long-shadow/firewall.pid
           wait_http http://127.0.0.1:8017/health
 
-          node MarketData/market_data_service.js > .runtime/long-shadow/logs/marketdata.log 2>&1 & echo $! > .runtime/long-shadow/marketdata.pid
+          node Engines/MarketData/market_data_service.js > .runtime/long-shadow/logs/marketdata.log 2>&1 & echo $! > .runtime/long-shadow/marketdata.pid
           wait_http http://127.0.0.1:8013/health
 
           node Engines/Indicators/Engine/indicator_service.js > .runtime/long-shadow/logs/indicator.log 2>&1 & echo $! > .runtime/long-shadow/indicator.pid
-          node Liquidity/Engine/liquidity_service.js > .runtime/long-shadow/logs/liquidity.log 2>&1 & echo $! > .runtime/long-shadow/liquidity.pid
+          node Engines/Liquidity/Engine/liquidity_service.js > .runtime/long-shadow/logs/liquidity.log 2>&1 & echo $! > .runtime/long-shadow/liquidity.pid
 
           wait_http http://127.0.0.1:8012/health
           wait_http http://127.0.0.1:8014/health
@@ -102,7 +102,7 @@ jobs:
           cp .runtime/long-shadow/workload_start_ms.txt .runtime/workload/workload_start_ms.txt
           cp .runtime/long-shadow/api_telemetry.db .runtime/workload/api_telemetry.db
           cp .runtime/long-shadow/long_run_report.json .runtime/workload/workload_report.json
-          IATB_WORKLOAD_DIR="$PWD/.runtime/workload" IATB_API_TELEMETRY_DB="$PWD/.runtime/workload/api_telemetry.db"             node MarketData/Tests/analyze_shadow_workload_telemetry_v1.js
+          IATB_WORKLOAD_DIR="$PWD/.runtime/workload" IATB_API_TELEMETRY_DB="$PWD/.runtime/workload/api_telemetry.db"             node Engines/MarketData/Tests/analyze_shadow_workload_telemetry_v1.js
           cp .runtime/workload/telemetry_summary.json .runtime/long-shadow/telemetry_summary.json
 
       - name: Upload long-run telemetry

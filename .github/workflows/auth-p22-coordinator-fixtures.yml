@@ -12,7 +12,7 @@ on:
       - 'App/Tools/CLI/auth21-recover-snapshot.js'
       - 'App/Engines/Indicators/Engine/indicator_registry.js'
       - 'App/Engines/Indicators/Engine/indicator_settings.js'
-      - 'App/Strategy/Engine/strategy_stats_v2.js'
+      - 'App/Engines/Strategy/Engine/strategy_stats_v2.js'
       - 'App/Core/Shared/paths.js'
       - 'App/Core/Server/server.js'
       - 'App/Tools/CI/auth21_legacy_core_route_audit.js'
@@ -24,7 +24,7 @@ on:
       - 'App/Tools/Tests/auth21_core_local_trial_wiring.test.js'
       - 'App/Tools/CI/auth21_engine_encrypted_bundle.js'
       - 'App/Tools/Tests/auth21_snapshot_real_bundle_e2e.test.js'
-      - 'App/MarketData/Config/market_data_settings.js'
+      - 'App/Engines/MarketData/Config/market_data_settings.js'
       - 'App/Tools/Tests/auth21_market_settings_snapshot_gate.test.js'
       - 'App/Tools/Tests/auth21_paths_startup_preflight.test.js'
       - 'App/Tools/CI/auth21_writer_inventory.js'
@@ -33,17 +33,17 @@ on:
       - 'App/Tools/Tests/core_snapshot_writers.test.js'
       - 'App/Core/Clients/client_repository.js'
       - 'App/Core/Settings/sqlite_settings_store.js'
-      - 'App/Portfolio/Engine/portfolio_store.js'
+      - 'App/Engines/Portfolio/Engine/portfolio_store.js'
       - 'App/Tools/Tests/portfolio_snapshot_writer.test.js'
       - 'App/Engines/Fundamental/Engine/database_core.js'
       - 'App/Tools/Tests/fundamental_snapshot_writer.test.js'
       - 'App/Engines/Fundamental/Engine/database.js'
       - 'App/Tools/Tests/fundamental_legacy_snapshot_bridge.test.js'
-      - 'App/MarketData/Registry/market_registry.js'
-      - 'App/MarketData/Storage/api_telemetry_store.js'
-      - 'App/MarketData/Storage/microstructure_store.js'
+      - 'App/Engines/MarketData/Registry/market_registry.js'
+      - 'App/Engines/MarketData/Storage/api_telemetry_store.js'
+      - 'App/Engines/MarketData/Storage/microstructure_store.js'
       - 'App/Tools/Tests/marketdata_snapshot_writers.test.js'
-      - 'App/MarketData/Financial/financial_store.js'
+      - 'App/Engines/MarketData/Financial/financial_store.js'
       - 'App/Tools/Tests/financial_jsonl_snapshot_writer.test.js'
       - 'App/Engines/Trading/history-store.js'
       - 'App/Core/Services/usage_ledger_v1.js'
@@ -101,17 +101,17 @@ on:
       - 'App/Tools/Tests/auth21_real_engines_ingress.test.js'
       - 'App/Engines/Indicators/Engine/indicator_service.js'
       - 'App/Engines/Fundamental/Engine/fundamental_service.js'
-      - 'App/Liquidity/Engine/liquidity_service.js'
-      - 'App/MarketData/market_data_service.js'
-      - 'App/Strategy/Engine/strategy_service.js'
-      - 'App/Supervisor/supervisor_service.js'
+      - 'App/Engines/Liquidity/Engine/liquidity_service.js'
+      - 'App/Engines/MarketData/market_data_service.js'
+      - 'App/Engines/Strategy/Engine/strategy_service.js'
+      - 'App/Engines/Supervisor/supervisor_service.js'
       - 'App/Engines/Firewall/firewall_service.js'
       - 'App/Tools/Tests/auth21_service_boundary.test.js'
       - 'App/UI/Gateway/ui_service.js'
       - 'App/Core/Router/router.js'
       - 'App/Engines/Trading/trading_service.js'
-      - 'App/Portfolio/Engine/portfolio_service.js'
-      - 'App/Risk/Engine/risk_service.js'
+      - 'App/Engines/Portfolio/Engine/portfolio_service.js'
+      - 'App/Engines/Risk/Engine/risk_service.js'
       - 'App/Tools/Tests/auth21_rbac_guard.test.js'
       - 'App/Core/Clients/auth21_core_route_gate.js'
       - 'App/Tools/Tests/auth21_http_boundary.test.js'
@@ -138,7 +138,7 @@ on:
       - 'App/Tools/CLI/auth21-recover-snapshot.js'
       - 'App/Engines/Indicators/Engine/indicator_registry.js'
       - 'App/Engines/Indicators/Engine/indicator_settings.js'
-      - 'App/Strategy/Engine/strategy_stats_v2.js'
+      - 'App/Engines/Strategy/Engine/strategy_stats_v2.js'
       - 'App/Core/Shared/paths.js'
       - 'App/Core/Server/server.js'
       - 'App/Core/Backup/auth21_core_local_trial_wiring.js'
@@ -148,7 +148,7 @@ on:
       - 'App/Tools/Tests/auth21_core_local_trial_wiring.test.js'
       - 'App/Tools/CI/auth21_engine_encrypted_bundle.js'
       - 'App/Tools/Tests/auth21_snapshot_real_bundle_e2e.test.js'
-      - 'App/MarketData/Config/market_data_settings.js'
+      - 'App/Engines/MarketData/Config/market_data_settings.js'
       - 'App/Tools/Tests/auth21_market_settings_snapshot_gate.test.js'
       - 'App/Tools/Tests/auth21_paths_startup_preflight.test.js'
       - 'App/Tools/CI/auth21_writer_inventory.js'
@@ -157,17 +157,17 @@ on:
       - 'App/Tools/Tests/core_snapshot_writers.test.js'
       - 'App/Core/Clients/client_repository.js'
       - 'App/Core/Settings/sqlite_settings_store.js'
-      - 'App/Portfolio/Engine/portfolio_store.js'
+      - 'App/Engines/Portfolio/Engine/portfolio_store.js'
       - 'App/Tools/Tests/portfolio_snapshot_writer.test.js'
       - 'App/Engines/Fundamental/Engine/database_core.js'
       - 'App/Tools/Tests/fundamental_snapshot_writer.test.js'
       - 'App/Engines/Fundamental/Engine/database.js'
       - 'App/Tools/Tests/fundamental_legacy_snapshot_bridge.test.js'
-      - 'App/MarketData/Registry/market_registry.js'
-      - 'App/MarketData/Storage/api_telemetry_store.js'
-      - 'App/MarketData/Storage/microstructure_store.js'
+      - 'App/Engines/MarketData/Registry/market_registry.js'
+      - 'App/Engines/MarketData/Storage/api_telemetry_store.js'
+      - 'App/Engines/MarketData/Storage/microstructure_store.js'
       - 'App/Tools/Tests/marketdata_snapshot_writers.test.js'
-      - 'App/MarketData/Financial/financial_store.js'
+      - 'App/Engines/MarketData/Financial/financial_store.js'
       - 'App/Tools/Tests/financial_jsonl_snapshot_writer.test.js'
       - 'App/Engines/Trading/history-store.js'
       - 'App/Core/Services/usage_ledger_v1.js'
@@ -215,17 +215,17 @@ on:
       - 'App/Tools/Tests/auth21_real_engines_ingress.test.js'
       - 'App/Engines/Indicators/Engine/indicator_service.js'
       - 'App/Engines/Fundamental/Engine/fundamental_service.js'
-      - 'App/Liquidity/Engine/liquidity_service.js'
-      - 'App/MarketData/market_data_service.js'
-      - 'App/Strategy/Engine/strategy_service.js'
-      - 'App/Supervisor/supervisor_service.js'
+      - 'App/Engines/Liquidity/Engine/liquidity_service.js'
+      - 'App/Engines/MarketData/market_data_service.js'
+      - 'App/Engines/Strategy/Engine/strategy_service.js'
+      - 'App/Engines/Supervisor/supervisor_service.js'
       - 'App/Engines/Firewall/firewall_service.js'
       - 'App/Tools/Tests/auth21_service_boundary.test.js'
       - 'App/UI/Gateway/ui_service.js'
       - 'App/Core/Router/router.js'
       - 'App/Engines/Trading/trading_service.js'
-      - 'App/Portfolio/Engine/portfolio_service.js'
-      - 'App/Risk/Engine/risk_service.js'
+      - 'App/Engines/Portfolio/Engine/portfolio_service.js'
+      - 'App/Engines/Risk/Engine/risk_service.js'
       - 'App/Tools/Tests/auth21_rbac_guard.test.js'
       - 'App/Tools/Tests/auth21_http_boundary.test.js'
       - 'App/Core/Clients/auth21_admin_store.js'
@@ -268,11 +268,11 @@ jobs:
           node --check App/Tools/Tests/auth21_writer_source_census.test.js
           node --check App/Tools/Tests/auth21_core_direct_writer_guard.test.js
           node --check App/Tools/Tests/auth21_market_settings_snapshot_gate.test.js
-          node --check App/MarketData/Config/market_data_settings.js
+          node --check App/Engines/MarketData/Config/market_data_settings.js
           node --check App/Tools/Tests/auth21_durable_snapshot_writer.test.js
-          node --check App/Portfolio/Engine/portfolio_service.js
+          node --check App/Engines/Portfolio/Engine/portfolio_service.js
           node --check App/Tools/Tests/auth21_portfolio_real_gate.test.js
-          node --check App/MarketData/market_data_service.js
+          node --check App/Engines/MarketData/market_data_service.js
           node --check App/Tools/Tests/auth21_marketdata_real_gate.test.js
           node --check App/Engines/Fundamental/Engine/fundamental_service.js
           node --check App/Tools/Tests/auth21_fundamental_real_gate.test.js
@@ -298,17 +298,17 @@ jobs:
           node --check App/Tools/Tests/core_snapshot_writers.test.js
           node --check App/Core/Clients/client_repository.js
           node --check App/Core/Settings/sqlite_settings_store.js
-          node --check App/Portfolio/Engine/portfolio_store.js
+          node --check App/Engines/Portfolio/Engine/portfolio_store.js
           node --check App/Tools/Tests/portfolio_snapshot_writer.test.js
           node --check App/Engines/Fundamental/Engine/database_core.js
           node --check App/Tools/Tests/fundamental_snapshot_writer.test.js
           node --check App/Engines/Fundamental/Engine/database.js
           node --check App/Tools/Tests/fundamental_legacy_snapshot_bridge.test.js
-          node --check App/MarketData/Registry/market_registry.js
-          node --check App/MarketData/Storage/api_telemetry_store.js
-          node --check App/MarketData/Storage/microstructure_store.js
+          node --check App/Engines/MarketData/Registry/market_registry.js
+          node --check App/Engines/MarketData/Storage/api_telemetry_store.js
+          node --check App/Engines/MarketData/Storage/microstructure_store.js
           node --check App/Tools/Tests/marketdata_snapshot_writers.test.js
-          node --check App/MarketData/Financial/financial_store.js
+          node --check App/Engines/MarketData/Financial/financial_store.js
           node --check App/Tools/Tests/financial_jsonl_snapshot_writer.test.js
           node --check App/Engines/Trading/history-store.js
           node --check App/Core/Services/usage_ledger_v1.js
@@ -364,8 +364,8 @@ jobs:
           node --check App/UI/Gateway/ui_service.js
           node --check App/Core/Router/router.js
           node --check App/Engines/Trading/trading_service.js
-          node --check App/Portfolio/Engine/portfolio_service.js
-          node --check App/Risk/Engine/risk_service.js
+          node --check App/Engines/Portfolio/Engine/portfolio_service.js
+          node --check App/Engines/Risk/Engine/risk_service.js
           node --check App/Tools/Tests/auth21_rbac_guard.test.js
           node --check App/Core/Clients/auth21_core_route_gate.js
           node --check App/Tools/CI/auth21_legacy_core_route_audit.js

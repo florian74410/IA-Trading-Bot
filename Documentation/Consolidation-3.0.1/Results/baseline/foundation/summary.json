@@ -1,0 +1,1363 @@
+{
+  "schema": "iatb.supervisor-foundation-validation/1.0",
+  "version": "3.0.1-dev.1",
+  "commit": "1b6a01f012169bfd4d1034c0d9d19b20b2fc9284",
+  "node": "v22.23.0",
+  "generated_at": "2026-11-18T07:37:55.855Z",
+  "live_orders": 0,
+  "paid_ai_calls": 0,
+  "groups": [
+    {
+      "name": "qualification",
+      "exit_code": 0,
+      "error": null,
+      "duration_ms": 110168,
+      "tests": 93,
+      "passed": 93,
+      "failed": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "failed_cases": [],
+      "cases": [
+        {
+          "name": "actual Engines publish and execute through authenticated TLS Core, Supervisor Gateway and Router",
+          "status": "PASS"
+        },
+        {
+          "name": "advanced manual trading through Auth21, real services and isolated HTTP OKX V5",
+          "status": "PASS"
+        },
+        {
+          "name": "profile key -> signed vault TLS -> Trading Firewall CP/1 -> Portfolio -> owner Risk",
+          "status": "PASS"
+        },
+        {
+          "name": "persistent cognitive memory, self first, scoped tools, reviewed-only proposals, model allowlist",
+          "status": "PASS"
+        },
+        {
+          "name": "CP1 registry matches real Supervisor handlers and manifest contracts",
+          "status": "PASS"
+        },
+        {
+          "name": "tool allowlist blocks model-command injection; no direct trade/tool execution",
+          "status": "PASS"
+        },
+        {
+          "name": "existing OpenAI provider forwards chosen model through CP1 AI Gateway Responses API",
+          "status": "PASS"
+        },
+        {
+          "name": "unverified CP1 identity cannot open cognitive memory, cross-account isolation",
+          "status": "PASS"
+        },
+        {
+          "name": "malformed provider JSON retries once; failure stores a controlled turn without secrets",
+          "status": "PASS"
+        },
+        {
+          "name": "context budget drops old history, protects current prompt, and backup restores SQLite",
+          "status": "PASS"
+        },
+        {
+          "name": "Core policy uses authenticated owner channel for cognitive reasoning and ADMIN configuration",
+          "status": "PASS"
+        },
+        {
+          "name": "Core owner AI checks model, signed original prompt, output token cap, store:false, current session",
+          "status": "PASS"
+        },
+        {
+          "name": "ADMIN model choice persists in canonical SQLite settings and USER cannot alter it",
+          "status": "PASS"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "foundation",
+      "exit_code": 0,
+      "error": null,
+      "duration_ms": 1385,
+      "tests": 53,
+      "passed": 53,
+      "failed": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "failed_cases": [],
+      "cases": [
+        {
+          "name": "MEM-01: empty memory has no invented objective or observations",
+          "status": "PASS"
+        },
+        {
+          "name": "MEM-02: objective persists across SQLite shutdown/reopen",
+          "status": "PASS"
+        },
+        {
+          "name": "MEM-03: observations survive SQLite process reopening",
+          "status": "PASS"
+        },
+        {
+          "name": "MEM-04: objective replacement clears older observations",
+          "status": "PASS"
+        },
+        {
+          "name": "MEM-05: setting same objective preserves observations",
+          "status": "PASS"
+        },
+        {
+          "name": "MEM-06: owner isolation",
+          "status": "PASS"
+        },
+        {
+          "name": "MEM-07: authenticated owner continuity across session renewal (3.0.1 policy)",
+          "status": "PASS"
+        },
+        {
+          "name": "MEM-08: room isolation",
+          "status": "PASS"
+        },
+        {
+          "name": "MEM-09: memory rejects bad tenant and room",
+          "status": "PASS"
+        },
+        {
+          "name": "MEM-10: memory retains 48 observations but returns at most 12",
+          "status": "PASS"
+        },
+        {
+          "name": "MEM-11: invalid status rejected",
+          "status": "PASS"
+        },
+        {
+          "name": "MEM-12: memory file permissions are private on POSIX",
+          "status": "PASS"
+        },
+        {
+          "name": "MEM-13: observations preserve structured JSON values (expected product requirement)",
+          "status": "PASS"
+        },
+        {
+          "name": "MEM-14: short-term objective recoverable after owner renews Auth21 session (expected medium-term requirement)",
+          "status": "PASS"
+        },
+        {
+          "name": "MEM-15: stale observations are marked before use (expected context recovery requirement)",
+          "status": "PASS"
+        },
+        {
+          "name": "CP1-01: discover queries a gateway and returns capabilities",
+          "status": "PASS"
+        },
+        {
+          "name": "CP1-02: allowed read command traverses gateway and writes observation",
+          "status": "PASS"
+        },
+        {
+          "name": "CP1-03: dangerous financial command rejected before transport",
+          "status": "PASS"
+        },
+        {
+          "name": "CP1-04: DENY privilege is blocked before transport",
+          "status": "PASS"
+        },
+        {
+          "name": "CP1-05: offline engine is blocked before transport",
+          "status": "PASS"
+        },
+        {
+          "name": "CP1-06: hard-deny contract is blocked before transport",
+          "status": "PASS"
+        },
+        {
+          "name": "CP1-07: unqualified contract is blocked before transport",
+          "status": "PASS"
+        },
+        {
+          "name": "CP1-08: side-effect contract is blocked before transport",
+          "status": "PASS"
+        },
+        {
+          "name": "CP1-09: gateway temporarily absent does not lose objective",
+          "status": "PASS"
+        },
+        {
+          "name": "CP1-10: timeout produces explicit unknown observation",
+          "status": "PASS"
+        },
+        {
+          "name": "CP1-11: unavailable discovery does not invent engines",
+          "status": "PASS"
+        },
+        {
+          "name": "CP1-12: gateway throws on discovery; no stale connected claim",
+          "status": "PASS"
+        },
+        {
+          "name": "SEC-01: unverified principal refused",
+          "status": "PASS"
+        },
+        {
+          "name": "SEC-02: missing session hash refused",
+          "status": "PASS"
+        },
+        {
+          "name": "CTX-01: working objective included in cognitive context facade",
+          "status": "PASS"
+        },
+        {
+          "name": "CTX-02: observation refresh follows changed gateway data",
+          "status": "PASS"
+        },
+        {
+          "name": "SEC-03: changing objective resets old sensitive observations",
+          "status": "PASS"
+        },
+        {
+          "name": "typed observation round trip: {\"a\":1,\"nested\":{\"b\":false,\"c\":null}}",
+          "status": "PASS"
+        },
+        {
+          "name": "typed observation round trip: [1,\"string\",false,null]",
+          "status": "PASS"
+        },
+        {
+          "name": "typed observation round trip: \"not JSON: {x}\"",
+          "status": "PASS"
+        },
+        {
+          "name": "typed observation round trip: 123",
+          "status": "PASS"
+        },
+        {
+          "name": "typed observation round trip: false",
+          "status": "PASS"
+        },
+        {
+          "name": "typed observation round trip: null",
+          "status": "PASS"
+        },
+        {
+          "name": "recursive sanitizer rejects malformed, cyclic and excessive input without changing revision",
+          "status": "PASS"
+        },
+        {
+          "name": "secrets, grants and session material are removed recursively before SQLite storage",
+          "status": "PASS"
+        },
+        {
+          "name": "workspace objective survives session renewal; owner and context isolation stay strict",
+          "status": "PASS"
+        },
+        {
+          "name": "per-command TTL, unknown availability and future observations are explicit",
+          "status": "PASS"
+        },
+        {
+          "name": "dev1 migration is atomic, idempotent and never guesses the type of a legacy string",
+          "status": "PASS"
+        },
+        {
+          "name": "unknown future schema is rejected without destructive migration",
+          "status": "PASS"
+        },
+        {
+          "name": "100 writes and interleaved owners/contexts preserve integrity and limits",
+          "status": "PASS"
+        },
+        {
+          "name": "SIGKILL recovery committed retains committed data only",
+          "status": "PASS"
+        },
+        {
+          "name": "SIGKILL recovery transaction retains committed data only",
+          "status": "PASS"
+        },
+        {
+          "name": "late CP1 observation cannot attach to a replaced goal",
+          "status": "PASS"
+        },
+        {
+          "name": "context recovery refreshes stale observations with current grants; failures retain objective",
+          "status": "PASS"
+        },
+        {
+          "name": "CognitiveRuntime MOCK receives exact typed fresh/stale/unknown data and a persistent goal",
+          "status": "PASS"
+        },
+        {
+          "name": "parallel SQLite writers keep separate owner contexts and atomic revisions",
+          "status": "PASS"
+        },
+        {
+          "name": "migration creates a private consistent dev1 backup usable for rollback",
+          "status": "PASS"
+        },
+        {
+          "name": "observation data resembling instructions never enters the model system instructions",
+          "status": "PASS"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "cognitive",
+      "exit_code": 0,
+      "error": null,
+      "duration_ms": 3840,
+      "tests": 13,
+      "passed": 13,
+      "failed": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "failed_cases": [],
+      "cases": [
+        {
+          "name": "actual Router -> Supervisor -> verified owner receiver -> persistent cognitive memory (MOCK)",
+          "status": "PASS"
+        },
+        {
+          "name": "persistent cognitive memory, self first, scoped tools, reviewed-only proposals, model allowlist",
+          "status": "PASS"
+        },
+        {
+          "name": "CP1 registry matches real Supervisor handlers and manifest contracts",
+          "status": "PASS"
+        },
+        {
+          "name": "tool allowlist blocks model-command injection; no direct trade/tool execution",
+          "status": "PASS"
+        },
+        {
+          "name": "existing OpenAI provider forwards chosen model through CP1 AI Gateway Responses API",
+          "status": "PASS"
+        },
+        {
+          "name": "unverified CP1 identity cannot open cognitive memory, cross-account isolation",
+          "status": "PASS"
+        },
+        {
+          "name": "malformed provider JSON retries once; failure stores a controlled turn without secrets",
+          "status": "PASS"
+        },
+        {
+          "name": "context budget drops old history, protects current prompt, and backup restores SQLite",
+          "status": "PASS"
+        },
+        {
+          "name": "Core policy uses authenticated owner channel for cognitive reasoning and ADMIN configuration",
+          "status": "PASS"
+        },
+        {
+          "name": "Core owner AI checks model, signed original prompt, output token cap, store:false, current session",
+          "status": "PASS"
+        },
+        {
+          "name": "ADMIN model choice persists in canonical SQLite settings and USER cannot alter it",
+          "status": "PASS"
+        },
+        {
+          "name": "persist across process reopen, isolate tenants and sessions, enforce retention",
+          "status": "PASS"
+        },
+        {
+          "name": "expiry prevents reading and prune deletes expired sessions",
+          "status": "PASS"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "name": "auth21",
+      "exit_code": 1,
+      "error": null,
+      "duration_ms": 55939,
+      "tests": 68,
+      "passed": 66,
+      "failed": 1,
+      "skipped": 1,
+      "cancelled": 0,
+      "failed_cases": [
+        "real service HTTP entrypoints invoke the isolated boundary before legacy handlers"
+      ],
+      "cases": [
+        {
+          "name": "Core issued action and exact HTTP body hash verified at Router and Engine",
+          "status": "PASS"
+        },
+        {
+          "name": "body-digest mismatch and unauthorized principal fail closed",
+          "status": "PASS"
+        },
+        {
+          "name": "real TLS Core cookie authenticates and CSRF-gates mutations; HTTP never authenticates",
+          "status": "PASS"
+        },
+        {
+          "name": "proof is valid once for exact scoped operation; rejects replay",
+          "status": "PASS"
+        },
+        {
+          "name": "inter-process proof rejects forged audience, method, owner and expired token",
+          "status": "PASS"
+        },
+        {
+          "name": "different process key never authenticates and invalid payload fails closed",
+          "status": "PASS"
+        },
+        {
+          "name": "Router/Engine role enforcement uses signed proof, never claimed browser role",
+          "status": "PASS"
+        },
+        {
+          "name": "Core issues scoped proof only from verified server session and permitted owner",
+          "status": "PASS"
+        },
+        {
+          "name": "actual Gateway and Router reject unsupported upgrade requests",
+          "status": "PASS"
+        },
+        {
+          "name": "Auth21 isolated mode prevents legacy CP1 and WebSocket paths at both HTTP boundaries",
+          "status": "PASS"
+        },
+        {
+          "name": "Indicator: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT",
+          "status": "PASS"
+        },
+        {
+          "name": "MarketData: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT",
+          "status": "PASS"
+        },
+        {
+          "name": "Liquidity: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT",
+          "status": "PASS"
+        },
+        {
+          "name": "Fundamental: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT",
+          "status": "PASS"
+        },
+        {
+          "name": "Trading: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT",
+          "status": "PASS"
+        },
+        {
+          "name": "Firewall: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT",
+          "status": "PASS"
+        },
+        {
+          "name": "Strategy: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT",
+          "status": "PASS"
+        },
+        {
+          "name": "Risk: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT",
+          "status": "PASS"
+        },
+        {
+          "name": "Portfolio: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT",
+          "status": "PASS"
+        },
+        {
+          "name": "Supervisor: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT",
+          "status": "PASS"
+        },
+        {
+          "name": "legacy handler remains available when isolated Auth21 mode is off",
+          "status": "PASS"
+        },
+        {
+          "name": "trial boundary cannot be activated by partial flags",
+          "status": "PASS"
+        },
+        {
+          "name": "Gateway forwards only Auth21 routes and denies legacy pages and API",
+          "status": "PASS"
+        },
+        {
+          "name": "Router denies CP1, market data and fallback-to-Core in isolated mode",
+          "status": "PASS"
+        },
+        {
+          "name": "Engine direct HTTP paths default deny in isolated mode",
+          "status": "PASS"
+        },
+        {
+          "name": "real service HTTP entrypoints invoke the isolated boundary before legacy handlers",
+          "status": "FAIL"
+        },
+        {
+          "name": "gateway method allowlist never forwards writes as reads or unknown operations",
+          "status": "PASS"
+        },
+        {
+          "name": "authenticated Firewall machine ingress requires the token and exact body signature",
+          "status": "PASS"
+        },
+        {
+          "name": "CLI historical Portfolio import preserves original rows, backs up committed WAL, rejects another claimant and rolls back interrupted copy",
+          "status": "PASS"
+        },
+        {
+          "name": "explicit wallet attribution retains original key/envelope and never exposes another owner wallet",
+          "status": "PASS"
+        },
+        {
+          "name": "explicit historical Settings attribution encrypts only the selected owner copy, preserves source and rejects conflicts",
+          "status": "PASS"
+        },
+        {
+          "name": "fictional market preload refuses real paths and unsupported vendor requests",
+          "status": "PASS"
+        },
+        {
+          "name": "real authenticated MarketData passes synthetic Binance candles through the real protection worker before cache",
+          "status": "PASS"
+        },
+        {
+          "name": "real SIGKILL between-v3-v4: durable backup, retry and rollback preserve historical data/key",
+          "status": "PASS"
+        },
+        {
+          "name": "real SIGKILL inside-v4: durable backup, retry and rollback preserve historical data/key",
+          "status": "PASS"
+        },
+        {
+          "name": "wrong original key refuses migration before creating backup or changing schema",
+          "status": "PASS"
+        },
+        {
+          "name": "canonical Mosaic validator and private settings prevent cross-user read, overwrite and delete",
+          "status": "PASS"
+        },
+        {
+          "name": "operator feed creation rejects literal private IPv6 and endpoint credentials through the canonical validator",
+          "status": "PASS"
+        },
+        {
+          "name": "real canonical Portfolio SQLite ledger isolates events/trades/balances/snapshots in existing DB and preserves legacy",
+          "status": "PASS"
+        },
+        {
+          "name": "actual Strategy owner dispatcher persists only own definitions, mode and canonical evaluations",
+          "status": "PASS"
+        },
+        {
+          "name": "public Fundamental provider metadata removes endpoint and nested credentials while keeping public feed configuration",
+          "status": "PASS"
+        },
+        {
+          "name": "mixed-case provider configuration and diagnostic errors never disclose operator credentials",
+          "status": "PASS"
+        },
+        {
+          "name": "every historical route enforces the ADMIN/USER/GUEST boundary with live TLS sessions",
+          "status": "PASS"
+        },
+        {
+          "name": "CP1 administration uses real Auth21 roles, HTTPS Origin and CSRF",
+          "status": "PASS"
+        },
+        {
+          "name": "personal API settings accept only explicit HTTPS RPC origins and never browser identity",
+          "status": "PASS"
+        },
+        {
+          "name": "authenticated Swap Bridge never falls back to an operator RPC credential",
+          "status": "PASS"
+        },
+        {
+          "name": "vault stores encrypted multi-owner assignments; scoped TLS client obtains only selected credential",
+          "status": "PASS"
+        },
+        {
+          "name": "ticket binds exact order and expires; revoked sessions and rotated assignments cannot release credentials",
+          "status": "PASS"
+        },
+        {
+          "name": "invalid and ambiguous registry changes do not rotate secrets; broker of an existing ID cannot change",
+          "status": "PASS"
+        },
+        {
+          "name": "internal EVM signer creates verifiable EIP712 signature without exporting key or broadcasting",
+          "status": "PASS"
+        },
+        {
+          "name": "signer checks revocation before releasing signature",
+          "status": "PASS"
+        },
+        {
+          "name": "real HTTPS account routes enforce password, CSRF, origin, owner isolation and internal machine authentication",
+          "status": "PASS"
+        },
+        {
+          "name": "vault machine proof is domain-bound, fresh, exact-body and single-use",
+          "status": "PASS"
+        },
+        {
+          "name": "offline migration backup and CLI first ADMIN preserve key and reject duplicate bootstrap",
+          "status": "PASS"
+        },
+        {
+          "name": "real Argon2 email authentication, persistent throttling, ciphertext and opaque sessions",
+          "status": "PASS"
+        },
+        {
+          "name": "two users cannot read preferences, secrets, sessions or audit of each other; GUEST write forbidden",
+          "status": "PASS"
+        },
+        {
+          "name": "password change revokes all sessions and preserves per-user ciphertext, email change revokes login",
+          "status": "PASS"
+        },
+        {
+          "name": "expiry and CLI disable invalidate live session and hashed interprocess session",
+          "status": "PASS"
+        },
+        {
+          "name": "production configuration rejects bypass and cannot silently use DEV credentials",
+          "status": "PASS"
+        },
+        {
+          "name": "real TLS HTTP handler: cookie, origin, CSRF, spoofed ownership, CLI-only administration and logout",
+          "status": "PASS"
+        },
+        {
+          "name": "actual Core and Gateway processes authenticate over pinned TLS, isolate language and deny web administration",
+          "status": "PASS"
+        },
+        {
+          "name": "real unprivileged owner TTY CLI authenticates ADMIN without echo and refuses a piped password # SKIP container maps only UID 0; no unprivileged OS identity is available",
+          "status": "SKIP"
+        },
+        {
+          "name": "legacy RSA vault imports once to explicit owner, survives password reset, original bytes remain untouched",
+          "status": "PASS"
+        },
+        {
+          "name": "literal legacy route inventory remains explicit; shared private routes default deny",
+          "status": "PASS"
+        },
+        {
+          "name": "historical SUPERADMIN and PBKDF2 identity survive migration with original key and clientId",
+          "status": "PASS"
+        },
+        {
+          "name": "owner AI transport selects only the live session owner key and rejects substitution before provider call",
+          "status": "PASS"
+        },
+        {
+          "name": "browser action acknowledgements are owner-scoped, single use and never execute Engine actions",
+          "status": "PASS"
+        },
+        {
+          "name": "offline CLI attributes canonical Indicator, Strategy and Mosaic definitions only to the named owner",
+          "status": "PASS"
+        }
+      ],
+      "ok": false
+    },
+    {
+      "name": "regression",
+      "exit_code": 0,
+      "error": null,
+      "duration_ms": 131498,
+      "tests": 170,
+      "passed": 170,
+      "failed": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "failed_cases": [],
+      "cases": [
+        {
+          "name": "Core/Communication/Tests/test_communication_router_v1.js",
+          "status": "PASS"
+        },
+        {
+          "name": "Core/Communication/Tests/test_router_normalization_v1.8.12.js",
+          "status": "PASS"
+        },
+        {
+          "name": "Core/Communication/Tests/test_runtime_registry_v1.js",
+          "status": "PASS"
+        },
+        {
+          "name": "manual order accepts NULL historical statistics; fresh owner Risk -> approval -> bound signed EU OKX request; repeat confirms never resend",
+          "status": "PASS"
+        },
+        {
+          "name": "manual Gate cannot be obtained without fresh owner snapshot or after mutation; binding rejects altered amount",
+          "status": "PASS"
+        },
+        {
+          "name": "manual context preserves null history while missing fees and balance remain blocking",
+          "status": "PASS"
+        },
+        {
+          "name": "LIVE configuration is true and an explicit false override is respected",
+          "status": "PASS"
+        },
+        {
+          "name": "authenticated ADMIN START transitions actual durable lifecycle to RUNNING after checks",
+          "status": "PASS"
+        },
+        {
+          "name": "Demande incomplète : demander le montant, sans ordre ni préparation",
+          "status": "PASS"
+        },
+        {
+          "name": "Acheter ou vendre : demander une clarification sans exécuter",
+          "status": "PASS"
+        },
+        {
+          "name": "Montant négatif : invalider la demande sans réutiliser un ancien montant",
+          "status": "PASS"
+        },
+        {
+          "name": "Fonds insuffisants : bloquer et expliquer le manque de solde",
+          "status": "PASS"
+        },
+        {
+          "name": "Montant disponible égal à l’achat, sans réserve pour les frais : bloquer",
+          "status": "PASS"
+        },
+        {
+          "name": "Solde null : ne pas inventer un solde disponible",
+          "status": "PASS"
+        },
+        {
+          "name": "Frais null : rendre la préparation non confirmable",
+          "status": "PASS"
+        },
+        {
+          "name": "Vente sans assez de crypto : bloquer sans envoyer de vente",
+          "status": "PASS"
+        },
+        {
+          "name": "Montant inférieur au minimum d’instrument : bloquer",
+          "status": "PASS"
+        },
+        {
+          "name": "Limite de taille/exposition Risk dépassée : refuser",
+          "status": "PASS"
+        },
+        {
+          "name": "Spread excessif : refus Risk",
+          "status": "PASS"
+        },
+        {
+          "name": "Carnet sans profondeur suffisante : aucune exécution partielle implicite",
+          "status": "PASS"
+        },
+        {
+          "name": "Carnet périmé : demander des données vérifiables",
+          "status": "PASS"
+        },
+        {
+          "name": "Risk demande une révision : la confirmation utilisateur ne vaut pas autorisation",
+          "status": "PASS"
+        },
+        {
+          "name": "Risk indisponible : aucun accord de remplacement",
+          "status": "PASS"
+        },
+        {
+          "name": "Premier ordre sans historique : null conservés et préparation possible",
+          "status": "PASS"
+        },
+        {
+          "name": "Ordre Limit hors périmètre : refus explicite sans changement silencieux en Market",
+          "status": "PASS"
+        },
+        {
+          "name": "Compte Demo sélectionné pour une demande Live : bloquer",
+          "status": "PASS"
+        },
+        {
+          "name": "Compte en lecture seule : aucune demande d’ordre",
+          "status": "PASS"
+        },
+        {
+          "name": "Préparation expirée : confirmation refusée",
+          "status": "PASS"
+        },
+        {
+          "name": "Digest modifié : refus et aucune mutation",
+          "status": "PASS"
+        },
+        {
+          "name": "Préparation annulée : répondre Annulée, sans prétendre à un résultat inconnu",
+          "status": "PASS"
+        },
+        {
+          "name": "Compte modifié après préparation : nouvelle préparation requise",
+          "status": "PASS"
+        },
+        {
+          "name": "Session révoquée : refus de confirmer",
+          "status": "PASS"
+        },
+        {
+          "name": "Solde diminué entre préparation et confirmation : nouveau Risk refuse",
+          "status": "PASS"
+        },
+        {
+          "name": "Prix devenu trop différent : nouvelle confirmation nécessaire",
+          "status": "PASS"
+        },
+        {
+          "name": "Identifiants indisponibles : blocage avant envoi au broker",
+          "status": "PASS"
+        },
+        {
+          "name": "Trading arrêté : blocage certain avant envoi, pas un ordre inconnu",
+          "status": "PASS"
+        },
+        {
+          "name": "Firewall désactivé : ordre refusé",
+          "status": "PASS"
+        },
+        {
+          "name": "Autorisation Risk expirée avant Firewall : refus sans ordre",
+          "status": "PASS"
+        },
+        {
+          "name": "Montant altéré entre Risk et Trading : liaison refusée",
+          "status": "PASS"
+        },
+        {
+          "name": "Refus explicite OKX après vérification locale : REJECTED, sans retry",
+          "status": "PASS"
+        },
+        {
+          "name": "Résultat broker ambigu (timeout) : bloquer les retries et conserver l’état inconnu",
+          "status": "PASS"
+        },
+        {
+          "name": "Résultat broker ambigu (http503) : bloquer les retries et conserver l’état inconnu",
+          "status": "PASS"
+        },
+        {
+          "name": "Résultat broker ambigu (ambiguous50004) : bloquer les retries et conserver l’état inconnu",
+          "status": "PASS"
+        },
+        {
+          "name": "Résultat broker ambigu (empty) : bloquer les retries et conserver l’état inconnu",
+          "status": "PASS"
+        },
+        {
+          "name": "Résultat broker ambigu (noOrderId) : bloquer les retries et conserver l’état inconnu",
+          "status": "PASS"
+        },
+        {
+          "name": "Deux confirmations concurrentes : un seul ordre",
+          "status": "PASS"
+        },
+        {
+          "name": "Redémarrage après ACK : résultat conservé, aucun renvoi",
+          "status": "PASS"
+        },
+        {
+          "name": "Redémarrage après réponse perdue : compte bloqué jusqu’à réconciliation",
+          "status": "PASS"
+        },
+        {
+          "name": "Un autre utilisateur ne confirme ni ne consulte cet ordre",
+          "status": "PASS"
+        },
+        {
+          "name": "Journal durable Trading : ack conserve ACKNOWLEDGED",
+          "status": "PASS"
+        },
+        {
+          "name": "Journal durable Trading : rejected conserve REJECTED",
+          "status": "PASS"
+        },
+        {
+          "name": "Journal durable Trading : timeout_code conserve UNCERTAIN",
+          "status": "PASS"
+        },
+        {
+          "name": "Journal durable Trading : http503 conserve UNCERTAIN",
+          "status": "PASS"
+        },
+        {
+          "name": "Journal durable Trading : empty_ack conserve UNCERTAIN",
+          "status": "PASS"
+        },
+        {
+          "name": "Router preserves only validated, bounded manual-order rejection details; malformed or mismatched replies stay ambiguous",
+          "status": "PASS"
+        },
+        {
+          "name": "actual Engines publish and execute through authenticated TLS Core, Supervisor Gateway and Router",
+          "status": "PASS"
+        },
+        {
+          "name": "default DENY; consistent legacy/permanent grants, reservation, admission and audit",
+          "status": "PASS"
+        },
+        {
+          "name": "ONCE admits one concurrent request and cannot be reused; revocation before Engine admission wins",
+          "status": "PASS"
+        },
+        {
+          "name": "temporary expiry, contract changes and session revocation are read from persistent state",
+          "status": "PASS"
+        },
+        {
+          "name": "identity cannot be supplied in JSON; keys, publication ownership, schema and sensitive calls fail closed",
+          "status": "PASS"
+        },
+        {
+          "name": "malformed Engine result fails its contract and cannot be completed twice",
+          "status": "PASS"
+        },
+        {
+          "name": "bounded recursive schemas check types, nested keys, ranges, enums, strings and limits",
+          "status": "PASS"
+        },
+        {
+          "name": "managed services receive their own identity and UI never inherits a Core key",
+          "status": "PASS"
+        },
+        {
+          "name": "Engines/Firewall/Tests/trading_firewall.test.js",
+          "status": "PASS"
+        },
+        {
+          "name": "CEX selection binds owner, market and broker; public identity contains no secret",
+          "status": "PASS"
+        },
+        {
+          "name": "reject missing authorization, other owner, disabled, wrong market, ambiguous default and inline credentials",
+          "status": "PASS"
+        },
+        {
+          "name": "explicit account selects among multiple assigned accounts without fallback",
+          "status": "PASS"
+        },
+        {
+          "name": "revocation and credential rotation invalidate prior binding before reading secrets",
+          "status": "PASS"
+        },
+        {
+          "name": "GMX selects wallet by explicit chain and passes only bound signer",
+          "status": "PASS"
+        },
+        {
+          "name": "engine uses routing for execution and cancellation and rechecks halt after asynchronous resolution",
+          "status": "PASS"
+        },
+        {
+          "name": "Engines/Trading/tests/test_trading_core_v2.0.js",
+          "status": "PASS"
+        },
+        {
+          "name": "manual ChatBot confirmation -> real Router/Supervisor/Risk/Firewall/Trading -> signed simulated OKX EU request",
+          "status": "PASS"
+        },
+        {
+          "name": "OKX reads use profile credentials, correct GET HMAC, selected region/demo and fee group",
+          "status": "PASS"
+        },
+        {
+          "name": "profile ownership, replay, expiry, no ambient secret fallback and no write escalation",
+          "status": "PASS"
+        },
+        {
+          "name": "session revocation and assignment rotation during a read discard all account data",
+          "status": "PASS"
+        },
+        {
+          "name": "missing fee group, quote FX, stale source timestamps and manual positions remain explicit",
+          "status": "PASS"
+        },
+        {
+          "name": "OKX transport, rate limits and API errors are sanitized; unbounded order pages fail closed",
+          "status": "PASS"
+        },
+        {
+          "name": "legacy trading assignments can read without being re-entered",
+          "status": "PASS"
+        },
+        {
+          "name": "zero available balance is retained and partial balances never become reconciled",
+          "status": "PASS"
+        },
+        {
+          "name": "read ticket expires and profile credential rotation invalidates a pending read",
+          "status": "PASS"
+        },
+        {
+          "name": "profile key -> signed vault TLS -> Trading Firewall CP/1 -> Portfolio -> owner Risk",
+          "status": "PASS"
+        },
+        {
+          "name": "Portfolio/Tests/test_portfolio_engine_v2.js",
+          "status": "PASS"
+        },
+        {
+          "name": "Risk/Tests/risk_engine.test.js",
+          "status": "PASS"
+        },
+        {
+          "name": "real Router + Risk processes, Supervisor facade, discovery, auth, compatibility and native recheck",
+          "status": "PASS"
+        },
+        {
+          "name": "new audited manifests remain DENY without an explicit administrator grant",
+          "status": "PASS"
+        },
+        {
+          "name": "reference log returns, sample volatility, Gaussian VaR, empirical tail, drawdown",
+          "status": "PASS"
+        },
+        {
+          "name": "zero volatility has undefined ratios; invalid/empty/gapped histories unavailable",
+          "status": "PASS"
+        },
+        {
+          "name": "correlation aligns timestamps, rejects constant and desynchronised series",
+          "status": "PASS"
+        },
+        {
+          "name": "portfolio reference exposure, concentration and stop budget; rejects TRADING_ONLY",
+          "status": "PASS"
+        },
+        {
+          "name": "VWAP, spread, fees, partial fills, crossed/unsorted books and constraints",
+          "status": "PASS"
+        },
+        {
+          "name": "strategy expectancy and profit factor use net closed trades",
+          "status": "PASS"
+        },
+        {
+          "name": "policy rejects invalid values; unavailable overall does not imply low risk",
+          "status": "PASS"
+        },
+        {
+          "name": "complete immutable snapshot, unique identity, expiry and portfolio isolation",
+          "status": "PASS"
+        },
+        {
+          "name": "incomplete, stale, mismatched and untrusted data never grant permission",
+          "status": "PASS"
+        },
+        {
+          "name": "hard limits and critical components cannot hide behind average scores",
+          "status": "PASS"
+        },
+        {
+          "name": "bounded simultaneous snapshots do not mix contexts; overload and cancellation",
+          "status": "PASS"
+        },
+        {
+          "name": "source timeout returns incomplete result, no raw service error or late mutation",
+          "status": "PASS"
+        },
+        {
+          "name": "parallel and sequential calculations are identical apart from metadata",
+          "status": "PASS"
+        },
+        {
+          "name": "worker timeout, failed job and queue saturation recover",
+          "status": "PASS"
+        },
+        {
+          "name": "strict requests reject injected data, policy and incompatible horizons",
+          "status": "PASS"
+        },
+        {
+          "name": "cancellation during I/O clears active slot without caching a partial response",
+          "status": "PASS"
+        },
+        {
+          "name": "unsupported leverage, missing protection and mismatched quote currency fail closed",
+          "status": "PASS"
+        },
+        {
+          "name": "component REVIEW and explicit policy violation are distinct decisions",
+          "status": "PASS"
+        },
+        {
+          "name": "overflow is explicitly unavailable, capacity is bounded, market expiry is checked after CPU",
+          "status": "PASS"
+        },
+        {
+          "name": "book execution venue, market type, order type and trade scope cannot be substituted",
+          "status": "PASS"
+        },
+        {
+          "name": "Risk/Tests/test_risk_gate.js",
+          "status": "PASS"
+        },
+        {
+          "name": "R1 calculation A B C D and proportional resize",
+          "status": "PASS"
+        },
+        {
+          "name": "R1 missing data, wrong stops and modules",
+          "status": "PASS"
+        },
+        {
+          "name": "R2 detects drawdown, aggregate risk, concentration and integrity",
+          "status": "PASS"
+        },
+        {
+          "name": "R2 stale data fail closed; disabled passive mode",
+          "status": "PASS"
+        },
+        {
+          "name": "Risk v2.5 policy is restrictive and separates R1/R2",
+          "status": "PASS"
+        },
+        {
+          "name": "Risk level changes R1 and R2 presets without modifying Risk Gate threshold",
+          "status": "PASS"
+        },
+        {
+          "name": "Unrecognized keys and invalid risk limits cannot broaden policy",
+          "status": "PASS"
+        },
+        {
+          "name": "Risk settings routes are ADMIN-only; UI does not use blocked CP1 UI writes",
+          "status": "PASS"
+        },
+        {
+          "name": "explicit LIVE=false override blocks actual Trading Engine / OKX adapter; no network call",
+          "status": "PASS"
+        },
+        {
+          "name": "financial commands and risk approval issuance remain outside the qualified agent command set",
+          "status": "PASS"
+        },
+        {
+          "name": "legacy Risk Gate approval alone is insufficient: scores and owner snapshot are not prerequisites of this low-level class",
+          "status": "PASS"
+        },
+        {
+          "name": "official catalogue, natural requests, exact REST/WS identifiers and unimplemented operations are distinct",
+          "status": "PASS"
+        },
+        {
+          "name": "amount units, limit/trigger/protections and market types remain separate",
+          "status": "PASS"
+        },
+        {
+          "name": "LOCAL multi-turn clarification makes zero LLM calls and never enables financial confirmation",
+          "status": "PASS"
+        },
+        {
+          "name": "material changes, replacement, expiry and Auth21 session/owner isolation invalidate context",
+          "status": "PASS"
+        },
+        {
+          "name": "HYBRID fallback is opt-in; explicit OPENAI and invalid output have no extra authority",
+          "status": "PASS"
+        },
+        {
+          "name": "LOCAL and model intents use the same validation and actual Gateway permission boundary",
+          "status": "PASS"
+        },
+        {
+          "name": "catalogue loading rejects duplicates, traversal, unsafe regex and unknown parameter contracts",
+          "status": "PASS"
+        },
+        {
+          "name": "secrets are scrubbed before LLM context, response and history; environment mismatch cannot execute",
+          "status": "PASS"
+        },
+        {
+          "name": "asset corrections invalidate stale instruments, prices and base quantities; contradictory model pairs are rejected",
+          "status": "PASS"
+        },
+        {
+          "name": "Supervisor/LLM/Tests/test_llm_manager.js",
+          "status": "PASS"
+        },
+        {
+          "name": "Supervisor/Tests/test_supervisor_architecture.js",
+          "status": "PASS"
+        },
+        {
+          "name": "multi-service fixtures reject duplicate ephemeral ports before starting Engines",
+          "status": "PASS"
+        },
+        {
+          "name": "fictional market preload refuses real paths and unsupported vendor requests",
+          "status": "PASS"
+        },
+        {
+          "name": "real authenticated MarketData passes synthetic Binance candles through the real protection worker before cache",
+          "status": "PASS"
+        },
+        {
+          "name": "real canonical Portfolio SQLite ledger isolates events/trades/balances/snapshots in existing DB and preserves legacy",
+          "status": "PASS"
+        },
+        {
+          "name": "actual Strategy owner dispatcher persists only own definitions, mode and canonical evaluations",
+          "status": "PASS"
+        },
+        {
+          "name": "every historical route enforces the ADMIN/USER/GUEST boundary with live TLS sessions",
+          "status": "PASS"
+        },
+        {
+          "name": "CP1 administration uses real Auth21 roles, HTTPS Origin and CSRF",
+          "status": "PASS"
+        },
+        {
+          "name": "vault stores encrypted multi-owner assignments; scoped TLS client obtains only selected credential",
+          "status": "PASS"
+        },
+        {
+          "name": "ticket binds exact order and expires; revoked sessions and rotated assignments cannot release credentials",
+          "status": "PASS"
+        },
+        {
+          "name": "invalid and ambiguous registry changes do not rotate secrets; broker of an existing ID cannot change",
+          "status": "PASS"
+        },
+        {
+          "name": "internal EVM signer creates verifiable EIP712 signature without exporting key or broadcasting",
+          "status": "PASS"
+        },
+        {
+          "name": "signer checks revocation before releasing signature",
+          "status": "PASS"
+        },
+        {
+          "name": "real HTTPS account routes enforce password, CSRF, origin, owner isolation and internal machine authentication",
+          "status": "PASS"
+        },
+        {
+          "name": "vault machine proof is domain-bound, fresh, exact-body and single-use",
+          "status": "PASS"
+        },
+        {
+          "name": "Blob restores history, converses with cognitive mode, retains command mode and controls Engines via Core",
+          "status": "PASS"
+        },
+        {
+          "name": "ADMIN can load allowlisted models and explicitly persist selected Supervisor provider",
+          "status": "PASS"
+        },
+        {
+          "name": "live notification confirms the exact preparation with CSRF once even after a double click",
+          "status": "PASS"
+        },
+        {
+          "name": "confirmation refusée : afficher le message utilisateur, sans retry ni code technique comme seul texte",
+          "status": "PASS"
+        },
+        {
+          "name": "risk acknowledgement blocks first then accompanies the exact manual confirmation",
+          "status": "PASS"
+        },
+        {
+          "name": "Companion calls only Auth21 owner bridge; model and UI context sanitized",
+          "status": "PASS"
+        },
+        {
+          "name": "Chat history is retrieved only through owner-verified Supervisor action",
+          "status": "PASS"
+        },
+        {
+          "name": "Engine panel lists only Core-authorized read operations and explicit owner Strategy controls",
+          "status": "PASS"
+        },
+        {
+          "name": "slow OpenAI conversation gets dedicated timeouts; regular Engines keep their normal limits",
+          "status": "PASS"
+        },
+        {
+          "name": "delegated owner AI proof renewal is single-use and bounded to same verified owner",
+          "status": "PASS"
+        },
+        {
+          "name": "Core polls each Engine and broker, scoped registry identities",
+          "status": "PASS"
+        },
+        {
+          "name": "reject unauthenticated peer and do not import",
+          "status": "PASS"
+        },
+        {
+          "name": "reject cross-broker snapshots",
+          "status": "PASS"
+        },
+        {
+          "name": "one failed Engine does not stop others",
+          "status": "PASS"
+        },
+        {
+          "name": "tests/registry-process-integration.js",
+          "status": "PASS"
+        },
+        {
+          "name": "actual Router -> Supervisor -> verified owner receiver -> persistent cognitive memory (MOCK)",
+          "status": "PASS"
+        },
+        {
+          "name": "persistent cognitive memory, self first, scoped tools, reviewed-only proposals, model allowlist",
+          "status": "PASS"
+        },
+        {
+          "name": "CP1 registry matches real Supervisor handlers and manifest contracts",
+          "status": "PASS"
+        },
+        {
+          "name": "tool allowlist blocks model-command injection; no direct trade/tool execution",
+          "status": "PASS"
+        },
+        {
+          "name": "existing OpenAI provider forwards chosen model through CP1 AI Gateway Responses API",
+          "status": "PASS"
+        },
+        {
+          "name": "unverified CP1 identity cannot open cognitive memory, cross-account isolation",
+          "status": "PASS"
+        },
+        {
+          "name": "malformed provider JSON retries once; failure stores a controlled turn without secrets",
+          "status": "PASS"
+        },
+        {
+          "name": "context budget drops old history, protects current prompt, and backup restores SQLite",
+          "status": "PASS"
+        },
+        {
+          "name": "Core policy uses authenticated owner channel for cognitive reasoning and ADMIN configuration",
+          "status": "PASS"
+        },
+        {
+          "name": "Core owner AI checks model, signed original prompt, output token cap, store:false, current session",
+          "status": "PASS"
+        },
+        {
+          "name": "ADMIN model choice persists in canonical SQLite settings and USER cannot alter it",
+          "status": "PASS"
+        },
+        {
+          "name": "persist across process reopen, isolate tenants and sessions, enforce retention",
+          "status": "PASS"
+        },
+        {
+          "name": "expiry prevents reading and prune deletes expired sessions",
+          "status": "PASS"
+        }
+      ],
+      "ok": true
+    }
+  ],
+  "passed": 395,
+  "failed": 1,
+  "skipped": 1,
+  "mandatory_failures": [
+    "auth21"
+  ],
+  "status": "FAIL"
+}

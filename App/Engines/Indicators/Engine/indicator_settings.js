@@ -4,7 +4,7 @@
 var path=require('path'),Store=require("../../../Core/Settings/sqlite_settings_store");
 var REFRESH_PRESETS=[1000,5000,15000,30000,60000],SCOPE='indicator_engine',KEY='settings';
 function Settings(root,registry,opt){
- opt=opt||{};this.root=root;this.registry=registry;this.appRoot=path.resolve(root,'..');
+ opt=opt||{};this.root=root;this.registry=registry;this.appRoot=opt.appRoot||path.resolve(root,'..');
  var trial=process.env.IATB_AUTH21_LOCAL_SNAPSHOT_TRIAL==='1';
  var business=trial&&process.env.IATB_AUTH21_BUSINESS_TRIAL==='1'&&
   process.env.IATB_AUTH21_IPC_PROBE_TRIAL==='1';

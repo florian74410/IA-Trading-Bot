@@ -360,7 +360,7 @@ status_ok "Firewall workers" "Trading + Market Data"
 
 # 4. Universal Market Data Collector (native CEX/DEX providers).
 status_wait "Market Data Collector" "CEX/DEX registry"
-IATB_MARKET_DATA_PORT="$MARKET_DATA_PORT" IATB_FIREWALL_PORT="$FIREWALL_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" MarketData/market_data_service.js >> "$MARKET_DATA_LOG" 2>&1 &
+IATB_MARKET_DATA_PORT="$MARKET_DATA_PORT" IATB_FIREWALL_PORT="$FIREWALL_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Engines/MarketData/market_data_service.js >> "$MARKET_DATA_LOG" 2>&1 &
 MARKET_DATA_PID=$!
 require_service "Market Data Collector" "$MARKET_DATA_PORT" "/health" "IA-TB Market Data" "$MARKET_DATA_LOG" 12
 
@@ -385,13 +385,13 @@ else
 fi
 
 status_wait "Liquidity Engine" "after Market Data"
-IATB_LIQUIDITY_PORT="$LIQUIDITY_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Liquidity/Engine/liquidity_service.js >> "$LIQUIDITY_LOG" 2>&1 &
+IATB_LIQUIDITY_PORT="$LIQUIDITY_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Engines/Liquidity/Engine/liquidity_service.js >> "$LIQUIDITY_LOG" 2>&1 &
 LIQUIDITY_PID=$!
 require_service "Liquidity Engine" "$LIQUIDITY_PORT" "/health" "IA-TB Liquidity Engine" "$LIQUIDITY_LOG" 10
 
 # 6. Risk is online before Trading accepts any mutating path.
 status_wait "Risk Engine" "before Trading"
-IATB_RISK_ENGINE_PORT="$RISK_ENGINE_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Risk/Engine/risk_service.js >> "$RISK_LOG" 2>&1 &
+IATB_RISK_ENGINE_PORT="$RISK_ENGINE_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Engines/Risk/Engine/risk_service.js >> "$RISK_LOG" 2>&1 &
 RISK_ENGINE_PID=$!
 require_service "Risk Engine" "$RISK_ENGINE_PORT" "/health" "IA-TB Risk Engine" "$RISK_LOG" 10
 
@@ -402,19 +402,19 @@ require_service "Trading Engine" "$TRADING_ENGINE_PORT" "/health" "IA-TB Trading
 
 # 7. Portfolio can now sync Trading history and marks through Router.
 status_wait "Portfolio Engine" "after Trading"
-IATB_PORTFOLIO_PORT="$PORTFOLIO_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Portfolio/Engine/portfolio_service.js >> "$PORTFOLIO_LOG" 2>&1 &
+IATB_PORTFOLIO_PORT="$PORTFOLIO_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Engines/Portfolio/Engine/portfolio_service.js >> "$PORTFOLIO_LOG" 2>&1 &
 PORTFOLIO_PID=$!
 require_service "Portfolio Engine" "$PORTFOLIO_PORT" "/health" "IA-TB Portfolio Engine" "$PORTFOLIO_LOG" 10
 
 # 8. Strategy sees all analysis/risk/portfolio dependencies.
 status_wait "Strategy Engine" "after Risk + Portfolio"
-IATB_STRATEGY_PORT="$STRATEGY_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Strategy/Engine/strategy_service.js >> "$STRATEGY_LOG" 2>&1 &
+IATB_STRATEGY_PORT="$STRATEGY_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Engines/Strategy/Engine/strategy_service.js >> "$STRATEGY_LOG" 2>&1 &
 STRATEGY_PID=$!
 require_service "Strategy Engine" "$STRATEGY_PORT" "/health" "IA-TB Strategy Engine v2" "$STRATEGY_LOG" 10
 
 # 9. Supervisor orchestrates only once the runtime topology is ready.
 status_wait "IA Supervisor" "last backend service"
-IATB_SUPERVISOR_PORT="$SUPERVISOR_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Supervisor/supervisor_service.js >> "$SUPERVISOR_LOG" 2>&1 &
+IATB_SUPERVISOR_PORT="$SUPERVISOR_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Engines/Supervisor/supervisor_service.js >> "$SUPERVISOR_LOG" 2>&1 &
 SUPERVISOR_PID=$!
 require_service "IA Supervisor" "$SUPERVISOR_PORT" "/health" "IA-TB Supervisor" "$SUPERVISOR_LOG" 10
 

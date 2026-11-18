@@ -4,7 +4,7 @@ Goal
 - Market Data Collector is the universal READ data ingress.
 - Liquidity Engine analyses liquidity; it does not own broker credentials or portfolio state.
 - Strategy, Portfolio, Supervisor and Chat consume normalized contracts.
-- Supervisor/Chat access is READ_ONLY.
+- Engines/Supervisor/Chat access is READ_ONLY.
 
 Provider families
 CEX_MARKET: Kraken/Binance/etc.
@@ -61,7 +61,7 @@ Consumers
   - indicator.financial_series
   - indicator.financial_analyze
   These allow deterministic calculations over persisted financial metrics without provider/network access inside the math engine.
-- Supervisor/LLM: marketdata.financial.ai_context through CP/1, read-only.
+- Engines/Supervisor/LLM: marketdata.financial.ai_context through CP/1, read-only.
 
 Technical market data
 ---------------------
@@ -93,7 +93,7 @@ CP/1 action marketdata.audit
 returns PASS/WARN/FAIL with provider, cache, registry, storage, freshness, quality and routing state.
 
 Tests:
-node MarketData/Tests/test_market_data_collector_v2_lock.js
-node MarketData/Tests/test_market_data_runtime_v2.js
+node Engines/MarketData/Tests/test_market_data_collector_v2_lock.js
+node Engines/MarketData/Tests/test_market_data_runtime_v2.js
 
 The runtime test expects the IA-TB services to be running on their standard ports.

@@ -1,0 +1,143 @@
+{
+  "schema": "iatb.consolidation-anomalies/1.0",
+  "source": "1b6a01f012169bfd4d1034c0d9d19b20b2fc9284",
+  "anomalies": [
+    {
+      "id": "ERR-001",
+      "priority": "P0",
+      "error": "Fundamental persistent root retargeted with source",
+      "files": [
+        "App/Core/Shared/paths.js"
+      ],
+      "first_solution": "Restore the established Shared Data/Fundamental path without moving data",
+      "latest_solution": "Restore the established Shared Data/Fundamental path without moving data",
+      "status": "RESOLVED",
+      "proofs": [
+        "artifacts/persistent-layout-before.tap",
+        "artifacts/persistent-layout-after.tap",
+        "Results/consolidation-first-cp1.tap",
+        "Results/consolidation-first-commands.json"
+      ],
+      "attempts": [
+        {
+          "result": "PASS",
+          "details": "10 targeted tests, 93 CP1 executions, all 358 serialized contracts/permissions unchanged."
+        }
+      ],
+      "commits": []
+    },
+    {
+      "id": "ERR-002",
+      "priority": "P1",
+      "error": "Migration tool confuses data labels and source prefixes",
+      "files": [
+        "Tools/Architecture/Rev3/migrate.js"
+      ],
+      "first_solution": "Root-sensitive path prefixes; protect persistent path module; migration unit tests",
+      "latest_solution": "Root-sensitive path prefixes; protect persistent path module; migration unit tests",
+      "status": "RESOLVED",
+      "proofs": [
+        "artifacts/consolidation-first-fixes.tap",
+        "Results/consolidation-first-cp1.tap",
+        "Results/consolidation-first-commands.json"
+      ],
+      "attempts": [
+        {
+          "result": "PASS",
+          "details": "10 targeted tests, 93 CP1 executions, all 358 serialized contracts/permissions unchanged."
+        }
+      ],
+      "commits": []
+    },
+    {
+      "id": "ERR-003",
+      "priority": "P1",
+      "error": "Derived Indicator roots and mutable custom resources follow relocated code",
+      "files": [
+        "App/Engines/Indicators/Engine/indicator_service.js"
+      ],
+      "first_solution": "Use canonical App root and explicit historical data directories; keep BuiltIn under code",
+      "latest_solution": "Use canonical App root and explicit historical data directories; keep BuiltIn under code",
+      "status": "RESOLVED",
+      "proofs": [
+        "IMPACT_REPORTS/IMPACT-001-PERSISTENT-ROOTS.md",
+        "artifacts/consolidation-first-fixes.tap",
+        "Results/consolidation-first-cp1.tap",
+        "Results/consolidation-first-commands.json"
+      ],
+      "attempts": [
+        {
+          "result": "PASS",
+          "details": "10 targeted tests, 93 CP1 executions, all 358 serialized contracts/permissions unchanged."
+        }
+      ],
+      "commits": []
+    },
+    {
+      "id": "ERR-004",
+      "priority": "P1",
+      "error": "Auth21 service-boundary test still reads removed Trading entry",
+      "files": [
+        "App/Tools/Tests/auth21_service_boundary.test.js"
+      ],
+      "first_solution": "Resolve relative strings stored in dynamic path tables without relaxing assertions",
+      "latest_solution": "Resolve relative strings stored in dynamic path tables without relaxing assertions",
+      "status": "RESOLVED",
+      "proofs": [
+        "artifacts/consolidation-baseline/foundation/auth21.tap",
+        "artifacts/consolidation-first-fixes.tap",
+        "Results/consolidation-first-cp1.tap",
+        "Results/consolidation-first-commands.json"
+      ],
+      "attempts": [
+        {
+          "result": "PASS",
+          "details": "10 targeted tests, 93 CP1 executions, all 358 serialized contracts/permissions unchanged."
+        }
+      ],
+      "commits": []
+    },
+    {
+      "id": "ERR-005",
+      "priority": "P1",
+      "error": "Six Engines still outside canonical Engines directory",
+      "files": [
+        "App/"
+      ],
+      "first_solution": "Migrate each Engine and requalify existing CP1 contracts",
+      "latest_solution": "Migrate each Engine and requalify existing CP1 contracts",
+      "status": "CONFIRMED",
+      "proofs": [],
+      "attempts": [],
+      "commits": []
+    },
+    {
+      "id": "ERR-006",
+      "priority": "P1",
+      "error": "Launchers, dynamic paths and old build prerequisites need post-migration audit",
+      "files": [
+        "Deploy/ Tools/ .github/ App/"
+      ],
+      "first_solution": "Second whole-tree audit and global regression after all moves",
+      "latest_solution": "Second whole-tree audit and global regression after all moves",
+      "status": "ANALYZING",
+      "proofs": [],
+      "attempts": [],
+      "commits": []
+    },
+    {
+      "id": "ERR-007",
+      "priority": "P3",
+      "error": "Generated registry report and repeated intermediate contract snapshots in tracked source",
+      "files": [
+        "App/artifacts/ Documentation/Architecture/Rev3/Results/"
+      ],
+      "first_solution": "Remove regenerable outputs after preserving canonical evidence and recovery refs",
+      "latest_solution": "Remove regenerable outputs after preserving canonical evidence and recovery refs",
+      "status": "ANALYZING",
+      "proofs": [],
+      "attempts": [],
+      "commits": []
+    }
+  ]
+}

@@ -8,7 +8,7 @@
   "marker": "IA-TB Portfolio Engine",
   "restartable": true,
   "defaultEnabled": true,
-  "script": "Portfolio/Engine/portfolio_service.js",
+  "script": "Engines/Portfolio/Engine/portfolio_service.js",
   "log": ".runtime/logs/portfolio.log",
   "env": {
     "IATB_PORTFOLIO_PORT": "8020",

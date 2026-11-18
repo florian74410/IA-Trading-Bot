@@ -65,7 +65,7 @@ services:
     depends_on: [router]
   marketdata:
     <<: *runtime
-    command: ["node", "--require", "./Tools/CI/auth21_provider_fixture_transport.js", "MarketData/market_data_service.js"]
+    command: ["node", "--require", "./Tools/CI/auth21_provider_fixture_transport.js", "Engines/MarketData/market_data_service.js"]
     environment:
       <<: *auth21-env
       IATB_QA_MARKET_FIXTURE: "1"
@@ -78,27 +78,27 @@ services:
     depends_on: [router]
   liquidity:
     <<: *runtime
-    command: ["node", "Liquidity/Engine/liquidity_service.js"]
+    command: ["node", "Engines/Liquidity/Engine/liquidity_service.js"]
     network_mode: service:router
     depends_on: [router]
   strategy:
     <<: *runtime
-    command: ["node", "Strategy/Engine/strategy_service.js"]
+    command: ["node", "Engines/Strategy/Engine/strategy_service.js"]
     network_mode: service:router
     depends_on: [router]
   risk:
     <<: *runtime
-    command: ["node", "Risk/Engine/risk_service.js"]
+    command: ["node", "Engines/Risk/Engine/risk_service.js"]
     network_mode: service:router
     depends_on: [router]
   portfolio:
     <<: *runtime
-    command: ["node", "Portfolio/Engine/portfolio_service.js"]
+    command: ["node", "Engines/Portfolio/Engine/portfolio_service.js"]
     network_mode: service:router
     depends_on: [router]
   supervisor:
     <<: *runtime
-    command: ["node", "Supervisor/supervisor_service.js"]
+    command: ["node", "Engines/Supervisor/supervisor_service.js"]
     network_mode: service:router
     depends_on: [router]
   fundamental:

@@ -1,0 +1,252 @@
+{
+  "schema": "cp1.simulator-report/1.0",
+  "scenario": "all-engines-read",
+  "ok": true,
+  "discovery_ms": 60.49084099999982,
+  "engines": [
+    {
+      "id": "marketdata",
+      "online": true
+    },
+    {
+      "id": "indicator",
+      "online": true
+    },
+    {
+      "id": "fundamental",
+      "online": true
+    },
+    {
+      "id": "liquidity",
+      "online": true
+    },
+    {
+      "id": "strategy",
+      "online": true
+    },
+    {
+      "id": "risk",
+      "online": true
+    },
+    {
+      "id": "portfolio",
+      "online": true
+    },
+    {
+      "id": "firewall",
+      "online": true
+    },
+    {
+      "id": "trading",
+      "online": true
+    },
+    {
+      "id": "supervisor",
+      "online": true
+    }
+  ],
+  "commands_discovered": 258,
+  "permissions": {
+    "allow": 22,
+    "deny": 236
+  },
+  "latency_ms": {
+    "p50": 48.494494000000486,
+    "p95": 63.915500000000065,
+    "p99": 63.915500000000065
+  },
+  "steps": [
+    {
+      "id": "market",
+      "engine": "marketdata",
+      "command": "marketdata.health",
+      "permission_validation_ms": 1.9613140000001295,
+      "request_id": "cp-mwlt4ggg-f0a763f5a9aee261",
+      "response_schema": "marketdata.response/2.0",
+      "routing": {
+        "permission_ms": 2.6032169999998587,
+        "engine_round_trip_ms": 18.258617000000413
+      },
+      "response_hash": "1238743e5ee299e429da6fc0b8d7ec8fe439718e34b879ba68ae732122c8632c",
+      "audit_events": 3,
+      "status": "PASS",
+      "latency_ms": 56.465376000000106
+    },
+    {
+      "id": "indicator",
+      "engine": "indicator",
+      "command": "indicator.list_indicators",
+      "permission_validation_ms": 1.8747530000000552,
+      "request_id": "cp-mwlt4gi0-251f0e565c9e8e6f",
+      "response_schema": "iatb.indicator.settings/1.0",
+      "routing": {
+        "permission_ms": 3.8396649999995134,
+        "engine_round_trip_ms": 15.675586000000294
+      },
+      "response_hash": "81af064b8b003484bd8cd9549ba3278207cc10135befd99f0336475f467c733b",
+      "audit_events": 3,
+      "status": "PASS",
+      "latency_ms": 56.269585000000006
+    },
+    {
+      "id": "fundamental",
+      "engine": "fundamental",
+      "command": "fundamental.health",
+      "permission_validation_ms": 1.4098400000002584,
+      "request_id": "cp-mwlt4gjk-8e6d11c11906ddcc",
+      "response_schema": "fundamental.response/1.1",
+      "routing": {
+        "permission_ms": 3.739027999999962,
+        "engine_round_trip_ms": 13.241363000000092
+      },
+      "response_hash": "d9286e9642e87420d44ef6a5839bc9b8eb710e23666b467cb2ebb265f92630f2",
+      "audit_events": 3,
+      "status": "PASS",
+      "latency_ms": 46.625326000000314
+    },
+    {
+      "id": "liquidity",
+      "engine": "liquidity",
+      "command": "liquidity.health",
+      "permission_validation_ms": 1.9854190000005474,
+      "request_id": "cp-mwlt4gkv-dcbbce146c1956fe",
+      "response_schema": "liquidity.response/2.0",
+      "routing": {
+        "permission_ms": 4.931422999999995,
+        "engine_round_trip_ms": 14.90026300000045
+      },
+      "response_hash": "b67ff300a325df98a26a3e397307479509dd52a9be3ef75f8b1f223664fe1f1a",
+      "audit_events": 3,
+      "status": "PASS",
+      "latency_ms": 63.915500000000065
+    },
+    {
+      "id": "strategy",
+      "engine": "strategy",
+      "command": "strategy.health",
+      "permission_validation_ms": 1.7331600000006802,
+      "request_id": "cp-mwlt4gmn-b0ebca957fd9e164",
+      "response_schema": "strategy.response/2.0",
+      "routing": {
+        "permission_ms": 4.183594000000085,
+        "engine_round_trip_ms": 12.205716000000393
+      },
+      "response_hash": "cbc61bbbafb7032fec366134bae615421093f42a1e013846c1df833b3bfcadd3",
+      "audit_events": 3,
+      "status": "PASS",
+      "latency_ms": 52.47035599999981
+    },
+    {
+      "id": "risk",
+      "engine": "risk",
+      "command": "risk.constraints.get",
+      "permission_validation_ms": 1.4397849999995742,
+      "request_id": "cp-mwlt4go3-e4d27469af35bbf6",
+      "response_schema": "risk.constraints/1.0",
+      "routing": {
+        "permission_ms": 3.290814999999384,
+        "engine_round_trip_ms": 11.698073000000477
+      },
+      "response_hash": "94a5dabd87de5ad37e65c69c23fe2628678ded4b29e15ae766352ac663a3df26",
+      "audit_events": 3,
+      "status": "PASS",
+      "latency_ms": 44.00205099999948
+    },
+    {
+      "id": "portfolio",
+      "engine": "portfolio",
+      "command": "portfolio.health",
+      "permission_validation_ms": 1.1544149999999718,
+      "request_id": "cp-mwlt4gpb-3604174aaeb80774",
+      "response_schema": "portfolio.response/1.0",
+      "routing": {
+        "permission_ms": 4.215723999999682,
+        "engine_round_trip_ms": 13.592738000000281
+      },
+      "response_hash": "faf66eb72db36b1c23ba5c5159f438d88d28fd517807595d987dc5741a3aa5c2",
+      "audit_events": 3,
+      "status": "PASS",
+      "latency_ms": 51.17327600000044
+    },
+    {
+      "id": "firewall",
+      "engine": "firewall",
+      "command": "firewall.status",
+      "permission_validation_ms": 1.6055029999997714,
+      "request_id": "cp-mwlt4gqq-a3e13d9e47d5ba2b",
+      "response_schema": "firewall.monitor.response/1.0",
+      "routing": {
+        "permission_ms": 3.3049810000002253,
+        "engine_round_trip_ms": 11.136693999999807
+      },
+      "response_hash": "22f1ff138b0200cdb0a9f92d93d673c46daf22b6a0fc3e878a23c4794f9e22e4",
+      "audit_events": 3,
+      "status": "PASS",
+      "latency_ms": 48.494494000000486
+    },
+    {
+      "id": "trading",
+      "engine": "trading",
+      "command": "trading.health",
+      "permission_validation_ms": 1.9155799999998635,
+      "request_id": "cp-mwlt4gs3-699671e5653873f5",
+      "response_schema": "trading.response/2.0",
+      "routing": {
+        "permission_ms": 3.3008929999996326,
+        "engine_round_trip_ms": 12.870574999999917
+      },
+      "response_hash": "fa31f646e4738c64f8144c09e858178575433c5421ea59d0cce2f31fcd4dd46a",
+      "audit_events": 3,
+      "status": "PASS",
+      "latency_ms": 52.24433299999964
+    },
+    {
+      "id": "supervisor",
+      "engine": "supervisor",
+      "command": "supervisor.status",
+      "permission_validation_ms": 1.7668530000000828,
+      "request_id": "cp-mwlt4gtj-8374e3945eedab6f",
+      "response_schema": "supervisor.response/1.0",
+      "routing": {
+        "permission_ms": 3.1240850000003775,
+        "engine_round_trip_ms": 8.407992999999806
+      },
+      "response_hash": "bafe51a79fe5f480b7696c3eaf92fc8c11a7d6c01c36a7185e7f86e2509661e0",
+      "audit_events": 3,
+      "status": "PASS",
+      "latency_ms": 48.83532500000001
+    },
+    {
+      "id": "forbidden",
+      "engine": "trading",
+      "command": "trading.execute",
+      "error": "COMMAND_UNAVAILABLE",
+      "status": "EXPECTED_REFUSAL",
+      "latency_ms": 1.4802309999995487
+    },
+    {
+      "id": "invalid",
+      "engine": "risk",
+      "command": "risk.status",
+      "error": "CP_ARGUMENT_SCHEMA",
+      "status": "EXPECTED_REFUSAL",
+      "latency_ms": 1.6476810000003752
+    },
+    {
+      "id": "unknown",
+      "engine": "risk",
+      "command": "risk.does_not_exist",
+      "error": "COMMAND_UNKNOWN",
+      "status": "EXPECTED_REFUSAL",
+      "latency_ms": 1.3598469999997178
+    },
+    {
+      "id": "no-permission",
+      "engine": "risk",
+      "command": "risk.status",
+      "error": "PERMISSION_DENIED",
+      "status": "EXPECTED_REFUSAL",
+      "latency_ms": 1.5129109999998036
+    }
+  ]
+}

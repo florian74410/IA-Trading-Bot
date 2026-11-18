@@ -1,0 +1,148 @@
+{
+  "schema": "cp1.simulator-report/1.0",
+  "scenario": "owner-okx-risk-preparation",
+  "ok": true,
+  "discovery_ms": 35.71957899999961,
+  "engines": [
+    {
+      "id": "marketdata",
+      "online": true
+    },
+    {
+      "id": "indicator",
+      "online": false
+    },
+    {
+      "id": "fundamental",
+      "online": false
+    },
+    {
+      "id": "liquidity",
+      "online": false
+    },
+    {
+      "id": "strategy",
+      "online": false
+    },
+    {
+      "id": "risk",
+      "online": true
+    },
+    {
+      "id": "portfolio",
+      "online": true
+    },
+    {
+      "id": "firewall",
+      "online": true
+    },
+    {
+      "id": "trading",
+      "online": true
+    },
+    {
+      "id": "supervisor",
+      "online": true
+    }
+  ],
+  "commands_discovered": 141,
+  "permissions": {
+    "allow": 5,
+    "deny": 136
+  },
+  "latency_ms": {
+    "p50": 59.12572899999941,
+    "p95": 143.6526049999993,
+    "p99": 143.6526049999993
+  },
+  "steps": [
+    {
+      "id": "account",
+      "engine": "portfolio",
+      "command": "portfolio.account.snapshot",
+      "permission_validation_ms": 2.339657000000443,
+      "request_id": "cp-mwlt64iy-d85e8cb261e54f78",
+      "response_schema": "portfolio.response/1.0",
+      "routing": {
+        "permission_ms": 4.073940000000221,
+        "engine_round_trip_ms": 73.89284999999927
+      },
+      "response_hash": "24976b1421cc8cafd36740f371942af5866af2658e7609d35321df2164279003",
+      "audit_events": 3,
+      "status": "PASS",
+      "latency_ms": 106.85184799999934
+    },
+    {
+      "id": "candles",
+      "engine": "marketdata",
+      "command": "marketdata.candles",
+      "permission_validation_ms": 2.570585999999821,
+      "request_id": "cp-mwlt65gi-4e56dcb4d1be39aa",
+      "response_schema": "marketdata.response/2.0",
+      "routing": {
+        "permission_ms": 3.835436999999729,
+        "engine_round_trip_ms": 21.120200000001205
+      },
+      "response_hash": "124dd6de4626315c83c58500a80f42856f135b150770e07068adf123b93f5125",
+      "audit_events": 3,
+      "status": "PASS",
+      "latency_ms": 62.23303399999895
+    },
+    {
+      "id": "book",
+      "engine": "marketdata",
+      "command": "marketdata.microstructure.snapshot",
+      "permission_validation_ms": 1.4976230000011128,
+      "request_id": "cp-mwlt65i7-df9f5d8f390cf8f9",
+      "response_schema": "marketdata.response/2.0",
+      "routing": {
+        "permission_ms": 3.2422979999992094,
+        "engine_round_trip_ms": 13.85435900000084
+      },
+      "response_hash": "d3d8c809f64f254aefa4a87813bd63ffcb60a7307ce4725b0f3de050b87c8b8e",
+      "audit_events": 3,
+      "status": "PASS",
+      "latency_ms": 41.09600900000078
+    },
+    {
+      "id": "risk",
+      "engine": "risk",
+      "command": "risk.snapshot.create",
+      "permission_validation_ms": 3.2838819999997213,
+      "request_id": "cp-mwlt65je-03625337bcf9c7f2",
+      "response_schema": "risk.snapshot/2.0",
+      "routing": {
+        "permission_ms": 5.789211999999679,
+        "engine_round_trip_ms": 104.67618200000106
+      },
+      "response_hash": "a6167d35b35a125eed1996be06ac0d06e97bc92a7011f4cb249865bc2fec1638",
+      "audit_events": 3,
+      "status": "PASS",
+      "latency_ms": 143.6526049999993
+    },
+    {
+      "id": "saved",
+      "engine": "risk",
+      "command": "risk.snapshot.get",
+      "permission_validation_ms": 1.5582660000000033,
+      "request_id": "cp-mwlt65nc-9fa70fe880a9c219",
+      "response_schema": "risk.snapshot/2.0",
+      "routing": {
+        "permission_ms": 4.449567999999999,
+        "engine_round_trip_ms": 20.282375999999203
+      },
+      "response_hash": "a6167d35b35a125eed1996be06ac0d06e97bc92a7011f4cb249865bc2fec1638",
+      "audit_events": 3,
+      "status": "PASS",
+      "latency_ms": 59.12572899999941
+    },
+    {
+      "id": "order",
+      "engine": "trading",
+      "command": "trading.execute",
+      "error": "COMMAND_UNAVAILABLE",
+      "status": "EXPECTED_REFUSAL",
+      "latency_ms": 1.9604330000001937
+    }
+  ]
+}

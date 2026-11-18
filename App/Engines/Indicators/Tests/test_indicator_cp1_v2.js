@@ -1,6 +1,6 @@
 'use strict';
 /* Indicator Engine v1.12 black-box CP/1 test.
-   Run while IA-TB services are started: node Indicators/Tests/test_indicator_cp1_v112.js */
+   Run while IA-TB services are started: node Engines/Indicators/Tests/test_indicator_cp1_v2.js */
 var http=require('http'),path=require('path'),CP=require("../../../Core/Communication/communication_protocol_v1");
 var ROOT=path.resolve(__dirname,"../../.."),PORT=+(process.env.ROUTER_PORT||8021),fail=[];
 function ok(v,m){if(v)console.log('PASS',m);else{console.error('FAIL',m);fail.push(m);}}

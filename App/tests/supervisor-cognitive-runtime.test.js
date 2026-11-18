@@ -1,17 +1,17 @@
 'use strict';
 const {test}=require('node:test'),assert=require('node:assert/strict');
 const fs=require('node:fs'),os=require('node:os'),path=require('node:path');
-const {CognitiveRuntime,tenantOf}=require('../Supervisor/CognitiveRuntime');
+const {CognitiveRuntime,tenantOf}=require("../Engines/Supervisor/CognitiveRuntime");
 const auth=(clientId='CLalice',role='USER')=>({source:'AUTH21_OWNER',principal:{clientId,role}});
 const tenant=()=>tenantOf(auth());
-const {PersonalMemory}=require('../Supervisor/Memory/personal-memory');
+const {PersonalMemory}=require("../Engines/Supervisor/Memory/personal-memory");
 const ProtocolRegistry=require('../Core/Communication/protocol_registry_v2');
 const appRoot=path.resolve(__dirname,'..');
 function make(root,replies,calls){
  const llm={reason:async x=>{calls.push(x);return {text:JSON.stringify(replies.shift()||{message:'ok'}),provider:'MOCK',model:'mock-debug',latencyMs:1};}};
  const cp={request:async (target,action)=>{assert.equal(target,'router');assert.equal(action,'router.registry.list');return {ok:true,engines:[]};}};
  const settings={llm:()=>({provider:'MOCK',openai:{model:'gpt-5.6'}})};
- return new CognitiveRuntime({root,llm,cp,settings,shortMemory:new (require('../Supervisor/Memory/short-term').ConversationMemory)({filename:path.join(root,'.runtime/cognitive/short.sqlite')}),longMemory:new PersonalMemory(path.join(root,'.runtime/cognitive/long.sqlite')),protocolRegistry:new ProtocolRegistry(appRoot),functionRegistryDb:path.join(root,'absent.sqlite')});
+ return new CognitiveRuntime({root,llm,cp,settings,shortMemory:new (require("../Engines/Supervisor/Memory/short-term").ConversationMemory)({filename:path.join(root,'.runtime/cognitive/short.sqlite')}),longMemory:new PersonalMemory(path.join(root,'.runtime/cognitive/long.sqlite')),protocolRegistry:new ProtocolRegistry(appRoot),functionRegistryDb:path.join(root,'absent.sqlite')});
 }
 test('persistent cognitive memory, self first, scoped tools, reviewed-only proposals, model allowlist',async()=>{
  const root=fs.mkdtempSync(path.join(os.tmpdir(),'iatb-cognitive-')),calls=[];
@@ -38,8 +38,8 @@ test('persistent cognitive memory, self first, scoped tools, reviewed-only propo
  }finally{fs.rmSync(root,{recursive:true,force:true});}
 });
 test('CP1 registry matches real Supervisor handlers and manifest contracts',()=>{
- const svc=fs.readFileSync(path.join(appRoot,'Supervisor','supervisor_service.js'),'utf8');
- const json=JSON.parse(fs.readFileSync(path.join(appRoot,'Supervisor','FunctionRegistry','Functions.json'),'utf8'));
+ const svc=fs.readFileSync(path.join(appRoot,"Engines/Supervisor",'supervisor_service.js'),'utf8');
+ const json=JSON.parse(fs.readFileSync(path.join(appRoot,"Engines/Supervisor",'FunctionRegistry','Functions.json'),'utf8'));
  const p=new ProtocolRegistry(appRoot);
  for(const action of ['supervisor.cognitive.reason','supervisor.cognitive.status','supervisor.llm.models','supervisor.llm.select']){
   assert.ok(p.command('supervisor',action),'CP1 protocol registry missing '+action);
@@ -65,7 +65,7 @@ test('tool allowlist blocks model-command injection; no direct trade/tool execut
 });
 
 test('existing OpenAI provider forwards chosen model through CP1 AI Gateway Responses API',async()=>{
- const LLMManager=require('../Supervisor/LLM/llm_manager'),root=fs.mkdtempSync(path.join(os.tmpdir(),'iatb-cognitive-gateway-'));
+ const LLMManager=require("../Engines/Supervisor/LLM/llm_manager"),root=fs.mkdtempSync(path.join(os.tmpdir(),'iatb-cognitive-gateway-'));
  const payloads=[];
  try{
   const cp={request:async (target,action,arguments_)=>{
@@ -113,7 +113,7 @@ test('malformed provider JSON retries once; failure stores a controlled turn wit
  }finally{fs.rmSync(root,{recursive:true,force:true});}
 });
 test('context budget drops old history, protects current prompt, and backup restores SQLite',async()=>{
- const {prepare}=require('../Supervisor/CognitiveRuntime/context-budget');
+ const {prepare}=require("../Engines/Supervisor/CognitiveRuntime/context-budget");
  const compact=prepare({system:'BOOTLOADER',self:'self',history:Array.from({length:10},(_,i)=>({role:'user',content:'history-'+i+'X'.repeat(400)})),ram:{},prompt:'current',maxInputTokens:280});
  assert.ok(compact.historyUsed<10);assert.match(compact.prompt,/current/);
  const root=fs.mkdtempSync(path.join(os.tmpdir(),'iatb-backup-'));

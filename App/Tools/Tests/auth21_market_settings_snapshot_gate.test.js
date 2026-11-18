@@ -4,7 +4,7 @@ const {LocalSnapshotWriter}=require('../../Core/Backup/snapshot_coordinator');
 test('MarketData provider configuration cannot write through real API during frozen epoch',t=>{
  const file=path.join(fs.mkdtempSync(path.join(os.tmpdir(),'iatb-market-config-')),'settings.json');
  t.after(()=>fs.rmSync(path.dirname(file),{recursive:true,force:true}));
- const moduleFile=require.resolve('../../MarketData/Config/market_data_settings');
+ const moduleFile=require.resolve("../../Engines/MarketData/Config/market_data_settings");
  const before=process.env.IATB_MARKET_SETTINGS;
  process.env.IATB_MARKET_SETTINGS=file;delete require.cache[moduleFile];
  const settings=require(moduleFile);
@@ -20,7 +20,7 @@ test('MarketData provider configuration cannot write through real API during fro
  assert.doesNotThrow(()=>settings.save({refreshMs:12345}));
 });
 test('actual market service assigns configuration gate before settings loading',()=>{
- const src=fs.readFileSync(path.resolve(__dirname,'../../MarketData/market_data_service.js'),'utf8');
+ const src=fs.readFileSync(path.resolve(__dirname,"../../Engines/MarketData/market_data_service.js"),'utf8');
  assert.ok(src.indexOf('Settings.setSnapshotGate(AUTH21_MARKETDATA_SNAPSHOT)')>=0);
  assert.ok(src.indexOf('Settings.setSnapshotGate(AUTH21_MARKETDATA_SNAPSHOT)')<src.indexOf('settings=Settings.load()'));
 });

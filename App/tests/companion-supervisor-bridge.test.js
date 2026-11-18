@@ -68,5 +68,5 @@ test('delegated owner AI proof renewal is single-use and bounded to same verifie
  assert.ok(core.verify(fresh,expected),'fresh owner-bound proof can authorize second model round');
  assert.equal(core.verify(fresh,{...expected,ownerClientId:'CLbob'}),null,'different owner is forbidden');
  const code=read=>fs.readFileSync(path.join(root,read),'utf8');
- assert.match(code('Supervisor/Core/owner_supervisor.js'),/if\(\+\+aiCalls>4\)/);
+ assert.match(code("Engines/Supervisor/Core/owner_supervisor.js"),/if\(\+\+aiCalls>4\)/);
 });

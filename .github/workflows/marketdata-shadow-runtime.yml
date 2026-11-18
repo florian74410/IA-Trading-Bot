@@ -47,11 +47,11 @@ jobs:
           wait_http http://127.0.0.1:8021/router-health
           wait_http http://127.0.0.1:8017/health
 
-          ROUTER_PORT=8021 IATB_FIREWALL_PORT=8017 IATB_MARKET_DATA_PORT=8013 node MarketData/market_data_service.js > .runtime/ci/marketdata.log 2>&1 & echo $! > .runtime/ci/marketdata.pid
+          ROUTER_PORT=8021 IATB_FIREWALL_PORT=8017 IATB_MARKET_DATA_PORT=8013 node Engines/MarketData/market_data_service.js > .runtime/ci/marketdata.log 2>&1 & echo $! > .runtime/ci/marketdata.pid
           wait_http http://127.0.0.1:8013/health
 
           ROUTER_PORT=8021 IATB_INDICATOR_PORT=8012 node Engines/Indicators/Engine/indicator_service.js > .runtime/ci/indicator.log 2>&1 & echo $! > .runtime/ci/indicator.pid
-          ROUTER_PORT=8021 IATB_LIQUIDITY_PORT=8014 node Liquidity/Engine/liquidity_service.js > .runtime/ci/liquidity.log 2>&1 & echo $! > .runtime/ci/liquidity.pid
+          ROUTER_PORT=8021 IATB_LIQUIDITY_PORT=8014 node Engines/Liquidity/Engine/liquidity_service.js > .runtime/ci/liquidity.log 2>&1 & echo $! > .runtime/ci/liquidity.pid
           wait_http http://127.0.0.1:8012/health
           wait_http http://127.0.0.1:8014/health
 

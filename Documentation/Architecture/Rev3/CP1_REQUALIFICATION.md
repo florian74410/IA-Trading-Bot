@@ -8,12 +8,12 @@ Base Rev2 : `ef425e04182619e9992aa8a7368db2a30b2a0f87`. Les résultats interméd
 | Firewall | 3 (1 qualifiées) | 3 | Oui — générateur existant | 93 PASS, 0 FAIL | PASS intermédiaire |
 | Fundamental | 63 (2 qualifiées) | 63 | Oui — générateur existant | 93 PASS, 0 FAIL | PASS intermédiaire |
 | Indicators | 26 (3 qualifiées) | 26 | Oui — générateur existant | 93 PASS, 0 FAIL | PASS intermédiaire |
-| Liquidity | 15 (2 qualifiées) | À vérifier | PENDING | PENDING | PENDING |
-| MarketData | 42 (5 qualifiées) | À vérifier | PENDING | PENDING | PENDING |
-| Portfolio | 20 (2 qualifiées) | À vérifier | PENDING | PENDING | PENDING |
-| Risk | 18 (8 qualifiées) | À vérifier | PENDING | PENDING | PENDING |
-| Strategy | 13 (3 qualifiées) | À vérifier | PENDING | PENDING | PENDING |
-| Supervisor | 38 (14 qualifiées) | À vérifier | PENDING | PENDING | PENDING |
+| Liquidity | 15 (2 qualifiées) | 15 | Oui — générateur existant | 93 PASS, 0 FAIL | PASS intermédiaire |
+| MarketData | 42 (5 qualifiées) | 42 | Oui — générateur existant | 93 PASS, 0 FAIL | PASS intermédiaire |
+| Portfolio | 20 (2 qualifiées) | 20 | Oui — générateur existant | 93 PASS, 0 FAIL | PASS intermédiaire |
+| Risk | 18 (8 qualifiées) | 18 | Oui — générateur existant | 93 PASS, 0 FAIL | PASS intermédiaire |
+| Strategy | 13 (3 qualifiées) | 13 | Oui — générateur existant | 93 PASS, 0 FAIL | PASS intermédiaire |
+| Supervisor | 38 (14 qualifiées) | 38 | Oui — générateur existant | 93 PASS, 0 FAIL | PASS intermédiaire |
 
 Chaque comparaison JSON contrôle tous les identifiants, schémas, handlers sources, empreintes, permissions, hard_deny, qualifications agents et autorisations. Seuls le chemin source et son empreinte peuvent différer ; aucune autorisation ne peut être élargie. Les empreintes proviennent du mécanisme existant, puis des tests réels Core TLS → Router → Engine → réponse et des scénarios avec broker fictif.
 

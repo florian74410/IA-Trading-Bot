@@ -1,0 +1,78 @@
+(node:7) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+TAP version 13
+# (node:14) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: trial boundary cannot be activated by partial flags
+ok 1 - trial boundary cannot be activated by partial flags
+  ---
+  duration_ms: 2.021946
+  type: 'test'
+  ...
+# Subtest: Gateway forwards only Auth21 routes and denies legacy pages and API
+ok 2 - Gateway forwards only Auth21 routes and denies legacy pages and API
+  ---
+  duration_ms: 1.045873
+  type: 'test'
+  ...
+# Subtest: Router denies CP1, market data and fallback-to-Core in isolated mode
+ok 3 - Router denies CP1, market data and fallback-to-Core in isolated mode
+  ---
+  duration_ms: 1.526055
+  type: 'test'
+  ...
+# Subtest: Engine direct HTTP paths default deny in isolated mode
+ok 4 - Engine direct HTTP paths default deny in isolated mode
+  ---
+  duration_ms: 0.270503
+  type: 'test'
+  ...
+# Subtest: real service HTTP entrypoints invoke the isolated boundary before legacy handlers
+ok 5 - real service HTTP entrypoints invoke the isolated boundary before legacy handlers
+  ---
+  duration_ms: 3.396659
+  type: 'test'
+  ...
+# Subtest: gateway method allowlist never forwards writes as reads or unknown operations
+ok 6 - gateway method allowlist never forwards writes as reads or unknown operations
+  ---
+  duration_ms: 0.388411
+  type: 'test'
+  ...
+# (node:15) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Engine layout preserves the existing Fundamental SQLite database and private roots
+ok 7 - Engine layout preserves the existing Fundamental SQLite database and private roots
+  ---
+  duration_ms: 185.29425
+  type: 'test'
+  ...
+# Subtest: relocated Indicator code keeps preexisting shared custom definitions in their data directory
+ok 8 - relocated Indicator code keeps preexisting shared custom definitions in their data directory
+  ---
+  duration_ms: 9.613788
+  type: 'test'
+  ...
+# (node:16) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: path migration distinguishes code prefixes from storage segments
+ok 9 - path migration distinguishes code prefixes from storage segments
+  ---
+  duration_ms: 9.710823
+  type: 'test'
+  ...
+# Subtest: path arrays used dynamically are migrated with their owning file
+ok 10 - path arrays used dynamically are migrated with their owning file
+  ---
+  duration_ms: 1.961024
+  type: 'test'
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 569.71807

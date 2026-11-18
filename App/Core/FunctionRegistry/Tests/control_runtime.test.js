@@ -1,6 +1,6 @@
 'use strict';
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),os=require('node:os'),path=require('node:path');
-const I=require('../Control/identity'),{ControlRuntime}=require('../Control/runtime'),Catalog=require('../Control/catalog'),CP=require('../../Communication/communication_protocol_v1'),{profileFixture}=require('../../../Portfolio/Tests/okx_fixture');
+const I=require('../Control/identity'),{ControlRuntime}=require('../Control/runtime'),Catalog=require('../Control/catalog'),CP=require('../../Communication/communication_protocol_v1'),{profileFixture}=require("../../../Engines/Portfolio/Tests/okx_fixture");
 function fixture(){const dir=fs.mkdtempSync(path.join(os.tmpdir(),'cp1-control-'));I.provision(dir);const root=path.resolve(__dirname,'../../..'),f=profileFixture();f.sessions.verifySession(f.tokens.alice).role='ADMIN';const env={IATB_CP1_CONTROL_ROOT:dir},runtime=new ControlRuntime({root,env,sessions:f.sessions,discovery:false});const serviceEnv=id=>({...env,IATB_CP1_SERVICE_ID:id,IATB_CP1_SERVICE_KEY_FILE:path.join(dir,'services',id+'.key')});
  const machine=(id,operation,data={})=>{const b={operation,...data};return runtime.machine(b,Object.fromEntries(Object.entries(I.headers(b,serviceEnv(id))).map(([k,v])=>[k.toLowerCase(),v])));};
  const publish=id=>{const request={command:'registry.capabilities.publish',arguments:{manifest:Catalog.manifest(root,id)}};return machine(id,'publish',{request});};

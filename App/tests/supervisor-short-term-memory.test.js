@@ -1,7 +1,7 @@
 'use strict';
 const {test}=require('node:test'),assert=require('node:assert/strict');
 const fs=require('node:fs'),os=require('node:os'),path=require('node:path');
-const {ConversationMemory}=require('../Supervisor/Memory/short-term');
+const {ConversationMemory}=require("../Engines/Supervisor/Memory/short-term");
 test('persist across process reopen, isolate tenants and sessions, enforce retention',()=>{
  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'iatb-memory-'));const filename=path.join(dir,'memory.sqlite');
  try{

@@ -2,7 +2,7 @@
 // Fault injection at owner/Engine/provider boundaries. The local resolver, state,
 // Risk calculations, approval gate, binding, Trading and OKX adapter are real.
 const {test,after}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),os=require('node:os'),path=require('node:path'),crypto=require('node:crypto');
-const {ManualOrders}=require('./manual_orders'),{profileFixture}=require('../../Portfolio/Tests/okx_fixture'),{fixture}=require('../../Risk/Tests/snapshot_fixture'),{Orchestrator}=require('../../Risk/Snapshots/orchestrator'),{RiskGate}=require('../../Risk/Engine/risk_gate'),{TradingEngine}=require("../../Engines/Trading/trading-engine"),{OkxExecutor}=require("../../Engines/Trading/exchange-adapters/okx/executor"),{HybridChatBot}=require('../../Supervisor/ChatBot'),{State}=require('../../Supervisor/ChatBot/state');
+const {ManualOrders}=require('./manual_orders'),{profileFixture}=require("../../Engines/Portfolio/Tests/okx_fixture"),{fixture}=require("../../Engines/Risk/Tests/snapshot_fixture"),{Orchestrator}=require("../../Engines/Risk/Snapshots/orchestrator"),{RiskGate}=require("../../Engines/Risk/Engine/risk_gate"),{TradingEngine}=require("../../Engines/Trading/trading-engine"),{OkxExecutor}=require("../../Engines/Trading/exchange-adapters/okx/executor"),{HybridChatBot}=require("../../Engines/Supervisor/ChatBot"),{State}=require("../../Engines/Supervisor/ChatBot/state");
 const BUY='Achète 5 USDT de BTC-USDT Spot Market Live sur OKX compte okx-main';
 const SELL='Vends 0,05 BTC de BTC-USDT Spot Market Live sur OKX compte okx-main';
 const results=[];

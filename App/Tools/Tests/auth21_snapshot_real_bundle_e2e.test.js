@@ -13,12 +13,12 @@ const {createSnapshotCoreClient}=require('../../Core/Backup/auth21_snapshot_core
 const {capture,restore}=require('../CI/auth21_engine_encrypted_bundle');
 const APP=path.resolve(__dirname,'../..');
 const SPEC=[
- ['portfolio','Portfolio/Engine/portfolio_service.js','IATB_PORTFOLIO_PORT'],
- ['marketdata','MarketData/market_data_service.js','IATB_MARKET_DATA_PORT'],
+ ['portfolio',"Engines/Portfolio/Engine/portfolio_service.js",'IATB_PORTFOLIO_PORT'],
+ ['marketdata',"Engines/MarketData/market_data_service.js",'IATB_MARKET_DATA_PORT'],
  ['fundamental',"Engines/Fundamental/Engine/fundamental_service.js",'IATB_FUNDAMENTAL_PORT'],
  ['trading',"Engines/Trading/trading_service.js",'IATB_TRADING_ENGINE_PORT'],
  ['indicators',"Engines/Indicators/Engine/indicator_service.js",'IATB_INDICATOR_PORT'],
- ['strategy','Strategy/Engine/strategy_service.js','IATB_STRATEGY_PORT']
+ ['strategy',"Engines/Strategy/Engine/strategy_service.js",'IATB_STRATEGY_PORT']
 ];
 async function unusedPort(){const s=net.createServer();s.listen(0,'127.0.0.1');await once(s,'listening');const p=s.address().port;await new Promise(ok=>s.close(ok));return p;}
 async function probe(port){return new Promise(resolve=>{
@@ -249,7 +249,7 @@ test('Core freezes three real Engines, captures encrypted WAL/JSONL, restores in
  assert.equal(coordinator.state,'IDLE');
  if(helper.exitCode===null)await once(helper,'exit');
  assert.equal(helper.exitCode,0);
- const marketRestart=spawn(process.execPath,[path.join(app,'MarketData/market_data_service.js')],
+ const marketRestart=spawn(process.execPath,[path.join(app,"Engines/MarketData/market_data_service.js")],
   {cwd:app,env,stdio:['ignore','pipe','pipe']});
  let marketLog='';marketRestart.stdout.on('data',x=>marketLog+=x);
  marketRestart.stderr.on('data',x=>marketLog+=x);children.push(marketRestart);

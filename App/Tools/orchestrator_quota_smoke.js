@@ -2,9 +2,9 @@
 // Strictly offline fixtures: request quotas, 429 feedback, cache TTL and dedup.
 // No engines or providers are launched. SHADOW decisions are never enforced.
 const assert=require('node:assert/strict');
-const Budget=require('../MarketData/Orchestrator/request_budget');
-const Broker=require('../MarketData/Orchestrator/request_broker');
-const Orchestrator=require('../MarketData/Orchestrator/api_request_orchestrator');
+const Budget=require("../Engines/MarketData/Orchestrator/request_budget");
+const Broker=require("../Engines/MarketData/Orchestrator/request_broker");
+const Orchestrator=require("../Engines/MarketData/Orchestrator/api_request_orchestrator");
 try {
  const budget=new Budget({mode:'SHADOW'});
  budget.configure('FIXTURE',{

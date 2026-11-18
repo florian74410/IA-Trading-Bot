@@ -71,11 +71,11 @@ jobs:
           wait_http http://127.0.0.1:8021/router-health
           wait_http http://127.0.0.1:8017/health
 
-          node MarketData/market_data_service.js > .runtime/workload/logs/marketdata.log 2>&1 & echo $! > .runtime/workload/marketdata.pid
+          node Engines/MarketData/market_data_service.js > .runtime/workload/logs/marketdata.log 2>&1 & echo $! > .runtime/workload/marketdata.pid
           wait_http http://127.0.0.1:8013/health
 
           node Engines/Indicators/Engine/indicator_service.js > .runtime/workload/logs/indicator.log 2>&1 & echo $! > .runtime/workload/indicator.pid
-          node Liquidity/Engine/liquidity_service.js > .runtime/workload/logs/liquidity.log 2>&1 & echo $! > .runtime/workload/liquidity.pid
+          node Engines/Liquidity/Engine/liquidity_service.js > .runtime/workload/logs/liquidity.log 2>&1 & echo $! > .runtime/workload/liquidity.pid
           wait_http http://127.0.0.1:8012/health
           wait_http http://127.0.0.1:8014/health
 
