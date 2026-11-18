@@ -44,7 +44,7 @@ try {
       ),
     });
   tradingAdminVerifier =
-    require("../../services/trading-engine/trading_auth21_admin_v2").createVerifier(
+    require("../../Engines/Trading/trading_auth21_admin_v2").createVerifier(
       { env: process.env, replayStore: store },
     );
 } catch (e) {
@@ -174,7 +174,7 @@ function body(req, cb) {
   req.on("error", cb);
 }
 function worker(id, thread, kind, name, configDir, onReady) {
-  var w = new Worker(path.join(__dirname, "Workers", "protection_worker.js"), {
+  var w = new Worker(path.join(__dirname, "./Workers/protection_worker.js", ""), {
       workerData: {
         id: id,
         thread: thread,
@@ -449,7 +449,7 @@ function forwardTrading(msg, token, cb) {
     var gate;
     try {
       gate =
-        new (require("../../services/trading-engine/trading_runtime_state_v2").RuntimeState)();
+        new (require("../../Engines/Trading/trading_runtime_state_v2").RuntimeState)();
       if (!gate.canExecute()) return cb(Error("TRADING_ENGINE_RUNTIME_LOCKED"));
     } catch (_) {
       return cb(Error("TRADING_STATE_UNAVAILABLE"));

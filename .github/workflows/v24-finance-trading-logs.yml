@@ -28,7 +28,7 @@ jobs:
           python3 -W error::ResourceWarning -m unittest discover -s Tools/CI -p 'test_auth_storage_preflight.py' -v
           python3 -m unittest discover -s Tools/Deploy -p 'test_*.py' -v
       - name: Finance Calendar, lifecycle, ADMIN, logs and SQLite regressions
-        run: node --test --test-concurrency=1 App/services/trading-engine/tests/*.js App/tests/*.js tests/calendar_events_v2_2_5.test.cjs tests/chart_events_v251.test.cjs App/Supervisor/Tests/test_supervisor_architecture.js
+        run: node --test --test-concurrency=1 App/Engines/Trading/tests/*.js App/tests/*.js tests/calendar_events_v2_2_5.test.cjs tests/chart_events_v251.test.cjs App/Supervisor/Tests/test_supervisor_architecture.js
       - name: Collector, Liquidity, Fundamental, Portfolio, Strategy and Risk fixtures
         working-directory: App
         run: |

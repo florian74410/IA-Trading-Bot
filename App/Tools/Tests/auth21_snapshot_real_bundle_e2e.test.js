@@ -16,7 +16,7 @@ const SPEC=[
  ['portfolio','Portfolio/Engine/portfolio_service.js','IATB_PORTFOLIO_PORT'],
  ['marketdata','MarketData/market_data_service.js','IATB_MARKET_DATA_PORT'],
  ['fundamental','Fundamental/Engine/fundamental_service.js','IATB_FUNDAMENTAL_PORT'],
- ['trading','services/trading-engine/trading_service.js','IATB_TRADING_ENGINE_PORT'],
+ ['trading',"Engines/Trading/trading_service.js",'IATB_TRADING_ENGINE_PORT'],
  ['indicators','Indicators/Engine/indicator_service.js','IATB_INDICATOR_PORT'],
  ['strategy','Strategy/Engine/strategy_service.js','IATB_STRATEGY_PORT']
 ];
@@ -205,7 +205,7 @@ test('Core freezes three real Engines, captures encrypted WAL/JSONL, restores in
  assert.equal(coordinator.state,'BLOCKED');
  await assert.rejects(coordinator.execute(async()=>{}),/SNAPSHOT_COORDINATOR_BUSY/);
  // Start the genuine Trading service again with the SAME isolated journal.
- const restarted=spawn(process.execPath,[path.join(app,'services/trading-engine/trading_service.js')],
+ const restarted=spawn(process.execPath,[path.join(app,"Engines/Trading/trading_service.js")],
   {cwd:app,env,stdio:['ignore','pipe','pipe']});
  let restartLog='';restarted.stdout.on('data',x=>restartLog+=x);
  restarted.stderr.on('data',x=>restartLog+=x);children.push(restarted);

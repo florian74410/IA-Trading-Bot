@@ -12,8 +12,8 @@ const { ManualOrders, orderFor } = require("./manual_orders"),
   { RiskGate } = require("../../Risk/Engine/risk_gate"),
   {
     OkxExecutor,
-  } = require("../../services/trading-engine/exchange-adapters/okx/executor"),
-  { TradingEngine } = require("../../services/trading-engine/trading-engine");
+  } = require("../../Engines/Trading/exchange-adapters/okx/executor"),
+  { TradingEngine } = require("../../Engines/Trading/trading-engine");
 function prep() {
   return {
     id: crypto.randomUUID(),
@@ -251,11 +251,11 @@ test("LIVE configuration is true and an explicit false override is respected", (
 test("authenticated ADMIN START transitions actual durable lifecycle to RUNNING after checks", async () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "manual-start-")),
     Runtime =
-      require("../../services/trading-engine/trading_runtime_state_v2").RuntimeState,
+      require("../../Engines/Trading/trading_runtime_state_v2").RuntimeState,
     Ledger =
-      require("../../services/trading-engine/trading_admin_ledger_v2").AdminCommandLedger,
+      require("../../Engines/Trading/trading_admin_ledger_v2").AdminCommandLedger,
     Controller =
-      require("../../services/trading-engine/trading_admin_controller_v2").TradingAdminController;
+      require("../../Engines/Trading/trading_admin_controller_v2").TradingAdminController;
   const state = new Runtime({ file: path.join(dir, "state.json") }),
     ledger = new Ledger({ file: state.dbFile, db: state.db });
   try {

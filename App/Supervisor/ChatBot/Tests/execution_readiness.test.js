@@ -3,8 +3,8 @@
 const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const path=require('node:path');
-const {TradingEngine}=require('../../../services/trading-engine/trading-engine');
-const {OkxExecutor}=require('../../../services/trading-engine/exchange-adapters/okx/executor');
+const {TradingEngine}=require("../../../Engines/Trading/trading-engine");
+const {OkxExecutor}=require("../../../Engines/Trading/exchange-adapters/okx/executor");
 const {RiskGate}=require('../../../Risk/Engine/risk_gate');
 const Catalog=require('../../../Core/FunctionRegistry/Control/catalog');
 

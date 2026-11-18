@@ -1,6 +1,6 @@
 'use strict';
 // Portfolio receives normalized public account data via CP/1, never API credentials.
-const Store=require('./portfolio_store'),{number}=require('../../services/trading-engine/exchange-adapters/okx/account-reader');
+const Store=require('./portfolio_store'),{number}=require("../../Engines/Trading/exchange-adapters/okx/account-reader");
 function normalize(packet,principal,account,now=Date.now()){
  const identity=packet?.account_identity;
  if(packet?.ok!==true||packet.exchange!=='OKX'||identity?.owner!==principal.clientId||identity?.id!==account||identity.exchange!=='OKX')throw Error('PORTFOLIO_ACCOUNT_SCOPE_DENIED');

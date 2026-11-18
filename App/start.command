@@ -396,7 +396,7 @@ RISK_ENGINE_PID=$!
 require_service "Risk Engine" "$RISK_ENGINE_PORT" "/health" "IA-TB Risk Engine" "$RISK_LOG" 10
 
 status_wait "Trading Engine" "after Firewall + Risk"
-IATB_TRADING_ENGINE_PORT="$TRADING_ENGINE_PORT" ROUTER_PORT="$ROUTER_PORT" IATB_TRADING_LIVE="0" "$NODE_BIN" services/trading-engine/trading_service.js >> "$TRADING_LOG" 2>&1 &
+IATB_TRADING_ENGINE_PORT="$TRADING_ENGINE_PORT" ROUTER_PORT="$ROUTER_PORT" IATB_TRADING_LIVE="0" "$NODE_BIN" Engines/Trading/trading_service.js >> "$TRADING_LOG" 2>&1 &
 TRADING_ENGINE_PID=$!
 require_service "Trading Engine" "$TRADING_ENGINE_PORT" "/health" "IA-TB Trading Engine" "$TRADING_LOG" 10
 

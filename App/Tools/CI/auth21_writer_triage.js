@@ -25,11 +25,11 @@ const GROUPS=Object.freeze({
   'Core/Clients/auth21_trading_key_provider.js',
   // v2.3 runtime/replay/ADMIN state: exclusive-mode writers, not hot-snapshot qualified.
   'Core/Clients/auth21_trading_replay_v2.js',
-  'services/trading-engine/trading_admin_ledger_v2.js',
+  "Engines/Trading/trading_admin_ledger_v2.js",
   // P4/P5 share the existing ADMIN SQLite file. Offline backup only; no hot snapshot claim.
-  'services/trading-engine/trading_admin_controller_v2.js',
-  'services/trading-engine/trading_draining_v2.js',
-  'services/trading-engine/trading_runtime_state_v2.js',
+  "Engines/Trading/trading_admin_controller_v2.js",
+  "Engines/Trading/trading_draining_v2.js",
+  "Engines/Trading/trading_runtime_state_v2.js",
   // Empty persistent lock inode only; kernel lease excludes Core/CLI writers.
   'Core/Clients/auth21_local_owner_lock.js',
   'Core/Admin/admin_console.js','Core/Admin/CP1/parser.js','Core/Admin/log_reader.js',
@@ -43,16 +43,16 @@ const GROUPS=Object.freeze({
  ],
  'coordinator-and-auth-fixture':[
   // Disposable keys/accounts/ledgers, no production writers.
-  'services/trading-engine/tests/test_trading_p3_multiprocess_v252.js',
-  'services/trading-engine/tests/test_trading_p3_qualification_v252.js',
-  'services/trading-engine/tests/test_trading_p4_p5_v253.js',
+  "Engines/Trading/tests/test_trading_p3_multiprocess_v252.js",
+  "Engines/Trading/tests/test_trading_p3_qualification_v252.js",
+  "Engines/Trading/tests/test_trading_p4_p5_v253.js",
   // Reviewed temporary-only fixtures; never production writers.
-  'services/trading-engine/tests/test_trading_admin_auth21_binding_v2.js',
-  'services/trading-engine/tests/test_trading_admin_bridge_key_v2.js',
-  'services/trading-engine/tests/test_trading_admin_controller_v2.js',
-  'services/trading-engine/tests/test_trading_admin_p3_security.js',
-  'services/trading-engine/tests/test_trading_runtime_state_v2.js',
-  'services/trading-engine/tests/test_trading_logs_v2.js',
+  "Engines/Trading/tests/test_trading_admin_auth21_binding_v2.js",
+  "Engines/Trading/tests/test_trading_admin_bridge_key_v2.js",
+  "Engines/Trading/tests/test_trading_admin_controller_v2.js",
+  "Engines/Trading/tests/test_trading_admin_p3_security.js",
+  "Engines/Trading/tests/test_trading_runtime_state_v2.js",
+  "Engines/Trading/tests/test_trading_logs_v2.js",
   'tests/test_v2_4_1_cp1_path.js', // isolated temporary CP key and audit fixture only
   'Core/Backup/auth21_core_local_trial_wiring.js',
   'Core/Backup/auth21_durable_snapshot_writer.js',
@@ -75,7 +75,7 @@ const GROUPS=Object.freeze({
  ],
  'engine-and-telemetry':[
   // JSONL + SQLite mirror; gate tested, global writer coverage still incomplete.
-  'services/trading-engine/trading_logs_v2.js',
+  "Engines/Trading/trading_logs_v2.js",
   'Fundamental/Engine/bootstrap_sqlite.js','Fundamental/Engine/fundamental_service.js',
   'Fundamental/Engine/observability_v3.js','Fundamental/Engine/source_discovery.js',
   'Fundamental/Providers/calendar_provider.js','Fundamental/Providers/fedwatch_provider.js',

@@ -2,8 +2,8 @@
 const C = require("./manual_contract"),
   {
     number,
-  } = require("../../services/trading-engine/exchange-adapters/okx/account-reader");
-const {build,multiple,quoteToBase}=require('../../services/trading-engine/exchange-adapters/okx/order-model');
+  } = require("../../Engines/Trading/exchange-adapters/okx/account-reader");
+const {build,multiple,quoteToBase}=require("../../Engines/Trading/exchange-adapters/okx/order-model");
 function preview(spec, pre, risk) {
   const b = spec.body,
     price = number(pre.ticker?.[0]?.last),

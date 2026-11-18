@@ -231,14 +231,14 @@
         }
       },
       "errors": [],
-      "source": "services/trading-engine/trading_service.js",
+      "source": "Engines/Trading/trading_service.js",
       "verified_handler": true,
       "default_privilege": "DENY",
       "side_effects": false,
       "transport": "CP1",
       "authorization": "Authenticated service identity, authenticated agent session and effective per-command permission.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
+      "handler_sha256": "3df3d388b7ade17d22e3dfad53139ad1d7c7828d04ffb9c7b1c4a59ca29134ee",
       "availability_reason": null,
       "timeout_ms": 5000,
       "agent_qualified": true
@@ -271,14 +271,14 @@
         }
       },
       "errors": [],
-      "source": "services/trading-engine/trading_service.js",
+      "source": "Engines/Trading/trading_service.js",
       "verified_handler": true,
       "default_privilege": "DENY",
       "side_effects": false,
       "transport": "CP1",
       "authorization": "Authenticated service identity, authenticated agent session and effective per-command permission.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
+      "handler_sha256": "3df3d388b7ade17d22e3dfad53139ad1d7c7828d04ffb9c7b1c4a59ca29134ee",
       "availability_reason": null,
       "timeout_ms": 5000,
       "agent_qualified": true
@@ -335,7 +335,7 @@
         "OKX_ACCOUNT_READ_REJECTED",
         "OKX_ACCOUNT_RATE_LIMITED"
       ],
-      "source": "services/trading-engine/trading_service.js",
+      "source": "Engines/Trading/trading_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
       "side_effects": false,
@@ -352,7 +352,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
+      "handler_sha256": "3df3d388b7ade17d22e3dfad53139ad1d7c7828d04ffb9c7b1c4a59ca29134ee",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -409,7 +409,7 @@
         "OKX_ACCOUNT_READ_REJECTED",
         "OKX_ACCOUNT_RATE_LIMITED"
       ],
-      "source": "services/trading-engine/trading_service.js",
+      "source": "Engines/Trading/trading_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
       "side_effects": false,
@@ -426,7 +426,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
+      "handler_sha256": "3df3d388b7ade17d22e3dfad53139ad1d7c7828d04ffb9c7b1c4a59ca29134ee",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -483,7 +483,7 @@
         "OKX_ACCOUNT_READ_REJECTED",
         "OKX_ACCOUNT_RATE_LIMITED"
       ],
-      "source": "services/trading-engine/trading_service.js",
+      "source": "Engines/Trading/trading_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
       "side_effects": false,
@@ -500,7 +500,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
+      "handler_sha256": "3df3d388b7ade17d22e3dfad53139ad1d7c7828d04ffb9c7b1c4a59ca29134ee",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -605,14 +605,14 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "services/trading-engine/trading_service.js",
+      "source": "Engines/Trading/trading_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
       "side_effects": true,
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
+      "handler_sha256": "3df3d388b7ade17d22e3dfad53139ad1d7c7828d04ffb9c7b1c4a59ca29134ee",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -676,14 +676,14 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "services/trading-engine/trading_service.js",
+      "source": "Engines/Trading/trading_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
       "side_effects": true,
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
+      "handler_sha256": "3df3d388b7ade17d22e3dfad53139ad1d7c7828d04ffb9c7b1c4a59ca29134ee",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -757,14 +757,14 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "services/trading-engine/trading_service.js",
+      "source": "Engines/Trading/trading_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
       "side_effects": true,
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
+      "handler_sha256": "3df3d388b7ade17d22e3dfad53139ad1d7c7828d04ffb9c7b1c4a59ca29134ee",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -804,14 +804,14 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "services/trading-engine/trading_service.js",
+      "source": "Engines/Trading/trading_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
       "side_effects": false,
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
+      "handler_sha256": "3df3d388b7ade17d22e3dfad53139ad1d7c7828d04ffb9c7b1c4a59ca29134ee",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -865,14 +865,14 @@
         "description": "Schéma à confirmer dans le handler réel"
       },
       "errors": [],
-      "source": "services/trading-engine/trading_service.js",
+      "source": "Engines/Trading/trading_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
       "side_effects": false,
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
+      "handler_sha256": "3df3d388b7ade17d22e3dfad53139ad1d7c7828d04ffb9c7b1c4a59ca29134ee",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -930,7 +930,7 @@
         "OKX_ACCOUNT_READ_REJECTED",
         "OKX_ACCOUNT_RATE_LIMITED"
       ],
-      "source": "services/trading-engine/trading_service.js",
+      "source": "Engines/Trading/trading_service.js",
       "verified_handler": false,
       "default_privilege": "DENY",
       "side_effects": false,
@@ -947,7 +947,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
+      "handler_sha256": "3df3d388b7ade17d22e3dfad53139ad1d7c7828d04ffb9c7b1c4a59ca29134ee",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -1018,8 +1018,8 @@
       "authorization": "Unavailable to agents until independently qualified.",
       "default_privilege": "DENY",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
-      "source": "services/trading-engine/trading_service.js",
+      "handler_sha256": "3df3d388b7ade17d22e3dfad53139ad1d7c7828d04ffb9c7b1c4a59ca29134ee",
+      "source": "Engines/Trading/trading_service.js",
       "availability_reason": "OWNER_ONLY",
       "timeout_ms": 8000
     },
@@ -1164,8 +1164,8 @@
       "authorization": "Unavailable to agents until independently qualified.",
       "default_privilege": "DENY",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
-      "source": "services/trading-engine/trading_service.js",
+      "handler_sha256": "3df3d388b7ade17d22e3dfad53139ad1d7c7828d04ffb9c7b1c4a59ca29134ee",
+      "source": "Engines/Trading/trading_service.js",
       "availability_reason": "OWNER_ONLY",
       "timeout_ms": 8000
     },
@@ -1310,8 +1310,8 @@
       "authorization": "Unavailable to agents until independently qualified.",
       "default_privilege": "DENY",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
-      "source": "services/trading-engine/trading_service.js",
+      "handler_sha256": "3df3d388b7ade17d22e3dfad53139ad1d7c7828d04ffb9c7b1c4a59ca29134ee",
+      "source": "Engines/Trading/trading_service.js",
       "availability_reason": "OWNER_ONLY",
       "timeout_ms": 8000
     },
@@ -1456,8 +1456,8 @@
       "authorization": "Unavailable to agents until independently qualified.",
       "default_privilege": "DENY",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
-      "source": "services/trading-engine/trading_service.js",
+      "handler_sha256": "3df3d388b7ade17d22e3dfad53139ad1d7c7828d04ffb9c7b1c4a59ca29134ee",
+      "source": "Engines/Trading/trading_service.js",
       "availability_reason": "OWNER_ONLY",
       "timeout_ms": 8000
     },
@@ -1602,8 +1602,8 @@
       "authorization": "Unavailable to agents until independently qualified.",
       "default_privilege": "DENY",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
-      "source": "services/trading-engine/trading_service.js",
+      "handler_sha256": "3df3d388b7ade17d22e3dfad53139ad1d7c7828d04ffb9c7b1c4a59ca29134ee",
+      "source": "Engines/Trading/trading_service.js",
       "availability_reason": "OWNER_ONLY",
       "timeout_ms": 8000
     },
@@ -1748,8 +1748,8 @@
       "authorization": "Unavailable to agents until independently qualified.",
       "default_privilege": "DENY",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
-      "source": "services/trading-engine/trading_service.js",
+      "handler_sha256": "3df3d388b7ade17d22e3dfad53139ad1d7c7828d04ffb9c7b1c4a59ca29134ee",
+      "source": "Engines/Trading/trading_service.js",
       "availability_reason": "OWNER_ONLY",
       "timeout_ms": 8000
     },
@@ -1894,8 +1894,8 @@
       "authorization": "Unavailable to agents until independently qualified.",
       "default_privilege": "DENY",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
-      "source": "services/trading-engine/trading_service.js",
+      "handler_sha256": "3df3d388b7ade17d22e3dfad53139ad1d7c7828d04ffb9c7b1c4a59ca29134ee",
+      "source": "Engines/Trading/trading_service.js",
       "availability_reason": "OWNER_ONLY",
       "timeout_ms": 8000
     },
@@ -2040,8 +2040,8 @@
       "authorization": "Unavailable to agents until independently qualified.",
       "default_privilege": "DENY",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
-      "source": "services/trading-engine/trading_service.js",
+      "handler_sha256": "3df3d388b7ade17d22e3dfad53139ad1d7c7828d04ffb9c7b1c4a59ca29134ee",
+      "source": "Engines/Trading/trading_service.js",
       "availability_reason": "OWNER_ONLY",
       "timeout_ms": 8000
     },
@@ -2186,11 +2186,11 @@
       "authorization": "Unavailable to agents until independently qualified.",
       "default_privilege": "DENY",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "996432931ea63f22647db8d039ba598df8e1333038d8a62ca2234aef09d95360",
-      "source": "services/trading-engine/trading_service.js",
+      "handler_sha256": "3df3d388b7ade17d22e3dfad53139ad1d7c7828d04ffb9c7b1c4a59ca29134ee",
+      "source": "Engines/Trading/trading_service.js",
       "availability_reason": "OWNER_ONLY",
       "timeout_ms": 8000
     }
   ],
-  "revision_hash": "d35fc338d0a8d1f9ebd5f7ac11f53209b907af9d033c31c32b89c80584a56483"
+  "revision_hash": "77fc74eff8e781915ccdcb780c157c20ecdd2bbafc088c1f5bb17afa08d26f8a"
 }

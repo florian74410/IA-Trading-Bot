@@ -8,7 +8,7 @@ var specs=[
  ['Portfolio/Engine/portfolio_service.js',[]],
  ['Strategy/Engine/strategy_service.js',[]],
  ['Risk/Engine/risk_service.js',[]],
- ['services/trading-engine/trading_service.js',[]],
+ ["Engines/Trading/trading_service.js",[]],
  ['Supervisor/supervisor_service.js',[]]
 ];
 var forbidden=["'/api/settings'","'/api/capabilities'","'/api/catalog'","'/api/status'","'/api/overview'","'/api/history'","'/api/trades'","'/api/events'"];

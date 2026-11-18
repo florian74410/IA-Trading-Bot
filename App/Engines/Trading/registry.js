@@ -3,7 +3,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const CATALOG = path.join(__dirname, "executor_catalog.json");
+const CATALOG = path.join(__dirname, "./executor_catalog.json");
 
 function readCatalog() {
   const raw = JSON.parse(fs.readFileSync(CATALOG, "utf8"));

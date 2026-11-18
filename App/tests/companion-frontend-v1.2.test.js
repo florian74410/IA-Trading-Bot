@@ -1,6 +1,6 @@
 'use strict';
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
-const code=fs.readFileSync(path.join(__dirname,'..','Frontend','JS','companion_v1.0.js'),'utf8');
+const code=fs.readFileSync(path.join(__dirname,"../Frontend/JS/companion_v1.0.js","","",""),'utf8');
 const tick=()=>new Promise(resolve=>setImmediate(resolve));
 class Element{
  constructor(tag){this.tagName=tag;this.children=[];this.dataset={};this.style={};this.value='';this.className='';this.id='';this._text='';this.disabled=false;this.attributes={};this.offsetWidth=470;this.offsetHeight=500;const set=new Set();this.classList={add:x=>set.add(x),remove:x=>set.delete(x),toggle:(x,v)=>{const enabled=v===undefined?!set.has(x):!!v;if(enabled)set.add(x);else set.delete(x);return enabled;},contains:x=>set.has(x)};}

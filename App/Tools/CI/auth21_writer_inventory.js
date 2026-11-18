@@ -17,7 +17,7 @@ const WRITERS=Object.freeze([
  ['MarketData/Storage/api_telemetry_store.js','sqlite','telemetry'],
  ['MarketData/Storage/microstructure_store.js','sqlite','microstructure'],
  ['MarketData/Financial/financial_store.js','jsonl','financial'],
- ['services/trading-engine/history-store.js','jsonl','trading-history'],
+ ["Engines/Trading/history-store.js",'jsonl','trading-history'],
  ['Core/Services/usage_ledger_v1.js','jsonl','usage-ledger'],
  ['Core/Mosaics/mosaic_store_v1.0.js','annex','mosaics']
 ].map(([file,kind,id])=>Object.freeze({file,kind,id,gate:'snapshotGate'})));

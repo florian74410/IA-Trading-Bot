@@ -15,7 +15,7 @@ const specs = [
   ['MarketData', 'MarketData/market_data_service.js', 'IATB_MARKET_DATA_PORT'],
   ['Liquidity', 'Liquidity/Engine/liquidity_service.js', 'IATB_LIQUIDITY_PORT'],
   ['Fundamental', 'Fundamental/Engine/fundamental_service.js', 'IATB_FUNDAMENTAL_PORT'],
-  ['Trading', 'services/trading-engine/trading_service.js', 'IATB_TRADING_ENGINE_PORT'],
+  ['Trading', "Engines/Trading/trading_service.js", 'IATB_TRADING_ENGINE_PORT'],
   ['Firewall', 'Core/Firewall/firewall_service.js', 'IATB_FIREWALL_PORT'],
   ['Strategy', 'Strategy/Engine/strategy_service.js', 'IATB_STRATEGY_PORT'],
   ['Risk', 'Risk/Engine/risk_service.js', 'IATB_RISK_ENGINE_PORT'],

@@ -15,7 +15,7 @@
     "test:risk": "node --test --test-concurrency=1 Risk/Tests/snapshots.test.js Risk/Tests/snapshots.integration.test.js Risk/Tests/risk_engine.test.js Risk/Tests/test_risk_gate.js Risk/Tests/test_risk_r1_r2_v25.js Risk/Tests/test_risk_settings_v25.js",
     "bench:risk": "node Risk/Tests/benchmark_snapshots.js",
     "build:risk": "python3 ../Tools/Build/build_risk_snapshot.py",
-    "test:okx": "node --test --test-concurrency=1 Portfolio/Tests/okx_account.test.js Portfolio/Tests/okx_pipeline.integration.test.js services/trading-engine/tests/test_account_routing_v253.js Tools/Tests/user_management_trading_vault.test.js",
+    "test:okx": "node --test --test-concurrency=1 Portfolio/Tests/okx_account.test.js Portfolio/Tests/okx_pipeline.integration.test.js Engines/Trading/tests/test_account_routing_v253.js Tools/Tests/user_management_trading_vault.test.js",
     "test:cp1": "node --test --test-concurrency=1 Core/FunctionRegistry/Tests/*.test.js",
     "qualify:cp1": "node Tools/qualify_cp1_control.js",
     "test:integration": "node Tools/Tests/SupervisorSimulator/run_validation.js",

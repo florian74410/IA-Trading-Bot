@@ -1,0 +1,790 @@
+{
+  "completed": [
+    "trading"
+  ],
+  "steps": [
+    {
+      "id": "trading",
+      "from": "services/trading-engine",
+      "to": "Engines/Trading",
+      "changes": [
+        {
+          "file": ".github/workflows/auth-p22-coordinator-fixtures.yml",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": ".github/workflows/risk-snapshots.yml",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": ".github/workflows/v24-finance-trading-logs.yml",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": "App/Core/Clients/UserManagement/trading_vault.js",
+          "kind": "relative module",
+          "before": "'../../../services/trading-engine/exchange-adapters/okx/account-reader'",
+          "after": "\"../../../Engines/Trading/exchange-adapters/okx/account-reader\""
+        },
+        {
+          "file": "App/Core/Clients/UserManagement/trading_vault.js",
+          "kind": "relative module",
+          "before": "'../../../services/trading-engine/trading-engine'",
+          "after": "\"../../../Engines/Trading/trading-engine\""
+        },
+        {
+          "file": "App/Core/Clients/UserManagement/trading_vault.js",
+          "kind": "relative module",
+          "before": "'../../../services/trading-engine/account-routing'",
+          "after": "\"../../../Engines/Trading/account-routing\""
+        },
+        {
+          "file": "App/Core/Execution/manual_orders.test.js",
+          "kind": "relative module",
+          "before": "\"../../services/trading-engine/trading_admin_controller_v2\"",
+          "after": "\"../../Engines/Trading/trading_admin_controller_v2\""
+        },
+        {
+          "file": "App/Core/Execution/manual_orders.test.js",
+          "kind": "relative module",
+          "before": "\"../../services/trading-engine/trading_admin_ledger_v2\"",
+          "after": "\"../../Engines/Trading/trading_admin_ledger_v2\""
+        },
+        {
+          "file": "App/Core/Execution/manual_orders.test.js",
+          "kind": "relative module",
+          "before": "\"../../services/trading-engine/trading_runtime_state_v2\"",
+          "after": "\"../../Engines/Trading/trading_runtime_state_v2\""
+        },
+        {
+          "file": "App/Core/Execution/manual_orders.test.js",
+          "kind": "relative module",
+          "before": "\"../../services/trading-engine/trading-engine\"",
+          "after": "\"../../Engines/Trading/trading-engine\""
+        },
+        {
+          "file": "App/Core/Execution/manual_orders.test.js",
+          "kind": "relative module",
+          "before": "\"../../services/trading-engine/exchange-adapters/okx/executor\"",
+          "after": "\"../../Engines/Trading/exchange-adapters/okx/executor\""
+        },
+        {
+          "file": "App/Core/Execution/manual_preview.js",
+          "kind": "relative module",
+          "before": "'../../services/trading-engine/exchange-adapters/okx/order-model'",
+          "after": "\"../../Engines/Trading/exchange-adapters/okx/order-model\""
+        },
+        {
+          "file": "App/Core/Execution/manual_preview.js",
+          "kind": "relative module",
+          "before": "\"../../services/trading-engine/exchange-adapters/okx/account-reader\"",
+          "after": "\"../../Engines/Trading/exchange-adapters/okx/account-reader\""
+        },
+        {
+          "file": "App/Core/Execution/manual_workflow.js",
+          "kind": "relative module",
+          "before": "\"../../services/trading-engine/exchange-adapters/okx/account-reader\"",
+          "after": "\"../../Engines/Trading/exchange-adapters/okx/account-reader\""
+        },
+        {
+          "file": "App/Core/Execution/order_scenarios.test.js",
+          "kind": "relative module",
+          "before": "'../../services/trading-engine/trading_runtime_state_v2'",
+          "after": "\"../../Engines/Trading/trading_runtime_state_v2\""
+        },
+        {
+          "file": "App/Core/Execution/order_scenarios.test.js",
+          "kind": "relative module",
+          "before": "'../../services/trading-engine/exchange-adapters/okx/executor'",
+          "after": "\"../../Engines/Trading/exchange-adapters/okx/executor\""
+        },
+        {
+          "file": "App/Core/Execution/order_scenarios.test.js",
+          "kind": "relative module",
+          "before": "'../../services/trading-engine/trading-engine'",
+          "after": "\"../../Engines/Trading/trading-engine\""
+        },
+        {
+          "file": "App/Core/Firewall/FunctionRegistry/startup.js",
+          "kind": "dirname resource",
+          "before": "'Functions.json'",
+          "after": "\"./Functions.json\""
+        },
+        {
+          "file": "App/Core/Firewall/firewall_service.js",
+          "kind": "relative module",
+          "before": "\"../../services/trading-engine/trading_runtime_state_v2\"",
+          "after": "\"../../Engines/Trading/trading_runtime_state_v2\""
+        },
+        {
+          "file": "App/Core/Firewall/firewall_service.js",
+          "kind": "combined path segment",
+          "before": "\"protection_worker.js\"",
+          "after": "\"\""
+        },
+        {
+          "file": "App/Core/Firewall/firewall_service.js",
+          "kind": "dirname resource",
+          "before": "\"Workers\"",
+          "after": "\"./Workers/protection_worker.js\""
+        },
+        {
+          "file": "App/Core/Firewall/firewall_service.js",
+          "kind": "relative module",
+          "before": "\"../../services/trading-engine/trading_auth21_admin_v2\"",
+          "after": "\"../../Engines/Trading/trading_auth21_admin_v2\""
+        },
+        {
+          "file": "App/Core/FunctionRegistry/Control/catalog.js",
+          "kind": "explicit App-relative source",
+          "before": "'services/trading-engine/vault-client.js'",
+          "after": "\"Engines/Trading/vault-client.js\""
+        },
+        {
+          "file": "App/Core/FunctionRegistry/Control/catalog.js",
+          "kind": "dirname resource",
+          "before": "'output_contracts.json'",
+          "after": "\"./output_contracts.json\""
+        },
+        {
+          "file": "App/Core/FunctionRegistry/Control/catalog.js",
+          "kind": "dirname resource",
+          "before": "'qualification.json'",
+          "after": "\"./qualification.json\""
+        },
+        {
+          "file": "App/Core/FunctionRegistry/Control/catalog.js",
+          "kind": "explicit App-relative source",
+          "before": "'services/trading-engine/trading_service.js'",
+          "after": "\"Engines/Trading/trading_service.js\""
+        },
+        {
+          "file": "App/Core/FunctionRegistry/Control/catalog.js",
+          "kind": "explicit App-relative source",
+          "before": "'services/trading-engine'",
+          "after": "\"Engines/Trading\""
+        },
+        {
+          "file": "App/Core/FunctionRegistry/startup.js",
+          "kind": "dirname resource",
+          "before": "'Functions.json'",
+          "after": "\"./Functions.json\""
+        },
+        {
+          "file": "App/Core/FunctionRegistry/startup.js",
+          "kind": "dirname resource",
+          "before": "'../../Core/FunctionRegistry/publisher'",
+          "after": "\"./publisher\""
+        },
+        {
+          "file": "App/Core/Network/tls_ca_v1.0.js",
+          "kind": "combined path segment",
+          "before": "'cacert.pem'",
+          "after": "\"\""
+        },
+        {
+          "file": "App/Core/Network/tls_ca_v1.0.js",
+          "kind": "combined path segment",
+          "before": "'Certificates'",
+          "after": "\"\""
+        },
+        {
+          "file": "App/Core/Network/tls_ca_v1.0.js",
+          "kind": "dirname resource",
+          "before": "'..'",
+          "after": "\"../Certificates/cacert.pem\""
+        },
+        {
+          "file": "App/Core/ProcessRegistry/manifests/trading.json",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": "App/Core/ProcessRegistry/process_registry.js",
+          "kind": "dirname resource",
+          "before": "'manifests'",
+          "after": "\"./manifests\""
+        },
+        {
+          "file": "App/Core/Router/FunctionRegistry/startup.js",
+          "kind": "dirname resource",
+          "before": "'Functions.json'",
+          "after": "\"./Functions.json\""
+        },
+        {
+          "file": "App/Core/Router/FunctionRegistry/startup.js",
+          "kind": "dirname resource",
+          "before": "'../../../Core/FunctionRegistry/publisher'",
+          "after": "\"../../FunctionRegistry/publisher\""
+        },
+        {
+          "file": "App/Core/Tests/auth21_core_legacy_route_audit.js",
+          "kind": "combined path segment",
+          "before": "'auth21_core_route_gate.js'",
+          "after": "\"\""
+        },
+        {
+          "file": "App/Core/Tests/auth21_core_legacy_route_audit.js",
+          "kind": "combined path segment",
+          "before": "'Clients'",
+          "after": "\"\""
+        },
+        {
+          "file": "App/Core/Tests/auth21_core_legacy_route_audit.js",
+          "kind": "dirname resource",
+          "before": "'..'",
+          "after": "\"../Clients/auth21_core_route_gate.js\""
+        },
+        {
+          "file": "App/Core/Tests/auth21_core_legacy_route_audit.js",
+          "kind": "combined path segment",
+          "before": "'server.js'",
+          "after": "\"\""
+        },
+        {
+          "file": "App/Core/Tests/auth21_core_legacy_route_audit.js",
+          "kind": "combined path segment",
+          "before": "'Server'",
+          "after": "\"\""
+        },
+        {
+          "file": "App/Core/Tests/auth21_core_legacy_route_audit.js",
+          "kind": "dirname resource",
+          "before": "'..'",
+          "after": "\"../Server/server.js\""
+        },
+        {
+          "file": "App/Fundamental/FunctionRegistry/startup.js",
+          "kind": "dirname resource",
+          "before": "'Functions.json'",
+          "after": "\"./Functions.json\""
+        },
+        {
+          "file": "App/Indicators/FunctionRegistry/startup.js",
+          "kind": "dirname resource",
+          "before": "'Functions.json'",
+          "after": "\"./Functions.json\""
+        },
+        {
+          "file": "App/Liquidity/FunctionRegistry/startup.js",
+          "kind": "dirname resource",
+          "before": "'Functions.json'",
+          "after": "\"./Functions.json\""
+        },
+        {
+          "file": "App/MarketData/FunctionRegistry/startup.js",
+          "kind": "dirname resource",
+          "before": "'Functions.json'",
+          "after": "\"./Functions.json\""
+        },
+        {
+          "file": "App/Portfolio/Engine/okx_account.js",
+          "kind": "relative module",
+          "before": "'../../services/trading-engine/exchange-adapters/okx/account-reader'",
+          "after": "\"../../Engines/Trading/exchange-adapters/okx/account-reader\""
+        },
+        {
+          "file": "App/Portfolio/Engine/okx_contracts.js",
+          "kind": "explicit App-relative source",
+          "before": "'App/services/trading-engine/exchange-adapters/okx/account-reader.js'",
+          "after": "\"App/Engines/Trading/exchange-adapters/okx/account-reader.js\""
+        },
+        {
+          "file": "App/Portfolio/FunctionRegistry/startup.js",
+          "kind": "dirname resource",
+          "before": "'Functions.json'",
+          "after": "\"./Functions.json\""
+        },
+        {
+          "file": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+          "kind": "explicit App-relative source",
+          "before": "'services/trading-engine/trading_service.js'",
+          "after": "\"Engines/Trading/trading_service.js\""
+        },
+        {
+          "file": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+          "kind": "relative module",
+          "before": "'../../services/trading-engine/trading_runtime_state_v2'",
+          "after": "\"../../Engines/Trading/trading_runtime_state_v2\""
+        },
+        {
+          "file": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+          "kind": "relative module",
+          "before": "'../../services/trading-engine/exchange-adapters/okx/executor'",
+          "after": "\"../../Engines/Trading/exchange-adapters/okx/executor\""
+        },
+        {
+          "file": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+          "kind": "relative module",
+          "before": "'../../services/trading-engine/trading-engine'",
+          "after": "\"../../Engines/Trading/trading-engine\""
+        },
+        {
+          "file": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+          "kind": "relative module",
+          "before": "'../../services/trading-engine/vault-client'",
+          "after": "\"../../Engines/Trading/vault-client\""
+        },
+        {
+          "file": "App/Portfolio/Tests/manual_order_pipeline.integration.test.js",
+          "kind": "explicit App-relative source",
+          "before": "'services/trading-engine/trading_service.js'",
+          "after": "\"Engines/Trading/trading_service.js\""
+        },
+        {
+          "file": "App/Portfolio/Tests/manual_order_pipeline.integration.test.js",
+          "kind": "relative module",
+          "before": "'../../services/trading-engine/exchange-adapters/okx/executor'",
+          "after": "\"../../Engines/Trading/exchange-adapters/okx/executor\""
+        },
+        {
+          "file": "App/Portfolio/Tests/manual_order_pipeline.integration.test.js",
+          "kind": "relative module",
+          "before": "'../../services/trading-engine/trading-engine'",
+          "after": "\"../../Engines/Trading/trading-engine\""
+        },
+        {
+          "file": "App/Portfolio/Tests/manual_order_pipeline.integration.test.js",
+          "kind": "relative module",
+          "before": "'../../services/trading-engine/vault-client'",
+          "after": "\"../../Engines/Trading/vault-client\""
+        },
+        {
+          "file": "App/Portfolio/Tests/manual_projection.test.js",
+          "kind": "relative module",
+          "before": "\"../../services/trading-engine/manual-lifecycle\"",
+          "after": "\"../../Engines/Trading/manual-lifecycle\""
+        },
+        {
+          "file": "App/Portfolio/Tests/okx_account.test.js",
+          "kind": "relative module",
+          "before": "'../../services/trading-engine/vault-client'",
+          "after": "\"../../Engines/Trading/vault-client\""
+        },
+        {
+          "file": "App/Portfolio/Tests/okx_account.test.js",
+          "kind": "relative module",
+          "before": "'../../services/trading-engine/trading-engine'",
+          "after": "\"../../Engines/Trading/trading-engine\""
+        },
+        {
+          "file": "App/Portfolio/Tests/okx_account.test.js",
+          "kind": "relative module",
+          "before": "'../../services/trading-engine/exchange-adapters/okx/executor'",
+          "after": "\"../../Engines/Trading/exchange-adapters/okx/executor\""
+        },
+        {
+          "file": "App/Portfolio/Tests/okx_pipeline.integration.test.js",
+          "kind": "explicit App-relative source",
+          "before": "'services/trading-engine/trading_service.js'",
+          "after": "\"Engines/Trading/trading_service.js\""
+        },
+        {
+          "file": "App/Portfolio/Tests/okx_pipeline.integration.test.js",
+          "kind": "relative module",
+          "before": "'../../services/trading-engine/exchange-adapters/okx/executor'",
+          "after": "\"../../Engines/Trading/exchange-adapters/okx/executor\""
+        },
+        {
+          "file": "App/Portfolio/Tests/okx_pipeline.integration.test.js",
+          "kind": "relative module",
+          "before": "'../../services/trading-engine/trading-engine'",
+          "after": "\"../../Engines/Trading/trading-engine\""
+        },
+        {
+          "file": "App/Portfolio/Tests/okx_pipeline.integration.test.js",
+          "kind": "relative module",
+          "before": "'../../services/trading-engine/vault-client'",
+          "after": "\"../../Engines/Trading/vault-client\""
+        },
+        {
+          "file": "App/Risk/FunctionRegistry/startup.js",
+          "kind": "dirname resource",
+          "before": "'Functions.json'",
+          "after": "\"./Functions.json\""
+        },
+        {
+          "file": "App/Strategy/FunctionRegistry/startup.js",
+          "kind": "dirname resource",
+          "before": "'Functions.json'",
+          "after": "\"./Functions.json\""
+        },
+        {
+          "file": "App/Supervisor/ChatBot/Tests/execution_readiness.test.js",
+          "kind": "relative module",
+          "before": "'../../../services/trading-engine/exchange-adapters/okx/executor'",
+          "after": "\"../../../Engines/Trading/exchange-adapters/okx/executor\""
+        },
+        {
+          "file": "App/Supervisor/ChatBot/Tests/execution_readiness.test.js",
+          "kind": "relative module",
+          "before": "'../../../services/trading-engine/trading-engine'",
+          "after": "\"../../../Engines/Trading/trading-engine\""
+        },
+        {
+          "file": "App/Supervisor/ChatBot/catalog.js",
+          "kind": "dirname resource",
+          "before": "'Intents'",
+          "after": "\"./Intents\""
+        },
+        {
+          "file": "App/Supervisor/CognitiveRuntime/index.js",
+          "kind": "combined path segment",
+          "before": "'identity.md'",
+          "after": "\"\""
+        },
+        {
+          "file": "App/Supervisor/CognitiveRuntime/index.js",
+          "kind": "combined path segment",
+          "before": "'Soul'",
+          "after": "\"\""
+        },
+        {
+          "file": "App/Supervisor/CognitiveRuntime/index.js",
+          "kind": "dirname resource",
+          "before": "'..'",
+          "after": "\"../Soul/identity.md\""
+        },
+        {
+          "file": "App/Supervisor/CognitiveRuntime/index.js",
+          "kind": "combined path segment",
+          "before": "'identity.md'",
+          "after": "\"\""
+        },
+        {
+          "file": "App/Supervisor/CognitiveRuntime/index.js",
+          "kind": "combined path segment",
+          "before": "'Soul'",
+          "after": "\"\""
+        },
+        {
+          "file": "App/Supervisor/CognitiveRuntime/index.js",
+          "kind": "dirname resource",
+          "before": "'..'",
+          "after": "\"../Soul/identity.md\""
+        },
+        {
+          "file": "App/Supervisor/FunctionRegistry/startup.js",
+          "kind": "dirname resource",
+          "before": "'Functions.json'",
+          "after": "\"./Functions.json\""
+        },
+        {
+          "file": "App/Tools/CI/auth21_writer_inventory.js",
+          "kind": "explicit App-relative source",
+          "before": "'services/trading-engine/history-store.js'",
+          "after": "\"Engines/Trading/history-store.js\""
+        },
+        {
+          "file": "App/Tools/CI/auth21_writer_triage.js",
+          "kind": "explicit App-relative source",
+          "before": "'services/trading-engine/trading_logs_v2.js'",
+          "after": "\"Engines/Trading/trading_logs_v2.js\""
+        },
+        {
+          "file": "App/Tools/CI/auth21_writer_triage.js",
+          "kind": "explicit App-relative source",
+          "before": "'services/trading-engine/tests/test_trading_logs_v2.js'",
+          "after": "\"Engines/Trading/tests/test_trading_logs_v2.js\""
+        },
+        {
+          "file": "App/Tools/CI/auth21_writer_triage.js",
+          "kind": "explicit App-relative source",
+          "before": "'services/trading-engine/tests/test_trading_runtime_state_v2.js'",
+          "after": "\"Engines/Trading/tests/test_trading_runtime_state_v2.js\""
+        },
+        {
+          "file": "App/Tools/CI/auth21_writer_triage.js",
+          "kind": "explicit App-relative source",
+          "before": "'services/trading-engine/tests/test_trading_admin_p3_security.js'",
+          "after": "\"Engines/Trading/tests/test_trading_admin_p3_security.js\""
+        },
+        {
+          "file": "App/Tools/CI/auth21_writer_triage.js",
+          "kind": "explicit App-relative source",
+          "before": "'services/trading-engine/tests/test_trading_admin_controller_v2.js'",
+          "after": "\"Engines/Trading/tests/test_trading_admin_controller_v2.js\""
+        },
+        {
+          "file": "App/Tools/CI/auth21_writer_triage.js",
+          "kind": "explicit App-relative source",
+          "before": "'services/trading-engine/tests/test_trading_admin_bridge_key_v2.js'",
+          "after": "\"Engines/Trading/tests/test_trading_admin_bridge_key_v2.js\""
+        },
+        {
+          "file": "App/Tools/CI/auth21_writer_triage.js",
+          "kind": "explicit App-relative source",
+          "before": "'services/trading-engine/tests/test_trading_admin_auth21_binding_v2.js'",
+          "after": "\"Engines/Trading/tests/test_trading_admin_auth21_binding_v2.js\""
+        },
+        {
+          "file": "App/Tools/CI/auth21_writer_triage.js",
+          "kind": "explicit App-relative source",
+          "before": "'services/trading-engine/tests/test_trading_p4_p5_v253.js'",
+          "after": "\"Engines/Trading/tests/test_trading_p4_p5_v253.js\""
+        },
+        {
+          "file": "App/Tools/CI/auth21_writer_triage.js",
+          "kind": "explicit App-relative source",
+          "before": "'services/trading-engine/tests/test_trading_p3_qualification_v252.js'",
+          "after": "\"Engines/Trading/tests/test_trading_p3_qualification_v252.js\""
+        },
+        {
+          "file": "App/Tools/CI/auth21_writer_triage.js",
+          "kind": "explicit App-relative source",
+          "before": "'services/trading-engine/tests/test_trading_p3_multiprocess_v252.js'",
+          "after": "\"Engines/Trading/tests/test_trading_p3_multiprocess_v252.js\""
+        },
+        {
+          "file": "App/Tools/CI/auth21_writer_triage.js",
+          "kind": "explicit App-relative source",
+          "before": "'services/trading-engine/trading_runtime_state_v2.js'",
+          "after": "\"Engines/Trading/trading_runtime_state_v2.js\""
+        },
+        {
+          "file": "App/Tools/CI/auth21_writer_triage.js",
+          "kind": "explicit App-relative source",
+          "before": "'services/trading-engine/trading_draining_v2.js'",
+          "after": "\"Engines/Trading/trading_draining_v2.js\""
+        },
+        {
+          "file": "App/Tools/CI/auth21_writer_triage.js",
+          "kind": "explicit App-relative source",
+          "before": "'services/trading-engine/trading_admin_controller_v2.js'",
+          "after": "\"Engines/Trading/trading_admin_controller_v2.js\""
+        },
+        {
+          "file": "App/Tools/CI/auth21_writer_triage.js",
+          "kind": "explicit App-relative source",
+          "before": "'services/trading-engine/trading_admin_ledger_v2.js'",
+          "after": "\"Engines/Trading/trading_admin_ledger_v2.js\""
+        },
+        {
+          "file": "App/Tools/FunctionRegistry/generate.js",
+          "kind": "explicit App-relative source",
+          "before": "'services/trading-engine'",
+          "after": "\"Engines/Trading\""
+        },
+        {
+          "file": "App/Tools/Tests/SupervisorSimulator/advanced_network.js",
+          "kind": "relative module",
+          "before": "'../../../services/trading-engine/http-transport'",
+          "after": "\"../../../Engines/Trading/http-transport\""
+        },
+        {
+          "file": "App/Tools/Tests/SupervisorSimulator/external_fixtures.js",
+          "kind": "relative module",
+          "before": "'../../../services/trading-engine/http-transport'",
+          "after": "\"../../../Engines/Trading/http-transport\""
+        },
+        {
+          "file": "App/Tools/Tests/SupervisorSimulator/external_fixtures.js",
+          "kind": "relative module",
+          "before": "'../../../services/trading-engine/trading_runtime_state_v2'",
+          "after": "\"../../../Engines/Trading/trading_runtime_state_v2\""
+        },
+        {
+          "file": "App/Tools/Tests/SupervisorSimulator/validation-suite.json",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": "App/Tools/Tests/auth21_admin_store.test.js",
+          "kind": "dirname resource",
+          "before": "'auth21_cli_pty_driver.py'",
+          "after": "\"./auth21_cli_pty_driver.py\""
+        },
+        {
+          "file": "App/Tools/Tests/auth21_four_process_http.test.js",
+          "kind": "dirname resource",
+          "before": "'auth21_four_process_worker.js'",
+          "after": "\"./auth21_four_process_worker.js\""
+        },
+        {
+          "file": "App/Tools/Tests/auth21_maintenance_bypass.test.js",
+          "kind": "dirname resource",
+          "before": "'../'",
+          "after": "\"..\""
+        },
+        {
+          "file": "App/Tools/Tests/auth21_real_engines_ingress.test.js",
+          "kind": "explicit App-relative source",
+          "before": "'services/trading-engine/trading_service.js'",
+          "after": "\"Engines/Trading/trading_service.js\""
+        },
+        {
+          "file": "App/Tools/Tests/auth21_snapshot_real_bundle_e2e.test.js",
+          "kind": "explicit App-relative source",
+          "before": "'services/trading-engine/trading_service.js'",
+          "after": "\"Engines/Trading/trading_service.js\""
+        },
+        {
+          "file": "App/Tools/Tests/auth21_snapshot_real_bundle_e2e.test.js",
+          "kind": "explicit App-relative source",
+          "before": "'services/trading-engine/trading_service.js'",
+          "after": "\"Engines/Trading/trading_service.js\""
+        },
+        {
+          "file": "App/Tools/Tests/auth21_snapshot_real_service_ipc.test.js",
+          "kind": "explicit App-relative source",
+          "before": "'services/trading-engine/trading_service.js'",
+          "after": "\"Engines/Trading/trading_service.js\""
+        },
+        {
+          "file": "App/Tools/Tests/trading_usage_jsonl_snapshot_writers.test.js",
+          "kind": "relative module",
+          "before": "'../../services/trading-engine/history-store'",
+          "after": "\"../../Engines/Trading/history-store\""
+        },
+        {
+          "file": "App/Tools/Tests/user_management_trading_vault.test.js",
+          "kind": "relative module",
+          "before": "'../../services/trading-engine/trading-engine'",
+          "after": "\"../../Engines/Trading/trading-engine\""
+        },
+        {
+          "file": "App/Tools/Tests/user_management_trading_vault.test.js",
+          "kind": "relative module",
+          "before": "'../../services/trading-engine/vault-client'",
+          "after": "\"../../Engines/Trading/vault-client\""
+        },
+        {
+          "file": "App/Tools/Tests/user_management_v1.test.js",
+          "kind": "dirname resource",
+          "before": "'auth21_cli_pty_driver.py'",
+          "after": "\"./auth21_cli_pty_driver.py\""
+        },
+        {
+          "file": "App/Tools/qualify_rev2.js",
+          "kind": "explicit App-relative source",
+          "before": "\"services/trading-engine/tests/manual_outbox.test.js\"",
+          "after": "\"Engines/Trading/tests/manual_outbox.test.js\""
+        },
+        {
+          "file": "App/Tools/trading_boundary_contract_audit.js",
+          "kind": "explicit App-relative source",
+          "before": "'services/trading-engine/trading_service.js'",
+          "after": "\"Engines/Trading/trading_service.js\""
+        },
+        {
+          "file": "App/Tools/trading_static_audit.js",
+          "kind": "explicit App-relative source",
+          "before": "'services/trading-engine/registry.js'",
+          "after": "\"Engines/Trading/registry.js\""
+        },
+        {
+          "file": "App/Tools/trading_static_audit.js",
+          "kind": "explicit App-relative source",
+          "before": "'services/trading-engine/secret-provider.js'",
+          "after": "\"Engines/Trading/secret-provider.js\""
+        },
+        {
+          "file": "App/Tools/trading_static_audit.js",
+          "kind": "explicit App-relative source",
+          "before": "'services/trading-engine/http-transport.js'",
+          "after": "\"Engines/Trading/http-transport.js\""
+        },
+        {
+          "file": "App/Tools/trading_static_audit.js",
+          "kind": "explicit App-relative source",
+          "before": "'services/trading-engine/trading-engine.js'",
+          "after": "\"Engines/Trading/trading-engine.js\""
+        },
+        {
+          "file": "App/Tools/trading_static_audit.js",
+          "kind": "explicit App-relative source",
+          "before": "'services/trading-engine/trading_service.js'",
+          "after": "\"Engines/Trading/trading_service.js\""
+        },
+        {
+          "file": "App/UI/Tests/test_engine_http_surface_v2.0.js",
+          "kind": "explicit App-relative source",
+          "before": "'services/trading-engine/trading_service.js'",
+          "after": "\"Engines/Trading/trading_service.js\""
+        },
+        {
+          "file": "App/package.json",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": "App/Engines/Trading/FunctionRegistry/Functions.json",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": "App/Engines/Trading/FunctionRegistry/startup.js",
+          "kind": "dirname resource",
+          "before": "'Functions.json'",
+          "after": "\"./Functions.json\""
+        },
+        {
+          "file": "App/Engines/Trading/registry.js",
+          "kind": "dirname resource",
+          "before": "\"executor_catalog.json\"",
+          "after": "\"./executor_catalog.json\""
+        },
+        {
+          "file": "App/Engines/Trading/tests/test_trading_p3_multiprocess_v252.js",
+          "kind": "explicit App-relative source",
+          "before": "'services/trading-engine/trading_service.js'",
+          "after": "\"Engines/Trading/trading_service.js\""
+        },
+        {
+          "file": "App/start.command",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": "App/start_auth21_local_safe.command",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": "App/tests/companion-frontend-v1.2.test.js",
+          "kind": "combined path segment",
+          "before": "'companion_v1.0.js'",
+          "after": "\"\""
+        },
+        {
+          "file": "App/tests/companion-frontend-v1.2.test.js",
+          "kind": "combined path segment",
+          "before": "'JS'",
+          "after": "\"\""
+        },
+        {
+          "file": "App/tests/companion-frontend-v1.2.test.js",
+          "kind": "combined path segment",
+          "before": "'Frontend'",
+          "after": "\"\""
+        },
+        {
+          "file": "App/tests/companion-frontend-v1.2.test.js",
+          "kind": "dirname resource",
+          "before": "'..'",
+          "after": "\"../Frontend/JS/companion_v1.0.js\""
+        },
+        {
+          "file": "App/tests/registry-process-integration.js",
+          "kind": "dirname resource",
+          "before": "'registry-engine-child.js'",
+          "after": "\"./registry-engine-child.js\""
+        },
+        {
+          "file": "App/tests/registry-process-integration.js",
+          "kind": "explicit App-relative source",
+          "before": "'services/trading-engine'",
+          "after": "\"Engines/Trading\""
+        },
+        {
+          "file": "Deploy/VPS/preflight.sh",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": "Tools/Build/build_rev1_full_source.py",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": "compose.debug.stack.yml",
+          "kind": "explicit paths in configuration/launcher"
+        }
+      ],
+      "old_directory_retained": false,
+      "status": "PASS"
+    }
+  ]
+}

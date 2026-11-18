@@ -11,7 +11,7 @@ const SPEC=[
  ['portfolio','Portfolio/Engine/portfolio_service.js','IATB_PORTFOLIO_PORT'],
  ['marketdata','MarketData/market_data_service.js','IATB_MARKET_DATA_PORT'],
  ['fundamental','Fundamental/Engine/fundamental_service.js','IATB_FUNDAMENTAL_PORT'],
- ['trading','services/trading-engine/trading_service.js','IATB_TRADING_ENGINE_PORT'],
+ ['trading',"Engines/Trading/trading_service.js",'IATB_TRADING_ENGINE_PORT'],
  ['indicators','Indicators/Engine/indicator_service.js','IATB_INDICATOR_PORT'],
  ['strategy','Strategy/Engine/strategy_service.js','IATB_STRATEGY_PORT']
 ];

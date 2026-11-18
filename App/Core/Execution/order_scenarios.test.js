@@ -2,7 +2,7 @@
 // Fault injection at owner/Engine/provider boundaries. The local resolver, state,
 // Risk calculations, approval gate, binding, Trading and OKX adapter are real.
 const {test,after}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),os=require('node:os'),path=require('node:path'),crypto=require('node:crypto');
-const {ManualOrders}=require('./manual_orders'),{profileFixture}=require('../../Portfolio/Tests/okx_fixture'),{fixture}=require('../../Risk/Tests/snapshot_fixture'),{Orchestrator}=require('../../Risk/Snapshots/orchestrator'),{RiskGate}=require('../../Risk/Engine/risk_gate'),{TradingEngine}=require('../../services/trading-engine/trading-engine'),{OkxExecutor}=require('../../services/trading-engine/exchange-adapters/okx/executor'),{HybridChatBot}=require('../../Supervisor/ChatBot'),{State}=require('../../Supervisor/ChatBot/state');
+const {ManualOrders}=require('./manual_orders'),{profileFixture}=require('../../Portfolio/Tests/okx_fixture'),{fixture}=require('../../Risk/Tests/snapshot_fixture'),{Orchestrator}=require('../../Risk/Snapshots/orchestrator'),{RiskGate}=require('../../Risk/Engine/risk_gate'),{TradingEngine}=require("../../Engines/Trading/trading-engine"),{OkxExecutor}=require("../../Engines/Trading/exchange-adapters/okx/executor"),{HybridChatBot}=require('../../Supervisor/ChatBot'),{State}=require('../../Supervisor/ChatBot/state');
 const BUY='Achète 5 USDT de BTC-USDT Spot Market Live sur OKX compte okx-main';
 const SELL='Vends 0,05 BTC de BTC-USDT Spot Market Live sur OKX compte okx-main';
 const results=[];
@@ -87,6 +87,6 @@ for(const [id,response,expected]of [
  ['http503',{statusCode:503,body:{code:'50001',data:[]}},'UNCERTAIN'],
  ['empty_ack',{statusCode:200,body:{code:'0',data:[]}},'UNCERTAIN']
 ])test('Journal durable Trading : '+id+' conserve '+expected,async t=>{
- const dir=fs.mkdtempSync(path.join(os.tmpdir(),'iatb-outcome-ledger-')),Runtime=require('../../services/trading-engine/trading_runtime_state_v2').RuntimeState,r=new Runtime({file:path.join(dir,'state.json')});
+ const dir=fs.mkdtempSync(path.join(os.tmpdir(),'iatb-outcome-ledger-')),Runtime=require("../../Engines/Trading/trading_runtime_state_v2").RuntimeState,r=new Runtime({file:path.join(dir,'state.json')});
  t.after(()=>{r.close();fs.rmSync(dir,{recursive:true,force:true});});r.transition('RUNNING','SIMULATION',{recovery_required:false});await r.submit({id,generation:r.snapshot().generation},()=>Promise.resolve(response));assert.equal(r.db.prepare('SELECT phase FROM trading_operations WHERE id=?').get(id).phase,expected);
 });

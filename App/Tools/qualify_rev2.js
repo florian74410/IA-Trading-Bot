@@ -43,7 +43,7 @@ run("rev2-unit", [
   "--test",
   "--test-concurrency=1",
   "Core/Execution/advanced_contract.test.js",
-  "services/trading-engine/tests/manual_outbox.test.js",
+  "Engines/Trading/tests/manual_outbox.test.js",
   "Portfolio/Tests/manual_projection.test.js",
 ]);
 if (process.env.IATB_REV2_BROWSER === "1") {

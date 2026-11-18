@@ -45,7 +45,7 @@ on:
       - 'App/Tools/Tests/marketdata_snapshot_writers.test.js'
       - 'App/MarketData/Financial/financial_store.js'
       - 'App/Tools/Tests/financial_jsonl_snapshot_writer.test.js'
-      - 'App/services/trading-engine/history-store.js'
+      - 'App/Engines/Trading/history-store.js'
       - 'App/Core/Services/usage_ledger_v1.js'
       - 'App/Tools/Tests/trading_usage_jsonl_snapshot_writers.test.js'
       - 'App/Core/Mosaics/mosaic_store_v1.0.js'
@@ -109,7 +109,7 @@ on:
       - 'App/Tools/Tests/auth21_service_boundary.test.js'
       - 'App/UI/Gateway/ui_service.js'
       - 'App/Core/Router/router.js'
-      - 'App/services/trading-engine/trading_service.js'
+      - 'App/Engines/Trading/trading_service.js'
       - 'App/Portfolio/Engine/portfolio_service.js'
       - 'App/Risk/Engine/risk_service.js'
       - 'App/Tools/Tests/auth21_rbac_guard.test.js'
@@ -169,7 +169,7 @@ on:
       - 'App/Tools/Tests/marketdata_snapshot_writers.test.js'
       - 'App/MarketData/Financial/financial_store.js'
       - 'App/Tools/Tests/financial_jsonl_snapshot_writer.test.js'
-      - 'App/services/trading-engine/history-store.js'
+      - 'App/Engines/Trading/history-store.js'
       - 'App/Core/Services/usage_ledger_v1.js'
       - 'App/Tools/Tests/trading_usage_jsonl_snapshot_writers.test.js'
       - 'App/Core/Mosaics/mosaic_store_v1.0.js'
@@ -223,7 +223,7 @@ on:
       - 'App/Tools/Tests/auth21_service_boundary.test.js'
       - 'App/UI/Gateway/ui_service.js'
       - 'App/Core/Router/router.js'
-      - 'App/services/trading-engine/trading_service.js'
+      - 'App/Engines/Trading/trading_service.js'
       - 'App/Portfolio/Engine/portfolio_service.js'
       - 'App/Risk/Engine/risk_service.js'
       - 'App/Tools/Tests/auth21_rbac_guard.test.js'
@@ -310,7 +310,7 @@ jobs:
           node --check App/Tools/Tests/marketdata_snapshot_writers.test.js
           node --check App/MarketData/Financial/financial_store.js
           node --check App/Tools/Tests/financial_jsonl_snapshot_writer.test.js
-          node --check App/services/trading-engine/history-store.js
+          node --check App/Engines/Trading/history-store.js
           node --check App/Core/Services/usage_ledger_v1.js
           node --check App/Tools/Tests/trading_usage_jsonl_snapshot_writers.test.js
           node --check App/Core/Mosaics/mosaic_store_v1.0.js
@@ -363,7 +363,7 @@ jobs:
           node --check App/Tools/Tests/auth21_service_boundary.test.js
           node --check App/UI/Gateway/ui_service.js
           node --check App/Core/Router/router.js
-          node --check App/services/trading-engine/trading_service.js
+          node --check App/Engines/Trading/trading_service.js
           node --check App/Portfolio/Engine/portfolio_service.js
           node --check App/Risk/Engine/risk_service.js
           node --check App/Tools/Tests/auth21_rbac_guard.test.js

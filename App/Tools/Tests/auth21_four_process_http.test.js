@@ -6,7 +6,7 @@ const test=require('node:test'),assert=require('node:assert/strict');
 const fs=require('node:fs'),os=require('node:os'),path=require('node:path');
 const http=require('node:http'),{fork}=require('node:child_process');
 const {randomBytes}=require('node:crypto');
-const worker=path.join(__dirname,'auth21_four_process_worker.js');
+const worker=path.join(__dirname,"./auth21_four_process_worker.js");
 const wait=(ms)=>new Promise(r=>setTimeout(r,ms));
 async function launch(role,extra){
  const child=fork(worker,[],{env:{...process.env,AUTH21_FIXTURE_ROLE:role,...extra},stdio:['ignore','pipe','pipe','ipc']});

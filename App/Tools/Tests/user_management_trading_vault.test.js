@@ -8,7 +8,7 @@ const PASSWORD='Fictional test password 2026!';
 async function fixture(t){const root=fs.mkdtempSync(path.join(os.tmpdir(),'iatb-um-test-'));fs.mkdirSync(path.join(root,'Security'));fs.mkdirSync(path.join(root,'Database'));const file=path.join(root,'Database','clients.sqlite'),key=path.join(root,'Security','client_master.key'),cipher=new ClientCrypto(key,{clientDbPath:file}),db=new Database(file);db.pragma('foreign_keys=ON');for(const name of ['001_clients_v1.sql','002_client_accounts_v1.sql'])db.exec(fs.readFileSync(path.resolve(__dirname,'../../Core/Clients/migrations',name),'utf8'));t.after(()=>{if(db.open)db.close();fs.rmSync(root,{recursive:true,force:true});});await migrate(db,{backupFile:file+'.backup',keyFile:key,confirm:'MIGRATE USER MANAGEMENT V1'});const prompts=['Admin','Test','admin@example.invalid','ADMIN',PASSWORD,PASSWORD,'CREATE FIRST ADMIN'];const admin=await run(['create-first-admin'],{env:{IATB_DATA_ROOT:root},check:()=>true,prompt:async()=>prompts.shift()});let now=1900000000;const sessions=new UserStore({db,clientCrypto:cipher,nowSeconds:()=>now});const login=await sessions.loginEmail('admin@example.invalid',PASSWORD);const manager=new Auth21AdminStore({sessionStore:sessions,authorizeLocalOperator:()=>true});return {root,file,key,cipher,db,sessions,login,manager,admin,advance:n=>now+=n};}
 async function account(f,name,role='USER'){const x=await f.manager.createAccount(f.login.token,{firstName:name,lastName:'Test',email:name+'@example.invalid',username:name,password:PASSWORD,role});return {...x,...await f.sessions.loginEmail(name+'@example.invalid',PASSWORD)};}
 const {TradingVault}=require('../../Core/Clients/UserManagement/trading_vault');
-const {createVaultClient}=require('../../services/trading-engine/vault-client');
+const {createVaultClient}=require("../../Engines/Trading/vault-client");
 const {Wallet,utils}=require('ethers');
 const {signTypedData,typedDigest}=require('../../Bank/Core/dex_wallet_signer');
 const config={id:'binance-main',exchange:'BINANCE',markets:['SPOT'],actions:['execute','cancel','close'],enabled:true,default:true,credentials:{apiKey:'TEST_KEY_ONLY',apiSecret:'TEST_SECRET_ONLY'}};
@@ -78,7 +78,7 @@ test('real HTTPS account routes enforce password, CSRF, origin, owner isolation 
  // Shared CP authentication alone cannot authorize secret release.
  assert.equal((await call('/auth21/internal/trading-access','POST',{ticket:grant.ticket,intent,action:'execute',operation:'bind'},{'X-IATB-CP-Token':cp.ensureSecret(f.root)})).status,403);
  const b=await remote.bind({...intent,metadata:{account_ticket:grant.ticket}},'execute');assert.equal((await b.secretProvider.get('BINANCE')).apiKey,'TEST_KEY_ONLY');
- const engine=new (require('../../services/trading-engine/trading-engine').TradingEngine)({accountRouting:remote,lifecycle:{canExecute:()=>true,snapshot:()=>({generation:1}),submit:(o,fn)=>fn()}});
+ const engine=new (require("../../Engines/Trading/trading-engine").TradingEngine)({accountRouting:remote,lifecycle:{canExecute:()=>true,snapshot:()=>({generation:1}),submit:(o,fn)=>fn()}});
  engine.registerExecutor('BINANCE',{execute:async(o,ctx)=>{assert.equal(o.account,'binance-main');assert.equal((await ctx.secretProvider.get('BINANCE')).apiKey,'TEST_KEY_ONLY');return {ok:true,status:'SIMULATED'};}});
  const next=await vault.issue(f.login.token,intent,'execute');const result=await engine.execute({...intent,metadata:{account_ticket:next.ticket}});assert.equal(result.account_identity.owner,f.login.clientId);assert.equal(result.status,'SIMULATED');
 

@@ -4,7 +4,7 @@
    - Uses the bundled Mozilla CA roots when the old macOS / Node trust store is incomplete.
    - Zero npm dependency, Node.js 16 compatible. */
 var fs=require('fs'),path=require('path');
-var BUNDLE_PATH=path.join(__dirname,'..','Certificates','cacert.pem'),CACHE;
+var BUNDLE_PATH=path.join(__dirname,"../Certificates/cacert.pem","",""),CACHE;
 function load(){
  if(CACHE!==undefined)return CACHE;
  try{

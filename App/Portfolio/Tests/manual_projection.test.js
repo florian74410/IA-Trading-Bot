@@ -8,7 +8,7 @@ const Store = require("../Engine/portfolio_store"),
   PE = require("../Engine/portfolio_engine"),
   Owner = require("../Engine/owner_portfolio"),
   Projection = require("../Engine/execution_projection"),
-  Lifecycle = require("../../services/trading-engine/manual-lifecycle");
+  Lifecycle = require("../../Engines/Trading/manual-lifecycle");
 function fill(
   owner = "CLalice",
   account = "okx-main",

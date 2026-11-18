@@ -178,7 +178,7 @@ services:
   trading:
     <<: *iatb-base
     profiles: ["trading-staged-do-not-start"]
-    command: ["node", "services/trading-engine/trading_service.js"]
+    command: ["node", "Engines/Trading/trading_service.js"]
     network_mode: "service:router"
     environment:
       <<: *iatb-env

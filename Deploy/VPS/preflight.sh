@@ -18,7 +18,7 @@ required=(
   App/Risk/Engine/risk_service.js
   App/Portfolio/Engine/portfolio_service.js
   App/Strategy/Engine/strategy_service.js
-  App/services/trading-engine/trading_service.js
+  App/Engines/Trading/trading_service.js
   App/UI/Gateway/ui_service.js
   App/start_auth21_local_safe.command
 )

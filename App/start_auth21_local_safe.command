@@ -75,7 +75,7 @@ launch indicator Indicators/Engine/indicator_service.js
 launch fundamental Fundamental/Engine/fundamental_service.js
 launch liquidity Liquidity/Engine/liquidity_service.js
 launch risk Risk/Engine/risk_service.js
-launch trading services/trading-engine/trading_service.js
+launch trading Engines/Trading/trading_service.js
 launch portfolio Portfolio/Engine/portfolio_service.js
 launch strategy Strategy/Engine/strategy_service.js
 launch supervisor Supervisor/supervisor_service.js
