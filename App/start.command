@@ -222,9 +222,9 @@ SUPERVISOR_LOG="$LOG_DIR/supervisor.log"
 # Fundamental Engine V3: SQLite native dependency tested with the local Node runtime.
 # Echec non bloquant: IA-TB reste disponible et le FE apparaitra OFFLINE dans ADMIN.
 FUNDAMENTAL_READY=0
-if [ -f "$PWD/Fundamental/install_sqlite.command" ]; then
+if [ -f "$PWD/Engines/Fundamental/install_sqlite.command" ]; then
   status_wait "SQLite / Fundamental" "checking"
-  if /bin/bash "$PWD/Fundamental/install_sqlite.command"; then
+  if /bin/bash "$PWD/Engines/Fundamental/install_sqlite.command"; then
     FUNDAMENTAL_READY=1
     status_ok "SQLite / Fundamental" "ready"
   else
@@ -282,7 +282,7 @@ trap cleanup EXIT INT TERM
 : > "$INDICATOR_LOG"
 : > "$MARKET_DATA_LOG"
 : > "$LIQUIDITY_LOG"
-mkdir -p Fundamental/Data
+mkdir -p Engines/Fundamental/Data
 : > "$FUNDAMENTAL_LOG"
 : > "$TRADING_LOG"
 : > "$FIREWALL_LOG"
@@ -340,7 +340,7 @@ require_service "Router" "$ROUTER_PORT" "/router-health" "\"router\"" "$ROUTER_L
 
 # 3. Security boundary before Market Data or Trading.
 status_wait "Firewall" "before data/trading"
-IATB_FIREWALL_PORT="$FIREWALL_PORT" IATB_TRADING_ENGINE_PORT="$TRADING_ENGINE_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Core/Firewall/firewall_service.js >> "$FIREWALL_LOG" 2>&1 &
+IATB_FIREWALL_PORT="$FIREWALL_PORT" IATB_TRADING_ENGINE_PORT="$TRADING_ENGINE_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Engines/Firewall/firewall_service.js >> "$FIREWALL_LOG" 2>&1 &
 FIREWALL_PID=$!
 require_service "Firewall" "$FIREWALL_PORT" "/health" "IA-TB Firewall Service" "$FIREWALL_LOG" 10
 fw_threads_ok=0
@@ -366,13 +366,13 @@ require_service "Market Data Collector" "$MARKET_DATA_PORT" "/health" "IA-TB Mar
 
 # 5. Read/analysis engines consume Router + Market Data.
 status_wait "Indicator Engine" "after Market Data"
-IATB_INDICATOR_PORT="$INDICATOR_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Indicators/Engine/indicator_service.js >> "$INDICATOR_LOG" 2>&1 &
+IATB_INDICATOR_PORT="$INDICATOR_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Engines/Indicators/Engine/indicator_service.js >> "$INDICATOR_LOG" 2>&1 &
 INDICATOR_PID=$!
 require_service "Indicator Engine" "$INDICATOR_PORT" "/health" "IA-TB Indicator Engine" "$INDICATOR_LOG" 10
 
 if [ "$FUNDAMENTAL_READY" -eq 1 ]; then
   status_wait "Fundamental Engine" "after Router"
-  IATB_FUNDAMENTAL_PORT="$FUNDAMENTAL_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Fundamental/Engine/fundamental_service.js >> "$FUNDAMENTAL_LOG" 2>&1 &
+  IATB_FUNDAMENTAL_PORT="$FUNDAMENTAL_PORT" ROUTER_PORT="$ROUTER_PORT" "$NODE_BIN" Engines/Fundamental/Engine/fundamental_service.js >> "$FUNDAMENTAL_LOG" 2>&1 &
   FUNDAMENTAL_PID=$!
   if ! wait_service "Fundamental Engine" "$FUNDAMENTAL_PORT" "/health" "IA-TB Fundamental Engine" "$FUNDAMENTAL_LOG" 12; then
     status_warn "Fundamental Engine" "disabled after failed boot"

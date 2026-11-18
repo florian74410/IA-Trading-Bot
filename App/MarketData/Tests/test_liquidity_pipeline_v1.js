@@ -1,6 +1,6 @@
 'use strict';
 var assert=require('assert'),fs=require('fs'),path=require('path');
-var Firewall=require('../../Core/Firewall/Protection/market_data_firewall');
+var Firewall=require("../../Engines/Firewall/Protection/market_data_firewall");
 var Metrics=require('../../Liquidity/Engine/liquidity_metrics');
 
 var fw=new Firewall({

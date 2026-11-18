@@ -18,7 +18,7 @@
   "Tools/Tests/user_management_route_matrix.test.js",
   "Tools/Tests/user_management_market_pipeline.test.js",
   "Engines/Trading/tests/test_trading_core_v2.0.js",
-  "Core/Firewall/Tests/trading_firewall.test.js",
+  "Engines/Firewall/Tests/trading_firewall.test.js",
   "Core/FunctionRegistry/Tests/control_runtime.test.js",
   "Core/FunctionRegistry/Tests/control_schema.test.js",
   "Core/FunctionRegistry/Tests/control_http.integration.test.js",

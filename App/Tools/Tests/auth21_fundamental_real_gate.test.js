@@ -2,7 +2,7 @@
 const test=require('node:test'),assert=require('node:assert/strict');
 const fs=require('node:fs'),path=require('node:path'),os=require('node:os');
 const {openEngineSnapshotTrial}=require('../../Core/Backup/auth21_engine_snapshot_trial');
-const src=fs.readFileSync(path.resolve(__dirname,'../../Fundamental/Engine/fundamental_service.js'),'utf8');
+const src=fs.readFileSync(path.resolve(__dirname,"../../Engines/Fundamental/Engine/fundamental_service.js"),'utf8');
 test('actual Fundamental Engine injects gate before initializing real SQLite store',()=>{
  const gate=src.indexOf("openEngineSnapshotTrial({env:process.env,engine:'fundamental'}).gate");
  const boot=src.indexOf('bootstrapInfo=Bootstrap.ensureSync()',gate);

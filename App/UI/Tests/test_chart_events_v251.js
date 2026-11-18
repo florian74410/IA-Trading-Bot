@@ -2,8 +2,8 @@
 // Local fixtures only. Real HTML/CSS/JS and Indicator Engine math; no external requests or live orders.
 var test=require('node:test'),assert=require('assert'),fs=require('fs'),path=require('path'),http=require('http');
 var firefox=require('playwright').firefox,root=path.resolve(__dirname,'../..');
-var Engine=require('../../Indicators/Engine/indicator_engine'),Registry=require('../../Indicators/Engine/indicator_registry').Registry;
-var registry=new Registry(path.join(root,'Indicators')),browser,server,base,FIXTURE_NOW=Date.now();
+var Engine=require("../../Engines/Indicators/Engine/indicator_engine"),Registry=require("../../Engines/Indicators/Engine/indicator_registry").Registry;
+var registry=new Registry(path.join(root,"Engines/Indicators")),browser,server,base,FIXTURE_NOW=Date.now();
 function calendarFixture(){
  var at=Math.floor(FIXTURE_NOW/60000)*60-25*60+23;
  function event(id,source,time,extra){return Object.assign({id:id,source:source,title:id,date:new Date(time*1000).toISOString().slice(0,10),startAtUtc:new Date(time*1000).toISOString()},extra)}
@@ -39,7 +39,7 @@ async function pageWith(options){
    if(a==='marketdata.symbols')d={ok:true,symbols:[{symbol:'BTCUSD',label:'BTC/USD'},{symbol:'ETHUSD',label:'ETH/USD'}]};
    if(a==='indicator.registry.reload')d={ok:true,items:registry.list().concat(Object.keys(custom).map(function(id){var d=custom[id];return{id:id,name:d.name,category:d.category,kind:'Custom',display:d.display,outputs:d.outputs,chartAvailable:true}})),status:registry.status()};
    if(a==='indicator.settings.get')d={ok:true,settings:{indicators:registry.list().map(function(x){return{id:x.id,enabled:true};})}};
-   if(a==='indicator.definition.create'){var def=args.definition,v=require('../../Indicators/Engine/indicator_registry').validateDefinition(def,'Custom',null,false);if(!v.ok)return route.fulfill({status:400,json:{error:v.errors.join('; ')}});custom[def.id]=def;d={ok:true,id:def.id};}
+   if(a==='indicator.definition.create'){var def=args.definition,v=require("../../Engines/Indicators/Engine/indicator_registry").validateDefinition(def,'Custom',null,false);if(!v.ok)return route.fulfill({status:400,json:{error:v.errors.join('; ')}});custom[def.id]=def;d={ok:true,id:def.id};}
    if(a==='indicator.compute_batch_data'||a==='indicator.compute_batch'){
     if(options.delay)await new Promise(function(done){setTimeout(done,options.delay);});
     if(options.fail) return route.fulfill({status:503,json:{error:'FIXTURE_INDICATOR_UNAVAILABLE'}});

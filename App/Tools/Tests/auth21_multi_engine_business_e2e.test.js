@@ -12,7 +12,7 @@ const {createCoreBusinessHttp}=require('../../Core/Clients/auth21_core_business_
 const APP=path.resolve(__dirname,'../..');
 const ENGINES=[
  ['marketdata','MarketData/market_data_service.js','IATB_MARKET_DATA_PORT'],
- ['fundamental','Fundamental/Engine/fundamental_service.js','IATB_FUNDAMENTAL_PORT'],
+ ['fundamental',"Engines/Fundamental/Engine/fundamental_service.js",'IATB_FUNDAMENTAL_PORT'],
  ['portfolio','Portfolio/Engine/portfolio_service.js','IATB_PORTFOLIO_PORT'],
  ['strategy','Strategy/Engine/strategy_service.js','IATB_STRATEGY_PORT']
 ];
@@ -114,7 +114,7 @@ test('real four Engine business actions honor roles, ownership and deny all old 
   if(data.ownerClientId)assert.equal(saved.ownerClientId,'CLBob');
   if(route.includes('fundamental')){
    const Database=require('better-sqlite3');
-   const dbFile=path.join(root,'userdata','Shared Data','Fundamental','fundamental.db');
+   const dbFile=path.join(root,'userdata','Shared Data',"Engines/Fundamental",'fundamental.db');
    const actual=new Database(dbFile,{readonly:true,fileMustExist:true});
    try{
     const row=actual.prepare('SELECT endpoint,enabled,provider_type FROM feeds WHERE endpoint=?')

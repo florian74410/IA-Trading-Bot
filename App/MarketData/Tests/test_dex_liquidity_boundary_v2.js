@@ -4,7 +4,7 @@ var assert=require('assert'),test=require('node:test'),http=require('http'),fs=r
 var temp=fs.mkdtempSync(path.join(os.tmpdir(),'iatb-dex-boundary-'));
 ['RUNTIME','DATA','STATE','ANNEX','UPDATES'].forEach(function(k){process.env['IATB_'+k+'_ROOT']=path.join(temp,k);});
 var Provider=require('../Provider/dexscreener_provider'),Collector=require('../Collectors/dex_liquidity_collector');
-var Firewall=require('../../Core/Firewall/Protection/market_data_firewall'),Client=require('../Firewall/data_firewall_client'),Store=require('../Storage/microstructure_store');
+var Firewall=require("../../Engines/Firewall/Protection/market_data_firewall"),Client=require('../Firewall/data_firewall_client'),Store=require('../Storage/microstructure_store');
 var providerServer,firewallServer,mode='valid',firewallMode='valid',requests=0,checks=0,lastMessage,store;
 function pool(address,liquidity){return{chainId:'ethereum',dexId:'uniswap',pairAddress:address,baseToken:{symbol:'WETH'},quoteToken:{symbol:'USDC'},priceUsd:'2000',liquidity:{usd:liquidity},volume:{h24:100},labels:[]};}
 function json(res,code,o){res.writeHead(code,{'Content-Type':'application/json'});res.end(JSON.stringify(o));}

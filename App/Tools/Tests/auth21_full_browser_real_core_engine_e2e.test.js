@@ -125,7 +125,7 @@ test('full genuine HTTPS Gateway -> Core SQLite v3 ADMIN -> Router -> Indicator 
  }
  const core=start('core','Core/Server/server.js');
  await ready('core',core,corePort,true);
- const indicator=start('indicator','Indicators/Engine/indicator_service.js');
+ const indicator=start('indicator',"Engines/Indicators/Engine/indicator_service.js");
  await ready('indicator',indicator,indicatorPort,false);
  const router=start('router','Core/Router/router.js');
  await ready('router',router,routerPort,false);

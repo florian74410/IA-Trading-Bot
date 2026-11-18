@@ -3,7 +3,7 @@
 var test=require('node:test'),assert=require('assert'),fs=require('fs'),os=require('os'),path=require('path');
 var temp=fs.mkdtempSync(path.join(os.tmpdir(),'iatb-liquidations-'));
 ['RUNTIME','DATA','STATE','ANNEX','UPDATES'].forEach(function(k){process.env['IATB_'+k+'_ROOT']=path.join(temp,k);});
-var Normalize=require('../Normalizer/liquidations'),Collector=require('../Collectors/microstructure_collector'),Store=require('../Storage/microstructure_store'),DF=require('../../Core/Firewall/Protection/market_data_firewall');
+var Normalize=require('../Normalizer/liquidations'),Collector=require('../Collectors/microstructure_collector'),Store=require('../Storage/microstructure_store'),DF=require("../../Engines/Firewall/Protection/market_data_firewall");
 var stores=[],index=0;
 test.after(function(){stores.forEach(function(s){s.close();});fs.rmSync(temp,{recursive:true,force:true});});
 function make(options){var store=new Store({file:path.join(temp,'liquidations-'+(++index)+'.db')}),fw=new DF({duplicateWindowMs:0}),state={checks:0,rates:0,instruments:0};stores.push(store);

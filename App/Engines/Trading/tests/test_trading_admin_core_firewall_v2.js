@@ -4,7 +4,7 @@ const crypto=require('node:crypto');
 const CP=require('../../../Core/Communication/communication_protocol_v1');
 const {proofCodec}=require('../../../Core/Clients/auth21_ipc_proof');
 const {issueTradingAdminProof}=require('../../../Core/Clients/auth21_trading_admin_issuer');
-const {TradingFirewall,defaults}=require('../../../Core/Firewall/Protection/trading_firewall');
+const {TradingFirewall,defaults}=require("../../Firewall/Protection/trading_firewall");
 const secret=crypto.randomBytes(32),codec=proofCodec({secret});
 const verifiedSessions={verifySession:token=>token==='admin'?{clientId:'CLadmin01',role:'ADMIN'}:{clientId:'CLuser01',role:'USER'}};
 const payload={command:'EMERGENCY_STOP',command_id:'unique-admin-command-123',timestamp:Date.now(),confirmed:true};

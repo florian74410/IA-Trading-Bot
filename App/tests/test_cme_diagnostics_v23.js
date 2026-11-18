@@ -1,6 +1,6 @@
 'use strict';
 const assert=require('node:assert/strict');
-const c=require('../Fundamental/Providers/calendar_provider');
+const c=require("../Engines/Fundamental/Providers/calendar_provider");
 assert.equal(c._classifyFetchError(Error('HTTP 403')),'HTTP_BLOCKED');
 assert.equal(c._classifyFetchError(Error('HTTP 429')),'HTTP_BLOCKED');
 assert.equal(c._classifyFetchError(Error('TIMEOUT')),'UNAVAILABLE');

@@ -64,7 +64,7 @@ function step(id){
  if(!layout[id]||state.completed.includes(id))throw Error('Invalid/already migrated Engine '+id);
  const [from,to]=layout[id],pairs=[[from,to]],oldDir=path.join(app,from),newDir=path.join(app,to),changes=[];
  if(fs.existsSync(newDir))throw Error('Destination exists');
- const files=tracked().filter(p=>!p.startsWith('Documentation/')&&!p.startsWith('Tools/Architecture/Rev3/'));
+ const files=tracked().filter(p=>!p.startsWith('Documentation/')&&!p.startsWith('Tools/Architecture/Rev3/')&&!p.startsWith('Tools/CI/baselines/'));
  fs.cpSync(oldDir,newDir,{recursive:true});
  for(const p of files){const oldFile=path.join(root,p),newFile=remapAbsolute(oldFile,pairs);if(!fs.existsSync(oldFile)||fs.lstatSync(oldFile).isSymbolicLink())continue;
   if(!/\.(js|cjs|mjs|json|py|sh|yml|yaml|command|md|txt)$/.test(p)&&!/(Dockerfile|\.dockerignore)$/.test(p))continue;

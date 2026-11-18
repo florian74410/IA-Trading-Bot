@@ -19,7 +19,7 @@ async function importSetting({file,backupFile,target,scope,key,cipher,authorize,
 }
 async function importDefinition({file,sourceFile,backupFile,target,kind,cipher,authorize,checkpoint=()=>{}}){
  targetId(target);authorize();safeFile(sourceFile);if(fs.statSync(sourceFile).size>524288)throw Error('LEGACY_DEFINITION_TOO_LARGE');const source=fs.readFileSync(sourceFile),original=JSON.parse(source);let definition;
- if(kind==='INDICATOR'){const registry=require('../../../Indicators/Engine/indicator_registry'),checked=registry.validateDefinition(original,'Custom');if(!checked.ok||Object.hasOwn(registry.SAFE_NATIVE,String(original.id)))throw Error('LEGACY_DEFINITION_INVALID');definition=original;}
+ if(kind==='INDICATOR'){const registry=require("../../../Engines/Indicators/Engine/indicator_registry"),checked=registry.validateDefinition(original,'Custom');if(!checked.ok||Object.hasOwn(registry.SAFE_NATIVE,String(original.id)))throw Error('LEGACY_DEFINITION_INVALID');definition=original;}
  else if(kind==='STRATEGY'){const checked=require('../../../Strategy/Engine/strategy_v2_core').validate(original);if(!checked.ok)throw Error('LEGACY_DEFINITION_INVALID');definition=checked.strategy;}
  else if(kind==='MOSAIC'){const Mosaic=require('../../Mosaics/mosaic_store_v1.0');definition=Object.create(Mosaic.prototype).sanitizeDefinition(original);}
  else throw Error('LEGACY_DEFINITION_KIND_INVALID');

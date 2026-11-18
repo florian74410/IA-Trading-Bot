@@ -15,9 +15,9 @@ const APP=path.resolve(__dirname,'../..');
 const SPEC=[
  ['portfolio','Portfolio/Engine/portfolio_service.js','IATB_PORTFOLIO_PORT'],
  ['marketdata','MarketData/market_data_service.js','IATB_MARKET_DATA_PORT'],
- ['fundamental','Fundamental/Engine/fundamental_service.js','IATB_FUNDAMENTAL_PORT'],
+ ['fundamental',"Engines/Fundamental/Engine/fundamental_service.js",'IATB_FUNDAMENTAL_PORT'],
  ['trading',"Engines/Trading/trading_service.js",'IATB_TRADING_ENGINE_PORT'],
- ['indicators','Indicators/Engine/indicator_service.js','IATB_INDICATOR_PORT'],
+ ['indicators',"Engines/Indicators/Engine/indicator_service.js",'IATB_INDICATOR_PORT'],
  ['strategy','Strategy/Engine/strategy_service.js','IATB_STRATEGY_PORT']
 ];
 async function unusedPort(){const s=net.createServer();s.listen(0,'127.0.0.1');await once(s,'listening');const p=s.address().port;await new Promise(ok=>s.close(ok));return p;}
@@ -48,7 +48,7 @@ test('Core freezes three real Engines, captures encrypted WAL/JSONL, restores in
   'annexes/Mosaics/fixture.moz.json',
   'userdata/Shared Data/MarketData/api_telemetry.db',
   'userdata/Shared Data/MarketData/market_microstructure.db',
-  'App/Indicators/Custom/p22_fixture.indicator.json',
+  "App/Engines/Indicators/Custom/p22_fixture.indicator.json",
   'runtime/state/strategy/strategy_stats.json'
  ];
  const fpath=path.join(root,resources[3]);fs.mkdirSync(path.dirname(fpath),{recursive:true,mode:0o700});

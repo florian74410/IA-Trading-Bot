@@ -69,19 +69,19 @@ const GROUPS=Object.freeze({
  ],
  'supporting-infrastructure':[
   'Core/Communication/communication_router_v1.js',
-  'Core/Firewall/firewall_service.js','Core/Firewall/Workers/protection_worker.js',
+  "Engines/Firewall/firewall_service.js","Engines/Firewall/Workers/protection_worker.js",
   'Core/Server/server.js','Core/Shared/paths.js','Core/Shared/sqlite_compat.js',
   'Frontend/JS/admin_controller_v1.0.js'
  ],
  'engine-and-telemetry':[
   // JSONL + SQLite mirror; gate tested, global writer coverage still incomplete.
   "Engines/Trading/trading_logs_v2.js",
-  'Fundamental/Engine/bootstrap_sqlite.js','Fundamental/Engine/fundamental_service.js',
-  'Fundamental/Engine/observability_v3.js','Fundamental/Engine/source_discovery.js',
-  'Fundamental/Providers/calendar_provider.js','Fundamental/Providers/fedwatch_provider.js',
-  'Fundamental/Providers/rss_provider.js','Fundamental/Providers/web_provider.js',
-  'Indicators/Engine/indicator_language.js','Indicators/Engine/indicator_registry.js',
-  'Indicators/Engine/indicator_service.js',
+  "Engines/Fundamental/Engine/bootstrap_sqlite.js","Engines/Fundamental/Engine/fundamental_service.js",
+  "Engines/Fundamental/Engine/observability_v3.js","Engines/Fundamental/Engine/source_discovery.js",
+  "Engines/Fundamental/Providers/calendar_provider.js","Engines/Fundamental/Providers/fedwatch_provider.js",
+  "Engines/Fundamental/Providers/rss_provider.js","Engines/Fundamental/Providers/web_provider.js",
+  "Engines/Indicators/Engine/indicator_language.js","Engines/Indicators/Engine/indicator_registry.js",
+  "Engines/Indicators/Engine/indicator_service.js",
   'MarketData/Config/market_data_settings.js',
   'MarketData/Orchestrator/weighted_request_profile_v1.js',
   'Strategy/Engine/strategy_service.js','Strategy/Engine/strategy_stats_v2.js',

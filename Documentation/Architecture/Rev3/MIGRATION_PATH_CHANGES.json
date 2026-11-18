@@ -1,6 +1,9 @@
 {
   "completed": [
-    "trading"
+    "trading",
+    "firewall",
+    "fundamental",
+    "indicator"
   ],
   "steps": [
     {
@@ -776,6 +779,1201 @@
         },
         {
           "file": "Tools/Build/build_rev1_full_source.py",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": "compose.debug.stack.yml",
+          "kind": "explicit paths in configuration/launcher"
+        }
+      ],
+      "old_directory_retained": false,
+      "status": "PASS"
+    },
+    {
+      "id": "firewall",
+      "from": "Core/Firewall",
+      "to": "Engines/Firewall",
+      "changes": [
+        {
+          "file": ".github/workflows/auth-p22-coordinator-fixtures.yml",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": ".github/workflows/marketdata-shadow-long-run.yml",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": ".github/workflows/marketdata-shadow-runtime.yml",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": ".github/workflows/marketdata-shadow-workload.yml",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": ".github/workflows/risk-snapshots.yml",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": "App/Engines/Firewall/FunctionRegistry/Functions.json",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": "App/Engines/Firewall/FunctionRegistry/startup.js",
+          "kind": "dirname resource",
+          "before": "'../../FunctionRegistry/publisher'",
+          "after": "\"../../../Core/FunctionRegistry/publisher\""
+        },
+        {
+          "file": "App/Engines/Firewall/Protection/trading_firewall.js",
+          "kind": "relative module",
+          "before": "'../../Execution/manual_contract'",
+          "after": "\"../../../Core/Execution/manual_contract\""
+        },
+        {
+          "file": "App/Engines/Firewall/README.md",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": "App/Engines/Firewall/Tests/firewall_fast_path_debug.js",
+          "kind": "relative module",
+          "before": "'../../Communication/cp1_client'",
+          "after": "\"../../../Core/Communication/cp1_client\""
+        },
+        {
+          "file": "App/Engines/Firewall/Tests/test_risk_gate_boundary.js",
+          "kind": "combined engine segment",
+          "before": "'Firewall'",
+          "after": "\"\""
+        },
+        {
+          "file": "App/Engines/Firewall/Tests/test_risk_gate_boundary.js",
+          "kind": "engine resource segments",
+          "before": "'Core'",
+          "after": "\"Engines/Firewall\""
+        },
+        {
+          "file": "App/Engines/Firewall/Tests/test_risk_gate_boundary.js",
+          "kind": "combined engine segment",
+          "before": "'Firewall'",
+          "after": "\"\""
+        },
+        {
+          "file": "App/Engines/Firewall/Tests/test_risk_gate_boundary.js",
+          "kind": "engine resource segments",
+          "before": "'Core'",
+          "after": "\"Engines/Firewall\""
+        },
+        {
+          "file": "App/Engines/Firewall/firewall_service.js",
+          "kind": "relative module",
+          "before": "\"../Clients/auth21_engine_ingress\"",
+          "after": "\"../../Core/Clients/auth21_engine_ingress\""
+        },
+        {
+          "file": "App/Engines/Firewall/firewall_service.js",
+          "kind": "explicit App-relative source",
+          "before": "\"Core/Firewall/Config/MarketData\"",
+          "after": "\"Engines/Firewall/Config/MarketData\""
+        },
+        {
+          "file": "App/Engines/Firewall/firewall_service.js",
+          "kind": "explicit App-relative source",
+          "before": "\"Core/Firewall/Config/Trading\"",
+          "after": "\"Engines/Firewall/Config/Trading\""
+        },
+        {
+          "file": "App/Engines/Firewall/firewall_service.js",
+          "kind": "relative module",
+          "before": "\"../../Engines/Trading/trading_runtime_state_v2\"",
+          "after": "\"../Trading/trading_runtime_state_v2\""
+        },
+        {
+          "file": "App/Engines/Firewall/firewall_service.js",
+          "kind": "relative module",
+          "before": "\"../Execution/binding\"",
+          "after": "\"../../Core/Execution/binding\""
+        },
+        {
+          "file": "App/Engines/Firewall/firewall_service.js",
+          "kind": "relative module",
+          "before": "'../Execution/manual_authority'",
+          "after": "\"../../Core/Execution/manual_authority\""
+        },
+        {
+          "file": "App/Engines/Firewall/firewall_service.js",
+          "kind": "relative module",
+          "before": "'../Execution/manual_authority'",
+          "after": "\"../../Core/Execution/manual_authority\""
+        },
+        {
+          "file": "App/Engines/Firewall/firewall_service.js",
+          "kind": "relative module",
+          "before": "'../Execution/manual_contract'",
+          "after": "\"../../Core/Execution/manual_contract\""
+        },
+        {
+          "file": "App/Engines/Firewall/firewall_service.js",
+          "kind": "relative module",
+          "before": "\"../Clients/auth21_ipc_proof\"",
+          "after": "\"../../Core/Clients/auth21_ipc_proof\""
+        },
+        {
+          "file": "App/Engines/Firewall/firewall_service.js",
+          "kind": "relative module",
+          "before": "'../Execution/manual_contract'",
+          "after": "\"../../Core/Execution/manual_contract\""
+        },
+        {
+          "file": "App/Engines/Firewall/firewall_service.js",
+          "kind": "relative module",
+          "before": "\"../Clients/UserManagement/admin_capability\"",
+          "after": "\"../../Core/Clients/UserManagement/admin_capability\""
+        },
+        {
+          "file": "App/Engines/Firewall/firewall_service.js",
+          "kind": "relative module",
+          "before": "\"../Clients/UserManagement/admin_capability\"",
+          "after": "\"../../Core/Clients/UserManagement/admin_capability\""
+        },
+        {
+          "file": "App/Engines/Firewall/firewall_service.js",
+          "kind": "relative module",
+          "before": "\"../../Engines/Trading/trading_auth21_admin_v2\"",
+          "after": "\"../Trading/trading_auth21_admin_v2\""
+        },
+        {
+          "file": "App/Engines/Firewall/firewall_service.js",
+          "kind": "relative module",
+          "before": "\"../Clients/auth21_trading_replay_v2\"",
+          "after": "\"../../Core/Clients/auth21_trading_replay_v2\""
+        },
+        {
+          "file": "App/Engines/Firewall/firewall_service.js",
+          "kind": "relative module",
+          "before": "\"../Shared/build_info\"",
+          "after": "\"../../Core/Shared/build_info\""
+        },
+        {
+          "file": "App/Engines/Firewall/firewall_service.js",
+          "kind": "relative module",
+          "before": "\"../Shared/paths\"",
+          "after": "\"../../Core/Shared/paths\""
+        },
+        {
+          "file": "App/Engines/Firewall/firewall_service.js",
+          "kind": "relative module",
+          "before": "\"../Communication/component_cp1_adapter\"",
+          "after": "\"../../Core/Communication/component_cp1_adapter\""
+        },
+        {
+          "file": "App/Engines/Firewall/firewall_service.js",
+          "kind": "relative module",
+          "before": "\"../Communication/communication_protocol_v1\"",
+          "after": "\"../../Core/Communication/communication_protocol_v1\""
+        },
+        {
+          "file": "App/Engines/Firewall/risk_approval_client.js",
+          "kind": "relative module",
+          "before": "'../Communication/cp1_client'",
+          "after": "\"../../Core/Communication/cp1_client\""
+        },
+        {
+          "file": "App/Core/FunctionRegistry/Control/catalog.js",
+          "kind": "explicit App-relative source",
+          "before": "'Core/Firewall/firewall_service.js'",
+          "after": "\"Engines/Firewall/firewall_service.js\""
+        },
+        {
+          "file": "App/Core/FunctionRegistry/Control/catalog.js",
+          "kind": "explicit App-relative source",
+          "before": "'Core/Firewall'",
+          "after": "\"Engines/Firewall\""
+        },
+        {
+          "file": "App/Core/ProcessRegistry/manifests/firewall.json",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": "App/Engines/Trading/tests/test_trading_admin_core_firewall_v2.js",
+          "kind": "relative module",
+          "before": "'../../../Core/Firewall/Protection/trading_firewall'",
+          "after": "\"../../Firewall/Protection/trading_firewall\""
+        },
+        {
+          "file": "App/Engines/Trading/tests/test_trading_admin_p3_security.js",
+          "kind": "relative module",
+          "before": "'../../../Core/Firewall/Protection/trading_firewall'",
+          "after": "\"../../Firewall/Protection/trading_firewall\""
+        },
+        {
+          "file": "App/Engines/Trading/tests/test_trading_p3_multiprocess_v252.js",
+          "kind": "explicit App-relative source",
+          "before": "'Core/Firewall/firewall_service.js'",
+          "after": "\"Engines/Firewall/firewall_service.js\""
+        },
+        {
+          "file": "App/MarketData/Tests/test_cex_providers_v2.js",
+          "kind": "relative module",
+          "before": "'../../Core/Firewall/Protection/market_data_firewall'",
+          "after": "\"../../Engines/Firewall/Protection/market_data_firewall\""
+        },
+        {
+          "file": "App/MarketData/Tests/test_dex_liquidity_boundary_v2.js",
+          "kind": "relative module",
+          "before": "'../../Core/Firewall/Protection/market_data_firewall'",
+          "after": "\"../../Engines/Firewall/Protection/market_data_firewall\""
+        },
+        {
+          "file": "App/MarketData/Tests/test_dynamic_symbol_catalog_v1.js",
+          "kind": "relative module",
+          "before": "'../../Core/Firewall/Protection/market_data_firewall'",
+          "after": "\"../../Engines/Firewall/Protection/market_data_firewall\""
+        },
+        {
+          "file": "App/MarketData/Tests/test_liquidations_usd_v2.js",
+          "kind": "relative module",
+          "before": "'../../Core/Firewall/Protection/market_data_firewall'",
+          "after": "\"../../Engines/Firewall/Protection/market_data_firewall\""
+        },
+        {
+          "file": "App/MarketData/Tests/test_liquidity_pipeline_v1.js",
+          "kind": "relative module",
+          "before": "'../../Core/Firewall/Protection/market_data_firewall'",
+          "after": "\"../../Engines/Firewall/Protection/market_data_firewall\""
+        },
+        {
+          "file": "App/MarketData/Tests/test_microstructure_missing_oi.js",
+          "kind": "relative module",
+          "before": "'../../Core/Firewall/Protection/market_data_firewall'",
+          "after": "\"../../Engines/Firewall/Protection/market_data_firewall\""
+        },
+        {
+          "file": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+          "kind": "explicit App-relative source",
+          "before": "'Core/Firewall/firewall_service.js'",
+          "after": "\"Engines/Firewall/firewall_service.js\""
+        },
+        {
+          "file": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+          "kind": "explicit App-relative source",
+          "before": "'Core/Firewall/Config/Trading/whitelist.json'",
+          "after": "\"Engines/Firewall/Config/Trading/whitelist.json\""
+        },
+        {
+          "file": "App/Portfolio/Tests/manual_order_pipeline.integration.test.js",
+          "kind": "explicit App-relative source",
+          "before": "'Core/Firewall/firewall_service.js'",
+          "after": "\"Engines/Firewall/firewall_service.js\""
+        },
+        {
+          "file": "App/Portfolio/Tests/okx_pipeline.integration.test.js",
+          "kind": "explicit App-relative source",
+          "before": "'Core/Firewall/firewall_service.js'",
+          "after": "\"Engines/Firewall/firewall_service.js\""
+        },
+        {
+          "file": "App/Risk/Tests/snapshots.integration.test.js",
+          "kind": "relative module",
+          "before": "'../../Core/Firewall/risk_approval_client'",
+          "after": "\"../../Engines/Firewall/risk_approval_client\""
+        },
+        {
+          "file": "App/Tools/CI/auth21_writer_triage.js",
+          "kind": "explicit App-relative source",
+          "before": "'Core/Firewall/Workers/protection_worker.js'",
+          "after": "\"Engines/Firewall/Workers/protection_worker.js\""
+        },
+        {
+          "file": "App/Tools/CI/auth21_writer_triage.js",
+          "kind": "explicit App-relative source",
+          "before": "'Core/Firewall/firewall_service.js'",
+          "after": "\"Engines/Firewall/firewall_service.js\""
+        },
+        {
+          "file": "App/Tools/FunctionRegistry/generate.js",
+          "kind": "explicit App-relative source",
+          "before": "'Core/Firewall'",
+          "after": "\"Engines/Firewall\""
+        },
+        {
+          "file": "App/Tools/Tests/SupervisorSimulator/validation-suite.json",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": "App/Tools/Tests/auth21_real_engines_ingress.test.js",
+          "kind": "explicit App-relative source",
+          "before": "'Core/Firewall/firewall_service.js'",
+          "after": "\"Engines/Firewall/firewall_service.js\""
+        },
+        {
+          "file": "App/Tools/Tests/user_management_firewall_machine.test.js",
+          "kind": "dirname resource",
+          "before": "'../../Core/Firewall/firewall_service.js'",
+          "after": "\"../../Engines/Firewall/firewall_service.js\""
+        },
+        {
+          "file": "App/Tools/Tests/user_management_market_pipeline.test.js",
+          "kind": "explicit App-relative source",
+          "before": "'Core/Firewall/firewall_service.js'",
+          "after": "\"Engines/Firewall/firewall_service.js\""
+        },
+        {
+          "file": "App/Tools/firewall_smoke.js",
+          "kind": "dirname resource",
+          "before": "'../Core/Firewall/Config/MarketData/rules.json'",
+          "after": "\"../Engines/Firewall/Config/MarketData/rules.json\""
+        },
+        {
+          "file": "App/Tools/firewall_smoke.js",
+          "kind": "explicit App-relative source",
+          "before": "'Core/Firewall/firewall_service.js'",
+          "after": "\"Engines/Firewall/firewall_service.js\""
+        },
+        {
+          "file": "App/Tools/trading_boundary_contract_audit.js",
+          "kind": "explicit App-relative source",
+          "before": "'Core/Firewall/risk_approval_client.js'",
+          "after": "\"Engines/Firewall/risk_approval_client.js\""
+        },
+        {
+          "file": "App/Tools/trading_boundary_contract_audit.js",
+          "kind": "explicit App-relative source",
+          "before": "'Core/Firewall/firewall_service.js'",
+          "after": "\"Engines/Firewall/firewall_service.js\""
+        },
+        {
+          "file": "App/UI/Tests/test_engine_http_surface_v2.0.js",
+          "kind": "explicit App-relative source",
+          "before": "'Core/Firewall/firewall_service.js'",
+          "after": "\"Engines/Firewall/firewall_service.js\""
+        },
+        {
+          "file": "App/start.command",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": "App/start_auth21_local_safe.command",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": "App/tests/registry-process-integration.js",
+          "kind": "explicit App-relative source",
+          "before": "'Core/Firewall'",
+          "after": "\"Engines/Firewall\""
+        },
+        {
+          "file": "Deploy/VPS/preflight.sh",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": "Tools/CI/baselines/p3_reviewed_252.json",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": "compose.auth21.qualification.yml",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": "compose.debug.stack.yml",
+          "kind": "explicit paths in configuration/launcher"
+        }
+      ],
+      "old_directory_retained": false,
+      "status": "PASS"
+    },
+    {
+      "id": "fundamental",
+      "from": "Fundamental",
+      "to": "Engines/Fundamental",
+      "changes": [
+        {
+          "file": ".github/workflows/auth-p22-coordinator-fixtures.yml",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": ".github/workflows/v24-finance-trading-logs.yml",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": "App/Core/Admin/log_reader.js",
+          "kind": "explicit App-relative source",
+          "before": "'Fundamental'",
+          "after": "\"Engines/Fundamental\""
+        },
+        {
+          "file": "App/Core/Clients/auth21_engine_business_ingress.js",
+          "kind": "relative module",
+          "before": "'../../Fundamental/Engine/database'",
+          "after": "\"../../Engines/Fundamental/Engine/database\""
+        },
+        {
+          "file": "App/Core/FunctionRegistry/Control/catalog.js",
+          "kind": "explicit App-relative source",
+          "before": "'Fundamental/Engine/fundamental_service.js'",
+          "after": "\"Engines/Fundamental/Engine/fundamental_service.js\""
+        },
+        {
+          "file": "App/Core/FunctionRegistry/Control/catalog.js",
+          "kind": "explicit App-relative source",
+          "before": "'Fundamental'",
+          "after": "\"Engines/Fundamental\""
+        },
+        {
+          "file": "App/Core/ProcessRegistry/manifests/fundamental.json",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": "App/Core/Shared/paths.js",
+          "kind": "engine resource segments",
+          "before": "'Fundamental'",
+          "after": "\"Engines/Fundamental\""
+        },
+        {
+          "file": "App/Frontend/JS/settings.js",
+          "kind": "explicit App-relative source",
+          "before": "'Fundamental'",
+          "after": "\"Engines/Fundamental\""
+        },
+        {
+          "file": "App/Engines/Fundamental/Engine/ai_synthesis.js",
+          "kind": "dirname resource",
+          "before": "'../..'",
+          "after": "\"../../..\""
+        },
+        {
+          "file": "App/Engines/Fundamental/Engine/ai_synthesis.js",
+          "kind": "relative module",
+          "before": "'../../Core/Services/usage_ledger_v1'",
+          "after": "\"../../../Core/Services/usage_ledger_v1\""
+        },
+        {
+          "file": "App/Engines/Fundamental/Engine/ai_synthesis.js",
+          "kind": "relative module",
+          "before": "'../../Core/Services/openai_response_v1.0'",
+          "after": "\"../../../Core/Services/openai_response_v1.0\""
+        },
+        {
+          "file": "App/Engines/Fundamental/Engine/ai_synthesis.js",
+          "kind": "relative module",
+          "before": "'../../Core/Services/fundamental_ai_synthesis_v3'",
+          "after": "\"../../../Core/Services/fundamental_ai_synthesis_v3\""
+        },
+        {
+          "file": "App/Engines/Fundamental/Engine/bootstrap_sqlite.js",
+          "kind": "dirname resource",
+          "before": "'../..'",
+          "after": "\"../../..\""
+        },
+        {
+          "file": "App/Engines/Fundamental/Engine/database.js",
+          "kind": "relative module",
+          "before": "'../../Core/Shared/paths'",
+          "after": "\"../../../Core/Shared/paths\""
+        },
+        {
+          "file": "App/Engines/Fundamental/Engine/database_core.js",
+          "kind": "relative module",
+          "before": "'../../Core/Shared/paths'",
+          "after": "\"../../../Core/Shared/paths\""
+        },
+        {
+          "file": "App/Engines/Fundamental/Engine/fundamental_service.js",
+          "kind": "relative module",
+          "before": "'../../Core/Clients/auth21_engine_ingress'",
+          "after": "\"../../../Core/Clients/auth21_engine_ingress\""
+        },
+        {
+          "file": "App/Engines/Fundamental/Engine/fundamental_service.js",
+          "kind": "relative module",
+          "before": "'../../Core/Backup/auth21_engine_snapshot_trial'",
+          "after": "\"../../../Core/Backup/auth21_engine_snapshot_trial\""
+        },
+        {
+          "file": "App/Engines/Fundamental/Engine/fundamental_service.js",
+          "kind": "dirname resource",
+          "before": "'../..'",
+          "after": "\"../../..\""
+        },
+        {
+          "file": "App/Engines/Fundamental/Engine/fundamental_service.js",
+          "kind": "relative module",
+          "before": "'../../Core/Shared/build_info'",
+          "after": "\"../../../Core/Shared/build_info\""
+        },
+        {
+          "file": "App/Engines/Fundamental/Engine/fundamental_service.js",
+          "kind": "relative module",
+          "before": "'../../Core/Shared/paths'",
+          "after": "\"../../../Core/Shared/paths\""
+        },
+        {
+          "file": "App/Engines/Fundamental/Engine/fundamental_service.js",
+          "kind": "relative module",
+          "before": "'../../Core/Communication/cp1_client'",
+          "after": "\"../../../Core/Communication/cp1_client\""
+        },
+        {
+          "file": "App/Engines/Fundamental/Engine/fundamental_service.js",
+          "kind": "relative module",
+          "before": "'../../Core/Communication/component_cp1_adapter'",
+          "after": "\"../../../Core/Communication/component_cp1_adapter\""
+        },
+        {
+          "file": "App/Engines/Fundamental/FunctionRegistry/Functions.json",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": "App/Engines/Fundamental/FunctionRegistry/startup.js",
+          "kind": "dirname resource",
+          "before": "'../../Core/FunctionRegistry/publisher'",
+          "after": "\"../../../Core/FunctionRegistry/publisher\""
+        },
+        {
+          "file": "App/Engines/Fundamental/Providers/rss_provider.js",
+          "kind": "relative module",
+          "before": "'../../Core/Network/tls_ca_v1.0'",
+          "after": "\"../../../Core/Network/tls_ca_v1.0\""
+        },
+        {
+          "file": "App/Engines/Fundamental/Providers/web_provider.js",
+          "kind": "relative module",
+          "before": "'../../Core/Network/tls_ca_v1.0'",
+          "after": "\"../../../Core/Network/tls_ca_v1.0\""
+        },
+        {
+          "file": "App/Engines/Fundamental/Providers/x_provider.js",
+          "kind": "relative module",
+          "before": "'../../Core/Communication/cp1_client'",
+          "after": "\"../../../Core/Communication/cp1_client\""
+        },
+        {
+          "file": "App/Engines/Fundamental/Providers/x_provider.js",
+          "kind": "relative module",
+          "before": "'../../Core/Shared/paths'",
+          "after": "\"../../../Core/Shared/paths\""
+        },
+        {
+          "file": "App/Engines/Fundamental/Tests/Debug/debug_fundamental_v3.js",
+          "kind": "explicit App-relative source",
+          "before": "'Fundamental/Engine/fundamental_service.js'",
+          "after": "\"Engines/Fundamental/Engine/fundamental_service.js\""
+        },
+        {
+          "file": "App/Engines/Fundamental/Tests/Debug/debug_fundamental_v3.js",
+          "kind": "explicit App-relative source",
+          "before": "'Fundamental/FUNDAMENTAL_V2_UI_CONTRACT.md'",
+          "after": "\"Engines/Fundamental/FUNDAMENTAL_V2_UI_CONTRACT.md\""
+        },
+        {
+          "file": "App/Engines/Fundamental/Tests/Debug/debug_fundamental_v3.js",
+          "kind": "explicit App-relative source",
+          "before": "'Fundamental/Engine/observability_v2.js'",
+          "after": "\"Engines/Fundamental/Engine/observability_v2.js\""
+        },
+        {
+          "file": "App/Engines/Fundamental/Tests/Debug/debug_fundamental_v3.js",
+          "kind": "explicit App-relative source",
+          "before": "'Fundamental/FUNDAMENTAL_V3_UI_CONTRACT.md'",
+          "after": "\"Engines/Fundamental/FUNDAMENTAL_V3_UI_CONTRACT.md\""
+        },
+        {
+          "file": "App/Engines/Fundamental/Tests/Debug/debug_fundamental_v3.js",
+          "kind": "explicit App-relative source",
+          "before": "'Fundamental/Engine/observability_v3.js'",
+          "after": "\"Engines/Fundamental/Engine/observability_v3.js\""
+        },
+        {
+          "file": "App/Engines/Fundamental/Tests/Debug/debug_fundamental_v3.js",
+          "kind": "explicit App-relative source",
+          "before": "'Fundamental/Engine/fundamental_service.js'",
+          "after": "\"Engines/Fundamental/Engine/fundamental_service.js\""
+        },
+        {
+          "file": "App/Engines/Fundamental/Tests/Debug/debug_fundamental_v3.js",
+          "kind": "dirname resource",
+          "before": "'../../..'",
+          "after": "\"../../../..\""
+        },
+        {
+          "file": "App/Engines/Fundamental/Tests/test_event_engine_mock_v3.js",
+          "kind": "explicit App-relative source",
+          "before": "'Fundamental/Engine/event_engine'",
+          "after": "\"Engines/Fundamental/Engine/event_engine\""
+        },
+        {
+          "file": "App/Engines/Fundamental/Tests/test_fundamental_v3.js",
+          "kind": "explicit App-relative source",
+          "before": "'Fundamental/Engine/ai_synthesis'",
+          "after": "\"Engines/Fundamental/Engine/ai_synthesis\""
+        },
+        {
+          "file": "App/Engines/Fundamental/Tests/test_fundamental_v3.js",
+          "kind": "dirname resource",
+          "before": "'../..'",
+          "after": "\"../../..\""
+        },
+        {
+          "file": "App/Tools/CI/auth21_writer_inventory.js",
+          "kind": "explicit App-relative source",
+          "before": "'Fundamental/Engine/database.js'",
+          "after": "\"Engines/Fundamental/Engine/database.js\""
+        },
+        {
+          "file": "App/Tools/CI/auth21_writer_inventory.js",
+          "kind": "explicit App-relative source",
+          "before": "'Fundamental/Engine/database_core.js'",
+          "after": "\"Engines/Fundamental/Engine/database_core.js\""
+        },
+        {
+          "file": "App/Tools/CI/auth21_writer_triage.js",
+          "kind": "explicit App-relative source",
+          "before": "'Fundamental/Providers/web_provider.js'",
+          "after": "\"Engines/Fundamental/Providers/web_provider.js\""
+        },
+        {
+          "file": "App/Tools/CI/auth21_writer_triage.js",
+          "kind": "explicit App-relative source",
+          "before": "'Fundamental/Providers/rss_provider.js'",
+          "after": "\"Engines/Fundamental/Providers/rss_provider.js\""
+        },
+        {
+          "file": "App/Tools/CI/auth21_writer_triage.js",
+          "kind": "explicit App-relative source",
+          "before": "'Fundamental/Providers/fedwatch_provider.js'",
+          "after": "\"Engines/Fundamental/Providers/fedwatch_provider.js\""
+        },
+        {
+          "file": "App/Tools/CI/auth21_writer_triage.js",
+          "kind": "explicit App-relative source",
+          "before": "'Fundamental/Providers/calendar_provider.js'",
+          "after": "\"Engines/Fundamental/Providers/calendar_provider.js\""
+        },
+        {
+          "file": "App/Tools/CI/auth21_writer_triage.js",
+          "kind": "explicit App-relative source",
+          "before": "'Fundamental/Engine/source_discovery.js'",
+          "after": "\"Engines/Fundamental/Engine/source_discovery.js\""
+        },
+        {
+          "file": "App/Tools/CI/auth21_writer_triage.js",
+          "kind": "explicit App-relative source",
+          "before": "'Fundamental/Engine/observability_v3.js'",
+          "after": "\"Engines/Fundamental/Engine/observability_v3.js\""
+        },
+        {
+          "file": "App/Tools/CI/auth21_writer_triage.js",
+          "kind": "explicit App-relative source",
+          "before": "'Fundamental/Engine/fundamental_service.js'",
+          "after": "\"Engines/Fundamental/Engine/fundamental_service.js\""
+        },
+        {
+          "file": "App/Tools/CI/auth21_writer_triage.js",
+          "kind": "explicit App-relative source",
+          "before": "'Fundamental/Engine/bootstrap_sqlite.js'",
+          "after": "\"Engines/Fundamental/Engine/bootstrap_sqlite.js\""
+        },
+        {
+          "file": "App/Tools/FunctionRegistry/generate.js",
+          "kind": "explicit App-relative source",
+          "before": "'Fundamental'",
+          "after": "\"Engines/Fundamental\""
+        },
+        {
+          "file": "App/Tools/Tests/auth21_fundamental_real_gate.test.js",
+          "kind": "dirname resource",
+          "before": "'../../Fundamental/Engine/fundamental_service.js'",
+          "after": "\"../../Engines/Fundamental/Engine/fundamental_service.js\""
+        },
+        {
+          "file": "App/Tools/Tests/auth21_multi_engine_business_e2e.test.js",
+          "kind": "engine resource segments",
+          "before": "'Fundamental'",
+          "after": "\"Engines/Fundamental\""
+        },
+        {
+          "file": "App/Tools/Tests/auth21_multi_engine_business_e2e.test.js",
+          "kind": "explicit App-relative source",
+          "before": "'Fundamental/Engine/fundamental_service.js'",
+          "after": "\"Engines/Fundamental/Engine/fundamental_service.js\""
+        },
+        {
+          "file": "App/Tools/Tests/auth21_real_engines_ingress.test.js",
+          "kind": "explicit App-relative source",
+          "before": "'Fundamental/Engine/fundamental_service.js'",
+          "after": "\"Engines/Fundamental/Engine/fundamental_service.js\""
+        },
+        {
+          "file": "App/Tools/Tests/auth21_snapshot_real_bundle_e2e.test.js",
+          "kind": "explicit App-relative source",
+          "before": "'Fundamental/Engine/fundamental_service.js'",
+          "after": "\"Engines/Fundamental/Engine/fundamental_service.js\""
+        },
+        {
+          "file": "App/Tools/Tests/auth21_snapshot_real_service_ipc.test.js",
+          "kind": "explicit App-relative source",
+          "before": "'Fundamental/Engine/fundamental_service.js'",
+          "after": "\"Engines/Fundamental/Engine/fundamental_service.js\""
+        },
+        {
+          "file": "App/Tools/Tests/fundamental_legacy_snapshot_bridge.test.js",
+          "kind": "dirname resource",
+          "before": "'../../Fundamental/Data/fundamental.db'",
+          "after": "\"../../Engines/Fundamental/Data/fundamental.db\""
+        },
+        {
+          "file": "App/Tools/Tests/fundamental_legacy_snapshot_bridge.test.js",
+          "kind": "relative module",
+          "before": "'../../Fundamental/Engine/database'",
+          "after": "\"../../Engines/Fundamental/Engine/database\""
+        },
+        {
+          "file": "App/Tools/Tests/fundamental_snapshot_writer.test.js",
+          "kind": "engine resource segments",
+          "before": "'Fundamental'",
+          "after": "\"Engines/Fundamental\""
+        },
+        {
+          "file": "App/Tools/Tests/fundamental_snapshot_writer.test.js",
+          "kind": "relative module",
+          "before": "'../../Fundamental/Engine/database_core'",
+          "after": "\"../../Engines/Fundamental/Engine/database_core\""
+        },
+        {
+          "file": "App/Tools/Tests/user_management_operator_feed_validation.test.js",
+          "kind": "relative module",
+          "before": "'../../Fundamental/Engine/database_core'",
+          "after": "\"../../Engines/Fundamental/Engine/database_core\""
+        },
+        {
+          "file": "App/UI/Tests/test_engine_http_surface_v2.0.js",
+          "kind": "explicit App-relative source",
+          "before": "'Fundamental/Engine/fundamental_service.js'",
+          "after": "\"Engines/Fundamental/Engine/fundamental_service.js\""
+        },
+        {
+          "file": "App/UI/Tests/test_fundamental_v3_console.js",
+          "kind": "explicit App-relative source",
+          "before": "'Fundamental/Engine/fundamental_service.js'",
+          "after": "\"Engines/Fundamental/Engine/fundamental_service.js\""
+        },
+        {
+          "file": "App/UI/Tests/test_secret_gateways_v2.0.js",
+          "kind": "explicit App-relative source",
+          "before": "'Fundamental/Engine/fundamental_service.js'",
+          "after": "\"Engines/Fundamental/Engine/fundamental_service.js\""
+        },
+        {
+          "file": "App/start.command",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": "App/start_auth21_local_safe.command",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": "App/tests/registry-process-integration.js",
+          "kind": "explicit App-relative source",
+          "before": "'Fundamental'",
+          "after": "\"Engines/Fundamental\""
+        },
+        {
+          "file": "App/tests/test_cme_diagnostics_v23.js",
+          "kind": "relative module",
+          "before": "'../Fundamental/Providers/calendar_provider'",
+          "after": "\"../Engines/Fundamental/Providers/calendar_provider\""
+        },
+        {
+          "file": "App/tests/test_finance_calendar_v2_4.js",
+          "kind": "relative module",
+          "before": "'../Fundamental/Providers/finance_calendar_provider_v2_4'",
+          "after": "\"../Engines/Fundamental/Providers/finance_calendar_provider_v2_4\""
+        },
+        {
+          "file": "App/tests/test_v2_4_1_collector_bank.js",
+          "kind": "explicit App-relative source",
+          "before": "'Fundamental/Engine/fundamental_service.js'",
+          "after": "\"Engines/Fundamental/Engine/fundamental_service.js\""
+        },
+        {
+          "file": "Deploy/VPS/preflight.sh",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": "Tools/CI/source_integrity_v242.py",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": "Tools/CI/source_integrity_v25.py",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": "compose.auth21.qualification.yml",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": "compose.debug.stack.yml",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": "tests/chart_events_v251.test.cjs",
+          "kind": "relative module",
+          "before": "'../App/Fundamental/Providers/finance_calendar_provider_v2_4'",
+          "after": "\"../App/Engines/Fundamental/Providers/finance_calendar_provider_v2_4\""
+        }
+      ],
+      "old_directory_retained": false,
+      "status": "PASS"
+    },
+    {
+      "id": "indicator",
+      "from": "Indicators",
+      "to": "Engines/Indicators",
+      "changes": [
+        {
+          "file": ".github/workflows/auth-p22-coordinator-fixtures.yml",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": ".github/workflows/chart-workspace-v21.yml",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": ".github/workflows/indicator-visual-v2-tests.yml",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": ".github/workflows/marketdata-shadow-long-run.yml",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": ".github/workflows/marketdata-shadow-runtime.yml",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": ".github/workflows/marketdata-shadow-workload.yml",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": "App/Core/Clients/UserManagement/legacy_data.js",
+          "kind": "relative module",
+          "before": "'../../../Indicators/Engine/indicator_registry'",
+          "after": "\"../../../Engines/Indicators/Engine/indicator_registry\""
+        },
+        {
+          "file": "App/Core/FunctionRegistry/Control/catalog.js",
+          "kind": "explicit App-relative source",
+          "before": "'Indicators/Engine/indicator_service.js'",
+          "after": "\"Engines/Indicators/Engine/indicator_service.js\""
+        },
+        {
+          "file": "App/Core/FunctionRegistry/Control/catalog.js",
+          "kind": "explicit App-relative source",
+          "before": "'Indicators'",
+          "after": "\"Engines/Indicators\""
+        },
+        {
+          "file": "App/Core/ProcessRegistry/manifests/indicator.json",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": "App/Docs/Indicators/INDICATOR_ENGINE_v1.12.txt",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": "App/Engines/Indicators/Engine/indicator_service.js",
+          "kind": "relative module",
+          "before": "'../../Core/Clients/auth21_engine_ingress'",
+          "after": "\"../../../Core/Clients/auth21_engine_ingress\""
+        },
+        {
+          "file": "App/Engines/Indicators/Engine/indicator_service.js",
+          "kind": "relative module",
+          "before": "'../../Core/Backup/auth21_engine_snapshot_trial'",
+          "after": "\"../../../Core/Backup/auth21_engine_snapshot_trial\""
+        },
+        {
+          "file": "App/Engines/Indicators/Engine/indicator_service.js",
+          "kind": "relative module",
+          "before": "'../../Core/Shared/build_info'",
+          "after": "\"../../../Core/Shared/build_info\""
+        },
+        {
+          "file": "App/Engines/Indicators/Engine/indicator_service.js",
+          "kind": "relative module",
+          "before": "'../../Core/Communication/financial_data_client_v1'",
+          "after": "\"../../../Core/Communication/financial_data_client_v1\""
+        },
+        {
+          "file": "App/Engines/Indicators/Engine/indicator_service.js",
+          "kind": "relative module",
+          "before": "'../../Core/Communication/cp1_client'",
+          "after": "\"../../../Core/Communication/cp1_client\""
+        },
+        {
+          "file": "App/Engines/Indicators/Engine/indicator_service.js",
+          "kind": "relative module",
+          "before": "'../../Core/Communication/communication_protocol_v1'",
+          "after": "\"../../../Core/Communication/communication_protocol_v1\""
+        },
+        {
+          "file": "App/Engines/Indicators/Engine/indicator_settings.js",
+          "kind": "relative module",
+          "before": "'../../Core/Backup/auth21_core_local_trial_wiring'",
+          "after": "\"../../../Core/Backup/auth21_core_local_trial_wiring\""
+        },
+        {
+          "file": "App/Engines/Indicators/Engine/indicator_settings.js",
+          "kind": "relative module",
+          "before": "'../../Core/Settings/sqlite_settings_store'",
+          "after": "\"../../../Core/Settings/sqlite_settings_store\""
+        },
+        {
+          "file": "App/Engines/Indicators/Engine/user_compute.js",
+          "kind": "relative module",
+          "before": "'../../Core/Clients/auth21_ipc_proof'",
+          "after": "\"../../../Core/Clients/auth21_ipc_proof\""
+        },
+        {
+          "file": "App/Engines/Indicators/Engine/user_compute.js",
+          "kind": "relative module",
+          "before": "'../../Core/Communication/communication_protocol_v1'",
+          "after": "\"../../../Core/Communication/communication_protocol_v1\""
+        },
+        {
+          "file": "App/Engines/Indicators/FunctionRegistry/Functions.json",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": "App/Engines/Indicators/FunctionRegistry/startup.js",
+          "kind": "dirname resource",
+          "before": "'../../Core/FunctionRegistry/publisher'",
+          "after": "\"../../../Core/FunctionRegistry/publisher\""
+        },
+        {
+          "file": "App/Engines/Indicators/Tests/test_indicator_cp1_v2.js",
+          "kind": "dirname resource",
+          "before": "'../..'",
+          "after": "\"../../..\""
+        },
+        {
+          "file": "App/Engines/Indicators/Tests/test_indicator_cp1_v2.js",
+          "kind": "relative module",
+          "before": "'../../Core/Communication/communication_protocol_v1'",
+          "after": "\"../../../Core/Communication/communication_protocol_v1\""
+        },
+        {
+          "file": "App/Engines/Indicators/Tests/test_indicator_settings_v1.js",
+          "kind": "engine resource segments",
+          "before": "'Indicators'",
+          "after": "\"Engines/Indicators\""
+        },
+        {
+          "file": "App/Tools/CI/auth21_engine_encrypted_bundle.js",
+          "kind": "explicit App-relative source",
+          "before": "'App/Indicators/Custom/'",
+          "after": "\"App/Engines/Indicators/Custom/\""
+        },
+        {
+          "file": "App/Tools/CI/auth21_writer_triage.js",
+          "kind": "explicit App-relative source",
+          "before": "'Indicators/Engine/indicator_service.js'",
+          "after": "\"Engines/Indicators/Engine/indicator_service.js\""
+        },
+        {
+          "file": "App/Tools/CI/auth21_writer_triage.js",
+          "kind": "explicit App-relative source",
+          "before": "'Indicators/Engine/indicator_registry.js'",
+          "after": "\"Engines/Indicators/Engine/indicator_registry.js\""
+        },
+        {
+          "file": "App/Tools/CI/auth21_writer_triage.js",
+          "kind": "explicit App-relative source",
+          "before": "'Indicators/Engine/indicator_language.js'",
+          "after": "\"Engines/Indicators/Engine/indicator_language.js\""
+        },
+        {
+          "file": "App/Tools/CI/test_user_management_v1.sh",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": "App/Tools/FunctionRegistry/generate.js",
+          "kind": "explicit App-relative source",
+          "before": "'Indicators'",
+          "after": "\"Engines/Indicators\""
+        },
+        {
+          "file": "App/Tools/Tests/auth21_full_browser_real_core_engine_e2e.test.js",
+          "kind": "explicit App-relative source",
+          "before": "'Indicators/Engine/indicator_service.js'",
+          "after": "\"Engines/Indicators/Engine/indicator_service.js\""
+        },
+        {
+          "file": "App/Tools/Tests/auth21_real_engines_ingress.test.js",
+          "kind": "explicit App-relative source",
+          "before": "'Indicators/Engine/indicator_service.js'",
+          "after": "\"Engines/Indicators/Engine/indicator_service.js\""
+        },
+        {
+          "file": "App/Tools/Tests/auth21_real_indicator_business_process.test.js",
+          "kind": "explicit App-relative source",
+          "before": "'Indicators/Engine/indicator_service.js'",
+          "after": "\"Engines/Indicators/Engine/indicator_service.js\""
+        },
+        {
+          "file": "App/Tools/Tests/auth21_snapshot_real_bundle_e2e.test.js",
+          "kind": "explicit App-relative source",
+          "before": "'App/Indicators/Custom/p22_fixture.indicator.json'",
+          "after": "\"App/Engines/Indicators/Custom/p22_fixture.indicator.json\""
+        },
+        {
+          "file": "App/Tools/Tests/auth21_snapshot_real_bundle_e2e.test.js",
+          "kind": "explicit App-relative source",
+          "before": "'Indicators/Engine/indicator_service.js'",
+          "after": "\"Engines/Indicators/Engine/indicator_service.js\""
+        },
+        {
+          "file": "App/Tools/Tests/auth21_snapshot_real_service_ipc.test.js",
+          "kind": "explicit App-relative source",
+          "before": "'Indicators/Engine/indicator_service.js'",
+          "after": "\"Engines/Indicators/Engine/indicator_service.js\""
+        },
+        {
+          "file": "App/Tools/Tests/user_management_v1.test.js",
+          "kind": "relative module",
+          "before": "'../../Indicators/Engine/indicator_registry'",
+          "after": "\"../../Engines/Indicators/Engine/indicator_registry\""
+        },
+        {
+          "file": "App/Tools/Tests/user_management_v1.test.js",
+          "kind": "explicit App-relative source",
+          "before": "'Indicators/Engine/indicator_service.js'",
+          "after": "\"Engines/Indicators/Engine/indicator_service.js\""
+        },
+        {
+          "file": "App/UI/Tests/test_chart_events_v251.js",
+          "kind": "relative module",
+          "before": "'../../Indicators/Engine/indicator_registry'",
+          "after": "\"../../Engines/Indicators/Engine/indicator_registry\""
+        },
+        {
+          "file": "App/UI/Tests/test_chart_events_v251.js",
+          "kind": "engine resource segments",
+          "before": "'Indicators'",
+          "after": "\"Engines/Indicators\""
+        },
+        {
+          "file": "App/UI/Tests/test_chart_events_v251.js",
+          "kind": "relative module",
+          "before": "'../../Indicators/Engine/indicator_registry'",
+          "after": "\"../../Engines/Indicators/Engine/indicator_registry\""
+        },
+        {
+          "file": "App/UI/Tests/test_chart_events_v251.js",
+          "kind": "relative module",
+          "before": "'../../Indicators/Engine/indicator_engine'",
+          "after": "\"../../Engines/Indicators/Engine/indicator_engine\""
+        },
+        {
+          "file": "App/UI/Tests/test_chart_workspace_v21.js",
+          "kind": "explicit App-relative source",
+          "before": "'Indicators/BuiltIn/RSI.indicator.json'",
+          "after": "\"Engines/Indicators/BuiltIn/RSI.indicator.json\""
+        },
+        {
+          "file": "App/UI/Tests/test_chart_workspace_v21.js",
+          "kind": "relative module",
+          "before": "'../../Indicators/Engine/indicator_registry'",
+          "after": "\"../../Engines/Indicators/Engine/indicator_registry\""
+        },
+        {
+          "file": "App/UI/Tests/test_chart_workspace_v21.js",
+          "kind": "engine resource segments",
+          "before": "'Indicators'",
+          "after": "\"Engines/Indicators\""
+        },
+        {
+          "file": "App/UI/Tests/test_chart_workspace_v21.js",
+          "kind": "relative module",
+          "before": "'../../Indicators/Engine/indicator_registry'",
+          "after": "\"../../Engines/Indicators/Engine/indicator_registry\""
+        },
+        {
+          "file": "App/UI/Tests/test_chart_workspace_v21.js",
+          "kind": "relative module",
+          "before": "'../../Indicators/Engine/indicator_engine'",
+          "after": "\"../../Engines/Indicators/Engine/indicator_engine\""
+        },
+        {
+          "file": "App/UI/Tests/test_engine_http_surface_v2.0.js",
+          "kind": "explicit App-relative source",
+          "before": "'Indicators/Engine/indicator_service.js'",
+          "after": "\"Engines/Indicators/Engine/indicator_service.js\""
+        },
+        {
+          "file": "App/UI/Tests/test_indicator_visual_v2.js",
+          "kind": "explicit App-relative source",
+          "before": "'Indicators/BuiltIn'",
+          "after": "\"Engines/Indicators/BuiltIn\""
+        },
+        {
+          "file": "App/UI/Tests/test_indicator_visual_v2.js",
+          "kind": "explicit App-relative source",
+          "before": "'Indicators/BuiltIn'",
+          "after": "\"Engines/Indicators/BuiltIn\""
+        },
+        {
+          "file": "App/UI/Tests/test_indicator_visual_v2.js",
+          "kind": "relative module",
+          "before": "'../../Indicators/Engine/indicator_registry'",
+          "after": "\"../../Engines/Indicators/Engine/indicator_registry\""
+        },
+        {
+          "file": "App/UI/Tests/test_trading_indicators_v204.js",
+          "kind": "engine resource segments",
+          "before": "'Indicators'",
+          "after": "\"Engines/Indicators\""
+        },
+        {
+          "file": "App/UI/Tests/test_trading_indicators_v204.js",
+          "kind": "relative module",
+          "before": "'../../Indicators/Engine/indicator_registry'",
+          "after": "\"../../Engines/Indicators/Engine/indicator_registry\""
+        },
+        {
+          "file": "App/UI/Tests/test_trading_indicators_v204.js",
+          "kind": "relative module",
+          "before": "'../../Indicators/Engine/indicator_engine'",
+          "after": "\"../../Engines/Indicators/Engine/indicator_engine\""
+        },
+        {
+          "file": "App/start.command",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": "App/start_auth21_local_safe.command",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": "App/tests/registry-process-integration.js",
+          "kind": "explicit App-relative source",
+          "before": "'Indicators'",
+          "after": "\"Engines/Indicators\""
+        },
+        {
+          "file": "Deploy/VPS/preflight.sh",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": "Tools/CI/source_integrity_v242.py",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": "Tools/CI/source_integrity_v25.py",
+          "kind": "explicit paths in configuration/launcher"
+        },
+        {
+          "file": "compose.auth21.qualification.yml",
           "kind": "explicit paths in configuration/launcher"
         },
         {

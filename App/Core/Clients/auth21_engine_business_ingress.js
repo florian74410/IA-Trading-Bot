@@ -49,7 +49,7 @@ function openBusinessIngress({env,businessHandlers=null}={}){
    const parsed=new URL(input.feedUrl);
    if(parsed.username||parsed.password||parsed.port||!parsed.hostname.includes('.'))
     throw Error('AUTH21_FEED_HOST_INVALID');
-   const Storage=require('../../Fundamental/Engine/database');
+   const Storage=require("../../Engines/Fundamental/Engine/database");
    const store=new Storage({snapshotGate:trial.gate});
    try{
     const id=crypto.createHash('sha256').update(input.feedUrl).digest('hex').slice(0,12).toUpperCase();

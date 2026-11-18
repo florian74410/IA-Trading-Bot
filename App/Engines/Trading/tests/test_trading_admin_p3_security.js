@@ -2,7 +2,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),os=require('node:os'),path=require('node:path');
 const {AdminCommandLedger}=require('../trading_admin_ledger_v2');
 const {TradingAdminController}=require('../trading_admin_controller_v2');
-const {TradingFirewall,defaults}=require('../../../Core/Firewall/Protection/trading_firewall');
+const {TradingFirewall,defaults}=require("../../Firewall/Protection/trading_firewall");
 (async()=>{
  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'iatb-admin-p3-'));
  try{

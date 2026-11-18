@@ -26,7 +26,7 @@ def main():
     for row in inventory:
         p=ROOT/row['path']
         if row['decision']=='DELETE'and p.exists()and row['path']!='App/Updates/update_history.dat':errors.append('planned removal still exists: '+row['path'])
-        if row['path'].startswith(('App/Core/Communication/ProtocolRegistry/','App/Core/Clients/migrations/','App/Fundamental/Database/','App/Strategy/Schemas/','App/Core/Clients/UserManagement/','App/Indicators/BuiltIn/','App/Core/Firewall/','App/Core/ProcessRegistry/manifests/')):
+        if row['path'].startswith(('App/Core/Communication/ProtocolRegistry/','App/Core/Clients/migrations/','App/Engines/Fundamental/Database/','App/Strategy/Schemas/','App/Core/Clients/UserManagement/','App/Engines/Indicators/BuiltIn/','App/Core/Firewall/','App/Core/ProcessRegistry/manifests/')):
             if not p.is_file()or hashlib.sha256(p.read_bytes()).hexdigest()!=row['sha256']:errors.append('protected contract changed: '+row['path'])
     for row in report['files']:
         if row['path'].endswith('.json'):

@@ -4,7 +4,7 @@ on:
     branches: [feature/indicator-visual-renderer-v2.1]
   pull_request:
     paths:
-      - 'App/Indicators/**'
+      - 'App/Engines/Indicators/**'
       - 'App/Frontend/JS/indicator*'
       - 'App/Frontend/JS/chart_controller_native_v1.2.js'
       - 'App/UI/Tests/test_indicator_visual_v2.js'
@@ -31,6 +31,6 @@ jobs:
         run: node --test App/UI/Tests/test_indicator_visual_v2.js
       - name: Verify indicator core computations
         run: |
-          node App/Indicators/Tests/test_indicator_engine.js
-          node App/Indicators/Tests/test_indicator_settings_v1.js
-          node App/Indicators/Tests/test_indicator_complete_v2.js
+          node App/Engines/Indicators/Tests/test_indicator_engine.js
+          node App/Engines/Indicators/Tests/test_indicator_settings_v1.js
+          node App/Engines/Indicators/Tests/test_indicator_complete_v2.js

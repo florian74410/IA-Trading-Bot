@@ -1,6 +1,6 @@
 'use strict';
 const assert=require('node:assert/strict');
-const fc=require('../Fundamental/Providers/finance_calendar_provider_v2_4');
+const fc=require("../Engines/Fundamental/Providers/finance_calendar_provider_v2_4");
 const entry={id:'us-cpi-october-2026',series_code:'us-cpi',name:'US CPI',country:'US',category:'economic-indicators',impact:'high',date:'2026-10-22',release_at_utc:'2026-10-22T12:30:00+00:00',consensus:'2.9%',prior:'3.0%',actual:null,unit:'%',status:'confirmed',source_name:'BLS',source_url:'https://www.bls.gov'};
 const norm=fc.normalize(entry);
 assert.equal(norm.calendar,'FINANCE_CALENDAR');

@@ -2,8 +2,8 @@
 // Local fixtures only. Real HTML/CSS/JS and Indicator Engine math; no external requests or live orders.
 var test=require('node:test'),assert=require('assert'),fs=require('fs'),path=require('path'),http=require('http');
 var firefox=require('playwright').firefox,root=path.resolve(__dirname,'../..');
-var Engine=require('../../Indicators/Engine/indicator_engine'),Registry=require('../../Indicators/Engine/indicator_registry').Registry;
-var registry=new Registry(path.join(root,'Indicators')),browser,server,base,FIXTURE_NOW=Date.now();
+var Engine=require("../../Engines/Indicators/Engine/indicator_engine"),Registry=require("../../Engines/Indicators/Engine/indicator_registry").Registry;
+var registry=new Registry(path.join(root,"Engines/Indicators")),browser,server,base,FIXTURE_NOW=Date.now();
 function candles(symbol,tf){var step=tf==='5m'?300000:60000,at=Math.floor(FIXTURE_NOW/step)*step-239*step,price=symbol==='ETHUSD'?3000:60000;
  return Array.from({length:240},function(_,i){var p=price+i*2+Math.sin(i/5)*30;return[at+i*step,p,p+12,p-12,p+Math.sin(i/3)*9,100+i];});}
 test.before(async function(){
@@ -31,7 +31,7 @@ async function pageWith(options){
    if(a==='marketdata.symbols')d={ok:true,symbols:[{symbol:'BTCUSD',label:'BTC/USD'},{symbol:'ETHUSD',label:'ETH/USD'}]};
    if(a==='indicator.registry.reload')d={ok:true,items:registry.list().concat(Object.keys(custom).map(function(id){var d=custom[id];return{id:id,name:d.name,category:d.category,kind:'Custom',display:d.display,outputs:d.outputs,chartAvailable:true}})),status:registry.status()};
    if(a==='indicator.settings.get')d={ok:true,settings:{indicators:registry.list().map(function(x){return{id:x.id,enabled:true};})}};
-   if(a==='indicator.definition.create'){var def=args.definition,v=require('../../Indicators/Engine/indicator_registry').validateDefinition(def,'Custom',null,false);if(!v.ok)return route.fulfill({status:400,json:{error:v.errors.join('; ')}});custom[def.id]=def;d={ok:true,id:def.id};}
+   if(a==='indicator.definition.create'){var def=args.definition,v=require("../../Engines/Indicators/Engine/indicator_registry").validateDefinition(def,'Custom',null,false);if(!v.ok)return route.fulfill({status:400,json:{error:v.errors.join('; ')}});custom[def.id]=def;d={ok:true,id:def.id};}
    if(a==='indicator.compute_batch_data'||a==='indicator.compute_batch'){
     if(options.delay)await new Promise(function(done){setTimeout(done,options.delay);});
     if(options.fail) return route.fulfill({status:503,json:{error:'FIXTURE_INDICATOR_UNAVAILABLE'}});
@@ -105,7 +105,7 @@ test('drawing anchors survive zoom/pan/timeframe and source changes with explici
 });
 
  test('JSON import uses the existing installation path and refreshes the Studio catalog',async function(){
- var c=await pageWith(),p=c.page;try{await openStudio(p);await p.getByRole('button',{name:'Importer JSON',exact:true}).click();var def=JSON.parse(fs.readFileSync(path.join(root,'Indicators/BuiltIn/RSI.indicator.json'),'utf8'));def.id='qa_import_rsi';def.name='QA Imported RSI';await p.getByLabel('Importer un indicateur JSON',{exact:true}).setInputFiles({name:'qa.indicator.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(def))});await p.waitForFunction(function(){return IATBIndicatorUI.state().selected.includes('qa_import_rsi')});assert(c.calls.some(function(x){return x.action==='indicator.definition.create'}));await p.getByRole('button',{name:'Indicateurs',exact:true}).click();await p.getByLabel('Rechercher un indicateur',{exact:true}).fill('QA Imported');assert.equal(await p.locator('.cvIndicatorRow').count(),1);assert.deepStrictEqual(c.errors,[]);
+ var c=await pageWith(),p=c.page;try{await openStudio(p);await p.getByRole('button',{name:'Importer JSON',exact:true}).click();var def=JSON.parse(fs.readFileSync(path.join(root,"Engines/Indicators/BuiltIn/RSI.indicator.json"),'utf8'));def.id='qa_import_rsi';def.name='QA Imported RSI';await p.getByLabel('Importer un indicateur JSON',{exact:true}).setInputFiles({name:'qa.indicator.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(def))});await p.waitForFunction(function(){return IATBIndicatorUI.state().selected.includes('qa_import_rsi')});assert(c.calls.some(function(x){return x.action==='indicator.definition.create'}));await p.getByRole('button',{name:'Indicateurs',exact:true}).click();await p.getByLabel('Rechercher un indicateur',{exact:true}).fill('QA Imported');assert.equal(await p.locator('.cvIndicatorRow').count(),1);assert.deepStrictEqual(c.errors,[]);
  }finally{await p.close();}
 });
  test('responsive workspace, actual pointer wheel, focus and handler cleanup preserve the renderer',async function(){

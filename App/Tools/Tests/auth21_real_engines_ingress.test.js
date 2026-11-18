@@ -11,12 +11,12 @@ const {once} = require('node:events');
 const {setTimeout: delay} = require('node:timers/promises');
 const APP = path.resolve(__dirname, '../..');
 const specs = [
-  ['Indicator', 'Indicators/Engine/indicator_service.js', 'IATB_INDICATOR_PORT'],
+  ['Indicator', "Engines/Indicators/Engine/indicator_service.js", 'IATB_INDICATOR_PORT'],
   ['MarketData', 'MarketData/market_data_service.js', 'IATB_MARKET_DATA_PORT'],
   ['Liquidity', 'Liquidity/Engine/liquidity_service.js', 'IATB_LIQUIDITY_PORT'],
-  ['Fundamental', 'Fundamental/Engine/fundamental_service.js', 'IATB_FUNDAMENTAL_PORT'],
+  ['Fundamental', "Engines/Fundamental/Engine/fundamental_service.js", 'IATB_FUNDAMENTAL_PORT'],
   ['Trading', "Engines/Trading/trading_service.js", 'IATB_TRADING_ENGINE_PORT'],
-  ['Firewall', 'Core/Firewall/firewall_service.js', 'IATB_FIREWALL_PORT'],
+  ['Firewall', "Engines/Firewall/firewall_service.js", 'IATB_FIREWALL_PORT'],
   ['Strategy', 'Strategy/Engine/strategy_service.js', 'IATB_STRATEGY_PORT'],
   ['Risk', 'Risk/Engine/risk_service.js', 'IATB_RISK_ENGINE_PORT'],
   ['Portfolio', 'Portfolio/Engine/portfolio_service.js', 'IATB_PORTFOLIO_PORT'],

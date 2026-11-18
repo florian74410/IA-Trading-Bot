@@ -5,9 +5,9 @@ Base Rev2 : `ef425e04182619e9992aa8a7368db2a30b2a0f87`. Les résultats interméd
 | Engine | Commandes avant | Commandes après | Empreintes recalculées | Tests CP1 | Résultat |
 |---|---:|---:|---|---|---|
 | Trading | 20 (11 qualifiées) | 20 | Oui — générateur existant | 93 PASS, 0 FAIL | PASS intermédiaire |
-| Firewall | 3 (1 qualifiées) | À vérifier | PENDING | PENDING | PENDING |
-| Fundamental | 63 (2 qualifiées) | À vérifier | PENDING | PENDING | PENDING |
-| Indicators | 26 (3 qualifiées) | À vérifier | PENDING | PENDING | PENDING |
+| Firewall | 3 (1 qualifiées) | 3 | Oui — générateur existant | 93 PASS, 0 FAIL | PASS intermédiaire |
+| Fundamental | 63 (2 qualifiées) | 63 | Oui — générateur existant | 93 PASS, 0 FAIL | PASS intermédiaire |
+| Indicators | 26 (3 qualifiées) | 26 | Oui — générateur existant | 93 PASS, 0 FAIL | PASS intermédiaire |
 | Liquidity | 15 (2 qualifiées) | À vérifier | PENDING | PENDING | PENDING |
 | MarketData | 42 (5 qualifiées) | À vérifier | PENDING | PENDING | PENDING |
 | Portfolio | 20 (2 qualifiées) | À vérifier | PENDING | PENDING | PENDING |

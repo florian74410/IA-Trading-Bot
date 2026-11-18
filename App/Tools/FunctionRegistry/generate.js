@@ -3,7 +3,7 @@
 const fs=require('fs'),path=require('path'),crypto=require('crypto');
 const root=path.resolve(__dirname,'../..');
 const registry=path.join(root,'Core/Communication/ProtocolRegistry');
-const map={core:'Core',router:'Core/Router',supervisor:'Supervisor',marketdata:'MarketData',fundamental:'Fundamental',indicator:'Indicators',liquidity:'Liquidity',portfolio:'Portfolio',risk:'Risk',strategy:'Strategy',trading:"Engines/Trading",firewall:'Core/Firewall'};
+const map={core:'Core',router:'Core/Router',supervisor:'Supervisor',marketdata:'MarketData',fundamental:"Engines/Fundamental",indicator:"Engines/Indicators",liquidity:'Liquidity',portfolio:'Portfolio',risk:'Risk',strategy:'Strategy',trading:"Engines/Trading",firewall:"Engines/Firewall"};
 const version=require('../../Core/Shared/build_info').version;
 const checksum=v=>crypto.createHash('sha256').update(JSON.stringify(v)).digest('hex');
 function classify(name){if(/private.key|secret|seed|withdraw|export.key/i.test(name))return ['CRITICAL',true,'SECRET'];

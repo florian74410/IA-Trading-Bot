@@ -1,7 +1,7 @@
 'use strict';
 const test=require('node:test'),assert=require('node:assert/strict'),vm=require('node:vm'),fs=require('node:fs');
 const cal=require('../App/Frontend/JS/calendar_events_v2_2_5');
-const provider=require('../App/Fundamental/Providers/finance_calendar_provider_v2_4');
+const provider=require("../App/Engines/Fundamental/Providers/finance_calendar_provider_v2_4");
 const sandbox={window:{},Intl,CustomEvent:function(){}};
 vm.runInNewContext(fs.readFileSync('App/Frontend/JS/chart_controller_native_v1.2.js','utf8'),sandbox);
 const proto=sandbox.window.IATBChartController.prototype;

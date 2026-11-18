@@ -10,7 +10,7 @@ const {FunctionRegistryManager}=require('../Core/FunctionRegistry/manager');
 const {receivePublication}=require('../Core/FunctionRegistry/receiver');
 const {RegistryDiscovery}=require('../Core/FunctionRegistry/discovery');
 const root=path.resolve(__dirname,'..');
-const components={core:'Core',router:'Core/Router',supervisor:'Supervisor',marketdata:'MarketData',fundamental:'Fundamental',indicator:'Indicators',liquidity:'Liquidity',portfolio:'Portfolio',risk:'Risk',strategy:'Strategy',trading:"Engines/Trading",firewall:'Core/Firewall'};
+const components={core:'Core',router:'Core/Router',supervisor:'Supervisor',marketdata:'MarketData',fundamental:"Engines/Fundamental",indicator:"Engines/Indicators",liquidity:'Liquidity',portfolio:'Portfolio',risk:'Risk',strategy:'Strategy',trading:"Engines/Trading",firewall:"Engines/Firewall"};
 async function main(){
  const manager=new FunctionRegistryManager(':memory:');
  const secret=require('node:crypto').randomBytes(32).toString('hex');

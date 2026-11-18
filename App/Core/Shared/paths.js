@@ -65,7 +65,7 @@ var PERSISTENT_ROOT=path.resolve(process.env.IATB_DATA_ROOT||path.join(os.homedi
 var LEGACY_STATE_ROOT=path.resolve(process.env.IATB_STATE_ROOT||ROOT);
 var MUTABLE_ANNEX_ROOT=path.resolve(process.env.IATB_ANNEX_ROOT||path.join(ROOT,'Annexes'));
 var MUTABLE_UPDATES_ROOT=path.resolve(process.env.IATB_UPDATES_ROOT||path.join(ROOT,'Updates'));
-var SHARED_DATA=path.join(PERSISTENT_ROOT,'Shared Data'),FUNDAMENTAL_DATA=path.join(SHARED_DATA,'Fundamental'),CLIENT_DATABASE_DIR=path.join(PERSISTENT_ROOT,'Database'),CLIENT_SECURITY_DIR=path.join(PERSISTENT_ROOT,'Security');
+var SHARED_DATA=path.join(PERSISTENT_ROOT,'Shared Data'),FUNDAMENTAL_DATA=path.join(SHARED_DATA,"Engines/Fundamental"),CLIENT_DATABASE_DIR=path.join(PERSISTENT_ROOT,'Database'),CLIENT_SECURITY_DIR=path.join(PERSISTENT_ROOT,'Security');
 var PERSISTENT_DATA={root:PERSISTENT_ROOT,shared:SHARED_DATA,fundamental:FUNDAMENTAL_DATA,fundamentalDb:path.join(FUNDAMENTAL_DATA,'fundamental.db'),clientDatabaseDir:CLIENT_DATABASE_DIR,clientDb:path.join(CLIENT_DATABASE_DIR,'clients.sqlite'),clientSecurityDir:CLIENT_SECURITY_DIR,clientMasterKey:path.join(CLIENT_SECURITY_DIR,'client_master.key'),walletMasterKey:path.join(CLIENT_SECURITY_DIR,'wallet_master.key')};
 function ensureAppRuntimeDirs(){
   assertStartupWritable();

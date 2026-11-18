@@ -1,0 +1,7 @@
+{
+  "engine_id": "firewall",
+  "engine_version": "3.0.1-dev.1",
+  "registry_schema": "2.6.0",
+  "source_sha256": "7df07a1114fac1750e952be02d31260c1d5093d76cf484b18ac555d0dfb84861",
+  "revision_hash": "6533f46c92456d035b4d8411d108df8cf7a0f844c75c1696e92912e7778836d1"
+}

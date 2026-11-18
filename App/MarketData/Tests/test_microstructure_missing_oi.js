@@ -14,7 +14,7 @@ require.cache[transport].exports=function(url,options,cb){
 const Provider=require('../Provider/microstructure_provider');
 const Collector=require('../Collectors/microstructure_collector');
 const Store=require('../Storage/microstructure_store');
-const Firewall=require('../../Core/Firewall/Protection/market_data_firewall');
+const Firewall=require("../../Engines/Firewall/Protection/market_data_firewall");
 const fw=new Firewall({enabled:true,mode:'PROTECTION',rules:{duplicateProtection:false}});
 function get(p,source){return new Promise((resolve,reject)=>p.getSnapshot('BTCUSD',source,20,(e,x)=>e?reject(e):resolve(x)));}
 test('Kraken absent OI passes real Firewall and persists a snapshot',async()=>{

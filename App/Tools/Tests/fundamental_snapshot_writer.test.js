@@ -8,7 +8,7 @@ const os=require('node:os');
 const Module=require('node:module');
 const {SnapshotCoordinator,LocalSnapshotWriter}=require('../../Core/Backup/snapshot_coordinator');
 
-const modulePath=require.resolve('../../Fundamental/Engine/database_core');
+const modulePath=require.resolve("../../Engines/Fundamental/Engine/database_core");
 let currentFixture=null;
 let sqliteOpens=0;
 class FakeDb {
@@ -53,7 +53,7 @@ function withMockedModuleLoad(callback) {
 }
 function environment(t){
   const root=fs.mkdtempSync(path.join(os.tmpdir(),'iatb-fundamental-p22-'));
-  const dataDir=path.join(root,'persistent','Fundamental');
+  const dataDir=path.join(root,'persistent',"Engines/Fundamental");
   t.after(()=>{delete require.cache[modulePath];fs.rmSync(root,{recursive:true,force:true});});
   currentFixture={root,dataDir};
   delete require.cache[modulePath];

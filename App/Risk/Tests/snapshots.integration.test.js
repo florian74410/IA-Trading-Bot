@@ -38,7 +38,7 @@ test('real Router + Risk processes, Supervisor facade, discovery, auth, compatib
   const verify=await client.request('risk','risk.gate.verify',{risk_approval_id:approval.risk_approval_id,intent,consume:true});assert.equal(verify.ok,false);assert.equal(verify.error,'NATIVE_RISK_RECHECK_FAILED');
   const blocked=await client.request('risk','risk.gate.evaluate',{intent});assert.equal(blocked.approved,false);assert.equal(blocked.risk_approval_id,null);
   failure=false;
-  const firewallClient=new (require('../../Core/Firewall/risk_approval_client'))(ROOT,routerPort);
+  const firewallClient=new (require("../../Engines/Firewall/risk_approval_client"))(ROOT,routerPort);
   const consumed=await new Promise((resolve,reject)=>firewallClient.verify(approval.risk_approval_id,intent,true,(e,x)=>e?reject(e):resolve(x)));assert.equal(consumed.ok,true);
   const replay=await client.request('risk','risk.gate.verify',{risk_approval_id:approval.risk_approval_id,intent,consume:true});assert.equal(replay.ok,false);
   const manifest=require('../FunctionRegistry/Functions.json');for(const x of manifest.functions.filter(x=>/risk.snapshot\.|risk.constraints.get|risk.status/.test(x.id)))assert.equal(x.default_privilege,'DENY');
