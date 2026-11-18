@@ -27,7 +27,7 @@ function create({root,corePort,pages,findAsset}){
   try{
    const u=new URL(req.url,config.origin),p=u.pathname;
    if(!req.socket.encrypted){res.writeHead(403);return res.end();}
-   if(p==='/ui-health'&&req.method==='GET'){res.writeHead(200,{'Content-Type':'application/json','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});return res.end(JSON.stringify({ok:true,name:'IA-TB UI Service',authentication:'Auth21',version:require('../../Core/Shared/build_info').version,pid:process.pid}));}
+   if(p==='/ui-health'&&req.method==='GET'){res.writeHead(200,{'Content-Type':'application/json','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});return res.end(JSON.stringify({ok:true,name:'IA-TB UI Service',authentication:'Auth21',version:require('../../Core/Shared/build_info').version,build:require('../../Core/Shared/build_info').build,pid:process.pid}));}
    // Auth21 2.2.3: authenticated and sanitized operational states (no internal IP/port leakage).
    if((p==='/router-health'||p==='/route-health')&&req.method==='GET'){
     const me=await core(req,'/auth21/me');

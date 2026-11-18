@@ -151,23 +151,9 @@ async function advancedPrepare(token, p,{leverageDependency=false}={}) {
     )
       throw Error("MANUAL_DEFINITION_REQUIRED");
     this.account(token, { ...params, market: params.market });
-    if (
-      [
-        "orders.status",
-        "orders.fills",
-        "orders.history",
-        "algorithms.status",
-      ].includes(p.operation)
-    ) {
+    if (Object.hasOwn(C.READ_INTENTS, p.operation)) {
       const result = await inspect.call(this, token, params, {
-        kind:
-          p.operation === "orders.fills"
-            ? "FILLS"
-            : p.operation === "orders.history"
-              ? "HISTORY"
-              : p.operation === "algorithms.status"
-                ? "ALGO"
-                : "ORDER",
+        kind: C.READ_INTENTS[p.operation],
         ...(params.algo_id
           ? { algoId: params.algo_id }
           : params.order_id

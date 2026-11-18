@@ -3,7 +3,12 @@
  if(document.getElementById('iatbServiceStrip'))return;
  const names=[['Core','core'],['Router','router'],['Market Data','marketData'],['Indicators','indicators'],['Liquidity','liquidity'],['Fundamental','fundamental'],['Risk Engine','risk'],['Trading Engine','trading'],['Strategy Engine','strategy'],['Portfolio Engine','portfolio'],['Firewall','firewall'],['IA Supervisor','supervisor']];
  const footer=document.createElement('footer');footer.id='iatbServiceStrip';footer.className='iatbServiceStrip iatbGlobalServiceFooter';footer.setAttribute('aria-label','État des services IA-TB');
- const label=document.createElement('div');label.className='iatbSvcTitle';label.textContent='ÉTAT DES SERVICES';footer.appendChild(label);
+ const label=document.createElement('div');label.className='iatbSvcTitle';label.textContent='ÉTAT DES SERVICES';
+ const build=document.createElement('span');build.setAttribute('data-runtime-build','');build.textContent='Version indisponible';label.appendChild(build);footer.appendChild(label);
+ if(window.IATBRuntimeBuild)window.IATBRuntimeBuild.apply(build);
+ else if(!document.querySelector('script[src="/assets/runtime_build.js"]')){
+  const loader=document.createElement('script');loader.src='/assets/runtime_build.js';document.head.appendChild(loader);
+ }
  const list=document.createElement('div');list.className='iatbSvcList';for(const [name,key] of names){const item=document.createElement('div');item.className='iatbSvc';const dot=document.createElement('i');dot.className='iatbSvcDot';dot.setAttribute('aria-hidden','true');item.append(dot,document.createTextNode(name));item.dataset.key=key;list.appendChild(item);}footer.appendChild(list);
  const update=async()=>{try{const r=await fetch('/router-health',{credentials:'same-origin',cache:'no-store'});if(!r.ok)throw Error('HEALTH_UNAVAILABLE');const d=await r.json();for(const node of list.children){const key=node.dataset.key, state=key==='router'?d.ok:d.dependencies&&d.dependencies[key]&&d.dependencies[key].ok;node.querySelector('i').className='iatbSvcDot '+(state?'ok':'bad');node.title=nameFrom(key)+(state?' : opérationnel':' : indisponible');}}catch(_){for(const node of list.children){node.querySelector('i').className='iatbSvcDot';node.title='État inconnu';}}};
  const nameFrom=k=>names.find(x=>x[1]===k)?.[0]||k;

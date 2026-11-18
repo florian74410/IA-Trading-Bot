@@ -50,7 +50,15 @@
         "engine": "trading",
         "command": "trading.cancel"
       },
-      "parameters_schema": "intent.parameters/1.0"
+      "parameters_schema": "intent.parameters/1.0",
+      "help": {
+        "prerequisites": [
+          "Droits de trading et contrôles Risk requis pour la validation par Core."
+        ],
+        "conditional": [
+          "Mode de marge requis hors Spot."
+        ]
+      }
     },
     {
       "id": "orders.amend",
@@ -98,7 +106,16 @@
       "confirmation": "AUTHENTICATED_EXACT_PREPARATION",
       "parameters_contract": "intent.parameters/1.0",
       "cp1": null,
-      "parameters_schema": "intent.parameters/1.0"
+      "parameters_schema": "intent.parameters/1.0",
+      "help": {
+        "conditional": [
+          "Préciser un nouveau montant ou un nouveau prix limite.",
+          "Mode de marge requis hors Spot."
+        ],
+        "prerequisites": [
+          "Droits de trading et contrôles Risk requis pour la validation par Core."
+        ]
+      }
     },
     {
       "id": "orders.open",

@@ -10,6 +10,12 @@ const KINDS = [
   "LEVERAGE",
   "BATCH",
 ];
+const READ_INTENTS = Object.freeze({
+  'orders.status': 'ORDER',
+  'orders.fills': 'FILLS',
+  'orders.history': 'HISTORY',
+  'algorithms.status': 'ALGO'
+});
 const MARKETS = ["SPOT", "MARGIN", "SWAP", "FUTURES"];
 const FIELDS = [
   "instId",
@@ -256,7 +262,7 @@ function hash(v) {
 const ACTIONS={"BATCH":"trading.manual.batch","ORDER": "trading.manual.order", "ALGO": "trading.manual.algo", "CANCEL": "trading.manual.cancel", "AMEND": "trading.manual.amend", "CANCEL_ALGO": "trading.manual.cancel_algo", "AMEND_ALGO": "trading.manual.amend_algo", "LEVERAGE": "trading.manual.leverage"};
 function actionFor(s){validate(s);return ACTIONS[s.kind];}
 function isAction(a){return Object.values(ACTIONS).includes(a);}
-module.exports = { ACTIONS,actionFor,isAction,
+module.exports = { ACTIONS,READ_INTENTS,actionFor,isAction,
   validate,
   canonical,
   decimal,

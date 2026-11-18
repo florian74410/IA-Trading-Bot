@@ -1,9 +1,9 @@
-name: IA-TB 3.1.0 Rev1 complete build qualification
+name: IA-TB 3.1.0 complete build qualification
 on:
   push:
-    branches: ['release/iatb-3.1.0-Rev1-full-source', 'release/iatb-3.1.0-Rev1-ui-fixes']
+    branches: ['release/iatb-3.1.0-Rev1-full-source', 'release/iatb-3.1.0-Rev1-ui-fixes', 'release/iatb-3.1.0-Rev2-full-source']
   pull_request:
-    branches: ['release/iatb-3.0.2-Rev-X-full-source', 'release/iatb-3.1.0-Rev1-full-source']
+    branches: ['release/iatb-3.0.2-Rev-X-full-source', 'release/iatb-3.1.0-Rev1-full-source', 'release/iatb-3.1.0-Rev1-ui-fixes']
   workflow_dispatch:
 permissions:
   contents: read
@@ -19,13 +19,18 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Resolve the archive name from the selected source
+        run: |
+          revision=$(cat App/REVISION)
+          echo "BUILD_REVISION=$revision" >> "$GITHUB_ENV"
+          echo "BUILD_ARCHIVE=artifacts/IA-TB-${revision}_FULL-SOURCE_VPS.zip" >> "$GITHUB_ENV"
       - name: Install pinned runtime dependencies
         working-directory: App
         run: npm ci --omit=dev --no-audit --no-fund
       - name: Install isolated audit and browser tools
         run: |
           npm install --prefix "$RUNNER_TEMP/iatb-qa" acorn@8.15.0 acorn-walk@8.3.4 yaml@2.8.1 playwright@1.56.1 --no-audit --no-fund
-          "$RUNNER_TEMP/iatb-qa/node_modules/.bin/playwright" install --with-deps chromium
+          "$RUNNER_TEMP/iatb-qa/node_modules/.bin/playwright" install --with-deps chromium firefox
           echo "NODE_PATH=$RUNNER_TEMP/iatb-qa/node_modules" >> "$GITHUB_ENV"
           echo "IATB_ACORN_MODULE=$RUNNER_TEMP/iatb-qa/node_modules/acorn" >> "$GITHUB_ENV"
           echo "IATB_ACORN_WALK_MODULE=$RUNNER_TEMP/iatb-qa/node_modules/acorn-walk" >> "$GITHUB_ENV"
@@ -62,24 +67,31 @@ jobs:
         env:
           IATB_ATLAS_BROWSER: '1'
         run: node --test --test-concurrency=1 App/Tools/Tests/user_management_v1.test.js App/Engines/Supervisor/ChatBot/Tests/hybrid.test.js
+      - name: Verify the same Auth21 and Companion journey in Firefox
+        env:
+          IATB_ATLAS_BROWSER: firefox
+          IATB_BROWSER_QA: '1'
+        run: node --test --test-concurrency=1 App/Tools/Tests/user_management_v1.test.js
+      - name: Verify help and all three runtime build states
+        run: node --test App/Engines/Supervisor/ChatBot/Tests/help.test.js App/Core/FunctionRegistry/Tests/runtime_build.test.js
       - name: Build twice and verify complete source membership
         run: |
           python3 Tools/Build/build_rev1_full_source.py
-          cp artifacts/IA-TB-3.1.0_Rev1_FULL-SOURCE_VPS.zip "$RUNNER_TEMP/first.zip"
+          cp "$BUILD_ARCHIVE" "$RUNNER_TEMP/first.zip"
           python3 Tools/Build/build_rev1_full_source.py
-          cmp artifacts/IA-TB-3.1.0_Rev1_FULL-SOURCE_VPS.zip "$RUNNER_TEMP/first.zip"
-          python3 Tools/Build/verify_source_bundle.py artifacts/IA-TB-3.1.0_Rev1_FULL-SOURCE_VPS.zip
+          cmp "$BUILD_ARCHIVE" "$RUNNER_TEMP/first.zip"
+          python3 Tools/Build/verify_source_bundle.py "$BUILD_ARCHIVE"
       - name: Measure final source and archive footprints
-        run: python3 Tools/Build/measure_delivery.py artifacts/IA-TB-3.1.0_Rev1_FULL-SOURCE_VPS.zip artifacts/consolidation-validation/package-metrics.json
+        run: python3 Tools/Build/measure_delivery.py "$BUILD_ARCHIVE" artifacts/consolidation-validation/package-metrics.json
       - name: Requalify real services from extracted package
-        run: python3 Tools/Build/test_extracted_bundle.py artifacts/IA-TB-3.1.0_Rev1_FULL-SOURCE_VPS.zip --node-modules "$GITHUB_WORKSPACE/App/node_modules" --report artifacts/consolidation-validation/extracted-package.json
+        run: python3 Tools/Build/test_extracted_bundle.py "$BUILD_ARCHIVE" --node-modules "$GITHUB_WORKSPACE/App/node_modules" --report artifacts/consolidation-validation/extracted-package.json
       - name: Publish source package and evidence without runtime stores
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: IA-TB-3.1.0-Rev1-full-source-and-evidence
+          name: IA-TB-${{ env.BUILD_REVISION }}-full-source-and-evidence
           path: |
-            artifacts/IA-TB-3.1.0_Rev1_FULL-SOURCE_VPS.zip*
+            ${{ env.BUILD_ARCHIVE }}*
             artifacts/consolidation-validation/**/*.json
             artifacts/consolidation-validation/**/*.tap
             artifacts/consolidation-validation/**/*.png

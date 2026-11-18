@@ -68,7 +68,7 @@ var handler=function(req,res){var u=new URL(req.url,'http://'+HOST+':'+PORT),p=u
   }
  var auth21Boundary=require('../../Core/Clients/auth21_service_boundary').decision(process.env,'gateway',req.method,p);
  if(auth21Boundary.intercept){if(auth21Boundary.forwardToCore)return proxy(req,res,CORE_PORT,p+u.search,{service:'Auth21 isolated Core',permission:'AUTH'});return json(res,404,{error:'NOT_FOUND'});}
- if(req.method==='GET'&&p==='/ui-health')return json(res,200,{ok:true,name:'IA-TB UI Service',version:BUILD.version,pid:process.pid,host:HOST,port:PORT,corePort:CORE_PORT,routerPort:ROUTER_PORT,firewallPort:FIREWALL_PORT,authMode:AUTH_MODE,bypassRole:AUTH_MODE==='disabled'?BYPASS_ROLE:null,separation:'UI_PROCESS_ISOLATED'});
+ if(req.method==='GET'&&p==='/ui-health')return json(res,200,{ok:true,name:'IA-TB UI Service',version:BUILD.version,build:BUILD.build,pid:process.pid,host:HOST,port:PORT,corePort:CORE_PORT,routerPort:ROUTER_PORT,firewallPort:FIREWALL_PORT,authMode:AUTH_MODE,bypassRole:AUTH_MODE==='disabled'?BYPASS_ROLE:null,separation:'UI_PROCESS_ISOLATED'});
  if(req.method==='GET'&&p==='/ui-api/session')return json(res,200,{ok:true,authenticated:AUTH_MODE!=='disabled',authMode:AUTH_MODE,role:currentRole(),permissions:{read:true,userWrite:true,adminWrite:isAdminRole(currentRole()),superAdmin:currentRole()==='SUPERADMIN'},policy:'SERVER_SIDE'});
  if(req.method==='GET'&&p==='/communication-health')return proxy(req,res,ROUTER_PORT,p+u.search,{service:'Communication Router',permission:'READ'});
  if(req.method==='GET'&&p==='/router-health')return authorizePage(req,res,'USER',function(){proxy(req,res,ROUTER_PORT,p+u.search,{service:'Router Health',permission:'READ'});});

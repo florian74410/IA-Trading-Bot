@@ -4,6 +4,7 @@ const { Catalog, normalize } = require("./catalog"),
   Contracts = require("./Contracts"),
   { State, digest } = require("./state"),
   Procedures = require("./procedures"),
+  Help = require("./help"),
   { redactSecrets } = require("../../../Core/Shared/cognitive_text_safety");
 const questions = {
   asset: "Quel actif souhaites-tu utiliser ?",
@@ -68,6 +69,8 @@ class HybridChatBot {
     this.busy.add(key);
     try {
       this.catalog.reload();
+      const help = Help.parseHelp(input.message);
+      if (help) return await Help.answer(this.catalog, help[1], { role: auth.principal.role, gateway });
       const config = Contracts.settings(settings),
         state = this.state.load(auth, room),
         message = scrub(input.message.trim()),

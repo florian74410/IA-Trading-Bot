@@ -91,7 +91,12 @@
       "confirmation": "NO_FINANCIAL_EXECUTION",
       "parameters_contract": "intent.parameters/1.0",
       "cp1": null,
-      "parameters_schema": "intent.parameters/1.0"
+      "parameters_schema": "intent.parameters/1.0",
+      "help": {
+        "conditional": [
+          "Type d’algorithme requis. Pour un trailing stop, préciser le ratio ou l’écart. Pour un déclencheur, préciser son prix. Pour conditionnel ou OCO, préciser TP ou SL. Indiquer le sens si aucune position n’est fournie."
+        ]
+      }
     },
     {
       "id": "copytrading.list",
@@ -395,7 +400,12 @@
       "confirmation": "NO_FINANCIAL_EXECUTION",
       "parameters_contract": "intent.parameters/1.0",
       "cp1": null,
-      "parameters_schema": "intent.parameters/1.0"
+      "parameters_schema": "intent.parameters/1.0",
+      "help": {
+        "conditional": [
+          "Chaque étape requiert les paramètres de sa propre intention."
+        ]
+      }
     },
     {
       "id": "orders.batch",

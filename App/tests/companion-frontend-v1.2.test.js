@@ -30,8 +30,8 @@ function create(role='USER',chatReply=null,confirmError=null){
   if(url==='/communication/v1/ui/write')data={status:'OK',data:options.body&&JSON.parse(options.body).action==='supervisor.llm.select'?{ok:true,selection:{persisted:true}}:{ok:true,mode:'PAUSED'}};
   return {ok:true,status:200,json:async()=>data};
  };
- const window={IATBSession:{authenticated:true,role:role,clientId:'CLalice'},speechSynthesis:null,dispatchEvent:e=>events.push(e),confirm:()=>{calls.confirm++;return true}};
- const sandbox={window,document,fetch,CustomEvent:class{constructor(type,{detail}){this.type=type;this.detail=detail;}},setTimeout:()=>1,clearTimeout(){},innerWidth:1024,innerHeight:768,location:{pathname:'/trading',hash:''}};
+ const window={addEventListener(){},IATBSession:{authenticated:true,role:role,clientId:'CLalice'},speechSynthesis:null,dispatchEvent:e=>events.push(e),confirm:()=>{calls.confirm++;return true}};
+ const sandbox={window,document,fetch,ResizeObserver:class{observe(){}},CustomEvent:class{constructor(type,{detail}){this.type=type;this.detail=detail;}},setTimeout:()=>1,clearTimeout(){},innerWidth:1024,innerHeight:768,location:{pathname:'/trading',hash:''}};
  vm.runInNewContext(code,sandbox,{filename:'companion_v1.0.js'});
  return {requests,events,body,window,calls};
 }

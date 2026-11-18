@@ -17,7 +17,12 @@
       ],
       "patterns": [
         "^diagnostic (des|inter) engines[.!]?$"
-      ]
+      ],
+      "help": {
+        "prerequisites": [
+          "Permissions CP1 pour chacun des Engines consultés."
+        ]
+      }
     },
     {
       "category": "engines",
@@ -35,7 +40,12 @@
       ],
       "patterns": [
         "^(liste les )?commandes cp1( disponibles)?[.!]?$"
-      ]
+      ],
+      "help": {
+        "prerequisites": [
+          "Agent CP1 disponible. Les commandes retournées sont limitées aux permissions accordées."
+        ]
+      }
     },
     {
       "category": "engines",
@@ -59,7 +69,12 @@
       "patterns": [
         "^analyse(?:r)? .{2,120} avec market\\s*data\\b",
         "^analyse croisee\\b"
-      ]
+      ],
+      "help": {
+        "prerequisites": [
+          "Permissions CP1 pour les données de marché, Indicators et Liquidity. Le diagnostic Risk requiert un compte et sa propre permission CP1."
+        ]
+      }
     }
   ]
 }

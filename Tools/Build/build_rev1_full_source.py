@@ -14,7 +14,7 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parents[2]
 REVISION = (ROOT / "App/REVISION").read_text(encoding="utf-8").strip() if (ROOT / "App/REVISION").exists() else "3.0.1_Rev1"
-RELEASES = {"3.0.1_Rev1": "3.0.1-dev.1", "3.0.1_Rev2": "3.0.1-dev.1", "3.0.1_Rev3": "3.0.1-dev.1", "3.0.2_Rev-X": "3.0.2-dev.1", "3.1.0_Rev1": "3.1.0"}
+RELEASES = {"3.0.1_Rev1": "3.0.1-dev.1", "3.0.1_Rev2": "3.0.1-dev.1", "3.0.1_Rev3": "3.0.1-dev.1", "3.0.2_Rev-X": "3.0.2-dev.1", "3.1.0_Rev1": "3.1.0", "3.1.0_Rev2": "3.1.0"}
 if REVISION not in RELEASES:
     raise RuntimeError("Unknown complete source revision")
 VERSION = (ROOT / "App/VERSION").read_text(encoding="utf-8").strip()
@@ -22,6 +22,8 @@ if VERSION != RELEASES[REVISION]:
     raise RuntimeError(f"Unexpected source version: {VERSION}")
 OUTPUT = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else ROOT / "artifacts" / f"IA-TB-{REVISION}{'_Consolidated' if REVISION in {'3.0.1_Rev3', '3.0.2_Rev-X'} else ''}_FULL-SOURCE_VPS.zip"
 SOURCE_COMMIT = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
+if subprocess.check_output(["git", "status", "--porcelain", "--untracked-files=no"], cwd=ROOT):
+    raise RuntimeError("Package from a clean commit")
 TRACKED = subprocess.check_output(["git", "ls-files", "-z"], cwd=ROOT).decode("utf-8").split("\0")
 ALLOWED_TOP = {"App", "Tools", "Documentation", ".github", "Deploy", "Assets", "Infrastructure", "tests"}
 ALLOWED_ROOT = {"README.md", "ROADMAP.md", "AGENT_ROLE.md", ".gitignore", "compose.debug.yml", "compose.debug.stack.yml", "compose.auth21.qualification.yml", ".dockerignore"}
@@ -83,7 +85,7 @@ required = {
     "Deploy/VPS/README-3.0.1_Rev1.md", "Deploy/VPS/preflight.sh",
     "Deploy/VPS/launch_vps.sh",
 }
-if REVISION == "3.1.0_Rev1":
+if REVISION.startswith("3.1.0_"):
     required.update({
         "App/UI/Analysis/atlas-3.0.2-rev-x.json",
         "App/UI/Analysis/structural_report.js",
@@ -91,6 +93,12 @@ if REVISION == "3.1.0_Rev1":
         "App/Frontend/CSS/admin_structural_analysis.css",
         "Documentation/Versions/3.1.0-Rev1/README.md",
     })
+if REVISION == "3.1.0_Rev2":
+    required.update({"Deploy/VPS/README-3.1.0_Rev2.md", "Documentation/Versions/3.1.0-Rev2/README.md"})
+for filename in ("App/manifest.json", "App/Updates/current_release.dat"):
+    metadata = json.loads((ROOT / filename).read_text(encoding="utf-8"))
+    if metadata["version"] != VERSION or (REVISION.startswith("3.1.0_") and metadata.get("revision") != REVISION):
+        raise RuntimeError(f"Build metadata mismatch: {filename}")
 if not required.issubset(included):
     raise RuntimeError("Missing essential sources: " + ", ".join(sorted(required - included)))
 

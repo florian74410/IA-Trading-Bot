@@ -50,11 +50,19 @@ test('actual Core and Gateway processes authenticate over pinned TLS, isolate la
  let output='';for(const entry of ['Core/Server/server.js','UI/Gateway/ui_service.js','Core/Router/router.js',"Engines/Indicators/Engine/indicator_service.js","Engines/Strategy/Engine/strategy_service.js","Engines/Portfolio/Engine/portfolio_service.js","Engines/Supervisor/supervisor_service.js"]){const p=spawn(process.execPath,[path.resolve(__dirname,'../..',entry)],{env,stdio:['ignore','pipe','pipe']});p.stdout.on('data',b=>output+=b);p.stderr.on('data',b=>output+=b);t.after(()=>{p.kill('SIGTERM');});}
  async function call(route,method='GET',body=null,headers={}){return new Promise((resolve,reject)=>{const raw=body===null?'':JSON.stringify(body),q=https.request({host:'127.0.0.1',port:uiPort,servername:'localhost',ca:fs.readFileSync(crt),path:route,method,headers:{Origin:origin,'Content-Type':'application/json','Content-Length':Buffer.byteLength(raw),...headers}},r=>{let data='';r.on('data',b=>data+=b);r.on('end',()=>{let json;try{json=JSON.parse(data);}catch(_){}resolve({status:r.statusCode,data:json,text:data,cookie:r.headers['set-cookie']?.[0]});});});q.on('error',reject);q.end(raw);});}
  let ready=false;for(let i=0;i<100;i++){try{if((await call('/api/health')).status===200){ready=true;break;}}catch(_){}await new Promise(r=>setTimeout(r,50));}assert(ready,'Core/Gateway startup failed: '+output);
- assert.equal((await call('/ui-health')).data.authentication,'Auth21');
+ const build=require('../../Core/Shared/build_info').build;
+ assert.deepEqual((await call('/api/health')).data.build,build);
+ const uiHealth=(await call('/ui-health')).data;
+ assert.equal(uiHealth.authentication,'Auth21');
+ assert.deepEqual(uiHealth.build,build);
+ assert.equal((await call('/api/status')).status,401);
  assert.equal((await call('/settings')).status,303);assert.equal((await call('/login')).status,200);
  const a=await call('/auth21/login','POST',{email:'alice@example.invalid',password:PASSWORD});assert.equal(a.status,200,JSON.stringify(a.data));const ha={Cookie:a.cookie.split(';')[0],'X-IATB-CSRF':a.data.csrfToken};
  assert.equal((await call('/api/settings/language','POST',{language:'en'},ha)).status,200);
- assert.equal((await call('/api/settings','GET',null,ha)).data.language,'en');
+ const activeSettings=(await call('/api/settings','GET',null,ha)).data;
+ assert.equal(activeSettings.language,'en');
+ assert.deepEqual(activeSettings.build,build);
+ assert.deepEqual((await call('/api/status','GET',null,ha)).data.build,build);
  const b=await call('/auth21/login','POST',{email:'bobby@example.invalid',password:PASSWORD}),hb={Cookie:b.cookie.split(';')[0],'X-IATB-CSRF':b.data.csrfToken};assert.equal((await call('/api/settings','GET',null,hb)).data.language,'fr');
  const guestViewer=await call('/auth21/login','POST',{email:'guest@example.invalid',password:PASSWORD}),hGuestViewer={Cookie:guestViewer.cookie.split(';')[0],'X-IATB-CSRF':guestViewer.data.csrfToken};for(const route of ['/bank','/keys','/portfolio','/api/security/wallets'])assert.equal((await call(route,'GET',null,hGuestViewer)).status,403);assert.equal((await call('/settings','GET',null,hGuestViewer)).status,403,'GUEST cannot open private Settings UI');assert.equal((await call('/api/settings','GET',null,hGuestViewer)).status,200,'sanitized GUEST settings API remains available');
  const walletA=await call('/api/security/wallets/create','POST',{name:'Fictional Alice',notRobot:true,password:PASSWORD},ha);assert.equal(walletA.status,200,JSON.stringify(walletA.data));assert.equal((await call('/api/security/wallets','GET',null,hb)).data.items.length,0);assert.equal((await call('/api/security/wallets/reveal','POST',{id:walletA.data.item.id,accountId:'evm',password:PASSWORD,confirmed:true},hb)).status,404);
@@ -77,6 +85,18 @@ test('actual Core and Gateway processes authenticate over pinned TLS, isolate la
  let ownPortfolio;for(let i=0;i<80;i++){ownPortfolio=await owner('portfolio','portfolio.overview',{});if(ownPortfolio.status===200)break;await new Promise(r=>setTimeout(r,50));}assert.equal(ownPortfolio.status,200,JSON.stringify(ownPortfolio.data)+output);
  assert.equal((await call('/api/settings/supervisor/brains','POST',{provider:'MOCK',fallbackEnabled:false,fallbackProvider:'OPENAI_API',openai:{model:'gpt-5.6',timeoutMs:45000},remote:{endpoint:''}},ha)).status,200);
  assert.equal((await owner('supervisor','supervisor.status',{})).data.data.llm.provider,'MOCK');
+ const chatbotRoute='/api/companion/chat', helpMessage={mode:'hybrid',message:' /AIDE ',forceOpenAI:true};
+ assert.equal((await call(chatbotRoute,'POST',helpMessage,{Cookie:ha.Cookie})).status,403);
+ assert.equal((await call(chatbotRoute,'POST',helpMessage,hGuestViewer)).status,403);
+ for(const mode of ['LOCAL','HYBRID','OPENAI']){
+  assert.equal((await call('/api/settings/chatbot','POST',{mode,autoFallback:true},ha)).status,200);
+  const help=await call(chatbotRoute,'POST',helpMessage,ha);
+  assert.equal(help.status,200,JSON.stringify(help.data)+output);
+  assert.equal(help.data.status,'HELP');
+  assert.equal(help.data.execution,'NONE');
+  assert(help.data.help.groups.some(group=>group.intents.some(intent=>intent.id==='trading.buy')));
+ }
+
  assert.equal((await call('/api/settings/supervisor/brains','POST',{provider:'REMOTE_LLM',remote:{endpoint:'http://127.0.0.1:1234'}},ha)).status,409);
  const sup=await owner('supervisor','supervisor.status',{});assert.equal(sup.status,200,JSON.stringify(sup.data)+output);const mock=await owner('supervisor','supervisor.reason',{provider:'MOCK',prompt:'Fictional smoke only'});assert.equal(mock.status,200,JSON.stringify(mock.data));assert.equal(mock.data.data.response.provider,'MOCK');assert.equal((await owner('supervisor','supervisor.status',{},hb)).data.data.reasoningCount,0);
  const definition={schema_version:1,name:'Alice RSI',version:'1.0',symbol:'BTCUSD',timeframe:'5m',entry:{side:'BUY',conditions:[{indicator:'RSI',operator:'<',value:30}]},risk:{leverage:2,max_position_usdt:10,stop_loss_percent:1,take_profit_percent:2}};
@@ -105,7 +125,7 @@ test('actual Core and Gateway processes authenticate over pinned TLS, isolate la
  assert.equal(atlas.status,200);
  assert.equal(atlas.data.report.meta.engines.length,10);
  assert.equal(atlas.data.report.meta.commit,'6bdfd3626d19b37790202a66007b90d121007703');
- assert.equal(atlas.data.installed.version,require('../../Core/Shared/build_info').version);
+ assert.deepEqual(atlas.data.installed,build);
  assert.equal(atlas.data.deployed,null);
  const originalPath=atlasPath+'/explorateur';
  assert.equal((await call(originalPath)).status,401);
@@ -114,15 +134,19 @@ test('actual Core and Gateway processes authenticate over pinned TLS, isolate la
  assert.equal(original.status,200);
  assert.match(original.text,/Atlas des fonctionnalités/);
  assert.doesNotMatch(original.text,/__IATB_ATLAS_(JSON|NONCE)__/);
- if(process.env.IATB_ATLAS_BROWSER==='1'){
+ if(['1','firefox'].includes(process.env.IATB_ATLAS_BROWSER)){
   const playwright=require(process.env.IATB_PLAYWRIGHT_MODULE||'playwright');
-  const browser=await playwright.chromium.launch({executablePath:process.env.IATB_CHROMIUM_EXECUTABLE||undefined,args:['--no-sandbox']});
+  const browser=process.env.IATB_ATLAS_BROWSER==='firefox'?await playwright.firefox.launch():await playwright.chromium.launch({executablePath:process.env.IATB_CHROMIUM_EXECUTABLE||undefined,args:['--no-sandbox']});
   t.after(()=>browser.close());
   const context=await browser.newContext({ignoreHTTPSErrors:true,viewport:{width:1366,height:900}});
   const [name,value]=adminHeaders.Cookie.split('=');
   await context.addCookies([{name,value,url:origin}]);
   const page=await context.newPage(),errors=[];
   page.on('pageerror',e=>errors.push(e.message));
+  await page.goto(origin+'/login');
+  await page.waitForFunction(expected=>document.querySelector('[data-runtime-build]')?.textContent===expected,build.revision);
+  await page.goto(origin+'/settings?section=Versions');
+  await page.waitForFunction(expected=>document.querySelector('#componentBuildLabel')?.textContent.includes(expected),build.revision);
   await page.goto(origin+'/settings?section=IA');
   await page.locator('#view-ai-supervisor').waitFor();
   await page.waitForFunction(()=>!document.querySelector('#chatbotSettingsFields').disabled &&
@@ -149,8 +173,53 @@ test('actual Core and Gateway processes authenticate over pinned TLS, isolate la
   await page.goBack();
   await page.locator('#view-trading').waitFor();
   await page.setViewportSize({width:1280,height:800});
+  await page.goto(origin+'/ia-trading');
+  await page.locator('#iatb-global-nav').waitFor();
+  await page.waitForFunction(expected=>document.querySelector('#iatbServiceStrip [data-runtime-build]')?.textContent===expected,build.revision);
+  const bot=page.locator('.iatbCompBot'),panel=page.locator('.iatbCompPanel');
+  await bot.click({position:{x:26,y:24}});
+  await panel.locator('[data-mode=hybrid]').waitFor();
+  const fit=()=>page.waitForFunction(()=>{
+    const panel=document.querySelector('.iatbCompPanel').getBoundingClientRect();
+    const controls=['.iatbCompHead','.iatbCompTabs','.iatbCompForm'];
+    return panel.top>=0&&panel.left>=0&&panel.right<=innerWidth&&panel.bottom<=innerHeight&&
+      controls.every(selector=>{
+        const rect=document.querySelector(selector).getBoundingClientRect();
+        return rect.height>0&&rect.top>=panel.top&&rect.bottom<=panel.bottom;
+      });
+  });
+  for(const size of [{width:1280,height:800},{width:1024,height:640},{width:1280,height:420},{width:1600,height:1000}]){
+   // 1024 × 640 CSS pixels reproduce the viewport available at 125% browser zoom on 1280 × 800.
+   await page.setViewportSize(size);
+   await fit();
+  }
+  const title=await panel.locator('.iatbCompHead b').boundingBox();
+  await page.mouse.move(title.x+10,title.y+7);await page.mouse.down();
+  await page.mouse.move(1390,680,{steps:8});await page.mouse.up();
+  const moved=await panel.boundingBox();
+  assert.notEqual(moved.x,1600-moved.width-24);
+  await page.setViewportSize({width:1280,height:420});
+  await fit();
+  const beforeResize=await panel.boundingBox();
+  await page.mouse.move(beforeResize.x+beforeResize.width-4,beforeResize.y+beforeResize.height-4);
+  await page.mouse.down();await page.mouse.move(beforeResize.x+beforeResize.width-115,beforeResize.y+beforeResize.height-4,{steps:8});await page.mouse.up();
+  assert((await panel.boundingBox()).width<beforeResize.width);
+  await fit();
+  const input=panel.getByRole('textbox',{name:'Message au ChatBot IA-TB'});
+  await input.fill('/AIDE');await input.press('Enter');
+  const help=panel.locator('.iatbCompHelp').last();
+  await help.getByText(/Aide du ChatBot/).waitFor();
+  await help.locator('summary').filter({hasText:/^trading /}).click();
+  await help.getByRole('button',{name:'trading.sell',exact:true}).click();
+  await panel.getByText('Aide · trading.sell',{exact:true}).waitFor();
+  assert(await panel.locator('.iatbCompMsgs').evaluate(node=>node.scrollHeight>node.clientHeight&&node.scrollTop>0));
+  await fit();
+  await panel.locator('.iatbCompHead button').last().click();
+  await panel.waitFor({state:'hidden'});
+  await page.setViewportSize({width:1280,height:800});
   await page.goto(origin+'/admin');
   await page.locator('#iatbServiceStrip').waitFor();
+  await page.waitForFunction(expected=>document.querySelector('#iatbServiceStrip [data-runtime-build]')?.textContent===expected,build.revision);
   assert.equal(await page.locator('.sideBrand').count(),0);
   assert(await page.evaluate(()=>{
     const footer=document.querySelector('#iatbServiceStrip').getBoundingClientRect().top;

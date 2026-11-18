@@ -3,7 +3,6 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const build = require('../../Core/Shared/build_info');
-const { revision } = require('../../manifest.json');
 
 const pagePath = '/admin/analyse/structurelle';
 const reportPath = pagePath + '/rapport';
@@ -14,7 +13,7 @@ function load() {
   return {
     schema: 'iatb.admin.structural-report/1',
     report: require('./atlas-3.0.2-rev-x.json'),
-    installed: { version: build.version, revision },
+    installed: build.build,
     deployed: null,
     capabilities: { dynamicAnalysis: false }
   };

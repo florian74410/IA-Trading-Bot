@@ -246,11 +246,11 @@
       const data = await response.json();
       if (data.schema !== 'iatb.admin.structural-report/1') throw Error('ATLAS_SCHEMA');
       report = data.report;
-      byId('version').textContent = 'v' + data.installed.version;
+      byId('version').textContent = window.IATBRuntimeBuild.label(data.installed);
       entries('atlasMeta', [
         ['Version auditée', report.meta.revision], ['Commit audité', report.meta.commit],
         ['Date du rapport', report.meta.audit_date],
-        ['Version installée', data.installed.revision + ' · ' + data.installed.version],
+        ['Version installée', window.IATBRuntimeBuild.label(data.installed)],
         ['Version déployée', data.deployed?.revision || 'Non vérifiée']
       ]);
       entries('atlasStats', [
