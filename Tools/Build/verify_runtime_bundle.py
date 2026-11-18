@@ -34,7 +34,11 @@ with zipfile.ZipFile(archive_path) as archive:
         if name.startswith(".github/") or name.startswith("Tools/") or p.suffix.lower() in {".tap", ".log", ".sqlite", ".db", ".zip", ".pyc"}:
             raise RuntimeError("Development or runtime artifact included: " + name)
         if p.name.startswith(".env") or p.name.endswith((".pem", ".key", ".p12", ".pfx")):
-            raise RuntimeError("Credentials included: " + name)
+            if name != "App/Core/Certificates/cacert.pem":
+                raise RuntimeError("Credentials included: " + name)
+            ca = archive.read(name)
+            if b"BEGIN CERTIFICATE" not in ca or b"PRIVATE KEY" in ca:
+                raise RuntimeError("Invalid public CA trust bundle")
         if hashlib.sha256(archive.read(name)).hexdigest() != sha:
             raise RuntimeError("Invalid hash: " + name)
 digest = hashlib.sha256(archive_path.read_bytes()).hexdigest()
