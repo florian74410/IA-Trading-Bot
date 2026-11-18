@@ -42,7 +42,7 @@ Le format dev.1 ne permet pas de distinguer un texte ressemblant à du JSON d'un
 
 Un changement d'objectif masque les observations du précédent objectif sans effacer cet historique. Une réponse CP1 tardive ne peut pas être attribuée au nouvel objectif. La lecture du contexte est transactionnelle.
 
-Limites : 64 Kio par observation nettoyée, profondeur 8, 256 éléments par tableau, 128 propriétés par objet et 4096 nœuds. Les structures cycliques, accesseurs, prototypes non JSON, nombres non finis et valeurs non JSON sont refusés. Maximum 48 observations retenues par espace/contexte, 12 retournées. La suppression des secrets est une défense déterministe ; elle ne constitue pas un détecteur universel de données sensibles.
+Limites : 64 Kio par observation nettoyée, profondeur 8, 256 éléments par tableau, 128 propriétés par objet et 4096 nœuds. Les structures cycliques, accesseurs, prototypes non JSON, nombres non finis et valeurs non JSON sont refusés. Lors des nouvelles écritures, 48 observations au maximum sont retenues par espace/contexte ; 12 sont retournées. La suppression des secrets est une défense déterministe ; elle ne constitue pas un détecteur universel de données sensibles.
 
 ## API existante et permissions
 
