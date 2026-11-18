@@ -20,6 +20,13 @@ function createBridge({root,sessions,routerPort,tradingVault=null,functionRegist
   if(!sessions.attempt(require('node:crypto').createHash('sha256').update('bridge:'+principal.clientId).digest('hex'),300))throw Error('AUTH_THROTTLED');
   if(require('../../../Bank/Core/feature_policy_v2_4_1').blockedAction(action))throw Error('BANK_FEATURE_SUSPENDED');
   const expected=action.split('.')[0];if(target!==expected)throw Error('FORBIDDEN');
+  if(target==='trading'&&(require('../../Execution/manual_contract').isAction(action)||action==='trading.account.inspect')){
+   if(!tradingVault||principal.role==='GUEST'||a.metadata)throw Error('FORBIDDEN');
+   if(require('../../Execution/manual_contract').isAction(action)&&(!a.proof||a.owner!==principal.clientId))throw Error('MANUAL_OWNER_CONFIRMATION_REQUIRED');
+   if(require('../../Execution/manual_contract').isAction(action)&&action!==require('../../Execution/manual_contract').actionFor(a.spec))throw Error('MANUAL_ACTION_MISMATCH');
+   const grant=await tradingVault.issue(token,a,require('../../Execution/manual_contract').isAction(action)?(a.spec.kind.startsWith('CANCEL')?'cancel':a.spec.position_id?'close':'execute'):'read');
+   return rpc(target,action,{...a,metadata:{account_ticket:grant.ticket}});
+  }
   if(target==='trading'&&['trading.execute','trading.cancel','trading.close_position'].includes(action)){
    if(!tradingVault||principal.role==='GUEST'||a.metadata?.account_ticket)throw Error('FORBIDDEN');
    const kind=action==='trading.cancel'?'cancel':action==='trading.close_position'||a.reduce_only===true?'close':'execute';
@@ -90,6 +97,6 @@ if(target==='supervisor'){payload.configuration=configurationFor(token);if(actio
   // No fallthrough to global Custom registry, global settings or execution.
   throw Error('FORBIDDEN');
  }
- let manual=null;const api={bridge,rpc,codec,prepareOrder:(token,p)=>orders().prepare(token,p),confirmOrder:(token,p)=>orders().confirm(token,p),cancelOrder:(token,p)=>orders().cancel(token,p),orderHistory:token=>orders().history(token),close:()=>manual?.close()};function orders(){if(!manual)manual=new (require('../../Execution/manual_orders').ManualOrders)({root,sessions,bridge:api,vault:tradingVault});return manual;}return api;
+ let manual=null;const api={bridge,rpc,codec,prepareOrder:(token,p)=>orders().prepare(token,p),confirmOrder:(token,p)=>orders().confirm(token,p),cancelOrder:(token,p)=>orders().cancel(token,p),reconcileOrder:(token,p)=>orders().reconcileAdvanced(token,p.preparation_id),resumePlan:(token,p)=>orders().advancePlan(token,p.preparation_id),orderHistory:token=>orders().history(token),close:()=>{manual?.close();manual=null;}};function orders(){if(!manual)manual=new (require('../../Execution/manual_orders').ManualOrders)({root,sessions,bridge:api,vault:tradingVault,env});return manual;}return api;
 }
 module.exports={createBridge,PUBLIC,GUEST_READ};

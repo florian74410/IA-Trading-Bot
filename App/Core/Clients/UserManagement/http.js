@@ -67,6 +67,8 @@ function createHandler({sessions,origin,secret,bridge=null,aiTransport=null,pers
    if(p==='/auth21/capabilities'&&req.method==='GET')return reply(res,200,require('./capabilities').describe(principal.role));
    if(!['GET','HEAD'].includes(req.method)&&!cookies.validate(req,token)){sessions.audit(principal.clientId,'CSRF_REJECTED','DENIED');return reply(res,403,{error:'CSRF_FORBIDDEN'});}
    if(u.search&&!['/auth21/preferences'].includes(p)&&[...u.searchParams.keys()].some(k=>/client|owner|role|user/i.test(k)))return reply(res,400,{error:'IDENTITY_INPUT_FORBIDDEN'});
+   if(p==='/api/companion/resume-plan'&&req.method==='POST'){if(principal.role==='GUEST'||!bridge?.resumePlan)throw Error('FORBIDDEN');const input=await read(req);if(Object.keys(input).some(k=>k!=='preparation_id'))throw Error('INVALID_REQUEST');return reply(res,200,await bridge.resumePlan(token,input));}
+   if(p==='/api/companion/reconcile'&&req.method==='POST'){if(principal.role==='GUEST'||!bridge?.reconcileOrder)throw Error('FORBIDDEN');return reply(res,200,await bridge.reconcileOrder(token,await read(req)));}
    if(p==='/api/companion/order-history'&&req.method==='GET'){if(principal.role==='GUEST'||!bridge?.orderHistory)throw Error('FORBIDDEN');return reply(res,200,{ok:true,orders:bridge.orderHistory(token)});}
    if(p==='/api/settings/chatbot'){
     if(principal.role==='GUEST')throw Error('FORBIDDEN');const settings=require('./chatbot_settings');if(req.method==='GET')return reply(res,200,{ok:true,settings:settings.get(sessions,token)});if(req.method==='PUT'||req.method==='POST')return reply(res,200,{ok:true,settings:settings.save(sessions,token,await read(req))});return reply(res,405,{error:'METHOD_NOT_ALLOWED'});

@@ -1,0 +1,352 @@
+{
+  "schema": "iatb.recovery-source-inventory/1.0",
+  "source_commit": "41d9ea0b00ae0c59f3f58b0b403cde05d6fd8d58",
+  "recovered_commit": "e7a8dd72118b4cb5d0bf916dd256747142934438",
+  "recovered_tree": "1b67c1a22fce256ebb43bec6d55806e5ac157934",
+  "modified_files": 39,
+  "new_files": 18,
+  "files": [
+    {
+      "path": "App/Core/Clients/UserManagement/cp_bridge.js",
+      "change": "M",
+      "bytes": 16302,
+      "sha256": "213f3ecbf7ea127752b721a68282b740129ff40bc01e4028d3a0143eb118b715"
+    },
+    {
+      "path": "App/Core/Clients/UserManagement/http.js",
+      "change": "M",
+      "bytes": 21816,
+      "sha256": "13de513b80afdd03689fa6c70cede2c83e36b9c38cd147e0399944e3d84cb412"
+    },
+    {
+      "path": "App/Core/Clients/UserManagement/owner_ai.js",
+      "change": "M",
+      "bytes": 4870,
+      "sha256": "a42d77810f27d9b40ffe42daee30d38e9a4b47ab7304a0c48a7c360d205ffa12"
+    },
+    {
+      "path": "App/Core/Clients/UserManagement/owner_policy.js",
+      "change": "M",
+      "bytes": 1216,
+      "sha256": "86549e8996c3b76c31747b59cdc9b9b4700a7196f9bc4d43bd629c492844df91"
+    },
+    {
+      "path": "App/Core/Clients/UserManagement/trading_vault.js",
+      "change": "M",
+      "bytes": 12064,
+      "sha256": "b2e55aad41ae1f6026bca392a343eeb1b8a7db66d99801fac22580936e4edb7d"
+    },
+    {
+      "path": "App/Core/Communication/ProtocolRegistry/risk.json",
+      "change": "M",
+      "bytes": 30987,
+      "sha256": "d15252ccafcd304382f8d7a2e43fadb434f295c0cbb14975fee3977e2c7b2b3c"
+    },
+    {
+      "path": "App/Core/Communication/ProtocolRegistry/trading.json",
+      "change": "M",
+      "bytes": 48457,
+      "sha256": "9a9fba63a39a2984fa477282d1766259a3edb31dda799fe1742b4c4dbf620459"
+    },
+    {
+      "path": "App/Core/Communication/communication_protocol_v1.js",
+      "change": "M",
+      "bytes": 7307,
+      "sha256": "87c053109e593288c905138a4d53f31a0e264a6dbb91f53aa4bbb8fbd451f05c"
+    },
+    {
+      "path": "App/Core/Execution/advanced_contract.test.js",
+      "change": "A",
+      "bytes": 2931,
+      "sha256": "b9187e7bcf5f996261fc6fd65b3aea3c28727e89e48826e0d8f4814d23a2f13d"
+    },
+    {
+      "path": "App/Core/Execution/config.json",
+      "change": "M",
+      "bytes": 205,
+      "sha256": "330b6aab1ce3f749e90f05a29308ff8bce7011eaacad4e84911ac57dbd074c9a"
+    },
+    {
+      "path": "App/Core/Execution/manual_authority.js",
+      "change": "A",
+      "bytes": 2260,
+      "sha256": "9cc72adc20412483a10380fa274c0f8df18ddab891d94345b896a9edac8cc201"
+    },
+    {
+      "path": "App/Core/Execution/manual_contract.js",
+      "change": "A",
+      "bytes": 10032,
+      "sha256": "1b223afa1a087672c9809a422a2bd63c69273c0ff827c7fa4cc33229527c795c"
+    },
+    {
+      "path": "App/Core/Execution/manual_orders.js",
+      "change": "M",
+      "bytes": 18087,
+      "sha256": "3877900270cca106a3d4bb4c16f44b529ba54bbd8b72a27ceb7498ccf102b058"
+    },
+    {
+      "path": "App/Core/Execution/manual_orders.test.js",
+      "change": "M",
+      "bytes": 9218,
+      "sha256": "3c7b82df083a2bc5c4bec026fe5c53bf667495397f203a4151cd5916fc5a16aa"
+    },
+    {
+      "path": "App/Core/Execution/manual_plans.js",
+      "change": "A",
+      "bytes": 7800,
+      "sha256": "fb87f5f4472b46c102134e66f9e4ae065b2704f0babe307e5af18f2caa25a7b9"
+    },
+    {
+      "path": "App/Core/Execution/manual_preview.js",
+      "change": "A",
+      "bytes": 3121,
+      "sha256": "d5e2eb6692fc452e1bf27078f40ac33f6b31099b5a6484917da733129df48a58"
+    },
+    {
+      "path": "App/Core/Execution/manual_workflow.js",
+      "change": "A",
+      "bytes": 24651,
+      "sha256": "bfe83024eda6155fa097db52dfae47ef32a676503c4fa77d22f79672ab722e95"
+    },
+    {
+      "path": "App/Core/Execution/messages.js",
+      "change": "M",
+      "bytes": 4495,
+      "sha256": "eaf45835bfd515a3786e8934a6bf41590bcd5a3c19854e6374fc75036f2089f6"
+    },
+    {
+      "path": "App/Core/Execution/order_scenarios.test.js",
+      "change": "M",
+      "bytes": 17630,
+      "sha256": "30ee6ed2538c0f209dda0b822fbea4078e6edf6aeeb8ed770a853d3d53b5c06f"
+    },
+    {
+      "path": "App/Core/Firewall/Config/Trading/whitelist.json",
+      "change": "M",
+      "bytes": 756,
+      "sha256": "001b730b22f2e779ef3eb3dde57729eee2650f44700eb866047f7121e97efb3f"
+    },
+    {
+      "path": "App/Core/Firewall/Protection/trading_firewall.js",
+      "change": "M",
+      "bytes": 7427,
+      "sha256": "42c38e70317324e3e8ec7ba19a4585f7cce6c0bc0752a97c2fc94923ef4ba14f"
+    },
+    {
+      "path": "App/Core/Firewall/firewall_service.js",
+      "change": "M",
+      "bytes": 34174,
+      "sha256": "004ac05d777a3324cf16ec90a01b0b9dd5a52af258300290df11c7d874837dba"
+    },
+    {
+      "path": "App/Core/FunctionRegistry/Control/catalog.js",
+      "change": "M",
+      "bytes": 10863,
+      "sha256": "0623b55da494958650bf5d2a72fcf46e2e59bbfecc537ee7da26ec2aeaab988d"
+    },
+    {
+      "path": "App/Core/Server/companion_cognitive_bridge.js",
+      "change": "M",
+      "bytes": 3793,
+      "sha256": "07466621f43e2b427b5c61d49194574dfc9f737138aa278c60cfb9ca8d1fadeb"
+    },
+    {
+      "path": "App/Frontend/JS/companion_v1.0.js",
+      "change": "M",
+      "bytes": 23456,
+      "sha256": "0444971b950437b3ee7ec19c5346b946129e1a4ed8052f623199328bebb5d21a"
+    },
+    {
+      "path": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "change": "A",
+      "bytes": 36030,
+      "sha256": "3a6e65a9504dda308cfa3521c77836b0641925960ddba4ad65dd4f31fbab6d0d"
+    },
+    {
+      "path": "App/Portfolio/Tests/manual_order_pipeline.integration.test.js",
+      "change": "M",
+      "bytes": 21506,
+      "sha256": "d63912a00b4905984bca4038c2e887207445e8ae07b3925fe888061ca80363c7"
+    },
+    {
+      "path": "App/Risk/Engine/risk_gate.js",
+      "change": "M",
+      "bytes": 6417,
+      "sha256": "c05746d4ec6179868dfea02d1a3ac08aaae9cdc75a28744c7cdc7b2d7b1709c2"
+    },
+    {
+      "path": "App/Risk/Engine/risk_service.js",
+      "change": "M",
+      "bytes": 24766,
+      "sha256": "4628cf4a64b3cf953fee7677f4424d4f44f84e5bcdfee5f20ce0b7b73c4a2269"
+    },
+    {
+      "path": "App/Supervisor/ChatBot/Contracts/index.js",
+      "change": "M",
+      "bytes": 4736,
+      "sha256": "b41872bd2243c16ef45973ac652b9efbb0852ab49efe98ed0021f1cd90c19e8b"
+    },
+    {
+      "path": "App/Supervisor/ChatBot/Intents/account.json",
+      "change": "M",
+      "bytes": 5958,
+      "sha256": "04209637b2ddeca1744e535a0f8843b88bfa7f7c365c4d00adcde36decc6a7e6"
+    },
+    {
+      "path": "App/Supervisor/ChatBot/Intents/algorithms.json",
+      "change": "M",
+      "bytes": 11239,
+      "sha256": "970a58d02bb117058748f3e63042499baeffce99e47c91e510517ba2dddfd2f4"
+    },
+    {
+      "path": "App/Supervisor/ChatBot/Intents/orders.json",
+      "change": "M",
+      "bytes": 4903,
+      "sha256": "1ab6ddd73c9c4179bb502df9e6ebcc1395147f43bd9962304fd9cbd64ba03c98"
+    },
+    {
+      "path": "App/Supervisor/ChatBot/Intents/positions.json",
+      "change": "M",
+      "bytes": 4096,
+      "sha256": "242c3fe90a7e1c5d59ea926aa55f9c91d92e2574f4dd3a728b8b7c25a51ec64c"
+    },
+    {
+      "path": "App/Supervisor/ChatBot/Resolver/advanced.js",
+      "change": "A",
+      "bytes": 2739,
+      "sha256": "a366778741a9e4c3cd5fbb952a821215a73fbe5a251b3c551b277e987d6b9715"
+    },
+    {
+      "path": "App/Supervisor/ChatBot/Resolver/index.js",
+      "change": "M",
+      "bytes": 9277,
+      "sha256": "b3590d6c99ec9fb4b20f1c79f83f55eae124be69e85614f74158a27ded940dd5"
+    },
+    {
+      "path": "App/Supervisor/ChatBot/Tests/hybrid.test.js",
+      "change": "M",
+      "bytes": 11245,
+      "sha256": "79f887e4eaf7d3fdafb585a8b8fe8902d245e0282c91f2b5aa41f97fe968fa40"
+    },
+    {
+      "path": "App/Supervisor/ChatBot/index.js",
+      "change": "M",
+      "bytes": 12847,
+      "sha256": "c18c6727447f0e4d7d050b5111f00adbd7916f1617456c342c0b582cb35fc998"
+    },
+    {
+      "path": "App/Supervisor/ChatBot/llm.js",
+      "change": "M",
+      "bytes": 2798,
+      "sha256": "4b0f389c25746758fd7a45e7ccb6fbb389c71d4281582037e3d1f9d423dd95c8"
+    },
+    {
+      "path": "App/Supervisor/ChatBot/procedures.js",
+      "change": "M",
+      "bytes": 9695,
+      "sha256": "536f045ab865fec712c221dc5c5a37c2334161aad76f433b02daf4102bc2221b"
+    },
+    {
+      "path": "App/Supervisor/ChatBot/state.js",
+      "change": "M",
+      "bytes": 3652,
+      "sha256": "21afe943aa6678e3fb4b7463304fedd09a69e61d9efeaf09b6c4cea6ba870fef"
+    },
+    {
+      "path": "App/Tools/Tests/SupervisorSimulator/advanced_auth_fixture.js",
+      "change": "A",
+      "bytes": 1999,
+      "sha256": "965239bcbf6902882d1911eb3655ab4e6ef8dfcab693faf60ff8ba2eaf9ed5a3"
+    },
+    {
+      "path": "App/Tools/Tests/SupervisorSimulator/advanced_network.js",
+      "change": "A",
+      "bytes": 2539,
+      "sha256": "3a1cb9452f1a35946e4a16977c23318534418c8c6036755c76bdee0b46bef33f"
+    },
+    {
+      "path": "App/Tools/Tests/SupervisorSimulator/advanced_okx_fixture.js",
+      "change": "A",
+      "bytes": 6016,
+      "sha256": "61ae6d092bc214e5b02ae40c910769ab704959598da728339dec1952b9e3fa90"
+    },
+    {
+      "path": "App/services/trading-engine/delivery-outbox.js",
+      "change": "A",
+      "bytes": 1383,
+      "sha256": "e6b16714fbcf9da71eb50019b66e2a9eab49e637c76192bb8f69665abaa4f48f"
+    },
+    {
+      "path": "App/services/trading-engine/exchange-adapters/okx/capabilities.json",
+      "change": "M",
+      "bytes": 1245,
+      "sha256": "66c6b96da1c014f180964a5097ff810e0341ad8b6810ef7717778b2d8311f626"
+    },
+    {
+      "path": "App/services/trading-engine/exchange-adapters/okx/manual.js",
+      "change": "A",
+      "bytes": 7916,
+      "sha256": "de691ea0753a6dc373905b52ccf4a15aba44ab3c1278c28adc659b0ba5b6c6ee"
+    },
+    {
+      "path": "App/services/trading-engine/exchange-adapters/okx/order-model.js",
+      "change": "A",
+      "bytes": 14150,
+      "sha256": "f6ed91ecbb2733b743811eed6fa353ea6077b0e78469c124fcf5a9e76af3095c"
+    },
+    {
+      "path": "App/services/trading-engine/history-store.js",
+      "change": "M",
+      "bytes": 2110,
+      "sha256": "a1596b2a59be8c9fe0f552f8066b8dd72365bb3779b677fef9c79c7ac56393c7"
+    },
+    {
+      "path": "App/services/trading-engine/manual-lifecycle.js",
+      "change": "A",
+      "bytes": 5057,
+      "sha256": "9774903f8b5aeea44ad1a8eee2380926590ef2659315b6e2b2904d4d06d946e5"
+    },
+    {
+      "path": "App/services/trading-engine/tests/manual_outbox.test.js",
+      "change": "A",
+      "bytes": 2350,
+      "sha256": "5775ceebdc2e17507e746b02d79e3f611b743bb2e1287182b80fccdb34832d28"
+    },
+    {
+      "path": "App/services/trading-engine/trading-engine.js",
+      "change": "M",
+      "bytes": 9814,
+      "sha256": "d50812f57f2bff96dc3aba1f8d513c354254ac7d0d158177f0c5cad609ae9e42"
+    },
+    {
+      "path": "App/services/trading-engine/trading_logs_v2.js",
+      "change": "M",
+      "bytes": 7489,
+      "sha256": "b0425f375cf551c84af102d883c9160dceb6c3481467bff02f31695e4d7c2a3c"
+    },
+    {
+      "path": "App/services/trading-engine/trading_service.js",
+      "change": "M",
+      "bytes": 26516,
+      "sha256": "f30b6732bec83069f3b7d8f69d5da92be92b0ec8e9452d19419886c72d37bb0f"
+    },
+    {
+      "path": "App/services/trading-engine/vault-client.js",
+      "change": "M",
+      "bytes": 2426,
+      "sha256": "c776a6fc5b34abebfb90bd074f02b5e34c5f49892ae73ff351faa6646badbb3c"
+    },
+    {
+      "path": "Documentation/Trading/ADVANCED_OKX_INTEGRATION_3.0.1_REV1.md",
+      "change": "A",
+      "bytes": 8891,
+      "sha256": "e1dc7be840a24c71a457424e1e91e14aa2903d1c4b6cfe055e860ce30c6ca662"
+    },
+    {
+      "path": "Documentation/Trading/OKX_CAPABILITY_MATRIX.md",
+      "change": "A",
+      "bytes": 4110,
+      "sha256": "3507b2fde5a9f8598d07a6be3670dcc8a4c910a2d6c065aeff120235831f9864"
+    }
+  ]
+}

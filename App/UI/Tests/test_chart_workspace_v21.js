@@ -53,7 +53,7 @@ test('PR7 base: V2 Ichimoku/Bollinger surfaces and MACD/RSI panes are loaded',as
  }finally{await p.close();}
 });
 
-async function drag(p,tool,ax,ay,bx,by){await p.locator('[data-tool="'+tool+'"]').click();var box=await p.locator('#iaChartHost').boundingBox(),geo=await p.evaluate(function(){return IATBActiveChartController._geom});function point(x,y){return{x:box.x+geo.L+x*geo.cw,y:box.y+geo.priceTop+y*geo.priceH}}var a=point(ax,ay),b=point(bx,by);await p.mouse.move(a.x,a.y);await p.mouse.down();await p.mouse.move(b.x,b.y,{steps:6});await p.mouse.up();return{a:a,b:b};}
+async function drag(p,tool,ax,ay,bx,by){await p.locator('[data-tool="'+tool+'"]').click();await p.waitForFunction(function(){var c=window.IATBActiveChartController,g=c&&c._geom;return !!(g&&g.cw>0&&g.priceH>0)});var box=await p.locator('#iaChartHost').boundingBox(),geo=await p.evaluate(function(){return IATBActiveChartController._geom});function point(x,y){return{x:box.x+geo.L+x*geo.cw,y:box.y+geo.priceTop+y*geo.priceH}}var a=point(ax,ay),b=point(bx,by);await p.mouse.move(a.x,a.y);await p.mouse.down();await p.mouse.move(b.x,b.y,{steps:6});await p.mouse.up();return{a:a,b:b};}
 async function items(p){return p.evaluate(function(){return IATBChartDrawings.instance.items})}
 async function openStudio(p){await p.locator('#indicatorStudioButton').click();await p.waitForSelector('#indicatorStudio[open]')}
 test('toolbar uses canonical market/pair controls, shows supported chart types and captures actual canvases',async function(){

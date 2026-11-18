@@ -98,20 +98,20 @@
     },
     {
       "id": "account.leverage",
-      "category": "account",
-      "description": "Modifier le levier",
+      "category": "algorithms",
+      "description": "account.leverage",
       "examples": [
-        "Règle mon levier à 3."
+        "Mets le levier à 3 sur BTC-USDT-SWAP cross"
       ],
-      "synonyms": [
-        "\\b(levier|leverage)\\b"
-      ],
-      "patterns": [
-        "\\b(levier|leverage)\\b"
-      ],
+      "synonyms": [],
+      "patterns": [],
       "required": [
         "account",
-        "leverage"
+        "environment",
+        "market",
+        "instrument_candidate",
+        "leverage",
+        "margin_mode"
       ],
       "optional": [
         "exchange",

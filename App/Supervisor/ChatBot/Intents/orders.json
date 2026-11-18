@@ -16,7 +16,10 @@
       ],
       "required": [
         "account",
-        "order_id"
+        "order_id",
+        "environment",
+        "market",
+        "instrument_candidate"
       ],
       "optional": [
         "exchange",
@@ -64,7 +67,10 @@
       ],
       "required": [
         "account",
-        "order_id"
+        "order_id",
+        "environment",
+        "market",
+        "instrument_candidate"
       ],
       "optional": [
         "exchange",
@@ -143,19 +149,18 @@
     },
     {
       "id": "orders.history",
-      "category": "orders",
-      "description": "Historique des ordres",
+      "category": "algorithms",
+      "description": "orders.history",
       "examples": [
-        "Historique de mes ordres OKX."
+        "Historique des ordres OKX"
       ],
-      "synonyms": [
-        "\\b(historique (?:de mes|des?) ordres|order history|orders history)\\b"
-      ],
-      "patterns": [
-        "\\b(historique (?:de mes|des?) ordres|order history|orders history)\\b"
-      ],
+      "synonyms": [],
+      "patterns": [],
       "required": [
-        "account"
+        "account",
+        "environment",
+        "market",
+        "instrument_candidate"
       ],
       "optional": [
         "exchange",
@@ -179,7 +184,7 @@
       ],
       "okx_operation": "rest.get.trade.orders-history",
       "implementation": "RECOGNITION_ONLY",
-      "risk_level": "LOW",
+      "risk_level": "HIGH",
       "confirmation": "NO_FINANCIAL_EXECUTION",
       "parameters_contract": "intent.parameters/1.0",
       "cp1": null,

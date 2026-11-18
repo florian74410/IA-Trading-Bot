@@ -5,9 +5,11 @@ const {normalizeOrderIntent,normalizeCancelIntent}=require('../../../services/tr
 const {typedDigest,signTypedData}=require('../../../Bank/Core/dex_wallet_signer');
 const CP=require('../../Communication/communication_protocol_v1');
 const ACTIONS=new Set(['execute','cancel','close','read']);
-const MARKETS={BINANCE:['SPOT','FUTURES_USDM'],KRAKEN:['SPOT','MARGIN'],OKX:['SPOT','SWAP','FUTURES'],GMX:['PERPETUAL']};
+const MARKETS={BINANCE:['SPOT','FUTURES_USDM'],KRAKEN:['SPOT','MARGIN'],OKX:['SPOT','MARGIN','SWAP','FUTURES'],GMX:['PERPETUAL']};
 function canonical(intent,action){
  if(!ACTIONS.has(action))throw Error('TRADING_ACTION_INVALID');
+ if(intent.spec){if(action!==(intent.spec.kind.startsWith('CANCEL')?'cancel':intent.spec.position_id?'close':'execute'))throw Error('TRADING_ACTION_INVALID');return require('../../Execution/manual_contract').canonical(intent);}
+ if(intent.query){if(action!=='read')throw Error('TRADING_ACTION_INVALID');return require('../../Execution/manual_authority').query(intent);}
  if(action==='read'){
   const allowed=['exchange','market_type','symbol','account','metadata'];
   if(!intent||Object.keys(intent).some(k=>!allowed.includes(k))||intent.exchange!=='OKX'||intent.market_type&&intent.market_type!=='SPOT'||intent.account!==undefined&&intent.account!==null&&(typeof intent.account!=='string'||!/^[a-z][a-z0-9_-]{0,39}$/.test(intent.account)))throw Error('TRADING_READ_SCOPE_INVALID');
@@ -22,7 +24,7 @@ function canonical(intent,action){
  return o;
 }
 class TradingVault {
- constructor({sessions,walletAccess=null,now=Date.now}){this.sessions=sessions;this.walletAccess=walletAccess;this.now=now;this.tickets=new Map();}
+ constructor({sessions,walletAccess=null,now=Date.now}){this.sessions=sessions;this.walletAccess=walletAccess;this.now=now;this.tickets=new Map();this.spentTickets=new Map();}
  principal(token){const p=this.sessions.verifySession(token);if(!p||!['ADMIN','USER'].includes(p.role))throw Error('TRADING_ACCOUNT_UNAUTHORIZED');return p;}
  list(token){this.principal(token);const rows=JSON.parse(this.sessions.getPreference(token,'trading','accounts')||'[]');if(!Array.isArray(rows))throw Error('TRADING_ACCOUNT_REGISTRY_INVALID');return rows;}
  async save(token,input){
@@ -75,7 +77,8 @@ class TradingVault {
   for(const [id,t]of this.tickets)if(t.expires<=this.now())this.tickets.delete(id);if(this.tickets.size>=256)throw Error('TRADING_TICKET_LIMIT');const ticket=crypto.randomBytes(32).toString('base64url');this.tickets.set(ticket,{sessionHash,intent:normalized,action:'read',account:binding.identity.id,revision:context.list().find(a=>a.id===binding.identity.id).revision,expires:this.now()+30000,claimed:false,credentialRead:false});return {ticket,account:binding.identity,expiresInMs:30000};
  }
  async access({ticket,intent,action,operation,exchange}){
-  const t=this.tickets.get(ticket);if(!t||t.expires<=this.now()||t.action!==action||CP.hashData(canonical(intent,action))!==CP.hashData(t.intent))throw Error('TRADING_TICKET_INVALID');
+  const t=this.tickets.get(ticket);if(!t&&(this.spentTickets.get(crypto.createHash('sha256').update(String(ticket)).digest('hex'))||0)>this.now())throw Error('TRADING_TICKET_REPLAY');if(!t||t.expires<=this.now()||t.action!==action||CP.hashData(canonical(intent,action))!==CP.hashData(t.intent))throw Error('TRADING_TICKET_INVALID');
+  if(operation==='release'){this.tickets.delete(ticket);for(const [id,expires]of this.spentTickets)if(expires<=this.now())this.spentTickets.delete(id);this.spentTickets.set(crypto.createHash('sha256').update(ticket).digest('hex'),t.expires);if(this.spentTickets.size>4096)this.spentTickets.delete(this.spentTickets.keys().next().value);return {ok:true};}
   const context=t.sessionHash?this.readSessionContext(t.sessionHash,t.intent):{list:()=>this.list(t.token),routing:()=>this.routing(t.token,t.intent,action)};const record=context.list().find(a=>a.id===t.account);if(!record||record.revision!==t.revision)throw Error('TRADING_ACCOUNT_REVOKED');
   if(operation==='bind'){if(t.claimed)throw Error('TRADING_TICKET_REPLAY');t.claimed=true;}else if(!t.claimed)throw Error('TRADING_TICKET_UNCLAIMED');
   const b=await context.routing().bind(t.intent,action);

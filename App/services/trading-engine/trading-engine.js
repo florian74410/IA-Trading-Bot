@@ -10,17 +10,19 @@ function context(self,extra){
  return Object.assign({},extra||{},{secretProvider:self.secretProvider,transport:request=>self.lifecycle.submit({generation,id:extra?.operationId},()=>self.transport(request)),liveExecutionEnabled:self.liveExecutionEnabled,now:Date.now()});
 }
 async function bindAccount(self,order,action,ctx){
- const executionContext=context(self,{...ctx,operationId:order.client_order_id});
+ const executionContext=context(self,{...ctx,operationId:order.plan_id||order.client_order_id});
  if(!self.accountRouting)return {order,context:executionContext};
  const binding=await self.accountRouting.bind(order,order.reduce_only?'close':action,ctx&&ctx.accountProof);
  if(!self.lifecycle.canExecute())throw Error('TRADING_ENGINE_RUNTIME_LOCKED');
- return {order:Object.assign({},order,{account:binding.account}),context:Object.assign(executionContext,{secretProvider:binding.secretProvider||null,walletSigner:binding.walletSigner||null,accountIdentity:binding.identity,revalidate:binding.revalidate})};
+ return {order:Object.assign({},order,{account:binding.account}),context:Object.assign(executionContext,{secretProvider:binding.secretProvider||null,walletSigner:binding.walletSigner||null,accountIdentity:binding.identity,revalidate:binding.revalidate,release:binding.release})};
 }
 function resultBase(order,r){return{contract_version:CONTRACT_VERSION,engine:ENGINE_NAME,engine_version:ENGINE_VERSION,request_id:order.request_id,risk_approval_id:order.risk_approval_id,client_order_id:order.client_order_id||null,exchange:order.exchange,symbol:order.symbol,side:order.side||null,position_side:order.position_side||null,order_type:order.order_type||null,reduce_only:!!order.reduce_only,quantity:order.quantity||null,ok:Boolean(r&&r.ok),status:r&&r.status||'UNKNOWN',exchange_order_id:r&&r.exchange_order_id||order.exchange_order_id||null,raw_status:r&&r.raw_status||null,filled_quantity:r&&r.filled_quantity||null,average_price:r&&r.average_price||null,fees:r&&r.fees||null,error:r&&r.error||null,timestamp:Date.now(),diagnostics:r&&r.diagnostics||{}};}
 function TradingEngine(opt){opt=opt||{};this.lifecycle=opt.lifecycle||new (require('./trading_runtime_state_v2').RuntimeState)();this.executors=new Map();this.secretProvider=opt.secretProvider||null;this.accountRouting=opt.accountRouting||null;this.transport=opt.transport||null;this.liveExecutionEnabled=opt.liveExecutionEnabled===true;}
 TradingEngine.prototype.registerExecutor=function(name,ex){if(!name||!ex||typeof ex.execute!=='function')throw new Error('Executor must expose execute(order, context)');this.executors.set(String(name).toUpperCase(),ex);};
 TradingEngine.prototype.capabilities=function(exchange){var ex=this.executors.get(String(exchange||'').toUpperCase());return ex&&typeof ex.capabilities==='function'?ex.capabilities():null;};
 TradingEngine.prototype.execute=async function(intent,ctx){if(!this.lifecycle.canExecute())throw Error('TRADING_ENGINE_RUNTIME_LOCKED');var o=normalizeOrderIntent(intent),ex=this.executors.get(o.exchange);if(!ex)throw new Error('Unsupported exchange: '+o.exchange);var bound=await bindAccount(this,o,'execute',ctx);return Object.assign(resultBase(o,await ex.execute(bound.order,bound.context)),{account_identity:bound.context.accountIdentity||null});};
+TradingEngine.prototype.manualExecute=async function(input){if(!this.lifecycle.canExecute())throw Error('TRADING_ENGINE_RUNTIME_LOCKED');const c=require('../../Core/Execution/manual_contract').canonical(input),o={...c,owner:input.owner,plan_id:input.plan_id,metadata:input.metadata};const bound=await bindAccount(this,o,c.spec.kind.startsWith('CANCEL')?'cancel':c.spec.position_id?'close':'execute');let r;try{r=await require('./exchange-adapters/okx/manual').execute(bound.order,bound.context);}finally{await bound.context.release?.();}return {...r,exchange:'OKX',symbol:o.symbol,account_identity:bound.context.accountIdentity||null,timestamp:Date.now(),request_id:input.request_id,client_order_id:c.spec.body.clOrdId||c.spec.body.algoClOrdId||null};};
+TradingEngine.prototype.manualInspect=async function(input){const q=require('../../Core/Execution/manual_authority').query(input),bound=await this.accountRouting.bind({...q,metadata:input.metadata},'read');try{return {...await require('./exchange-adapters/okx/manual').inspect(q,{secretProvider:bound.secretProvider,transport:this.transport,revalidate:bound.revalidate}),account_identity:bound.identity};}finally{await bound.release?.();}};
 TradingEngine.prototype.cancel=async function(intent,ctx){if(!this.lifecycle.canExecute())throw Error('TRADING_ENGINE_RUNTIME_LOCKED');var o=normalizeCancelIntent(intent),ex=this.executors.get(o.exchange);if(!ex)throw new Error('Unsupported exchange: '+o.exchange);if(typeof ex.cancel!=='function')throw new Error('Cancel unsupported by executor: '+o.exchange);var bound=await bindAccount(this,o,'cancel',ctx);return Object.assign(resultBase(o,await ex.cancel(bound.order,bound.context)),{account_identity:bound.context.accountIdentity||null});};
 TradingEngine.prototype.readAccount=async function(kind,input,ctx){
  input=input||{};const exchange=String(input.exchange||'').toUpperCase();required({exchange},'exchange');
@@ -30,9 +32,9 @@ TradingEngine.prototype.readAccount=async function(kind,input,ctx){
  if(exchange==='OKX'&&!this.accountRouting)throw Error('TRADING_ACCOUNT_AUTHORITY_UNAVAILABLE');
  let bound=this.accountRouting?await this.accountRouting.bind(input,'read',ctx&&ctx.accountProof):null;
  const readContext=Object.assign({},ctx||{},{secretProvider:bound?.secretProvider||this.secretProvider,transport:this.transport,liveExecutionEnabled:false,revalidate:bound?.revalidate});
- const result=await ex[method](Object.assign({},input,{exchange}),readContext);
+ try{const result=await ex[method](Object.assign({},input,{exchange}),readContext);
  if(bound?.revalidate)await bound.revalidate();
- return JSON.parse(JSON.stringify(Object.assign({},result,{account_identity:bound?.identity||null})));
+ return JSON.parse(JSON.stringify(Object.assign({},result,{account_identity:bound?.identity||null})));}finally{await bound?.release?.();}
 };
 TradingEngine.prototype.accountSnapshot=function(input,ctx){return this.readAccount('snapshot',input,ctx);};
 TradingEngine.prototype.positions=function(input,ctx){return this.readAccount('positions',input,ctx);};
@@ -40,4 +42,5 @@ TradingEngine.prototype.orders=function(input,ctx){return this.readAccount('orde
 TradingEngine.prototype.balances=function(input,ctx){return this.readAccount('balances',input,ctx);};
 TradingEngine.prototype.closePosition=async function(intent,ctx){intent=Object.assign({},intent||{});var ps=String(intent.position_side||'').toUpperCase();if(ps!=='LONG'&&ps!=='SHORT')throw new Error('position_side must be LONG or SHORT');intent.side=ps==='LONG'?'SELL':'BUY';intent.order_type='MARKET';intent.reduce_only=true;return this.execute(intent,ctx);};
 TradingEngine.prototype.health=function(){return{ok:true,engine:ENGINE_NAME,engine_version:ENGINE_VERSION,contract_version:CONTRACT_VERSION,live_execution_enabled:this.liveExecutionEnabled,exchanges:Array.from(this.executors.keys()),timestamp:Date.now()};};
+require('./manual-lifecycle').install(TradingEngine);
 module.exports={TradingEngine:TradingEngine,normalizeOrderIntent:normalizeOrderIntent,normalizeCancelIntent:normalizeCancelIntent,ENGINE_NAME:ENGINE_NAME,ENGINE_VERSION:ENGINE_VERSION,CONTRACT_VERSION:CONTRACT_VERSION};

@@ -1,0 +1,58 @@
+name: IA-TB 3.0.1 Rev2 qualification and full source
+on:
+  push:
+    branches: ['feature/iatb-3.0.1-Rev2-advanced-okx-orders']
+  pull_request:
+    branches: ['release/iatb-3.0.1-Rev1-full-source']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  qualification:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned application dependencies
+        working-directory: App
+        run: npm ci --omit=dev --no-audit --no-fund
+      - name: Install isolated browser test dependencies
+        run: |
+          npm install --prefix "$RUNNER_TEMP/iatb-browser" playwright@1.56.1 --no-audit --no-fund
+          "$RUNNER_TEMP/iatb-browser/node_modules/.bin/playwright" install --with-deps chromium
+          echo "IATB_PLAYWRIGHT_MODULE=$RUNNER_TEMP/iatb-browser/node_modules/playwright" >> "$GITHUB_ENV"
+      - name: Qualify all services, simulated orders and browser controls
+        env:
+          IATB_REV2_BROWSER: '1'
+        run: node App/Tools/qualify_rev2.js artifacts/rev2-validation
+      - name: Validate version and VPS source prerequisites
+        run: |
+          node App/Tools_validate_release_version.js
+          bash -n Deploy/VPS/preflight.sh
+          bash -n Deploy/VPS/prepare_vps.sh
+          bash -n Deploy/VPS/launch_vps.sh
+          bash Deploy/VPS/preflight.sh --source-only
+      - name: Produce and verify reproducible full source archive
+        run: |
+          python3 Tools/Build/build_rev1_full_source.py
+          cp artifacts/IA-TB-3.0.1_Rev2_FULL-SOURCE_VPS.zip /tmp/iatb-rev2-first.zip
+          python3 Tools/Build/build_rev1_full_source.py
+          cmp artifacts/IA-TB-3.0.1_Rev2_FULL-SOURCE_VPS.zip /tmp/iatb-rev2-first.zip
+          python3 Tools/Build/verify_source_bundle.py artifacts/IA-TB-3.0.1_Rev2_FULL-SOURCE_VPS.zip
+      - name: Publish evidence and source archive without private runtime data
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: IA-TB-3.0.1-Rev2-full-source-and-evidence
+          path: |
+            artifacts/IA-TB-3.0.1_Rev2_FULL-SOURCE_VPS.zip*
+            artifacts/rev2-validation/**/*.json
+            artifacts/rev2-validation/**/*.tap
+            artifacts/rev2-validation/**/*.png
+          retention-days: 30
+          if-no-files-found: error

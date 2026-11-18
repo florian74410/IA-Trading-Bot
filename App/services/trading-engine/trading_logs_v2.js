@@ -39,7 +39,7 @@ class TradingLogsV2{
   this.writable();if(this.db)return;
   ensurePrivateFile(this.dbFile);const db=new Database(this.dbFile);this.db=db;
   try{
-   db.pragma('journal_mode = WAL');db.pragma('busy_timeout = 5000');
+   db.pragma('journal_mode = WAL');db.pragma('synchronous = FULL');db.pragma('busy_timeout = 5000');
    db.exec(`CREATE TABLE IF NOT EXISTS execution_logs(log_id INTEGER PRIMARY KEY AUTOINCREMENT,event_id TEXT NOT NULL UNIQUE,timestamp INTEGER NOT NULL,event_type TEXT,exchange TEXT,symbol TEXT,request_id TEXT,risk_approval_id TEXT,client_order_id TEXT,exchange_order_id TEXT,payload_json TEXT NOT NULL,created_at INTEGER NOT NULL);
    CREATE INDEX IF NOT EXISTS ix_execution_logs_time ON execution_logs(timestamp);
    CREATE INDEX IF NOT EXISTS ix_execution_logs_request ON execution_logs(request_id);
