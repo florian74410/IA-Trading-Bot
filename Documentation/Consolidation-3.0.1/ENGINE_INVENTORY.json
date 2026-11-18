@@ -2,8 +2,8 @@
   "engines": [
     {
       "id": "marketdata",
-      "folder": "App/MarketData",
-      "entry": "App/MarketData/market_data_service.js",
+      "folder": "App/Engines/MarketData",
+      "entry": "App/Engines/MarketData/market_data_service.js",
       "entry_exists": true,
       "process": {
         "id": "marketdata",
@@ -15,7 +15,7 @@
         "marker": "IA-TB Market Data",
         "restartable": true,
         "defaultEnabled": true,
-        "script": "MarketData/market_data_service.js",
+        "script": "Engines/MarketData/market_data_service.js",
         "log": ".runtime/logs/market_data.log",
         "env": {
           "IATB_MARKET_DATA_PORT": "8013",
@@ -36,7 +36,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "MarketData/market_data_service.js"
+          "source": "Engines/MarketData/market_data_service.js"
         },
         {
           "id": "marketdata.health",
@@ -44,7 +44,7 @@
           "agent_qualified": true,
           "hard_deny": false,
           "availability": null,
-          "source": "MarketData/market_data_service.js"
+          "source": "Engines/MarketData/market_data_service.js"
         },
         {
           "id": "marketdata.candles",
@@ -52,7 +52,7 @@
           "agent_qualified": true,
           "hard_deny": false,
           "availability": null,
-          "source": "MarketData/market_data_service.js"
+          "source": "Engines/MarketData/market_data_service.js"
         },
         {
           "id": "marketdata.symbols",
@@ -60,7 +60,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "MarketData/market_data_service.js"
+          "source": "Engines/MarketData/market_data_service.js"
         },
         {
           "id": "marketdata.providers",
@@ -68,7 +68,7 @@
           "agent_qualified": true,
           "hard_deny": false,
           "availability": null,
-          "source": "MarketData/market_data_service.js"
+          "source": "Engines/MarketData/market_data_service.js"
         },
         {
           "id": "marketdata.provider.test",
@@ -76,7 +76,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "MarketData/market_data_service.js"
+          "source": "Engines/MarketData/market_data_service.js"
         },
         {
           "id": "marketdata.financial.capabilities",
@@ -84,7 +84,7 @@
           "agent_qualified": true,
           "hard_deny": false,
           "availability": null,
-          "source": "MarketData/market_data_service.js"
+          "source": "Engines/MarketData/market_data_service.js"
         },
         {
           "id": "marketdata.registry.status",
@@ -92,7 +92,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "MarketData/market_data_service.js"
+          "source": "Engines/MarketData/market_data_service.js"
         },
         {
           "id": "marketdata.registry.asset",
@@ -100,7 +100,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "MarketData/market_data_service.js"
+          "source": "Engines/MarketData/market_data_service.js"
         },
         {
           "id": "marketdata.registry.search",
@@ -108,7 +108,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "MarketData/market_data_service.js"
+          "source": "Engines/MarketData/market_data_service.js"
         },
         {
           "id": "marketdata.registry.list",
@@ -116,7 +116,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "MarketData/market_data_service.js"
+          "source": "Engines/MarketData/market_data_service.js"
         },
         {
           "id": "marketdata.registry.query",
@@ -124,7 +124,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "MarketData/market_data_service.js"
+          "source": "Engines/MarketData/market_data_service.js"
         },
         {
           "id": "marketdata.financial.snapshot",
@@ -132,7 +132,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "MarketData/market_data_service.js"
+          "source": "Engines/MarketData/market_data_service.js"
         },
         {
           "id": "marketdata.financial.history",
@@ -140,7 +140,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "MarketData/market_data_service.js"
+          "source": "Engines/MarketData/market_data_service.js"
         },
         {
           "id": "marketdata.financial.ai_context",
@@ -148,7 +148,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "MarketData/market_data_service.js"
+          "source": "Engines/MarketData/market_data_service.js"
         },
         {
           "id": "marketdata.financial.storage",
@@ -156,7 +156,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "MarketData/market_data_service.js"
+          "source": "Engines/MarketData/market_data_service.js"
         },
         {
           "id": "marketdata.financial.status",
@@ -164,7 +164,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "MarketData/market_data_service.js"
+          "source": "Engines/MarketData/market_data_service.js"
         },
         {
           "id": "marketdata.financial.refresh",
@@ -172,7 +172,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "MarketData/market_data_service.js"
+          "source": "Engines/MarketData/market_data_service.js"
         },
         {
           "id": "marketdata.derivatives.open_interest",
@@ -180,7 +180,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "MarketData/market_data_service.js"
+          "source": "Engines/MarketData/market_data_service.js"
         },
         {
           "id": "marketdata.liquidations.recent",
@@ -188,7 +188,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "MarketData/market_data_service.js"
+          "source": "Engines/MarketData/market_data_service.js"
         },
         {
           "id": "marketdata.liquidations.stats",
@@ -196,7 +196,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "MarketData/market_data_service.js"
+          "source": "Engines/MarketData/market_data_service.js"
         },
         {
           "id": "marketdata.microstructure.capabilities",
@@ -204,7 +204,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "MarketData/market_data_service.js"
+          "source": "Engines/MarketData/market_data_service.js"
         },
         {
           "id": "marketdata.microstructure.snapshot",
@@ -212,7 +212,7 @@
           "agent_qualified": true,
           "hard_deny": false,
           "availability": null,
-          "source": "MarketData/market_data_service.js"
+          "source": "Engines/MarketData/market_data_service.js"
         },
         {
           "id": "marketdata.microstructure.history",
@@ -220,7 +220,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "MarketData/market_data_service.js"
+          "source": "Engines/MarketData/market_data_service.js"
         },
         {
           "id": "marketdata.microstructure.storage",
@@ -228,7 +228,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "MarketData/market_data_service.js"
+          "source": "Engines/MarketData/market_data_service.js"
         },
         {
           "id": "marketdata.microstructure.refresh",
@@ -236,7 +236,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "MarketData/market_data_service.js"
+          "source": "Engines/MarketData/market_data_service.js"
         },
         {
           "id": "marketdata.liquidations.streams",
@@ -244,7 +244,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "MarketData/market_data_service.js"
+          "source": "Engines/MarketData/market_data_service.js"
         },
         {
           "id": "marketdata.derivatives.open_interest.history",
@@ -252,7 +252,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "MarketData/market_data_service.js"
+          "source": "Engines/MarketData/market_data_service.js"
         },
         {
           "id": "marketdata.dex.liquidity.capabilities",
@@ -260,7 +260,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "MarketData/market_data_service.js"
+          "source": "Engines/MarketData/market_data_service.js"
         },
         {
           "id": "marketdata.dex.liquidity.snapshot",
@@ -268,7 +268,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "MarketData/market_data_service.js"
+          "source": "Engines/MarketData/market_data_service.js"
         },
         {
           "id": "marketdata.dex.liquidity.history",
@@ -276,7 +276,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "MarketData/market_data_service.js"
+          "source": "Engines/MarketData/market_data_service.js"
         },
         {
           "id": "marketdata.ticker",
@@ -284,7 +284,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "MarketData/market_data_service.js"
+          "source": "Engines/MarketData/market_data_service.js"
         },
         {
           "id": "marketdata.refresh",
@@ -292,7 +292,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "MarketData/market_data_service.js"
+          "source": "Engines/MarketData/market_data_service.js"
         },
         {
           "id": "marketdata.active",
@@ -300,7 +300,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "MarketData/market_data_service.js"
+          "source": "Engines/MarketData/market_data_service.js"
         },
         {
           "id": "marketdata.cache.clear",
@@ -308,7 +308,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "MarketData/market_data_service.js"
+          "source": "Engines/MarketData/market_data_service.js"
         },
         {
           "id": "marketdata.settings.get",
@@ -316,7 +316,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "MarketData/market_data_service.js"
+          "source": "Engines/MarketData/market_data_service.js"
         },
         {
           "id": "marketdata.settings.set",
@@ -324,7 +324,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "MarketData/market_data_service.js"
+          "source": "Engines/MarketData/market_data_service.js"
         },
         {
           "id": "marketdata.registry.refresh",
@@ -332,7 +332,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "MarketData/market_data_service.js"
+          "source": "Engines/MarketData/market_data_service.js"
         },
         {
           "id": "marketdata.asset.price",
@@ -340,7 +340,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "MarketData/market_data_service.js"
+          "source": "Engines/MarketData/market_data_service.js"
         },
         {
           "id": "marketdata.catalog",
@@ -348,7 +348,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "MarketData/market_data_service.js"
+          "source": "Engines/MarketData/market_data_service.js"
         },
         {
           "id": "marketdata.asset.resolve",
@@ -356,7 +356,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "MarketData/market_data_service.js"
+          "source": "Engines/MarketData/market_data_service.js"
         },
         {
           "id": "marketdata.operator.request",
@@ -364,58 +364,58 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "MarketData/market_data_service.js"
+          "source": "Engines/MarketData/market_data_service.js"
         }
       ],
       "test_files": [
-        "App/MarketData/Tests/analyze_shadow_workload_telemetry_v1.js",
-        "App/MarketData/Tests/market_data_v2_debug.js",
-        "App/MarketData/Tests/runtime_shadow_long_observation_v1.js",
-        "App/MarketData/Tests/runtime_workload_shadow_v1.js",
-        "App/MarketData/Tests/test_alternate_provider_policy_v1.js",
-        "App/MarketData/Tests/test_api_request_orchestrator_shadow_v1.js",
-        "App/MarketData/Tests/test_cex_providers_v2.js",
-        "App/MarketData/Tests/test_coingecko_global_volume_hotfix_v201.js",
-        "App/MarketData/Tests/test_coingecko_limits_v2.js",
-        "App/MarketData/Tests/test_currency_registry_v1.js",
-        "App/MarketData/Tests/test_defillama_public_surface_v2.js",
-        "App/MarketData/Tests/test_dex_liquidity_boundary_v2.js",
-        "App/MarketData/Tests/test_dynamic_symbol_catalog_v1.js",
-        "App/MarketData/Tests/test_financial_async_fastlane_v1.js",
-        "App/MarketData/Tests/test_financial_cached_read_v2.js",
-        "App/MarketData/Tests/test_financial_data_contract_v2.js",
-        "App/MarketData/Tests/test_financial_family_scheduler_v1.js",
-        "App/MarketData/Tests/test_firewall_cache_boundary_v1.js",
-        "App/MarketData/Tests/test_liquidations_usd_v2.js",
-        "App/MarketData/Tests/test_liquidity_pipeline_v1.js",
-        "App/MarketData/Tests/test_market_data_collector_v2_lock.js",
-        "App/MarketData/Tests/test_market_data_runtime_v2.js",
-        "App/MarketData/Tests/test_market_liquidity_layer_v2.js",
-        "App/MarketData/Tests/test_microstructure_missing_oi.js",
-        "App/MarketData/Tests/test_native_budget_admission_v1.js",
-        "App/MarketData/Tests/test_native_budget_safety_v1.js",
-        "App/MarketData/Tests/test_native_dispatcher_priority_v1.js",
-        "App/MarketData/Tests/test_native_dispatcher_v1.js",
-        "App/MarketData/Tests/test_native_http_429_cooldown_v1.js",
-        "App/MarketData/Tests/test_native_http_429_interrupted_v1.js",
-        "App/MarketData/Tests/test_native_http_dispatcher_v1.js",
-        "App/MarketData/Tests/test_native_http_enforcement_v1.js",
-        "App/MarketData/Tests/test_native_http_failclosed_v1.js",
-        "App/MarketData/Tests/test_native_lite_cache_dedup_v1.js",
-        "App/MarketData/Tests/test_native_lite_data_integrity_v1.js",
-        "App/MarketData/Tests/test_native_retry_after_v1.js",
-        "App/MarketData/Tests/test_native_transport_bridge_v1.js",
-        "App/MarketData/Tests/test_open_interest_currency_normalization_v1.js",
-        "App/MarketData/Tests/test_phase1_provider_profiles_v1.js",
-        "App/MarketData/Tests/test_phase2_weighted_budget_v1.js",
-        "App/MarketData/Tests/test_phase3_special_limits_v1.js",
-        "App/MarketData/Tests/test_provider_passports_v1.js",
-        "App/MarketData/Tests/test_shadow_decision_engine_v1.js",
-        "App/MarketData/Tests/test_shadow_runtime_orchestrator_v1.js",
-        "App/MarketData/Tests/test_transport_budget_bridge_v1.js",
-        "App/MarketData/Tests/test_unknown_quota_nonblocking_v1.js",
-        "App/MarketData/Tests/validate_dex_liquidity_gen1.js",
-        "App/MarketData/Tests/validate_step4_gen1.js"
+        "App/Engines/MarketData/Tests/analyze_shadow_workload_telemetry_v1.js",
+        "App/Engines/MarketData/Tests/market_data_v2_debug.js",
+        "App/Engines/MarketData/Tests/runtime_shadow_long_observation_v1.js",
+        "App/Engines/MarketData/Tests/runtime_workload_shadow_v1.js",
+        "App/Engines/MarketData/Tests/test_alternate_provider_policy_v1.js",
+        "App/Engines/MarketData/Tests/test_api_request_orchestrator_shadow_v1.js",
+        "App/Engines/MarketData/Tests/test_cex_providers_v2.js",
+        "App/Engines/MarketData/Tests/test_coingecko_global_volume_hotfix_v201.js",
+        "App/Engines/MarketData/Tests/test_coingecko_limits_v2.js",
+        "App/Engines/MarketData/Tests/test_currency_registry_v1.js",
+        "App/Engines/MarketData/Tests/test_defillama_public_surface_v2.js",
+        "App/Engines/MarketData/Tests/test_dex_liquidity_boundary_v2.js",
+        "App/Engines/MarketData/Tests/test_dynamic_symbol_catalog_v1.js",
+        "App/Engines/MarketData/Tests/test_financial_async_fastlane_v1.js",
+        "App/Engines/MarketData/Tests/test_financial_cached_read_v2.js",
+        "App/Engines/MarketData/Tests/test_financial_data_contract_v2.js",
+        "App/Engines/MarketData/Tests/test_financial_family_scheduler_v1.js",
+        "App/Engines/MarketData/Tests/test_firewall_cache_boundary_v1.js",
+        "App/Engines/MarketData/Tests/test_liquidations_usd_v2.js",
+        "App/Engines/MarketData/Tests/test_liquidity_pipeline_v1.js",
+        "App/Engines/MarketData/Tests/test_market_data_collector_v2_lock.js",
+        "App/Engines/MarketData/Tests/test_market_data_runtime_v2.js",
+        "App/Engines/MarketData/Tests/test_market_liquidity_layer_v2.js",
+        "App/Engines/MarketData/Tests/test_microstructure_missing_oi.js",
+        "App/Engines/MarketData/Tests/test_native_budget_admission_v1.js",
+        "App/Engines/MarketData/Tests/test_native_budget_safety_v1.js",
+        "App/Engines/MarketData/Tests/test_native_dispatcher_priority_v1.js",
+        "App/Engines/MarketData/Tests/test_native_dispatcher_v1.js",
+        "App/Engines/MarketData/Tests/test_native_http_429_cooldown_v1.js",
+        "App/Engines/MarketData/Tests/test_native_http_429_interrupted_v1.js",
+        "App/Engines/MarketData/Tests/test_native_http_dispatcher_v1.js",
+        "App/Engines/MarketData/Tests/test_native_http_enforcement_v1.js",
+        "App/Engines/MarketData/Tests/test_native_http_failclosed_v1.js",
+        "App/Engines/MarketData/Tests/test_native_lite_cache_dedup_v1.js",
+        "App/Engines/MarketData/Tests/test_native_lite_data_integrity_v1.js",
+        "App/Engines/MarketData/Tests/test_native_retry_after_v1.js",
+        "App/Engines/MarketData/Tests/test_native_transport_bridge_v1.js",
+        "App/Engines/MarketData/Tests/test_open_interest_currency_normalization_v1.js",
+        "App/Engines/MarketData/Tests/test_phase1_provider_profiles_v1.js",
+        "App/Engines/MarketData/Tests/test_phase2_weighted_budget_v1.js",
+        "App/Engines/MarketData/Tests/test_phase3_special_limits_v1.js",
+        "App/Engines/MarketData/Tests/test_provider_passports_v1.js",
+        "App/Engines/MarketData/Tests/test_shadow_decision_engine_v1.js",
+        "App/Engines/MarketData/Tests/test_shadow_runtime_orchestrator_v1.js",
+        "App/Engines/MarketData/Tests/test_transport_budget_bridge_v1.js",
+        "App/Engines/MarketData/Tests/test_unknown_quota_nonblocking_v1.js",
+        "App/Engines/MarketData/Tests/validate_dex_liquidity_gen1.js",
+        "App/Engines/MarketData/Tests/validate_step4_gen1.js"
       ]
     },
     {
@@ -1213,8 +1213,8 @@
     },
     {
       "id": "liquidity",
-      "folder": "App/Liquidity",
-      "entry": "App/Liquidity/Engine/liquidity_service.js",
+      "folder": "App/Engines/Liquidity",
+      "entry": "App/Engines/Liquidity/Engine/liquidity_service.js",
       "entry_exists": true,
       "process": {
         "id": "liquidity",
@@ -1226,7 +1226,7 @@
         "marker": "IA-TB Liquidity Engine",
         "restartable": true,
         "defaultEnabled": true,
-        "script": "Liquidity/Engine/liquidity_service.js",
+        "script": "Engines/Liquidity/Engine/liquidity_service.js",
         "log": ".runtime/logs/liquidity.log",
         "env": {
           "IATB_LIQUIDITY_PORT": "8014",
@@ -1247,7 +1247,7 @@
           "agent_qualified": true,
           "hard_deny": false,
           "availability": null,
-          "source": "Liquidity/Engine/liquidity_service.js"
+          "source": "Engines/Liquidity/Engine/liquidity_service.js"
         },
         {
           "id": "liquidity.zones",
@@ -1255,7 +1255,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Liquidity/Engine/liquidity_service.js"
+          "source": "Engines/Liquidity/Engine/liquidity_service.js"
         },
         {
           "id": "liquidity.realtime",
@@ -1263,7 +1263,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Liquidity/Engine/liquidity_service.js"
+          "source": "Engines/Liquidity/Engine/liquidity_service.js"
         },
         {
           "id": "liquidity.snapshot",
@@ -1271,7 +1271,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Liquidity/Engine/liquidity_service.js"
+          "source": "Engines/Liquidity/Engine/liquidity_service.js"
         },
         {
           "id": "liquidity.financial",
@@ -1279,7 +1279,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Liquidity/Engine/liquidity_service.js"
+          "source": "Engines/Liquidity/Engine/liquidity_service.js"
         },
         {
           "id": "liquidity.liquidations",
@@ -1287,7 +1287,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Liquidity/Engine/liquidity_service.js"
+          "source": "Engines/Liquidity/Engine/liquidity_service.js"
         },
         {
           "id": "liquidity.capabilities",
@@ -1295,7 +1295,7 @@
           "agent_qualified": true,
           "hard_deny": false,
           "availability": null,
-          "source": "Liquidity/Engine/liquidity_service.js"
+          "source": "Engines/Liquidity/Engine/liquidity_service.js"
         },
         {
           "id": "liquidity.raw",
@@ -1303,7 +1303,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Liquidity/Engine/liquidity_service.js"
+          "source": "Engines/Liquidity/Engine/liquidity_service.js"
         },
         {
           "id": "liquidity.history",
@@ -1311,7 +1311,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Liquidity/Engine/liquidity_service.js"
+          "source": "Engines/Liquidity/Engine/liquidity_service.js"
         },
         {
           "id": "liquidity.context",
@@ -1319,7 +1319,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Liquidity/Engine/liquidity_service.js"
+          "source": "Engines/Liquidity/Engine/liquidity_service.js"
         },
         {
           "id": "liquidity.cache.clear",
@@ -1327,7 +1327,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Liquidity/Engine/liquidity_service.js"
+          "source": "Engines/Liquidity/Engine/liquidity_service.js"
         },
         {
           "id": "liquidity.open_interest",
@@ -1335,7 +1335,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Liquidity/Engine/liquidity_service.js"
+          "source": "Engines/Liquidity/Engine/liquidity_service.js"
         },
         {
           "id": "liquidity.open_interest.history",
@@ -1343,7 +1343,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Liquidity/Engine/liquidity_service.js"
+          "source": "Engines/Liquidity/Engine/liquidity_service.js"
         },
         {
           "id": "liquidity.dex_liquidity",
@@ -1351,7 +1351,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Liquidity/Engine/liquidity_service.js"
+          "source": "Engines/Liquidity/Engine/liquidity_service.js"
         },
         {
           "id": "liquidity.dex_liquidity.history",
@@ -1359,19 +1359,19 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Liquidity/Engine/liquidity_service.js"
+          "source": "Engines/Liquidity/Engine/liquidity_service.js"
         }
       ],
       "test_files": [
-        "App/Liquidity/Tests/test_liquidity_engine.js",
-        "App/Liquidity/Tests/test_liquidity_metrics.js",
-        "App/Liquidity/Tests/test_market_data_provider_static.js"
+        "App/Engines/Liquidity/Tests/test_liquidity_engine.js",
+        "App/Engines/Liquidity/Tests/test_liquidity_metrics.js",
+        "App/Engines/Liquidity/Tests/test_market_data_provider_static.js"
       ]
     },
     {
       "id": "strategy",
-      "folder": "App/Strategy",
-      "entry": "App/Strategy/Engine/strategy_service.js",
+      "folder": "App/Engines/Strategy",
+      "entry": "App/Engines/Strategy/Engine/strategy_service.js",
       "entry_exists": true,
       "process": {
         "id": "strategy",
@@ -1383,7 +1383,7 @@
         "marker": "IA-TB Strategy Engine v2",
         "restartable": true,
         "defaultEnabled": true,
-        "script": "Strategy/Engine/strategy_service.js",
+        "script": "Engines/Strategy/Engine/strategy_service.js",
         "log": ".runtime/logs/strategy.log",
         "env": {
           "IATB_STRATEGY_PORT": "8018",
@@ -1408,7 +1408,7 @@
           "agent_qualified": true,
           "hard_deny": false,
           "availability": null,
-          "source": "Strategy/Engine/strategy_service.js"
+          "source": "Engines/Strategy/Engine/strategy_service.js"
         },
         {
           "id": "strategy.capabilities",
@@ -1416,7 +1416,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Strategy/Engine/strategy_service.js"
+          "source": "Engines/Strategy/Engine/strategy_service.js"
         },
         {
           "id": "strategy.catalog",
@@ -1424,7 +1424,7 @@
           "agent_qualified": true,
           "hard_deny": false,
           "availability": null,
-          "source": "Strategy/Engine/strategy_service.js"
+          "source": "Engines/Strategy/Engine/strategy_service.js"
         },
         {
           "id": "strategy.validate",
@@ -1432,7 +1432,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Strategy/Engine/strategy_service.js"
+          "source": "Engines/Strategy/Engine/strategy_service.js"
         },
         {
           "id": "strategy.evaluate",
@@ -1440,7 +1440,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Strategy/Engine/strategy_service.js"
+          "source": "Engines/Strategy/Engine/strategy_service.js"
         },
         {
           "id": "strategy.dry_run",
@@ -1448,7 +1448,7 @@
           "agent_qualified": true,
           "hard_deny": false,
           "availability": null,
-          "source": "Strategy/Engine/strategy_service.js"
+          "source": "Engines/Strategy/Engine/strategy_service.js"
         },
         {
           "id": "strategy.stats",
@@ -1456,7 +1456,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Strategy/Engine/strategy_service.js"
+          "source": "Engines/Strategy/Engine/strategy_service.js"
         },
         {
           "id": "strategy.state",
@@ -1464,7 +1464,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Strategy/Engine/strategy_service.js"
+          "source": "Engines/Strategy/Engine/strategy_service.js"
         },
         {
           "id": "strategy.reload",
@@ -1472,7 +1472,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Strategy/Engine/strategy_service.js"
+          "source": "Engines/Strategy/Engine/strategy_service.js"
         },
         {
           "id": "strategy.pause",
@@ -1480,7 +1480,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Strategy/Engine/strategy_service.js"
+          "source": "Engines/Strategy/Engine/strategy_service.js"
         },
         {
           "id": "strategy.resume",
@@ -1488,7 +1488,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Strategy/Engine/strategy_service.js"
+          "source": "Engines/Strategy/Engine/strategy_service.js"
         },
         {
           "id": "strategy.reset_stats",
@@ -1496,7 +1496,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Strategy/Engine/strategy_service.js"
+          "source": "Engines/Strategy/Engine/strategy_service.js"
         },
         {
           "id": "strategy.user.request",
@@ -1504,18 +1504,18 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Strategy/Engine/strategy_service.js"
+          "source": "Engines/Strategy/Engine/strategy_service.js"
         }
       ],
       "test_files": [
-        "App/Strategy/Tests/test_strategy_engine_v2.js",
-        "App/Strategy/Tests/test_strategy_ui_router_readonly_v1.9.js"
+        "App/Engines/Strategy/Tests/test_strategy_engine_v2.js",
+        "App/Engines/Strategy/Tests/test_strategy_ui_router_readonly_v1.9.js"
       ]
     },
     {
       "id": "risk",
-      "folder": "App/Risk",
-      "entry": "App/Risk/Engine/risk_service.js",
+      "folder": "App/Engines/Risk",
+      "entry": "App/Engines/Risk/Engine/risk_service.js",
       "entry_exists": true,
       "process": {
         "id": "risk",
@@ -1527,7 +1527,7 @@
         "marker": "IA-TB Risk Engine",
         "restartable": true,
         "defaultEnabled": true,
-        "script": "Risk/Engine/risk_service.js",
+        "script": "Engines/Risk/Engine/risk_service.js",
         "log": ".runtime/logs/risk.log",
         "env": {
           "IATB_RISK_ENGINE_PORT": "8019",
@@ -1550,7 +1550,7 @@
           "agent_qualified": true,
           "hard_deny": false,
           "availability": null,
-          "source": "Risk/Engine/risk_service.js"
+          "source": "Engines/Risk/Engine/risk_service.js"
         },
         {
           "id": "risk.position.analyze",
@@ -1558,7 +1558,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Risk/Engine/risk_service.js"
+          "source": "Engines/Risk/Engine/risk_service.js"
         },
         {
           "id": "risk.portfolio.analyze",
@@ -1566,7 +1566,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Risk/Engine/risk_service.js"
+          "source": "Engines/Risk/Engine/risk_service.js"
         },
         {
           "id": "risk.strategy.analyze",
@@ -1574,7 +1574,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Risk/Engine/risk_service.js"
+          "source": "Engines/Risk/Engine/risk_service.js"
         },
         {
           "id": "risk.snapshot",
@@ -1582,7 +1582,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Risk/Engine/risk_service.js"
+          "source": "Engines/Risk/Engine/risk_service.js"
         },
         {
           "id": "risk.settings.get",
@@ -1590,7 +1590,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Risk/Engine/risk_service.js"
+          "source": "Engines/Risk/Engine/risk_service.js"
         },
         {
           "id": "risk.settings.set",
@@ -1598,7 +1598,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Risk/Engine/risk_service.js"
+          "source": "Engines/Risk/Engine/risk_service.js"
         },
         {
           "id": "risk.gate.evaluate",
@@ -1606,7 +1606,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Risk/Engine/risk_service.js"
+          "source": "Engines/Risk/Engine/risk_service.js"
         },
         {
           "id": "risk.gate.verify",
@@ -1614,7 +1614,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Risk/Engine/risk_service.js"
+          "source": "Engines/Risk/Engine/risk_service.js"
         },
         {
           "id": "risk.r1.evaluate",
@@ -1622,7 +1622,7 @@
           "agent_qualified": true,
           "hard_deny": false,
           "availability": null,
-          "source": "Risk/Engine/risk_service.js"
+          "source": "Engines/Risk/Engine/risk_service.js"
         },
         {
           "id": "risk.r2.evaluate",
@@ -1630,7 +1630,7 @@
           "agent_qualified": true,
           "hard_deny": false,
           "availability": null,
-          "source": "Risk/Engine/risk_service.js"
+          "source": "Engines/Risk/Engine/risk_service.js"
         },
         {
           "id": "risk.r2.monitor",
@@ -1638,7 +1638,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Risk/Engine/risk_service.js"
+          "source": "Engines/Risk/Engine/risk_service.js"
         },
         {
           "id": "risk.snapshot.create",
@@ -1646,7 +1646,7 @@
           "agent_qualified": true,
           "hard_deny": false,
           "availability": null,
-          "source": "Risk/Engine/risk_service.js"
+          "source": "Engines/Risk/Engine/risk_service.js"
         },
         {
           "id": "risk.snapshot.get",
@@ -1654,7 +1654,7 @@
           "agent_qualified": true,
           "hard_deny": false,
           "availability": null,
-          "source": "Risk/Engine/risk_service.js"
+          "source": "Engines/Risk/Engine/risk_service.js"
         },
         {
           "id": "risk.constraints.get",
@@ -1662,7 +1662,7 @@
           "agent_qualified": true,
           "hard_deny": false,
           "availability": null,
-          "source": "Risk/Engine/risk_service.js"
+          "source": "Engines/Risk/Engine/risk_service.js"
         },
         {
           "id": "risk.status",
@@ -1670,7 +1670,7 @@
           "agent_qualified": true,
           "hard_deny": false,
           "availability": null,
-          "source": "Risk/Engine/risk_service.js"
+          "source": "Engines/Risk/Engine/risk_service.js"
         },
         {
           "id": "risk.user.request",
@@ -1678,7 +1678,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Risk/Engine/risk_service.js"
+          "source": "Engines/Risk/Engine/risk_service.js"
         },
         {
           "id": "risk.manual.authorize",
@@ -1686,24 +1686,24 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "OWNER_ONLY",
-          "source": "Risk/Engine/risk_service.js"
+          "source": "Engines/Risk/Engine/risk_service.js"
         }
       ],
       "test_files": [
-        "App/Risk/Tests/benchmark_snapshots.js",
-        "App/Risk/Tests/risk_engine.test.js",
-        "App/Risk/Tests/snapshot_fixture.js",
-        "App/Risk/Tests/snapshots.integration.test.js",
-        "App/Risk/Tests/snapshots.test.js",
-        "App/Risk/Tests/test_risk_gate.js",
-        "App/Risk/Tests/test_risk_r1_r2_v25.js",
-        "App/Risk/Tests/test_risk_settings_v25.js"
+        "App/Engines/Risk/Tests/benchmark_snapshots.js",
+        "App/Engines/Risk/Tests/risk_engine.test.js",
+        "App/Engines/Risk/Tests/snapshot_fixture.js",
+        "App/Engines/Risk/Tests/snapshots.integration.test.js",
+        "App/Engines/Risk/Tests/snapshots.test.js",
+        "App/Engines/Risk/Tests/test_risk_gate.js",
+        "App/Engines/Risk/Tests/test_risk_r1_r2_v25.js",
+        "App/Engines/Risk/Tests/test_risk_settings_v25.js"
       ]
     },
     {
       "id": "portfolio",
-      "folder": "App/Portfolio",
-      "entry": "App/Portfolio/Engine/portfolio_service.js",
+      "folder": "App/Engines/Portfolio",
+      "entry": "App/Engines/Portfolio/Engine/portfolio_service.js",
       "entry_exists": true,
       "process": {
         "id": "portfolio",
@@ -1715,7 +1715,7 @@
         "marker": "IA-TB Portfolio Engine",
         "restartable": true,
         "defaultEnabled": true,
-        "script": "Portfolio/Engine/portfolio_service.js",
+        "script": "Engines/Portfolio/Engine/portfolio_service.js",
         "log": ".runtime/logs/portfolio.log",
         "env": {
           "IATB_PORTFOLIO_PORT": "8020",
@@ -1737,7 +1737,7 @@
           "agent_qualified": true,
           "hard_deny": false,
           "availability": null,
-          "source": "Portfolio/Engine/portfolio_service.js"
+          "source": "Engines/Portfolio/Engine/portfolio_service.js"
         },
         {
           "id": "portfolio.overview",
@@ -1745,7 +1745,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Portfolio/Engine/portfolio_service.js"
+          "source": "Engines/Portfolio/Engine/portfolio_service.js"
         },
         {
           "id": "portfolio.settings.get",
@@ -1753,7 +1753,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Portfolio/Engine/portfolio_service.js"
+          "source": "Engines/Portfolio/Engine/portfolio_service.js"
         },
         {
           "id": "portfolio.settings.set",
@@ -1761,7 +1761,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Portfolio/Engine/portfolio_service.js"
+          "source": "Engines/Portfolio/Engine/portfolio_service.js"
         },
         {
           "id": "portfolio.event.record",
@@ -1769,7 +1769,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Portfolio/Engine/portfolio_service.js"
+          "source": "Engines/Portfolio/Engine/portfolio_service.js"
         },
         {
           "id": "portfolio.balance.record",
@@ -1777,7 +1777,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Portfolio/Engine/portfolio_service.js"
+          "source": "Engines/Portfolio/Engine/portfolio_service.js"
         },
         {
           "id": "portfolio.snapshot",
@@ -1785,7 +1785,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Portfolio/Engine/portfolio_service.js"
+          "source": "Engines/Portfolio/Engine/portfolio_service.js"
         },
         {
           "id": "portfolio.positions",
@@ -1793,7 +1793,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Portfolio/Engine/portfolio_service.js"
+          "source": "Engines/Portfolio/Engine/portfolio_service.js"
         },
         {
           "id": "portfolio.balances",
@@ -1801,7 +1801,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Portfolio/Engine/portfolio_service.js"
+          "source": "Engines/Portfolio/Engine/portfolio_service.js"
         },
         {
           "id": "portfolio.history",
@@ -1809,7 +1809,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Portfolio/Engine/portfolio_service.js"
+          "source": "Engines/Portfolio/Engine/portfolio_service.js"
         },
         {
           "id": "portfolio.statistics",
@@ -1817,7 +1817,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Portfolio/Engine/portfolio_service.js"
+          "source": "Engines/Portfolio/Engine/portfolio_service.js"
         },
         {
           "id": "portfolio.events",
@@ -1825,7 +1825,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Portfolio/Engine/portfolio_service.js"
+          "source": "Engines/Portfolio/Engine/portfolio_service.js"
         },
         {
           "id": "portfolio.sync",
@@ -1833,7 +1833,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Portfolio/Engine/portfolio_service.js"
+          "source": "Engines/Portfolio/Engine/portfolio_service.js"
         },
         {
           "id": "portfolio.cost.summary",
@@ -1841,7 +1841,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Portfolio/Engine/portfolio_service.js"
+          "source": "Engines/Portfolio/Engine/portfolio_service.js"
         },
         {
           "id": "portfolio.cost.history",
@@ -1849,7 +1849,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Portfolio/Engine/portfolio_service.js"
+          "source": "Engines/Portfolio/Engine/portfolio_service.js"
         },
         {
           "id": "portfolio.position.health",
@@ -1857,7 +1857,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Portfolio/Engine/portfolio_service.js"
+          "source": "Engines/Portfolio/Engine/portfolio_service.js"
         },
         {
           "id": "portfolio.trades",
@@ -1865,7 +1865,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Portfolio/Engine/portfolio_service.js"
+          "source": "Engines/Portfolio/Engine/portfolio_service.js"
         },
         {
           "id": "portfolio.trade.detail",
@@ -1873,7 +1873,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Portfolio/Engine/portfolio_service.js"
+          "source": "Engines/Portfolio/Engine/portfolio_service.js"
         },
         {
           "id": "portfolio.user.request",
@@ -1881,7 +1881,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Portfolio/Engine/portfolio_service.js"
+          "source": "Engines/Portfolio/Engine/portfolio_service.js"
         },
         {
           "id": "portfolio.account.snapshot",
@@ -1889,17 +1889,17 @@
           "agent_qualified": true,
           "hard_deny": false,
           "availability": null,
-          "source": "Portfolio/Engine/portfolio_service.js"
+          "source": "Engines/Portfolio/Engine/portfolio_service.js"
         }
       ],
       "test_files": [
-        "App/Portfolio/Tests/advanced_orders.integration.test.js",
-        "App/Portfolio/Tests/manual_order_pipeline.integration.test.js",
-        "App/Portfolio/Tests/manual_projection.test.js",
-        "App/Portfolio/Tests/okx_account.test.js",
-        "App/Portfolio/Tests/okx_fixture.js",
-        "App/Portfolio/Tests/okx_pipeline.integration.test.js",
-        "App/Portfolio/Tests/test_portfolio_engine_v2.js"
+        "App/Engines/Portfolio/Tests/advanced_orders.integration.test.js",
+        "App/Engines/Portfolio/Tests/manual_order_pipeline.integration.test.js",
+        "App/Engines/Portfolio/Tests/manual_projection.test.js",
+        "App/Engines/Portfolio/Tests/okx_account.test.js",
+        "App/Engines/Portfolio/Tests/okx_fixture.js",
+        "App/Engines/Portfolio/Tests/okx_pipeline.integration.test.js",
+        "App/Engines/Portfolio/Tests/test_portfolio_engine_v2.js"
       ]
     },
     {
@@ -2202,8 +2202,8 @@
     },
     {
       "id": "supervisor",
-      "folder": "App/Supervisor",
-      "entry": "App/Supervisor/supervisor_service.js",
+      "folder": "App/Engines/Supervisor",
+      "entry": "App/Engines/Supervisor/supervisor_service.js",
       "entry_exists": true,
       "process": {
         "id": "supervisor",
@@ -2215,7 +2215,7 @@
         "marker": "IA-TB Supervisor",
         "restartable": true,
         "defaultEnabled": true,
-        "script": "Supervisor/supervisor_service.js",
+        "script": "Engines/Supervisor/supervisor_service.js",
         "log": ".runtime/logs/supervisor.log",
         "env": {
           "IATB_SUPERVISOR_PORT": "3000",
@@ -2244,7 +2244,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Supervisor/supervisor_service.js"
+          "source": "Engines/Supervisor/supervisor_service.js"
         },
         {
           "id": "supervisor.capabilities",
@@ -2252,7 +2252,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Supervisor/supervisor_service.js"
+          "source": "Engines/Supervisor/supervisor_service.js"
         },
         {
           "id": "supervisor.status",
@@ -2260,7 +2260,7 @@
           "agent_qualified": true,
           "hard_deny": false,
           "availability": null,
-          "source": "Supervisor/supervisor_service.js"
+          "source": "Engines/Supervisor/supervisor_service.js"
         },
         {
           "id": "supervisor.reload",
@@ -2268,7 +2268,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Supervisor/supervisor_service.js"
+          "source": "Engines/Supervisor/supervisor_service.js"
         },
         {
           "id": "supervisor.extensions",
@@ -2276,7 +2276,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Supervisor/supervisor_service.js"
+          "source": "Engines/Supervisor/supervisor_service.js"
         },
         {
           "id": "supervisor.llm.health",
@@ -2284,7 +2284,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Supervisor/supervisor_service.js"
+          "source": "Engines/Supervisor/supervisor_service.js"
         },
         {
           "id": "supervisor.context",
@@ -2292,7 +2292,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Supervisor/supervisor_service.js"
+          "source": "Engines/Supervisor/supervisor_service.js"
         },
         {
           "id": "supervisor.analyze",
@@ -2300,7 +2300,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Supervisor/supervisor_service.js"
+          "source": "Engines/Supervisor/supervisor_service.js"
         },
         {
           "id": "supervisor.indicators",
@@ -2308,7 +2308,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Supervisor/supervisor_service.js"
+          "source": "Engines/Supervisor/supervisor_service.js"
         },
         {
           "id": "supervisor.indicator.language",
@@ -2316,7 +2316,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Supervisor/supervisor_service.js"
+          "source": "Engines/Supervisor/supervisor_service.js"
         },
         {
           "id": "supervisor.indicator.validate",
@@ -2324,7 +2324,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Supervisor/supervisor_service.js"
+          "source": "Engines/Supervisor/supervisor_service.js"
         },
         {
           "id": "supervisor.indicator.create",
@@ -2332,7 +2332,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Supervisor/supervisor_service.js"
+          "source": "Engines/Supervisor/supervisor_service.js"
         },
         {
           "id": "supervisor.indicator.definition",
@@ -2340,7 +2340,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Supervisor/supervisor_service.js"
+          "source": "Engines/Supervisor/supervisor_service.js"
         },
         {
           "id": "supervisor.indicators.compute",
@@ -2348,7 +2348,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Supervisor/supervisor_service.js"
+          "source": "Engines/Supervisor/supervisor_service.js"
         },
         {
           "id": "supervisor.risk.evaluate",
@@ -2356,7 +2356,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Supervisor/supervisor_service.js"
+          "source": "Engines/Supervisor/supervisor_service.js"
         },
         {
           "id": "supervisor.reason",
@@ -2364,7 +2364,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Supervisor/supervisor_service.js"
+          "source": "Engines/Supervisor/supervisor_service.js"
         },
         {
           "id": "supervisor.structured",
@@ -2372,7 +2372,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Supervisor/supervisor_service.js"
+          "source": "Engines/Supervisor/supervisor_service.js"
         },
         {
           "id": "supervisor.calendar",
@@ -2380,7 +2380,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Supervisor/supervisor_service.js"
+          "source": "Engines/Supervisor/supervisor_service.js"
         },
         {
           "id": "supervisor.calendar.fed",
@@ -2388,7 +2388,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Supervisor/supervisor_service.js"
+          "source": "Engines/Supervisor/supervisor_service.js"
         },
         {
           "id": "supervisor.calendar.cme",
@@ -2396,7 +2396,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Supervisor/supervisor_service.js"
+          "source": "Engines/Supervisor/supervisor_service.js"
         },
         {
           "id": "supervisor.fedwatch",
@@ -2404,7 +2404,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Supervisor/supervisor_service.js"
+          "source": "Engines/Supervisor/supervisor_service.js"
         },
         {
           "id": "supervisor.calendar.cme.expirations",
@@ -2412,7 +2412,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Supervisor/supervisor_service.js"
+          "source": "Engines/Supervisor/supervisor_service.js"
         },
         {
           "id": "supervisor.user.request",
@@ -2420,7 +2420,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Supervisor/supervisor_service.js"
+          "source": "Engines/Supervisor/supervisor_service.js"
         },
         {
           "id": "supervisor.data.catalog",
@@ -2428,7 +2428,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Supervisor/supervisor_service.js"
+          "source": "Engines/Supervisor/supervisor_service.js"
         },
         {
           "id": "supervisor.data.read",
@@ -2436,7 +2436,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "NOT_QUALIFIED_FOR_AGENT",
-          "source": "Supervisor/supervisor_service.js"
+          "source": "Engines/Supervisor/supervisor_service.js"
         },
         {
           "id": "supervisor.cognitive.reason",
@@ -2444,7 +2444,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "OWNER_ONLY",
-          "source": "Supervisor/supervisor_service.js"
+          "source": "Engines/Supervisor/supervisor_service.js"
         },
         {
           "id": "supervisor.cognitive.status",
@@ -2452,7 +2452,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "OWNER_ONLY",
-          "source": "Supervisor/supervisor_service.js"
+          "source": "Engines/Supervisor/supervisor_service.js"
         },
         {
           "id": "supervisor.llm.models",
@@ -2460,7 +2460,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "OWNER_ONLY",
-          "source": "Supervisor/supervisor_service.js"
+          "source": "Engines/Supervisor/supervisor_service.js"
         },
         {
           "id": "supervisor.llm.select",
@@ -2468,7 +2468,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "OWNER_ONLY",
-          "source": "Supervisor/supervisor_service.js"
+          "source": "Engines/Supervisor/supervisor_service.js"
         },
         {
           "id": "supervisor.cognitive.history",
@@ -2476,7 +2476,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "OWNER_ONLY",
-          "source": "Supervisor/supervisor_service.js"
+          "source": "Engines/Supervisor/supervisor_service.js"
         },
         {
           "id": "supervisor.chatbot.message",
@@ -2484,7 +2484,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "OWNER_ONLY",
-          "source": "Supervisor/supervisor_service.js"
+          "source": "Engines/Supervisor/supervisor_service.js"
         },
         {
           "id": "supervisor.chatbot.history",
@@ -2492,7 +2492,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "OWNER_ONLY",
-          "source": "Supervisor/supervisor_service.js"
+          "source": "Engines/Supervisor/supervisor_service.js"
         },
         {
           "id": "supervisor.chatbot.confirm",
@@ -2500,7 +2500,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "OWNER_ONLY",
-          "source": "Supervisor/supervisor_service.js"
+          "source": "Engines/Supervisor/supervisor_service.js"
         },
         {
           "id": "supervisor.chatbot.cancel",
@@ -2508,7 +2508,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "OWNER_ONLY",
-          "source": "Supervisor/supervisor_service.js"
+          "source": "Engines/Supervisor/supervisor_service.js"
         },
         {
           "id": "supervisor.engine.context",
@@ -2516,7 +2516,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "OWNER_ONLY",
-          "source": "Supervisor/supervisor_service.js"
+          "source": "Engines/Supervisor/supervisor_service.js"
         },
         {
           "id": "supervisor.engine.objective",
@@ -2524,7 +2524,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "OWNER_ONLY",
-          "source": "Supervisor/supervisor_service.js"
+          "source": "Engines/Supervisor/supervisor_service.js"
         },
         {
           "id": "supervisor.engine.discover",
@@ -2532,7 +2532,7 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "OWNER_ONLY",
-          "source": "Supervisor/supervisor_service.js"
+          "source": "Engines/Supervisor/supervisor_service.js"
         },
         {
           "id": "supervisor.engine.observe",
@@ -2540,20 +2540,20 @@
           "agent_qualified": false,
           "hard_deny": true,
           "availability": "OWNER_ONLY",
-          "source": "Supervisor/supervisor_service.js"
+          "source": "Engines/Supervisor/supervisor_service.js"
         }
       ],
       "test_files": [
-        "App/Supervisor/ChatBot/Tests/browser_rev2.js",
-        "App/Supervisor/ChatBot/Tests/browser_ui.js",
-        "App/Supervisor/ChatBot/Tests/execution_readiness.test.js",
-        "App/Supervisor/ChatBot/Tests/hybrid.test.js",
-        "App/Supervisor/ChatBot/Tests/ui_fixture.js",
-        "App/Supervisor/LLM/Tests/test_llm_manager.js",
-        "App/Supervisor/Tests/SupervisorEngine/foundation.test.js",
-        "App/Supervisor/Tests/SupervisorEngine/recovery.test.js",
-        "App/Supervisor/Tests/test_supervisor_architecture.js",
-        "App/Supervisor/Tests/test_supervisor_pipeline_smoke.js"
+        "App/Engines/Supervisor/ChatBot/Tests/browser_rev2.js",
+        "App/Engines/Supervisor/ChatBot/Tests/browser_ui.js",
+        "App/Engines/Supervisor/ChatBot/Tests/execution_readiness.test.js",
+        "App/Engines/Supervisor/ChatBot/Tests/hybrid.test.js",
+        "App/Engines/Supervisor/ChatBot/Tests/ui_fixture.js",
+        "App/Engines/Supervisor/LLM/Tests/test_llm_manager.js",
+        "App/Engines/Supervisor/Tests/SupervisorEngine/foundation.test.js",
+        "App/Engines/Supervisor/Tests/SupervisorEngine/recovery.test.js",
+        "App/Engines/Supervisor/Tests/test_supervisor_architecture.js",
+        "App/Engines/Supervisor/Tests/test_supervisor_pipeline_smoke.js"
       ]
     }
   ],

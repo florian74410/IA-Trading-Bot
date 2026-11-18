@@ -1,26 +1,24 @@
-# Requalification Function Registry et CP1 — IA-TB 3.0.1 Rev3
+# Function Registry / CP1 — requalification après second audit
 
-Base Rev2 : `ef425e04182619e9992aa8a7368db2a30b2a0f87`. Les résultats intermédiaires ne remplacent pas la qualification finale après le second audit.
+Base qualifiée de comparaison : `ef425e04182619e9992aa8a7368db2a30b2a0f87`. Les 258 identifiants, schémas, permissions, hard_deny et qualifications sont préservés. Les empreintes ont été recalculées par le mécanisme existant ; les baselines historiques restent immuables.
 
-| Engine | Commandes avant | Commandes après | Empreintes recalculées | Tests CP1 | Résultat |
-|---|---:|---:|---|---|---|
-| Trading | 20 (11 qualifiées) | 20 | Oui — générateur existant | 93 PASS, 0 FAIL | PASS intermédiaire |
-| Firewall | 3 (1 qualifiées) | 3 | Oui — générateur existant | 93 PASS, 0 FAIL | PASS intermédiaire |
-| Fundamental | 63 (2 qualifiées) | 63 | Oui — générateur existant | 93 PASS, 0 FAIL | PASS intermédiaire |
-| Indicators | 26 (3 qualifiées) | 26 | Oui — générateur existant | 93 PASS, 0 FAIL | PASS intermédiaire |
-| Liquidity | 15 (2 qualifiées) | 15 | Oui — générateur existant | 93 PASS, 0 FAIL | PASS intermédiaire |
-| MarketData | 42 (5 qualifiées) | 42 | Oui — générateur existant | 93 PASS, 0 FAIL | PASS intermédiaire |
-| Portfolio | 20 (2 qualifiées) | 20 | Oui — générateur existant | 93 PASS, 0 FAIL | PASS intermédiaire |
-| Risk | 18 (8 qualifiées) | 18 | Oui — générateur existant | 93 PASS, 0 FAIL | PASS intermédiaire |
-| Strategy | 13 (3 qualifiées) | 13 | Oui — générateur existant | 93 PASS, 0 FAIL | PASS intermédiaire |
-| Supervisor | 38 (14 qualifiées) | 38 | Oui — générateur existant | 93 PASS, 0 FAIL | PASS intermédiaire |
+| Engine | Commandes avant | Commandes après | Qualifiées avant/après | Empreintes | Tests CP1 réels | Preuves | Résultat |
+|---|---:|---:|---:|---|---|---|---|
+| trading | 20 | 20 | 11/11 | Recalculées | Core TLS → Router → Engine ; redémarrage/refus | [Matrice](CP1_FINAL_COMPARISON.json) et [TAP](../../Consolidation-3.0.1/Results/final-local/foundation/qualification.tap) | PASS local |
+| firewall | 3 | 3 | 1/1 | Recalculées | Core TLS → Router → Engine ; redémarrage/refus | [Matrice](CP1_FINAL_COMPARISON.json) et [TAP](../../Consolidation-3.0.1/Results/final-local/foundation/qualification.tap) | PASS local |
+| fundamental | 63 | 63 | 2/2 | Recalculées | Core TLS → Router → Engine ; redémarrage/refus | [Matrice](CP1_FINAL_COMPARISON.json) et [TAP](../../Consolidation-3.0.1/Results/final-local/foundation/qualification.tap) | PASS local |
+| indicator | 26 | 26 | 3/3 | Recalculées | Core TLS → Router → Engine ; redémarrage/refus | [Matrice](CP1_FINAL_COMPARISON.json) et [TAP](../../Consolidation-3.0.1/Results/final-local/foundation/qualification.tap) | PASS local |
+| liquidity | 15 | 15 | 2/2 | Recalculées | Core TLS → Router → Engine ; redémarrage/refus | [Matrice](CP1_FINAL_COMPARISON.json) et [TAP](../../Consolidation-3.0.1/Results/final-local/foundation/qualification.tap) | PASS local |
+| marketdata | 42 | 42 | 5/5 | Recalculées | Core TLS → Router → Engine ; redémarrage/refus | [Matrice](CP1_FINAL_COMPARISON.json) et [TAP](../../Consolidation-3.0.1/Results/final-local/foundation/qualification.tap) | PASS local |
+| portfolio | 20 | 20 | 2/2 | Recalculées | Core TLS → Router → Engine ; redémarrage/refus | [Matrice](CP1_FINAL_COMPARISON.json) et [TAP](../../Consolidation-3.0.1/Results/final-local/foundation/qualification.tap) | PASS local |
+| risk | 18 | 18 | 8/8 | Recalculées | Core TLS → Router → Engine ; redémarrage/refus | [Matrice](CP1_FINAL_COMPARISON.json) et [TAP](../../Consolidation-3.0.1/Results/final-local/foundation/qualification.tap) | PASS local |
+| strategy | 13 | 13 | 3/3 | Recalculées | Core TLS → Router → Engine ; redémarrage/refus | [Matrice](CP1_FINAL_COMPARISON.json) et [TAP](../../Consolidation-3.0.1/Results/final-local/foundation/qualification.tap) | PASS local |
+| supervisor | 38 | 38 | 14/14 | Recalculées | Core TLS → Router → Engine ; redémarrage/refus | [Matrice](CP1_FINAL_COMPARISON.json) et [TAP](../../Consolidation-3.0.1/Results/final-local/foundation/qualification.tap) | PASS local |
 
-Chaque comparaison JSON contrôle tous les identifiants, schémas, handlers sources, empreintes, permissions, hard_deny, qualifications agents et autorisations. Seuls le chemin source et son empreinte peuvent différer ; aucune autorisation ne peut être élargie. Les empreintes proviennent du mécanisme existant, puis des tests réels Core TLS → Router → Engine → réponse et des scénarios avec broker fictif.
+La qualification complète après audit a réussi localement : 414 exécutions PASS, 0 FAIL, 1 SKIP environnemental, dont 80 scénarios fictifs. Le workflow de consolidation répète cette qualification et les deux parcours Chromium sur le commit publié, puis exécute la suite CP1 depuis le ZIP extrait. Le résultat définitif correspond au workflow attaché au commit de BUILD.json ; aucun PASS local ne remplace ces contrôles.
 
-Les commandes non qualifiées en Rev2 restent non qualifiées. Une empreinte recalculée ne constitue pas seule une preuve de réussite. Les rapports de chaque étape et les tentatives échouées sont conservés dans `Results/`.
+Détails par commande : [CP1_FINAL_COMPARISON.json](CP1_FINAL_COMPARISON.json). Les synthèses intermédiaires et empreintes sont dans [CP1_STAGE_SUMMARIES.json](CP1_STAGE_SUMMARIES.json). Les matrices intermédiaires intégrales sont récupérables au checkpoint `c7a7841c7c47ac63edf19f0a7973ec3ecf5a1ab3` ; tous les TAP sont conservés.
 
-## Condition finale bloquante
+Les changements de chemins et la couverture supplémentaire de Core/Shared/paths.js expliquent les nouvelles empreintes. Les contraintes Auth21, Risk, Firewall, signatures, rejeu, révocation, namespaces propriétaires et arrêt d’urgence restent obligatoires. Les commandes non qualifiées restent non qualifiées.
 
-Aucune validation finale si un handler manque, un contrat est désynchronisé, une empreinte est incorrecte, une permission est élargie, une commande qualifiée de Rev2 régresse, une protection Auth21/Risk/Firewall est désactivée ou un test obligatoire échoue.
-
-Après les corrections du second audit global, tous les registres et empreintes doivent être régénérés et la qualification complète répétée sur le commit publié et dans le paquet distribué. **Qualification finale après second audit : PENDING.**
+La correction du diagnostic Trading en cas de journal indisponible change de nouveau l’empreinte Trading ; cette modification est documentée dans IMPACT-002, puis les empreintes et la qualification complète sont recalculées après le dernier audit. Aucun pin historique n’est retouché.

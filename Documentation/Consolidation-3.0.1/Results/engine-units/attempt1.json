@@ -1,0 +1,16 @@
+{
+  "status": "FAIL",
+  "exit_code": 1,
+  "error": null,
+  "files": 69,
+  "passed": 130,
+  "failed": 3,
+  "skipped": 0,
+  "real_orders": 0,
+  "network": "loopback only; no real exchange domains",
+  "failed_cases": [
+    "Engines/Firewall/Tests/test_risk_gate_boundary.js",
+    "P3.3 real multiprocess ADMIN chain, denial matrix, key agreement, durable replay and interruptions",
+    "P5 production provider and LIVE mutations are explicitly unavailable"
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "source_commit": "0707a8ba422ccdd6b4e44000d65a380e72c2a1e3",
+  "revision": "3.0.1_Rev3",
+  "status": "PASS",
+  "passed": 93,
+  "failed": 0,
+  "skipped": 0,
+  "execution": "extracted sources; real Core/Router/10 Engines; isolated broker; no VPS",
+  "real_orders": 0
+}

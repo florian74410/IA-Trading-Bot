@@ -1,0 +1,353 @@
+{
+  "schema": "iatb.post-migration-audit/1.0",
+  "counts": {
+    "files_examined": 1050,
+    "json": 136,
+    "python": 16,
+    "shell": 14
+  },
+  "engines": [
+    {
+      "engine": "trading",
+      "entry": "Engines/Trading/trading_service.js",
+      "commands": 20,
+      "verified": 11,
+      "old_executable_files": 0
+    },
+    {
+      "engine": "firewall",
+      "entry": "Engines/Firewall/firewall_service.js",
+      "commands": 3,
+      "verified": 1,
+      "old_executable_files": 0
+    },
+    {
+      "engine": "fundamental",
+      "entry": "Engines/Fundamental/Engine/fundamental_service.js",
+      "commands": 63,
+      "verified": 2,
+      "old_executable_files": 0
+    },
+    {
+      "engine": "indicator",
+      "entry": "Engines/Indicators/Engine/indicator_service.js",
+      "commands": 26,
+      "verified": 3,
+      "old_executable_files": 0
+    },
+    {
+      "engine": "liquidity",
+      "entry": "Engines/Liquidity/Engine/liquidity_service.js",
+      "commands": 15,
+      "verified": 2,
+      "old_executable_files": 0
+    },
+    {
+      "engine": "marketdata",
+      "entry": "Engines/MarketData/market_data_service.js",
+      "commands": 42,
+      "verified": 5,
+      "old_executable_files": 0
+    },
+    {
+      "engine": "portfolio",
+      "entry": "Engines/Portfolio/Engine/portfolio_service.js",
+      "commands": 20,
+      "verified": 2,
+      "old_executable_files": 0
+    },
+    {
+      "engine": "risk",
+      "entry": "Engines/Risk/Engine/risk_service.js",
+      "commands": 18,
+      "verified": 8,
+      "old_executable_files": 0
+    },
+    {
+      "engine": "strategy",
+      "entry": "Engines/Strategy/Engine/strategy_service.js",
+      "commands": 13,
+      "verified": 3,
+      "old_executable_files": 0
+    },
+    {
+      "engine": "supervisor",
+      "entry": "Engines/Supervisor/supervisor_service.js",
+      "commands": 38,
+      "verified": 14,
+      "old_executable_files": 44
+    }
+  ],
+  "syntax_or_layout_errors": [
+    {
+      "engine": "supervisor",
+      "error": "Old executable Engine copy retained",
+      "files": [
+        "App/Supervisor/supervisor_service.js",
+        "App/Supervisor/Engine/supervisor-engine.js",
+        "App/Supervisor/Engine/working-memory.js",
+        "App/Supervisor/Gateway/agent_engine_gateway.js",
+        "App/Supervisor/CognitiveRuntime/context-budget.js",
+        "App/Supervisor/CognitiveRuntime/index.js",
+        "App/Supervisor/Tests/test_supervisor_pipeline_smoke.js",
+        "App/Supervisor/Tests/test_supervisor_architecture.js",
+        "App/Supervisor/FunctionRegistry/startup.js",
+        "App/Supervisor/ChatBot/llm.js",
+        "App/Supervisor/ChatBot/procedures.js",
+        "App/Supervisor/ChatBot/index.js",
+        "App/Supervisor/ChatBot/state.js",
+        "App/Supervisor/ChatBot/catalog.js",
+        "App/Supervisor/LLM/llm_manager.js",
+        "App/Supervisor/LLM/http_json.js",
+        "App/Supervisor/LLM/provider_contract.js",
+        "App/Supervisor/Core/supervisor_core.js",
+        "App/Supervisor/Core/collector_data_v2_4_1.js",
+        "App/Supervisor/Core/cp1_client.js",
+        "App/Supervisor/Core/owner_supervisor.js",
+        "App/Supervisor/Core/settings.js",
+        "App/Supervisor/Core/extension_manager.js",
+        "App/Supervisor/Core/context_orchestrator.js",
+        "App/Supervisor/Memory/short-term.js",
+        "App/Supervisor/Memory/personal-memory.js",
+        "App/Supervisor/Tests/SupervisorEngine/recovery.test.js",
+        "App/Supervisor/Tests/SupervisorEngine/foundation.test.js",
+        "App/Supervisor/ChatBot/Tests/browser_ui.js",
+        "App/Supervisor/ChatBot/Tests/browser_rev2.js",
+        "App/Supervisor/ChatBot/Tests/ui_fixture.js",
+        "App/Supervisor/ChatBot/Tests/execution_readiness.test.js",
+        "App/Supervisor/ChatBot/Tests/hybrid.test.js",
+        "App/Supervisor/ChatBot/Contracts/index.js",
+        "App/Supervisor/ChatBot/Resolver/advanced.js",
+        "App/Supervisor/ChatBot/Resolver/index.js",
+        "App/Supervisor/LLM/providers/remote_llm_provider.js",
+        "App/Supervisor/LLM/providers/openai_provider.js",
+        "App/Supervisor/LLM/providers/mock_provider.js",
+        "App/Supervisor/LLM/Tests/test_llm_manager.js",
+        "App/Supervisor/Extensions/AutonomousTrading/context_builder.js",
+        "App/Supervisor/Extensions/AutonomousTrading/decision_engine.js",
+        "App/Supervisor/Extensions/AutonomousTrading/trade_intent.js",
+        "App/Supervisor/Extensions/AutonomousTrading/state_manager.js"
+      ]
+    }
+  ],
+  "obsolete_active_references": [
+    {
+      "file": "App/Engines/Risk/Tests/benchmark_snapshots.js",
+      "reference": "App/Risk/Engine/risk_engine.js",
+      "line": 10
+    },
+    {
+      "file": "App/Engines/Indicators/Tests/test_indicator_cp1_v2.js",
+      "reference": "Indicators/Tests/test_indicator_cp1_v112.js",
+      "line": 3
+    },
+    {
+      "file": "App/Engines/Fundamental/Tests/test_news_latest_v2_0_1.js",
+      "reference": "Fundamental/Tests/test_news_latest_v2_0_1.js",
+      "line": 3
+    },
+    {
+      "file": "App/Supervisor/FunctionRegistry/Functions.json",
+      "reference": "Supervisor/supervisor_service.js",
+      "line": 27
+    },
+    {
+      "file": "App/Supervisor/FunctionRegistry/Functions.json",
+      "reference": "Supervisor/supervisor_service.js",
+      "line": 57
+    },
+    {
+      "file": "App/Supervisor/FunctionRegistry/Functions.json",
+      "reference": "Supervisor/supervisor_service.js",
+      "line": 148
+    },
+    {
+      "file": "App/Supervisor/FunctionRegistry/Functions.json",
+      "reference": "Supervisor/supervisor_service.js",
+      "line": 178
+    },
+    {
+      "file": "App/Supervisor/FunctionRegistry/Functions.json",
+      "reference": "Supervisor/supervisor_service.js",
+      "line": 208
+    },
+    {
+      "file": "App/Supervisor/FunctionRegistry/Functions.json",
+      "reference": "Supervisor/supervisor_service.js",
+      "line": 243
+    },
+    {
+      "file": "App/Supervisor/FunctionRegistry/Functions.json",
+      "reference": "Supervisor/supervisor_service.js",
+      "line": 332
+    },
+    {
+      "file": "App/Supervisor/FunctionRegistry/Functions.json",
+      "reference": "Supervisor/supervisor_service.js",
+      "line": 441
+    },
+    {
+      "file": "App/Supervisor/FunctionRegistry/Functions.json",
+      "reference": "Supervisor/supervisor_service.js",
+      "line": 471
+    },
+    {
+      "file": "App/Supervisor/FunctionRegistry/Functions.json",
+      "reference": "Supervisor/supervisor_service.js",
+      "line": 501
+    },
+    {
+      "file": "App/Supervisor/FunctionRegistry/Functions.json",
+      "reference": "Supervisor/supervisor_service.js",
+      "line": 538
+    },
+    {
+      "file": "App/Supervisor/FunctionRegistry/Functions.json",
+      "reference": "Supervisor/supervisor_service.js",
+      "line": 579
+    },
+    {
+      "file": "App/Supervisor/FunctionRegistry/Functions.json",
+      "reference": "Supervisor/supervisor_service.js",
+      "line": 616
+    },
+    {
+      "file": "App/Supervisor/FunctionRegistry/Functions.json",
+      "reference": "Supervisor/supervisor_service.js",
+      "line": 679
+    },
+    {
+      "file": "App/Supervisor/FunctionRegistry/Functions.json",
+      "reference": "Supervisor/supervisor_service.js",
+      "line": 716
+    },
+    {
+      "file": "App/Supervisor/FunctionRegistry/Functions.json",
+      "reference": "Supervisor/supervisor_service.js",
+      "line": 773
+    },
+    {
+      "file": "App/Supervisor/FunctionRegistry/Functions.json",
+      "reference": "Supervisor/supervisor_service.js",
+      "line": 839
+    },
+    {
+      "file": "App/Supervisor/FunctionRegistry/Functions.json",
+      "reference": "Supervisor/supervisor_service.js",
+      "line": 886
+    },
+    {
+      "file": "App/Supervisor/FunctionRegistry/Functions.json",
+      "reference": "Supervisor/supervisor_service.js",
+      "line": 916
+    },
+    {
+      "file": "App/Supervisor/FunctionRegistry/Functions.json",
+      "reference": "Supervisor/supervisor_service.js",
+      "line": 946
+    },
+    {
+      "file": "App/Supervisor/FunctionRegistry/Functions.json",
+      "reference": "Supervisor/supervisor_service.js",
+      "line": 976
+    },
+    {
+      "file": "App/Supervisor/FunctionRegistry/Functions.json",
+      "reference": "Supervisor/supervisor_service.js",
+      "line": 1006
+    },
+    {
+      "file": "App/Supervisor/FunctionRegistry/Functions.json",
+      "reference": "Supervisor/supervisor_service.js",
+      "line": 1048
+    },
+    {
+      "file": "App/Supervisor/FunctionRegistry/Functions.json",
+      "reference": "Supervisor/supervisor_service.js",
+      "line": 1078
+    },
+    {
+      "file": "App/Supervisor/FunctionRegistry/Functions.json",
+      "reference": "Supervisor/supervisor_service.js",
+      "line": 1124
+    },
+    {
+      "file": "App/Supervisor/FunctionRegistry/Functions.json",
+      "reference": "Supervisor/supervisor_service.js",
+      "line": 1172
+    },
+    {
+      "file": "App/Supervisor/FunctionRegistry/Functions.json",
+      "reference": "Supervisor/supervisor_service.js",
+      "line": 1204
+    },
+    {
+      "file": "App/Supervisor/FunctionRegistry/Functions.json",
+      "reference": "Supervisor/supervisor_service.js",
+      "line": 1236
+    },
+    {
+      "file": "App/Supervisor/FunctionRegistry/Functions.json",
+      "reference": "Supervisor/supervisor_service.js",
+      "line": 1278
+    },
+    {
+      "file": "App/Supervisor/FunctionRegistry/Functions.json",
+      "reference": "Supervisor/supervisor_service.js",
+      "line": 1317
+    },
+    {
+      "file": "App/Supervisor/FunctionRegistry/Functions.json",
+      "reference": "Supervisor/supervisor_service.js",
+      "line": 1371
+    },
+    {
+      "file": "App/Supervisor/FunctionRegistry/Functions.json",
+      "reference": "Supervisor/supervisor_service.js",
+      "line": 1403
+    },
+    {
+      "file": "App/Supervisor/FunctionRegistry/Functions.json",
+      "reference": "Supervisor/supervisor_service.js",
+      "line": 1449
+    },
+    {
+      "file": "App/Supervisor/FunctionRegistry/Functions.json",
+      "reference": "Supervisor/supervisor_service.js",
+      "line": 1487
+    },
+    {
+      "file": "App/Supervisor/FunctionRegistry/Functions.json",
+      "reference": "Supervisor/supervisor_service.js",
+      "line": 1523
+    },
+    {
+      "file": "App/Supervisor/FunctionRegistry/Functions.json",
+      "reference": "Supervisor/supervisor_service.js",
+      "line": 1566
+    },
+    {
+      "file": "App/Supervisor/FunctionRegistry/Functions.json",
+      "reference": "Supervisor/supervisor_service.js",
+      "line": 1606
+    },
+    {
+      "file": "App/Supervisor/FunctionRegistry/Functions.json",
+      "reference": "Supervisor/supervisor_service.js",
+      "line": 1654
+    }
+  ],
+  "documentary_references_to_review": [
+    {
+      "file": "App/Supervisor/README.md",
+      "reference": "Supervisor/supervisor_service.js",
+      "line": 3
+    },
+    {
+      "file": "App/Supervisor/README.md",
+      "reference": "Supervisor/LLM/llm_manager.js",
+      "line": 6
+    }
+  ],
+  "status": "FAIL"
+}

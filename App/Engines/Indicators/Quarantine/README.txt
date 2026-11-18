@@ -1,5 +1,3 @@
-QUARANTINE — v1.2.0
-===================
+Indicateurs — définitions partagées en quarantaine
 
-Les définitions Custom invalides sont déplacées ici et ne sont jamais chargées.
-Ne pas exécuter ni renommer un fichier de Quarantine sans l'avoir vérifié.
+Le service conserve les données existantes sous App/Indicators/Quarantine, défini par Core/Shared/paths.LegacyEngineData. Le dossier App/Engines/Indicators contient le code et BuiltIn. Ce répertoire de sources n'est pas le stockage modifiable du service. Les tests Registry isolés peuvent utiliser leur propre répertoire temporaire. Les définitions privées Auth21 restent dans leur namespace propriétaire.

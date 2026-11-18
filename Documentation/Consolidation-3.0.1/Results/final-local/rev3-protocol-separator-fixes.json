@@ -1,0 +1,47 @@
+[
+  {
+    "file": "App/Engines/MarketData/Financial/financial_policy.js",
+    "restored_protocol_separators": 1,
+    "reference": "ef425e04:App/MarketData/Financial/financial_policy.js"
+  },
+  {
+    "file": "App/Engines/MarketData/Provider/microstructure_provider.js",
+    "restored_protocol_separators": 1,
+    "reference": "ef425e04:App/MarketData/Provider/microstructure_provider.js"
+  },
+  {
+    "file": "App/Engines/Supervisor/ChatBot/Resolver/advanced.js",
+    "restored_protocol_separators": 1,
+    "reference": "ef425e04:App/Supervisor/ChatBot/Resolver/advanced.js"
+  },
+  {
+    "file": "App/Engines/Supervisor/ChatBot/Resolver/index.js",
+    "restored_protocol_separators": 7,
+    "reference": "ef425e04:App/Supervisor/ChatBot/Resolver/index.js"
+  },
+  {
+    "file": "App/Engines/Supervisor/ChatBot/index.js",
+    "restored_protocol_separators": 1,
+    "reference": "ef425e04:App/Supervisor/ChatBot/index.js"
+  },
+  {
+    "file": "App/Engines/Supervisor/ChatBot/procedures.js",
+    "restored_protocol_separators": 3,
+    "reference": "ef425e04:App/Supervisor/ChatBot/procedures.js"
+  },
+  {
+    "file": "App/Engines/Supervisor/Core/collector_data_v2_4_1.js",
+    "restored_protocol_separators": 3,
+    "reference": "ef425e04:App/Supervisor/Core/collector_data_v2_4_1.js"
+  },
+  {
+    "file": "App/Engines/Supervisor/Engine/supervisor-engine.js",
+    "restored_protocol_separators": 1,
+    "reference": "ef425e04:App/Supervisor/Engine/supervisor-engine.js"
+  },
+  {
+    "file": "App/Engines/Supervisor/Tests/SupervisorEngine/foundation.test.js",
+    "restored_protocol_separators": 1,
+    "reference": "ef425e04:App/Supervisor/Tests/SupervisorEngine/foundation.test.js"
+  }
+]

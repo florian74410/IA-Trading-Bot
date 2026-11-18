@@ -28,7 +28,7 @@ for directory in ['App', 'Tools', 'Deploy', 'Infrastructure', 'Assets', 'tests',
         if p.is_file() and not p.is_symlink() and not any(x in SKIP for x in p.relative_to(ROOT).parts):
             files.append(p)
 files += [p for p in ROOT.iterdir() if p.is_file() and p.suffix in {'.json', '.yml', '.yaml', '.md'}]
-errors, engines, obsolete, historical = [], [], [], []
+errors, engines, obsolete, historical, intentional_history = [], [], [], [], []
 counts = {'files_examined': len(files), 'json': 0, 'python': 0, 'shell': 0}
 for p in files:
     rel = p.relative_to(ROOT).as_posix()
@@ -52,10 +52,13 @@ for p in files:
     if rel.startswith(('Tools/Architecture/Rev3/', 'Tools/CI/baselines/')):
         continue  # Deliberate migration maps and immutable historical pins.
     for old, _ in LAYOUT.values():
-        pattern = r'(?<![\w/])(?:App/)?' + re.escape(old) + r'/[\w./*-]+\.(?:js|json|sh|command)'
+        pattern = r'(?:(?<![\w/])(?:App/)?|\$(?:\{)?(?:ROOT|APP_ROOT|APP|PWD)(?:\})?/(?:App/)?)' + re.escape(old) + r'/[\w./*-]+\.(?:js|json|sh|command)'
         for m in re.finditer(pattern, text):
             item = {'file': rel, 'reference': m.group(), 'line': text.count('\n', 0, m.start()) + 1}
-            (historical if p.suffix in {'.md', '.txt'} else obsolete).append(item)
+            if re.search(r'[0-9a-f]{7,40}:$', text[max(0,m.start()-41):m.start()]):
+                intentional_history.append({**item,'reason':'Explicit immutable git-show baseline path, not a current entrypoint'})
+            else:
+                (historical if p.suffix in {'.md', '.txt'} else obsolete).append(item)
 for engine, (old, new) in LAYOUT.items():
     manifest = json.loads((ROOT / 'App/Core/ProcessRegistry/manifests' / (engine + '.json')).read_text())
     expected = 'Engines/' + new + '/'
@@ -68,7 +71,7 @@ for engine, (old, new) in LAYOUT.items():
         errors.append({'engine': engine, 'error': 'Old executable Engine copy retained', 'files': [str(p.relative_to(ROOT)) for p in old_code]})
     functions = json.loads((ROOT / 'App/Engines' / new / 'FunctionRegistry/Functions.json').read_text())
     engines.append({'engine': engine, 'entry': entry, 'commands': len(functions['functions']), 'verified': sum(bool(f.get('verified_handler')) for f in functions['functions']), 'old_executable_files': len(old_code)})
-result = {'schema': 'iatb.post-migration-audit/1.0', 'counts': counts, 'engines': engines, 'syntax_or_layout_errors': errors, 'obsolete_active_references': obsolete, 'documentary_references_to_review': historical, 'status': 'PASS' if not errors and not obsolete else 'FAIL'}
+result = {'schema': 'iatb.post-migration-audit/1.0', 'counts': counts, 'engines': engines, 'syntax_or_layout_errors': errors, 'obsolete_active_references': obsolete, 'documentary_references_to_review': historical, 'intentional_historical_references': intentional_history, 'status': 'PASS' if not errors and not obsolete else 'FAIL'}
 output = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / 'artifacts/post-migration-audit.json'
 output.parent.mkdir(parents=True, exist_ok=True)
 output.write_text(json.dumps(result, indent=2) + '\n')

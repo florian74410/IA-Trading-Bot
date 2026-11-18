@@ -51,6 +51,10 @@ function rewriteOther(text,pairs){
  }
  return text;
 }
+function rewriteJSON(text,pairs){
+ const visit=(value,key)=>{if(Array.isArray(value))return value.map(v=>visit(v,key));if(value&&typeof value==='object')return Object.fromEntries(Object.entries(value).map(([k,v])=>[k,visit(v,k)]));if(typeof value==='string'&&key!=='description'&&(/\.(js|json|md|txt|css|html|sql|pem|command)$/.test(value)||value.endsWith('/**')))return prefixValue(value,pairs);return value;};
+ const old=JSON.parse(text),next=visit(old,'');return JSON.stringify(old)===JSON.stringify(next)?text:JSON.stringify(next,null,2)+'\n';
+}
 function inventory(){
  const C=require(path.join(app,'Core/FunctionRegistry/Control/catalog'));let imports=0;
  const files=tracked();for(const p of files.filter(p=>/\.(c?js|mjs)$/.test(p))){try{walk.simple(parse(fs.readFileSync(path.join(root,p),'utf8')),{CallExpression(n){if(n.callee.name==='require'&&n.arguments[0]?.value?.startsWith('.'))imports++;}});}catch(e){}}
@@ -70,7 +74,7 @@ function step(id){
  for(const p of files){const oldFile=path.join(root,p),newFile=remapAbsolute(oldFile,pairs);if(!fs.existsSync(oldFile)||fs.lstatSync(oldFile).isSymbolicLink())continue;
   if(!/\.(js|cjs|mjs|json|py|sh|yml|yaml|command|md|txt)$/.test(p)&&!/(Dockerfile|\.dockerignore)$/.test(p))continue;
   const before=fs.readFileSync(oldFile,'utf8');let after;
-  if(/\.(js|cjs)$/.test(p))after=rewriteJS(before,oldFile,newFile,pairs,changes);else after=rewriteOther(before,pairs);
+  if(/\.(js|cjs)$/.test(p))after=rewriteJS(before,oldFile,newFile,pairs,changes);else if(p.endsWith('.json'))after=rewriteJSON(before,pairs);else after=rewriteOther(before,pairs);
   if(after!==before){fs.writeFileSync(newFile,after);if(!/\.(js|cjs)$/.test(p))changes.push({file:path.relative(root,newFile),kind:'explicit paths in configuration/launcher'});}
  }
  state.completed.push(id);state.steps.push({id,from,to,changes,old_directory_retained:true});fs.mkdirSync(path.dirname(stateFile),{recursive:true});fs.writeFileSync(stateFile,JSON.stringify(state,null,2)+'\n');console.log(JSON.stringify({engine:id,changes:changes.length,source:from,destination:to,old_directory_retained:true}));
@@ -78,4 +82,4 @@ function step(id){
 function activeFiles(){return tracked().filter(p=>!p.startsWith('Documentation/')&&!p.startsWith('Tools/Architecture/Rev3/')&&!p.startsWith('Tools/CI/baselines/')&&p!=='App/Core/Shared/paths.js');}
 function rewriteCurrent(){const pairs=state.completed.map(id=>layout[id]),changes=[];for(const p of activeFiles().filter(p=>/\.(js|cjs)$/.test(p))){const file=path.join(root,p);if(!fs.existsSync(file))continue;const before=fs.readFileSync(file,'utf8'),after=rewriteJS(before,file,file,pairs,changes);if(before!==after)fs.writeFileSync(file,after);}fs.writeFileSync(path.join(root,'artifacts/rev3-current-path-fixes.json'),JSON.stringify(changes,null,2)+'\n');console.log(JSON.stringify({current_path_fixes:changes.length}));}
 if(require.main===module){if(process.argv[2]==='inventory')inventory();else if(process.argv[2]==='step')step(process.argv[3]);else if(process.argv[2]==='rewrite-current')rewriteCurrent();else throw Error('Use inventory, rewrite-current or step <engine>');}
-module.exports={rewriteJS,remapAbsolute};
+module.exports={rewriteJS,remapAbsolute,rewriteJSON};

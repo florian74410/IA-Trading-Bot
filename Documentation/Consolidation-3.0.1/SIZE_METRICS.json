@@ -1,0 +1,26 @@
+{
+  "scope": "Tracked tree excluding new consolidation reports to avoid recursive self-counts; installed dependencies and ignored runtime excluded",
+  "before": {
+    "files": 1225,
+    "bytes": 11589483,
+    "app_files": 909,
+    "app_bytes": 6922612
+  },
+  "after_before_final_doc_commit": {
+    "files": 1257,
+    "bytes": 11571163,
+    "app_files": 914,
+    "app_bytes": 6938209
+  },
+  "gross_removed_tracked_bytes": 1740614,
+  "replacement_stage_summary_bytes": 42798,
+  "preserved_before_cleanup": {
+    "commit": "c7a7841c7c47ac63edf19f0a7973ec3ecf5a1ab3",
+    "tracked_files": 1283,
+    "tracked_bytes": 14969241,
+    "app_bytes": 6930450,
+    "zip_bytes": 3618996,
+    "zip_sha256": "692334024b7ddebb5ba8b68d3f6ac86c340ba9c004b8b7f4075ea204a6c1fd0b"
+  },
+  "final_exact_measurement": "CI artifact package-metrics.json: measured from the final commit after building, kept outside the ZIP to avoid self-referential size/checksum."
+}

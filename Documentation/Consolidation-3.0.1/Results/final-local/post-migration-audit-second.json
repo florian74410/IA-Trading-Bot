@@ -1,0 +1,93 @@
+{
+  "schema": "iatb.post-migration-audit/1.0",
+  "counts": {
+    "files_examined": 998,
+    "json": 124,
+    "python": 18,
+    "shell": 14
+  },
+  "engines": [
+    {
+      "engine": "trading",
+      "entry": "Engines/Trading/trading_service.js",
+      "commands": 20,
+      "verified": 11,
+      "old_executable_files": 0
+    },
+    {
+      "engine": "firewall",
+      "entry": "Engines/Firewall/firewall_service.js",
+      "commands": 3,
+      "verified": 1,
+      "old_executable_files": 0
+    },
+    {
+      "engine": "fundamental",
+      "entry": "Engines/Fundamental/Engine/fundamental_service.js",
+      "commands": 63,
+      "verified": 2,
+      "old_executable_files": 0
+    },
+    {
+      "engine": "indicator",
+      "entry": "Engines/Indicators/Engine/indicator_service.js",
+      "commands": 26,
+      "verified": 3,
+      "old_executable_files": 0
+    },
+    {
+      "engine": "liquidity",
+      "entry": "Engines/Liquidity/Engine/liquidity_service.js",
+      "commands": 15,
+      "verified": 2,
+      "old_executable_files": 0
+    },
+    {
+      "engine": "marketdata",
+      "entry": "Engines/MarketData/market_data_service.js",
+      "commands": 42,
+      "verified": 5,
+      "old_executable_files": 0
+    },
+    {
+      "engine": "portfolio",
+      "entry": "Engines/Portfolio/Engine/portfolio_service.js",
+      "commands": 20,
+      "verified": 2,
+      "old_executable_files": 0
+    },
+    {
+      "engine": "risk",
+      "entry": "Engines/Risk/Engine/risk_service.js",
+      "commands": 18,
+      "verified": 8,
+      "old_executable_files": 0
+    },
+    {
+      "engine": "strategy",
+      "entry": "Engines/Strategy/Engine/strategy_service.js",
+      "commands": 13,
+      "verified": 3,
+      "old_executable_files": 0
+    },
+    {
+      "engine": "supervisor",
+      "entry": "Engines/Supervisor/supervisor_service.js",
+      "commands": 38,
+      "verified": 14,
+      "old_executable_files": 0
+    }
+  ],
+  "syntax_or_layout_errors": [],
+  "obsolete_active_references": [],
+  "documentary_references_to_review": [],
+  "intentional_historical_references": [
+    {
+      "file": "App/Engines/Risk/Tests/benchmark_snapshots.js",
+      "reference": "App/Risk/Engine/risk_engine.js",
+      "line": 10,
+      "reason": "Explicit immutable git-show baseline path, not a current entrypoint"
+    }
+  ],
+  "status": "PASS"
+}

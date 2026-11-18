@@ -1,3 +1,7 @@
+> Correction de comptage : les dix Engines exposent 258 commandes, dont 51 qualifiées ; le total manuel de 358 mentionné dans cette archive était erroné. Les inventaires par Engine et comparaisons de contrats étaient exacts.
+
+> Archive de reprise : cet état suspendu a été repris par la consolidation. Le blocage de stockage et les autres résultats actuels sont documentés dans `Documentation/Consolidation-3.0.1/`. Ce document conserve la trace du diagnostic initial.
+
 # Reprise suspendue — migration Rev3 NON QUALIFIÉE
 
 Le 18 novembre 2026, la demande utilisateur a été réorientée vers la reformulation de la mission de consolidation du build le plus récent. Aucun nouveau déplacement ne doit être lancé sans reprendre cet état et ses blocages.
