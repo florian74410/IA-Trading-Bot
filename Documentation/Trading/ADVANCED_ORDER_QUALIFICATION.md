@@ -18,6 +18,8 @@ Node **22.23.0**, dépendances applicatives épinglées : **408 exécutions PASS
 
 Ce sont des exécutions de tests, et non un nombre de cas uniques : certains fichiers participent à plusieurs groupes. Les 80 scénarios sont inclus dans la première ligne ; le test parent est également compté dans TAP. Les 65 scénarios obligatoires et les 15 complémentaires sont tous réussis.
 
+Une vérification CI complémentaire du calendrier a identifié une ancienne assertion sur un conteneur remplacé par les deux panneaux FED et Finance Calendar. Le contrat a été aligné sur les conteneurs et les renderers réellement présents ; les **23 tests** de cette suite passent localement, en complément du total ci-dessus. Rapport : [calendar-regression.tap](Results-Rev2/local/calendar-regression.tap).
+
 ## CI et navigateur
 
 Le workflow [IA-TB 3.0.1 Rev2](https://github.com/florian74410/IA-Trading-Bot/actions/workflows/iatb-301-rev2.yml) est obligatoire pour valider le commit publié. Il installe Node 22, les dépendances épinglées et Chromium, puis exécute la même suite, l'interface héritée et les nouveaux contrôles de consentement au clavier, d'empreinte exacte, de notification et d'affichage mobile. Il vérifie aussi les scripts VPS, le paquet complet, son inventaire et sa reproductibilité dans le runner.

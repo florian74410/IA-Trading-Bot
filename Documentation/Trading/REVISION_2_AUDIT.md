@@ -42,3 +42,5 @@ Le déploiement n'est pas exécuté. Pour une installation ultérieure, utiliser
 Le rollback consiste à arrêter la nouvelle release et repointer vers le répertoire Rev1 conservé. Les ajouts SQLite sont compatibles avec les anciens lecteurs ; ne pas supprimer les journaux et réservations ni restaurer aveuglément une base antérieure si une opération broker était incertaine. Cette procédure reste documentaire : aucun VPS n'est modifié pendant la mission.
 
 La CI Rev2 fixe Ubuntu 24.04 : le premier essai sur `ubuntu-latest` a révélé Ubuntu 26.04, incompatible avec la version Playwright épinglée. Ce correctif de reproductibilité conserve la version testée du navigateur.
+
+Non-régression complémentaire : l’ancien test du calendrier exigeait `calendarUnifiedEvents`, remplacé dans l’interface existante par les panneaux FED et Finance Calendar. L’assertion contrôle maintenant leurs grilles, listes et appels de rendu. Aucun changement de l’interface du calendrier ; les 23 tests associés passent.

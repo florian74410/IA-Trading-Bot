@@ -945,6 +945,7 @@
     "Deploy/VPS/prepare_vps.sh": "49f451d165aeeb0613d217c58600c0a701c0006a43eab1ebdb4a33f7b2f3b327",
     "Tools/Build/build_rev1_full_source.py": "a0817b555c4a9c1dbc401825dbedcaa898031f1e2a59f37dc28c20dc8a05f02b",
     "Tools/Build/build_risk_snapshot.py": "4bf31a544907c68cd76f40357405d15e2091e2e37efb6bec7631545d19619cbb",
-    "Tools/Build/verify_source_bundle.py": "17d3571cefa8d72bff8edc97cfd953c8e9e0e575f3f9e9c4dec794247bbd097c"
+    "Tools/Build/verify_source_bundle.py": "17d3571cefa8d72bff8edc97cfd953c8e9e0e575f3f9e9c4dec794247bbd097c",
+    "tests/v225_unified_integration.test.cjs": "49c71c092fe58b2323757beae41a05a92d78e39826984da93bbb752f6cdd681e"
   }
 }

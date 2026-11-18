@@ -44,7 +44,14 @@ test('page wiring preserves separate News area and shares data across both globe
  const globeBridge=read('App/Frontend/JS/fundamental_globe_bridge_v2_2_5.js');
  assert.match(fundamental,/id="fundamentalGlobeWebGL"/);
  assert.match(fundamental,/fundamental_globe_bridge_v2_2_5\.js/);
- assert.match(fundamental,/id="calendarUnifiedEvents"/);
+ // The current calendar uses distinct FED and Finance Calendar panes.
+ for(const source of ['fed','cme']){
+  assert.match(fundamental,new RegExp('id="'+source+'CalendarGrid"'));
+  assert.match(fundamental,new RegExp('id="'+source+'CalendarEvents"'));
+  assert.ok(controller.includes("renderMonthCalendar('"+source+"CalendarGrid'"));
+  assert.ok(controller.includes("renderCalendarEventList('"+source+"CalendarEvents'"));
+ }
+ assert.match(fundamental,/class="macroCalendarSplit"/);
  assert.match(fundamental,/data-view="news"/);
  assert.match(fundamental,/overviewIndicatorPanel/);
  assert.match(controller,/iatb-fundamental-news/);

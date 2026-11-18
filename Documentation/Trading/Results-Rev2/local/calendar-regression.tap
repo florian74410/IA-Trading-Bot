@@ -1,0 +1,158 @@
+(node:5) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+TAP version 13
+# (node:12) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: source-qualified IDs, values and no false merging
+ok 1 - source-qualified IDs, values and no false merging
+  ---
+  duration_ms: 19.748942
+  type: 'test'
+  ...
+# Subtest: Europe/Paris DST boundary and date-only do not shift dates
+ok 2 - Europe/Paris DST boundary and date-only do not shift dates
+  ---
+  duration_ms: 40.353405
+  type: 'test'
+  ...
+# Subtest: filters remain source-specific
+ok 3 - filters remain source-specific
+  ---
+  duration_ms: 0.466927
+  type: 'test'
+  ...
+# Subtest: chart on by default, date-only excluded and optional off
+ok 4 - chart on by default, date-only excluded and optional off
+  ---
+  duration_ms: 0.553539
+  type: 'test'
+  ...
+# Subtest: timestamps must have timezone and unsafe URLs are omitted
+ok 5 - timestamps must have timezone and unsafe URLs are omitted
+  ---
+  duration_ms: 0.74238
+  type: 'test'
+  ...
+# Subtest: calendar detail uses only provider-supplied description and numbers
+ok 6 - calendar detail uses only provider-supplied description and numbers
+  ---
+  duration_ms: 1.093671
+  type: 'test'
+  ...
+# (node:13) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: normalize geo event and safe URL
+ok 7 - normalize geo event and safe URL
+  ---
+  duration_ms: 2.698834
+  type: 'test'
+  ...
+# Subtest: filter period and category
+ok 8 - filter period and category
+  ---
+  duration_ms: 0.776652
+  type: 'test'
+  ...
+# Subtest: missing dates and unknown coordinates cannot be pinned
+ok 9 - missing dates and unknown coordinates cannot be pinned
+  ---
+  duration_ms: 0.492084
+  type: 'test'
+  ...
+# Subtest: reject untrusted URLs
+ok 10 - reject untrusted URLs
+  ---
+  duration_ms: 0.269992
+  type: 'test'
+  ...
+# (node:14) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: four standard concise labels
+ok 11 - four standard concise labels
+  ---
+  duration_ms: 2.516415
+  type: 'test'
+  ...
+# Subtest: single flight and success
+ok 12 - single flight and success
+  ---
+  duration_ms: 0.585768
+  type: 'test'
+  ...
+# Subtest: error, reset, retry
+ok 13 - error, reset, retry
+  ---
+  duration_ms: 0.869977
+  type: 'test'
+  ...
+# Subtest: backend failure payload is failure
+ok 14 - backend failure payload is failure
+  ---
+  duration_ms: 0.55494
+  type: 'test'
+  ...
+# Subtest: button binding and restoration
+ok 15 - button binding and restoration
+  ---
+  duration_ms: 5.935597
+  type: 'test'
+  ...
+# (node:20) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: FED/CME canonical payload retains dates, converts US zone and keeps forecast/actual
+ok 16 - FED/CME canonical payload retains dates, converts US zone and keeps forecast/actual
+  ---
+  duration_ms: 65.29994
+  type: 'test'
+  ...
+# Subtest: timezone conversion respects winter EST and summer EDT
+ok 17 - timezone conversion respects winter EST and summer EDT
+  ---
+  duration_ms: 0.809083
+  type: 'test'
+  ...
+# Subtest: globe filtered categories and time windows only use real timestamps
+ok 18 - globe filtered categories and time windows only use real timestamps
+  ---
+  duration_ms: 1.188278
+  type: 'test'
+  ...
+# Subtest: page wiring preserves separate News area and shares data across both globes
+ok 19 - page wiring preserves separate News area and shares data across both globes
+  ---
+  duration_ms: 5.600746
+  type: 'test'
+  ...
+# Subtest: Fundamental bridge classifies securely, resolves grounded regions and refuses invalid dates
+ok 20 - Fundamental bridge classifies securely, resolves grounded regions and refuses invalid dates
+  ---
+  duration_ms: 4.297173
+  type: 'test'
+  ...
+# Subtest: Fundamental collector refresh uses the shared single-flight button and avoids destructive purge
+ok 21 - Fundamental collector refresh uses the shared single-flight button and avoids destructive purge
+  ---
+  duration_ms: 2.30319
+  type: 'test'
+  ...
+# Subtest: R1: UI layout, calendar detail, refreshed FedWatch and trading service strip contracts
+ok 22 - R1: UI layout, calendar detail, refreshed FedWatch and trading service strip contracts
+  ---
+  duration_ms: 2.649724
+  type: 'test'
+  ...
+# Subtest: R1: refresh allows non-GUEST proof but leaves destructive operator operations privileged
+ok 23 - R1: refresh allows non-GUEST proof but leaves destructive operator operations privileged
+  ---
+  duration_ms: 2.590423
+  type: 'test'
+  ...
+1..23
+# tests 23
+# suites 0
+# pass 23
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 270.46456
