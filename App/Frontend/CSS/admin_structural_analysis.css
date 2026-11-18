@@ -27,3 +27,5 @@
   .atlasLayout { grid-template-columns: minmax(0, 1fr); }
   #atlasTree { max-height: 30vh; }
 }
+.atlasOriginal { display:inline-flex; align-items:center; text-decoration:none; }
+.atlasFilters select { color-scheme:dark; }

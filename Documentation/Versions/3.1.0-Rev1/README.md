@@ -57,3 +57,13 @@ python3 Tools/Build/test_extracted_bundle.py artifacts/IA-TB-3.1.0_Rev1_FULL-SOU
 ```
 
 L’archive conserve l’inventaire et les empreintes individuelles dans `BUILD.json`. Le checksum SHA-256 se trouve à côté du ZIP. Les dépendances Node sont installées depuis le lockfile. Les bases, certificats privés et clés de l’installation restent hors de l’archive.
+
+## Correctifs d’interface Rev1
+
+La section **AI Supervisor** du menu Paramètres regroupe deux formulaires indépendants. **Supervisor** enregistre le fournisseur, le modèle, le délai et le secours dans le profil via `/api/settings/supervisor/brains`. **ChatBot** enregistre son mode et son option de secours OpenAI via `/api/settings/chatbot`. Les anciennes URL IA et Supervisor mènent à la section fusionnée. Les clés restent gérées dans **API & Data**.
+
+La section **Trading** reprend le formulaire des comptes d’exécution existant, ses permissions et son API Auth21. Le formulaire et la liste du niveau de risque utilisent les contrôles sombres de Paramètres.
+
+Le menu et le contenu **ADMIN** défilent dans l’espace compris entre les barres globales. La rubrique **Analyse → Analyse structurelle** conserve l’Atlas intégré et propose l’explorateur HTML d’origine sur `/admin/analyse/structurelle/explorateur`. La vue d’origine et le rapport JSON sont réservés aux administrateurs Auth21.
+
+Fundamental partage une seule interrogation périodique des événements entre le tableau de bord et la console. L’interrogation se met en pause lorsque l’onglet est masqué et temporise après un refus de débit. Les quotas Auth21 existants restent applicables.

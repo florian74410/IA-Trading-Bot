@@ -2,6 +2,7 @@
 // Authenticated UI has exactly one authority: Core's live server-side session.
 const fs=require('node:fs'),path=require('node:path'),https=require('node:https'),http=require('node:http');
 const analysis=require('../Analysis/structural_report');
+const {randomBytes}=require('node:crypto');
 const {configuration,tls}=require('../../Core/Clients/UserManagement/config');
 function create({root,corePort,pages,findAsset}){
  const config=configuration();if(!config.enabled)return null;
@@ -45,9 +46,18 @@ function create({root,corePort,pages,findAsset}){
      q.on('timeout',()=>q.destroy());
     });
    }
-   if(p===analysis.reportPath&&req.method==='GET'){
+   if([analysis.reportPath,analysis.originalPath].includes(p)&&req.method==='GET'){
     const me=await core(req,'/auth21/me');
     const status=me.status===401?401:me.status!==200?503:me.data.authenticated!==true?401:me.data.role!=='ADMIN'?403:200;
+    if(status===200&&p===analysis.originalPath){
+     const nonce=randomBytes(18).toString('base64');
+     res.writeHead(200,{
+      'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff',
+      'Referrer-Policy':'no-referrer',
+      'Content-Security-Policy':"default-src 'none'; script-src 'nonce-"+nonce+"'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
+     });
+     return res.end(analysis.original(nonce));
+    }
     const payload=status===200?analysis.load():{error:status===401?'AUTH_REQUIRED':status===403?'ADMIN_REQUIRED':'AUTH_UNAVAILABLE'};
     res.writeHead(status,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});
     return res.end(JSON.stringify(payload));

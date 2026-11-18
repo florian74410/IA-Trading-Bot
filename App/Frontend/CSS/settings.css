@@ -398,3 +398,49 @@
 .fundEconomicPrefs p{margin:0 0 4px;font-size:11px;color:#94bfd7}
 .fundEconomicPrefs label{display:flex;align-items:center;gap:9px;font-size:12px;color:#b1d8ed}
 .fundEconomicPrefs input[type="checkbox"]{accent-color:#20bdeb;width:15px;height:15px}
+
+/* AI Supervisor et Trading utilisent les panneaux et contrôles de Paramètres. */
+.aiSettingsLayout,
+.tradingSettingsLayout {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 14px;
+}
+.tradingSettingsLayout { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); }
+.aiSettingsFields { min-inline-size: 0; margin: 0; padding: 0; border: 0; }
+.aiSettingsFields .row, .riskLevel {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+.aiSettingsFields .row > input[type=checkbox] { justify-self: start; }
+.aiSettingsFields .saveLine { justify-content: flex-start; }
+.settingsSectionBar #nav button:focus-visible,
+.main .view select:focus-visible,
+.main [data-open-settings]:focus-visible {
+  outline: 2px solid #20c8ff;
+  outline-offset: 2px;
+}
+.main .view select {
+  color-scheme: dark;
+  background-color: #091522;
+  color: #e9f3fb;
+}
+.riskEnable { display: inline-flex; align-items: center; gap: 8px; }
+.riskLevel { max-width: 480px; margin: 8px 0; }
+#tradingAccountCard .apiBody select,
+#tradingAccountCard .apiBody textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #2b4a61;
+  border-radius: 6px;
+  background: #091522;
+  color: #e9f3fb;
+  font: inherit;
+}
+#taForm label:has(> input[type=checkbox]) { display: flex; gap: 8px; align-items: center; }
+@media (max-width: 760px) {
+  .aiSettingsLayout, .tradingSettingsLayout { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 480px) {
+  .aiSettingsFields .row, .riskLevel { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+}

@@ -26,7 +26,7 @@ body.iatb-global-nav-ready>.shell{height:calc(100vh - var(--iatb-nav-h) - var(--
 body.iatb-global-nav-ready>.page{min-height:calc(100vh - var(--iatb-nav-h) - var(--iatb-nav-gap))!important}
 body.iatb-global-nav-ready>.page>.fundSidebar{top:calc(var(--iatb-nav-h) + var(--iatb-nav-gap))!important}
 body.iatb-global-nav-ready>.app{height:calc(100vh - var(--iatb-nav-h) - var(--iatb-nav-gap))!important}
-body.iatb-global-nav-ready>.adminShell{margin-top:0!important;height:calc(100vh - var(--iatb-nav-h) - var(--iatb-nav-gap))!important;min-height:0!important}
+body.iatb-global-nav-ready>.adminShell{--admin-top-space:calc(var(--iatb-nav-h) + var(--iatb-nav-gap))}
 
 /* Breathing space below the fixed application chrome. */
 body.iatb-global-nav-ready{background:#040d17}
