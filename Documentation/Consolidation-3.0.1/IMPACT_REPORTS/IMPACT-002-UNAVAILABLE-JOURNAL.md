@@ -1,0 +1,11 @@
+# IMPACT-002 — journal Trading indisponible au démarrage
+
+Statut initial : SECOND_PASS_REQUIRED, preuve conservée dans Results/engine-units/trading-multiprocess-attempt.tap. Le test multiprocessus ancien, auparavant arrêté par une attente START obsolète, atteint le scénario SQLite inaccessible. La lifecycle refuse déjà d’exécuter ; l’initialisation inconditionnelle de DeliveryOutbox reçoit ensuite un db absent et plante le processus. Le comportement est présent dans les sources Rev2, pas introduit par le déplacement.
+
+Seconde passe : correction nécessaire à l’intégrité et au diagnostic, compatible avec les contrats. Le service doit rester disponible pour la santé et le refus ADMIN 503 existant. L’outbox n’est construite que si le store lifecycle est accessible ; un échec de sa création est diagnostiqué. Toute mutation est refusée avant l’exécution sans outbox durable. Aucun nouveau store, retry de mutation, nouvelle permission, migration SQL ou changement d’algorithme financier.
+
+Fichiers : App/Engines/Trading/trading_service.js, test_trading_p3_multiprocess_v252.js. Consommateurs : Admin Auth21 et commandes financières existantes. Risque : masquer une perte de journal ; prévention par erreur explicite et blocage, sans retour à un journal mémoire. Alternatives écartées : base temporaire ou reprise automatique, qui compromettraient la réconciliation. L’ancienne base et ses données restent en place.
+
+Validation requise : test réel multiprocessus sur SQLite fictif inaccessible, santé ERROR et ADMIN non READY/503, réouverture après restauration, tous refus/signatures/rejeu/crash existants ; qualification des 69 fichiers Engine ; recalcul par qualify_cp1_control et requalification complète, comparaison stricte 258 commandes, package extrait. Retour arrière : code du checkpoint c7a7841c, sans restauration aveugle de bases ni suppression des opérations incertaines. Aucun accès à un compte d’exchange.
+
+Validation locale après correction : PASS du test multiprocessus complet, 133 exécutions Engine sans échec et qualification globale 414 PASS / 0 FAIL / 1 SKIP environnemental, 80 scénarios inclus. Empreinte Trading recalculée par l’outil existant ; comparaison 258 contrats PASS. CI et ZIP extrait restent les conditions de livraison finale.

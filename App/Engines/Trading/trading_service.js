@@ -495,21 +495,29 @@ function recordPortfolio(event, cb) {
     },
   );
 }
-var delivery = new (require("./delivery-outbox").DeliveryOutbox)(lifecycle.db);
-engine.onManualEvent=function(event){delivery.persist(event.event_id,event,{});};
+// A missing journal is an unavailable durable boundary, never a memory fallback.
+var delivery = null;
+if (lifecycle.db && !lifecycle.failed) {
+  try { delivery = new (require("./delivery-outbox").DeliveryOutbox)(lifecycle.db); }
+  catch (_) { console.error("TRADING_DELIVERY_UNAVAILABLE"); }
+}
+engine.onManualEvent=function(event){
+  if (!delivery) throw Error("TRADING_DELIVERY_UNAVAILABLE");
+  delivery.persist(event.event_id,event,{});
+};
 function publishDurable(event) {
   return new Promise((resolve, reject) =>
     recordPortfolio(event, (e) => (e ? reject(e) : resolve())),
   );
 }
-var deliveryTimer = setInterval(
+var deliveryTimer = delivery && setInterval(
   () =>
     delivery
       .flush(history, publishDurable)
       .catch((e) => console.error("TRADING_DELIVERY_PENDING")),
   2000,
 );
-deliveryTimer.unref();
+if (deliveryTimer) deliveryTimer.unref();
 function finalize(action, args, r, msg, res) {
   var ev = normalizeExecution(action, args, r);
   ev.event_id =
@@ -570,6 +578,8 @@ function handleCp(req, res, raw, msg) {
       403,
       cpResponse(msg, "ERROR", { error: "FIREWALL_FORWARD_REQUIRED" }),
     );
+  if (mutating(v.action) && !delivery)
+    return send(res, 503, cpResponse(msg, "ERROR", { error: "TRADING_DELIVERY_UNAVAILABLE" }));
   if (
     mutating(v.action) &&
     !require('../../Core/Execution/manual_contract').isAction(v.action) &&

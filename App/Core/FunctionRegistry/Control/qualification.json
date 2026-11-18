@@ -149,49 +149,49 @@
     "trading": {
       "commands": {
         "trading.health": {
-          "implementation_sha256": "8bd6d8bafa836a02bb64add09383e27e05f54cb64a4c36a6d0e5f5a767b1a88e",
+          "implementation_sha256": "ab67ec207c78bf20dd1d135839c9b6cd0c2cbff038b120c9b8dbac822ed2663b",
           "contract_sha256": "b23ab46387711ec3e05b224254c4c83a3712cd22d3d02060e8105dc5926fec7c"
         },
         "trading.capabilities": {
-          "implementation_sha256": "8bd6d8bafa836a02bb64add09383e27e05f54cb64a4c36a6d0e5f5a767b1a88e",
+          "implementation_sha256": "ab67ec207c78bf20dd1d135839c9b6cd0c2cbff038b120c9b8dbac822ed2663b",
           "contract_sha256": "3b95beff89041877a3ff67ad91141f021ed94b57278dd199c5055925db10281d"
         }
       },
       "native_verified": {
         "trading.account.inspect": {
-          "implementation_sha256": "8bd6d8bafa836a02bb64add09383e27e05f54cb64a4c36a6d0e5f5a767b1a88e",
+          "implementation_sha256": "ab67ec207c78bf20dd1d135839c9b6cd0c2cbff038b120c9b8dbac822ed2663b",
           "contract_sha256": "7f69c4b28e037d203c56d144498789f3a91b3d94ab7b8be71b00e24271d09e30"
         },
         "trading.manual.batch": {
-          "implementation_sha256": "8bd6d8bafa836a02bb64add09383e27e05f54cb64a4c36a6d0e5f5a767b1a88e",
+          "implementation_sha256": "ab67ec207c78bf20dd1d135839c9b6cd0c2cbff038b120c9b8dbac822ed2663b",
           "contract_sha256": "439e19be6125d4e78dcacec3389e8b0c2d527ea3f489c446c779d1aff859e152"
         },
         "trading.manual.order": {
-          "implementation_sha256": "8bd6d8bafa836a02bb64add09383e27e05f54cb64a4c36a6d0e5f5a767b1a88e",
+          "implementation_sha256": "ab67ec207c78bf20dd1d135839c9b6cd0c2cbff038b120c9b8dbac822ed2663b",
           "contract_sha256": "efd76aed44afc60ce9abe7d6020df849e099eda38e17e0bff2159a614480d666"
         },
         "trading.manual.algo": {
-          "implementation_sha256": "8bd6d8bafa836a02bb64add09383e27e05f54cb64a4c36a6d0e5f5a767b1a88e",
+          "implementation_sha256": "ab67ec207c78bf20dd1d135839c9b6cd0c2cbff038b120c9b8dbac822ed2663b",
           "contract_sha256": "fbb2c8ab4fdcd430201fd014de220a5ca4ac0b9da73ef1739849afefed32515d"
         },
         "trading.manual.cancel": {
-          "implementation_sha256": "8bd6d8bafa836a02bb64add09383e27e05f54cb64a4c36a6d0e5f5a767b1a88e",
+          "implementation_sha256": "ab67ec207c78bf20dd1d135839c9b6cd0c2cbff038b120c9b8dbac822ed2663b",
           "contract_sha256": "f653cfd5cb4d800fef2d9cd204157e02d78f6148012d7fcc600564a61918f13d"
         },
         "trading.manual.amend": {
-          "implementation_sha256": "8bd6d8bafa836a02bb64add09383e27e05f54cb64a4c36a6d0e5f5a767b1a88e",
+          "implementation_sha256": "ab67ec207c78bf20dd1d135839c9b6cd0c2cbff038b120c9b8dbac822ed2663b",
           "contract_sha256": "a0bef210bd4e249e07bd106d2fec8bc732ac513af7783e8f20ef6011c9972dc0"
         },
         "trading.manual.cancel_algo": {
-          "implementation_sha256": "8bd6d8bafa836a02bb64add09383e27e05f54cb64a4c36a6d0e5f5a767b1a88e",
+          "implementation_sha256": "ab67ec207c78bf20dd1d135839c9b6cd0c2cbff038b120c9b8dbac822ed2663b",
           "contract_sha256": "670443d92bf35d6ffdd109fcec83ceccffd74a81f255815723a2b4df53e61a86"
         },
         "trading.manual.amend_algo": {
-          "implementation_sha256": "8bd6d8bafa836a02bb64add09383e27e05f54cb64a4c36a6d0e5f5a767b1a88e",
+          "implementation_sha256": "ab67ec207c78bf20dd1d135839c9b6cd0c2cbff038b120c9b8dbac822ed2663b",
           "contract_sha256": "e5a2d7f23f1a36ff48977b5bd343efa0c3ad8f1bee2749a957a816c6710ef829"
         },
         "trading.manual.leverage": {
-          "implementation_sha256": "8bd6d8bafa836a02bb64add09383e27e05f54cb64a4c36a6d0e5f5a767b1a88e",
+          "implementation_sha256": "ab67ec207c78bf20dd1d135839c9b6cd0c2cbff038b120c9b8dbac822ed2663b",
           "contract_sha256": "96904de3e77048e2c4a71046c823e50bf4c0b5a39d37199638ac5d6e0b8b42c5"
         }
       }
