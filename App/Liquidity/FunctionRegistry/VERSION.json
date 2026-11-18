@@ -1,7 +1,7 @@
 {
   "engine_id": "liquidity",
-  "engine_version": "2.6.0-dev.7",
+  "engine_version": "3.0.1-dev.1",
   "registry_schema": "2.6.0",
   "source_sha256": "a63bc04a2b9c8b8e92cbcd05d4178c88a0c197741b8f06c5caa073c404f970b8",
-  "revision_hash": "ef3629ca55ddbb44f09b067077d3c2d43f94ee9b289a1abeb2b5374206fe0f03"
+  "revision_hash": "942318765fd372ccce689614b307baf0eb344df4bb051738b3fa0156bec6426e"
 }

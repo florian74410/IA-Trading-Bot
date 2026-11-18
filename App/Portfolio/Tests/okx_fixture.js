@@ -7,7 +7,7 @@ function profileFixture(){
  const sessions={verifySession:verify,verifyHashedSession:hash=>{for(const [t,p]of active)if(crypto.createHash('sha256').update(Buffer.from(t,'base64url')).digest('hex')===hash)return p;return null;},getPreference:(t,s,k)=>preferences.get(key(t,s,k))||null,setPreference:(t,s,k,v)=>preferences.set(key(t,s,k),v),secrets:t=>{const p=verify(t);if(!p)throw Error('UNAUTHORIZED');return secrets.get(p.clientId)||{};},setSecrets:(t,s)=>{const p=verify(t);secrets.set(p.clientId,{...(secrets.get(p.clientId)||{}),...s});},attempt:()=>true,audit:()=>{},touch:()=>{},db:{transaction}};
  sessions.secretForSessionHash=(hash,name)=>{for(const [t,p]of active)if(p.role!=='GUEST'&&crypto.createHash('sha256').update(Buffer.from(t,'base64url')).digest('hex')===hash)return sessions.secrets(t)[name]||'';throw Error('UNAUTHORIZED');};
  sessions.tradingReadContext=hash=>{const token=[...active.keys()].find(t=>crypto.createHash('sha256').update(Buffer.from(t,'base64url')).digest('hex')===hash);return {principal:()=>{const p=verify(token);if(!p||p.role==='GUEST')throw Error('TRADING_ACCOUNT_UNAUTHORIZED');return p;},listAccounts:()=>JSON.parse(sessions.getPreference(token,'trading','accounts')||'[]'),secrets:()=>sessions.secrets(token)};};
- return {tokens,sessions,revoke:t=>active.delete(t)};
+ return {tokens,sessions,revoke:t=>active.delete(t),renew:t=>{const p=verify(t);if(!p)throw Error('UNAUTHORIZED');const fresh=crypto.randomBytes(32).toString('base64url');active.set(fresh,{...p});active.delete(t);return fresh;}};
 }
 function apiFixture(now=Date.now()){
  const inst={instId:'BTC-USDT',instType:'SPOT',baseCcy:'BTC',quoteCcy:'USDT',minSz:'0.001',maxMktSz:'10',lotSz:'0.001',tickSz:'0.01',groupId:'4',state:'live'};

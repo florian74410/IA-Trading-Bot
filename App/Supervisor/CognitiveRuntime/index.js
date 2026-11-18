@@ -22,6 +22,11 @@ function tenantOf(auth){
  if(!x||auth.source!=='AUTH21_OWNER'||!/^CL[A-Za-z0-9_-]{1,64}$/.test(x.clientId)||!['USER','ADMIN'].includes(x.role))throw Error('COGNITIVE_OWNER_PROOF_REQUIRED');
  return crypto.createHash('sha256').update('iatb-cognitive-owner-v1:').update(x.clientId).digest('hex');
 }
+function memorySession(a={},fallback='default'){
+ const room=String(a.sessionId||fallback);if(a.workspace_id===undefined)return room;
+ if(!/^[-A-Za-z0-9_]{1,64}$/.test(a.workspace_id))throw Error('SUPERVISOR_WORKSPACE_INVALID');
+ return 'workspace-'+crypto.createHash('sha256').update(a.workspace_id+'|'+room).digest('hex').slice(0,40);
+}
 class CognitiveRuntime{
  constructor({root,llm,cp,settings,shortMemory,longMemory,protocolRegistry,functionRegistryDb,workingMemory=null}={}){
   if(!root||!llm||!cp||!settings)throw Error('COGNITIVE_ADAPTERS_REQUIRED');
@@ -93,7 +98,7 @@ class CognitiveRuntime{
   return output;
  }
  async reason(a={},auth={}){
-  const tenant=tenantOf(auth),sessionId=String(a.sessionId||'default');
+  const tenant=tenantOf(auth),room=String(a.sessionId||'default'),sessionId=memorySession(a);
   this.short.validate(tenant,sessionId);
   if(typeof a.prompt!=='string'||!a.prompt.trim()||a.prompt.length>12000)throw Error('COGNITIVE_PROMPT_INVALID');
   const prompt=redactSecrets(a.prompt),model=this.modelSelection(a.model);
@@ -105,10 +110,22 @@ class CognitiveRuntime{
    const ram=this.ram.get(key)||{objective:null};
    // The provider receives a sanitized snapshot; provider-specific sessions never own state.
    const work=this.workingMemory&&/^[a-f0-9]{64}$/.test(auth.sessionHash||'')?
-     this.workingMemory.current({tenantId:tenant,sessionHash:auth.sessionHash,room:sessionId}):null;
-   const workContext=work?compact({objective:work.objective,revision:work.revision,observations:work.observations.slice(-4)},1200):null;
+     this.workingMemory.current({tenantId:tenant,sessionHash:auth.sessionHash,room,...(a.workspace_id?{workspaceId:a.workspace_id}:{})}):null;
+   const workContext=work?{workspace_id:work.workspace_id,objective:work.objective,revision:work.revision,
+     current_observations:[],stale_observations:[],unknown_observations:[],objective_history:work.objective_history.slice(-3).map(x=>({...x,objective:compact(x.objective,200)})),trust:'UNTRUSTED_DATA_ONLY'}:null;
+   if(workContext)for(const observation of work.observations.slice(-6)){
+     const o={engine:observation.engine,command:observation.command,value:observation.value,source:observation.source,observed_ms:observation.observed_ms,age_ms:observation.age_ms,ttl_ms:observation.ttl_ms,contract_version:observation.contract_version,freshness:observation.freshness,status:observation.status};
+     if(Buffer.byteLength(JSON.stringify(o.value))>1000)o.value='[VALUE_OMITTED_FROM_PROMPT: STORED_IN_WORKING_MEMORY]';
+     workContext[observation.freshness==='FRESH'?'current_observations':observation.freshness==='STALE'?'stale_observations':'unknown_observations'].push(o);
+   }
+   if(workContext){
+    workContext.prompt_value_omissions=0;
+    for(const field of ['stale_observations','unknown_observations','current_observations'])for(const observation of workContext[field]){
+     if(Buffer.byteLength(JSON.stringify(workContext))>6000){observation.value='[VALUE_OMITTED_FROM_PROMPT: STORED_IN_WORKING_MEMORY]';workContext.prompt_value_omissions++;}
+    }
+   }
    const system=this.systemPrompt(),llm=auth.llm||this.llm;
-   const input=prepare({system,self,history,ram:{objective:compact(ram.objective,150),workingMemory:workContext,uiContext:compact(a.uiContext&&typeof a.uiContext==='object'?a.uiContext:{},450)},prompt});
+   const input=prepare({system,self,history,ram:{objective:compact(work?work.objective:ram.objective,150),workingMemory:workContext,uiContext:compact(a.uiContext&&typeof a.uiContext==='object'?a.uiContext:{},450)},prompt});
    this.short.append({tenantId:tenant,sessionId,role:'user',content:prompt});
    const call=async prepared=>{
     const output=await llm.reason({system,prompt:prepared.prompt,model,maxTokens:1800});
@@ -129,13 +146,13 @@ class CognitiveRuntime{
    let latest=await call(input),observations=[],used=input.historyUsed;
    if(latest.parsed.tool_requests.length){
     observations=await this.tools(latest.parsed.tool_requests,tenant);
-    const followup=prepare({system,self,history:[],ram:{objective:compact(ram.objective,150),workingMemory:workContext,uiContext:compact(a.uiContext&&typeof a.uiContext==='object'?a.uiContext:{},450)},prompt,observations});
+    const followup=prepare({system,self,history:[],ram:{objective:compact(work?work.objective:ram.objective,150),workingMemory:workContext,uiContext:compact(a.uiContext&&typeof a.uiContext==='object'?a.uiContext:{},450)},prompt,observations});
     latest=await call(followup);
    }
    const message=redactSecrets(latest.parsed.message);
    const proposals=this.long.propose(tenant,sessionId,latest.parsed.memory_proposals.map(p=>({...p,content:compact(p?.content,1000)})));
    this.short.append({tenantId:tenant,sessionId,role:'assistant',content:message});
-   this.ram.set(key,{objective:compact(prompt,150),updatedAt:Date.now()});
+   this.ram.set(key,{objective:work?work.objective:compact(prompt,150),updatedAt:Date.now()});
    if(this.ram.size>64)this.ram.delete(this.ram.keys().next().value);
    return {schema:'supervisor.cognitive/1.1',execution:'NONE',response:{message,provider:latest.meta.provider,model:latest.meta.model||model},memory:{selfRead:true,historyUsed:used,proposals},observations,estimatedInputTokens:input.estimatedInputTokens};
   }catch(e){
@@ -148,7 +165,7 @@ class CognitiveRuntime{
   }finally{this.busy.delete(key);}
  }
  history(a={},auth={}){
-  const tenant=tenantOf(auth),sessionId=String(a.sessionId||'companion-default');
+  const tenant=tenantOf(auth),sessionId=memorySession(a,'companion-default');
   this.short.validate(tenant,sessionId);
   const limit=a.limit===undefined?20:Number(a.limit);
   if(!Number.isInteger(limit)||limit<1||limit>40)throw Error('COGNITIVE_HISTORY_LIMIT_INVALID');
@@ -161,4 +178,4 @@ class CognitiveRuntime{
  maintenance(){return {expiredSessions:this.short.prune(),expiredProposals:this.long.prune()};}
  close(){this.short.close();this.long.close();}
 }
-module.exports={CognitiveRuntime,tenantOf,parseResponse,estimate};
+module.exports={CognitiveRuntime,tenantOf,parseResponse,estimate,memorySession};

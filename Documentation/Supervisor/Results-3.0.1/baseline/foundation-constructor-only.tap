@@ -1,0 +1,272 @@
+(node:6) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+TAP version 13
+# (node:13) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: MEM-01: empty memory has no invented objective or observations
+ok 1 - MEM-01: empty memory has no invented objective or observations
+  ---
+  duration_ms: 7.295345
+  type: 'test'
+  ...
+# Subtest: MEM-02: objective persists across SQLite shutdown/reopen
+ok 2 - MEM-02: objective persists across SQLite shutdown/reopen
+  ---
+  duration_ms: 3.079865
+  type: 'test'
+  ...
+# Subtest: MEM-03: observations survive SQLite process reopening
+ok 3 - MEM-03: observations survive SQLite process reopening
+  ---
+  duration_ms: 2.822403
+  type: 'test'
+  ...
+# Subtest: MEM-04: objective replacement clears older observations
+ok 4 - MEM-04: objective replacement clears older observations
+  ---
+  duration_ms: 1.793518
+  type: 'test'
+  ...
+# Subtest: MEM-05: setting same objective preserves observations
+ok 5 - MEM-05: setting same objective preserves observations
+  ---
+  duration_ms: 1.885579
+  type: 'test'
+  ...
+# Subtest: MEM-06: owner isolation
+ok 6 - MEM-06: owner isolation
+  ---
+  duration_ms: 1.241223
+  type: 'test'
+  ...
+# Subtest: MEM-07: session isolation
+ok 7 - MEM-07: session isolation
+  ---
+  duration_ms: 1.470693
+  type: 'test'
+  ...
+# Subtest: MEM-08: room isolation
+ok 8 - MEM-08: room isolation
+  ---
+  duration_ms: 1.180219
+  type: 'test'
+  ...
+# Subtest: MEM-09: memory rejects bad tenant and room
+ok 9 - MEM-09: memory rejects bad tenant and room
+  ---
+  duration_ms: 1.878866
+  type: 'test'
+  ...
+# Subtest: MEM-10: memory retains 48 observations but returns at most 12
+ok 10 - MEM-10: memory retains 48 observations but returns at most 12
+  ---
+  duration_ms: 28.775399
+  type: 'test'
+  ...
+# Subtest: MEM-11: invalid status rejected
+ok 11 - MEM-11: invalid status rejected
+  ---
+  duration_ms: 1.652392
+  type: 'test'
+  ...
+# Subtest: MEM-12: memory file permissions are private on POSIX
+ok 12 - MEM-12: memory file permissions are private on POSIX
+  ---
+  duration_ms: 1.022053
+  type: 'test'
+  ...
+# Subtest: MEM-13: observations preserve structured JSON values (expected product requirement)
+not ok 13 - MEM-13: observations preserve structured JSON values (expected product requirement)
+  ---
+  duration_ms: 2.148311
+  type: 'test'
+  location: '/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:74:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Observation should be structured data, not a JSON-encoded string
+    
+    'string' !== 'object'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'object'
+  actual: 'string'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:76:60)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: MEM-14: short-term objective recoverable after owner renews Auth21 session (expected medium-term requirement)
+not ok 14 - MEM-14: short-term objective recoverable after owner renews Auth21 session (expected medium-term requirement)
+  ---
+  duration_ms: 1.721352
+  type: 'test'
+  location: '/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:78:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected owner-approved continuity across session refresh
+    + actual - expected
+    
+    + null
+    - 'analyse BTC'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'analyse BTC'
+  actual: ~
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:80:9)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: MEM-15: stale observations are marked before use (expected context recovery requirement)
+not ok 15 - MEM-15: stale observations are marked before use (expected context recovery requirement)
+  ---
+  duration_ms: 1.568927
+  type: 'test'
+  location: '/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:82:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Age > 1h should not remain an implicitly current observation
+    + actual - expected
+    
+    + undefined
+    - true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/workspace/scratch/6bed0bea6f2d/iatb-supervisor301/App/Supervisor/Tests/SupervisorEngine/foundation.test.js:85:63)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: CP1-01: discover queries a gateway and returns capabilities
+ok 16 - CP1-01: discover queries a gateway and returns capabilities
+  ---
+  duration_ms: 1.47464
+  type: 'test'
+  ...
+# Subtest: CP1-02: allowed read command traverses gateway and writes observation
+ok 17 - CP1-02: allowed read command traverses gateway and writes observation
+  ---
+  duration_ms: 1.781084
+  type: 'test'
+  ...
+# Subtest: CP1-03: dangerous financial command rejected before transport
+ok 18 - CP1-03: dangerous financial command rejected before transport
+  ---
+  duration_ms: 0.961068
+  type: 'test'
+  ...
+# Subtest: CP1-04: DENY privilege is blocked before transport
+ok 19 - CP1-04: DENY privilege is blocked before transport
+  ---
+  duration_ms: 2.465115
+  type: 'test'
+  ...
+# Subtest: CP1-05: offline engine is blocked before transport
+ok 20 - CP1-05: offline engine is blocked before transport
+  ---
+  duration_ms: 1.643356
+  type: 'test'
+  ...
+# Subtest: CP1-06: hard-deny contract is blocked before transport
+ok 21 - CP1-06: hard-deny contract is blocked before transport
+  ---
+  duration_ms: 2.023137
+  type: 'test'
+  ...
+# Subtest: CP1-07: unqualified contract is blocked before transport
+ok 22 - CP1-07: unqualified contract is blocked before transport
+  ---
+  duration_ms: 1.460974
+  type: 'test'
+  ...
+# Subtest: CP1-08: side-effect contract is blocked before transport
+ok 23 - CP1-08: side-effect contract is blocked before transport
+  ---
+  duration_ms: 1.708207
+  type: 'test'
+  ...
+# Subtest: CP1-09: gateway temporarily absent does not lose objective
+ok 24 - CP1-09: gateway temporarily absent does not lose objective
+  ---
+  duration_ms: 2.082318
+  type: 'test'
+  ...
+# Subtest: CP1-10: timeout produces explicit unknown observation
+ok 25 - CP1-10: timeout produces explicit unknown observation
+  ---
+  duration_ms: 1.985988
+  type: 'test'
+  ...
+# Subtest: CP1-11: unavailable discovery does not invent engines
+ok 26 - CP1-11: unavailable discovery does not invent engines
+  ---
+  duration_ms: 1.163438
+  type: 'test'
+  ...
+# Subtest: CP1-12: gateway throws on discovery; no stale connected claim
+ok 27 - CP1-12: gateway throws on discovery; no stale connected claim
+  ---
+  duration_ms: 1.223961
+  type: 'test'
+  ...
+# Subtest: SEC-01: unverified principal refused
+ok 28 - SEC-01: unverified principal refused
+  ---
+  duration_ms: 1.192322
+  type: 'test'
+  ...
+# Subtest: SEC-02: missing session hash refused
+ok 29 - SEC-02: missing session hash refused
+  ---
+  duration_ms: 1.81133
+  type: 'test'
+  ...
+# Subtest: CTX-01: working objective included in cognitive context facade
+ok 30 - CTX-01: working objective included in cognitive context facade
+  ---
+  duration_ms: 1.648866
+  type: 'test'
+  ...
+# Subtest: CTX-02: observation refresh follows changed gateway data
+ok 31 - CTX-02: observation refresh follows changed gateway data
+  ---
+  duration_ms: 2.383911
+  type: 'test'
+  ...
+# Subtest: SEC-03: changing objective resets old sensitive observations
+ok 32 - SEC-03: changing objective resets old sensitive observations
+  ---
+  duration_ms: 1.44816
+  type: 'test'
+  ...
+1..32
+# tests 32
+# suites 0
+# pass 29
+# fail 3
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 269.236588

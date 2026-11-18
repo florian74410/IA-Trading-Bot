@@ -569,6 +569,160 @@
           "type": "object"
         },
         "contractVersion": "2.6.0-dev.5"
+      },
+      {
+        "name": "supervisor.engine.context",
+        "transport": "OWNER",
+        "description": "Auth21 owner-only Supervisor Engine 3.0.1 operation; uses supervisor.user.request. Never an autonomous agent tool.",
+        "arguments": {
+          "allowed": [
+            "room",
+            "workspace_id"
+          ],
+          "required": []
+        },
+        "input": {
+          "type": "object",
+          "properties": {
+            "room": {
+              "type": "string",
+              "pattern": "^[-A-Za-z0-9_]{1,64}$"
+            },
+            "workspace_id": {
+              "type": "string",
+              "pattern": "^[-A-Za-z0-9_]{1,64}$"
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        },
+        "output": {
+          "type": "object"
+        },
+        "contractVersion": "3.0.1-dev.1"
+      },
+      {
+        "name": "supervisor.engine.objective",
+        "transport": "OWNER",
+        "description": "Auth21 owner-only Supervisor Engine 3.0.1 operation; uses supervisor.user.request. Never an autonomous agent tool.",
+        "arguments": {
+          "allowed": [
+            "room",
+            "workspace_id",
+            "objective"
+          ],
+          "required": [
+            "objective"
+          ]
+        },
+        "input": {
+          "type": "object",
+          "properties": {
+            "room": {
+              "type": "string",
+              "pattern": "^[-A-Za-z0-9_]{1,64}$"
+            },
+            "workspace_id": {
+              "type": "string",
+              "pattern": "^[-A-Za-z0-9_]{1,64}$"
+            },
+            "objective": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1200
+            }
+          },
+          "required": [
+            "objective"
+          ],
+          "additionalProperties": false
+        },
+        "output": {
+          "type": "object"
+        },
+        "contractVersion": "3.0.1-dev.1"
+      },
+      {
+        "name": "supervisor.engine.discover",
+        "transport": "OWNER",
+        "description": "Auth21 owner-only Supervisor Engine 3.0.1 operation; uses supervisor.user.request. Never an autonomous agent tool.",
+        "arguments": {
+          "allowed": [
+            "room",
+            "workspace_id",
+            "recover"
+          ],
+          "required": []
+        },
+        "input": {
+          "type": "object",
+          "properties": {
+            "room": {
+              "type": "string",
+              "pattern": "^[-A-Za-z0-9_]{1,64}$"
+            },
+            "workspace_id": {
+              "type": "string",
+              "pattern": "^[-A-Za-z0-9_]{1,64}$"
+            },
+            "recover": {
+              "type": "boolean"
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        },
+        "output": {
+          "type": "object"
+        },
+        "contractVersion": "3.0.1-dev.1"
+      },
+      {
+        "name": "supervisor.engine.observe",
+        "transport": "OWNER",
+        "description": "Auth21 owner-only Supervisor Engine 3.0.1 operation; uses supervisor.user.request. Never an autonomous agent tool.",
+        "arguments": {
+          "allowed": [
+            "room",
+            "workspace_id",
+            "engine",
+            "command"
+          ],
+          "required": [
+            "engine",
+            "command"
+          ]
+        },
+        "input": {
+          "type": "object",
+          "properties": {
+            "room": {
+              "type": "string",
+              "pattern": "^[-A-Za-z0-9_]{1,64}$"
+            },
+            "workspace_id": {
+              "type": "string",
+              "pattern": "^[-A-Za-z0-9_]{1,64}$"
+            },
+            "engine": {
+              "type": "string",
+              "maxLength": 40
+            },
+            "command": {
+              "type": "string",
+              "maxLength": 96
+            }
+          },
+          "required": [
+            "engine",
+            "command"
+          ],
+          "additionalProperties": false
+        },
+        "output": {
+          "type": "object"
+        },
+        "contractVersion": "3.0.1-dev.1"
       }
     ],
     "dataTypes": [
