@@ -173,12 +173,17 @@
         "timeframe"
       ],
       "okx_operation": null,
-      "implementation": "RECOGNITION_ONLY",
+      "implementation": "READ_GATEWAY_PROCEDURE",
       "risk_level": "LOW",
       "confirmation": "NO_FINANCIAL_EXECUTION",
       "parameters_contract": "intent.parameters/1.0",
       "cp1": null,
-      "parameters_schema": "intent.parameters/1.0"
+      "parameters_schema": "intent.parameters/1.0",
+      "help": {
+        "prerequisites": [
+          "Agent CP1 disponible."
+        ]
+      }
     }
   ]
 }

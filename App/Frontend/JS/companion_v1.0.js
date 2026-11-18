@@ -25,6 +25,50 @@ function restoreHistory(){
   if(j.messages&&j.messages.length){msgs.textContent='';j.messages.forEach(function(x){add(x.role==='user'?'me':'ai',x.content)})}
  }).catch(function(e){historyLoaded=false;add('ai','Historique indisponible : '+e.message)});
 }
+function renderHelp(message,help){
+ var card=el('div','iatbCompMsg ai iatbCompHelp'),title=el('strong','',message);
+ card.appendChild(title);
+ function link(id){
+  var button=el('button','iatbCompAction',id);
+  button.type='button';
+  button.onclick=function(){send(id==='Aide générale'?'aide':'aide '+id)};
+  return button;
+ }
+ function list(parent,label,values){
+  if(values.length)parent.appendChild(el('p','',label+' · '+values.join(' · ')));
+ }
+ if(help.groups){
+  help.groups.forEach(function(group){
+   var box=el('details'),heading=el('summary','',group.domain+' ('+group.intents.length+')');
+   box.appendChild(heading);
+   group.intents.forEach(function(intent){
+    var row=el('div','iatbCompHelpIntent');
+    row.appendChild(link(intent.id));
+    row.appendChild(el('p','',intent.description));
+    row.appendChild(el('p','','« '+intent.phrase+' »'));
+    list(row,'Prérequis',intent.prerequisites);
+    box.appendChild(row);
+   });
+   card.appendChild(box);
+  });
+ }else if(help.detail){
+  var detail=help.detail;
+  function parameter(p){return p.name+(p.values?' ('+p.values.join(' / ')+')':p.type?' ('+p.type+')':'')}
+  card.appendChild(el('p','',detail.description));
+  card.appendChild(el('p','',detail.effect));
+  card.appendChild(el('p','','Paramètres requis · '+(detail.required.map(parameter).join(' · ')||'aucun')));
+  card.appendChild(el('p','','Paramètres facultatifs · '+(detail.optional.map(parameter).join(' · ')||'aucun')));
+  list(card,'Conditions',detail.conditional);
+  list(card,'Prérequis',detail.prerequisites);
+  list(card,'Modes',detail.modes);
+  list(card,'Exemples',detail.examples);
+ }else{
+  card.appendChild(link('Aide générale'));
+  help.suggestions.forEach(function(id){card.appendChild(link(id))});
+ }
+ msgs.appendChild(card);
+ msgs.scrollTop+=card.getBoundingClientRect().top-msgs.getBoundingClientRect().top-8;
+}
 function send(text,forceOpenAI){
  text=String(text||'').trim();if(!text||busy||mode==='engines')return;
  if((mode==='cognitive'||mode==='hybrid')&&!authenticated()){add('ai','Connexion Auth21 requise pour discuter avec le Supervisor.');return}
@@ -32,7 +76,7 @@ function send(text,forceOpenAI){
  var requestedMode=mode,payload={message:text,mode:requestedMode,forceOpenAI:forceOpenAI===true,context:pageCtx(),state:{symbol:'',interval:''}};
  request('/api/companion/chat',payload).then(function(j){
   var t=j.message||(j.command&&j.command.message)||'Réponse reçue.';
-  add('ai',t);if(j.intent_id&&requestedMode==='hybrid')add('ai','['+(j.mode||'LOCAL')+'] '+j.intent_id+' · '+(j.status||''));if(j.preparation)showPreparation(j.preparation);setMood(j.mood||chooseMood(t));speak(t);
+  if(j.help)renderHelp(t,j.help);else add('ai',t);if(j.intent_id&&requestedMode==='hybrid')add('ai','['+(j.mode||'LOCAL')+'] '+j.intent_id+' · '+(j.status||''));if(j.preparation)showPreparation(j.preparation);setMood(j.mood||chooseMood(t));speak(t);
   if(requestedMode==='commands')window.dispatchEvent(new CustomEvent('iatb-companion-command',{detail:j}));
   statusLine(requestedMode==='hybrid'?'Mode '+(j.mode||'LOCAL')+' · '+(j.intent_id||'conversation'):requestedMode==='cognitive'?'Supervisor · '+String(j.model||'modèle configuré')+' · mémorisé':'Chat historique · actions contrôlées');
  }).catch(function(e){setMood(9);add('ai','Requête non exécutée : '+e.message)}).finally(function(){setBusy(false)});
@@ -112,10 +156,37 @@ function mount(){root=el('div');root.id='iatbCompanion';var bot=el('div','iatbCo
   var b=el('button','',pair[1]);b.type='button';b.dataset.mode=pair[0];b.onclick=function(){changeMode(pair[0])};tabBar.appendChild(b);
  });
  chatForm=form;sendButton=go;contextLabel=ctx;
- panel.appendChild(head);panel.appendChild(tabBar);panel.appendChild(msgs);panel.appendChild(setupEnginePanel());panel.appendChild(ctx);panel.appendChild(form);root.appendChild(panel);root.appendChild(bot);document.body.appendChild(root);bot.onclick=function(e){if(e.target===mic)return;if(drag&&drag.moved)return;if(panel.classList.contains('hide')){panel.classList.remove('hide');panel.classList.remove('iatbCompClosing')}else closePanel();setMood(1)};mic.onclick=function(e){e.stopPropagation();voiceEnabled=true;setupVoice()};bot.onmousedown=function(e){if(e.target===mic)return;drag={x:e.clientX,y:e.clientY,left:root.offsetLeft,top:root.offsetTop,moved:false};e.preventDefault()};document.addEventListener('mousemove',function(e){window.__iatbMouseX=e.clientX;window.__iatbMouseY=e.clientY;var h=e.target;if(h)lastHover=(h.id||h.getAttribute&&h.getAttribute('data-view')||h.tagName||'').slice(0,80);if(!drag)return;var dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(Math.abs(dx)+Math.abs(dy)>4)drag.moved=true;root.style.right='auto';root.style.bottom='auto';root.style.left=Math.max(0,Math.min(innerWidth-74,drag.left+dx))+'px';root.style.top=Math.max(0,Math.min(innerHeight-74,drag.top+dy))+'px'});document.addEventListener('mouseup',function(){drag=null});resetIdle();setupHybridControls();setupPanelInteraction(head);changeMode(authenticated()?'hybrid':'commands')}
+ panel.appendChild(head);panel.appendChild(tabBar);panel.appendChild(msgs);panel.appendChild(setupEnginePanel());panel.appendChild(ctx);panel.appendChild(form);root.appendChild(panel);root.appendChild(bot);document.body.appendChild(root);bot.onclick=function(e){if(e.target===mic)return;if(drag&&drag.moved)return;if(panel.classList.contains('hide')){panel.classList.remove('hide');panel.classList.remove('iatbCompClosing');fitPanel()}else closePanel();setMood(1)};mic.onclick=function(e){e.stopPropagation();voiceEnabled=true;setupVoice()};bot.onmousedown=function(e){if(e.target===mic)return;drag={x:e.clientX,y:e.clientY,left:root.offsetLeft,top:root.offsetTop,moved:false};e.preventDefault()};document.addEventListener('mousemove',function(e){window.__iatbMouseX=e.clientX;window.__iatbMouseY=e.clientY;var h=e.target;if(h)lastHover=(h.id||h.getAttribute&&h.getAttribute('data-view')||h.tagName||'').slice(0,80);if(!drag)return;var dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(Math.abs(dx)+Math.abs(dy)>4)drag.moved=true;root.style.right='auto';root.style.bottom='auto';root.style.left=Math.max(0,Math.min(innerWidth-74,drag.left+dx))+'px';root.style.top=Math.max(0,Math.min(innerHeight-74,drag.top+dy))+'px'});document.addEventListener('mouseup',function(){drag=null});resetIdle();setupHybridControls();setupPanelInteraction(head);changeMode(authenticated()?'hybrid':'commands')}
 function closePanel(){panel.classList.add('iatbCompClosing');setTimeout(function(){panel.classList.add('hide');panel.classList.remove('iatbCompClosing')},140)}
 function setupHybridControls(){var modeSelect=document.getElementById('hybridChatbotMode'),fallback=document.getElementById('hybridChatbotFallback'),save=document.getElementById('saveHybridChatbot'),status=document.getElementById('hybridChatbotSettingsStatus');if(!modeSelect||!save||!authenticated())return;request('/api/settings/chatbot').then(function(r){modeSelect.value=r.settings.mode;fallback.checked=r.settings.autoFallback}).catch(function(e){status.textContent=e.message});save.onclick=function(){save.disabled=true;request('/api/settings/chatbot',{mode:modeSelect.value,autoFallback:fallback.checked}).then(function(){status.textContent='Mode enregistré dans ton profil.'}).catch(function(e){status.textContent=e.message}).finally(function(){save.disabled=false})};}
-function setupPanelInteraction(head){var moving=null;head.onpointerdown=function(e){if(e.target.tagName==='BUTTON'||innerWidth<600)return;var r=panel.getBoundingClientRect();moving={x:e.clientX,y:e.clientY,left:r.left,top:r.top};e.preventDefault()};document.addEventListener('pointermove',function(e){if(!moving)return;panel.style.right='auto';panel.style.bottom='auto';panel.style.left=Math.max(8,Math.min(innerWidth-panel.offsetWidth-8,moving.left+e.clientX-moving.x))+'px';panel.style.top=Math.max(8,Math.min(innerHeight-panel.offsetHeight-8,moving.top+e.clientY-moving.y))+'px'});document.addEventListener('pointerup',function(){moving=null});}
+function fitPanel(){
+ if(panel.classList.contains('hide')||!panel.style.left||innerWidth<=600)return;
+ panel.style.left=Math.max(8,Math.min(innerWidth-panel.offsetWidth-8,parseFloat(panel.style.left)))+'px';
+ panel.style.top=Math.max(8,Math.min(innerHeight-panel.offsetHeight-8,parseFloat(panel.style.top)))+'px';
+}
+function setupPanelInteraction(head){
+ var moving=null;
+ head.onpointerdown=function(e){
+  if(e.button!==0||e.target.closest('button')||innerWidth<=600)return;
+  var r=panel.getBoundingClientRect();
+  moving={x:e.clientX,y:e.clientY,left:r.left,top:r.top};
+  head.setPointerCapture(e.pointerId);
+  e.preventDefault();
+ };
+ head.onpointermove=function(e){
+  if(!moving)return;
+  panel.style.right='auto';
+  panel.style.bottom='auto';
+  panel.style.left=(moving.left+e.clientX-moving.x)+'px';
+  panel.style.top=(moving.top+e.clientY-moving.y)+'px';
+  fitPanel();
+ };
+ head.onlostpointercapture=function(){moving=null};
+ head.onpointerup=head.onpointercancel=function(){moving=null};
+ window.addEventListener('resize',fitPanel);
+ new ResizeObserver(fitPanel).observe(panel);
+}
+
 function showPreparation(p){var old=document.getElementById('iatbTransactionOverlay');if(old)old.remove();var overlay=el('div','iatbTransactionOverlay');overlay.id='iatbTransactionOverlay';var dialog=el('section','iatbTransactionDialog');dialog.setAttribute('role','dialog');dialog.setAttribute('aria-modal','true');dialog.setAttribute('aria-label','Préparation financière détaillée');var title=el('h2','','Préparation financière — '+p.operation);dialog.appendChild(title);var fields=[['Exchange',p.exchange],['Compte',p.account],['Demo / Live',p.environment],['Marché',p.market],['Instrument vérifié',p.instrument],['Instrument candidat',p.instrument_candidate],['Sens',p.side],['Type d’ordre',p.order_type],['Quantité',p.quantity],['Montant en devise de cotation',p.quote_amount],['Prix indicatif vérifié',p.current_price],['Prix limite',p.limit_price],['Déclencheur',p.trigger_price],['Frais estimés',p.estimated_fees],['Slippage',p.slippage],['Coût total estimé',p.estimated_total],['Solde disponible vérifié',p.available_balance],['Levier demandé',p.requested_leverage],['Levier vérifié',p.verified_leverage],['Marge requise',p.margin_required],['Marge disponible',p.margin_available],['Liquidation indicative',p.liquidation_price],['Funding',p.funding_rate],['Quantité et unité',p.quantity_unit],['Plan',p.steps],['Paramètres exacts',p.spec],['Protections proposées',p.protections],['Position',p.position_id],['Ordre',p.order_id],['Part à fermer',p.close_fraction],['Valeurs initiales',p.initial_values],['Modifications demandées',p.requested_changes],['Scores Risk',p.risk_scores],['Décision Risk',p.risk_decision],['Qualification Trading',p.qualification],['Identifiant',p.id],['Valide jusqu’à',new Date(p.expires_at).toLocaleString()]],table=el('dl','iatbTransactionFields');fields.forEach(function(row){table.appendChild(el('dt','',row[0]));table.appendChild(el('dd','',row[1]===null||row[1]===undefined?'N/C':typeof row[1]==='object'?JSON.stringify(row[1]):String(row[1])))});dialog.appendChild(table);dialog.appendChild(el('p','iatbTransactionWarnings',(p.warnings||[]).join('\n')));var status=el('p','',p.confirmable?'Ordre réel : vérifie les montants avant de confirmer.':'Confirmation indisponible : Risk ou autorité d’exécution non validés.');status.setAttribute('role','status');dialog.appendChild(status);var actions=el('div','iatbTransactionActions'),confirm=el('button','iatbCompAction','Confirmer'),cancel=el('button','iatbCompAction','Annuler');var riskLabel=el('label','iatbTransactionWarnings'),riskAck=el('input');riskAck.type='checkbox';riskLabel.appendChild(riskAck);riskLabel.appendChild(el('span','','J’ai lu les avertissements et les informations N/C. J’accepte le risque supplémentaire pour cette demande.'));if(p.requires_acknowledgement)dialog.appendChild(riskLabel);confirm.disabled=p.confirmable!==true||p.requires_acknowledgement===true;riskAck.onchange=function(){confirm.disabled=p.confirmable!==true||!riskAck.checked;confirm.setAttribute('aria-disabled',String(confirm.disabled))};confirm.setAttribute('aria-disabled',String(confirm.disabled));confirm.title=p.confirmable?'Confirmer cet ordre réel':'Risk ou autorité indisponible';cancel.type='button';var previous=document.activeElement;function dismiss(){request('/api/companion/cancel',{preparation_id:p.id}).then(function(){overlay.remove();if(previous&&previous.focus)previous.focus()}).catch(function(e){status.textContent=e.message})}cancel.onclick=dismiss;confirm.onclick=function(){if(confirm.disabled)return;confirm.disabled=true;cancel.disabled=true;request('/api/companion/confirm',{preparation_id:p.id,digest:p.digest,...(p.requires_acknowledgement?{acknowledge_warnings:riskAck.checked}:{})}).then(function(r){status.textContent=r.message||r.status;add('ai',r.message||r.status);if(r.notification&&window.IATBNotify)window.IATBNotify.small({title:r.notification.title,text:r.notification.message,modal:false});var refresh=el('button','iatbCompAction',r.steps?'Reprendre le plan confirmé':'Vérifier l’état');refresh.onclick=function(){refresh.disabled=true;request(r.steps?'/api/companion/resume-plan':'/api/companion/reconcile',{preparation_id:p.id}).then(function(next){status.textContent=next.message||next.status;add('ai',next.message||next.status);if(next.notification&&window.IATBNotify)window.IATBNotify.small({title:next.notification.title,text:next.notification.message,modal:false});}).catch(function(e){status.textContent=e.message}).finally(function(){refresh.disabled=false})};actions.appendChild(refresh);cancel.textContent='Fermer';cancel.disabled=false;cancel.onclick=function(){overlay.remove();if(previous&&previous.focus)previous.focus()};dialog.onkeydown=function(e){if(e.key==='Escape'){e.preventDefault();cancel.click()}if(e.key==='Tab'){e.preventDefault();var focusable=Array.prototype.slice.call(dialog.querySelectorAll('button:not([disabled]),input:not([disabled]),[tabindex="0"]')).filter(function(n){return n.offsetParent!==null});var at=focusable.indexOf(document.activeElement);if(focusable.length)focusable[(at+(e.shiftKey?-1:1)+focusable.length)%focusable.length].focus()}}}).catch(function(e){status.textContent=e.message;cancel.disabled=false})};actions.appendChild(confirm);actions.appendChild(cancel);dialog.appendChild(actions);overlay.appendChild(dialog);document.body.appendChild(overlay);dialog.onkeydown=function(e){if(e.key==='Escape'){e.preventDefault();dismiss()}if(e.key==='Tab'){e.preventDefault();var focusable=Array.prototype.slice.call(dialog.querySelectorAll('button:not([disabled]),input:not([disabled]),[tabindex="0"]')).filter(function(n){return n.offsetParent!==null});var at=focusable.indexOf(document.activeElement);if(focusable.length)focusable[(at+(e.shiftKey?-1:1)+focusable.length)%focusable.length].focus()}};cancel.focus();}
 function addLater(box,w,t){var d=el('div','iatbCompMsg '+w,t);box.appendChild(d)}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount);else mount();})();

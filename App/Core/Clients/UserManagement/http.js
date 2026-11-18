@@ -41,7 +41,7 @@ function createHandler({sessions,origin,secret,bridge=null,aiTransport=null,pers
     return reply(res,grant&&active&&grant.clientId===active.clientId&&grant.role===active.role?200:403,{ok:!!grant&&!!active});
    }
    if(!cookies.originAllowed(req))return reply(res,403,{error:'ORIGIN_FORBIDDEN'});
-   if(p==='/api/health'&&req.method==='GET')return reply(res,200,{ok:true,authentication:'Auth21',version:require('../../Shared/build_info').version});
+   if(p==='/api/health'&&req.method==='GET')return reply(res,200,{ok:true,authentication:'Auth21',version:require('../../Shared/build_info').version,build:require('../../Shared/build_info').build});
    if(['/auth21/login','/api/login'].includes(p)&&req.method==='POST'){
     const b=await read(req);if(u.search||Object.keys(b).sort().join(',')!=='email,password'||typeof b.password!=='string'||b.password.length>1024)return reply(res,400,{error:'INVALID_REQUEST'});
     const login=await sessions.loginEmail(b.email,b.password,req.socket.remoteAddress||'local');

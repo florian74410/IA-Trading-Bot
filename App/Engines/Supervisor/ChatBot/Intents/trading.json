@@ -53,7 +53,16 @@
         "engine": "trading",
         "command": "trading.execute"
       },
-      "parameters_schema": "intent.parameters/1.0"
+      "parameters_schema": "intent.parameters/1.0",
+      "help": {
+        "prerequisites": [
+          "Droits de trading et contrôles Risk requis pour la validation par Core."
+        ],
+        "conditional": [
+          "Prix limite requis pour LIMIT, POST_ONLY, IOC et FOK.",
+          "Mode de marge requis hors Spot."
+        ]
+      }
     },
     {
       "id": "trading.sell",
@@ -107,7 +116,16 @@
         "engine": "trading",
         "command": "trading.execute"
       },
-      "parameters_schema": "intent.parameters/1.0"
+      "parameters_schema": "intent.parameters/1.0",
+      "help": {
+        "prerequisites": [
+          "Droits de trading et contrôles Risk requis pour la validation par Core."
+        ],
+        "conditional": [
+          "Prix limite requis pour LIMIT, POST_ONLY, IOC et FOK.",
+          "Mode de marge requis hors Spot."
+        ]
+      }
     }
   ]
 }

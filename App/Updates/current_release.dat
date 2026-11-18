@@ -6,7 +6,7 @@
   "ui": "UI/Gateway/ui_service.js",
   "uiPort": 8000,
   "routerPort": 8021,
-  "revision": "3.1.0_Rev1",
+  "revision": "3.1.0_Rev2",
   "status": "DEBUG",
   "consolidation_source": "c0e94a1c9be92282f04e0e2f1db647277e10b2b1"
 }

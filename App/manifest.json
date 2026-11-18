@@ -9,7 +9,7 @@
   "ui_entrypoint": "UI/Gateway/ui_service.js",
   "ui_port": 8000,
   "router_port": 8021,
-  "revision": "3.1.0_Rev1",
+  "revision": "3.1.0_Rev2",
   "supervisor_engine_version": "3.0.1",
   "manual_trading": "ADVANCED_OKX_MANUAL_CONFIRMED",
   "engines_layout": "App/Engines/<Engine>/",

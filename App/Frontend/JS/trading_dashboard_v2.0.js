@@ -1,6 +1,5 @@
 (function(){
 'use strict';
-var VERSION='2.0.0';
 function el(tag,cls,html){var n=document.createElement(tag);if(cls)n.className=cls;if(html!==undefined)n.innerHTML=html;return n}
 function q(s){return document.querySelector(s)}
 function byId(id){return document.getElementById(id)}
@@ -113,9 +112,9 @@ function serviceStrip(){
   /* Runtime topology mirrors start.command. Firewall Trading/Data are internal
      protection threads on the single Firewall service (8017), not extra ports. */
   var services=[['Core','8001'],['Market Data','8013'],['Indicators','8012'],['Liquidity','8014'],['Fundamental','8015'],['Risk Engine','8019'],['Trading Engine','8016'],['Strategy Engine','8018'],['Portfolio Engine','8020'],['Router','8021'],['Firewall','8017'],['IA Supervisor','3000']];
-  var h='<div class="iatbSvcTitle">ÉTAT DES SERVICES <span>runtime local v'+VERSION+'</span></div><div class="iatbSvcList">';
+  var h='<div class="iatbSvcTitle">ÉTAT DES SERVICES <span data-runtime-build>Version indisponible</span></div><div class="iatbSvcList">';
   for(var i=0;i<services.length;i++)h+='<div class="iatbSvc"><span class="iatbSvcTop"><i class="iatbSvcDot" data-svc="'+services[i][0]+'"></i>'+services[i][0]+'</span><span class="iatbSvcPort">'+services[i][1]+'</span></div>';
-  h+='</div><div class="iatbSvcTail"><div><small>LATENCE</small><strong id="tdLatency">—</strong></div><div><small>UPTIME</small><strong id="tdUptime">—</strong></div></div>';n.innerHTML=h;return n;
+  h+='</div><div class="iatbSvcTail"><div><small>LATENCE</small><strong id="tdLatency">—</strong></div><div><small>UPTIME</small><strong id="tdUptime">—</strong></div></div>';n.innerHTML=h;if(window.IATBRuntimeBuild)window.IATBRuntimeBuild.apply(n.querySelector('[data-runtime-build]'));return n;
 }
 
 function syncExchangeSelection(){

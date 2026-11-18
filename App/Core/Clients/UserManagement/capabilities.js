@@ -4,6 +4,7 @@
 function describe(role){
  return {
   version:require('../../Shared/build_info').version,
+  build:require('../../Shared/build_info').build,
   accounts:'LOCAL_ADMIN_CLI',
   profile:true,
   privateWorkspace:role!=='GUEST',
