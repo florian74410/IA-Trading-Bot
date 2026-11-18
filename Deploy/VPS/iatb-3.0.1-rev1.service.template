@@ -1,0 +1,23 @@
+# TEMPLATE ONLY. Adapt User/Group, install path and private directory after manual smoke test.
+# Never run two IA-TB versions simultaneously on identical ports or private databases.
+[Unit]
+Description=IA-TB 3.0.1_Rev1 authenticated local process group
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=iatb
+Group=iatb
+WorkingDirectory=/opt/iatb/releases/3.0.1_Rev1
+Environment=IATB_AUTH21_LOCAL_PRIVATE=/var/lib/iatb/auth21-private
+ExecStart=/bin/bash /opt/iatb/releases/3.0.1_Rev1/Deploy/VPS/launch_vps.sh
+Restart=on-failure
+RestartSec=10
+UMask=0077
+NoNewPrivileges=true
+LimitNOFILE=65535
+TimeoutStopSec=25
+
+[Install]
+WantedBy=multi-user.target
