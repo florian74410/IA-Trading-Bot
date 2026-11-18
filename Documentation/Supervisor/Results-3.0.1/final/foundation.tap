@@ -1,0 +1,334 @@
+TAP version 13
+# (node:336) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: MEM-01: empty memory has no invented objective or observations
+ok 1 - MEM-01: empty memory has no invented objective or observations
+  ---
+  duration_ms: 9.761624
+  type: 'test'
+  ...
+# Subtest: MEM-02: objective persists across SQLite shutdown/reopen
+ok 2 - MEM-02: objective persists across SQLite shutdown/reopen
+  ---
+  duration_ms: 5.574836
+  type: 'test'
+  ...
+# Subtest: MEM-03: observations survive SQLite process reopening
+ok 3 - MEM-03: observations survive SQLite process reopening
+  ---
+  duration_ms: 4.770981
+  type: 'test'
+  ...
+# Subtest: MEM-04: objective replacement clears older observations
+ok 4 - MEM-04: objective replacement clears older observations
+  ---
+  duration_ms: 3.048437
+  type: 'test'
+  ...
+# Subtest: MEM-05: setting same objective preserves observations
+ok 5 - MEM-05: setting same objective preserves observations
+  ---
+  duration_ms: 3.318704
+  type: 'test'
+  ...
+# Subtest: MEM-06: owner isolation
+ok 6 - MEM-06: owner isolation
+  ---
+  duration_ms: 2.022436
+  type: 'test'
+  ...
+# Subtest: MEM-07: authenticated owner continuity across session renewal (3.0.1 policy)
+ok 7 - MEM-07: authenticated owner continuity across session renewal (3.0.1 policy)
+  ---
+  duration_ms: 2.382801
+  type: 'test'
+  ...
+# Subtest: MEM-08: room isolation
+ok 8 - MEM-08: room isolation
+  ---
+  duration_ms: 1.706414
+  type: 'test'
+  ...
+# Subtest: MEM-09: memory rejects bad tenant and room
+ok 9 - MEM-09: memory rejects bad tenant and room
+  ---
+  duration_ms: 7.35583
+  type: 'test'
+  ...
+# Subtest: MEM-10: memory retains 48 observations but returns at most 12
+ok 10 - MEM-10: memory retains 48 observations but returns at most 12
+  ---
+  duration_ms: 147.878881
+  type: 'test'
+  ...
+# Subtest: MEM-11: invalid status rejected
+ok 11 - MEM-11: invalid status rejected
+  ---
+  duration_ms: 2.32905
+  type: 'test'
+  ...
+# Subtest: MEM-12: memory file permissions are private on POSIX
+ok 12 - MEM-12: memory file permissions are private on POSIX
+  ---
+  duration_ms: 1.258997
+  type: 'test'
+  ...
+# Subtest: MEM-13: observations preserve structured JSON values (expected product requirement)
+ok 13 - MEM-13: observations preserve structured JSON values (expected product requirement)
+  ---
+  duration_ms: 1.678553
+  type: 'test'
+  ...
+# Subtest: MEM-14: short-term objective recoverable after owner renews Auth21 session (expected medium-term requirement)
+ok 14 - MEM-14: short-term objective recoverable after owner renews Auth21 session (expected medium-term requirement)
+  ---
+  duration_ms: 1.994584
+  type: 'test'
+  ...
+# Subtest: MEM-15: stale observations are marked before use (expected context recovery requirement)
+ok 15 - MEM-15: stale observations are marked before use (expected context recovery requirement)
+  ---
+  duration_ms: 1.417574
+  type: 'test'
+  ...
+# Subtest: CP1-01: discover queries a gateway and returns capabilities
+ok 16 - CP1-01: discover queries a gateway and returns capabilities
+  ---
+  duration_ms: 1.842039
+  type: 'test'
+  ...
+# Subtest: CP1-02: allowed read command traverses gateway and writes observation
+ok 17 - CP1-02: allowed read command traverses gateway and writes observation
+  ---
+  duration_ms: 2.063203
+  type: 'test'
+  ...
+# Subtest: CP1-03: dangerous financial command rejected before transport
+ok 18 - CP1-03: dangerous financial command rejected before transport
+  ---
+  duration_ms: 1.766618
+  type: 'test'
+  ...
+# Subtest: CP1-04: DENY privilege is blocked before transport
+ok 19 - CP1-04: DENY privilege is blocked before transport
+  ---
+  duration_ms: 1.98677
+  type: 'test'
+  ...
+# Subtest: CP1-05: offline engine is blocked before transport
+ok 20 - CP1-05: offline engine is blocked before transport
+  ---
+  duration_ms: 1.876684
+  type: 'test'
+  ...
+# Subtest: CP1-06: hard-deny contract is blocked before transport
+ok 21 - CP1-06: hard-deny contract is blocked before transport
+  ---
+  duration_ms: 1.588874
+  type: 'test'
+  ...
+# Subtest: CP1-07: unqualified contract is blocked before transport
+ok 22 - CP1-07: unqualified contract is blocked before transport
+  ---
+  duration_ms: 2.109649
+  type: 'test'
+  ...
+# Subtest: CP1-08: side-effect contract is blocked before transport
+ok 23 - CP1-08: side-effect contract is blocked before transport
+  ---
+  duration_ms: 1.941174
+  type: 'test'
+  ...
+# Subtest: CP1-09: gateway temporarily absent does not lose objective
+ok 24 - CP1-09: gateway temporarily absent does not lose objective
+  ---
+  duration_ms: 2.438395
+  type: 'test'
+  ...
+# Subtest: CP1-10: timeout produces explicit unknown observation
+ok 25 - CP1-10: timeout produces explicit unknown observation
+  ---
+  duration_ms: 2.487116
+  type: 'test'
+  ...
+# Subtest: CP1-11: unavailable discovery does not invent engines
+ok 26 - CP1-11: unavailable discovery does not invent engines
+  ---
+  duration_ms: 1.229511
+  type: 'test'
+  ...
+# Subtest: CP1-12: gateway throws on discovery; no stale connected claim
+ok 27 - CP1-12: gateway throws on discovery; no stale connected claim
+  ---
+  duration_ms: 1.504207
+  type: 'test'
+  ...
+# Subtest: SEC-01: unverified principal refused
+ok 28 - SEC-01: unverified principal refused
+  ---
+  duration_ms: 1.07353
+  type: 'test'
+  ...
+# Subtest: SEC-02: missing session hash refused
+ok 29 - SEC-02: missing session hash refused
+  ---
+  duration_ms: 1.15871
+  type: 'test'
+  ...
+# Subtest: CTX-01: working objective included in cognitive context facade
+ok 30 - CTX-01: working objective included in cognitive context facade
+  ---
+  duration_ms: 2.031122
+  type: 'test'
+  ...
+# Subtest: CTX-02: observation refresh follows changed gateway data
+ok 31 - CTX-02: observation refresh follows changed gateway data
+  ---
+  duration_ms: 3.070528
+  type: 'test'
+  ...
+# Subtest: SEC-03: changing objective resets old sensitive observations
+ok 32 - SEC-03: changing objective resets old sensitive observations
+  ---
+  duration_ms: 2.546267
+  type: 'test'
+  ...
+# (node:344) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: typed observation round trip: {"a":1,"nested":{"b":false,"c":null}}
+ok 33 - typed observation round trip: {"a":1,"nested":{"b":false,"c":null}}
+  ---
+  duration_ms: 15.459996
+  type: 'test'
+  ...
+# Subtest: typed observation round trip: [1,"string",false,null]
+ok 34 - typed observation round trip: [1,"string",false,null]
+  ---
+  duration_ms: 3.938894
+  type: 'test'
+  ...
+# Subtest: typed observation round trip: "not JSON: {x}"
+ok 35 - typed observation round trip: "not JSON: {x}"
+  ---
+  duration_ms: 3.53626
+  type: 'test'
+  ...
+# Subtest: typed observation round trip: 123
+ok 36 - typed observation round trip: 123
+  ---
+  duration_ms: 2.50532
+  type: 'test'
+  ...
+# Subtest: typed observation round trip: false
+ok 37 - typed observation round trip: false
+  ---
+  duration_ms: 3.10389
+  type: 'test'
+  ...
+# Subtest: typed observation round trip: null
+ok 38 - typed observation round trip: null
+  ---
+  duration_ms: 2.520078
+  type: 'test'
+  ...
+# Subtest: recursive sanitizer rejects malformed, cyclic and excessive input without changing revision
+ok 39 - recursive sanitizer rejects malformed, cyclic and excessive input without changing revision
+  ---
+  duration_ms: 4.202016
+  type: 'test'
+  ...
+# Subtest: secrets, grants and session material are removed recursively before SQLite storage
+ok 40 - secrets, grants and session material are removed recursively before SQLite storage
+  ---
+  duration_ms: 2.83101
+  type: 'test'
+  ...
+# Subtest: workspace objective survives session renewal; owner and context isolation stay strict
+ok 41 - workspace objective survives session renewal; owner and context isolation stay strict
+  ---
+  duration_ms: 4.025987
+  type: 'test'
+  ...
+# Subtest: per-command TTL, unknown availability and future observations are explicit
+ok 42 - per-command TTL, unknown availability and future observations are explicit
+  ---
+  duration_ms: 4.463917
+  type: 'test'
+  ...
+# Subtest: dev1 migration is atomic, idempotent and never guesses the type of a legacy string
+ok 43 - dev1 migration is atomic, idempotent and never guesses the type of a legacy string
+  ---
+  duration_ms: 3.257248
+  type: 'test'
+  ...
+# Subtest: unknown future schema is rejected without destructive migration
+ok 44 - unknown future schema is rejected without destructive migration
+  ---
+  duration_ms: 1.623519
+  type: 'test'
+  ...
+# Subtest: 100 writes and interleaved owners/contexts preserve integrity and limits
+ok 45 - 100 writes and interleaved owners/contexts preserve integrity and limits
+  ---
+  duration_ms: 82.415838
+  type: 'test'
+  ...
+# Subtest: SIGKILL recovery committed retains committed data only
+ok 46 - SIGKILL recovery committed retains committed data only
+  ---
+  duration_ms: 98.496606
+  type: 'test'
+  ...
+# Subtest: SIGKILL recovery transaction retains committed data only
+ok 47 - SIGKILL recovery transaction retains committed data only
+  ---
+  duration_ms: 87.142321
+  type: 'test'
+  ...
+# Subtest: late CP1 observation cannot attach to a replaced goal
+ok 48 - late CP1 observation cannot attach to a replaced goal
+  ---
+  duration_ms: 6.103976
+  type: 'test'
+  ...
+# Subtest: context recovery refreshes stale observations with current grants; failures retain objective
+ok 49 - context recovery refreshes stale observations with current grants; failures retain objective
+  ---
+  duration_ms: 8.436344
+  type: 'test'
+  ...
+# Subtest: CognitiveRuntime MOCK receives exact typed fresh/stale/unknown data and a persistent goal
+ok 50 - CognitiveRuntime MOCK receives exact typed fresh/stale/unknown data and a persistent goal
+  ---
+  duration_ms: 21.343921
+  type: 'test'
+  ...
+# Subtest: parallel SQLite writers keep separate owner contexts and atomic revisions
+ok 51 - parallel SQLite writers keep separate owner contexts and atomic revisions
+  ---
+  duration_ms: 270.808445
+  type: 'test'
+  ...
+# Subtest: migration creates a private consistent dev1 backup usable for rollback
+ok 52 - migration creates a private consistent dev1 backup usable for rollback
+  ---
+  duration_ms: 3.927332
+  type: 'test'
+  ...
+# Subtest: observation data resembling instructions never enters the model system instructions
+ok 53 - observation data resembling instructions never enters the model system instructions
+  ---
+  duration_ms: 10.722383
+  type: 'test'
+  ...
+1..53
+# tests 53
+# suites 0
+# pass 53
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1108.033424
+(node:329) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)

@@ -1,0 +1,287 @@
+{
+  "name": "auth21",
+  "exit_code": 0,
+  "error": null,
+  "duration_ms": 39736,
+  "tests": 68,
+  "passed": 67,
+  "failed": 0,
+  "skipped": 1,
+  "cancelled": 0,
+  "failed_cases": [],
+  "cases": [
+    {
+      "name": "Core issued action and exact HTTP body hash verified at Router and Engine",
+      "status": "PASS"
+    },
+    {
+      "name": "body-digest mismatch and unauthorized principal fail closed",
+      "status": "PASS"
+    },
+    {
+      "name": "real TLS Core cookie authenticates and CSRF-gates mutations; HTTP never authenticates",
+      "status": "PASS"
+    },
+    {
+      "name": "proof is valid once for exact scoped operation; rejects replay",
+      "status": "PASS"
+    },
+    {
+      "name": "inter-process proof rejects forged audience, method, owner and expired token",
+      "status": "PASS"
+    },
+    {
+      "name": "different process key never authenticates and invalid payload fails closed",
+      "status": "PASS"
+    },
+    {
+      "name": "Router/Engine role enforcement uses signed proof, never claimed browser role",
+      "status": "PASS"
+    },
+    {
+      "name": "Core issues scoped proof only from verified server session and permitted owner",
+      "status": "PASS"
+    },
+    {
+      "name": "actual Gateway and Router reject unsupported upgrade requests",
+      "status": "PASS"
+    },
+    {
+      "name": "Auth21 isolated mode prevents legacy CP1 and WebSocket paths at both HTTP boundaries",
+      "status": "PASS"
+    },
+    {
+      "name": "Indicator: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT",
+      "status": "PASS"
+    },
+    {
+      "name": "MarketData: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT",
+      "status": "PASS"
+    },
+    {
+      "name": "Liquidity: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT",
+      "status": "PASS"
+    },
+    {
+      "name": "Fundamental: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT",
+      "status": "PASS"
+    },
+    {
+      "name": "Trading: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT",
+      "status": "PASS"
+    },
+    {
+      "name": "Firewall: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT",
+      "status": "PASS"
+    },
+    {
+      "name": "Strategy: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT",
+      "status": "PASS"
+    },
+    {
+      "name": "Risk: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT",
+      "status": "PASS"
+    },
+    {
+      "name": "Portfolio: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT",
+      "status": "PASS"
+    },
+    {
+      "name": "Supervisor: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT",
+      "status": "PASS"
+    },
+    {
+      "name": "legacy handler remains available when isolated Auth21 mode is off",
+      "status": "PASS"
+    },
+    {
+      "name": "trial boundary cannot be activated by partial flags",
+      "status": "PASS"
+    },
+    {
+      "name": "Gateway forwards only Auth21 routes and denies legacy pages and API",
+      "status": "PASS"
+    },
+    {
+      "name": "Router denies CP1, market data and fallback-to-Core in isolated mode",
+      "status": "PASS"
+    },
+    {
+      "name": "Engine direct HTTP paths default deny in isolated mode",
+      "status": "PASS"
+    },
+    {
+      "name": "real service HTTP entrypoints invoke the isolated boundary before legacy handlers",
+      "status": "PASS"
+    },
+    {
+      "name": "gateway method allowlist never forwards writes as reads or unknown operations",
+      "status": "PASS"
+    },
+    {
+      "name": "authenticated Firewall machine ingress requires the token and exact body signature",
+      "status": "PASS"
+    },
+    {
+      "name": "CLI historical Portfolio import preserves original rows, backs up committed WAL, rejects another claimant and rolls back interrupted copy",
+      "status": "PASS"
+    },
+    {
+      "name": "explicit wallet attribution retains original key/envelope and never exposes another owner wallet",
+      "status": "PASS"
+    },
+    {
+      "name": "explicit historical Settings attribution encrypts only the selected owner copy, preserves source and rejects conflicts",
+      "status": "PASS"
+    },
+    {
+      "name": "fictional market preload refuses real paths and unsupported vendor requests",
+      "status": "PASS"
+    },
+    {
+      "name": "real authenticated MarketData passes synthetic Binance candles through the real protection worker before cache",
+      "status": "PASS"
+    },
+    {
+      "name": "real SIGKILL between-v3-v4: durable backup, retry and rollback preserve historical data/key",
+      "status": "PASS"
+    },
+    {
+      "name": "real SIGKILL inside-v4: durable backup, retry and rollback preserve historical data/key",
+      "status": "PASS"
+    },
+    {
+      "name": "wrong original key refuses migration before creating backup or changing schema",
+      "status": "PASS"
+    },
+    {
+      "name": "canonical Mosaic validator and private settings prevent cross-user read, overwrite and delete",
+      "status": "PASS"
+    },
+    {
+      "name": "operator feed creation rejects literal private IPv6 and endpoint credentials through the canonical validator",
+      "status": "PASS"
+    },
+    {
+      "name": "real canonical Portfolio SQLite ledger isolates events/trades/balances/snapshots in existing DB and preserves legacy",
+      "status": "PASS"
+    },
+    {
+      "name": "actual Strategy owner dispatcher persists only own definitions, mode and canonical evaluations",
+      "status": "PASS"
+    },
+    {
+      "name": "public Fundamental provider metadata removes endpoint and nested credentials while keeping public feed configuration",
+      "status": "PASS"
+    },
+    {
+      "name": "mixed-case provider configuration and diagnostic errors never disclose operator credentials",
+      "status": "PASS"
+    },
+    {
+      "name": "every historical route enforces the ADMIN/USER/GUEST boundary with live TLS sessions",
+      "status": "PASS"
+    },
+    {
+      "name": "CP1 administration uses real Auth21 roles, HTTPS Origin and CSRF",
+      "status": "PASS"
+    },
+    {
+      "name": "personal API settings accept only explicit HTTPS RPC origins and never browser identity",
+      "status": "PASS"
+    },
+    {
+      "name": "authenticated Swap Bridge never falls back to an operator RPC credential",
+      "status": "PASS"
+    },
+    {
+      "name": "vault stores encrypted multi-owner assignments; scoped TLS client obtains only selected credential",
+      "status": "PASS"
+    },
+    {
+      "name": "ticket binds exact order and expires; revoked sessions and rotated assignments cannot release credentials",
+      "status": "PASS"
+    },
+    {
+      "name": "invalid and ambiguous registry changes do not rotate secrets; broker of an existing ID cannot change",
+      "status": "PASS"
+    },
+    {
+      "name": "internal EVM signer creates verifiable EIP712 signature without exporting key or broadcasting",
+      "status": "PASS"
+    },
+    {
+      "name": "signer checks revocation before releasing signature",
+      "status": "PASS"
+    },
+    {
+      "name": "real HTTPS account routes enforce password, CSRF, origin, owner isolation and internal machine authentication",
+      "status": "PASS"
+    },
+    {
+      "name": "vault machine proof is domain-bound, fresh, exact-body and single-use",
+      "status": "PASS"
+    },
+    {
+      "name": "offline migration backup and CLI first ADMIN preserve key and reject duplicate bootstrap",
+      "status": "PASS"
+    },
+    {
+      "name": "real Argon2 email authentication, persistent throttling, ciphertext and opaque sessions",
+      "status": "PASS"
+    },
+    {
+      "name": "two users cannot read preferences, secrets, sessions or audit of each other; GUEST write forbidden",
+      "status": "PASS"
+    },
+    {
+      "name": "password change revokes all sessions and preserves per-user ciphertext, email change revokes login",
+      "status": "PASS"
+    },
+    {
+      "name": "expiry and CLI disable invalidate live session and hashed interprocess session",
+      "status": "PASS"
+    },
+    {
+      "name": "production configuration rejects bypass and cannot silently use DEV credentials",
+      "status": "PASS"
+    },
+    {
+      "name": "real TLS HTTP handler: cookie, origin, CSRF, spoofed ownership, CLI-only administration and logout",
+      "status": "PASS"
+    },
+    {
+      "name": "actual Core and Gateway processes authenticate over pinned TLS, isolate language and deny web administration",
+      "status": "PASS"
+    },
+    {
+      "name": "real unprivileged owner TTY CLI authenticates ADMIN without echo and refuses a piped password # SKIP container maps only UID 0; no unprivileged OS identity is available",
+      "status": "SKIP"
+    },
+    {
+      "name": "legacy RSA vault imports once to explicit owner, survives password reset, original bytes remain untouched",
+      "status": "PASS"
+    },
+    {
+      "name": "literal legacy route inventory remains explicit; shared private routes default deny",
+      "status": "PASS"
+    },
+    {
+      "name": "historical SUPERADMIN and PBKDF2 identity survive migration with original key and clientId",
+      "status": "PASS"
+    },
+    {
+      "name": "owner AI transport selects only the live session owner key and rejects substitution before provider call",
+      "status": "PASS"
+    },
+    {
+      "name": "browser action acknowledgements are owner-scoped, single use and never execute Engine actions",
+      "status": "PASS"
+    },
+    {
+      "name": "offline CLI attributes canonical Indicator, Strategy and Mosaic definitions only to the named owner",
+      "status": "PASS"
+    }
+  ],
+  "ok": true
+}
