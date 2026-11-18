@@ -17,7 +17,7 @@
     ".github/workflows/cp1-registry-integration.yml": "9c84e4e647dc19d6b68b43554f128fdc0294af91117677e6e930a2e38b0fbaa8",
     ".github/workflows/hybrid-chatbot.yml": "e7383f6b5d0ec64a5b8a46dccbaff6511afe17496fc169a7842f40a0d79789df",
     ".github/workflows/iatb-301-rev1-full-source.yml": "6f15568d996e66c4bb30db570ad9b064790212dfc653099ceeac6fa73a052aee",
-    ".github/workflows/iatb-301-rev2.yml": "9cbe596761991b4d1f4f6781bec341207848ea362d41be16f110dd6bd049bdbc",
+    ".github/workflows/iatb-301-rev2.yml": "fc71f18b570a316331c375b4ac5332588cd8d19651f7b09ccca93959381e6ca2",
     ".github/workflows/indicator-visual-v2-tests.yml": "92b304e248075687cb9f0cf2739a08a8422bfdab6fc8388c9f9ae1679edefdf1",
     ".github/workflows/marketdata-phase1-tests.yml": "9514298100a4667ae22e003ad453ffd6aa445460a8c0d409ece4735b8abfcaab",
     ".github/workflows/marketdata-shadow-long-run.yml": "d41016d9767ac989af2ce6017773902f29dc66ed30ebe89c30e3efc8c1f49632",

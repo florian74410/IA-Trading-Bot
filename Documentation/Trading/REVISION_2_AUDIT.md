@@ -40,3 +40,5 @@ Le constructeur complet existant produit `IA-TB-3.0.1_Rev2_FULL-SOURCE_VPS.zip`,
 Le déploiement n'est pas exécuté. Pour une installation ultérieure, utiliser un répertoire de release distinct, vérifier le SHA-256 et `verify_source_bundle.py`, installer Node 22 et les dépendances épinglées avec les scripts VPS existants, puis le préflight. Les données Auth21 doivent rester hors des sources. Le démarrage SAFE et l'arrêt d'urgence doivent être vérifiés avant toute nouvelle autorisation manuelle.
 
 Le rollback consiste à arrêter la nouvelle release et repointer vers le répertoire Rev1 conservé. Les ajouts SQLite sont compatibles avec les anciens lecteurs ; ne pas supprimer les journaux et réservations ni restaurer aveuglément une base antérieure si une opération broker était incertaine. Cette procédure reste documentaire : aucun VPS n'est modifié pendant la mission.
+
+La CI Rev2 fixe Ubuntu 24.04 : le premier essai sur `ubuntu-latest` a révélé Ubuntu 26.04, incompatible avec la version Playwright épinglée. Ce correctif de reproductibilité conserve la version testée du navigateur.
