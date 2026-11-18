@@ -1,0 +1,585 @@
+{
+  "schema": "iatb.recovered-session-evidence/1.0",
+  "evidence_type": "TRANSCRIPTION_OF_SURVIVING_CONVERSATION_TOOL_OUTPUTS_NOT_RAW_TEST_REPORTS",
+  "recovered_code_commit": "e7a8dd72118b4cb5d0bf916dd256747142934438",
+  "qualifies_current_snapshot": false,
+  "original_raw_reports_recovered": false,
+  "lost_location": "/tmp/iatb-advanced-*.tap and /tmp/iatb-advanced-*.json",
+  "runs": [
+    {
+      "name": "Mandatory T01–T65",
+      "scenario_count": 65,
+      "reported_tap_tests": 66,
+      "reported_passed": 66,
+      "reported_failed": 0,
+      "reported_skipped": 0,
+      "note": "The TAP count includes the parent test. Later source modifications exist; this is not a qualification of the recovered commit."
+    },
+    {
+      "name": "ChatBot and historical Core execution tests",
+      "reported_tap_tests": 64,
+      "reported_passed": 64,
+      "reported_failed": 0,
+      "reported_skipped": 0,
+      "note": "Historical 41-scenario tests explicitly used legacy compatibility; advanced defaults were exercised separately."
+    },
+    {
+      "name": "Additional focused scenarios T51 + Q01–Q12",
+      "scenario_count": 13,
+      "reported_tap_tests": 14,
+      "reported_passed": 12,
+      "reported_failed": 2,
+      "failing_scenario": "Q12 Portfolio derivative contract multiplier",
+      "error": "MANUAL_CONFLICT_RECONCILIATION_REQUIRED",
+      "note": "One scenario and its parent test failed; 12 scenarios passed. Requires plan-child reservation reconciliation review."
+    },
+    {
+      "name": "advanced_contract.test.js and manual_outbox.test.js",
+      "observed_exit_code": 0,
+      "test_definitions_in_sources": 7,
+      "reported_tap_tests": null,
+      "note": "Successful command exit survives in conversation; raw TAP totals are unavailable."
+    }
+  ],
+  "scenarios_defined_in_recovered_test": [
+    {
+      "id": "T01",
+      "description": "Market Buy",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T02",
+      "description": "Market Sell",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T03",
+      "description": "Limit Buy OPEN",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T04",
+      "description": "Limit Sell later FILLED",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T05",
+      "description": "Post only rejection",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T06",
+      "description": "IOC partial fill",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T07",
+      "description": "FOK rejection",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T08",
+      "description": "Cancel open order",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T09",
+      "description": "Cancel filled order",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T10",
+      "description": "Amend price",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T11",
+      "description": "Amend size refused",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T12",
+      "description": "Independent Take Profit",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T13",
+      "description": "Independent Stop Loss",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T14",
+      "description": "Parent attached TP SL",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T15",
+      "description": "Parent partial protection inactive",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T16",
+      "description": "Parent filled protection verified",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T17",
+      "description": "Trailing ratio",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T18",
+      "description": "Trailing spread",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T19",
+      "description": "Trailing deferred activation",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T20",
+      "description": "Cancel algo",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T21",
+      "description": "Unsupported trailing amendment",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T22",
+      "description": "Triggered child rejected",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T23",
+      "description": "Read leverage",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T24",
+      "description": "Leverage verified independently",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T25",
+      "description": "Leverage broker reject",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T26",
+      "description": "LONG open",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T27",
+      "description": "SHORT open",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T28",
+      "description": "Partial close",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T29",
+      "description": "Full close verified",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T30",
+      "description": "Hedge mode close",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T31",
+      "description": "Isolated vs cross",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T32",
+      "description": "Contract quantity exact",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T33",
+      "description": "Invalid Auth21 session",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T34",
+      "description": "Other owner account",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T35",
+      "description": "Missing confirmation",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T36",
+      "description": "Mutated confirmation",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T37",
+      "description": "Confirmation replay",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T38",
+      "description": "Approval bound to exact spec",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T39",
+      "description": "Firewall unavailable",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T40",
+      "description": "Emergency halt",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T41",
+      "description": "Cognitive gateway cannot mutate",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T42",
+      "description": "Real OKX network denied",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T43",
+      "description": "Timeout after accepted submission",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T44",
+      "description": "Lost broker response",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T45",
+      "description": "Crash before send",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T46",
+      "description": "Crash after send before ACK",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T47",
+      "description": "Late broker result",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T48",
+      "description": "Core coordinator reopen reconciliation",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T49",
+      "description": "Portfolio unavailable durable queue",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T50",
+      "description": "Portfolio events idempotent",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T51",
+      "description": "Concurrent same balance",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T52",
+      "description": "Same order simultaneous confirmations",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T53",
+      "description": "Independent request after rejection",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T54",
+      "description": "Essential step rejects dependent chain",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T55",
+      "description": "Batch partial acceptance per item",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T56",
+      "description": "LOCAL Limit",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T57",
+      "description": "LOCAL TP SL",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T58",
+      "description": "LOCAL trailing 2 percent",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T59",
+      "description": "LOCAL leverage",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T60",
+      "description": "Missing target clarification",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T61",
+      "description": "Unknown metrics remain null",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T62",
+      "description": "Exact confirmation and risk consent",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T63",
+      "description": "Rejection notification",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T64",
+      "description": "Partial execution notification",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "T65",
+      "description": "History exact owner and states",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "Q01",
+      "description": "MARGIN account-mode and currency",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "Q02",
+      "description": "FUTURES linear contracts",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "Q03",
+      "description": "Trigger amendment",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "Q04",
+      "description": "Fees unavailable accepted only after consent",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "Q05",
+      "description": "Known insufficient funds remain mandatory",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "Q06",
+      "description": "Known fee reserve prevents overspending",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "Q07",
+      "description": "Account instrument unavailable",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "Q08",
+      "description": "Price precision mandatory",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "Q09",
+      "description": "Unknown position never substituted",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "Q10",
+      "description": "Distinct leverage and LONG plan",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "Q11",
+      "description": "Dependent protection waits for fill",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    },
+    {
+      "id": "Q12",
+      "description": "Portfolio derivative contract multiplier",
+      "source": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "current_snapshot_result": "NOT_RERUN",
+      "raw_prior_result_available": false
+    }
+  ]
+}

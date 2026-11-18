@@ -1,0 +1,377 @@
+{
+  "schema": "iatb.recovery-static-checks/1.0",
+  "commit": "e7a8dd72118b4cb5d0bf916dd256747142934438",
+  "node": "v24.22.3",
+  "runtime_tests_executed_during_recovery": false,
+  "live_orders": 0,
+  "vps_deployment": false,
+  "checks": [
+    {
+      "file": "App/Core/Clients/UserManagement/cp_bridge.js",
+      "check": "SYNTAX_ONLY_NO_EXECUTION",
+      "status": "PASS",
+      "exit_code": 0,
+      "details": null
+    },
+    {
+      "file": "App/Core/Clients/UserManagement/http.js",
+      "check": "SYNTAX_ONLY_NO_EXECUTION",
+      "status": "PASS",
+      "exit_code": 0,
+      "details": null
+    },
+    {
+      "file": "App/Core/Clients/UserManagement/owner_ai.js",
+      "check": "SYNTAX_ONLY_NO_EXECUTION",
+      "status": "PASS",
+      "exit_code": 0,
+      "details": null
+    },
+    {
+      "file": "App/Core/Clients/UserManagement/owner_policy.js",
+      "check": "SYNTAX_ONLY_NO_EXECUTION",
+      "status": "PASS",
+      "exit_code": 0,
+      "details": null
+    },
+    {
+      "file": "App/Core/Clients/UserManagement/trading_vault.js",
+      "check": "SYNTAX_ONLY_NO_EXECUTION",
+      "status": "PASS",
+      "exit_code": 0,
+      "details": null
+    },
+    {
+      "file": "App/Core/Communication/ProtocolRegistry/risk.json",
+      "check": "JSON_PARSE_ONLY",
+      "status": "PASS"
+    },
+    {
+      "file": "App/Core/Communication/ProtocolRegistry/trading.json",
+      "check": "JSON_PARSE_ONLY",
+      "status": "PASS"
+    },
+    {
+      "file": "App/Core/Communication/communication_protocol_v1.js",
+      "check": "SYNTAX_ONLY_NO_EXECUTION",
+      "status": "PASS",
+      "exit_code": 0,
+      "details": null
+    },
+    {
+      "file": "App/Core/Execution/advanced_contract.test.js",
+      "check": "SYNTAX_ONLY_NO_EXECUTION",
+      "status": "PASS",
+      "exit_code": 0,
+      "details": null
+    },
+    {
+      "file": "App/Core/Execution/config.json",
+      "check": "JSON_PARSE_ONLY",
+      "status": "PASS"
+    },
+    {
+      "file": "App/Core/Execution/manual_authority.js",
+      "check": "SYNTAX_ONLY_NO_EXECUTION",
+      "status": "PASS",
+      "exit_code": 0,
+      "details": null
+    },
+    {
+      "file": "App/Core/Execution/manual_contract.js",
+      "check": "SYNTAX_ONLY_NO_EXECUTION",
+      "status": "PASS",
+      "exit_code": 0,
+      "details": null
+    },
+    {
+      "file": "App/Core/Execution/manual_orders.js",
+      "check": "SYNTAX_ONLY_NO_EXECUTION",
+      "status": "PASS",
+      "exit_code": 0,
+      "details": null
+    },
+    {
+      "file": "App/Core/Execution/manual_orders.test.js",
+      "check": "SYNTAX_ONLY_NO_EXECUTION",
+      "status": "PASS",
+      "exit_code": 0,
+      "details": null
+    },
+    {
+      "file": "App/Core/Execution/manual_plans.js",
+      "check": "SYNTAX_ONLY_NO_EXECUTION",
+      "status": "PASS",
+      "exit_code": 0,
+      "details": null
+    },
+    {
+      "file": "App/Core/Execution/manual_preview.js",
+      "check": "SYNTAX_ONLY_NO_EXECUTION",
+      "status": "PASS",
+      "exit_code": 0,
+      "details": null
+    },
+    {
+      "file": "App/Core/Execution/manual_workflow.js",
+      "check": "SYNTAX_ONLY_NO_EXECUTION",
+      "status": "PASS",
+      "exit_code": 0,
+      "details": null
+    },
+    {
+      "file": "App/Core/Execution/messages.js",
+      "check": "SYNTAX_ONLY_NO_EXECUTION",
+      "status": "PASS",
+      "exit_code": 0,
+      "details": null
+    },
+    {
+      "file": "App/Core/Execution/order_scenarios.test.js",
+      "check": "SYNTAX_ONLY_NO_EXECUTION",
+      "status": "PASS",
+      "exit_code": 0,
+      "details": null
+    },
+    {
+      "file": "App/Core/Firewall/Config/Trading/whitelist.json",
+      "check": "JSON_PARSE_ONLY",
+      "status": "PASS"
+    },
+    {
+      "file": "App/Core/Firewall/Protection/trading_firewall.js",
+      "check": "SYNTAX_ONLY_NO_EXECUTION",
+      "status": "PASS",
+      "exit_code": 0,
+      "details": null
+    },
+    {
+      "file": "App/Core/Firewall/firewall_service.js",
+      "check": "SYNTAX_ONLY_NO_EXECUTION",
+      "status": "PASS",
+      "exit_code": 0,
+      "details": null
+    },
+    {
+      "file": "App/Core/FunctionRegistry/Control/catalog.js",
+      "check": "SYNTAX_ONLY_NO_EXECUTION",
+      "status": "PASS",
+      "exit_code": 0,
+      "details": null
+    },
+    {
+      "file": "App/Core/Server/companion_cognitive_bridge.js",
+      "check": "SYNTAX_ONLY_NO_EXECUTION",
+      "status": "PASS",
+      "exit_code": 0,
+      "details": null
+    },
+    {
+      "file": "App/Frontend/JS/companion_v1.0.js",
+      "check": "SYNTAX_ONLY_NO_EXECUTION",
+      "status": "PASS",
+      "exit_code": 0,
+      "details": null
+    },
+    {
+      "file": "App/Portfolio/Tests/advanced_orders.integration.test.js",
+      "check": "SYNTAX_ONLY_NO_EXECUTION",
+      "status": "PASS",
+      "exit_code": 0,
+      "details": null
+    },
+    {
+      "file": "App/Portfolio/Tests/manual_order_pipeline.integration.test.js",
+      "check": "SYNTAX_ONLY_NO_EXECUTION",
+      "status": "PASS",
+      "exit_code": 0,
+      "details": null
+    },
+    {
+      "file": "App/Risk/Engine/risk_gate.js",
+      "check": "SYNTAX_ONLY_NO_EXECUTION",
+      "status": "PASS",
+      "exit_code": 0,
+      "details": null
+    },
+    {
+      "file": "App/Risk/Engine/risk_service.js",
+      "check": "SYNTAX_ONLY_NO_EXECUTION",
+      "status": "PASS",
+      "exit_code": 0,
+      "details": null
+    },
+    {
+      "file": "App/Supervisor/ChatBot/Contracts/index.js",
+      "check": "SYNTAX_ONLY_NO_EXECUTION",
+      "status": "PASS",
+      "exit_code": 0,
+      "details": null
+    },
+    {
+      "file": "App/Supervisor/ChatBot/Intents/account.json",
+      "check": "JSON_PARSE_ONLY",
+      "status": "PASS"
+    },
+    {
+      "file": "App/Supervisor/ChatBot/Intents/algorithms.json",
+      "check": "JSON_PARSE_ONLY",
+      "status": "PASS"
+    },
+    {
+      "file": "App/Supervisor/ChatBot/Intents/orders.json",
+      "check": "JSON_PARSE_ONLY",
+      "status": "PASS"
+    },
+    {
+      "file": "App/Supervisor/ChatBot/Intents/positions.json",
+      "check": "JSON_PARSE_ONLY",
+      "status": "PASS"
+    },
+    {
+      "file": "App/Supervisor/ChatBot/Resolver/advanced.js",
+      "check": "SYNTAX_ONLY_NO_EXECUTION",
+      "status": "PASS",
+      "exit_code": 0,
+      "details": null
+    },
+    {
+      "file": "App/Supervisor/ChatBot/Resolver/index.js",
+      "check": "SYNTAX_ONLY_NO_EXECUTION",
+      "status": "PASS",
+      "exit_code": 0,
+      "details": null
+    },
+    {
+      "file": "App/Supervisor/ChatBot/Tests/hybrid.test.js",
+      "check": "SYNTAX_ONLY_NO_EXECUTION",
+      "status": "PASS",
+      "exit_code": 0,
+      "details": null
+    },
+    {
+      "file": "App/Supervisor/ChatBot/index.js",
+      "check": "SYNTAX_ONLY_NO_EXECUTION",
+      "status": "PASS",
+      "exit_code": 0,
+      "details": null
+    },
+    {
+      "file": "App/Supervisor/ChatBot/llm.js",
+      "check": "SYNTAX_ONLY_NO_EXECUTION",
+      "status": "PASS",
+      "exit_code": 0,
+      "details": null
+    },
+    {
+      "file": "App/Supervisor/ChatBot/procedures.js",
+      "check": "SYNTAX_ONLY_NO_EXECUTION",
+      "status": "PASS",
+      "exit_code": 0,
+      "details": null
+    },
+    {
+      "file": "App/Supervisor/ChatBot/state.js",
+      "check": "SYNTAX_ONLY_NO_EXECUTION",
+      "status": "PASS",
+      "exit_code": 0,
+      "details": null
+    },
+    {
+      "file": "App/Tools/Tests/SupervisorSimulator/advanced_auth_fixture.js",
+      "check": "SYNTAX_ONLY_NO_EXECUTION",
+      "status": "PASS",
+      "exit_code": 0,
+      "details": null
+    },
+    {
+      "file": "App/Tools/Tests/SupervisorSimulator/advanced_network.js",
+      "check": "SYNTAX_ONLY_NO_EXECUTION",
+      "status": "PASS",
+      "exit_code": 0,
+      "details": null
+    },
+    {
+      "file": "App/Tools/Tests/SupervisorSimulator/advanced_okx_fixture.js",
+      "check": "SYNTAX_ONLY_NO_EXECUTION",
+      "status": "PASS",
+      "exit_code": 0,
+      "details": null
+    },
+    {
+      "file": "App/services/trading-engine/delivery-outbox.js",
+      "check": "SYNTAX_ONLY_NO_EXECUTION",
+      "status": "PASS",
+      "exit_code": 0,
+      "details": null
+    },
+    {
+      "file": "App/services/trading-engine/exchange-adapters/okx/capabilities.json",
+      "check": "JSON_PARSE_ONLY",
+      "status": "PASS"
+    },
+    {
+      "file": "App/services/trading-engine/exchange-adapters/okx/manual.js",
+      "check": "SYNTAX_ONLY_NO_EXECUTION",
+      "status": "PASS",
+      "exit_code": 0,
+      "details": null
+    },
+    {
+      "file": "App/services/trading-engine/exchange-adapters/okx/order-model.js",
+      "check": "SYNTAX_ONLY_NO_EXECUTION",
+      "status": "PASS",
+      "exit_code": 0,
+      "details": null
+    },
+    {
+      "file": "App/services/trading-engine/history-store.js",
+      "check": "SYNTAX_ONLY_NO_EXECUTION",
+      "status": "PASS",
+      "exit_code": 0,
+      "details": null
+    },
+    {
+      "file": "App/services/trading-engine/manual-lifecycle.js",
+      "check": "SYNTAX_ONLY_NO_EXECUTION",
+      "status": "PASS",
+      "exit_code": 0,
+      "details": null
+    },
+    {
+      "file": "App/services/trading-engine/tests/manual_outbox.test.js",
+      "check": "SYNTAX_ONLY_NO_EXECUTION",
+      "status": "PASS",
+      "exit_code": 0,
+      "details": null
+    },
+    {
+      "file": "App/services/trading-engine/trading-engine.js",
+      "check": "SYNTAX_ONLY_NO_EXECUTION",
+      "status": "PASS",
+      "exit_code": 0,
+      "details": null
+    },
+    {
+      "file": "App/services/trading-engine/trading_logs_v2.js",
+      "check": "SYNTAX_ONLY_NO_EXECUTION",
+      "status": "PASS",
+      "exit_code": 0,
+      "details": null
+    },
+    {
+      "file": "App/services/trading-engine/trading_service.js",
+      "check": "SYNTAX_ONLY_NO_EXECUTION",
+      "status": "PASS",
+      "exit_code": 0,
+      "details": null
+    },
+    {
+      "file": "App/services/trading-engine/vault-client.js",
+      "check": "SYNTAX_ONLY_NO_EXECUTION",
+      "status": "PASS",
+      "exit_code": 0,
+      "details": null
+    }
+  ]
+}
