@@ -1,0 +1,435 @@
+TAP version 13
+# Subtest: Core issued action and exact HTTP body hash verified at Router and Engine
+ok 1 - Core issued action and exact HTTP body hash verified at Router and Engine
+  ---
+  duration_ms: 2.133365
+  type: 'test'
+  ...
+# Subtest: body-digest mismatch and unauthorized principal fail closed
+ok 2 - body-digest mismatch and unauthorized principal fail closed
+  ---
+  duration_ms: 0.280693
+  type: 'test'
+  ...
+# Subtest: real TLS Core cookie authenticates and CSRF-gates mutations; HTTP never authenticates
+ok 3 - real TLS Core cookie authenticates and CSRF-gates mutations; HTTP never authenticates
+  ---
+  duration_ms: 47.686028
+  type: 'test'
+  ...
+# Subtest: proof is valid once for exact scoped operation; rejects replay
+ok 4 - proof is valid once for exact scoped operation; rejects replay
+  ---
+  duration_ms: 2.032913
+  type: 'test'
+  ...
+# Subtest: inter-process proof rejects forged audience, method, owner and expired token
+ok 5 - inter-process proof rejects forged audience, method, owner and expired token
+  ---
+  duration_ms: 0.393393
+  type: 'test'
+  ...
+# Subtest: different process key never authenticates and invalid payload fails closed
+ok 6 - different process key never authenticates and invalid payload fails closed
+  ---
+  duration_ms: 0.221124
+  type: 'test'
+  ...
+# Subtest: Router/Engine role enforcement uses signed proof, never claimed browser role
+ok 7 - Router/Engine role enforcement uses signed proof, never claimed browser role
+  ---
+  duration_ms: 0.684912
+  type: 'test'
+  ...
+# Subtest: Core issues scoped proof only from verified server session and permitted owner
+ok 8 - Core issues scoped proof only from verified server session and permitted owner
+  ---
+  duration_ms: 0.268785
+  type: 'test'
+  ...
+# Subtest: actual Gateway and Router reject unsupported upgrade requests
+ok 9 - actual Gateway and Router reject unsupported upgrade requests
+  ---
+  duration_ms: 0.740966
+  type: 'test'
+  ...
+# Subtest: Auth21 isolated mode prevents legacy CP1 and WebSocket paths at both HTTP boundaries
+ok 10 - Auth21 isolated mode prevents legacy CP1 and WebSocket paths at both HTTP boundaries
+  ---
+  duration_ms: 0.258219
+  type: 'test'
+  ...
+# Subtest: Indicator: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT
+ok 11 - Indicator: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT
+  ---
+  duration_ms: 262.237676
+  type: 'test'
+  ...
+# Subtest: MarketData: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT
+ok 12 - MarketData: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT
+  ---
+  duration_ms: 331.912339
+  type: 'test'
+  ...
+# Subtest: Liquidity: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT
+ok 13 - Liquidity: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT
+  ---
+  duration_ms: 258.628027
+  type: 'test'
+  ...
+# Subtest: Fundamental: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT
+ok 14 - Fundamental: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT
+  ---
+  duration_ms: 361.783011
+  type: 'test'
+  ...
+# Subtest: Trading: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT
+ok 15 - Trading: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT
+  ---
+  duration_ms: 271.727046
+  type: 'test'
+  ...
+# Subtest: Firewall: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT
+ok 16 - Firewall: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT
+  ---
+  duration_ms: 244.141187
+  type: 'test'
+  ...
+# Subtest: Strategy: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT
+ok 17 - Strategy: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT
+  ---
+  duration_ms: 260.670409
+  type: 'test'
+  ...
+# Subtest: Risk: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT
+ok 18 - Risk: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT
+  ---
+  duration_ms: 237.807949
+  type: 'test'
+  ...
+# Subtest: Portfolio: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT
+ok 19 - Portfolio: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT
+  ---
+  duration_ms: 243.083768
+  type: 'test'
+  ...
+# Subtest: Supervisor: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT
+ok 20 - Supervisor: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT
+  ---
+  duration_ms: 282.248476
+  type: 'test'
+  ...
+# Subtest: legacy handler remains available when isolated Auth21 mode is off
+ok 21 - legacy handler remains available when isolated Auth21 mode is off
+  ---
+  duration_ms: 4.375634
+  type: 'test'
+  ...
+# Subtest: trial boundary cannot be activated by partial flags
+ok 22 - trial boundary cannot be activated by partial flags
+  ---
+  duration_ms: 0.523489
+  type: 'test'
+  ...
+# Subtest: Gateway forwards only Auth21 routes and denies legacy pages and API
+ok 23 - Gateway forwards only Auth21 routes and denies legacy pages and API
+  ---
+  duration_ms: 0.486883
+  type: 'test'
+  ...
+# Subtest: Router denies CP1, market data and fallback-to-Core in isolated mode
+ok 24 - Router denies CP1, market data and fallback-to-Core in isolated mode
+  ---
+  duration_ms: 0.121623
+  type: 'test'
+  ...
+# Subtest: Engine direct HTTP paths default deny in isolated mode
+ok 25 - Engine direct HTTP paths default deny in isolated mode
+  ---
+  duration_ms: 0.070005
+  type: 'test'
+  ...
+# Subtest: real service HTTP entrypoints invoke the isolated boundary before legacy handlers
+ok 26 - real service HTTP entrypoints invoke the isolated boundary before legacy handlers
+  ---
+  duration_ms: 1.147699
+  type: 'test'
+  ...
+# Subtest: gateway method allowlist never forwards writes as reads or unknown operations
+ok 27 - gateway method allowlist never forwards writes as reads or unknown operations
+  ---
+  duration_ms: 0.135815
+  type: 'test'
+  ...
+# Subtest: authenticated Firewall machine ingress requires the token and exact body signature
+ok 28 - authenticated Firewall machine ingress requires the token and exact body signature
+  ---
+  duration_ms: 92.892249
+  type: 'test'
+  ...
+# Subtest: CLI historical Portfolio import preserves original rows, backs up committed WAL, rejects another claimant and rolls back interrupted copy
+ok 29 - CLI historical Portfolio import preserves original rows, backs up committed WAL, rejects another claimant and rolls back interrupted copy
+  ---
+  duration_ms: 31.950746
+  type: 'test'
+  ...
+# Subtest: explicit wallet attribution retains original key/envelope and never exposes another owner wallet
+ok 30 - explicit wallet attribution retains original key/envelope and never exposes another owner wallet
+  ---
+  duration_ms: 9.024469
+  type: 'test'
+  ...
+# Subtest: explicit historical Settings attribution encrypts only the selected owner copy, preserves source and rejects conflicts
+ok 31 - explicit historical Settings attribution encrypts only the selected owner copy, preserves source and rejects conflicts
+  ---
+  duration_ms: 9.465474
+  type: 'test'
+  ...
+# Subtest: fictional market preload refuses real paths and unsupported vendor requests
+ok 32 - fictional market preload refuses real paths and unsupported vendor requests
+  ---
+  duration_ms: 0.960017
+  type: 'test'
+  ...
+# Subtest: real authenticated MarketData passes synthetic Binance candles through the real protection worker before cache
+ok 33 - real authenticated MarketData passes synthetic Binance candles through the real protection worker before cache
+  ---
+  duration_ms: 190.438653
+  type: 'test'
+  ...
+# Subtest: real SIGKILL between-v3-v4: durable backup, retry and rollback preserve historical data/key
+ok 34 - real SIGKILL between-v3-v4: durable backup, retry and rollback preserve historical data/key
+  ---
+  duration_ms: 48.524001
+  type: 'test'
+  ...
+# Subtest: real SIGKILL inside-v4: durable backup, retry and rollback preserve historical data/key
+ok 35 - real SIGKILL inside-v4: durable backup, retry and rollback preserve historical data/key
+  ---
+  duration_ms: 42.505792
+  type: 'test'
+  ...
+# Subtest: wrong original key refuses migration before creating backup or changing schema
+ok 36 - wrong original key refuses migration before creating backup or changing schema
+  ---
+  duration_ms: 7.17398
+  type: 'test'
+  ...
+# Subtest: canonical Mosaic validator and private settings prevent cross-user read, overwrite and delete
+ok 37 - canonical Mosaic validator and private settings prevent cross-user read, overwrite and delete
+  ---
+  duration_ms: 1.742646
+  type: 'test'
+  ...
+# Subtest: operator feed creation rejects literal private IPv6 and endpoint credentials through the canonical validator
+ok 38 - operator feed creation rejects literal private IPv6 and endpoint credentials through the canonical validator
+  ---
+  duration_ms: 5.374458
+  type: 'test'
+  ...
+# Subtest: real canonical Portfolio SQLite ledger isolates events/trades/balances/snapshots in existing DB and preserves legacy
+ok 39 - real canonical Portfolio SQLite ledger isolates events/trades/balances/snapshots in existing DB and preserves legacy
+  ---
+  duration_ms: 29.486894
+  type: 'test'
+  ...
+# Subtest: actual Strategy owner dispatcher persists only own definitions, mode and canonical evaluations
+ok 40 - actual Strategy owner dispatcher persists only own definitions, mode and canonical evaluations
+  ---
+  duration_ms: 5.957227
+  type: 'test'
+  ...
+# Subtest: public Fundamental provider metadata removes endpoint and nested credentials while keeping public feed configuration
+ok 41 - public Fundamental provider metadata removes endpoint and nested credentials while keeping public feed configuration
+  ---
+  duration_ms: 1.435623
+  type: 'test'
+  ...
+# Subtest: mixed-case provider configuration and diagnostic errors never disclose operator credentials
+ok 42 - mixed-case provider configuration and diagnostic errors never disclose operator credentials
+  ---
+  duration_ms: 0.23871
+  type: 'test'
+  ...
+# Subtest: every historical route enforces the ADMIN/USER/GUEST boundary with live TLS sessions
+ok 43 - every historical route enforces the ADMIN/USER/GUEST boundary with live TLS sessions
+  ---
+  duration_ms: 6430.616065
+  type: 'test'
+  ...
+# Subtest: CP1 administration uses real Auth21 roles, HTTPS Origin and CSRF
+ok 44 - CP1 administration uses real Auth21 roles, HTTPS Origin and CSRF
+  ---
+  duration_ms: 859.432734
+  type: 'test'
+  ...
+# Subtest: personal API settings accept only explicit HTTPS RPC origins and never browser identity
+ok 45 - personal API settings accept only explicit HTTPS RPC origins and never browser identity
+  ---
+  duration_ms: 1.094949
+  type: 'test'
+  ...
+# Subtest: authenticated Swap Bridge never falls back to an operator RPC credential
+ok 46 - authenticated Swap Bridge never falls back to an operator RPC credential
+  ---
+  duration_ms: 3.752681
+  type: 'test'
+  ...
+# Subtest: vault stores encrypted multi-owner assignments; scoped TLS client obtains only selected credential
+ok 47 - vault stores encrypted multi-owner assignments; scoped TLS client obtains only selected credential
+  ---
+  duration_ms: 755.330755
+  type: 'test'
+  ...
+# Subtest: ticket binds exact order and expires; revoked sessions and rotated assignments cannot release credentials
+ok 48 - ticket binds exact order and expires; revoked sessions and rotated assignments cannot release credentials
+  ---
+  duration_ms: 256.410219
+  type: 'test'
+  ...
+# Subtest: invalid and ambiguous registry changes do not rotate secrets; broker of an existing ID cannot change
+ok 49 - invalid and ambiguous registry changes do not rotate secrets; broker of an existing ID cannot change
+  ---
+  duration_ms: 501.963051
+  type: 'test'
+  ...
+# Subtest: internal EVM signer creates verifiable EIP712 signature without exporting key or broadcasting
+ok 50 - internal EVM signer creates verifiable EIP712 signature without exporting key or broadcasting
+  ---
+  duration_ms: 349.260598
+  type: 'test'
+  ...
+# Subtest: signer checks revocation before releasing signature
+ok 51 - signer checks revocation before releasing signature
+  ---
+  duration_ms: 18.807422
+  type: 'test'
+  ...
+# Subtest: real HTTPS account routes enforce password, CSRF, origin, owner isolation and internal machine authentication
+ok 52 - real HTTPS account routes enforce password, CSRF, origin, owner isolation and internal machine authentication
+  ---
+  duration_ms: 575.415869
+  type: 'test'
+  ...
+# Subtest: vault machine proof is domain-bound, fresh, exact-body and single-use
+ok 53 - vault machine proof is domain-bound, fresh, exact-body and single-use
+  ---
+  duration_ms: 1.280619
+  type: 'test'
+  ...
+# Subtest: offline migration backup and CLI first ADMIN preserve key and reject duplicate bootstrap
+ok 54 - offline migration backup and CLI first ADMIN preserve key and reject duplicate bootstrap
+  ---
+  duration_ms: 274.050103
+  type: 'test'
+  ...
+# Subtest: real Argon2 email authentication, persistent throttling, ciphertext and opaque sessions
+ok 55 - real Argon2 email authentication, persistent throttling, ciphertext and opaque sessions
+  ---
+  duration_ms: 1191.905162
+  type: 'test'
+  ...
+# Subtest: two users cannot read preferences, secrets, sessions or audit of each other; GUEST write forbidden
+ok 56 - two users cannot read preferences, secrets, sessions or audit of each other; GUEST write forbidden
+  ---
+  duration_ms: 1036.352562
+  type: 'test'
+  ...
+# Subtest: password change revokes all sessions and preserves per-user ciphertext, email change revokes login
+ok 57 - password change revokes all sessions and preserves per-user ciphertext, email change revokes login
+  ---
+  duration_ms: 1326.615364
+  type: 'test'
+  ...
+# Subtest: expiry and CLI disable invalidate live session and hashed interprocess session
+ok 58 - expiry and CLI disable invalidate live session and hashed interprocess session
+  ---
+  duration_ms: 509.790312
+  type: 'test'
+  ...
+# Subtest: production configuration rejects bypass and cannot silently use DEV credentials
+ok 59 - production configuration rejects bypass and cannot silently use DEV credentials
+  ---
+  duration_ms: 0.429016
+  type: 'test'
+  ...
+# Subtest: real TLS HTTP handler: cookie, origin, CSRF, spoofed ownership, CLI-only administration and logout
+ok 60 - real TLS HTTP handler: cookie, origin, CSRF, spoofed ownership, CLI-only administration and logout
+  ---
+  duration_ms: 1099.35552
+  type: 'test'
+  ...
+# Subtest: actual Core and Gateway processes authenticate over pinned TLS, isolate language and deny web administration
+not ok 61 - actual Core and Gateway processes authenticate over pinned TLS, isolate language and deny web administration
+  ---
+  duration_ms: 2194.21151
+  type: 'test'
+  location: '/home/runner/work/IA-Trading-Bot/IA-Trading-Bot/App/Tools/Tests/user_management_v1.test.js:43:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    {"error":"EVM_PRIVATE_KEY_INVALID"}
+    
+    400 !== 200
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 200
+  actual: 400
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/home/runner/work/IA-Trading-Bot/IA-Trading-Bot/App/Tools/Tests/user_management_v1.test.js:61:131)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: real unprivileged owner TTY CLI authenticates ADMIN without echo and refuses a piped password
+ok 62 - real unprivileged owner TTY CLI authenticates ADMIN without echo and refuses a piped password
+  ---
+  duration_ms: 613.201164
+  type: 'test'
+  ...
+# Subtest: legacy RSA vault imports once to explicit owner, survives password reset, original bytes remain untouched
+ok 63 - legacy RSA vault imports once to explicit owner, survives password reset, original bytes remain untouched
+  ---
+  duration_ms: 1105.962743
+  type: 'test'
+  ...
+# Subtest: literal legacy route inventory remains explicit; shared private routes default deny
+ok 64 - literal legacy route inventory remains explicit; shared private routes default deny
+  ---
+  duration_ms: 1.377044
+  type: 'test'
+  ...
+# Subtest: historical SUPERADMIN and PBKDF2 identity survive migration with original key and clientId
+ok 65 - historical SUPERADMIN and PBKDF2 identity survive migration with original key and clientId
+  ---
+  duration_ms: 335.171167
+  type: 'test'
+  ...
+# Subtest: owner AI transport selects only the live session owner key and rejects substitution before provider call
+ok 66 - owner AI transport selects only the live session owner key and rejects substitution before provider call
+  ---
+  duration_ms: 783.484406
+  type: 'test'
+  ...
+# Subtest: browser action acknowledgements are owner-scoped, single use and never execute Engine actions
+ok 67 - browser action acknowledgements are owner-scoped, single use and never execute Engine actions
+  ---
+  duration_ms: 779.287647
+  type: 'test'
+  ...
+# Subtest: offline CLI attributes canonical Indicator, Strategy and Mosaic definitions only to the named owner
+ok 68 - offline CLI attributes canonical Indicator, Strategy and Mosaic definitions only to the named owner
+  ---
+  duration_ms: 1174.277418
+  type: 'test'
+  ...
+1..68
+# tests 68
+# suites 0
+# pass 67
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 26156.582547

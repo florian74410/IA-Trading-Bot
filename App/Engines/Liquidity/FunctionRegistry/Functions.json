@@ -1,7 +1,7 @@
 {
   "schema_version": "2.6.0",
   "engine_id": "liquidity",
-  "engine_version": "3.0.1-dev.1",
+  "engine_version": "3.0.2-dev.1",
   "transport": "CP/1",
   "source_protocol_registry": "Core/Communication/ProtocolRegistry/liquidity.json",
   "source_sha256": "a63bc04a2b9c8b8e92cbcd05d4178c88a0c197741b8f06c5caa073c404f970b8",

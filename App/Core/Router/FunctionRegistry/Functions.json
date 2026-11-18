@@ -1,7 +1,7 @@
 {
   "schema_version": "2.6.0",
   "engine_id": "router",
-  "engine_version": "3.0.1-dev.1",
+  "engine_version": "3.0.2-dev.1",
   "transport": "CP/1",
   "source_protocol_registry": "Core/Communication/ProtocolRegistry/router.json",
   "source_sha256": "a528b72ff0e1d113546fa70d278ec9281e68d08adc8ac486712b4461e28e3ec8",

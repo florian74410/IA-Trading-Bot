@@ -1,0 +1,73 @@
+{
+  "tap_executions": {
+    "passed": 415,
+    "failed": 0,
+    "skipped": 0,
+    "note": "Executions across groups; some files overlap; scenario parent is included."
+  },
+  "schema": "iatb.revision-qualification/1.0",
+  "revision": "3.0.1_Rev3",
+  "commit": "c0e94a1c9be92282f04e0e2f1db647277e10b2b1",
+  "node": "v22.23.4",
+  "live_orders": 0,
+  "paid_ai_calls": 0,
+  "browser_required": true,
+  "groups": [
+    {
+      "name": "foundation-runner",
+      "ok": true,
+      "exit_code": 0,
+      "error": null,
+      "tests": 0,
+      "passed": 0,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "rev2-unit",
+      "ok": true,
+      "exit_code": 0,
+      "error": null,
+      "tests": 12,
+      "passed": 12,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "layout-unit",
+      "ok": true,
+      "exit_code": 0,
+      "error": null,
+      "tests": 6,
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "companion-legacy-ui",
+      "ok": true,
+      "exit_code": 0,
+      "error": null,
+      "tests": 0,
+      "passed": 0,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "companion-rev2-ui",
+      "ok": true,
+      "exit_code": 0,
+      "error": null,
+      "tests": 0,
+      "passed": 0,
+      "failed": 0,
+      "skipped": 0
+    }
+  ],
+  "scenarios": {
+    "total": 80,
+    "passed": 80,
+    "failed": 0
+  },
+  "status": "PASS"
+}

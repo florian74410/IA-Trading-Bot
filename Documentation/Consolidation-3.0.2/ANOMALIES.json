@@ -1,0 +1,59 @@
+{
+  "inherited": "../Consolidation-3.0.1/ANOMALIES.json",
+  "additional": [
+    {
+      "id": "ERR-013",
+      "priority": "P2",
+      "error": "Firefox resize assertion races asynchronous candle and oscillator renders",
+      "first_solution": "Reproduce in Chart workspace CI and preserve failure; no assertion removed",
+      "latest_solution": "Wait for matching observable timestamps and plot width before taking measurements; preserve all exact alignment assertions",
+      "status": "CORRECTED_CI_REQUIRED",
+      "files": [
+        "App/UI/Tests/test_trading_indicators_v204.js"
+      ],
+      "proofs": [
+        "../Consolidation-3.0.1/Results/chart-initial-ci.log",
+        "https://github.com/florian74410/IA-Trading-Bot/actions/runs/44296193895"
+      ],
+      "failed_attempts": 1
+    },
+    {
+      "id": "ERR-014",
+      "priority": "P1",
+      "error": "New zero-prefixed EVM scalars rejected; compressed Bitcoin WIF can omit leading zero bytes",
+      "files": [
+        "App/Bank/Core/evm_wallet.js",
+        "App/Bank/Core/multichain_wallet.js"
+      ],
+      "first_solution": "Reproduce exact short-scalar encoding with real ECDH and fictitious reference scalars; preserve CI Auth21 failure",
+      "latest_solution": "Pad only newly generated representations to 32 bytes; retain scalar/address, strict input validation, same random generator and existing stores; pin these security dependencies in financial implementation digests",
+      "status": "RESOLVED_LOCAL",
+      "proofs": [
+        "IMPACT_REPORTS/IMPACT-004-FIXED-WIDTH-KEYS.md",
+        "Results/wallet-width-before.tap",
+        "Results/wallet-width-evm-only.tap",
+        "Results/wallet-width-after.tap",
+        "Results/supervisor-auth21-first.tap",
+        "Results/final-local/summary.json"
+      ],
+      "attempts": [
+        {
+          "result": "FAIL",
+          "detail": "Original EVM validation rejects the deterministic minimal scalar representation."
+        },
+        {
+          "result": "FAIL",
+          "detail": "EVM-only correction passes EVM but exposes independent Bitcoin WIF width failure."
+        },
+        {
+          "result": "PASS",
+          "detail": "EVM reference addresses and Bitcoin WIF round-trips for 1-, 2- and 32-byte generated scalars; malformed imports still refused."
+        },
+        {
+          "result": "PASS",
+          "detail": "Complete post-audit qualification: 417 PASS, 0 FAIL, 1 environment SKIP; all 80 scenarios and 258 unchanged contracts. Exact published commit still gated by CI."
+        }
+      ]
+    }
+  ]
+}

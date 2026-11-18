@@ -1,3 +1,7 @@
+# Livraison courante : 3.0.2 Rev-X
+
+La consolidation ci-dessous est intégrée au build complet 3.0.2 Rev-X, demandé explicitement après l’audit. [Rapport et qualification](Documentation/Consolidation-3.0.2/FINAL_REPORT.md). Runtime 3.0.2-dev.1, mêmes contrats CP1, aucun nouveau pouvoir financier.
+
 # Roadmap IA-TB 3.0.1 — distribution Rev3
 
 Le build conserve Advanced Manual Trading et le runtime 3.0.1-dev.1. La consolidation termine les dix déplacements vers App/Engines/, protège les racines persistantes et requalifie Function Registry/CP1.

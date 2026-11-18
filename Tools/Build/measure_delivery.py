@@ -14,7 +14,7 @@ p.add_argument('report')
 a = p.parse_args()
 files = [Path(n) for n in subprocess.check_output(['git', 'ls-files', '-z'], cwd=ROOT).decode().split('\0') if n]
 size = lambda names: sum((ROOT / n).stat().st_size for n in names)
-code = [n for n in files if not str(n).startswith('Documentation/Consolidation-3.0.1/')]
+code = [n for n in files if not str(n).startswith('Documentation/Consolidation-')]
 archive = Path(a.archive)
 with zipfile.ZipFile(archive) as z:
     build = json.loads(z.read('BUILD.json'))

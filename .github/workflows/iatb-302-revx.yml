@@ -1,0 +1,82 @@
+name: IA-TB 3.0.2 Rev-X complete build qualification
+on:
+  push:
+    branches: ['release/iatb-3.0.2-Rev-X-full-source']
+  pull_request:
+    branches: ['maintenance/iatb-3.0.1-full-consolidation']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  qualification:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned runtime dependencies
+        working-directory: App
+        run: npm ci --omit=dev --no-audit --no-fund
+      - name: Install isolated audit and browser tools
+        run: |
+          npm install --prefix "$RUNNER_TEMP/iatb-qa" acorn@8.15.0 acorn-walk@8.3.4 yaml@2.8.1 playwright@1.56.1 --no-audit --no-fund
+          "$RUNNER_TEMP/iatb-qa/node_modules/.bin/playwright" install --with-deps chromium
+          echo "IATB_ACORN_MODULE=$RUNNER_TEMP/iatb-qa/node_modules/acorn" >> "$GITHUB_ENV"
+          echo "IATB_ACORN_WALK_MODULE=$RUNNER_TEMP/iatb-qa/node_modules/acorn-walk" >> "$GITHUB_ENV"
+          echo "IATB_YAML_MODULE=$RUNNER_TEMP/iatb-qa/node_modules/yaml" >> "$GITHUB_ENV"
+          echo "IATB_PLAYWRIGHT_MODULE=$RUNNER_TEMP/iatb-qa/node_modules/playwright" >> "$GITHUB_ENV"
+      - name: Repeat whole-tree and source integrity audits
+        run: |
+          node Tools/Architecture/Rev3/check.js artifacts/consolidation-validation/source-check.json
+          python3 Tools/Architecture/Rev3/audit.py artifacts/consolidation-validation/post-migration-audit.json
+          node Tools/Architecture/Rev3/source_inventory.js artifacts/consolidation-validation/inventory
+          python3 Tools/Architecture/Rev3/compare_source_graph.py artifacts/consolidation-validation/inventory/SOURCE_INVENTORY.json artifacts/consolidation-validation/source-graph.json
+          node Tools/Architecture/Rev3/check_yaml.js
+          node App/Tools_validate_release_version.js
+          bash Deploy/VPS/preflight.sh --source-only
+      - name: Verify Compose and actual Docker payloads without service startup
+        run: |
+          export IATB_UID=1001 IATB_GID=1001 IATB_QA_UID=1001 IATB_QA_GID=1001 IATB_QA_ROOT="$RUNNER_TEMP/fictional-compose"
+          docker compose -f compose.debug.yml --profile validate --profile storage config --quiet
+          docker compose -f compose.debug.stack.yml --profile manual-stack config --quiet
+          docker compose -f compose.auth21.qualification.yml config --quiet
+          docker build -f App/Dockerfile -t iatb-rev3-preflight:qa App
+          docker run --rm --network none --read-only iatb-rev3-preflight:qa > artifacts/consolidation-validation/docker-sqlite.json
+          docker build -f App/Dockerfile.app -t iatb-rev3-payload:qa App
+          docker run --rm --network none --read-only -v "$RUNNER_TEMP/iatb-qa:/qa:ro" -v "$GITHUB_WORKSPACE/Tools/Build/check_docker_payload.js:/check-payload.js:ro" -e IATB_ACORN_MODULE=/qa/node_modules/acorn -e IATB_ACORN_WALK_MODULE=/qa/node_modules/acorn-walk iatb-rev3-payload:qa node /check-payload.js /opt/iatb/App > artifacts/consolidation-validation/docker-payload.json
+      - name: Full security, CP1, simulated trading and Chromium qualification
+        env:
+          IATB_REV2_BROWSER: '1'
+        run: |
+          node App/Tools/qualify_revision.js artifacts/consolidation-validation
+          node Tools/Architecture/Rev3/compare.js artifacts/consolidation-validation/cp1-comparison.json
+      - name: Existing Engine unit suites with loopback-only network
+        run: node App/Tools/qualify_engine_units.js artifacts/consolidation-validation/engine-units
+      - name: Build twice and verify complete source membership
+        run: |
+          python3 Tools/Build/build_rev1_full_source.py
+          cp artifacts/IA-TB-3.0.2_Rev-X_Consolidated_FULL-SOURCE_VPS.zip "$RUNNER_TEMP/first.zip"
+          python3 Tools/Build/build_rev1_full_source.py
+          cmp artifacts/IA-TB-3.0.2_Rev-X_Consolidated_FULL-SOURCE_VPS.zip "$RUNNER_TEMP/first.zip"
+          python3 Tools/Build/verify_source_bundle.py artifacts/IA-TB-3.0.2_Rev-X_Consolidated_FULL-SOURCE_VPS.zip
+      - name: Measure final source and archive footprints
+        run: python3 Tools/Build/measure_delivery.py artifacts/IA-TB-3.0.2_Rev-X_Consolidated_FULL-SOURCE_VPS.zip artifacts/consolidation-validation/package-metrics.json
+      - name: Requalify real services from extracted package
+        run: python3 Tools/Build/test_extracted_bundle.py artifacts/IA-TB-3.0.2_Rev-X_Consolidated_FULL-SOURCE_VPS.zip --node-modules "$GITHUB_WORKSPACE/App/node_modules" --report artifacts/consolidation-validation/extracted-package.json
+      - name: Publish source package and evidence without runtime stores
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: IA-TB-3.0.2-Rev-X-full-source-and-evidence
+          path: |
+            artifacts/IA-TB-3.0.2_Rev-X_Consolidated_FULL-SOURCE_VPS.zip*
+            artifacts/consolidation-validation/**/*.json
+            artifacts/consolidation-validation/**/*.tap
+            artifacts/consolidation-validation/**/*.png
+          retention-days: 30
+          if-no-files-found: error

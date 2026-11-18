@@ -1,7 +1,7 @@
 {
   "schema_version": "2.6.0",
   "engine_id": "marketdata",
-  "engine_version": "3.0.1-dev.1",
+  "engine_version": "3.0.2-dev.1",
   "transport": "CP/1",
   "source_protocol_registry": "Core/Communication/ProtocolRegistry/marketdata.json",
   "source_sha256": "03f0d302e6090545c19c0d5034278996a492e0a1ea2d40669bc12fb0fab9c7de",

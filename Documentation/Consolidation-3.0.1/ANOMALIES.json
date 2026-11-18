@@ -306,7 +306,7 @@
       ],
       "first_solution": "Trace ignored names against production requires, COPY and Compose commands before changing exclusions",
       "latest_solution": "Use precise test globs; preserve required CLI helpers; keep runtime/artifact/private exclusions; build and inspect both Docker images in CI without starting services",
-      "status": "LOCAL_CORRECTED_CI_REQUIRED",
+      "status": "RESOLVED",
       "proofs": [
         "IMPACT_REPORTS/IMPACT-003-DOCKER-CONTEXT.md",
         "Results/docker-source-payload.json"
@@ -315,6 +315,10 @@
         {
           "result": "PASS",
           "details": "Local payload scanner: 374 production JavaScript files, 728 relative imports and all canonical manifest entries; Docker executable unavailable locally, actual Docker build mandatory in CI."
+        },
+        {
+          "result": "PASS",
+          "details": "Actual Dockerfile and Dockerfile.app builds, Compose validation and network-none payload inspection passed in CI run 44296193948, job 134773732588. 3.0.2 repeats qualification on its own commit."
         }
       ],
       "commits": []

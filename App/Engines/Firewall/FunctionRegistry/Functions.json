@@ -1,7 +1,7 @@
 {
   "schema_version": "2.6.0",
   "engine_id": "firewall",
-  "engine_version": "3.0.1-dev.1",
+  "engine_version": "3.0.2-dev.1",
   "transport": "CP/1",
   "source_protocol_registry": "Core/Communication/ProtocolRegistry/firewall.json",
   "source_sha256": "7df07a1114fac1750e952be02d31260c1d5093d76cf484b18ac555d0dfb84861",
@@ -137,7 +137,7 @@
       "transport": "CP1",
       "authorization": "Authenticated service identity, authenticated agent session and effective per-command permission.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "b5c386fdc7de992baedde37de9a5c797439251d3b9eb7b696027b96ff2827c19",
+      "handler_sha256": "ee5897cc0e361033b0ca2458a40db5c8888cef701cd7c551c1b05665b2ab403b",
       "availability_reason": null,
       "timeout_ms": 5000,
       "agent_qualified": true
@@ -167,7 +167,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "b5c386fdc7de992baedde37de9a5c797439251d3b9eb7b696027b96ff2827c19",
+      "handler_sha256": "ee5897cc0e361033b0ca2458a40db5c8888cef701cd7c551c1b05665b2ab403b",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -210,11 +210,11 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "b5c386fdc7de992baedde37de9a5c797439251d3b9eb7b696027b96ff2827c19",
+      "handler_sha256": "ee5897cc0e361033b0ca2458a40db5c8888cef701cd7c551c1b05665b2ab403b",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
     }
   ],
-  "revision_hash": "711d6b93463e00079b3565b93ff2880995eaf409a67dd8623de0c1368c594544"
+  "revision_hash": "0102df8bb39248dce63e27406d0865f45d8ad3c0439384f53ec0396f3cc3fce1"
 }

@@ -1,0 +1,26 @@
+(node:6) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+TAP version 13
+# (node:13) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: new EVM keys retain zero-prefixed scalar width and reference addresses
+ok 1 - new EVM keys retain zero-prefixed scalar width and reference addresses
+  ---
+  duration_ms: 39.177675
+  type: 'test'
+  ...
+# Subtest: new compressed Bitcoin WIF round-trips exact 32-byte scalar and address
+ok 2 - new compressed Bitcoin WIF round-trips exact 32-byte scalar and address
+  ---
+  duration_ms: 31.851138
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 632.549182

@@ -46,7 +46,7 @@ run("rev2-unit", [
   "Engines/Trading/tests/manual_outbox.test.js",
   "Engines/Portfolio/Tests/manual_projection.test.js",
 ]);
-run("layout-unit", ["--test", "Tools/Tests/engines_persistent_layout.test.js", "../Tools/Architecture/Rev3/migration.test.js"]);
+run("layout-unit", ["--test", "Tools/Tests/engines_persistent_layout.test.js", "Core/FunctionRegistry/Tests/release_version.test.js", "Tools/Tests/wallet_generated_width.test.js", "../Tools/Architecture/Rev3/migration.test.js"]);
 if (process.env.IATB_REV2_BROWSER === "1") {
   run("companion-legacy-ui", ["Engines/Supervisor/ChatBot/Tests/browser_ui.js"], {
     IATB_UI_REPORT_DIR: path.join(out, "ui-legacy"),

@@ -26,10 +26,11 @@ jobs:
       - name: Reproducible DEBUG source build
         run: |
           python3 Tools/Build/build_risk_snapshot.py
-          cp artifacts/IA-TB-3.0.1-dev.1-debug-source.zip /tmp/iatb-supervisor-first.zip
+          package="artifacts/IA-TB-$(cat App/VERSION)-debug-source.zip"
+          cp "$package" /tmp/iatb-supervisor-first.zip
           python3 Tools/Build/build_risk_snapshot.py
-          cmp artifacts/IA-TB-3.0.1-dev.1-debug-source.zip /tmp/iatb-supervisor-first.zip
-          python3 Tools/Build/verify_source_bundle.py artifacts/IA-TB-3.0.1-dev.1-debug-source.zip
+          cmp "$package" /tmp/iatb-supervisor-first.zip
+          python3 Tools/Build/verify_source_bundle.py "$package"
       - name: Upload reports without private runtime data
         if: always()
         uses: actions/upload-artifact@v4
@@ -38,7 +39,7 @@ jobs:
           path: |
             artifacts/supervisor-3.0.1/*.tap
             artifacts/supervisor-3.0.1/*.json
-            artifacts/IA-TB-3.0.1-dev.1-debug-source.zip
-            artifacts/IA-TB-3.0.1-dev.1-debug-source.zip.sha256
+            artifacts/IA-TB-*-debug-source.zip
+            artifacts/IA-TB-*-debug-source.zip.sha256
           if-no-files-found: warn
           retention-days: 14
