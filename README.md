@@ -1,8 +1,8 @@
-# IA-Trading-Bot — 3.0.1 Rev3 DEBUG
+# IA-Trading-Bot — 3.0.2 Rev-X DEBUG
 
-Consolidation du build Advanced OKX le plus récent et migration des dix Engines vers `App/Engines/`. Le runtime reste `3.0.1-dev.1` ; `App/REVISION` identifie la distribution `3.0.1_Rev3`. Cette opération ne crée pas une génération 3.0.2 ni de nouvelle logique de trading.
+Consolidation du build Advanced OKX le plus récent et migration des dix Engines vers `App/Engines/`. Le runtime reste `3.0.2-dev.1` ; `App/REVISION` identifie la distribution `3.0.2_Rev-X`. La consolidation est intégrée à la version 3.0.2 demandée par l’utilisateur, sans nouvelle autonomie financière.
 
-[Rapport de consolidation](Documentation/Consolidation-3.0.1/FINAL_REPORT.md) · [Qualification et limites](Documentation/Consolidation-3.0.1/QUALIFICATION.md) · [Second audit](Documentation/Consolidation-3.0.1/POST_CONSOLIDATION_AUDIT.md) · [Requalification CP1](Documentation/Architecture/Rev3/CP1_REQUALIFICATION.md)
+[Rapport de consolidation](Documentation/Consolidation-3.0.2/FINAL_REPORT.md) · [Qualification et limites](Documentation/Consolidation-3.0.2/QUALIFICATION.md) · [Second audit](Documentation/Consolidation-3.0.1/POST_CONSOLIDATION_AUDIT.md) · [Requalification CP1](Documentation/Architecture/Rev3/CP1_REQUALIFICATION.md)
 
 ## Architecture active
 
@@ -41,7 +41,7 @@ npm ci --omit=dev --no-audit --no-fund
 node Tools_validate_release_version.js
 ```
 
-La qualification complète est orchestrée par `node App/Tools/qualify_revision.js artifacts/consolidation-validation` depuis la racine. Les outils de parsing Acorn/acorn-walk et le navigateur sont installés séparément du runtime ; le workflow [qualification Rev3](.github/workflows/iatb-301-consolidation.yml) donne les versions et variables exactes. Il répète aussi les audits, vérifie les scripts VPS en mode source uniquement, construit deux ZIP identiques et requalifie les services depuis le package extrait.
+La qualification complète est orchestrée par `node App/Tools/qualify_revision.js artifacts/consolidation-validation` depuis la racine. Les outils de parsing Acorn/acorn-walk et le navigateur sont installés séparément du runtime ; le workflow [qualification 3.0.2 Rev-X](.github/workflows/iatb-302-revx.yml) donne les versions et variables exactes. Il répète aussi les audits, vérifie les scripts VPS en mode source uniquement, construit deux ZIP identiques et requalifie les services depuis le package extrait.
 
 Tous les tests financiers utilisent un broker, des identités, clés et prix fictifs. Les tests du LLM utilisent MOCK ; aucun ordre réel/Demo, appel OpenAI payant ou déploiement VPS n'est effectué par cette qualification.
 
@@ -49,12 +49,12 @@ Tous les tests financiers utilisent un broker, des identités, clés et prix fic
 
 ```bash
 python3 Tools/Build/build_rev1_full_source.py
-python3 Tools/Build/verify_source_bundle.py artifacts/IA-TB-3.0.1_Rev3_Consolidated_FULL-SOURCE_VPS.zip
+python3 Tools/Build/verify_source_bundle.py artifacts/IA-TB-3.0.2_Rev-X_Consolidated_FULL-SOURCE_VPS.zip
 ```
 
 Le nom historique du constructeur est conservé pour les appelants existants ; il valide la révision et l'inventaire complet. `BUILD.json` lie la distribution au commit et aux empreintes des sources. Les bases privées, secrets, dépendances installées et sorties générées ne sont pas embarqués. Les résumés de qualification et les sources des tests sont distribués ; les logs détaillés sont disponibles dans Git et les artifacts CI.
 
-Le lancement local existant passe par `App/start_auth21_local_safe.command` et les scripts VPS documentés dans [Deploy/VPS/README-3.0.1_Rev3.md](Deploy/VPS/README-3.0.1_Rev3.md). Ils exigent les données Auth21 et TLS propres à l'installation. Lire le rapport et les prérequis avant une installation ; aucun démarrage VPS n'est réalisé pendant cette livraison.
+Le lancement local existant passe par `App/start_auth21_local_safe.command` et les scripts VPS documentés dans [Deploy/VPS/README-3.0.2_Rev-X.md](Deploy/VPS/README-3.0.2_Rev-X.md). Ils exigent les données Auth21 et TLS propres à l'installation. Lire le rapport et les prérequis avant une installation ; aucun démarrage VPS n'est réalisé pendant cette livraison.
 
 ## Capacités et limites
 

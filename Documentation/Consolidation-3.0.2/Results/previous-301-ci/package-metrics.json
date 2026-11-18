@@ -1,0 +1,37 @@
+{
+  "schema": "iatb.delivery-size/1.0",
+  "initial_source": {
+    "commit": "1b6a01f012169bfd4d1034c0d9d19b20b2fc9284",
+    "tracked_files": 1225,
+    "tracked_bytes": 11589483,
+    "app_bytes": 6922612
+  },
+  "preserved_before_cleanup": {
+    "commit": "c7a7841c7c47ac63edf19f0a7973ec3ecf5a1ab3",
+    "tracked_files": 1283,
+    "tracked_bytes": 14969241,
+    "app_bytes": 6930450,
+    "zip_bytes": 3618996,
+    "zip_sha256": "692334024b7ddebb5ba8b68d3f6ac86c340ba9c004b8b7f4075ea204a6c1fd0b"
+  },
+  "final": {
+    "source_commit": "c0e94a1c9be92282f04e0e2f1db647277e10b2b1",
+    "tracked_files": 1344,
+    "tracked_bytes": 14682366,
+    "app_bytes": 6938209,
+    "scope_excluding_new_consolidation_reports": {
+      "files": 1257,
+      "bytes": 11571163
+    },
+    "zip_bytes": 3680433,
+    "zip_sha256": "227febc409e56bea3cbb48a0a62282d502781420ea472bdf550a5a8e2020d78b",
+    "bundled_app_bytes": 6938209
+  },
+  "net_bytes_saved_against_checkpoint": {
+    "tracked_checkout": 286875,
+    "app": -7759,
+    "zip": -61437
+  },
+  "gross_removed_bytes": 1740614,
+  "notes": "Positive saved = reduction; negative = growth. New reports/fixes are counted. Git history, dependencies, ignored artifacts and private runtime stores are excluded; ZIP is measured after building, so this report is kept separately."
+}

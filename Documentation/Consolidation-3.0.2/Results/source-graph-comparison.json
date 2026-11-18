@@ -1,0 +1,33 @@
+{
+  "schema": "iatb.source-graph-comparison/1.0",
+  "baseline": "1b6a01f012169bfd4d1034c0d9d19b20b2fc9284",
+  "preserved_census_commit": "c7a7841c7c47ac63edf19f0a7973ec3ecf5a1ab3",
+  "engine_js_files_compared": 301,
+  "missing_engine_js": [],
+  "changed_export_assignments": [],
+  "cycles_before": [
+    [
+      "App/Core/Backup/auth21_core_local_trial_wiring.js",
+      "App/Core/Backup/auth21_snapshot_core_client.js",
+      "App/Core/Clients/auth21_ipc_keyfile.js"
+    ],
+    [
+      "App/Engines/Supervisor/ChatBot/procedures.js",
+      "App/Engines/Supervisor/ChatBot/state.js"
+    ]
+  ],
+  "cycles_after": [
+    [
+      "App/Core/Backup/auth21_core_local_trial_wiring.js",
+      "App/Core/Backup/auth21_snapshot_core_client.js",
+      "App/Core/Clients/auth21_ipc_keyfile.js"
+    ],
+    [
+      "App/Engines/Supervisor/ChatBot/procedures.js",
+      "App/Engines/Supervisor/ChatBot/state.js"
+    ]
+  ],
+  "new_cycles": [],
+  "dynamic_loads": "Not a static proof; preserved and exercised by existing integration suites",
+  "status": "PASS"
+}

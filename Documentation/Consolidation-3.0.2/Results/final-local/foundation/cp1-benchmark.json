@@ -1,0 +1,160 @@
+{
+  "samples": 50,
+  "latency_ms": {
+    "p50": 51.41596500000014,
+    "p95": 78.48010700000032,
+    "p99": 104.95579999999973
+  },
+  "driver_and_core_cpu_us": {
+    "user": 2019311,
+    "system": 171620
+  },
+  "cpu_us_per_request": 43818.62,
+  "shared_command_tests": 23,
+  "agent_qualified_commands": 28,
+  "matrix": [
+    {
+      "engine": "marketdata",
+      "declared": 42,
+      "verified": 5,
+      "published": 42,
+      "agent_routable": 5,
+      "tested_agent_commands": 5,
+      "unavailable": 37
+    },
+    {
+      "engine": "indicator",
+      "declared": 26,
+      "verified": 3,
+      "published": 26,
+      "agent_routable": 3,
+      "tested_agent_commands": 3,
+      "unavailable": 23
+    },
+    {
+      "engine": "fundamental",
+      "declared": 63,
+      "verified": 2,
+      "published": 63,
+      "agent_routable": 2,
+      "tested_agent_commands": 2,
+      "unavailable": 61
+    },
+    {
+      "engine": "liquidity",
+      "declared": 15,
+      "verified": 2,
+      "published": 15,
+      "agent_routable": 2,
+      "tested_agent_commands": 2,
+      "unavailable": 13
+    },
+    {
+      "engine": "strategy",
+      "declared": 13,
+      "verified": 3,
+      "published": 13,
+      "agent_routable": 3,
+      "tested_agent_commands": 3,
+      "unavailable": 10
+    },
+    {
+      "engine": "risk",
+      "declared": 18,
+      "verified": 8,
+      "published": 18,
+      "agent_routable": 7,
+      "tested_agent_commands": 7,
+      "unavailable": 11
+    },
+    {
+      "engine": "portfolio",
+      "declared": 20,
+      "verified": 2,
+      "published": 20,
+      "agent_routable": 2,
+      "tested_agent_commands": 2,
+      "unavailable": 18
+    },
+    {
+      "engine": "firewall",
+      "declared": 3,
+      "verified": 1,
+      "published": 3,
+      "agent_routable": 1,
+      "tested_agent_commands": 1,
+      "unavailable": 2
+    },
+    {
+      "engine": "trading",
+      "declared": 20,
+      "verified": 11,
+      "published": 20,
+      "agent_routable": 2,
+      "tested_agent_commands": 2,
+      "unavailable": 18
+    },
+    {
+      "engine": "supervisor",
+      "declared": 38,
+      "verified": 14,
+      "published": 38,
+      "agent_routable": 1,
+      "tested_agent_commands": 1,
+      "unavailable": 37
+    }
+  ],
+  "restart_checks": [
+    {
+      "engine": "marketdata",
+      "outage_refused": true,
+      "recovered": true
+    },
+    {
+      "engine": "indicator",
+      "outage_refused": true,
+      "recovered": true
+    },
+    {
+      "engine": "fundamental",
+      "outage_refused": true,
+      "recovered": true
+    },
+    {
+      "engine": "liquidity",
+      "outage_refused": true,
+      "recovered": true
+    },
+    {
+      "engine": "strategy",
+      "outage_refused": true,
+      "recovered": true
+    },
+    {
+      "engine": "portfolio",
+      "outage_refused": true,
+      "recovered": true
+    },
+    {
+      "engine": "firewall",
+      "outage_refused": true,
+      "recovered": true
+    },
+    {
+      "engine": "trading",
+      "outage_refused": true,
+      "recovered": true
+    },
+    {
+      "engine": "supervisor",
+      "outage_refused": true,
+      "recovered": true
+    },
+    {
+      "engine": "risk",
+      "outage_refused": true,
+      "recovered": true,
+      "network_timeout_refused": true
+    }
+  ]
+}

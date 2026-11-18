@@ -1,0 +1,456 @@
+TAP version 13
+# (node:593) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Core issued action and exact HTTP body hash verified at Router and Engine
+ok 1 - Core issued action and exact HTTP body hash verified at Router and Engine
+  ---
+  duration_ms: 6.706189
+  type: 'test'
+  ...
+# Subtest: body-digest mismatch and unauthorized principal fail closed
+ok 2 - body-digest mismatch and unauthorized principal fail closed
+  ---
+  duration_ms: 1.276221
+  type: 'test'
+  ...
+# (node:601) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: real TLS Core cookie authenticates and CSRF-gates mutations; HTTP never authenticates
+ok 3 - real TLS Core cookie authenticates and CSRF-gates mutations; HTTP never authenticates
+  ---
+  duration_ms: 355.26338
+  type: 'test'
+  ...
+# (node:610) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: proof is valid once for exact scoped operation; rejects replay
+ok 4 - proof is valid once for exact scoped operation; rejects replay
+  ---
+  duration_ms: 3.954318
+  type: 'test'
+  ...
+# Subtest: inter-process proof rejects forged audience, method, owner and expired token
+ok 5 - inter-process proof rejects forged audience, method, owner and expired token
+  ---
+  duration_ms: 1.714956
+  type: 'test'
+  ...
+# Subtest: different process key never authenticates and invalid payload fails closed
+ok 6 - different process key never authenticates and invalid payload fails closed
+  ---
+  duration_ms: 0.618859
+  type: 'test'
+  ...
+# Subtest: Router/Engine role enforcement uses signed proof, never claimed browser role
+ok 7 - Router/Engine role enforcement uses signed proof, never claimed browser role
+  ---
+  duration_ms: 1.731988
+  type: 'test'
+  ...
+# Subtest: Core issues scoped proof only from verified server session and permitted owner
+ok 8 - Core issues scoped proof only from verified server session and permitted owner
+  ---
+  duration_ms: 0.671838
+  type: 'test'
+  ...
+# (node:618) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: actual Gateway and Router reject unsupported upgrade requests
+ok 9 - actual Gateway and Router reject unsupported upgrade requests
+  ---
+  duration_ms: 1.88382
+  type: 'test'
+  ...
+# Subtest: Auth21 isolated mode prevents legacy CP1 and WebSocket paths at both HTTP boundaries
+ok 10 - Auth21 isolated mode prevents legacy CP1 and WebSocket paths at both HTTP boundaries
+  ---
+  duration_ms: 2.347482
+  type: 'test'
+  ...
+# (node:626) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Indicator: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT
+ok 11 - Indicator: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT
+  ---
+  duration_ms: 442.659538
+  type: 'test'
+  ...
+# Subtest: MarketData: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT
+ok 12 - MarketData: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT
+  ---
+  duration_ms: 472.519844
+  type: 'test'
+  ...
+# Subtest: Liquidity: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT
+ok 13 - Liquidity: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT
+  ---
+  duration_ms: 310.360508
+  type: 'test'
+  ...
+# Subtest: Fundamental: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT
+ok 14 - Fundamental: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT
+  ---
+  duration_ms: 514.986709
+  type: 'test'
+  ...
+# Subtest: Trading: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT
+ok 15 - Trading: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT
+  ---
+  duration_ms: 241.393445
+  type: 'test'
+  ...
+# Subtest: Firewall: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT
+ok 16 - Firewall: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT
+  ---
+  duration_ms: 379.951006
+  type: 'test'
+  ...
+# Subtest: Strategy: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT
+ok 17 - Strategy: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT
+  ---
+  duration_ms: 294.412706
+  type: 'test'
+  ...
+# Subtest: Risk: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT
+ok 18 - Risk: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT
+  ---
+  duration_ms: 256.701192
+  type: 'test'
+  ...
+# Subtest: Portfolio: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT
+ok 19 - Portfolio: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT
+  ---
+  duration_ms: 267.987966
+  type: 'test'
+  ...
+# Subtest: Supervisor: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT
+ok 20 - Supervisor: real isolated process rejects HTTP, forged identity, CP/1, WebSocket and CONNECT
+  ---
+  duration_ms: 400.139544
+  type: 'test'
+  ...
+# Subtest: legacy handler remains available when isolated Auth21 mode is off
+ok 21 - legacy handler remains available when isolated Auth21 mode is off
+  ---
+  duration_ms: 10.081116
+  type: 'test'
+  ...
+# (node:716) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: trial boundary cannot be activated by partial flags
+ok 22 - trial boundary cannot be activated by partial flags
+  ---
+  duration_ms: 1.401594
+  type: 'test'
+  ...
+# Subtest: Gateway forwards only Auth21 routes and denies legacy pages and API
+ok 23 - Gateway forwards only Auth21 routes and denies legacy pages and API
+  ---
+  duration_ms: 0.790077
+  type: 'test'
+  ...
+# Subtest: Router denies CP1, market data and fallback-to-Core in isolated mode
+ok 24 - Router denies CP1, market data and fallback-to-Core in isolated mode
+  ---
+  duration_ms: 5.2108
+  type: 'test'
+  ...
+# Subtest: Engine direct HTTP paths default deny in isolated mode
+ok 25 - Engine direct HTTP paths default deny in isolated mode
+  ---
+  duration_ms: 0.252579
+  type: 'test'
+  ...
+# Subtest: real service HTTP entrypoints invoke the isolated boundary before legacy handlers
+ok 26 - real service HTTP entrypoints invoke the isolated boundary before legacy handlers
+  ---
+  duration_ms: 1.239252
+  type: 'test'
+  ...
+# Subtest: gateway method allowlist never forwards writes as reads or unknown operations
+ok 27 - gateway method allowlist never forwards writes as reads or unknown operations
+  ---
+  duration_ms: 0.476234
+  type: 'test'
+  ...
+# (node:724) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: authenticated Firewall machine ingress requires the token and exact body signature
+ok 28 - authenticated Firewall machine ingress requires the token and exact body signature
+  ---
+  duration_ms: 196.732793
+  type: 'test'
+  ...
+# (node:742) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: CLI historical Portfolio import preserves original rows, backs up committed WAL, rejects another claimant and rolls back interrupted copy
+ok 29 - CLI historical Portfolio import preserves original rows, backs up committed WAL, rejects another claimant and rolls back interrupted copy
+  ---
+  duration_ms: 40.157657
+  type: 'test'
+  ...
+# Subtest: explicit wallet attribution retains original key/envelope and never exposes another owner wallet
+ok 30 - explicit wallet attribution retains original key/envelope and never exposes another owner wallet
+  ---
+  duration_ms: 18.736335
+  type: 'test'
+  ...
+# Subtest: explicit historical Settings attribution encrypts only the selected owner copy, preserves source and rejects conflicts
+ok 31 - explicit historical Settings attribution encrypts only the selected owner copy, preserves source and rejects conflicts
+  ---
+  duration_ms: 9.419759
+  type: 'test'
+  ...
+# (node:754) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: fictional market preload refuses real paths and unsupported vendor requests
+ok 32 - fictional market preload refuses real paths and unsupported vendor requests
+  ---
+  duration_ms: 2.520262
+  type: 'test'
+  ...
+# Subtest: real authenticated MarketData passes synthetic Binance candles through the real protection worker before cache
+ok 33 - real authenticated MarketData passes synthetic Binance candles through the real protection worker before cache
+  ---
+  duration_ms: 574.990964
+  type: 'test'
+  ...
+# (node:784) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: real SIGKILL between-v3-v4: durable backup, retry and rollback preserve historical data/key
+ok 34 - real SIGKILL between-v3-v4: durable backup, retry and rollback preserve historical data/key
+  ---
+  duration_ms: 137.349053
+  type: 'test'
+  ...
+# Subtest: real SIGKILL inside-v4: durable backup, retry and rollback preserve historical data/key
+ok 35 - real SIGKILL inside-v4: durable backup, retry and rollback preserve historical data/key
+  ---
+  duration_ms: 128.430399
+  type: 'test'
+  ...
+# Subtest: wrong original key refuses migration before creating backup or changing schema
+ok 36 - wrong original key refuses migration before creating backup or changing schema
+  ---
+  duration_ms: 11.318105
+  type: 'test'
+  ...
+# (node:820) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: canonical Mosaic validator and private settings prevent cross-user read, overwrite and delete
+ok 37 - canonical Mosaic validator and private settings prevent cross-user read, overwrite and delete
+  ---
+  duration_ms: 7.541978
+  type: 'test'
+  ...
+# (node:828) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: operator feed creation rejects literal private IPv6 and endpoint credentials through the canonical validator
+ok 38 - operator feed creation rejects literal private IPv6 and endpoint credentials through the canonical validator
+  ---
+  duration_ms: 20.900484
+  type: 'test'
+  ...
+# (node:836) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: real canonical Portfolio SQLite ledger isolates events/trades/balances/snapshots in existing DB and preserves legacy
+ok 39 - real canonical Portfolio SQLite ledger isolates events/trades/balances/snapshots in existing DB and preserves legacy
+  ---
+  duration_ms: 20.114644
+  type: 'test'
+  ...
+# Subtest: actual Strategy owner dispatcher persists only own definitions, mode and canonical evaluations
+ok 40 - actual Strategy owner dispatcher persists only own definitions, mode and canonical evaluations
+  ---
+  duration_ms: 17.433095
+  type: 'test'
+  ...
+# (node:844) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: public Fundamental provider metadata removes endpoint and nested credentials while keeping public feed configuration
+ok 41 - public Fundamental provider metadata removes endpoint and nested credentials while keeping public feed configuration
+  ---
+  duration_ms: 4.955556
+  type: 'test'
+  ...
+# Subtest: mixed-case provider configuration and diagnostic errors never disclose operator credentials
+ok 42 - mixed-case provider configuration and diagnostic errors never disclose operator credentials
+  ---
+  duration_ms: 0.530826
+  type: 'test'
+  ...
+# (node:852) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: every historical route enforces the ADMIN/USER/GUEST boundary with live TLS sessions
+ok 43 - every historical route enforces the ADMIN/USER/GUEST boundary with live TLS sessions
+  ---
+  duration_ms: 15511.44156
+  type: 'test'
+  ...
+# Subtest: CP1 administration uses real Auth21 roles, HTTPS Origin and CSRF
+ok 44 - CP1 administration uses real Auth21 roles, HTTPS Origin and CSRF
+  ---
+  duration_ms: 2203.909149
+  type: 'test'
+  ...
+# (node:866) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: personal API settings accept only explicit HTTPS RPC origins and never browser identity
+ok 45 - personal API settings accept only explicit HTTPS RPC origins and never browser identity
+  ---
+  duration_ms: 3.268365
+  type: 'test'
+  ...
+# Subtest: authenticated Swap Bridge never falls back to an operator RPC credential
+ok 46 - authenticated Swap Bridge never falls back to an operator RPC credential
+  ---
+  duration_ms: 5.942354
+  type: 'test'
+  ...
+# (node:874) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: vault stores encrypted multi-owner assignments; scoped TLS client obtains only selected credential
+ok 47 - vault stores encrypted multi-owner assignments; scoped TLS client obtains only selected credential
+  ---
+  duration_ms: 2170.918783
+  type: 'test'
+  ...
+# Subtest: ticket binds exact order and expires; revoked sessions and rotated assignments cannot release credentials
+ok 48 - ticket binds exact order and expires; revoked sessions and rotated assignments cannot release credentials
+  ---
+  duration_ms: 477.314465
+  type: 'test'
+  ...
+# Subtest: invalid and ambiguous registry changes do not rotate secrets; broker of an existing ID cannot change
+ok 49 - invalid and ambiguous registry changes do not rotate secrets; broker of an existing ID cannot change
+  ---
+  duration_ms: 1047.944885
+  type: 'test'
+  ...
+# Subtest: internal EVM signer creates verifiable EIP712 signature without exporting key or broadcasting
+ok 50 - internal EVM signer creates verifiable EIP712 signature without exporting key or broadcasting
+  ---
+  duration_ms: 754.639563
+  type: 'test'
+  ...
+# Subtest: signer checks revocation before releasing signature
+ok 51 - signer checks revocation before releasing signature
+  ---
+  duration_ms: 52.267225
+  type: 'test'
+  ...
+# Subtest: real HTTPS account routes enforce password, CSRF, origin, owner isolation and internal machine authentication
+ok 52 - real HTTPS account routes enforce password, CSRF, origin, owner isolation and internal machine authentication
+  ---
+  duration_ms: 1238.185882
+  type: 'test'
+  ...
+# Subtest: vault machine proof is domain-bound, fresh, exact-body and single-use
+ok 53 - vault machine proof is domain-bound, fresh, exact-body and single-use
+  ---
+  duration_ms: 2.536703
+  type: 'test'
+  ...
+# (node:887) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: offline migration backup and CLI first ADMIN preserve key and reject duplicate bootstrap
+ok 54 - offline migration backup and CLI first ADMIN preserve key and reject duplicate bootstrap
+  ---
+  duration_ms: 515.472674
+  type: 'test'
+  ...
+# Subtest: real Argon2 email authentication, persistent throttling, ciphertext and opaque sessions
+ok 55 - real Argon2 email authentication, persistent throttling, ciphertext and opaque sessions
+  ---
+  duration_ms: 2366.049626
+  type: 'test'
+  ...
+# Subtest: two users cannot read preferences, secrets, sessions or audit of each other; GUEST write forbidden
+ok 56 - two users cannot read preferences, secrets, sessions or audit of each other; GUEST write forbidden
+  ---
+  duration_ms: 1881.255728
+  type: 'test'
+  ...
+# Subtest: password change revokes all sessions and preserves per-user ciphertext, email change revokes login
+ok 57 - password change revokes all sessions and preserves per-user ciphertext, email change revokes login
+  ---
+  duration_ms: 2490.552363
+  type: 'test'
+  ...
+# Subtest: expiry and CLI disable invalidate live session and hashed interprocess session
+ok 58 - expiry and CLI disable invalidate live session and hashed interprocess session
+  ---
+  duration_ms: 1416.674903
+  type: 'test'
+  ...
+# Subtest: production configuration rejects bypass and cannot silently use DEV credentials
+ok 59 - production configuration rejects bypass and cannot silently use DEV credentials
+  ---
+  duration_ms: 1.167218
+  type: 'test'
+  ...
+# Subtest: real TLS HTTP handler: cookie, origin, CSRF, spoofed ownership, CLI-only administration and logout
+ok 60 - real TLS HTTP handler: cookie, origin, CSRF, spoofed ownership, CLI-only administration and logout
+  ---
+  duration_ms: 2696.457945
+  type: 'test'
+  ...
+# Subtest: actual Core and Gateway processes authenticate over pinned TLS, isolate language and deny web administration
+ok 61 - actual Core and Gateway processes authenticate over pinned TLS, isolate language and deny web administration
+  ---
+  duration_ms: 8243.727076
+  type: 'test'
+  ...
+# Subtest: real unprivileged owner TTY CLI authenticates ADMIN without echo and refuses a piped password
+ok 62 - real unprivileged owner TTY CLI authenticates ADMIN without echo and refuses a piped password # SKIP container maps only UID 0; no unprivileged OS identity is available
+  ---
+  duration_ms: 6.349052
+  type: 'test'
+  ...
+# Subtest: legacy RSA vault imports once to explicit owner, survives password reset, original bytes remain untouched
+ok 63 - legacy RSA vault imports once to explicit owner, survives password reset, original bytes remain untouched
+  ---
+  duration_ms: 2315.416327
+  type: 'test'
+  ...
+# Subtest: literal legacy route inventory remains explicit; shared private routes default deny
+ok 64 - literal legacy route inventory remains explicit; shared private routes default deny
+  ---
+  duration_ms: 1.324952
+  type: 'test'
+  ...
+# Subtest: historical SUPERADMIN and PBKDF2 identity survive migration with original key and clientId
+ok 65 - historical SUPERADMIN and PBKDF2 identity survive migration with original key and clientId
+  ---
+  duration_ms: 623.796984
+  type: 'test'
+  ...
+# Subtest: owner AI transport selects only the live session owner key and rejects substitution before provider call
+ok 66 - owner AI transport selects only the live session owner key and rejects substitution before provider call
+  ---
+  duration_ms: 1403.308451
+  type: 'test'
+  ...
+# Subtest: browser action acknowledgements are owner-scoped, single use and never execute Engine actions
+ok 67 - browser action acknowledgements are owner-scoped, single use and never execute Engine actions
+  ---
+  duration_ms: 1671.24719
+  type: 'test'
+  ...
+# Subtest: offline CLI attributes canonical Indicator, Strategy and Mosaic definitions only to the named owner
+ok 68 - offline CLI attributes canonical Indicator, Strategy and Mosaic definitions only to the named owner
+  ---
+  duration_ms: 2505.286102
+  type: 'test'
+  ...
+1..68
+# tests 68
+# suites 0
+# pass 67
+# fail 0
+# cancelled 0
+# skipped 1
+# todo 0
+# duration_ms 59349.822413
+(node:586) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)

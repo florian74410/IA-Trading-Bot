@@ -4,7 +4,7 @@
 const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_process'),crypto=require('node:crypto'),{createRequire}=require('node:module');
 const acorn=require(process.env.IATB_ACORN_MODULE||'acorn'),walk=require(process.env.IATB_ACORN_WALK_MODULE||'acorn-walk');
 const root=path.resolve(__dirname,'../../..'),out=path.resolve(process.argv[2]||path.join(root,'Documentation/Consolidation-3.0.1'));
-const files=cp.execFileSync('git',['ls-files','-z'],{cwd:root,encoding:'utf8'}).split('\0').filter(Boolean).filter(f=>!f.startsWith('Documentation/Consolidation-3.0.1/'));
+const files=cp.execFileSync('git',['ls-files','-z'],{cwd:root,encoding:'utf8'}).split('\0').filter(Boolean).filter(f=>!f.startsWith('Documentation/Consolidation-'));
 const last=new Map(),log=cp.execFileSync('git',['log','--format=@@%H %aI','--name-only','HEAD'],{cwd:root,encoding:'utf8',maxBuffer:32e6});let commit,date;
 for(const l of log.split('\n')){if(l.startsWith('@@'))[commit,date]=l.slice(2).split(' ');else if(l&&!last.has(l))last.set(l,{commit,date});}
 const entries=[],edges=[],syntax=[],hashes=new Map();let functionCount=0,exportSites=0;

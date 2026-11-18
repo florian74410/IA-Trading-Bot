@@ -1,0 +1,9 @@
+{
+  "counts": {
+    "javascript": 697,
+    "json": 124,
+    "relative_imports": 1504
+  },
+  "syntax_errors": [],
+  "unresolved_imports": []
+}

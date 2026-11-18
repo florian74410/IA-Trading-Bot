@@ -1,0 +1,67 @@
+{
+  "name": "qualification",
+  "exit_code": 0,
+  "error": null,
+  "duration_ms": 141890,
+  "tests": 93,
+  "passed": 93,
+  "failed": 0,
+  "skipped": 0,
+  "cancelled": 0,
+  "failed_cases": [],
+  "cases": [
+    {
+      "name": "actual Engines publish and execute through authenticated TLS Core, Supervisor Gateway and Router",
+      "status": "PASS"
+    },
+    {
+      "name": "advanced manual trading through Auth21, real services and isolated HTTP OKX V5",
+      "status": "PASS"
+    },
+    {
+      "name": "profile key -> signed vault TLS -> Trading Firewall CP/1 -> Portfolio -> owner Risk",
+      "status": "PASS"
+    },
+    {
+      "name": "persistent cognitive memory, self first, scoped tools, reviewed-only proposals, model allowlist",
+      "status": "PASS"
+    },
+    {
+      "name": "CP1 registry matches real Supervisor handlers and manifest contracts",
+      "status": "PASS"
+    },
+    {
+      "name": "tool allowlist blocks model-command injection; no direct trade/tool execution",
+      "status": "PASS"
+    },
+    {
+      "name": "existing OpenAI provider forwards chosen model through CP1 AI Gateway Responses API",
+      "status": "PASS"
+    },
+    {
+      "name": "unverified CP1 identity cannot open cognitive memory, cross-account isolation",
+      "status": "PASS"
+    },
+    {
+      "name": "malformed provider JSON retries once; failure stores a controlled turn without secrets",
+      "status": "PASS"
+    },
+    {
+      "name": "context budget drops old history, protects current prompt, and backup restores SQLite",
+      "status": "PASS"
+    },
+    {
+      "name": "Core policy uses authenticated owner channel for cognitive reasoning and ADMIN configuration",
+      "status": "PASS"
+    },
+    {
+      "name": "Core owner AI checks model, signed original prompt, output token cap, store:false, current session",
+      "status": "PASS"
+    },
+    {
+      "name": "ADMIN model choice persists in canonical SQLite settings and USER cannot alter it",
+      "status": "PASS"
+    }
+  ],
+  "ok": true
+}

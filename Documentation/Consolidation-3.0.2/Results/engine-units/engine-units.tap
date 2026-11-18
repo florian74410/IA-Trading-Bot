@@ -1,0 +1,1188 @@
+TAP version 13
+# PASS Market Data Firewall volatility warning + OHLC + bid/ask + spread
+# (node:1934) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Engines/Firewall/Tests/market_data_firewall.test.js
+ok 1 - Engines/Firewall/Tests/market_data_firewall.test.js
+  ---
+  duration_ms: 115.461339
+  type: 'test'
+  ...
+# Firewall Risk boundary tests: OK
+# (node:1942) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Engines/Firewall/Tests/test_risk_gate_boundary.js
+ok 2 - Engines/Firewall/Tests/test_risk_gate_boundary.js
+  ---
+  duration_ms: 93.089527
+  type: 'test'
+  ...
+# {
+#   "ok": true,
+#   "result": {
+#     "ok": true,
+#     "mode": "INFORMATION_ONLY",
+#     "eventEngine": "INTERNAL_SUBPROCESS",
+#     "result": {
+#       "startedAt": "2026-11-18T11:54:13.424Z",
+#       "finishedAt": "2026-11-18T11:54:13.436Z",
+#       "processed": 2,
+#       "created": 1,
+#       "attached": 1,
+#       "errors": 0
+#     }
+#   },
+#   "score": {
+#     "sourceGrade": "A+",
+#     "sourceReliability": 98.1,
+#     "eventConfidence": 82.7,
+#     "marketRelevance": 95,
+#     "expectedImpact": 75,
+#     "direction": "POSITIVE",
+#     "conflictScore": 0,
+#     "status": "CONFIRMED",
+#     "independentSourceCount": 2,
+#     "sourceCount": 2
+#   }
+# }
+# (node:1950) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Engines/Fundamental/Tests/test_event_engine_mock_v3.js
+ok 3 - Engines/Fundamental/Tests/test_event_engine_mock_v3.js
+  ---
+  duration_ms: 119.956378
+  type: 'test'
+  ...
+# {
+#   "ok": true,
+#   "model": "gpt-5.6-luna",
+#   "result": {
+#     "headline": "ETF update",
+#     "overview": "Two sources describe the same regulatory event.",
+#     "marketTone": "MIXED",
+#     "confidence": 82,
+#     "themes": [
+#       {
+#         "label": "Regulation",
+#         "importance": "HIGH",
+#         "summary": "Regulatory update"
+#       }
+#     ],
+#     "watch": [
+#       "Official follow-up"
+#     ],
+#     "limitations": [
+#       "Information only"
+#     ]
+#   }
+# }
+# (node:1958) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Engines/Fundamental/Tests/test_fundamental_v3.js
+ok 4 - Engines/Fundamental/Tests/test_fundamental_v3.js
+  ---
+  duration_ms: 152.093052
+  type: 'test'
+  ...
+# C3_OK: 867 stored -> 5 latest ordered and readable; empty and null-filter cases passed\\n
+# (node:1966) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Engines/Fundamental/Tests/test_news_latest_v2_0_1.js
+ok 5 - Engines/Fundamental/Tests/test_news_latest_v2_0_1.js
+  ---
+  duration_ms: 284.551456
+  type: 'test'
+  ...
+# test_fundamental_ai_synthesis_v3: OK
+# (node:1974) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Engines/Fundamental/Tests/test_synthesis_helper_v3.js
+ok 6 - Engines/Fundamental/Tests/test_synthesis_helper_v3.js
+  ---
+  duration_ms: 95.543048
+  type: 'test'
+  ...
+# Indicator normalized analysis: OK · bias=BULLISH confidence=0.856 computed=20
+# (node:1982) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Engines/Indicators/Tests/test_indicator_analysis_v1.js
+ok 7 - Engines/Indicators/Tests/test_indicator_analysis_v1.js
+  ---
+  duration_ms: 321.362941
+  type: 'test'
+  ...
+# INDICATOR COMPLETE v1.12 DEBUG PASS dep_combo READY dep_fast
+# (node:1990) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Engines/Indicators/Tests/test_indicator_complete_v2.js
+ok 8 - Engines/Indicators/Tests/test_indicator_complete_v2.js
+  ---
+  duration_ms: 152.39898
+  type: 'test'
+  ...
+# PASS 21 BuiltIn chargés
+# PASS registre BuiltIn=21
+# PASS aucune erreur de registre
+# PASS adx READY
+# PASS adx valeur finale finie
+# PASS adx timestamps alignés
+# PASS atr READY
+# PASS atr valeur finale finie
+# PASS atr timestamps alignés
+# PASS bollinger_bands READY
+# PASS bollinger_bands valeur finale finie
+# PASS bollinger_bands timestamps alignés
+# PASS cci READY
+# PASS cci valeur finale finie
+# PASS cci timestamps alignés
+# PASS ema READY
+# PASS ema valeur finale finie
+# PASS ema timestamps alignés
+# PASS hma READY
+# PASS hma valeur finale finie
+# PASS hma timestamps alignés
+# PASS ichimoku_cloud READY
+# PASS ichimoku_cloud valeur finale finie
+# PASS ichimoku_cloud timestamps alignés
+# PASS Liquidity HeatMap externe enregistré
+# PASS macd READY
+# PASS macd valeur finale finie
+# PASS macd timestamps alignés
+# PASS mfi READY
+# PASS mfi valeur finale finie
+# PASS mfi timestamps alignés
+# PASS obv READY
+# PASS obv valeur finale finie
+# PASS obv timestamps alignés
+# PASS parabolic_sar READY
+# PASS parabolic_sar valeur finale finie
+# PASS parabolic_sar timestamps alignés
+# PASS roc READY
+# PASS roc valeur finale finie
+# PASS roc timestamps alignés
+# PASS rsi READY
+# PASS rsi valeur finale finie
+# PASS rsi timestamps alignés
+# PASS sma READY
+# PASS sma valeur finale finie
+# PASS sma timestamps alignés
+# PASS stochastic READY
+# PASS stochastic valeur finale finie
+# PASS stochastic timestamps alignés
+# PASS stochastic_rsi READY
+# PASS stochastic_rsi valeur finale finie
+# PASS stochastic_rsi timestamps alignés
+# PASS supertrend READY
+# PASS supertrend valeur finale finie
+# PASS supertrend timestamps alignés
+# PASS vwap READY
+# PASS vwap valeur finale finie
+# PASS vwap timestamps alignés
+# PASS vwma READY
+# PASS vwma valeur finale finie
+# PASS vwma timestamps alignés
+# PASS williams_r READY
+# PASS williams_r valeur finale finie
+# PASS williams_r timestamps alignés
+# PASS SMA(3) série croissante got=5 expected=5
+# PASS EMA(3) série croissante got=5 expected=5
+# PASS RSI tendance haussière = 100 got=100 expected=100
+# PASS ATR constant = range 2 got=2 expected=2
+# PASS ADX Wilder correctement chauffé (index >=26)
+# PASS rsi.value dans [0,100]
+# PASS mfi.value dans [0,100]
+# PASS stochastic.k dans [0,100]
+# PASS stochastic.d dans [0,100]
+# PASS stochastic_rsi.k dans [0,100]
+# PASS stochastic_rsi.d dans [0,100]
+# PASS adx.adx dans [0,100]
+# PASS adx.plus_di dans [0,100]
+# PASS adx.minus_di dans [0,100]
+# PASS Williams %R dans [-100,0]
+# PASS vwap refuse absence de volume
+# PASS vwma refuse absence de volume
+# PASS obv refuse absence de volume
+# PASS mfi refuse absence de volume
+# PASS limite 32 indicateurs appliquée
+# PASS runtime initial
+# PASS runtime incrémental
+# PASS Custom JSON sûr chargé
+# PASS Custom utilise operation native EMA
+# PASS Custom opération interdite refusé
+# PASS Custom refusé déplacé en Quarantine
+# PASS Ichimoku Lagging conserve 26 null finaux (pas de faux zéro)
+# PASS vwap calcule avec volume réel
+# PASS vwma calcule avec volume réel
+# PASS obv calcule avec volume réel
+# PASS mfi calcule avec volume réel
+# ALL TESTS PASS · 21 indicators
+# (node:1998) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Engines/Indicators/Tests/test_indicator_engine.js
+ok 9 - Engines/Indicators/Tests/test_indicator_engine.js
+  ---
+  duration_ms: 254.69439
+  type: 'test'
+  ...
+# INDICATOR IR v1.0 DEBUG PASS 2.5
+# (node:2006) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Engines/Indicators/Tests/test_indicator_ir_v2.js
+ok 10 - Engines/Indicators/Tests/test_indicator_ir_v2.js
+  ---
+  duration_ms: 147.202106
+  type: 'test'
+  ...
+# INDICATOR LANGUAGE IIL v1.0 DEBUG PASS overflow_cross 9
+# (node:2014) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Engines/Indicators/Tests/test_indicator_language_v2.js
+ok 11 - Engines/Indicators/Tests/test_indicator_language_v2.js
+  ---
+  duration_ms: 120.773366
+  type: 'test'
+  ...
+# Indicator settings registry: OK · add/remove dynamic + SQLite persistence
+# (node:2022) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Engines/Indicators/Tests/test_indicator_settings_v1.js
+ok 12 - Engines/Indicators/Tests/test_indicator_settings_v1.js
+  ---
+  duration_ms: 168.174211
+  type: 'test'
+  ...
+# PASS mode
+# PASS count
+# PASS short
+# PASS long
+# PASS strength
+# PASS bounds
+# PASS estimated
+# PASS strength
+# PASS bounds
+# PASS estimated
+# PASS strength
+# PASS bounds
+# PASS estimated
+# PASS strength
+# PASS bounds
+# PASS estimated
+# PASS warmup
+# ALL LIQUIDITY TESTS PASS · 4 zones
+# (node:2030) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Engines/Liquidity/Tests/test_liquidity_engine.js
+ok 13 - Engines/Liquidity/Tests/test_liquidity_engine.js
+  ---
+  duration_ms: 149.981107
+  type: 'test'
+  ...
+# PASS book available
+# PASS best bid ask
+# PASS spread
+# PASS bid dominance
+# PASS dominant side
+# PASS open interest
+# PASS oi notional
+# PASS liquidations count
+# PASS liquidation notional
+# PASS liquidation imbalance
+# PASS snapshot imbalance
+# PASS snapshot OI
+# ALL LIQUIDITY METRICS TESTS PASS
+# (node:2038) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Engines/Liquidity/Tests/test_liquidity_metrics.js
+ok 14 - Engines/Liquidity/Tests/test_liquidity_metrics.js
+  ---
+  duration_ms: 113.371401
+  type: 'test'
+  ...
+# PASS maintained Liquidity provider: ten canonical Market Data CP/1 reads, no direct Internet transport
+# (node:2046) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Engines/Liquidity/Tests/test_market_data_provider_static.js
+ok 15 - Engines/Liquidity/Tests/test_market_data_provider_static.js
+  ---
+  duration_ms: 123.885891
+  type: 'test'
+  ...
+# PASS Alternate Provider Policy v1 ranked fallback contract
+# (node:2054) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Engines/MarketData/Tests/test_alternate_provider_policy_v1.js
+ok 16 - Engines/MarketData/Tests/test_alternate_provider_policy_v1.js
+  ---
+  duration_ms: 144.35323
+  type: 'test'
+  ...
+# (node:2062) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# PASS API Request Orchestrator v1 Shadow Mode
+# Subtest: Engines/MarketData/Tests/test_api_request_orchestrator_shadow_v1.js
+ok 17 - Engines/MarketData/Tests/test_api_request_orchestrator_shadow_v1.js
+  ---
+  duration_ms: 337.04496
+  type: 'test'
+  ...
+# CEX PROVIDERS DEBUG PASS BINANCE OKX FIREWALL
+# (node:2070) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Engines/MarketData/Tests/test_cex_providers_v2.js
+ok 18 - Engines/MarketData/Tests/test_cex_providers_v2.js
+  ---
+  duration_ms: 165.956503
+  type: 'test'
+  ...
+# (node:2078) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: extreme raw CoinGecko volume is not reliable
+ok 19 - extreme raw CoinGecko volume is not reliable
+  ---
+  duration_ms: 3.193985
+  type: 'test'
+  ...
+# Subtest: null global volume keeps valid market cap/dominance admissible
+ok 20 - null global volume keeps valid market cap/dominance admissible
+  ---
+  duration_ms: 3.649027
+  type: 'test'
+  ...
+# (node:2086) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: queued/in-flight requests deduplicate, results do not share mutable state; no raw cache
+ok 21 - queued/in-flight requests deduplicate, results do not share mutable state; no raw cache
+  ---
+  duration_ms: 343.463453
+  type: 'test'
+  ...
+# Subtest: 429 preserves Retry-After, blocks all endpoints and never loops automatic retries
+ok 22 - 429 preserves Retry-After, blocks all endpoints and never loops automatic retries
+  ---
+  duration_ms: 306.069328
+  type: 'test'
+  ...
+# Subtest: zero retries is respected for provider failures; persisted budget exhaustion prevents HTTP
+ok 23 - zero retries is respected for provider failures; persisted budget exhaustion prevents HTTP
+  ---
+  duration_ms: 11.801378
+  type: 'test'
+  ...
+# Subtest: SQLite counts HTTP attempts once, including failures, and retains budget/cooldown on reopen
+ok 24 - SQLite counts HTTP attempts once, including failures, and retains budget/cooldown on reopen
+  ---
+  duration_ms: 13.390431
+  type: 'test'
+  ...
+# Subtest: legacy fast settings are clamped; failed refresh preserves prior CeFi instead of new zero fields
+ok 25 - legacy fast settings are clamped; failed refresh preserves prior CeFi instead of new zero fields
+  ---
+  duration_ms: 2.391214
+  type: 'test'
+  ...
+# Subtest: exchange enrichment reaches Data Firewall before cache admission
+ok 26 - exchange enrichment reaches Data Firewall before cache admission
+  ---
+  duration_ms: 0.843467
+  type: 'test'
+  ...
+# Subtest: refreshing exchange coverage never triggers redundant global/market calls when prior coverage exists
+ok 27 - refreshing exchange coverage never triggers redundant global/market calls when prior coverage exists
+  ---
+  duration_ms: 0.686957
+  type: 'test'
+  ...
+# PASS Currency Registry v1 unified fiat/stable-asset contract
+# (node:2094) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Engines/MarketData/Tests/test_currency_registry_v1.js
+ok 21 - Engines/MarketData/Tests/test_currency_registry_v1.js
+  ---
+  duration_ms: 154.892232
+  type: 'test'
+  ...
+# PASS DeFiLlama public/free provider surface: 29 endpoints, Yield/Premium excluded
+# (node:2102) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Engines/MarketData/Tests/test_defillama_public_surface_v2.js
+ok 22 - Engines/MarketData/Tests/test_defillama_public_surface_v2.js
+  ---
+  duration_ms: 146.398406
+  type: 'test'
+  ...
+# (node:2110) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: MISS → alias HIT → forced MISS → TTL expiry; Firewall before cache/SQL; durable exact pair
+ok 30 - MISS → alias HIT → forced MISS → TTL expiry; Firewall before cache/SQL; durable exact pair
+  ---
+  duration_ms: 89.112951
+  type: 'test'
+  ...
+# Subtest: empty, all-provider errors and malformed response are explicit, uncached and unpersisted
+ok 31 - empty, all-provider errors and malformed response are explicit, uncached and unpersisted
+  ---
+  duration_ms: 27.960682
+  type: 'test'
+  ...
+# Subtest: actual Firewall rejects invalid pool/aggregate; no cache or SQL
+ok 32 - actual Firewall rejects invalid pool/aggregate; no cache or SQL
+  ---
+  duration_ms: 20.759456
+  type: 'test'
+  ...
+# Subtest: Firewall bypass, missing decision and observation rejection cannot admit data
+ok 33 - Firewall bypass, missing decision and observation rejection cannot admit data
+  ---
+  duration_ms: 7.911082
+  type: 'test'
+  ...
+# Subtest: SQLite failure is explicit and never appears as successful cached persistence
+ok 34 - SQLite failure is explicit and never appears as successful cached persistence
+  ---
+  duration_ms: 31.587633
+  type: 'test'
+  ...
+# Subtest: storage rejects missing validation and historical throttling does not hide errors
+ok 35 - storage rejects missing validation and historical throttling does not hide errors
+  ---
+  duration_ms: 0.923135
+  type: 'test'
+  ...
+# Subtest: Firewall timeout and malformed JSON fail closed without cache or SQL
+ok 36 - Firewall timeout and malformed JSON fail closed without cache or SQL
+  ---
+  duration_ms: 1094.806397
+  type: 'test'
+  ...
+# Subtest: expired data is not reused on provider failure; a failed forced refresh preserves only the prior valid HIT
+ok 37 - expired data is not reused on provider failure; a failed forced refresh preserves only the prior valid HIT
+  ---
+  duration_ms: 18.520775
+  type: 'test'
+  ...
+# Subtest: reversed API pools do not assign stablecoin USD price to ETH
+ok 38 - reversed API pools do not assign stablecoin USD price to ETH
+  ---
+  duration_ms: 9.528887
+  type: 'test'
+  ...
+# (node:2118) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# PASS dynamic MarketData symbol catalogs + Firewall contract
+# Subtest: Engines/MarketData/Tests/test_dynamic_symbol_catalog_v1.js
+ok 24 - Engines/MarketData/Tests/test_dynamic_symbol_catalog_v1.js
+  ---
+  duration_ms: 291.681089
+  type: 'test'
+  ...
+# (node:2126) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# PASS Financial async refresh + DeFi fast lane
+# Subtest: Engines/MarketData/Tests/test_financial_async_fastlane_v1.js
+ok 25 - Engines/MarketData/Tests/test_financial_async_fastlane_v1.js
+  ---
+  duration_ms: 192.022255
+  type: 'test'
+  ...
+# (node:2134) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: cached UI read returns before refresh, preserving original validated metadata
+ok 41 - cached UI read returns before refresh, preserving original validated metadata
+  ---
+  duration_ms: 3.317255
+  type: 'test'
+  ...
+# Subtest: fresh reads do not refresh; ordinary reads and force keep their existing contract
+ok 42 - fresh reads do not refresh; ordinary reads and force keep their existing contract
+  ---
+  duration_ms: 0.863915
+  type: 'test'
+  ...
+# Subtest: cold UI read awaits a validated refresh and propagates its failure
+ok 43 - cold UI read awaits a validated refresh and propagates its failure
+  ---
+  duration_ms: 0.463041
+  type: 'test'
+  ...
+# FINANCIAL DATA CONTRACT DEBUG PASS STAKING KRAKEN READ_ONLY
+# (node:2142) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Engines/MarketData/Tests/test_financial_data_contract_v2.js
+ok 27 - Engines/MarketData/Tests/test_financial_data_contract_v2.js
+  ---
+  duration_ms: 167.301534
+  type: 'test'
+  ...
+# PASS Financial family scheduler: CeFi/DeFi refresh independently
+# (node:2150) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Engines/MarketData/Tests/test_financial_family_scheduler_v1.js
+ok 28 - Engines/MarketData/Tests/test_financial_family_scheduler_v1.js
+  ---
+  duration_ms: 129.355807
+  type: 'test'
+  ...
+# PASS Firewall reject => never cached; validated data => post-firewall cache
+# (node:2158) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Engines/MarketData/Tests/test_firewall_cache_boundary_v1.js
+ok 29 - Engines/MarketData/Tests/test_firewall_cache_boundary_v1.js
+  ---
+  duration_ms: 233.968191
+  type: 'test'
+  ...
+# (node:2166) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: raw stream units, filled quantity and side semantics are explicit
+ok 47 - raw stream units, filled quantity and side semantics are explicit
+  ---
+  duration_ms: 3.228098
+  type: 'test'
+  ...
+# Subtest: linear/base/inverse amounts use validated rates and metadata; final USD passes Firewall before SQLite
+ok 48 - linear/base/inverse amounts use validated rates and metadata; final USD passes Firewall before SQLite
+  ---
+  duration_ms: 28.978102
+  type: 'test'
+  ...
+# Subtest: simultaneous replay and replay after restart do not double count either memory or SQLite
+ok 49 - simultaneous replay and replay after restart do not double count either memory or SQLite
+  ---
+  duration_ms: 10.684881
+  type: 'test'
+  ...
+# Subtest: unknown contract metadata or USD conversion keeps events and explicit unavailable amounts
+ok 50 - unknown contract metadata or USD conversion keeps events and explicit unavailable amounts
+  ---
+  duration_ms: 5.890586
+  type: 'test'
+  ...
+# Subtest: invalid raw data and final Firewall refusal cannot be persisted
+ok 51 - invalid raw data and final Firewall refusal cannot be persisted
+  ---
+  duration_ms: 9.783248
+  type: 'test'
+  ...
+# Subtest: 24h SQL aggregates include more than 500 events, no recent-buffer heuristic or invented legacy USD
+ok 52 - 24h SQL aggregates include more than 500 events, no recent-buffer heuristic or invented legacy USD
+  ---
+  duration_ms: 108.676725
+  type: 'test'
+  ...
+# Subtest: order-only Binance prices and unsupported inverse Bybit contracts remain unavailable; memory contract retained
+ok 53 - order-only Binance prices and unsupported inverse Bybit contracts remain unavailable; memory contract retained
+  ---
+  duration_ms: 14.221729
+  type: 'test'
+  ...
+# LIQUIDITY_PIPELINE_V4_OK
+# (node:2174) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Engines/MarketData/Tests/test_liquidity_pipeline_v1.js
+ok 31 - Engines/MarketData/Tests/test_liquidity_pipeline_v1.js
+  ---
+  duration_ms: 164.110643
+  type: 'test'
+  ...
+# [OK]   Valid CoinGecko + DeFiLlama snapshot passes quality gate
+# [OK]   Negative token price is rejected
+# [OK]   Provider overlap cannot replace CoinGecko CeFi authority
+# [OK]   Provider overlap cannot replace DeFiLlama DeFi authority
+# [OK]   TVL authority = DeFiLlama
+# [OK]   Token price authority = CoinGecko
+# [OK]   Unsafe refresh/TTL values are clamped
+# [OK]   CoinGecko registry cannot refresh faster than 60 seconds
+# Market Data Collector V2.0 lock tests: PASS (0 error(s))
+# (node:2182) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Engines/MarketData/Tests/test_market_data_collector_v2_lock.js
+ok 32 - Engines/MarketData/Tests/test_market_data_collector_v2_lock.js
+  ---
+  duration_ms: 145.981386
+  type: 'test'
+  ...
+# (node:2190) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Kraken absent OI passes real Firewall and persists a snapshot
+ok 56 - Kraken absent OI passes real Firewall and persists a snapshot
+  ---
+  duration_ms: 24.212222
+  type: 'test'
+  ...
+# Subtest: genuine zero OI remains zero with a positive book mid price
+ok 57 - genuine zero OI remains zero with a positive book mid price
+  ---
+  duration_ms: 2.651276
+  type: 'test'
+  ...
+# Subtest: Firewall still rejects an available OI with a zero mark price
+ok 58 - Firewall still rejects an available OI with a zero mark price
+  ---
+  duration_ms: 0.441099
+  type: 'test'
+  ...
+# PASS NATIVE budget admission: 2 admitted, 1 rejected
+# (node:2198) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Engines/MarketData/Tests/test_native_budget_admission_v1.js
+ok 34 - Engines/MarketData/Tests/test_native_budget_admission_v1.js
+  ---
+  duration_ms: 233.161456
+  type: 'test'
+  ...
+# PASS NATIVE budget safety: unknown, invalid cost, valid
+# (node:2206) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Engines/MarketData/Tests/test_native_budget_safety_v1.js
+ok 35 - Engines/MarketData/Tests/test_native_budget_safety_v1.js
+  ---
+  duration_ms: 178.715578
+  type: 'test'
+  ...
+# (node:2214) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# PASS NATIVE Dispatcher priority: HIGH before LOW
+# Subtest: Engines/MarketData/Tests/test_native_dispatcher_priority_v1.js
+ok 36 - Engines/MarketData/Tests/test_native_dispatcher_priority_v1.js
+  ---
+  duration_ms: 131.428115
+  type: 'test'
+  ...
+# (node:2222) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# PASS NATIVE Dispatcher: retry, execution, fail-closed
+# Subtest: Engines/MarketData/Tests/test_native_dispatcher_v1.js
+ok 37 - Engines/MarketData/Tests/test_native_dispatcher_v1.js
+  ---
+  duration_ms: 200.516376
+  type: 'test'
+  ...
+# (node:2230) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# PASS HTTP 429: cooldown applique et requete differee
+# ATTENTE_MS=890
+# Subtest: Engines/MarketData/Tests/test_native_http_429_cooldown_v1.js
+ok 38 - Engines/MarketData/Tests/test_native_http_429_cooldown_v1.js
+  ---
+  duration_ms: 1261.436769
+  type: 'test'
+  ...
+# (node:2238) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# PASS NATIVE HTTP 429 INTERRUPTED: cooldown, feedback unique, callback unique
+# Subtest: Engines/MarketData/Tests/test_native_http_429_interrupted_v1.js
+ok 39 - Engines/MarketData/Tests/test_native_http_429_interrupted_v1.js
+  ---
+  duration_ms: 4234.405229
+  type: 'test'
+  ...
+# (node:2246) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# PASS NATIVE HTTP Dispatcher: 2 HTTP, quota consomme 2
+# Subtest: Engines/MarketData/Tests/test_native_http_dispatcher_v1.js
+ok 40 - Engines/MarketData/Tests/test_native_http_dispatcher_v1.js
+  ---
+  duration_ms: 314.217738
+  type: 'test'
+  ...
+# (node:2254) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# PASS NATIVE HTTP: 2 requetes transmises, 1 bloquee
+# Subtest: Engines/MarketData/Tests/test_native_http_enforcement_v1.js
+ok 41 - Engines/MarketData/Tests/test_native_http_enforcement_v1.js
+  ---
+  duration_ms: 30366.006016
+  type: 'test'
+  ...
+# (node:2262) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# PASS NATIVE FAIL-CLOSED: 0 requete emise
+# Subtest: Engines/MarketData/Tests/test_native_http_failclosed_v1.js
+ok 42 - Engines/MarketData/Tests/test_native_http_failclosed_v1.js
+  ---
+  duration_ms: 194.795437
+  type: 'test'
+  ...
+# (node:2270) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# PASS Native-Lite dedup + post-firewall cache boundary
+# Subtest: Engines/MarketData/Tests/test_native_lite_cache_dedup_v1.js
+ok 43 - Engines/MarketData/Tests/test_native_lite_cache_dedup_v1.js
+  ---
+  duration_ms: 350.711781
+  type: 'test'
+  ...
+# (node:2278) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# PASS Native-Lite signature + dedup isolation integrity
+# Subtest: Engines/MarketData/Tests/test_native_lite_data_integrity_v1.js
+ok 44 - Engines/MarketData/Tests/test_native_lite_data_integrity_v1.js
+  ---
+  duration_ms: 256.317056
+  type: 'test'
+  ...
+# PASS NATIVE retryAfterMs
+# (node:2286) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Engines/MarketData/Tests/test_native_retry_after_v1.js
+ok 45 - Engines/MarketData/Tests/test_native_retry_after_v1.js
+  ---
+  duration_ms: 162.910343
+  type: 'test'
+  ...
+# PASS NATIVE Bridge: admission, quota, fail-closed, SHADOW
+# (node:2294) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Engines/MarketData/Tests/test_native_transport_bridge_v1.js
+ok 46 - Engines/MarketData/Tests/test_native_transport_bridge_v1.js
+  ---
+  duration_ms: 132.944728
+  type: 'test'
+  ...
+# PASS OI Currency Registry normalization contract
+# (node:2302) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Engines/MarketData/Tests/test_open_interest_currency_normalization_v1.js
+ok 47 - Engines/MarketData/Tests/test_open_interest_currency_normalization_v1.js
+  ---
+  duration_ms: 175.713268
+  type: 'test'
+  ...
+# PASS Phase 1 provider policy/budget shadow profiles
+# (node:2310) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Engines/MarketData/Tests/test_phase1_provider_profiles_v1.js
+ok 48 - Engines/MarketData/Tests/test_phase1_provider_profiles_v1.js
+  ---
+  duration_ms: 188.248987
+  type: 'test'
+  ...
+# PASS Phase 2 weighted budget: Binance + Hyperliquid
+# (node:2318) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Engines/MarketData/Tests/test_phase2_weighted_budget_v1.js
+ok 49 - Engines/MarketData/Tests/test_phase2_weighted_budget_v1.js
+  ---
+  duration_ms: 170.169324
+  type: 'test'
+  ...
+# PASS Phase 3 special limits: Kraken + OKX + Bybit
+# (node:2326) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Engines/MarketData/Tests/test_phase3_special_limits_v1.js
+ok 50 - Engines/MarketData/Tests/test_phase3_special_limits_v1.js
+  ---
+  duration_ms: 170.259669
+  type: 'test'
+  ...
+# PASS Provider Passport v1 registry
+# (node:2334) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Engines/MarketData/Tests/test_provider_passports_v1.js
+ok 51 - Engines/MarketData/Tests/test_provider_passports_v1.js
+  ---
+  duration_ms: 250.833378
+  type: 'test'
+  ...
+# PASS Shadow Decision Engine v1 observation-only contract
+# (node:2342) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Engines/MarketData/Tests/test_shadow_decision_engine_v1.js
+ok 52 - Engines/MarketData/Tests/test_shadow_decision_engine_v1.js
+  ---
+  duration_ms: 165.345569
+  type: 'test'
+  ...
+# PASS transport bridge -> orchestrator -> budget integration
+# (node:2350) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Engines/MarketData/Tests/test_transport_budget_bridge_v1.js
+ok 53 - Engines/MarketData/Tests/test_transport_budget_bridge_v1.js
+  ---
+  duration_ms: 148.998701
+  type: 'test'
+  ...
+# PASS UNKNOWN quota profiles are observe-only and non-blocking
+# (node:2358) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Engines/MarketData/Tests/test_unknown_quota_nonblocking_v1.js
+ok 54 - Engines/MarketData/Tests/test_unknown_quota_nonblocking_v1.js
+  ---
+  duration_ms: 120.016299
+  type: 'test'
+  ...
+# Strategy Engine v2 core: OK; catalog=1
+# (node:2366) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Engines/Strategy/Tests/test_strategy_engine_v2.js
+ok 55 - Engines/Strategy/Tests/test_strategy_engine_v2.js
+  ---
+  duration_ms: 102.155002
+  type: 'test'
+  ...
+# Strategy UI Router READ_ONLY v2 contract: OK
+# (node:2374) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Engines/Strategy/Tests/test_strategy_ui_router_readonly_v1.9.js
+ok 56 - Engines/Strategy/Tests/test_strategy_ui_router_readonly_v1.9.js
+  ---
+  duration_ms: 111.824526
+  type: 'test'
+  ...
+# (node:2382) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: CEX selection binds owner, market and broker; public identity contains no secret
+ok 82 - CEX selection binds owner, market and broker; public identity contains no secret
+  ---
+  duration_ms: 2.905639
+  type: 'test'
+  ...
+# Subtest: reject missing authorization, other owner, disabled, wrong market, ambiguous default and inline credentials
+ok 83 - reject missing authorization, other owner, disabled, wrong market, ambiguous default and inline credentials
+  ---
+  duration_ms: 0.993025
+  type: 'test'
+  ...
+# Subtest: explicit account selects among multiple assigned accounts without fallback
+ok 84 - explicit account selects among multiple assigned accounts without fallback
+  ---
+  duration_ms: 0.380387
+  type: 'test'
+  ...
+# Subtest: revocation and credential rotation invalidate prior binding before reading secrets
+ok 85 - revocation and credential rotation invalidate prior binding before reading secrets
+  ---
+  duration_ms: 0.393121
+  type: 'test'
+  ...
+# Subtest: GMX selects wallet by explicit chain and passes only bound signer
+ok 86 - GMX selects wallet by explicit chain and passes only bound signer
+  ---
+  duration_ms: 0.778567
+  type: 'test'
+  ...
+# Subtest: engine uses routing for execution and cancellation and rechecks halt after asynchronous resolution
+ok 87 - engine uses routing for execution and cancellation and rechecks halt after asynchronous resolution
+  ---
+  duration_ms: 3.62178
+  type: 'test'
+  ...
+# (node:2390) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# PASS Auth21 signed ADMIN proof, role rejection, replay and ledger
+# Subtest: Engines/Trading/tests/test_trading_admin_auth21_binding_v2.js
+ok 58 - Engines/Trading/tests/test_trading_admin_auth21_binding_v2.js
+  ---
+  duration_ms: 168.754293
+  type: 'test'
+  ...
+# PASS P3.1/P3.2 Core issuer + provisioned key + replay checks
+# (node:2398) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Engines/Trading/tests/test_trading_admin_bridge_key_v2.js
+ok 59 - Engines/Trading/tests/test_trading_admin_bridge_key_v2.js
+  ---
+  duration_ms: 138.272353
+  type: 'test'
+  ...
+# (node:2406) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# PASS P3 ADMIN fail-closed controller
+# Subtest: Engines/Trading/tests/test_trading_admin_controller_v2.js
+ok 60 - Engines/Trading/tests/test_trading_admin_controller_v2.js
+  ---
+  duration_ms: 113.960332
+  type: 'test'
+  ...
+# PASS Core Auth21 issuer and Firewall guarded maintenance path
+# (node:2414) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Engines/Trading/tests/test_trading_admin_core_firewall_v2.js
+ok 61 - Engines/Trading/tests/test_trading_admin_core_firewall_v2.js
+  ---
+  duration_ms: 124.222229
+  type: 'test'
+  ...
+# (node:2422) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# PASS ADMIN ledger persistence and Firewall fail-closed
+# Subtest: Engines/Trading/tests/test_trading_admin_p3_security.js
+ok 62 - Engines/Trading/tests/test_trading_admin_p3_security.js
+  ---
+  duration_ms: 120.506994
+  type: 'test'
+  ...
+# (node:2430) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# PASS Trading execute/cancel/close normalization
+# Subtest: Engines/Trading/tests/test_trading_core_v2.0.js
+ok 63 - Engines/Trading/tests/test_trading_core_v2.0.js
+  ---
+  duration_ms: 105.425477
+  type: 'test'
+  ...
+# PASS Trading Health Monitor v2.3 P2
+# (node:2438) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Engines/Trading/tests/test_trading_health_monitor_v2.js
+ok 64 - Engines/Trading/tests/test_trading_health_monitor_v2.js
+  ---
+  duration_ms: 91.759481
+  type: 'test'
+  ...
+# (node:2446) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: legacy API and WAL mirror survive restart; both outputs redact credentials
+ok 95 - legacy API and WAL mirror survive restart; both outputs redact credentials
+  ---
+  duration_ms: 14.012388
+  type: 'test'
+  ...
+# Subtest: events sharing request_id are retained; no-ID backfill deduplicates across restart
+ok 96 - events sharing request_id are retained; no-ID backfill deduplicates across restart
+  ---
+  duration_ms: 5.650349
+  type: 'test'
+  ...
+# Subtest: real SQLite read-only failure leaves JSONL readable and is repaired after restart
+ok 97 - real SQLite read-only failure leaves JSONL readable and is repaired after restart
+  ---
+  duration_ms: 3.447666
+  type: 'test'
+  ...
+# Subtest: JSONL write failure never creates an unmatched SQLite event
+ok 98 - JSONL write failure never creates an unmatched SQLite event
+  ---
+  duration_ms: 2.311696
+  type: 'test'
+  ...
+# Subtest: frozen snapshot never creates SQLite/WAL or appends; replay works after thaw
+ok 99 - frozen snapshot never creates SQLite/WAL or appends; replay works after thaw
+  ---
+  duration_ms: 2.928191
+  type: 'test'
+  ...
+# Subtest: history import is bounded, handles malformed lines explicitly and preserves source
+ok 100 - history import is bounded, handles malformed lines explicitly and preserves source
+  ---
+  duration_ms: 2.797228
+  type: 'test'
+  ...
+# Subtest: formatter preserves real zero values and redacts unsafe error text
+ok 101 - formatter preserves real zero values and redacts unsafe error text
+  ---
+  duration_ms: 0.340583
+  type: 'test'
+  ...
+# Subtest: separate user namespace files stay separate; shared database override is rejected
+ok 102 - separate user namespace files stay separate; shared database override is rejected
+  ---
+  duration_ms: 5.092622
+  type: 'test'
+  ...
+# Subtest: configured data root owns the persistent history namespace
+ok 103 - configured data root owns the persistent history namespace
+  ---
+  duration_ms: 9.218819
+  type: 'test'
+  ...
+# (node:2454) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: P3.3 real multiprocess ADMIN chain, denial matrix, key agreement, durable replay and interruptions
+ok 104 - P3.3 real multiprocess ADMIN chain, denial matrix, key agreement, durable replay and interruptions
+  ---
+  duration_ms: 8297.688732
+  type: 'test'
+  ...
+# (node:2653) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: P3 key preflight distinguishes path, absence, exact permissions, owner, symlinks and size without exposing bytes
+ok 105 - P3 key preflight distinguishes path, absence, exact permissions, owner, symlinks and size without exposing bytes
+  ---
+  duration_ms: 4.730871
+  type: 'test'
+  ...
+# Subtest: P3 proof integrity, expiry, roles, durable replay across restart and journal failure
+ok 106 - P3 proof integrity, expiry, roles, durable replay across restart and journal failure
+  ---
+  duration_ms: 20.062728
+  type: 'test'
+  ...
+# Subtest: P3 configured dispatcher never confuses disabled or invalid configuration with READY
+ok 107 - P3 configured dispatcher never confuses disabled or invalid configuration with READY
+  ---
+  duration_ms: 2.366787
+  type: 'test'
+  ...
+# (node:2661) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: P4 atomic durable halt, stale process view, replay and no liquidation
+ok 108 - P4 atomic durable halt, stale process view, replay and no liquidation
+  ---
+  duration_ms: 27.410638
+  type: 'test'
+  ...
+# Subtest: P4 revoked queued intent, final fence and already transmitted uncertainty
+ok 109 - P4 revoked queued intent, final fence and already transmitted uncertainty
+  ---
+  duration_ms: 4.433698
+  type: 'test'
+  ...
+# Subtest: P4 process SIGKILL after durable acknowledgment survives new process and shutdown
+ok 110 - P4 process SIGKILL after durable acknowledgment survives new process and shutdown
+  ---
+  duration_ms: 109.4548
+  type: 'test'
+  ...
+# Subtest: P4 corruption and missing storage fail closed
+ok 111 - P4 corruption and missing storage fail closed
+  ---
+  duration_ms: 3.011095
+  type: 'test'
+  ...
+# Subtest: P4 transactional failure rolls back command and halt together
+ok 112 - P4 transactional failure rolls back command and halt together
+  ---
+  duration_ms: 3.466521
+  type: 'test'
+  ...
+# Subtest: P4 restart/start cannot recover; separate recovery validates backend evidence
+ok 113 - P4 restart/start cannot recover; separate recovery validates backend evidence
+  ---
+  duration_ms: 4.071074
+  type: 'test'
+  ...
+# Subtest: P4 recovery cannot clear uncertain submissions or a concurrent newer halt
+ok 114 - P4 recovery cannot clear uncertain submissions or a concurrent newer halt
+  ---
+  duration_ms: 13.30382
+  type: 'test'
+  ...
+# Subtest: P4 USER, GUEST, expired and missing confirmations do not mutate
+ok 115 - P4 USER, GUEST, expired and missing confirmations do not mutate
+  ---
+  duration_ms: 21.190663
+  type: 'test'
+  ...
+# Subtest: P5 SAFE multi-account drain confirms cancellation and retains owned/manual positions
+ok 116 - P5 SAFE multi-account drain confirms cancellation and retains owned/manual positions
+  ---
+  duration_ms: 193.420925
+  type: 'test'
+  ...
+# Subtest: P5 CLOSE requires separate confirmation, exact plan, reduce-only and excludes manual
+ok 117 - P5 CLOSE requires separate confirmation, exact plan, reduce-only and excludes manual
+  ---
+  duration_ms: 11.22514
+  type: 'test'
+  ...
+# Subtest: P5 partial close is blocked, later proof reconciles with no duplicate close
+ok 118 - P5 partial close is blocked, later proof reconciles with no duplicate close
+  ---
+  duration_ms: 15.211384
+  type: 'test'
+  ...
+# Subtest: P5 HTTP 200 without remote cancellation proof remains blocked
+ok 119 - P5 HTTP 200 without remote cancellation proof remains blocked
+  ---
+  duration_ms: 13.200458
+  type: 'test'
+  ...
+# Subtest: P5 timeout with late broker result reconciles after restart without resend
+ok 120 - P5 timeout with late broker result reconciles after restart without resend
+  ---
+  duration_ms: 9.164683
+  type: 'test'
+  ...
+# Subtest: P5 emergency during broker wait wins and already sent operations stay uncertain
+ok 121 - P5 emergency during broker wait wins and already sent operations stay uncertain
+  ---
+  duration_ms: 9.683893
+  type: 'test'
+  ...
+# Subtest: P5 stale inventory, foreign accounts and unsupported reduce-only fail closed
+ok 122 - P5 stale inventory, foreign accounts and unsupported reduce-only fail closed
+  ---
+  duration_ms: 21.883527
+  type: 'test'
+  ...
+# Subtest: P5 uncertain GMX submitted transaction cannot become confirmed close
+ok 123 - P5 uncertain GMX submitted transaction cannot become confirmed close
+  ---
+  duration_ms: 9.203845
+  type: 'test'
+  ...
+# Subtest: P5 Risk/Firewall refusal and Portfolio failure prevent successful stop
+ok 124 - P5 Risk/Firewall refusal and Portfolio failure prevent successful stop
+  ---
+  duration_ms: 10.31172
+  type: 'test'
+  ...
+# Subtest: P5 concurrent ADMIN commands serialize and unknown owner cannot confirm
+ok 125 - P5 concurrent ADMIN commands serialize and unknown owner cannot confirm
+  ---
+  duration_ms: 4.243124
+  type: 'test'
+  ...
+# Subtest: P5 production draining provider unavailable and disabled LIVE rejects before credentials or transport
+ok 126 - P5 production draining provider unavailable and disabled LIVE rejects before credentials or transport
+  ---
+  duration_ms: 5.455637
+  type: 'test'
+  ...
+# Subtest: P4 deleted/replaced persistent store invalidates an existing process view
+ok 127 - P4 deleted/replaced persistent store invalidates an existing process view
+  ---
+  duration_ms: 2.251082
+  type: 'test'
+  ...
+# Subtest: P5 changed plan digest, stale confirmation and SPOT liquidation are rejected
+ok 128 - P5 changed plan digest, stale confirmation and SPOT liquidation are rejected
+  ---
+  duration_ms: 10.568798
+  type: 'test'
+  ...
+# Subtest: P5 already filled order needs no cancellation; partial order cancellation retains exposure
+ok 129 - P5 already filled order needs no cancellation; partial order cancellation retains exposure
+  ---
+  duration_ms: 12.881816
+  type: 'test'
+  ...
+# Subtest: P5 incomplete inventory cannot be reconciled into false STOPPED
+ok 130 - P5 incomplete inventory cannot be reconciled into false STOPPED
+  ---
+  duration_ms: 8.329396
+  type: 'test'
+  ...
+# Subtest: P4 concurrent processes share a final fence and cannot send after halt ack
+ok 131 - P4 concurrent processes share a final fence and cannot send after halt ack
+  ---
+  duration_ms: 97.729403
+  type: 'test'
+  ...
+# Subtest: P5 crash after dispatch retains uncertain action and reconciliation cannot resend
+ok 132 - P5 crash after dispatch retains uncertain action and reconciliation cannot resend
+  ---
+  duration_ms: 114.49241
+  type: 'test'
+  ...
+# PASS P1 durable runtime states
+# (node:2693) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Engines/Trading/tests/test_trading_runtime_state_v2.js
+ok 69 - Engines/Trading/tests/test_trading_runtime_state_v2.js
+  ---
+  duration_ms: 119.475787
+  type: 'test'
+  ...
+1..133
+# tests 133
+# suites 0
+# pass 133
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 58636.76815
+(node:1927) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)

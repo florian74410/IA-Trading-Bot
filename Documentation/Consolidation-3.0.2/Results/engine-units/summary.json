@@ -1,0 +1,16 @@
+{
+  "commit": "c0e94a1c9be92282f04e0e2f1db647277e10b2b1",
+  "node": "v22.23.0",
+  "started_at": "2026-11-18T11:54:12.968Z",
+  "duration_ms": 58763,
+  "status": "PASS",
+  "exit_code": 0,
+  "error": null,
+  "files": 69,
+  "passed": 133,
+  "failed": 0,
+  "skipped": 0,
+  "real_orders": 0,
+  "network": "loopback only; no real exchange domains",
+  "failed_cases": []
+}

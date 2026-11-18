@@ -1,0 +1,13 @@
+{
+  "ok": true,
+  "node": "v22.23.5",
+  "betterSqlite3": "12.4.1",
+  "sqlite": "3.50.4",
+  "resolved": "/opt/iatb/App/node_modules/better-sqlite3/lib/index.js",
+  "checks": [
+    "insert",
+    "transaction",
+    "select",
+    "quick_check"
+  ]
+}
