@@ -73,13 +73,27 @@ function stopTotal(){
 }
 function initDashboardNavigation(){
  var content=document.querySelector('.adminContent'),links=[].slice.call(document.querySelectorAll('#adminSectionNav .sideLink[data-target]')),sections=[];
+ if(document.body.classList.contains('atlasPage')){
+  links.forEach(function(b){
+   b.classList.remove('active');
+   b.onclick=function(){location.href='/admin#'+b.dataset.target;};
+  });
+  return;
+ }
  links.forEach(function(b){var id=b.getAttribute('data-target'),el=$(id);if(el)sections.push({id:id,el:el,btn:b});b.onclick=function(){var target=$(id);if(!target)return;target.scrollIntoView({behavior:'smooth',block:'start'});setActiveSection(id)}});
  function setActiveSection(id){links.forEach(function(b){b.classList.toggle('active',b.getAttribute('data-target')===id)});[].slice.call(document.querySelectorAll('.dashSection')).forEach(function(s){s.classList.toggle('isActiveSection',s.id===id)})}
  function sync(){if(!content)return;var top=content.getBoundingClientRect().top+80,best=sections[0],dist=1e9;sections.forEach(function(x){var d=Math.abs(x.el.getBoundingClientRect().top-top);if(d<dist){dist=d;best=x}});if(best)setActiveSection(best.id)}
- if(content)content.addEventListener('scroll',sync,{passive:true});setActiveSection('console');
+ if(content)content.addEventListener('scroll',sync,{passive:true});setActiveSection(sections.some(function(x){return '#'+x.id===location.hash;})?location.hash.slice(1):'console');
 }
 function updateClock(){if(!$('systemClock'))return;var d=new Date(),pad=function(n){return(n<10?'0':'')+n};$('systemClock').textContent=pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds())}
 $('navTrading').onclick=function(){location.href='/'};$('navChart').onclick=function(){location.href='/chart-viewer'};$('navPortfolio').onclick=function(){location.href='/portfolio'};if($('navBank'))$('navBank').onclick=function(){location.href='/bank'};if($('navVaultCreator'))$('navVaultCreator').onclick=function(){location.href='/admin/vaults'};$('navFundamental').onclick=function(){location.href='/fundamental'};$('refresh').onclick=refresh;
+if(document.body.classList.contains('atlasPage')){
+ if($('restartAllSide'))$('restartAllSide').onclick=restartAll;
+ initDashboardNavigation();
+ updateClock();
+ setInterval(updateClock,1000);
+ return;
+}
 if($('consoleRefresh'))$('consoleRefresh').onclick=consoleRefresh;if($('consoleCopy'))$('consoleCopy').onclick=consoleCopy;if($('consoleClear'))$('consoleClear').onclick=function(){if(consoleIsLogs())clearLog();else consoleClearOutput();};if($('consoleSend'))$('consoleSend').onclick=executeConsole;if($('consoleInput')){$('consoleInput').onkeydown=consoleKeydown;$('consoleInput').oninput=updateConsoleSuggestions;}if($('consoleView'))$('consoleView').onchange=setConsoleView;if($('consoleTarget'))$('consoleTarget').onchange=function(){hideConsoleSuggestions();updateConsoleSuggestions();};if($('consoleMode'))$('consoleMode').onchange=function(){consoleAppend('Mode console : '+$('consoleMode').value.toUpperCase()+'.','SYSTEM');};
 if($('restartAllSide'))$('restartAllSide').onclick=restartAll;initDashboardNavigation();updateClock();setInterval(updateClock,1000);if($('logRefresh'))$('logRefresh').onclick=loadLog;if($('logSource'))$('logSource').onchange=loadLog;if($('logLines'))$('logLines').onchange=loadLog;if($('logCopy'))$('logCopy').onclick=consoleCopy;if($('logClear'))$('logClear').onclick=clearLog;$('reloadIndicators').onclick=reload;$('clearMarket').onclick=function(){clearCache('marketdata')};$('clearLiquidity').onclick=function(){clearCache('liquidity')};$('clearAllCaches').onclick=function(){clearCache('all')};$('restartAll').onclick=restartAll;$('stopTotal').onclick=stopTotal;
 setConsoleView();

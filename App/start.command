@@ -420,7 +420,7 @@ require_service "IA Supervisor" "$SUPERVISOR_PORT" "/health" "IA-TB Supervisor" 
 
 # 10. Public UI is always last.
 status_wait "UI Service" "public gateway"
-IATB_UI_PORT="$UI_PORT" CORE_PUBLIC_PORT="$CORE_PORT" ROUTER_PORT="$ROUTER_PORT" IATB_FIREWALL_PORT="$FIREWALL_PORT" IATB_AUTH_MODE="disabled" IATB_UI_BYPASS_ROLE="SUPERADMIN" "$NODE_BIN" UI/Gateway/ui_service.js >> "$UI_LOG" 2>&1 &
+IATB_UI_PORT="$UI_PORT" CORE_PUBLIC_PORT="$CORE_PORT" ROUTER_PORT="$ROUTER_PORT" IATB_FIREWALL_PORT="$FIREWALL_PORT" IATB_AUTH_MODE="disabled" IATB_UI_BYPASS_ROLE="USER" "$NODE_BIN" UI/Gateway/ui_service.js >> "$UI_LOG" 2>&1 &
 UI_PID=$!
 require_service "UI Service" "$UI_PORT" "/ui-health" "IA-TB UI Service" "$UI_LOG" 10
 

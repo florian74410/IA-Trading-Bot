@@ -34,12 +34,19 @@ async function available(gateway, engine, command, args) {
   )
     throw Error("COMMAND_UNQUALIFIED");
   if (c.decision !== "ALLOW") throw Error("PERMISSION_REQUIRED");
+  if (c.online === false) throw Error("ENGINE_OFFLINE");
   await gateway.validate_command(engine, command, args);
   return gateway.execute_authorized_command(engine, command, args);
 }
 async function run(intent, { gateway, accounts = [], now = Date.now }) {
   const p = intent.parameters,
     base = { execution: "NONE", intent_id: intent.intent_id, parameters: p };
+  if (intent.intent_id === "market.cross_analysis") {
+    return { ...base, ...await require("./engine_reads").marketAnalysis(p, gateway, available) };
+  }
+  if (intent.intent_id === "platform.diagnostics" || intent.intent_id === "platform.commands") {
+    return { ...base, ...await require("./engine_reads").run(intent.intent_id, gateway, available) };
+  }
   if (intent.intent_id === "platform.status") {
     if (!gateway)
       return {
@@ -132,7 +139,7 @@ async function run(intent, { gateway, accounts = [], now = Date.now }) {
               trigger_price: p.trigger_price || null,
             }
           : null,
-      warnings: ["Exécution financière non qualifiée ; LIVE reste désactivé."],
+      warnings: ["La préparation doit être vérifiée par Core avant confirmation."],
       sources: [],
       qualification,
     };
@@ -168,7 +175,7 @@ async function run(intent, { gateway, accounts = [], now = Date.now }) {
       ...base,
       status: "PREPARED_UNAVAILABLE",
       message:
-        "Demande reconnue. La préparation reste non exécutable : Trading n’est pas qualifié et aucune autorisation LIVE n’est créée.",
+        "Demande reconnue. En attente de la préparation par Core.",
       preparation,
     };
   }

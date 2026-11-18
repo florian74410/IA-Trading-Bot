@@ -1,7 +1,7 @@
 {
   "schema_version": "2.6.0",
   "engine_id": "risk",
-  "engine_version": "3.0.2-dev.1",
+  "engine_version": "3.1.0",
   "transport": "CP/1",
   "source_protocol_registry": "Core/Communication/ProtocolRegistry/risk.json",
   "source_sha256": "2e348d8bfc957b524435ece9c8165cf1637503ac51dffa0bc50253a607072912",

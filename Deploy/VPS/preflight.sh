@@ -25,7 +25,7 @@ required=(
 for file in "${required[@]}"; do
   if [[ ! -f "$file" ]]; then echo "[FAIL] Missing source: $file" >&2; exit 1; fi
 done
-if [[ "$(cat App/VERSION)" != "3.0.1-dev.1" && "$(cat App/VERSION)" != "3.0.2-dev.1" ]]; then echo "[FAIL] Unexpected source version" >&2; exit 1; fi
+if [[ "$(cat App/VERSION)" != "3.0.1-dev.1" && "$(cat App/VERSION)" != "3.0.2-dev.1" && "$(cat App/VERSION)" != "3.1.0" ]]; then echo "[FAIL] Unexpected source version" >&2; exit 1; fi
 if ! command -v node >/dev/null || [[ "$(node --version)" != v22.* ]]; then
   echo "[FAIL] Node.js 22.x is required." >&2
   exit 1

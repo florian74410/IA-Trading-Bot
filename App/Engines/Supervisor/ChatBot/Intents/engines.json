@@ -1,0 +1,65 @@
+{
+  "schema": "iatb.intent-file/1.0",
+  "intents": [
+    {
+      "category": "engines",
+      "required": [],
+      "optional": [],
+      "implementation": "READ_GATEWAY_PROCEDURE",
+      "risk_level": "LOW",
+      "confirmation": "NO_FINANCIAL_EXECUTION",
+      "parameters_contract": "intent.parameters/1.0",
+      "parameters_schema": "intent.parameters/1.0",
+      "id": "platform.diagnostics",
+      "description": "Consulter l’état des dix Engines via les lectures CP1 autorisées.",
+      "examples": [
+        "Diagnostic des Engines."
+      ],
+      "patterns": [
+        "^diagnostic (des|inter) engines[.!]?$"
+      ]
+    },
+    {
+      "category": "engines",
+      "required": [],
+      "optional": [],
+      "implementation": "READ_GATEWAY_PROCEDURE",
+      "risk_level": "LOW",
+      "confirmation": "NO_FINANCIAL_EXECUTION",
+      "parameters_contract": "intent.parameters/1.0",
+      "parameters_schema": "intent.parameters/1.0",
+      "id": "platform.commands",
+      "description": "Lister les commandes dont le contrat et la permission de l’agent permettent un appel.",
+      "examples": [
+        "Commandes CP1 disponibles."
+      ],
+      "patterns": [
+        "^(liste les )?commandes cp1( disponibles)?[.!]?$"
+      ]
+    },
+    {
+      "category": "engines",
+      "required": [
+        "instrument_candidate"
+      ],
+      "optional": [
+        "account",
+        "timeframe"
+      ],
+      "implementation": "READ_GATEWAY_PROCEDURE",
+      "risk_level": "LOW",
+      "confirmation": "NO_FINANCIAL_EXECUTION",
+      "parameters_contract": "intent.parameters/1.0",
+      "parameters_schema": "intent.parameters/1.0",
+      "id": "market.cross_analysis",
+      "description": "Croiser les bougies, le RSI, les capacités de Liquidity et le diagnostic Risk disponibles.",
+      "examples": [
+        "Analyse le BTC-USDT avec MarketData, Indicators, Liquidity et Risk."
+      ],
+      "patterns": [
+        "^analyse(?:r)? .{2,120} avec market\\s*data\\b",
+        "^analyse croisee\\b"
+      ]
+    }
+  ]
+}

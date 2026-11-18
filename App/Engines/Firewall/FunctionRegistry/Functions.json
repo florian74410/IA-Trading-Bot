@@ -1,7 +1,7 @@
 {
   "schema_version": "2.6.0",
   "engine_id": "firewall",
-  "engine_version": "3.0.2-dev.1",
+  "engine_version": "3.1.0",
   "transport": "CP/1",
   "source_protocol_registry": "Core/Communication/ProtocolRegistry/firewall.json",
   "source_sha256": "7df07a1114fac1750e952be02d31260c1d5093d76cf484b18ac555d0dfb84861",

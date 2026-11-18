@@ -1,7 +1,7 @@
 {
   "schema_version": "2.6.0",
   "engine_id": "indicator",
-  "engine_version": "3.0.2-dev.1",
+  "engine_version": "3.1.0",
   "transport": "CP/1",
   "source_protocol_registry": "Core/Communication/ProtocolRegistry/indicator.json",
   "source_sha256": "bcec8d6a9944c534fe328688f6d11cf9b7e02927bf2b79b8c400d8cf5809172c",

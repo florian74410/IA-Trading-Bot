@@ -26,7 +26,7 @@ function resolveAdminVisibility(){
  a.style.display='none';
  fetch('/api/bootstrap',{cache:'no-store'}).then(function(r){if(!r.ok)throw new Error('BOOTSTRAP_'+r.status);return r.json()}).then(function(o){
   var role=String(o&&o.role||'').toUpperCase();
-  if(role==='ADMIN'||role==='SUPERADMIN')a.style.display='inline-flex';
+  if(o.authenticated===true&&o.localBypass===false&&role==='ADMIN')a.style.display='inline-flex';
   if(settingsLink&&role!=='GUEST')settingsLink.style.display='';
  }).catch(function(){a.style.display='none';if(settingsLink)settingsLink.style.display='none'});
 }
