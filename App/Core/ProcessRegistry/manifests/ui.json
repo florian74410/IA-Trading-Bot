@@ -14,8 +14,6 @@
     "IATB_UI_PORT": "8000",
     "CORE_PUBLIC_PORT": "8001",
     "ROUTER_PORT": "8021",
-    "IATB_AUTH_MODE": "disabled",
-    "IATB_UI_BYPASS_ROLE": "SUPERADMIN",
     "IATB_FIREWALL_PORT": "8017"
   },
   "dependencies": [

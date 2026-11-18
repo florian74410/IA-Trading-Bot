@@ -91,6 +91,63 @@ test('actual Core and Gateway processes authenticate over pinned TLS, isolate la
   await page.evaluate(()=>{window.__qaClear=fetch('/api/settings/apis/clear',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:'OPENAI_API_KEY'})}).then(r=>r.status);});await page.locator('dialog input[type=password]').fill(PASSWORD);await page.locator('dialog button[type=submit]').click();assert.equal(await page.evaluate(()=>window.__qaClear),200);assert.equal(await page.locator('dialog').count(),0);assert.deepEqual(errors,[]);await context.close();
  }
  const adminLogin=await call('/auth21/login','POST',{email:'admin@example.invalid',password:PASSWORD}),adminHeaders={Cookie:adminLogin.cookie.split(';')[0],'X-IATB-CSRF':adminLogin.data.csrfToken};assert.equal((await call('/api/admin/cache/clear','POST',{target:'invalid'},adminHeaders)).status,428);assert.equal((await call('/api/admin/cache/clear','POST',{target:'invalid',password:'wrong',confirmed:true},adminHeaders)).status,401);assert.equal((await call('/api/admin/cache/clear','POST',{target:'invalid',password:PASSWORD,confirmed:true},adminHeaders)).status,400);
+ const atlasPath='/admin/analyse/structurelle',reportPath=atlasPath+'/rapport';
+ assert.equal((await call(atlasPath)).status,303);
+ assert.equal((await call(reportPath)).status,401);
+ assert.equal((await call(atlasPath,'GET',null,ha)).status,403);
+ assert.equal((await call(reportPath,'GET',null,{...ha,'X-IATB-UI-Role':'ADMIN'})).status,403);
+ assert.equal((await call(reportPath,'GET',null,hGuestViewer)).status,403);
+ assert.equal((await call('/assets/atlas-3.0.2-rev-x.json')).status,404);
+ const atlasPage=await call(atlasPath,'GET',null,adminHeaders);
+ assert.equal(atlasPage.status,200);
+ assert.match(atlasPage.text,/id="navStructuralAnalysis"/);
+ const atlas=await call(reportPath,'GET',null,adminHeaders);
+ assert.equal(atlas.status,200);
+ assert.equal(atlas.data.report.meta.engines.length,10);
+ assert.equal(atlas.data.report.meta.commit,'6bdfd3626d19b37790202a66007b90d121007703');
+ assert.equal(atlas.data.installed.version,require('../../Core/Shared/build_info').version);
+ assert.equal(atlas.data.deployed,null);
+ if(process.env.IATB_ATLAS_BROWSER==='1'){
+  const playwright=require(process.env.IATB_PLAYWRIGHT_MODULE||'playwright');
+  const browser=await playwright.chromium.launch({executablePath:process.env.IATB_CHROMIUM_EXECUTABLE||undefined,args:['--no-sandbox']});
+  t.after(()=>browser.close());
+  const context=await browser.newContext({ignoreHTTPSErrors:true,viewport:{width:1366,height:900}});
+  const [name,value]=adminHeaders.Cookie.split('=');
+  await context.addCookies([{name,value,url:origin}]);
+  const page=await context.newPage(),errors=[];
+  page.on('pageerror',e=>errors.push(e.message));
+  await page.goto(origin+'/admin');
+  await page.locator('#navStructuralAnalysis').click();
+  await page.waitForURL('**'+atlasPath);
+  await page.locator('#atlasReport').waitFor();
+  assert.equal(await page.locator('#navStructuralAnalysis').getAttribute('aria-current'),'page');
+  assert.equal(await page.locator('#console').isVisible(),false);
+  await page.locator('#atlasTree summary').first().click();
+  assert.equal(await page.locator('#atlasTree > details').first().getAttribute('open'),'');
+  await page.locator('#atlasTree summary').first().click();
+  assert.equal(await page.locator('#atlasTree > details').first().getAttribute('open'),null);
+  await page.locator('#atlasEngine').selectOption('Trading');
+  const groups=await page.locator('#atlasGroup option').allTextContents();
+  assert(groups.includes('État & contrôle'));
+  await page.locator('#atlasGroup').selectOption('État & contrôle');
+  await page.locator('#atlasFeatureStatus').selectOption('C');
+  await page.locator('#atlasSearch').fill('trading.health');
+  assert.equal(await page.locator('#atlasRows tbody tr').count(),1);
+  await page.locator('#atlasRows tbody button').first().click();
+  assert.equal(await page.locator('[id="atlas-detail-trading.health"]').count(),1);
+  await page.getByRole('button',{name:'ERR-004',exact:true}).click();
+  assert.equal(await page.locator('#atlasView').inputValue(),'issues');
+  assert.equal(await page.locator('#atlas-detail-ERR-004').count(),1);
+  await page.locator('#atlasRows th button').first().click();
+  assert.equal(await page.locator('#atlasRows th').first().getAttribute('aria-sort'),'descending');
+  await page.locator('#atlasSearch').fill('');
+  await page.locator('#atlasView').selectOption('remaining');
+  assert.equal(await page.locator('#atlasRows [data-status="C"]').count(),0);
+  await page.setViewportSize({width:390,height:844});
+  assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+  assert.deepEqual(errors,[]);
+  await context.close();
+ }
  assert.equal((await call('/ui-api/session','GET',null,{...hb,'X-IATB-UI-Role':'ADMIN','X-IATB-Client-Id':a.data.clientId})).data.role,'USER');
  const bridgeQuota=crypto.createHash('sha256').update('bridge:'+a.data.clientId).digest('hex');f.db.prepare('INSERT OR REPLACE INTO um_login_attempts VALUES(?,?,?)').run(bridgeQuota,300,Math.floor(Date.now()/1000)+300);assert.equal((await cp('indicator.registry.status',{})).status,429);f.db.prepare('DELETE FROM um_login_attempts WHERE key=?').run(bridgeQuota);
  f.manager.changeRole(f.login.token,a.data.clientId,'GUEST');assert.equal((await call('/auth21/me','GET',null,ha)).status,401);assert.equal((await call('/auth21/me','GET',null,hb)).status,200);
@@ -131,4 +188,32 @@ test('offline CLI attributes canonical Indicator, Strategy and Mosaic definition
  assert(JSON.parse(f.sessions.getPreference(a.token,'indicators','definitions')).private_import);assert.equal(f.sessions.getPreference(b.token,'indicators','definitions'),null);
  const scoped=Context.scopedSettings(settings,f.cipher);assert.equal(Context.run({clientId:a.clientId},()=>scoped.get('private_mosaics','definitions',[])).length,1);assert.equal(Context.run({clientId:b.clientId},()=>scoped.get('private_mosaics','definitions',[])).length,0);
  const before=process.env.IATB_USER_DB;process.env.IATB_USER_DB=file;try{const dispatch=require("../../Engines/Strategy/Engine/owner_strategy").dispatch({root:f.root});assert.equal(dispatch({clientId:a.clientId},'strategy.catalog',{}).catalog.count,1);assert.equal(dispatch({clientId:b.clientId},'strategy.catalog',{}).catalog.count,0);}finally{if(before===undefined)delete process.env.IATB_USER_DB;else process.env.IATB_USER_DB=before;}
+});
+
+test('legacy UI bypass cannot serve the ADMIN shell or structural report', async t => {
+ const http=require('node:http'),{spawn}=require('node:child_process'),{once}=require('node:events');
+ const probe=http.createServer().listen(0,'127.0.0.1');
+ await once(probe,'listening');
+ const port=probe.address().port;
+ await new Promise(resolve=>probe.close(resolve));
+ const service=spawn(process.execPath,[path.resolve(__dirname,'../../UI/Gateway/ui_service.js')],{
+  env:{...process.env,IATB_AUTH_MODE:'disabled',IATB_DEPLOYMENT_MODE:'DEV-LOCAL',IATB_UI_PORT:String(port),IATB_UI_BYPASS_ROLE:'SUPERADMIN'},
+  stdio:['ignore','ignore','pipe']
+ });
+ t.after(()=>service.kill('SIGTERM'));
+ const request=(route,method='GET')=>new Promise((resolve,reject)=>{
+  const req=http.request({host:'127.0.0.1',port,path:route,method,headers:{'x-iatb-ui-role':'ADMIN'}},res=>{
+   res.resume();res.on('end',()=>resolve(res.statusCode));
+  });
+  req.on('error',reject);req.end();
+ });
+ let healthy=false;
+ for(let i=0;i<60&&!healthy;i++){
+  try{healthy=(await request('/ui-health'))===200;}catch(_){await new Promise(resolve=>setTimeout(resolve,50));}
+ }
+ assert(healthy,'legacy UI did not start');
+ for(const url of ['/admin','/admin/vaults','/admin/analyse/structurelle','/admin/analyse/structurelle/rapport','/api/admin/status','/api/logs']){
+  assert.equal(await request(url),401,url);
+ }
+ assert.equal(await request('/admin/analyse/structurelle','HEAD'),401);
 });

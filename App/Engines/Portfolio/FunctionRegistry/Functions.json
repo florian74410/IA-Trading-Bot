@@ -1,7 +1,7 @@
 {
   "schema_version": "2.6.0",
   "engine_id": "portfolio",
-  "engine_version": "3.0.2-dev.1",
+  "engine_version": "3.1.0",
   "transport": "CP/1",
   "source_protocol_registry": "Core/Communication/ProtocolRegistry/portfolio.json",
   "source_sha256": "a141336e3613cbe6a9ec45c34420ac73f0177f65abbad478f8da69930c7cf047",

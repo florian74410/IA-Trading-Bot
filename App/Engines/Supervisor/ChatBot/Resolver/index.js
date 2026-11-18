@@ -135,6 +135,10 @@ class Resolver {
   }
   resolve(text, { pending = null, accounts = [] } = {}) {
     const n = normalize(text);
+    const [analysis, proposal] = n.split(/\s+puis propose(?:r)?\s+/);
+    if (proposal && this.catalog.get("market.cross_analysis")?.matchers.some(r => r.test(analysis))) {
+      return {...Contracts.validate({intent_id:"market.cross_analysis",parameters:parameters(text,accounts)},this.catalog),status:"RECOGNIZED"};
+    }
     if(/\b(puis|ensuite|independamment)\b/.test(n)){
      const parts=text.split(/\b(puis|ensuite|indépendamment|independamment)\b/i),steps=[];
      for(let i=0;i<parts.length;i+=2){const r=this.resolve(parts[i],{accounts});if(!require('../procedures').financial.has(r.intent_id)||r.intent_id==='plans.execute')return {intent_id:'UNKNOWN',parameters:{},status:'AMBIGUOUS'};steps.push({intent_id:r.intent_id,parameters:r.parameters,depends_on:i&& !/ind.pendamment/i.test(parts[i-1])?[steps.length-1]:[]});}
@@ -171,7 +175,9 @@ class Resolver {
       i.matchers.some((r) => r.test(n)),
     );
     const ids = matches.map((i) => i.id);
-    if (ids.includes("positions.open"))
+    if (ids.includes("market.cross_analysis") && !actions.length)
+      matches = matches.filter((i) => i.id === "market.cross_analysis");
+    else if (ids.includes("positions.open"))
       matches = matches.filter((i) => i.id === "positions.open");
     else if (ids.includes("positions.close"))
       matches = matches.filter((i) => i.id === "positions.close");

@@ -1,7 +1,7 @@
 {
   "schema_version": "2.6.0",
   "engine_id": "core",
-  "engine_version": "3.0.2-dev.1",
+  "engine_version": "3.1.0",
   "transport": "CP/1",
   "source_protocol_registry": "Core/Communication/ProtocolRegistry/core.json",
   "source_sha256": "18a0bf702007e474aeea2e6299d897356e10cf57f4f1c2cebc332101a58aaa26",

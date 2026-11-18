@@ -1,0 +1,29 @@
+#navStructuralAnalysis { text-decoration: none; }
+.atlasPage .adminContent > :not(.atlas), .atlas[hidden], .atlas [hidden] { display: none; }
+.atlasPage #refresh, .atlasPage .sideStatus, .atlasPage .headerMeta > div:first-child { display: none; }
+.atlasCards { display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 8px; }
+.atlasCards > div { padding: 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel2); }
+.atlas dt { color: var(--muted); font-size: .88em; }
+.atlas dd { margin: 4px 0 8px; overflow-wrap: anywhere; }
+.atlasLayout { display: grid; grid-template-columns: minmax(160px, 1fr) minmax(0, 4fr); gap: 14px; }
+#atlasTree { min-width: 0; max-height: 66vh; overflow: auto; border: 1px solid var(--line); padding: 10px; border-radius: 6px; }
+#atlasTree details { margin-left: 10px; }
+#atlasTree summary { cursor: pointer; margin: 7px 0; }
+.atlasFilters { display: flex; flex-wrap: wrap; gap: 8px; }
+.atlasFilters label { flex: 1 1 110px; min-width: 0; color: var(--muted); }
+.atlasFilters input, .atlasFilters select { display: block; width: 100%; padding: 7px; margin-top: 4px; border: 1px solid var(--line); color: var(--txt); background: var(--panel2); border-radius: 5px; }
+.atlasTable { overflow-x: auto; }
+.atlasTable table { width: 100%; border-collapse: collapse; font-size: .93em; }
+.atlasTable td, .atlasTable th { padding: 8px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+.atlasTable th { background: var(--panel2); }
+.atlasTable button:not(.btn), #atlasTree button { background: none; border: 0; padding: 4px 0; color: var(--blue); text-align: left; cursor: pointer; }
+.atlasTable [data-status="C"] { color: var(--green); }
+.atlasTable [data-status="U"] { color: var(--amber); }
+.atlasTable [data-status="I"] { color: var(--red); }
+.atlasDetail { background: var(--panel2); }
+.atlasDetail .btn { margin: 3px; }
+.atlasDetail a { color: var(--blue); }
+@media (max-width: 830px) {
+  .atlasLayout { grid-template-columns: minmax(0, 1fr); }
+  #atlasTree { max-height: 30vh; }
+}

@@ -159,7 +159,7 @@ function migrateLegacyUserIdentity(x){if(!x)return x;try{var legacy=String(x.ema
 function authEmailMatches(x,email){x=migrateLegacyUserIdentity(x);var h=CLIENT_CRYPTO.lookupHash(String(email||'').trim().toLowerCase()),stored=String(x&&x.emailHash||'');if(!h||!stored||h.length!==stored.length)return false;try{return crypto.timingSafeEqual(Buffer.from(h,'hex'),Buffer.from(stored,'hex'));}catch(e){return false;}}
 function userClient(x){x=migrateLegacyUserIdentity(x);try{return x&&x.clientId?CLIENT_SERVICE.byId(x.clientId):null;}catch(e){return null;}}
 function makeSession(email,privateKey,role,clientId){var id=crypto.randomBytes(18).toString('hex');SESS[id]={email:email,clientId:String(clientId||''),privateKey:privateKey,role:AdminPermissions.normalizeRole(role,true),exp:Date.now()+43200000};return id;}
-function adminSession(sess,res){if(!sess||!AdminPermissions.isAdmin(sess)){json(res,403,{ok:false,error:'ADMIN_REQUIRED'});return null;}return sess;}
+function adminSession(sess,res){if(!sess||sess.auth21!==true||!AdminPermissions.isAdmin(sess)){json(res,403,{ok:false,error:'ADMIN_REQUIRED'});return null;}return sess;}
 function invalidateSessions(){Object.keys(SESS).forEach(function(k){delete SESS[k];});Object.keys(PENDING).forEach(function(k){delete PENDING[k];});}
 function deriveKey(password,salt,iterations){return crypto.pbkdf2Sync(String(password),Buffer.from(salt,'base64'),iterations||180000,32,'sha256');}
 function wrapPrivateKey(privateKey,password){var salt=crypto.randomBytes(16).toString('base64'),iv=crypto.randomBytes(12),iterations=180000,key=deriveKey(password,salt,iterations),c=crypto.createCipheriv('aes-256-gcm',key,iv),enc=Buffer.concat([c.update(Buffer.from(privateKey,'utf8')),c.final()]);return{alg:'AES-256-GCM',kdf:'PBKDF2-SHA256',iterations:iterations,salt:salt,iv:iv.toString('base64'),tag:c.getAuthTag().toString('base64'),data:enc.toString('base64')};}
@@ -496,7 +496,8 @@ function legacyRoute(req,res){var u=new URL(req.url,'http://'+HOST+':'+PORT),p=u
  // Resolve request-local session before guarded API routes.
  // Without this, /api/status and other handlers referring to sess crash Core.
  var sess=session(req);
- if(p.indexOf('/api/admin/')===0&&!adminSession(sess,res))return;
+ var adminRoutes=require('../Clients/UserManagement/admin_routes').ADMIN_ONLY;
+ if((p.indexOf('/api/admin/')===0||adminRoutes.has(req.method+' '+p))&&!adminSession(sess,res))return;
  if(req.method==='GET'&&p==='/api/bank/vaults')return json(res,200,{ok:true,vaults:UM_RUNTIME?BankVaultRegistry.publicList().filter(function(v){return v.status==='ACTIVE'&&!!v.contractAddress;}).map(function(v){var visible=Object.assign({},v);delete visible.strategy;return visible;}):BankVaultRegistry.publicList()});
  if(req.method==='GET'&&p==='/api/admin/bank/vaults')return json(res,200,{ok:true,networks:BankVaultRegistry.NETWORKS,vaults:BankVaultRegistry.list()});
  if(req.method==='POST'&&p==='/api/admin/bank/vaults')return body(req,function(e,b){if(e)return json(res,400,{ok:false,error:'JSON_INVALID'});try{var v=BankVaultRegistry.create(b);log('ADMIN','Bank Vault DRAFT créé',v.id+' '+v.network+' '+v.asset);json(res,201,{ok:true,vault:v});}catch(x){json(res,400,{ok:false,error:x.message});}});

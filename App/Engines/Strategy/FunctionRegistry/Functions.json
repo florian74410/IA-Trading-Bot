@@ -1,7 +1,7 @@
 {
   "schema_version": "2.6.0",
   "engine_id": "strategy",
-  "engine_version": "3.0.2-dev.1",
+  "engine_version": "3.1.0",
   "transport": "CP/1",
   "source_protocol_registry": "Core/Communication/ProtocolRegistry/strategy.json",
   "source_sha256": "437fa03034b0ccbb437e775edc9424cdd35334110dc6548aa09c95a5e8ac2399",

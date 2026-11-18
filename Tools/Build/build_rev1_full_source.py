@@ -14,7 +14,7 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parents[2]
 REVISION = (ROOT / "App/REVISION").read_text(encoding="utf-8").strip() if (ROOT / "App/REVISION").exists() else "3.0.1_Rev1"
-RELEASES = {"3.0.1_Rev1": "3.0.1-dev.1", "3.0.1_Rev2": "3.0.1-dev.1", "3.0.1_Rev3": "3.0.1-dev.1", "3.0.2_Rev-X": "3.0.2-dev.1"}
+RELEASES = {"3.0.1_Rev1": "3.0.1-dev.1", "3.0.1_Rev2": "3.0.1-dev.1", "3.0.1_Rev3": "3.0.1-dev.1", "3.0.2_Rev-X": "3.0.2-dev.1", "3.1.0_Rev1": "3.1.0"}
 if REVISION not in RELEASES:
     raise RuntimeError("Unknown complete source revision")
 VERSION = (ROOT / "App/VERSION").read_text(encoding="utf-8").strip()
@@ -83,6 +83,14 @@ required = {
     "Deploy/VPS/README-3.0.1_Rev1.md", "Deploy/VPS/preflight.sh",
     "Deploy/VPS/launch_vps.sh",
 }
+if REVISION == "3.1.0_Rev1":
+    required.update({
+        "App/UI/Analysis/atlas-3.0.2-rev-x.json",
+        "App/UI/Analysis/structural_report.js",
+        "App/Frontend/JS/admin_structural_analysis.js",
+        "App/Frontend/CSS/admin_structural_analysis.css",
+        "Documentation/Versions/3.1.0-Rev1/README.md",
+    })
 if not required.issubset(included):
     raise RuntimeError("Missing essential sources: " + ", ".join(sorted(required - included)))
 

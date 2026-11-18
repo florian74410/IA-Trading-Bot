@@ -12,3 +12,60 @@ test('catalogue loading rejects duplicates, traversal, unsafe regex and unknown 
 test('secrets are scrubbed before LLM context, response and history; environment mismatch cannot execute',async t=>{const {bot}=fixture(t);let seen;await bot.message({message:'/openai apiKey=hidden secret=xyz passphrase=pass sk-proj-abcdefghijklmnopqrstuvwxyz'},auth(),{llm:async(message,context)=>{seen=JSON.stringify(context);return {intent_id:'UNKNOWN',parameters:{},reply:'token=not-for-the-browser'};}});assert(!seen.includes('hidden'));assert(!seen.includes('passphrase=pass'));assert(!JSON.stringify(bot.history(auth())).includes('not-for-the-browser'));const wrong=await bot.message({message:'Achète 50 USDT de BTC-USDT Spot Market OKX Live compte demo-account'},auth(),{accounts,settings:{mode:'LOCAL'}});assert.equal(wrong.status,'ACCOUNT_MODE_MISMATCH');assert.equal(wrong.preparation.confirmable,false);assert.equal(scrub('passphrase=my-pass').includes('my-pass'),false);});
 
 test('asset corrections invalidate stale instruments, prices and base quantities; contradictory model pairs are rejected',async t=>{const r=new Resolver(new Catalog()),first=r.resolve('Achète 0.1 BTC de BTC-USDT Spot Limit au prix de 60000 stop loss 57000 take profit 65000 Demo');const changed=r.resolve('ETH',{pending:first});assert.equal(changed.parameters.instrument_candidate,'ETH-USDT');for(const k of ['amount','amount_unit','limit_price','stop_loss','take_profit'])assert.equal(changed.parameters[k],undefined,k);const derivative=r.resolve('ETH',{pending:r.resolve('Ouvre LONG BTC-USDT-SWAP SWAP')});assert.equal(derivative.parameters.instrument_candidate,undefined);assert.throws(()=>Contracts.validate({intent_id:'trading.buy',parameters:{asset:'ETH',quote:'USDT',instrument_candidate:'BTC-USDT'}},new Catalog()),/MISMATCH/);const {bot}=fixture(t);await bot.message({message:'Achète 50 USDT de BTC-USDT Spot Market Demo'},auth(),{accounts});const invalid=await bot.message({message:'-50 USDT'},auth(),{accounts});assert.equal(invalid.status,'INVALID_PARAMETERS');assert.equal(bot.state.load(auth(),'default').preparation,null);const model=await bot.message({message:'/openai achat'},auth(),{accounts,llm:async()=>({intent_id:'trading.buy',parameters:{asset:'ETH',instrument_candidate:'BTC-USDT'},reply:''})});assert.equal(model.status,'LLM_INVALID_OR_UNAVAILABLE');});
+
+test('inter-Engine diagnostic uses only qualified, granted and online fixed reads',async t=>{
+ const {bot}=fixture(t),called=[];
+ const gateway={
+  describe_command:async (engine)=>({decision:engine==='trading'?'DENY':'ALLOW',online:engine!=='liquidity',
+   contract:{agent_qualified:engine!=='firewall',verified_handler:true,hard_deny:false}}),
+  validate_command:async (engine,command,args)=>assert.deepEqual(args,{}),
+  execute_authorized_command:async (engine,command)=>{called.push(command);return {request_id:engine+'-fixture'};},
+ };
+ const local=await bot.message({message:'Diagnostic des Engines.'},auth(),{gateway,settings:{mode:'LOCAL'}});
+ assert.equal(local.status,'PARTIAL');
+ assert.equal(local.result.length,10);
+ assert.equal(local.execution,'NONE');
+ assert.equal(called.length,7);
+ for(const command of ['trading.health','firewall.status','liquidity.health']) assert(!called.includes(command));
+ assert.equal(local.result.find(row=>row.engine==='trading').reason,'permission CP1 requise');
+ gateway.list_available_commands=async()=>[
+  {engine:'strategy',id:'strategy.health',online:true,decision:'ALLOW',contract:{agent_qualified:true,verified_handler:true,type:'READ'}},
+  {engine:'trading',id:'trading.execute',online:true,decision:'ALLOW',contract:{agent_qualified:false,verified_handler:true,hard_deny:true}}
+ ];
+ const model=await bot.message({message:'Quelles lectures CP1 sont disponibles ?'},auth(),{
+  gateway,settings:{mode:'OPENAI'},llm:async()=>({intent_id:'platform.commands',parameters:{},reply:''})
+ });
+ assert.equal(model.mode,'OPENAI');
+ assert.deepEqual(model.result,[{engine:'strategy',command:'strategy.health',type:'READ'}]);
+ assert.equal(called.length,7);
+});
+
+test('French cross-Engine analysis calculates RSI from authorized candles and distinguishes missing data',async t=>{
+ const {bot}=fixture(t),calls=[];
+ const candles=Array.from({length:20},(_,i)=>[1700000000000+i*60000,100,102,99,101,1000]);
+ const gateway={
+  describe_command:async()=>({decision:'ALLOW',online:true,contract:{agent_qualified:true,verified_handler:true}}),
+  validate_command:async()=>{},
+  execute_authorized_command:async(engine,command,args)=>{
+   calls.push(command);
+   if(engine==='marketdata')return {request_id:'md-fixture',data:{candles,providerId:'FIXTURE'}};
+   if(engine==='indicator'){
+    assert.deepEqual(args.candles,candles);
+    return {request_id:'indicator-fixture',data:{results:[{ok:true,result:{id:'rsi',latest:{value:51.25}}}]}};
+   }
+   assert.equal(command,'liquidity.capabilities');
+   return {request_id:'liq-fixture',data:{ok:true}};
+  }
+ };
+ const response=await bot.message({message:'Analyse le BTC-USDT avec MarketData, Indicators, Liquidity et Risk, puis propose une opération adaptée à mon compte.'},
+  auth(),{gateway,settings:{mode:'LOCAL'}});
+ assert.equal(response.intent_id,'market.cross_analysis');
+ assert.equal(response.status,'PARTIAL');
+ assert.equal(response.execution,'NONE');
+ assert.equal(response.preparation,undefined);
+ assert.equal(response.result[0].provider,'FIXTURE');
+ assert.equal(response.result[1].value,51.25);
+ assert.equal(response.result[2].status,'CAPABILITIES');
+ assert.equal(response.result[3].status,'MISSING');
+ assert.equal(calls.length,3);
+});

@@ -1,7 +1,7 @@
 {
   "engine_id": "supervisor",
-  "engine_version": "3.0.2-dev.1",
+  "engine_version": "3.1.0",
   "registry_schema": "2.6.0",
   "source_sha256": "e21df691a56167c704bd3fde91b08925ca3709e0d8b6a74c76c8ddcc54e63500",
-  "revision_hash": "7ac1b23109739ff700036e14b8c2f3852c7a758d06646ed89389873ce99f5dc1"
+  "revision_hash": "4738a06157b2350f2437a7a75c504c75e3de25c22a30d709d2bd1740ac970c0f"
 }

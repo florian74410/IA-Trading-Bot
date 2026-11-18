@@ -1,6 +1,6 @@
 {
   "schema": "iatb.intent-manifest/1.0",
-  "version": "2.6.0-dev.5",
+  "version": "3.1.0",
   "files": [
     "trading.json",
     "orders.json",
@@ -8,7 +8,8 @@
     "account.json",
     "market.json",
     "funding.json",
-    "algorithms.json"
+    "algorithms.json",
+    "engines.json"
   ],
   "api_catalog": "okx-api-catalog.json",
   "authority": "DESCRIPTIVE_ONLY"

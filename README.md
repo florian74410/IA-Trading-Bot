@@ -1,6 +1,21 @@
-# IA-Trading-Bot — 3.0.2 Rev-X DEBUG
+# IA-TB 3.1.0 Rev1
 
-Consolidation du build Advanced OKX le plus récent et migration des dix Engines vers `App/Engines/`. Le runtime reste `3.0.2-dev.1` ; `App/REVISION` identifie la distribution `3.0.2_Rev-X`. La consolidation est intégrée à la version 3.0.2 demandée par l’utilisateur, sans nouvelle autonomie financière.
+La version 3.1.0 Rev1 part de la branche `release/iatb-3.0.2-Rev-X-full-source`, au commit `6bdfd3626d19b37790202a66007b90d121007703`.
+
+- **ADMIN → ANALYSE → Analyse structurelle** ouvre l’Atlas statique Rev-X derrière une session Auth21 ADMIN. Le rapport affiche séparément la révision auditée, celle du code installé et l’état de vérification du déploiement.
+- **ChatBot** comprend « Diagnostic des Engines », « Commandes CP1 disponibles » et les demandes d’analyse croisée avec MarketData, Indicators, Liquidity et Risk. Les lectures passent par le Gateway et les permissions de l’agent.
+- **Trading** utilise la préparation et la confirmation utilisateur existantes de Core. Voir les preuves de simulation et les limites dans le [dossier de qualification](Documentation/Versions/3.1.0-Rev1/README.md).
+
+Le rôle de contournement du lanceur DEBUG local ne permet plus d’accéder à ADMIN. Pour ouvrir ADMIN, utiliser le [lanceur Auth21](App/start_auth21_local_safe.command) avec les prérequis TLS et Auth21 de l’installation.
+
+```bash
+python3 Tools/Build/build_rev1_full_source.py
+python3 Tools/Build/verify_source_bundle.py artifacts/IA-TB-3.1.0_Rev1_FULL-SOURCE_VPS.zip
+```
+
+## Qualification historique 3.0.2 Rev-X
+
+Rev-X a consolidé le build Advanced OKX et migré les dix Engines sous `App/Engines/`.
 
 [Rapport de consolidation](Documentation/Consolidation-3.0.2/FINAL_REPORT.md) · [Qualification et limites](Documentation/Consolidation-3.0.2/QUALIFICATION.md) · [Second audit](Documentation/Consolidation-3.0.1/POST_CONSOLIDATION_AUDIT.md) · [Requalification CP1](Documentation/Architecture/Rev3/CP1_REQUALIFICATION.md)
 
@@ -41,7 +56,7 @@ npm ci --omit=dev --no-audit --no-fund
 node Tools_validate_release_version.js
 ```
 
-La qualification complète est orchestrée par `node App/Tools/qualify_revision.js artifacts/consolidation-validation` depuis la racine. Les outils de parsing Acorn/acorn-walk et le navigateur sont installés séparément du runtime ; le workflow [qualification 3.0.2 Rev-X](.github/workflows/iatb-302-revx.yml) donne les versions et variables exactes. Il répète aussi les audits, vérifie les scripts VPS en mode source uniquement, construit deux ZIP identiques et requalifie les services depuis le package extrait.
+La qualification complète est orchestrée par `node App/Tools/qualify_revision.js artifacts/consolidation-validation` depuis la racine. Les outils de parsing Acorn/acorn-walk et le navigateur sont installés séparément du runtime ; le workflow [qualification 3.1.0 Rev1](.github/workflows/iatb-310-rev1.yml) donne les versions et variables exactes. Il répète aussi les audits, vérifie les scripts VPS en mode source uniquement, construit deux ZIP identiques et requalifie les services depuis le package extrait.
 
 Tous les tests financiers utilisent un broker, des identités, clés et prix fictifs. Les tests du LLM utilisent MOCK ; aucun ordre réel/Demo, appel OpenAI payant ou déploiement VPS n'est effectué par cette qualification.
 
@@ -49,7 +64,7 @@ Tous les tests financiers utilisent un broker, des identités, clés et prix fic
 
 ```bash
 python3 Tools/Build/build_rev1_full_source.py
-python3 Tools/Build/verify_source_bundle.py artifacts/IA-TB-3.0.2_Rev-X_Consolidated_FULL-SOURCE_VPS.zip
+python3 Tools/Build/verify_source_bundle.py artifacts/IA-TB-3.1.0_Rev1_FULL-SOURCE_VPS.zip
 ```
 
 Le nom historique du constructeur est conservé pour les appelants existants ; il valide la révision et l'inventaire complet. `BUILD.json` lie la distribution au commit et aux empreintes des sources. Les bases privées, secrets, dépendances installées et sorties générées ne sont pas embarqués. Les résumés de qualification et les sources des tests sont distribués ; les logs détaillés sont disponibles dans Git et les artifacts CI.
