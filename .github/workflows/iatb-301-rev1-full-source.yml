@@ -1,0 +1,64 @@
+name: IA-TB 3.0.1_Rev1 FULL SOURCE VPS qualification
+on:
+  push:
+    branches: ['release/iatb-3.0.1-Rev1-full-source']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check application version metadata
+        run: node App/Tools_validate_release_version.js
+      - name: Install pinned production Node dependencies
+        working-directory: App
+        run: npm ci --omit=dev --no-audit --no-fund
+      - name: Validate complete Supervisor, CP1, Auth21 and regression suites
+        run: node App/Tools/qualify_supervisor_foundation.js artifacts/rev1-validation
+      - name: Check deployment shell scripts
+        run: |
+          bash -n Deploy/VPS/preflight.sh
+          bash -n Deploy/VPS/prepare_vps.sh
+          bash -n Deploy/VPS/launch_vps.sh
+          bash Deploy/VPS/preflight.sh --source-only
+      - name: Produce source package, verify SHA and reproducibility
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 Tools/Build/build_rev1_full_source.py
+          cp artifacts/IA-TB-3.0.1_Rev1_FULL-SOURCE_VPS.zip /tmp/iatb-rev1-first.zip
+          python3 Tools/Build/build_rev1_full_source.py
+          cmp artifacts/IA-TB-3.0.1_Rev1_FULL-SOURCE_VPS.zip /tmp/iatb-rev1-first.zip
+          python3 Tools/Build/verify_source_bundle.py artifacts/IA-TB-3.0.1_Rev1_FULL-SOURCE_VPS.zip
+          python3 - <<'PY'
+          import json,zipfile
+          p='artifacts/IA-TB-3.0.1_Rev1_FULL-SOURCE_VPS.zip'
+          with zipfile.ZipFile(p) as z:
+              contents=set(z.namelist())
+              m=json.loads(z.read('BUILD.json'))
+              assert m['revision']=='3.0.1_Rev1'
+              assert m['distribution']=='FULL_SOURCE_FOR_VPS'
+              assert 'App/Supervisor/Tests/SupervisorEngine/foundation.test.js' in contents
+              assert 'App/Core/Execution/manual_orders.js' in contents
+              assert 'App/Tools/qualify_supervisor_foundation.js' in contents
+              assert 'Deploy/VPS/launch_vps.sh' in contents
+              assert not any(x.startswith('App/node_modules/') or x.endswith('.tap') or x.endswith('.log') for x in contents)
+              print('FULL SOURCE CHECK:',len(contents),'files, source:',m['source_commit'])
+          PY
+      - name: Upload full source archive and validation summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: IA-TB-3.0.1_Rev1-FULL-SOURCE-VPS
+          path: |
+            artifacts/IA-TB-3.0.1_Rev1_FULL-SOURCE_VPS.zip
+            artifacts/IA-TB-3.0.1_Rev1_FULL-SOURCE_VPS.zip.sha256
+            artifacts/rev1-validation/summary.json
+          if-no-files-found: warn
+          retention-days: 30
