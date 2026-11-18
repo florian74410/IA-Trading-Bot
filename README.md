@@ -1,4 +1,6 @@
-# IA-Trading-Bot — 2.6.0-dev.7 DEBUG
+# IA-Trading-Bot — 3.0.1-dev.1 DEBUG
+
+[Correctif Supervisor Engine 3.0.1](Documentation/Supervisor/FOUNDATION-3.0.1.md) : mémoire propriétaire persistante, migration SQLite, fraîcheur et récupération CP1. Candidat DEBUG ; aucune exécution financière par le Supervisor.
 
 ChatBot hybride intégré : intentions locales, interprétation OpenAI explicite, préférences Auth21 et lectures via Supervisor/CP1. Ordres manuels OKX Spot Market confirmés : configuration LIVE=true, snapshot Risk propriétaire et Firewall obligatoires. Aucun ordre broker réel effectué pour cette livraison.
 

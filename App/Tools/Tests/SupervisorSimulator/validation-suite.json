@@ -36,5 +36,6 @@
   "Supervisor/ChatBot/Tests/execution_readiness.test.js",
   "Core/Execution/order_scenarios.test.js",
   "Portfolio/Tests/test_portfolio_engine_v2.js",
-  "Core/Execution/rejection_transport.test.js"
+  "Core/Execution/rejection_transport.test.js",
+  "Tools/Tests/local_ports.test.js"
 ]

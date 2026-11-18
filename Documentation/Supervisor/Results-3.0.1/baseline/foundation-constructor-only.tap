@@ -84,9 +84,9 @@ not ok 13 - MEM-13: observations preserve structured JSON values (expected produ
   failureType: 'testCodeFailure'
   error: |-
     Observation should be structured data, not a JSON-encoded string
-    
+
     'string' !== 'object'
-    
+
   code: 'ERR_ASSERTION'
   name: 'AssertionError'
   expected: 'object'
@@ -112,10 +112,10 @@ not ok 14 - MEM-14: short-term objective recoverable after owner renews Auth21 s
   error: |-
     Expected owner-approved continuity across session refresh
     + actual - expected
-    
+
     + null
     - 'analyse BTC'
-    
+
   code: 'ERR_ASSERTION'
   name: 'AssertionError'
   expected: 'analyse BTC'
@@ -141,10 +141,10 @@ not ok 15 - MEM-15: stale observations are marked before use (expected context r
   error: |-
     Age > 1h should not remain an implicitly current observation
     + actual - expected
-    
+
     + undefined
     - true
-    
+
   code: 'ERR_ASSERTION'
   name: 'AssertionError'
   expected: true

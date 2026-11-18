@@ -23,6 +23,8 @@ Statut : candidat DEBUG `3.0.1-dev.1`. Aucun déploiement, ordre financier ou ap
 | S3-005 | Requalification explicite des sources et contrats selon le mécanisme existant. Les quatre commandes sont OWNER-only, DENY pour les agents. | Vrais processus, TLS Core, Router, Supervisor, Gateway, Risk, révocation et contrat changé |
 | S3-006 | Échec MACHINE_PROOF_INVALID non reproduit dans les exécutions isolées consignées ni après requalification. Les vérifications cryptographiques ne sont pas modifiées. | TAP d'intégration OKX isolés, qualification et régression ; voir le rapport de résultats |
 
+Les fixtures multi-processus utilisent désormais un allocateur empêchant de réattribuer le même port à deux Engines ; une collision EADDRINUSE a été reproduite pendant la qualification locale. Ce défaut de fixture est distinct de la preuve cryptographique ; il ne suffit pas à établir la cause de l’ancien MACHINE_PROOF_INVALID.
+
 Un ancien test Auth21 cherchait uniquement `createServer(` alors que l'entrée Trading a été migrée vers `auth21_engine_ingress.createEngineServer`. L'assertion reconnaît ce wrapper précis et la suite dynamique vérifie les points d'entrée HTTP des dix services, sans relâcher leurs politiques.
 
 ## Schéma SQLite et migration

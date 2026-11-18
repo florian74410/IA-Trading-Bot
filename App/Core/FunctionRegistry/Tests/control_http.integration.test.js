@@ -4,7 +4,7 @@ const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'control-http-')),root=path.resol
 process.env.IATB_RUNTIME_ROOT=path.join(tmp,'runtime');process.env.IATB_DATA_ROOT=path.join(tmp,'data');
 const I=require('../Control/identity'),{ControlRuntime}=require('../Control/runtime'),{createHandler}=require('../../Clients/UserManagement/http'),{profileFixture}=require('../../../Portfolio/Tests/okx_fixture'),{AgentEngineGateway}=require('../../../Supervisor/Gateway/agent_engine_gateway');
 const pause=ms=>new Promise(r=>setTimeout(r,ms));
-async function port(){const s=net.createServer();await new Promise(r=>s.listen(0,'127.0.0.1',r));const p=s.address().port;await new Promise(r=>s.close(r));return p;}
+const port=require('../../../Tools/Tests/local_ports').allocator();
 async function readyPort(p){for(let i=0;i<200;i++){const ok=await new Promise(r=>{const s=net.connect(p,'127.0.0.1');s.once('connect',()=>{s.destroy();r(true);});s.once('error',()=>r(false));s.setTimeout(100,()=>{s.destroy();r(false);});});if(ok)return;await pause(25);}throw Error('SERVICE_START_TIMEOUT');}
 test('actual Engines publish and execute through authenticated TLS Core, Supervisor Gateway and Router',{timeout:60000},async()=>{
  I.provision(path.join(tmp,'control'));const ports={core:await port(),router:await port()},children=[],logs=[],observed=[];const Catalog=require('../Control/catalog');for(const id of Object.keys(Catalog.folders))ports[id]=await port();
