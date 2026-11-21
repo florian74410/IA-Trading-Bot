@@ -25,7 +25,7 @@ function prerequisites(definition, commands) {
   const requirements = [...(definition.help?.prerequisites || [])];
   if (definition.required.includes('account')) requirements.push('Compte OKX activé dans le profil.');
   if (financial.has(definition.id)) {
-    requirements.push('Ce parcours Core requiert un compte OKX Live et une activation explicite de l’exécution manuelle.');
+    requirements.push('Choisir le compte et son mode dans Paramètres → Trading → Comptes d’exécution. Le mode Live exige l’autorisation d’exécution réelle.');
   } else if (definition.required.includes('environment')) {
     requirements.push('Choisir Démo avec un compte Démo, ou Live avec un compte Live lorsque ce mode est autorisé.');
   }

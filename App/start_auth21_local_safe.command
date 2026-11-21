@@ -19,7 +19,7 @@ export IATB_DATA_ROOT="$PRIVATE/data"
 export IATB_RUNTIME_ROOT="$PRIVATE/runtime"
 export IATB_AUTH_MODE=authenticated
 export IATB_DEPLOYMENT_MODE=AUTHENTICATED
-export IATB_AUTH_ORIGIN=https://localhost:8000
+export IATB_AUTH_ORIGIN="${IATB_AUTH_ORIGIN:-https://localhost:8000}"
 export IATB_AUTH_TLS_CERT="$PRIVATE/tls/localhost.crt"
 export IATB_AUTH_TLS_KEY="$PRIVATE/tls/localhost.key"
 export IATB_RELEASE_VERSION="$(tr -d '[:space:]' < VERSION)"
@@ -83,7 +83,7 @@ launch ui UI/Gateway/ui_service.js
 sleep 2
 curl --cacert "$IATB_AUTH_TLS_CERT" -fsS --max-time 5 https://localhost:8000/ui-health || { echo "UI indisponible, consulter les logs"; exit 1; }
 echo
-echo "IA-TB Auth21 SAFE : https://localhost:8000"
+echo "IA-TB Auth21 SAFE : $IATB_AUTH_ORIGIN"
 echo "Trading LIVE=0 ; diagnostic P3 complet disponible dans ADMIN → Maintenance (session ADMIN requise)."
 echo "Ctrl+C pour arrêter uniquement les processus de cette session."
 while :; do

@@ -1061,7 +1061,8 @@
             "plan_id",
             "proof",
             "confirmation_digest",
-            "diagnostic_digest"
+            "diagnostic_digest",
+            "environment"
           ],
           "required": [
             "exchange",
@@ -1176,6 +1177,13 @@
             "diagnostic_digest": {
               "type": "string",
               "pattern": "^[a-f0-9]{64}$"
+            },
+            "environment": {
+              "type": "string",
+              "enum": [
+                "DEMO",
+                "LIVE"
+              ]
             }
           },
           "required": [

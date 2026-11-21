@@ -102,6 +102,7 @@ function event(row, status, broker = {}, fill = null) {
       .update(
         [
           a.owner,
+          ...(a.environment === "DEMO" ? ["DEMO"] : []),
           a.account,
           fillId ? "fill" : a.plan_id,
           fillId ? "fill:" + fillId : status,
@@ -136,6 +137,7 @@ function event(row, status, broker = {}, fill = null) {
     metadata: {
       ownerClientId: a.owner,
       accountId: a.account,
+      environment: a.environment || "LIVE",
       plan_id: a.plan_id,
       confirmation_id: a.plan_id,
       confirmation_digest: a.confirmation_digest,
@@ -170,7 +172,7 @@ async function inspect(input) {
   if (!row) return r;
   const a = identity(row),
     b = a.spec.body;
-  if (a.symbol !== input.symbol) throw Error("MANUAL_TRACKING_SCOPE_MISMATCH");
+  if ((a.environment || "LIVE") !== (input.environment || "LIVE") || a.symbol !== input.symbol) throw Error("MANUAL_TRACKING_SCOPE_MISMATCH");
   if (q.kind === "PREFLIGHT" && a.spec.kind === "LEVERAGE") {
     const values = r.leverage?.filter(
       (x) =>

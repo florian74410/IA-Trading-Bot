@@ -2,6 +2,6 @@
   "engine_id": "risk",
   "engine_version": "3.1.0",
   "registry_schema": "2.6.0",
-  "source_sha256": "2e348d8bfc957b524435ece9c8165cf1637503ac51dffa0bc50253a607072912",
-  "revision_hash": "c77985a71784b591a2bdb46786f1aeb64a1cbee2d892c8fdde0033aaf661a6ee"
+  "source_sha256": "6aa93c94dce9563210e85a20d1f0886d769bf0ec6f445a9298ab444de5b1cc58",
+  "revision_hash": "ebc3048e562050519809ca371cedea5b27c280f66fadd5e78cc5f779528827f4"
 }

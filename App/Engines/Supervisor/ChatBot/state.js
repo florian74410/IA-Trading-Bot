@@ -64,7 +64,7 @@ class State {
           p.state !== "PREPARED"
         )
           throw Error("PREPARATION_EXPIRED_OR_CHANGED");
-        if (claim && require('./procedures').financial.has(p.operation)&&p.intent_parameters?.environment==='LIVE') {
+        if (claim && require('./procedures').financial.has(p.operation)&&['LIVE','DEMO'].includes(p.intent_parameters?.environment)) {
           p.state = "CONFIRMED";
           this.save(auth, room, state);
           return {

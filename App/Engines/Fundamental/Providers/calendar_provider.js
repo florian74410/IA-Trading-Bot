@@ -88,7 +88,7 @@ function classifyEmptyHtml(html,kind,parseStatus){
 
 function fedEvents(packet){
  var c=(packet&&packet.calendar)||[];
- return c.map(function(x){return{id:'FED:FOMC:'+x.date,calendar:'FED_FOMC',date:x.date,timeLabel:null,country:'United States',event:'FOMC Meeting / Rate Decision',impact:'HIGH',source:'Federal Reserve',url:'https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm'};});
+ return c.map(function(x){return{id:'FED:FOMC:'+x.date,calendar:'FED_FOMC',date:x.date,timeLabel:null,country:'United States',event:'FOMC Meeting',impact:'HIGH',source:'Federal Reserve',url:'https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm'};});
 }
 
 

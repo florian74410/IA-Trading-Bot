@@ -59,6 +59,7 @@ function query(a) {
   return {
     exchange: a.exchange,
     account: a.account,
+    ...C.modeBinding(a),
     market_type: a.market_type,
     symbol: a.symbol,
     query: q,

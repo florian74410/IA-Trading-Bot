@@ -224,6 +224,11 @@ function validate(spec) {
   }
   return JSON.parse(JSON.stringify(spec));
 }
+function modeBinding(input) {
+  if (input.environment === undefined) return {};
+  if (!["LIVE", "DEMO"].includes(input.environment)) throw Error("MANUAL_ENVIRONMENT_INVALID");
+  return { environment: input.environment };
+}
 function canonical(input) {
   if (
     !input ||
@@ -239,6 +244,7 @@ function canonical(input) {
   return {
     exchange: "OKX",
     account: input.account,
+    ...modeBinding(input),
     market_type: spec.market,
     symbol: input.symbol,
     spec,
@@ -262,7 +268,7 @@ function hash(v) {
 const ACTIONS={"BATCH":"trading.manual.batch","ORDER": "trading.manual.order", "ALGO": "trading.manual.algo", "CANCEL": "trading.manual.cancel", "AMEND": "trading.manual.amend", "CANCEL_ALGO": "trading.manual.cancel_algo", "AMEND_ALGO": "trading.manual.amend_algo", "LEVERAGE": "trading.manual.leverage"};
 function actionFor(s){validate(s);return ACTIONS[s.kind];}
 function isAction(a){return Object.values(ACTIONS).includes(a);}
-module.exports = { ACTIONS,READ_INTENTS,actionFor,isAction,
+module.exports = { modeBinding,ACTIONS,READ_INTENTS,actionFor,isAction,
   validate,
   canonical,
   decimal,

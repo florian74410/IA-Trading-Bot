@@ -14,7 +14,7 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parents[2]
 REVISION = (ROOT / "App/REVISION").read_text(encoding="utf-8").strip() if (ROOT / "App/REVISION").exists() else "3.0.1_Rev1"
-RELEASES = {"3.0.1_Rev1": "3.0.1-dev.1", "3.0.1_Rev2": "3.0.1-dev.1", "3.0.1_Rev3": "3.0.1-dev.1", "3.0.2_Rev-X": "3.0.2-dev.1", "3.1.0_Rev1": "3.1.0", "3.1.0_Rev2": "3.1.0"}
+RELEASES = {"3.0.1_Rev1": "3.0.1-dev.1", "3.0.1_Rev2": "3.0.1-dev.1", "3.0.1_Rev3": "3.0.1-dev.1", "3.0.2_Rev-X": "3.0.2-dev.1", "3.1.0_Rev1": "3.1.0", "3.1.0_Rev2": "3.1.0", "3.1.0_FINAL": "3.1.0"}
 if REVISION not in RELEASES:
     raise RuntimeError("Unknown complete source revision")
 VERSION = (ROOT / "App/VERSION").read_text(encoding="utf-8").strip()
@@ -93,7 +93,7 @@ if REVISION.startswith("3.1.0_"):
         "App/Frontend/CSS/admin_structural_analysis.css",
         "Documentation/Versions/3.1.0-Rev1/README.md",
     })
-if REVISION == "3.1.0_Rev2":
+if REVISION in {"3.1.0_Rev2","3.1.0_FINAL"}:
     required.update({"Deploy/VPS/README-3.1.0_Rev2.md", "Documentation/Versions/3.1.0-Rev2/README.md"})
 for filename in ("App/manifest.json", "App/Updates/current_release.dat"):
     metadata = json.loads((ROOT / filename).read_text(encoding="utf-8"))
