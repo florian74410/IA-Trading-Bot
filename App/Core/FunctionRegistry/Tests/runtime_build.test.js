@@ -29,7 +29,7 @@ test('Rev1, Rev2 and missing metadata agree across the runtime loader and shared
     assert.equal(node.title, build.source_commit || undefined);
   }
   fs.writeFileSync(path.join(app, 'VERSION'), version);
-  for (const revision of ['3.1.0_Rev1', '3.1.0_Rev2']) {
+  for (const revision of ['3.1.0_Rev1', '3.1.0_Rev2', '3.1.0_FINAL']) {
     fs.writeFileSync(path.join(app, 'REVISION'), revision);
     fs.writeFileSync(path.join(app, 'manifest.json'), JSON.stringify({ version, revision }));
     fs.writeFileSync(path.join(root, 'BUILD.json'), JSON.stringify({ version, revision, source_commit }));

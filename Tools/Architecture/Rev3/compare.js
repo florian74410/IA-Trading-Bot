@@ -3,6 +3,11 @@ const fs=require('node:fs'),path=require('node:path'),assert=require('node:asser
 const root=path.resolve(__dirname,'../../..'),app=path.join(root,'App'),C=require(path.join(app,'Core/FunctionRegistry/Control/catalog'));
 const baseline=require(path.join(root,'Documentation/Architecture/Rev3/REV2_BASELINE.json'));
 const hash=v=>crypto.createHash('sha256').update(JSON.stringify(v)).digest('hex');
+// Optional environment is the only schema extension authorised for FINAL.
+const modeCommands=new Set(['trading.account.inspect','risk.manual.authorize',
+ 'trading.manual.order','trading.manual.batch','trading.manual.algo','trading.manual.cancel',
+ 'trading.manual.amend','trading.manual.cancel_algo','trading.manual.amend_algo','trading.manual.leverage']);
+const final=fs.readFileSync(path.join(app,'REVISION'),'utf8').trim()==='3.1.0_FINAL';
 const checks=[];
 for(const [id,b]of Object.entries(baseline.engines)){
  const current=C.manifest(app,id),digest=C.implementationDigest(app,id),old=new Map(b.functions.map(f=>[f.id,f]));
@@ -12,7 +17,9 @@ for(const [id,b]of Object.entries(baseline.engines)){
   // Compare serialized CP1 contracts: undefined keys are absent on the wire
   // and were naturally omitted from the frozen JSON baseline.
   const strip=v=>JSON.parse(JSON.stringify(Object.fromEntries(Object.entries(v).filter(([k])=>!['source','handler_sha256'].includes(k)))));
-  assert.deepEqual(strip(f),strip(before),id+' contract/permissions/qualification drift: '+f.id);
+  const expected=strip(before);
+  if(final && modeCommands.has(f.id)) expected.input.properties.environment={type:'string',enum:['DEMO','LIVE']};
+  assert.deepEqual(strip(f),expected,id+' contract/permissions/qualification drift: '+f.id);
   if(f.verified_handler){assert.equal(f.handler_sha256,digest);assert(fs.existsSync(path.join(app,f.source)),f.source+' missing');}
   return {id:f.id,input_sha256:hash(f.input),output_sha256:hash(f.output),source_before:before.source,source_after:f.source,handler_sha256:f.handler_sha256,verified:f.verified_handler,agent_qualified:f.agent_qualified,hard_deny:f.hard_deny,default_privilege:f.default_privilege,authorization:f.authorization,result:'PASS'};
  });

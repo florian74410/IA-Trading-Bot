@@ -33,6 +33,7 @@ async function preparePlan(token, p) {
       environment:
         step.parameters.environment || p.intent_parameters.environment,
     };
+    if (params.environment !== p.intent_parameters.environment) throw Error("MANUAL_PLAN_MODE_MISMATCH");
     const child = await this.advancedPrepare(
       token,
       {
@@ -83,7 +84,7 @@ async function preparePlan(token, p) {
       "NO_AUTOMATIC_FINANCIAL_COMPENSATION",
     ],
     message:
-      "LIVE : vérifie toutes les étapes et leurs dépendances avant confirmation.",
+      p.intent_parameters.environment + " : vérifie toutes les étapes et leurs dépendances avant confirmation.",
   };
   out.digest = C.hash({ source: p.digest, steps: out.steps });
   const row = { id: p.id, ...actor, digest: out.digest };

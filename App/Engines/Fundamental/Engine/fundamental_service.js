@@ -29,8 +29,8 @@ function publishCpEvent(type,data,severity){CP_CLIENT.publish('fundamental',type
 function aiGatewayContext(cb){AI_CP_CLIENT.request('ai_gateway','ai_gateway.context',{},'summary',cb);}
 function aiGatewayTransport(payload,cb){AI_CP_CLIENT.request('ai_gateway','ai_gateway.responses',{payload:payload,usageContext:'FUNDAMENTAL'},'analysis',function(e,o){if(e)return cb(e);cb(null,o&&o.response||o);});}
 function summaryContext(lang){
- var since=new Date(Date.now()-86400000).toISOString(),recent=storage.rawItems({since:since,sort:'DATE_DESC',limit:36}),items=recent;
- if(recent.length<8)items=storage.rawItems({sort:'DATE_DESC',limit:28});
+ var now=Date.now(),until=new Date(now).toISOString(),since=new Date(now-86400000).toISOString(),recent=storage.rawItems({until:until,since:since,sort:'DATE_DESC',limit:36}),items=recent;
+ if(recent.length<8)items=storage.rawItems({until:until,sort:'DATE_DESC',limit:28});
  var window=recent.length>=8?'24H':(recent.length?'24H + RECENT_FALLBACK':'RECENT_FALLBACK'),ctx=SynthesisHelper.buildContext({summary:storage.summary()},{items:items},lang,window);
  ctx.scope='MARKET';ctx.query={window:window,language:lang};
  return{items:items,context:ctx,language:lang,window:window};

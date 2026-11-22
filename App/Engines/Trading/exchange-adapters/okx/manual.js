@@ -18,13 +18,15 @@ const READS = new Set([
   "/api/v5/trade/order-algo",
   "/api/v5/trade/orders-algo-history",
 ]);
-async function client(ctx) {
+async function client(ctx, environment = "LIVE") {
   const s = await ctx.secretProvider.get("OKX"),
     key = s.api_key || s.apiKey,
     secret = s.api_secret || s.apiSecret || s.secret,
     host = HOSTS[s.apiRegion || "GLOBAL"];
   if (!key || !secret || !s.passphrase || !host)
     throw Error("TRADING_CREDENTIALS_INCOMPLETE");
+  const demo = s.demoMode === true || s.demo_mode === true;
+  if (environment !== (demo ? "DEMO" : "LIVE")) throw Error("MANUAL_ACCOUNT_MODE_MISMATCH");
   return async (method, path, body = null, params = {}) => {
     if (method === "GET" && !READS.has(path))
       throw Error("OKX_READ_PATH_DENIED");
@@ -41,7 +43,7 @@ async function client(ctx) {
           .update(at + method + p + raw)
           .digest("base64"),
       };
-    if (s.demoMode || s.demo_mode) headers["x-simulated-trading"] = "1";
+    if (demo) headers["x-simulated-trading"] = "1";
     await ctx.revalidate?.();
     const res = await ctx.transport({
       method,
@@ -67,7 +69,7 @@ function rows(r) {
 }
 async function inspect(input, ctx) {
   const q = input.query || {},
-    get = await client(ctx),
+    get = await client(ctx, input.environment),
     call = async (p, a = {}) => rows(await get("GET", p, null, a));
   if (
     q.kind === "ORDER" ||
@@ -172,9 +174,9 @@ async function inspect(input, ctx) {
   };
 }
 async function execute(input, ctx) {
-  if (!ctx.liveExecutionEnabled) throw Error("LIVE_EXECUTION_DISABLED");
+  if (input.environment !== "DEMO" && !ctx.liveExecutionEnabled) throw Error("LIVE_EXECUTION_DISABLED");
   const spec = C.validate(input.spec),
-    send = await client(ctx),
+    send = await client(ctx, input.environment),
     body = spec.kind === "CANCEL_ALGO" ? [spec.body] : spec.kind==="BATCH"?spec.body.orders:spec.body;
   const r = await send("POST", C.endpoint(spec), body),
     a = r?.body?.data,

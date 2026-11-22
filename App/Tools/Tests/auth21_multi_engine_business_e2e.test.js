@@ -5,7 +5,7 @@
 const test=require('node:test'),assert=require('node:assert/strict');
 const fs=require('node:fs'),path=require('node:path'),os=require('node:os');
 const http=require('node:http'),net=require('node:net'),crypto=require('node:crypto');
-const {spawn}=require('node:child_process'),{once}=require('node:events');
+const {spawn,execFileSync}=require('node:child_process'),{once}=require('node:events');
 const {setTimeout:delay}=require('node:timers/promises');
 const {proofCodec}=require('../../Core/Clients/auth21_ipc_proof');
 const {createCoreBusinessHttp}=require('../../Core/Clients/auth21_core_business_http');
@@ -114,7 +114,9 @@ test('real four Engine business actions honor roles, ownership and deny all old 
   if(data.ownerClientId)assert.equal(saved.ownerClientId,'CLBob');
   if(route.includes('fundamental')){
    const Database=require('better-sqlite3');
-   const dbFile=path.join(root,'userdata','Shared Data',"Engines/Fundamental",'fundamental.db');
+   const dbFile=execFileSync(process.execPath,['-p',"require('./Core/Shared/paths').PersistentData.fundamentalDb"],{
+    cwd:app,env:{...env,IATB_PATHS_PREFLIGHT_READONLY:'1'},encoding:'utf8'
+   }).trim();
    const actual=new Database(dbFile,{readonly:true,fileMustExist:true});
    try{
     const row=actual.prepare('SELECT endpoint,enabled,provider_type FROM feeds WHERE endpoint=?')

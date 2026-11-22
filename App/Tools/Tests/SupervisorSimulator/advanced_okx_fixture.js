@@ -1,9 +1,10 @@
 'use strict';
 const http=require('node:http'),crypto=require('node:crypto');
-function fixture(){
+function fixture({demo=false}={}){
  const state={requests:[],orders:new Map(),algos:new Map(),fills:new Map(),next:1000,leverage:'3',leverageScopes:new Map(),posMode:'net_mode',margin:'cross',fault:null,balance:'900',positions:[],delay:false,omitFees:false};
  const server=http.createServer(async(req,res)=>{let raw='';for await(const c of req)raw+=c;const u=new URL(req.url,'http://localhost'),b=raw?JSON.parse(raw):{},q=Object.fromEntries(u.searchParams);state.requests.push({method:req.method,path:u.pathname,query:q,body:b});
  function reply(data,code='0'){res.writeHead(200,{'content-type':'application/json'});res.end(JSON.stringify({code,msg:'fixture',data}));}
+ if(demo ? req.headers['x-simulated-trading']!=='1' : req.headers['x-simulated-trading']!==undefined)return reply([],'50101');
  const sign=crypto.createHmac('sha256','PROFILE_SECRET_FIXTURE').update(req.headers['ok-access-timestamp']+req.method+req.url+raw).digest('base64');
  if(req.headers['x-fixture-original-host']!=='eea.okx.com'||!['PROFILE_FIXTURE','PROFILE_CRASH_FIXTURE'].includes(req.headers['ok-access-key'])||req.headers['ok-access-sign']!==sign)return reply([],'50113');
  const id=q.instId||b.instId||'BTC-USDT',type=q.instType||(/SWAP$/.test(id)?'SWAP':/\d{6}$/.test(id)?'FUTURES':'SPOT');

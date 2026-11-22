@@ -1,9 +1,9 @@
 name: IA-TB 3.1.0 complete build qualification
 on:
   push:
-    branches: ['release/iatb-3.1.0-Rev1-full-source', 'release/iatb-3.1.0-Rev1-ui-fixes', 'release/iatb-3.1.0-Rev2-full-source']
+    branches: ['release/iatb-3.1.0-Rev1-full-source', 'release/iatb-3.1.0-Rev1-ui-fixes', 'release/iatb-3.1.0-Rev2-full-source', 'release/iatb-3.1.0-FINAL']
   pull_request:
-    branches: ['release/iatb-3.0.2-Rev-X-full-source', 'release/iatb-3.1.0-Rev1-full-source', 'release/iatb-3.1.0-Rev1-ui-fixes']
+    branches: ['release/iatb-3.0.2-Rev-X-full-source', 'release/iatb-3.1.0-Rev1-full-source', 'release/iatb-3.1.0-Rev1-ui-fixes', 'release/iatb-3.1.0-Rev2-full-source']
   workflow_dispatch:
 permissions:
   contents: read
@@ -74,6 +74,11 @@ jobs:
         run: node --test --test-concurrency=1 App/Tools/Tests/user_management_v1.test.js
       - name: Verify help and all three runtime build states
         run: node --test App/Engines/Supervisor/ChatBot/Tests/help.test.js App/Core/FunctionRegistry/Tests/runtime_build.test.js
+      - name: Exercise Demo with Live disabled and verify persisted engine data
+        if: env.BUILD_REVISION == '3.1.0_FINAL'
+        run: |
+          node --test App/Tools/Tests/auth21_multi_engine_business_e2e.test.js
+          IATB_QA_OKX_MODE=DEMO IATB_SCENARIOS=T01,T03,T08,T48,Q12 node --test App/Engines/Portfolio/Tests/advanced_orders.integration.test.js
       - name: Build twice and verify complete source membership
         run: |
           python3 Tools/Build/build_rev1_full_source.py

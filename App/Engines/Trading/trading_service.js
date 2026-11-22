@@ -611,7 +611,7 @@ function handleCp(req, res, raw, msg) {
     if(!require('../../Core/Execution/manual_qualification').qualified(ROOT,v.action))return send(res,403,cpResponse(msg,'PROTECTION',{error:'MANUAL_CONTRACT_UNQUALIFIED'}));
     if(v.action!==require('../../Core/Execution/manual_contract').actionFor(v.arguments.spec))return send(res,403,cpResponse(msg,'PROTECTION',{error:'MANUAL_ACTION_MISMATCH'}));
     try {
-      if (!LIVE || !SERVICE_ENABLED || !lifecycle.canExecute())
+      if ((!LIVE && v.arguments.environment !== "DEMO") || !SERVICE_ENABLED || !lifecycle.canExecute())
         throw Error("TRADING_ENGINE_RUNTIME_LOCKED");
       if (
         !require("../../Core/Execution/manual_authority").verify(

@@ -104,11 +104,11 @@ class ManualOrders {
           a.id === p.account &&
           a.enabled &&
           a.exchange === "OKX" &&
-          !a.demoMode &&
+          (a.demoMode === true) === (p.environment === "DEMO") &&
           a.markets.includes(p.market||"SPOT") &&
           a.actions.includes("execute"),
       );
-    if (!a) throw Error("LIVE_ACCOUNT_NOT_AUTHORIZED");
+    if (!a) throw Error(p.environment === "DEMO" ? "DEMO_ACCOUNT_NOT_AUTHORIZED" : "LIVE_ACCOUNT_NOT_AUTHORIZED");
     return a;
   }
   async risk(token, intent) {

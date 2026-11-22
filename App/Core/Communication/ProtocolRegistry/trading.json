@@ -457,7 +457,8 @@
             "symbol",
             "market_type",
             "metadata",
-            "query"
+            "query",
+            "environment"
           ],
           "required": [
             "exchange",
@@ -507,6 +508,13 @@
             },
             "query": {
               "type": "object"
+            },
+            "environment": {
+              "type": "string",
+              "enum": [
+                "DEMO",
+                "LIVE"
+              ]
             }
           },
           "required": [
@@ -541,7 +549,8 @@
             "proof",
             "confirmation_digest",
             "diagnostic_digest",
-            "risk_approval_id"
+            "risk_approval_id",
+            "environment"
           ],
           "required": [
             "exchange",
@@ -666,6 +675,13 @@
             "risk_approval_id": {
               "type": "string",
               "maxLength": 128
+            },
+            "environment": {
+              "type": "string",
+              "enum": [
+                "DEMO",
+                "LIVE"
+              ]
             }
           },
           "required": [
@@ -706,7 +722,8 @@
             "proof",
             "confirmation_digest",
             "diagnostic_digest",
-            "risk_approval_id"
+            "risk_approval_id",
+            "environment"
           ],
           "required": [
             "exchange",
@@ -831,6 +848,13 @@
             "risk_approval_id": {
               "type": "string",
               "maxLength": 128
+            },
+            "environment": {
+              "type": "string",
+              "enum": [
+                "DEMO",
+                "LIVE"
+              ]
             }
           },
           "required": [
@@ -871,7 +895,8 @@
             "proof",
             "confirmation_digest",
             "diagnostic_digest",
-            "risk_approval_id"
+            "risk_approval_id",
+            "environment"
           ],
           "required": [
             "exchange",
@@ -996,6 +1021,13 @@
             "risk_approval_id": {
               "type": "string",
               "maxLength": 128
+            },
+            "environment": {
+              "type": "string",
+              "enum": [
+                "DEMO",
+                "LIVE"
+              ]
             }
           },
           "required": [
@@ -1036,7 +1068,8 @@
             "proof",
             "confirmation_digest",
             "diagnostic_digest",
-            "risk_approval_id"
+            "risk_approval_id",
+            "environment"
           ],
           "required": [
             "exchange",
@@ -1161,6 +1194,13 @@
             "risk_approval_id": {
               "type": "string",
               "maxLength": 128
+            },
+            "environment": {
+              "type": "string",
+              "enum": [
+                "DEMO",
+                "LIVE"
+              ]
             }
           },
           "required": [
@@ -1201,7 +1241,8 @@
             "proof",
             "confirmation_digest",
             "diagnostic_digest",
-            "risk_approval_id"
+            "risk_approval_id",
+            "environment"
           ],
           "required": [
             "exchange",
@@ -1326,6 +1367,13 @@
             "risk_approval_id": {
               "type": "string",
               "maxLength": 128
+            },
+            "environment": {
+              "type": "string",
+              "enum": [
+                "DEMO",
+                "LIVE"
+              ]
             }
           },
           "required": [
@@ -1366,7 +1414,8 @@
             "proof",
             "confirmation_digest",
             "diagnostic_digest",
-            "risk_approval_id"
+            "risk_approval_id",
+            "environment"
           ],
           "required": [
             "exchange",
@@ -1491,6 +1540,13 @@
             "risk_approval_id": {
               "type": "string",
               "maxLength": 128
+            },
+            "environment": {
+              "type": "string",
+              "enum": [
+                "DEMO",
+                "LIVE"
+              ]
             }
           },
           "required": [
@@ -1531,7 +1587,8 @@
             "proof",
             "confirmation_digest",
             "diagnostic_digest",
-            "risk_approval_id"
+            "risk_approval_id",
+            "environment"
           ],
           "required": [
             "exchange",
@@ -1656,6 +1713,13 @@
             "risk_approval_id": {
               "type": "string",
               "maxLength": 128
+            },
+            "environment": {
+              "type": "string",
+              "enum": [
+                "DEMO",
+                "LIVE"
+              ]
             }
           },
           "required": [
@@ -1696,7 +1760,8 @@
             "proof",
             "confirmation_digest",
             "diagnostic_digest",
-            "risk_approval_id"
+            "risk_approval_id",
+            "environment"
           ],
           "required": [
             "exchange",
@@ -1821,6 +1886,13 @@
             "risk_approval_id": {
               "type": "string",
               "maxLength": 128
+            },
+            "environment": {
+              "type": "string",
+              "enum": [
+                "DEMO",
+                "LIVE"
+              ]
             }
           },
           "required": [

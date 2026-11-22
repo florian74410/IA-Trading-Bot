@@ -41,6 +41,7 @@ async function inspect(token, p, query) {
     arguments: {
       exchange: "OKX",
       account: p.account,
+      ...C.modeBinding(p),
       market_type: p.market,
       symbol: p.instrument_candidate,
       query,
@@ -139,7 +140,7 @@ async function advancedPrepare(token, p,{leverageDependency=false}={}) {
   out.advanced = true;
   out.confirmable = false;
   try {
-    if (!require("./config").configuration(this.env).live)
+    if (p.intent_parameters.environment !== "DEMO" && !require("./config").configuration(this.env).live)
       throw Error("LIVE_EXECUTION_DISABLED");
     if (p.operation === "plans.execute")return await this.preparePlan(token,p);
     if(p.operation==='positions.open'&&p.intent_parameters.leverage!=null&&!leverageDependency){const q=p.intent_parameters;return await this.preparePlan(token,{...p,operation:'plans.execute',intent_parameters:{account:q.account,environment:q.environment,steps:[{intent_id:'account.leverage',parameters:q,depends_on:[]},{intent_id:'positions.open',parameters:q,depends_on:[0]}]}});}
@@ -147,7 +148,7 @@ async function advancedPrepare(token, p,{leverageDependency=false}={}) {
     const params = { ...p.intent_parameters, operation: p.operation };
     if (
       (params.exchange && params.exchange !== "OKX") ||
-      params.environment !== "LIVE"
+      !["LIVE","DEMO"].includes(params.environment)
     )
       throw Error("MANUAL_DEFINITION_REQUIRED");
     this.account(token, { ...params, market: params.market });
@@ -215,7 +216,7 @@ async function advancedPrepare(token, p,{leverageDependency=false}={}) {
       spec,
       confirmable: true,
       account: params.account,
-      environment: "LIVE",
+      environment: params.environment,
       api_region: account.apiRegion,
       requires_acknowledgement:
         diagnostics.missing_information.length > 0 ||
@@ -232,7 +233,7 @@ async function advancedPrepare(token, p,{leverageDependency=false}={}) {
       }),
     });
     out.message =
-      "LIVE : opération préparée. Vérifie les paramètres exacts, les avertissements et les champs N/C avant confirmation.";
+      params.environment + " : opération préparée. Vérifie les paramètres exacts, les avertissements et les champs N/C avant confirmation.";
     const row = { id: p.id, ...actor, digest: out.digest },
       data = {
         advanced: true,
@@ -313,7 +314,7 @@ async function advancedConfirm(token, input, { parentPlanId = null } = {}) {
       row,
       "MANUAL_WARNINGS_ACKNOWLEDGEMENT_REQUIRED",
     );
-  if (!require("./config").configuration(this.env).live)
+  if (p.intent_parameters.environment !== "DEMO" && !require("./config").configuration(this.env).live)
     throw Error("LIVE_EXECUTION_DISABLED");
   if (
     this.account(token, p.intent_parameters).revision !== saved.accountRevision
@@ -384,6 +385,7 @@ async function advancedConfirm(token, input, { parentPlanId = null } = {}) {
     const args = {
       exchange: "OKX",
       account: params.account,
+      environment: params.environment,
       market_type: params.market,
       symbol: params.instrument_candidate,
       spec: saved.spec,
@@ -430,6 +432,7 @@ async function advancedConfirm(token, input, { parentPlanId = null } = {}) {
         : status === "UNKNOWN_RECONCILIATION_REQUIRED"
           ? "UNCERTAIN"
           : "NONE",
+      environment: params.environment,
       order_id: result.exchange_order_id || null,
       plan_id: row.id,
       client_order_id:

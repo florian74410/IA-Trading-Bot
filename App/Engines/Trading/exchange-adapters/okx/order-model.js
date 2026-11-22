@@ -25,7 +25,7 @@ function quoteToBase(amount, price, step) {
 function build(p, id, pre) {
   if (
     !p ||
-    p.environment !== "LIVE" ||
+    !["LIVE","DEMO"].includes(p.environment) ||
     (p.exchange && p.exchange !== "OKX") ||
     !p.account ||
     !C.MARKETS.includes(p.market) ||
@@ -42,7 +42,7 @@ function build(p, id, pre) {
   if(p.operation==='orders.batch'){
     if(p.market!=='SPOT')throw Error('MANUAL_BATCH_SPOT_ONLY');
     if(!Array.isArray(p.steps)||p.steps.length<1||p.steps.length>20)throw Error('MANUAL_BATCH_INVALID');
-    const orders=p.steps.map((s,i)=>{if(!['trading.buy','trading.sell'].includes(s.intent_id)||s.depends_on?.length||s.parameters.account!==p.account||s.parameters.market!==p.market||s.parameters.instrument_candidate!==p.instrument_candidate)throw Error('MANUAL_BATCH_SCOPE_INVALID');const child=build({...s.parameters,operation:s.intent_id},id.replace(/-/g,'').slice(0,24)+String(i).padStart(4,'0'),pre);if(child.kind!=='ORDER')throw Error('MANUAL_BATCH_SCOPE_INVALID');return child.body;});
+    const orders=p.steps.map((s,i)=>{if(!['trading.buy','trading.sell'].includes(s.intent_id)||s.depends_on?.length||s.parameters.environment!==p.environment||s.parameters.account!==p.account||s.parameters.market!==p.market||s.parameters.instrument_candidate!==p.instrument_candidate)throw Error('MANUAL_BATCH_SCOPE_INVALID');const child=build({...s.parameters,operation:s.intent_id},id.replace(/-/g,'').slice(0,24)+String(i).padStart(4,'0'),pre);if(child.kind!=='ORDER')throw Error('MANUAL_BATCH_SCOPE_INVALID');return child.body;});
     for(const side of ['buy','sell']){const ccy=side==='buy'?pre.instrument.quoteCcy:pre.instrument.baseCcy,avail=number(pre.balances?.[0]?.details?.find(x=>x.ccy===ccy)?.availBal);let total=0;for(const b of orders.filter(x=>x.side===side)){const px=number(b.px)||number(pre.ticker?.[0]?.last);if(px===null)throw Error('MANUAL_BATCH_PRICE_REQUIRED');total+=side==='buy'?(b.tgtCcy==='quote_ccy'?+b.sz:+b.sz*px):(b.tgtCcy==='quote_ccy'?+b.sz/px:+b.sz);}if(avail!==null&&total>avail)throw Error('AVAILABLE_BALANCE_INSUFFICIENT');}
     return C.validate({kind:'BATCH',market:p.market,body:{instId:p.instrument_candidate,orders}});
   }

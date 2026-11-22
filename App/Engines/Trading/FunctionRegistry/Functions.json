@@ -4,7 +4,7 @@
   "engine_version": "3.1.0",
   "transport": "CP/1",
   "source_protocol_registry": "Core/Communication/ProtocolRegistry/trading.json",
-  "source_sha256": "7962836724426f106e305dee256ada245da79ad5c919e9c9ca3f327c7399e835",
+  "source_sha256": "528e44a816a4b166a3d77857c73c804857f5e7d2661ff5f676af87a639c682a2",
   "functions": [
     {
       "id": "trading.health",
@@ -238,7 +238,7 @@
       "transport": "CP1",
       "authorization": "Authenticated service identity, authenticated agent session and effective per-command permission.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "d5a94db7dff422d25d73773ca64e298d9ee807d1788f38aa78250dc9cadc410b",
+      "handler_sha256": "63785a94d1fab77903b7ff29658ce49e26fb146745c7970c1f74587c7d800d86",
       "availability_reason": null,
       "timeout_ms": 5000,
       "agent_qualified": true
@@ -278,7 +278,7 @@
       "transport": "CP1",
       "authorization": "Authenticated service identity, authenticated agent session and effective per-command permission.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "d5a94db7dff422d25d73773ca64e298d9ee807d1788f38aa78250dc9cadc410b",
+      "handler_sha256": "63785a94d1fab77903b7ff29658ce49e26fb146745c7970c1f74587c7d800d86",
       "availability_reason": null,
       "timeout_ms": 5000,
       "agent_qualified": true
@@ -352,7 +352,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "d5a94db7dff422d25d73773ca64e298d9ee807d1788f38aa78250dc9cadc410b",
+      "handler_sha256": "63785a94d1fab77903b7ff29658ce49e26fb146745c7970c1f74587c7d800d86",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -426,7 +426,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "d5a94db7dff422d25d73773ca64e298d9ee807d1788f38aa78250dc9cadc410b",
+      "handler_sha256": "63785a94d1fab77903b7ff29658ce49e26fb146745c7970c1f74587c7d800d86",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -500,7 +500,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "d5a94db7dff422d25d73773ca64e298d9ee807d1788f38aa78250dc9cadc410b",
+      "handler_sha256": "63785a94d1fab77903b7ff29658ce49e26fb146745c7970c1f74587c7d800d86",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -612,7 +612,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "d5a94db7dff422d25d73773ca64e298d9ee807d1788f38aa78250dc9cadc410b",
+      "handler_sha256": "63785a94d1fab77903b7ff29658ce49e26fb146745c7970c1f74587c7d800d86",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -683,7 +683,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "d5a94db7dff422d25d73773ca64e298d9ee807d1788f38aa78250dc9cadc410b",
+      "handler_sha256": "63785a94d1fab77903b7ff29658ce49e26fb146745c7970c1f74587c7d800d86",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -764,7 +764,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "d5a94db7dff422d25d73773ca64e298d9ee807d1788f38aa78250dc9cadc410b",
+      "handler_sha256": "63785a94d1fab77903b7ff29658ce49e26fb146745c7970c1f74587c7d800d86",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -811,7 +811,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "d5a94db7dff422d25d73773ca64e298d9ee807d1788f38aa78250dc9cadc410b",
+      "handler_sha256": "63785a94d1fab77903b7ff29658ce49e26fb146745c7970c1f74587c7d800d86",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -872,7 +872,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "d5a94db7dff422d25d73773ca64e298d9ee807d1788f38aa78250dc9cadc410b",
+      "handler_sha256": "63785a94d1fab77903b7ff29658ce49e26fb146745c7970c1f74587c7d800d86",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -947,7 +947,7 @@
       "transport": "CP1",
       "authorization": "Unavailable to agents until independently qualified.",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "d5a94db7dff422d25d73773ca64e298d9ee807d1788f38aa78250dc9cadc410b",
+      "handler_sha256": "63785a94d1fab77903b7ff29658ce49e26fb146745c7970c1f74587c7d800d86",
       "availability_reason": "NOT_QUALIFIED_FOR_AGENT",
       "timeout_ms": 8000,
       "agent_qualified": false
@@ -995,6 +995,13 @@
           },
           "query": {
             "type": "object"
+          },
+          "environment": {
+            "type": "string",
+            "enum": [
+              "DEMO",
+              "LIVE"
+            ]
           }
         },
         "required": [
@@ -1018,7 +1025,7 @@
       "authorization": "Unavailable to agents until independently qualified.",
       "default_privilege": "DENY",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "d5a94db7dff422d25d73773ca64e298d9ee807d1788f38aa78250dc9cadc410b",
+      "handler_sha256": "63785a94d1fab77903b7ff29658ce49e26fb146745c7970c1f74587c7d800d86",
       "source": "Engines/Trading/trading_service.js",
       "availability_reason": "OWNER_ONLY",
       "timeout_ms": 8000
@@ -1135,6 +1142,13 @@
           "risk_approval_id": {
             "type": "string",
             "maxLength": 128
+          },
+          "environment": {
+            "type": "string",
+            "enum": [
+              "DEMO",
+              "LIVE"
+            ]
           }
         },
         "required": [
@@ -1164,7 +1178,7 @@
       "authorization": "Unavailable to agents until independently qualified.",
       "default_privilege": "DENY",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "d5a94db7dff422d25d73773ca64e298d9ee807d1788f38aa78250dc9cadc410b",
+      "handler_sha256": "63785a94d1fab77903b7ff29658ce49e26fb146745c7970c1f74587c7d800d86",
       "source": "Engines/Trading/trading_service.js",
       "availability_reason": "OWNER_ONLY",
       "timeout_ms": 8000
@@ -1281,6 +1295,13 @@
           "risk_approval_id": {
             "type": "string",
             "maxLength": 128
+          },
+          "environment": {
+            "type": "string",
+            "enum": [
+              "DEMO",
+              "LIVE"
+            ]
           }
         },
         "required": [
@@ -1310,7 +1331,7 @@
       "authorization": "Unavailable to agents until independently qualified.",
       "default_privilege": "DENY",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "d5a94db7dff422d25d73773ca64e298d9ee807d1788f38aa78250dc9cadc410b",
+      "handler_sha256": "63785a94d1fab77903b7ff29658ce49e26fb146745c7970c1f74587c7d800d86",
       "source": "Engines/Trading/trading_service.js",
       "availability_reason": "OWNER_ONLY",
       "timeout_ms": 8000
@@ -1427,6 +1448,13 @@
           "risk_approval_id": {
             "type": "string",
             "maxLength": 128
+          },
+          "environment": {
+            "type": "string",
+            "enum": [
+              "DEMO",
+              "LIVE"
+            ]
           }
         },
         "required": [
@@ -1456,7 +1484,7 @@
       "authorization": "Unavailable to agents until independently qualified.",
       "default_privilege": "DENY",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "d5a94db7dff422d25d73773ca64e298d9ee807d1788f38aa78250dc9cadc410b",
+      "handler_sha256": "63785a94d1fab77903b7ff29658ce49e26fb146745c7970c1f74587c7d800d86",
       "source": "Engines/Trading/trading_service.js",
       "availability_reason": "OWNER_ONLY",
       "timeout_ms": 8000
@@ -1573,6 +1601,13 @@
           "risk_approval_id": {
             "type": "string",
             "maxLength": 128
+          },
+          "environment": {
+            "type": "string",
+            "enum": [
+              "DEMO",
+              "LIVE"
+            ]
           }
         },
         "required": [
@@ -1602,7 +1637,7 @@
       "authorization": "Unavailable to agents until independently qualified.",
       "default_privilege": "DENY",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "d5a94db7dff422d25d73773ca64e298d9ee807d1788f38aa78250dc9cadc410b",
+      "handler_sha256": "63785a94d1fab77903b7ff29658ce49e26fb146745c7970c1f74587c7d800d86",
       "source": "Engines/Trading/trading_service.js",
       "availability_reason": "OWNER_ONLY",
       "timeout_ms": 8000
@@ -1719,6 +1754,13 @@
           "risk_approval_id": {
             "type": "string",
             "maxLength": 128
+          },
+          "environment": {
+            "type": "string",
+            "enum": [
+              "DEMO",
+              "LIVE"
+            ]
           }
         },
         "required": [
@@ -1748,7 +1790,7 @@
       "authorization": "Unavailable to agents until independently qualified.",
       "default_privilege": "DENY",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "d5a94db7dff422d25d73773ca64e298d9ee807d1788f38aa78250dc9cadc410b",
+      "handler_sha256": "63785a94d1fab77903b7ff29658ce49e26fb146745c7970c1f74587c7d800d86",
       "source": "Engines/Trading/trading_service.js",
       "availability_reason": "OWNER_ONLY",
       "timeout_ms": 8000
@@ -1865,6 +1907,13 @@
           "risk_approval_id": {
             "type": "string",
             "maxLength": 128
+          },
+          "environment": {
+            "type": "string",
+            "enum": [
+              "DEMO",
+              "LIVE"
+            ]
           }
         },
         "required": [
@@ -1894,7 +1943,7 @@
       "authorization": "Unavailable to agents until independently qualified.",
       "default_privilege": "DENY",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "d5a94db7dff422d25d73773ca64e298d9ee807d1788f38aa78250dc9cadc410b",
+      "handler_sha256": "63785a94d1fab77903b7ff29658ce49e26fb146745c7970c1f74587c7d800d86",
       "source": "Engines/Trading/trading_service.js",
       "availability_reason": "OWNER_ONLY",
       "timeout_ms": 8000
@@ -2011,6 +2060,13 @@
           "risk_approval_id": {
             "type": "string",
             "maxLength": 128
+          },
+          "environment": {
+            "type": "string",
+            "enum": [
+              "DEMO",
+              "LIVE"
+            ]
           }
         },
         "required": [
@@ -2040,7 +2096,7 @@
       "authorization": "Unavailable to agents until independently qualified.",
       "default_privilege": "DENY",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "d5a94db7dff422d25d73773ca64e298d9ee807d1788f38aa78250dc9cadc410b",
+      "handler_sha256": "63785a94d1fab77903b7ff29658ce49e26fb146745c7970c1f74587c7d800d86",
       "source": "Engines/Trading/trading_service.js",
       "availability_reason": "OWNER_ONLY",
       "timeout_ms": 8000
@@ -2157,6 +2213,13 @@
           "risk_approval_id": {
             "type": "string",
             "maxLength": 128
+          },
+          "environment": {
+            "type": "string",
+            "enum": [
+              "DEMO",
+              "LIVE"
+            ]
           }
         },
         "required": [
@@ -2186,11 +2249,11 @@
       "authorization": "Unavailable to agents until independently qualified.",
       "default_privilege": "DENY",
       "contract_version": "3.0.1-dev.1",
-      "handler_sha256": "d5a94db7dff422d25d73773ca64e298d9ee807d1788f38aa78250dc9cadc410b",
+      "handler_sha256": "63785a94d1fab77903b7ff29658ce49e26fb146745c7970c1f74587c7d800d86",
       "source": "Engines/Trading/trading_service.js",
       "availability_reason": "OWNER_ONLY",
       "timeout_ms": 8000
     }
   ],
-  "revision_hash": "16f8b921f8641b4c7ba339a18568e1b1f2ded8d253f5b9fd118c093e7fb69a47"
+  "revision_hash": "9839b90797e98b5488f745c0a95b1b8f0fd507eae3c52c31b036c707d7dbf7fe"
 }

@@ -30,7 +30,7 @@ with tempfile.TemporaryDirectory(prefix='iatb-extracted-') as directory:
     (root / 'App/node_modules').symlink_to(Path(args.node_modules).resolve(), target_is_directory=True)
     r = subprocess.run([args.node, 'Tools/qualify_cp1_control.js'], cwd=root / 'App', capture_output=True, text=True, timeout=300, env=os.environ.copy())
     log = r.stdout + r.stderr
-    rev2 = build['revision'] == '3.1.0_Rev2'
+    rev2 = build['revision'] in {'3.1.0_Rev2', '3.1.0_FINAL'}
     checks = None
     if rev2:
         checks = subprocess.run([
